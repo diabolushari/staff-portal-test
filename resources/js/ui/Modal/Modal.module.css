@@ -1,0 +1,26 @@
+.modal {
+    position: fixed;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100vw;
+    /* Full width */
+    height: 100vh;
+    /* Full height */
+    overflow: auto;
+    z-index: 9997;
+}
+
+
+.modalBackground {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    min-height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modalContent {
+    z-index: 9999;
+}

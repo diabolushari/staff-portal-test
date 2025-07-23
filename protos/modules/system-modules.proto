@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.modules;
+
+option php_namespace = "Proto\\Modules";
+option php_metadata_namespace = "GPBMetadata";
+
+
+
+// Import for google.protobuf.Empty
+import "google/protobuf/empty.proto";
+
+// ----- Message Definitions -----
+
+message SystemModule {
+  int64 id = 1;
+  string name = 2;
+}
+
+message CreateSystemModuleRequest {
+  SystemModule module = 1;
+}
+
+message GetSystemModuleRequest {
+  int64 id = 1;
+}
+
+message UpdateSystemModuleRequest {
+  SystemModule module = 1;
+}
+
+message DeleteSystemModuleRequest {
+  int64 id = 1;
+}
+
+message ListSystemModulesRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListSystemModulesResponse {
+  repeated SystemModule modules = 1;
+}
+
+// ----- Service Definition -----
+
+service SystemModuleService {
+  rpc CreateSystemModule (CreateSystemModuleRequest) returns (SystemModule);
+  rpc GetSystemModule (GetSystemModuleRequest) returns (SystemModule);
+  rpc UpdateSystemModule (UpdateSystemModuleRequest) returns (SystemModule);
+  rpc DeleteSystemModule (DeleteSystemModuleRequest) returns (google.protobuf.Empty);
+  rpc ListSystemModules (ListSystemModulesRequest) returns (ListSystemModulesResponse);
+}
