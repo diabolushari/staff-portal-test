@@ -90,7 +90,7 @@ export default function CardHeader({
                         {(addUrl != null || onAddClick != null) && (
                             <Tooltip>
                                 <TooltipTrigger>
-                                    <Button variant="highlight" size="icon" className="transition-transform hover:scale-105" onClick={handleClick}>
+                                    <Button variant="default" size="icon" className="transition-transform hover:scale-105" onClick={handleClick}>
                                         <PlusIcon className="h-6 w-6" />
                                     </Button>
                                 </TooltipTrigger>

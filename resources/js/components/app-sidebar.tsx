@@ -3,23 +3,32 @@ import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
-import { LayoutGrid } from 'lucide-react';
+import { ListTreeIcon, Package } from 'lucide-react';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutGrid,
-    },
-    {
         title: 'Parameter',
-        href: '/parameter',
-        icon: LayoutGrid,
+        href: '/parameter-definition',
+        icon: ListTreeIcon,
+        children: [
+            {
+                title: 'Domain',
+                href: '/parameter-domain',
+            },
+            {
+                title: 'Definition',
+                href: '/parameter-definition',
+            },
+            {
+                title: 'Values',
+                href: '/parameter-value',
+            },
+        ],
     },
     {
         title: 'System Modules',
         href: '/system-module',
-        icon: LayoutGrid,
+        icon: Package,
     },
 ];
 

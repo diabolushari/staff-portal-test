@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\SystemModule;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SystemModule\SystemModuleFormRequest;
 use Inertia\Inertia;
 use Proto\Modules\SystemModuleServiceClient;
 use Grpc\ChannelCredentials;
 use Illuminate\Http\Request;
 use Proto\Modules\CreateSystemModuleRequest;
+use Proto\Modules\DeleteSystemModuleRequest;
 use Proto\Modules\ListSystemModulesRequest;
 use Proto\Modules\SystemModule;
+use Proto\Modules\UpdateSystemModuleRequest;
 
 class SystemModuleController extends Controller
 {
@@ -17,7 +20,7 @@ class SystemModuleController extends Controller
 
     public function __construct()
     {
-        $this->client = new SystemModuleServiceClient('localhost:9090', [
+        $this->client = new SystemModuleServiceClient(env('SERVER_HOST'), [
             'credentials' => ChannelCredentials::createInsecure()
         ]);
     }
@@ -25,7 +28,7 @@ class SystemModuleController extends Controller
     {
         $req = new ListSystemModulesRequest();
         $req->setPage(1);
-        $req->setPageSize(10);
+        $req->setPageSize(5);
 
 
         list($res, $status) = $this->client->ListSystemModules($req)->wait();
@@ -48,31 +51,58 @@ class SystemModuleController extends Controller
             'systemModules' => $systemModulesArray
         ]);
     }
-    public function store(Request $request)
+    public function store(SystemModuleFormRequest $request)
     {
-        // 1. Validate input from frontend
-        $validated = $request->validate([
-            'system_module_name' => 'required|string',
-        ]);
 
-        // 2. Create SystemModule message
         $systemModule = new SystemModule();
-        $systemModule->setName($validated['system_module_name']);
+        $systemModule->setName($request->systemModuleName);
 
-
-        // 3. Create CreateSystemModuleRequest message
         $grpcRequest = new CreateSystemModuleRequest();
         $grpcRequest->setModule($systemModule);
 
 
         list($response, $status) = $this->client->CreateSystemModule($grpcRequest)->wait();
 
-        // 5. Check response status
+
         if ($status->code !== \Grpc\STATUS_OK) {
             return redirect()->back()->withErrors(['grpc' => 'Failed to create module']);
         }
 
-        // 6. Redirect or return response
-        return redirect()->route('system-module.index')->with('success', 'System Module created successfully.');
+        return redirect()->back()->with(['message', 'System Module created successfully.']);
+    }
+
+    public function update(SystemModuleFormRequest $request, $id)
+    {
+        $systemModule = new SystemModule();
+        $systemModule->setName($request->systemModuleName);
+        $systemModule->setId($id);
+
+
+        $grpcRequest = new UpdateSystemModuleRequest();
+        $grpcRequest->setModule($systemModule);
+
+
+        list($response, $status) = $this->client->UpdateSystemModule($grpcRequest)->wait();
+
+        if ($status->code !== \Grpc\STATUS_OK) {
+            return redirect()->back()->with(['error' => 'Failed to update module']);
+        }
+        return redirect()->back()->with(['message', 'System Module updated successfully.']);
+    }
+
+    public function destroy($id)
+    {
+        $grpcRequest = new DeleteSystemModuleRequest();
+        $grpcRequest->setId($id);
+
+        list($response, $status) = $this->client->DeleteSystemModule($grpcRequest)->wait();
+        if ($status->code !== \Grpc\STATUS_OK) {
+
+            if ($status->code !== \Grpc\STATUS_OK) {
+                return redirect()->back()->with('error', 'Failed to delete module');
+            }
+        }
+
+        return redirect()->back()->with(['message', 'System Module deleted successfully.']);
     }
 }
