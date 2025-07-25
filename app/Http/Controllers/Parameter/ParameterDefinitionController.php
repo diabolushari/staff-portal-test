@@ -100,6 +100,10 @@ class ParameterDefinitionController extends Controller
 
     public function edit($id)
     {
+        if (!is_numeric($id) || $id <= 0) {
+            return response()->json(['error' => 'Invalid ID parameter'], 400);
+        }
+
         $req = new GetParameterDefinitionRequest();
         $req->setId($id);
         list($res, $status) = $this->client->GetParameterDefinition($req)->wait();

@@ -23,7 +23,7 @@ export default function ParameterDefinitionIndex({ parameterDefinitions }: { par
         { header: 'Attribute 5', accessor: 'attribute5_name' },
         { header: 'Actions', accessor: 'actions' },
     ];
-    console.log(parameterDefinitions);
+
     const dataWithActions = parameterDefinitions.map((item: any) => ({
         ...item,
         actions: {

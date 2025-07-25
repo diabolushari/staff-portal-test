@@ -10,8 +10,8 @@ import { router } from '@inertiajs/react';
 
 export default function ParameterDefinitionAction({ data }: { data: any }) {
     const { formData, setFormValue, toggleBoolean } = useCustomForm({
-        parameter_name: data?.parameter_name || '',
-        attribute1_name: data?.attribute1_name || '',
+        parameter_name: data?.parameter_name ?? '',
+        attribute1_name: data?.attribute1_name ?? '',
         attribute2_name: data?.attribute2_name || '',
         attribute3_name: data?.attribute3_name || '',
         attribute4_name: data?.attribute4_name || '',
@@ -32,7 +32,7 @@ export default function ParameterDefinitionAction({ data }: { data: any }) {
     return (
         <AppLayout>
             <div className="flex items-center justify-center">
-                <div className="p-y-8 w-3/4 items-center justify-center rounded-xl bg-white p-8 shadow-md">
+                <div className="w-3/4 items-center justify-center rounded-xl bg-white p-8 py-8 shadow-md">
                     <h2 className="mb-4 text-2xl font-bold">{data ? 'Edit' : 'Create'} Parameter Definition</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="grid gap-6 md:grid-cols-2">
