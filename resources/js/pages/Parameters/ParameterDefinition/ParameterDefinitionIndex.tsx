@@ -1,10 +1,8 @@
-import ParameterDefinitionActionModal from '@/components/Parameter/ParametrDefinition/ParameterDefinitionActionModal';
 import AppLayout from '@/layouts/app-layout';
 
 import { BreadcrumbItem } from '@/types';
 import CardHeader from '@/ui/Card/CardHeader';
 import CustomTable from '@/ui/Table/CustomTable';
-import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -29,30 +27,17 @@ export default function ParameterDefinitionIndex({ parameterDefinitions }: { par
     const dataWithActions = parameterDefinitions.map((item: any) => ({
         ...item,
         actions: {
-            editOnclick: () => handleEditClick(item),
+            editUrl: route('parameter-definition.edit', item.id),
             deleteUrl: route('parameter-definition.destroy', item.id),
         },
     }));
-    const handleEditClick = (item: any) => {
-        setEditRow(item);
-        setShowModal(true);
-    };
-    const [showModal, setShowModal] = useState(false);
-    const [editRow, setEditRow] = useState<any>(null);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <div className="p-4">
-                <CardHeader
-                    title="Parameter Definition"
-                    subheading="Parameter Definition"
-                    onAddClick={() => {
-                        setEditRow(false);
-                        setShowModal(true);
-                    }}
-                />
+                <CardHeader title="Parameter Definition" subheading="Parameter Definition" addUrl={route('parameter-definition.create')} />
                 <CustomTable columns={columns} data={dataWithActions} serialNumber={true} />
             </div>
-            {showModal && <ParameterDefinitionActionModal show={showModal} onClose={() => setShowModal(false)} editRow={editRow} />}
         </AppLayout>
     );
 }

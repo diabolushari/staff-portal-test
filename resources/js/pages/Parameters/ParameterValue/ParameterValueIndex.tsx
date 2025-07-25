@@ -7,10 +7,8 @@ const columns = [
     { header: 'ID', accessor: 'id' },
     { header: 'Parameter Code', accessor: 'parameter_code' },
     { header: 'Parameter Value', accessor: 'parameter_value' },
-    { header: 'Definition ID', accessor: 'definition_id' },
-    { header: 'Effective Start Date', accessor: 'effective_start_date' },
-    { header: 'Effective End Date', accessor: 'effective_end_date' },
-    { header: 'Sort Priority', accessor: 'sort_priority' },
+    { header: 'Definition Name', accessor: 'definition_name' },
+
     { header: 'Notes', accessor: 'notes' },
     { header: 'Actions', accessor: 'actions' },
 ];

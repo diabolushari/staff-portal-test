@@ -16,13 +16,19 @@ use Proto\Parameters\DeleteParameterValueRequest;
 use Proto\Parameters\ListParameterValuesRequest;
 
 use Grpc\ChannelCredentials;
+use Proto\Parameters\ListParameterDefinitionsRequest;
+use Proto\Parameters\ParameterDefinitionServiceClient;
 
 class ParameterValueController extends Controller
 {
+    private $parameterDefinitionClient;
     private $client;
 
     public function __construct()
     {
+        $this->parameterDefinitionClient = new ParameterDefinitionServiceClient(env('GRPC_HOST'), [
+            'credentials' => ChannelCredentials::createInsecure()
+        ]);
         $this->client = new ParameterValueServiceClient(env('GRPC_HOST'), [
             'credentials' => ChannelCredentials::createInsecure()
         ]);
@@ -70,6 +76,18 @@ class ParameterValueController extends Controller
         $page = $request->input('page', 1);
         $pageSize = $request->input('page_size', 10);
 
+        // 1. Fetch Parameter Definitions to get definition names
+        $definitionMap = [];
+        $defReq = new ListParameterDefinitionsRequest();
+        list($defRes, $defStatus) = $this->parameterDefinitionClient->ListParameterDefinitions($defReq)->wait();
+
+        if ($defStatus->code === \Grpc\STATUS_OK) {
+            foreach ($defRes->getDefinitions() as $definition) {
+                $definitionMap[$definition->getId()] = $definition->getParameterName(); // or ->getDefinitionName() if available
+            }
+        }
+
+        // 2. Fetch Parameter Values
         $req = new ListParameterValuesRequest();
         $req->setPage($page);
         $req->setPageSize($pageSize);
@@ -80,13 +98,18 @@ class ParameterValueController extends Controller
             return response()->json(['error' => $status->details], 500);
         }
 
+        // 3. Map values with definition name
         $values = [];
         foreach ($res->getValues() as $value) {
+            $definitionId = $value->getDefinitionId();
+            $definitionName = $definitionMap[$definitionId] ?? '—'; // fallback if not found
+
             $values[] = [
                 'id' => $value->getId(),
                 'parameter_code' => $value->getParameterCode(),
                 'parameter_value' => $value->getParameterValue(),
-                'definition_id' => $value->getDefinitionId(),
+                'definition_id' => $definitionId,
+                'definition_name' => $definitionName,
                 'attribute1_value' => $value->getAttribute1Value(),
                 'attribute2_value' => $value->getAttribute2Value(),
                 'attribute3_value' => $value->getAttribute3Value(),
@@ -104,6 +127,7 @@ class ParameterValueController extends Controller
             'values' => $values
         ]);
     }
+
     public function create()
     {
 

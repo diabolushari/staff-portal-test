@@ -11,6 +11,7 @@ use Proto\Parameters\ParameterDefinitionServiceClient;
 use Grpc\ChannelCredentials;
 use Proto\Parameters\CreateParameterDefinitionRequest;
 use Proto\Parameters\DeleteParameterDefinitionRequest;
+use Proto\Parameters\GetParameterDefinitionRequest;
 use Proto\Parameters\ListParameterDefinitionsRequest;
 use Proto\Parameters\ListParameterDomainsRequest;
 use Proto\Parameters\ParameterDefinitionProto;
@@ -64,6 +65,12 @@ class ParameterDefinitionController extends Controller
             'parameterDefinitions' => $parameterDefinitions,
         ]);
     }
+    public function create()
+    {
+        return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionAction', [
+            'data' => null,
+        ]);
+    }
 
     public function store(ParameterDefinitionFormRequest $request)
     {
@@ -88,6 +95,30 @@ class ParameterDefinitionController extends Controller
         }
         return redirect()->back()->with([
             'message' => 'Parameter definition created successfully',
+        ]);
+    }
+
+    public function edit($id)
+    {
+        $req = new GetParameterDefinitionRequest();
+        $req->setId($id);
+        list($res, $status) = $this->client->GetParameterDefinition($req)->wait();
+        if ($status->code !== \Grpc\STATUS_OK) {
+            return response()->json(['error' => $status->details], 500);
+        }
+        $value = [
+            'id' => $res->getId(),
+            'parameter_name' => $res->getParameterName(),
+            'attribute1_name' => $res->getAttribute1Name(),
+            'attribute2_name' => $res->getAttribute2Name(),
+            'attribute3_name' => $res->getAttribute3Name(),
+            'attribute4_name' => $res->getAttribute4Name(),
+            'attribute5_name' => $res->getAttribute5Name(),
+            'is_effective_date_driven' => $res->getIsEffectiveDateDriven(),
+            'domain_id' => $res->getDomainId(),
+        ];
+        return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionAction', [
+            'data' => $value,
         ]);
     }
 

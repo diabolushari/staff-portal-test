@@ -1,3 +1,4 @@
+import capitalSnakeCase from '@/formaters/capitalcase';
 import useCustomForm from '@/hooks/useCustomForm';
 import useInertiaPost from '@/hooks/useInertiaPost';
 import SubHeading from '@/typography/SubHeading';
@@ -85,6 +86,7 @@ export default function ParameterDomainActionModal({
                                 setValue={setFormValue('domain_code')}
                                 required
                                 error={errors?.domain_code}
+                                formatter={capitalSnakeCase}
                             />
                         </div>
                         <div className="flex flex-col">
