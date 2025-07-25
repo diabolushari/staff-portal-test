@@ -14,7 +14,7 @@ class ParameterDomainListApiController extends Controller
 
     public function __construct()
     {
-        $this->client = new ParameterDomainServiceClient(env('SERVER_HOST'), [
+        $this->client = new ParameterDomainServiceClient(env('GRPC_HOST'), [
             'credentials' => ChannelCredentials::createInsecure()
         ]);
     }

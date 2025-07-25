@@ -29,19 +29,15 @@ const CustomTable: React.FC<CustomTableProps> = ({ title, subheading, data, colu
         setRowToDelete(row);
         setShowDeleteModal(true);
     };
+
     const confirmDelete = async () => {
-        try {
-            await router.delete(rowToDelete.actions.deleteUrl);
-            setShowDeleteModal(false);
-            toast.success('Module deleted successfully');
-        } catch (error: any) {
-            setShowDeleteModal(false);
-
-            // If server returns JSON with message
-            const msg = error?.response?.data?.error || error.message || 'Unknown error';
-
-            toast.error('Failed to delete module: ' + msg);
-        }
+        router.delete(rowToDelete.actions.deleteUrl, {
+            onSuccess: (url, options, response) => {
+                url.props.flash?.message && toast.success(url.props.flash?.message);
+                url.props.flash?.error && toast.error(url.props.flash?.error);
+                setShowDeleteModal(false);
+            },
+        });
     };
 
     const defaultActionsRender = (value: any, row: any, onClick: any) => (

@@ -23,7 +23,7 @@ class ParameterValueController extends Controller
 
     public function __construct()
     {
-        $this->client = new ParameterValueServiceClient(env('SERVER_HOST'), [
+        $this->client = new ParameterValueServiceClient(env('GRPC_HOST'), [
             'credentials' => ChannelCredentials::createInsecure()
         ]);
     }
@@ -146,6 +146,9 @@ class ParameterValueController extends Controller
 
     public function store(ParameterValueFormRequest $request)
     {
+        if (!$request->effectiveStartDate) {
+            $request->effectiveStartDate = date('Y-m-d');
+        }
         $proto = new ParameterValueProto();
         $proto->setParameterCode($request->parameterCode);
         $proto->setParameterValue($request->parameterValue);
@@ -175,6 +178,9 @@ class ParameterValueController extends Controller
 
     public function update(ParameterValueFormRequest $request, $id)
     {
+        if (!$request->effectiveStartDate) {
+            $request->effectiveStartDate = date('Y-m-d');
+        }
         $proto = new ParameterValueProto();
         $proto->setId($id);
         $proto->setParameterCode($request->parameterCode);

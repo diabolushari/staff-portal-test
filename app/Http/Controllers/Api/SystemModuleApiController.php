@@ -14,7 +14,7 @@ class SystemModuleApiController extends Controller
     private $client;
     public function __construct()
     {
-        $this->client = new SystemModuleServiceClient(env('SERVER_HOST'), [
+        $this->client = new SystemModuleServiceClient(env('GRPC_HOST'), [
             'credentials' => ChannelCredentials::createInsecure()
         ]);
     }

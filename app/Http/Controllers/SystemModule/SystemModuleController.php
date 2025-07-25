@@ -20,7 +20,7 @@ class SystemModuleController extends Controller
 
     public function __construct()
     {
-        $this->client = new SystemModuleServiceClient(env('SERVER_HOST'), [
+        $this->client = new SystemModuleServiceClient(env('GRPC_HOST'), [
             'credentials' => ChannelCredentials::createInsecure()
         ]);
     }
@@ -99,7 +99,7 @@ class SystemModuleController extends Controller
         if ($status->code !== \Grpc\STATUS_OK) {
 
             if ($status->code !== \Grpc\STATUS_OK) {
-                return redirect()->back()->with('error', 'Failed to delete module');
+                return redirect()->back()->with(['error' => 'Failed to delete module']);
             }
         }
 

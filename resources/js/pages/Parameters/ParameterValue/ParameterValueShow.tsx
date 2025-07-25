@@ -2,7 +2,7 @@ import ViewParameterDetail from '@/components/Parameter/ViewParameterDetails';
 import AppLayout from '@/layouts/app-layout';
 
 export default function ParameterValueShow({ data }: { data: any }) {
-    const fields = [
+    const allFields = [
         { label: 'Parameter Code', key: 'parameter_code' },
         { label: 'Parameter Value', key: 'parameter_value' },
         { label: 'Attribute 1 Value', key: 'attribute1_value' },
@@ -12,14 +12,22 @@ export default function ParameterValueShow({ data }: { data: any }) {
         { label: 'Attribute 5 Value', key: 'attribute5_value' },
         { label: 'Effective Start Date', key: 'effective_start_date' },
         { label: 'Effective End Date', key: 'effective_end_date' },
-        { label: 'Is Active', key: 'is_active' },
         { label: 'Sort Priority', key: 'sort_priority' },
         { label: 'Notes', key: 'notes' },
     ];
 
+    const filteredFields = allFields.filter((field) => {
+        const isAttributeField = field.key.startsWith('attribute');
+        const value = data?.[field.key];
+        if (isAttributeField) {
+            return value !== null && value !== undefined && value.toString().trim() !== '';
+        }
+        return true; // always include non-attribute fields
+    });
+
     return (
         <AppLayout>
-            <ViewParameterDetail title="Parameter Value Details" data={data} fields={fields} />
+            <ViewParameterDetail title="Parameter Value Details" data={data} fields={filteredFields} />
         </AppLayout>
     );
 }

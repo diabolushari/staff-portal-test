@@ -1,12 +1,15 @@
 import useCustomForm from '@/hooks/useCustomForm';
+import useFetchRecord from '@/hooks/useFetchRecord';
 import useInertiaPost from '@/hooks/useInertiaPost';
 import StrongText from '@/typography/StrongText';
 import Button from '@/ui/button/Button';
 import DynamicSelectList from '@/ui/form/DynamicSelectList';
 import Input from '@/ui/form/Input';
 import TextArea from '@/ui/form/TextArea';
+import { useEffect, useState } from 'react';
 
 export default function ParameterValueCreate({ data }: { data?: any }) {
+    const [selectedDefinition, setSelectedDefinition] = useState<any>(null);
     const { formData, setFormValue, toggleBoolean } = useCustomForm({
         definition_id: data?.definition_id || '',
         parameter_code: data?.parameter_code || '',
@@ -27,11 +30,18 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
             window.location.href = route('parameter-value.index');
         },
     });
+    const [definitions] = useFetchRecord(`/api/parameter-definitions`);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post(data ? { ...formData, _method: 'PUT' } : formData);
     };
+    useEffect(() => {
+        if (formData.definition_id) {
+            const definition = definitions?.find((definition: any) => definition.id == formData.definition_id);
+            setSelectedDefinition(definition);
+        }
+    }, [formData.definition_id]);
 
     return (
         <div className="mx-auto max-w-5xl py-8">
@@ -70,74 +80,85 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                         required
                     />
                 </div>
-                <div className="col-span-2 flex flex-col">
-                    <StrongText>Attribute Values</StrongText>
-                </div>
-                <div className="flex flex-col">
-                    <Input
-                        label="Attribute 1 Value"
-                        value={formData.attribute1_value}
-                        setValue={setFormValue('attribute1_value')}
-                        error={errors?.attribute1_value}
-                    />
-                </div>
-
-                <div className="flex flex-col">
-                    <Input
-                        label="Attribute 2 Value"
-                        value={formData.attribute2_value}
-                        setValue={setFormValue('attribute2_value')}
-                        error={errors?.attribute2_value}
-                    />
-                </div>
-
-                <div className="flex flex-col">
-                    <Input
-                        label="Attribute 3 Value"
-                        value={formData.attribute3_value}
-                        setValue={setFormValue('attribute3_value')}
-                        error={errors?.attribute3_value}
-                    />
-                </div>
-
-                <div className="flex flex-col">
-                    <Input
-                        label="Attribute 4 Value"
-                        value={formData.attribute4_value}
-                        setValue={setFormValue('attribute4_value')}
-                        error={errors?.attribute4_value}
-                    />
-                </div>
-
-                <div className="flex flex-col">
-                    <Input
-                        label="Attribute 5 Value"
-                        value={formData.attribute5_value}
-                        setValue={setFormValue('attribute5_value')}
-                        error={errors?.attribute5_value}
-                    />
-                </div>
-                <div></div>
-
-                <div className="flex flex-col">
-                    <Input
-                        label="Effective Start Date"
-                        type="date"
-                        value={formData.effective_start_date}
-                        setValue={setFormValue('effective_start_date')}
-                        error={errors?.effective_start_date}
-                    />
-                </div>
-
-                <div className="flex flex-col">
-                    <Input
-                        label="Effective End Date"
-                        type="date"
-                        value={formData.effective_end_date}
-                        setValue={setFormValue('effective_end_date')}
-                        error={errors?.effective_end_date}
-                    />
-                </div>
+                {selectedDefinition && (
+                    <>
+                        <div className="col-span-2 flex flex-col">
+                            <StrongText>Attribute Values</StrongText>
+                        </div>
+                        {selectedDefinition.attribute1_name && (
+                            <div className="flex flex-col">
+                                <Input
+                                    label={selectedDefinition.attribute1_name}
+                                    value={formData.attribute1_value}
+                                    setValue={setFormValue('attribute1_value')}
+                                    error={errors?.attribute1_value}
+                                />
+                            </div>
+                        )}
+                        {selectedDefinition.attribute2_name && (
+                            <div className="flex flex-col">
+                                <Input
+                                    label="Attribute 2 Value"
+                                    value={formData.attribute2_value}
+                                    setValue={setFormValue('attribute2_value')}
+                                    error={errors?.attribute2_value}
+                                />
+                            </div>
+                        )}
+                        {selectedDefinition.attribute3_name && (
+                            <div className="flex flex-col">
+                                <Input
+                                    label="Attribute 3 Value"
+                                    value={formData.attribute3_value}
+                                    setValue={setFormValue('attribute3_value')}
+                                    error={errors?.attribute3_value}
+                                />
+                            </div>
+                        )}
+                        {selectedDefinition.attribute4_name && (
+                            <div className="flex flex-col">
+                                <Input
+                                    label="Attribute 4 Value"
+                                    value={formData.attribute4_value}
+                                    setValue={setFormValue('attribute4_value')}
+                                    error={errors?.attribute4_value}
+                                />
+                            </div>
+                        )}
+                        {selectedDefinition.attribute5_name && (
+                            <div className="flex flex-col">
+                                <Input
+                                    label="Attribute 5 Value"
+                                    value={formData.attribute5_value}
+                                    setValue={setFormValue('attribute5_value')}
+                                    error={errors?.attribute5_value}
+                                />
+                            </div>
+                        )}
+                    </>
+                )}
+                {selectedDefinition?.is_effective_date_driven && (
+                    <div className="flex flex-col">
+                        <Input
+                            label="Effective Start Date"
+                            type="date"
+                            value={formData.effective_start_date}
+                            setValue={setFormValue('effective_start_date')}
+                            error={errors?.effective_start_date}
+                        />
+                    </div>
+                )}
+                {selectedDefinition?.is_effective_date_driven && (
+                    <div className="flex flex-col">
+                        <Input
+                            label="Effective End Date"
+                            type="date"
+                            value={formData.effective_end_date}
+                            setValue={setFormValue('effective_end_date')}
+                            error={errors?.effective_end_date}
+                        />
+                    </div>
+                )}
 
                 <div className="flex flex-col">
                     <Input
@@ -149,7 +170,7 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                     />
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col md:col-span-2">
                     <TextArea label="Notes" value={formData.notes} setValue={setFormValue('notes')} error={errors?.notes} />
                 </div>
 

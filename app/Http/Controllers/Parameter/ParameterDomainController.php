@@ -24,10 +24,10 @@ class ParameterDomainController extends Controller
 
     public function __construct()
     {
-        $this->client = new ParameterDomainServiceClient(env('SERVER_HOST'), [
+        $this->client = new ParameterDomainServiceClient(env('GRPC_HOST'), [
             'credentials' => ChannelCredentials::createInsecure()
         ]);
-        $this->systemModuleClient = new SystemModuleServiceClient(env('SERVER_HOST'), [
+        $this->systemModuleClient = new SystemModuleServiceClient(env('GRPC_HOST'), [
             'credentials' => ChannelCredentials::createInsecure()
         ]);
     }

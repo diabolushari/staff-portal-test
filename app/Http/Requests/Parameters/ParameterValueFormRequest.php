@@ -19,9 +19,8 @@ class ParameterValueFormRequest extends Data
         public ?string $attribute3Value,
         public ?string $attribute4Value,
         public ?string $attribute5Value,
-        public string $effectiveStartDate,
+        public ?string $effectiveStartDate,
         public ?string $effectiveEndDate,
-        public ?bool $isActive = true,
         public ?int $sortPriority = 0,
         public ?string $notes = null,
     ) {}

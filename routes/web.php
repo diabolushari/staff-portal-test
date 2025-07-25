@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\ParameterDefinitionItemApiController;
 use App\Http\Controllers\Api\ParameterDefinitionListApiController;
 use App\Http\Controllers\Api\ParameterDomainListApiController;
 use App\Http\Controllers\Api\SystemModuleApiController;
-use App\Http\Controllers\Parameter\ParameterController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
@@ -29,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('api/system-modules', SystemModuleApiController::class);
 Route::get('api/parameter-domains', ParameterDomainListApiController::class);
 Route::get('api/parameter-definitions', ParameterDefinitionListApiController::class);
+Route::get('api/parameter-definitions/{id}', ParameterDefinitionItemApiController::class);
 
 
 

@@ -23,10 +23,10 @@ class ParameterDefinitionController extends Controller
     private $client;
     public function __construct()
     {
-        $this->client = new ParameterDefinitionServiceClient(env('SERVER_HOST'), [
+        $this->client = new ParameterDefinitionServiceClient(env('GRPC_HOST'), [
             'credentials' => ChannelCredentials::createInsecure()
         ]);
-        $this->parameterDomainClient = new ParameterDomainServiceClient(env('SERVER_HOST'), [
+        $this->parameterDomainClient = new ParameterDomainServiceClient(env('GRPC_HOST'), [
             'credentials' => ChannelCredentials::createInsecure()
         ]);
     }

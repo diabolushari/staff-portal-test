@@ -13,7 +13,7 @@ class ParameterDefinitionListApiController extends Controller
 
     public function __construct()
     {
-        $this->client = new ParameterDefinitionServiceClient(env('SERVER_HOST'), [
+        $this->client = new ParameterDefinitionServiceClient(env('GRPC_HOST'), [
             'credentials' => ChannelCredentials::createInsecure()
         ]);
     }

@@ -4,6 +4,7 @@ import useInertiaPost from '@/hooks/useInertiaPost';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import Button from '@/ui/button/Button';
+import CardHeader from '@/ui/Card/CardHeader';
 import Input from '@/ui/form/Input';
 import CustomTable from '@/ui/Table/CustomTable';
 import { Head } from '@inertiajs/react';
@@ -56,16 +57,16 @@ export default function SystemModuleIndex({ systemModules }: { systemModules: an
             <Head title="System Modules" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="p-2 lg:w-[50%]">
-                    <div className="mb-5 flex flex-col gap-1">
-                        <h1>System Module</h1>
-                        <p>Add a new system module. System modules for temporary use.</p>
-                    </div>
+                    <CardHeader
+                        title="System Module"
+                        subheading="Here you can create System module names. Only admin can create system module names."
+                    />
                     <Card className="p-4">
                         <form onSubmit={handleSubmit}>
                             <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
                                 <div className="flex flex-col gap-4">
                                     <Input
-                                        label={editRow ? 'Edit System Module Name' : 'Create System Module Name'}
+                                        label={editRow ? 'Edit System Module Name' : 'Create System Module'}
                                         setValue={setFormValue('system_module_name')}
                                         value={formData.system_module_name}
                                         placeholder={editRow ? '' : 'Type your System Module Name'}

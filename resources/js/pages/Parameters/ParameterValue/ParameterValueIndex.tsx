@@ -10,7 +10,6 @@ const columns = [
     { header: 'Definition ID', accessor: 'definition_id' },
     { header: 'Effective Start Date', accessor: 'effective_start_date' },
     { header: 'Effective End Date', accessor: 'effective_end_date' },
-    { header: 'Is Active', accessor: 'is_active' },
     { header: 'Sort Priority', accessor: 'sort_priority' },
     { header: 'Notes', accessor: 'notes' },
     { header: 'Actions', accessor: 'actions' },
