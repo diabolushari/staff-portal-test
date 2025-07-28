@@ -1,9 +1,10 @@
 import AppLayout from '@/layouts/app-layout';
 
+import ParameterDefinitionActionModal from '@/components/Parameter/ParametrDefinition/ParameterDefinitionActionModal';
 import { BreadcrumbItem } from '@/types';
 import CardHeader from '@/ui/Card/CardHeader';
 import CustomTable from '@/ui/Table/CustomTable';
-
+import { useState } from 'react';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Parameter Definition',
@@ -12,6 +13,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function ParameterDefinitionIndex({ parameterDefinitions }: { parameterDefinitions: any }) {
+    const [showModal, setShowModal] = useState(false);
+    const [editRow, setEditRow] = useState<any>(null);
     const columns = [
         { header: 'ID', accessor: 'id' },
         { header: 'Parameter Name', accessor: 'parameter_name' },
@@ -27,17 +30,29 @@ export default function ParameterDefinitionIndex({ parameterDefinitions }: { par
     const dataWithActions = parameterDefinitions.map((item: any) => ({
         ...item,
         actions: {
-            editUrl: route('parameter-definition.edit', item.id),
+            editOnclick: () => handleEditClick(item),
             deleteUrl: route('parameter-definition.destroy', item.id),
         },
     }));
+    const handleEditClick = (item: any) => {
+        setEditRow(item);
+        setShowModal(true);
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <div className="p-4">
-                <CardHeader title="Parameter Definition" subheading="Parameter Definition" addUrl={route('parameter-definition.create')} />
+                <CardHeader
+                    title="Parameter Definition"
+                    subheading="Parameter Definition"
+                    onAddClick={() => {
+                        setEditRow(false);
+                        setShowModal(true);
+                    }}
+                />
                 <CustomTable columns={columns} data={dataWithActions} serialNumber={true} />
             </div>
+            {showModal && <ParameterDefinitionActionModal show={showModal} onClose={() => setShowModal(false)} editRow={editRow} />}
         </AppLayout>
     );
 }
