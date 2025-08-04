@@ -20,6 +20,7 @@ export interface NavItem {
     href: string;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    children?: NavItem[];
 }
 
 export interface SharedData {
@@ -41,3 +42,14 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
+    auth: {
+        user?: User;
+        role: UserRole | null;
+    };
+    flash: {
+        message: string | null;
+        error: string | null;
+    };
+    ziggy: Config & { location: string };
+};
