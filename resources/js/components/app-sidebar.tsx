@@ -3,32 +3,29 @@ import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
-import { ListTreeIcon, Package } from 'lucide-react';
+import { ListTreeIcon, SettingsIcon } from 'lucide-react';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Parameter',
         href: '/parameter-definition',
         icon: ListTreeIcon,
-        children: [
-            {
-                title: 'Domain',
-                href: '/parameter-domain',
-            },
-            {
-                title: 'Definition',
-                href: '/parameter-definition',
-            },
-            {
-                title: 'Values',
-                href: '/parameter-value',
-            },
-        ],
+        children: [],
     },
     {
-        title: 'System Modules',
-        href: '/system-module',
-        icon: Package,
+        title: 'Settings',
+        href: '/settings',
+        icon: SettingsIcon,
+        children: [
+            {
+                title: 'Parameter Master',
+                children: [
+                    { title: 'Domain', href: '/parameter-domain' },
+                    { title: 'Definition', href: '/parameter-definition' },
+                    { title: 'Values', href: '/parameter-value' },
+                ],
+            },
+        ],
     },
 ];
 

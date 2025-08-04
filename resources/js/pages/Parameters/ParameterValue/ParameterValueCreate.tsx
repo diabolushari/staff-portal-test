@@ -11,7 +11,9 @@ import TextArea from '@/ui/form/TextArea';
 import { useEffect, useState } from 'react';
 
 export default function ParameterValueCreate({ data }: { data?: any }) {
-    const [selectedDefinition, setSelectedDefinition] = useState<any>(null);
+    const attributeValuePresent =
+        data?.attribute1_value || data?.attribute2_value || data?.attribute3_value || data?.attribute4_value || data?.attribute5_value;
+    const [selectedDefinition, setSelectedDefinition] = useState<any>(attributeValuePresent ? data?.definition_id : null);
     const { formData, setFormValue, toggleBoolean } = useCustomForm({
         definition_id: data?.definition_id || '',
         parameter_code: data?.parameter_code || '',
@@ -39,11 +41,11 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
         post(data ? { ...formData, _method: 'PUT' } : formData);
     };
     useEffect(() => {
-        if (formData.definition_id) {
-            const definition = definitions?.find((definition: any) => definition.id == formData.definition_id);
+        if (formData.definition_id && definitions?.length) {
+            const definition = definitions.find((d: any) => d.id == formData.definition_id);
             setSelectedDefinition(definition);
         }
-    }, [formData.definition_id]);
+    }, [formData.definition_id, definitions]);
 
     return (
         <AppLayout>
