@@ -72,7 +72,6 @@ export default function SystemModuleIndex({ systemModules }: { systemModules: an
                                         placeholder={editRow ? '' : 'Type your System Module Name'}
                                         error={errors?.system_module_name}
                                         type="text"
-                                        required
                                     />
                                 </div>
                                 <div className="mt-12">

@@ -34,6 +34,7 @@ class SystemModuleController extends Controller
         list($res, $status) = $this->client->ListSystemModules($req)->wait();
 
         if ($status->code !== \Grpc\STATUS_OK) {
+
             return response()->json(['error' => $status->details], 500);
         }
 
@@ -65,6 +66,7 @@ class SystemModuleController extends Controller
 
 
         if ($status->code !== \Grpc\STATUS_OK) {
+            dd($status);
             return redirect()->back()->withErrors(['grpc' => 'Failed to create module']);
         }
 

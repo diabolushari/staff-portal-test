@@ -16,7 +16,7 @@ export default function ParameterDefinitionActionModal({ show, onClose, editRow 
         attribute4_name: editRow?.attribute4_name || '',
         attribute5_name: editRow?.attribute5_name || '',
         is_effective_date_driven: editRow?.is_effective_date_driven || false,
-        domain_id: editRow?.domain_id || '',
+        domain_id: editRow?.domain_id || 0,
     });
 
     // Track visible attribute fields (initially show existing ones if editing)

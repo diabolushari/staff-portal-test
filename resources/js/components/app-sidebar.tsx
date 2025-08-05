@@ -25,6 +25,11 @@ const mainNavItems: NavItem[] = [
                     { title: 'Values', href: '/parameter-value' },
                 ],
             },
+            {
+                title: 'System modules',
+                href: '/system-module',
+                icon: SettingsIcon,
+            },
         ],
     },
 ];

@@ -79,15 +79,18 @@ class ParameterDefinitionController extends Controller
 
         $definition = new ParameterDefinitionProto();
         $definition->setParameterName($request->parameterName);
-        $definition->setAttribute1Name($request->attribute1Name);
-        $definition->setAttribute2Name($request->attribute2Name);
-        $definition->setAttribute3Name($request->attribute3Name);
-        $definition->setAttribute4Name($request->attribute4Name);
-        $definition->setAttribute5Name($request->attribute5Name);
+        $definition->setAttribute1Name($request->attribute1Name ?? '');
+        $definition->setAttribute2Name($request->attribute2Name ?? '');
+        $definition->setAttribute3Name($request->attribute3Name ?? '');
+        $definition->setAttribute4Name($request->attribute4Name ?? '');
+        $definition->setAttribute5Name($request->attribute5Name ?? '');
         $definition->setIsEffectiveDateDriven($request->isEffectiveDateDriven);
-        $definition->setDomainId($request->domainId);
+        $definition->setDomainId((int)$request->domainId);
+
+
 
         $req->setDefinition($definition);
+        dd($definition->getDomainId(), gettype($definition->getDomainId()));
 
         list($res, $status) = $this->client->CreateParameterDefinition($req)->wait();
         if ($status->code !== \Grpc\STATUS_OK) {
