@@ -131,10 +131,10 @@ class ParameterDomainController extends Controller
     {
 
         $domainProto = new ParameterDomainProto;
-        $domainProto->setDomainName('');
-        $domainProto->setDescription('');
-        $domainProto->setDomainCode('');
-        $domainProto->setManagedByModule(0);
+        $domainProto->setDomainName($request->domainName);
+        $domainProto->setDescription($request->description);
+        $domainProto->setDomainCode($request->domainCode);
+        $domainProto->setManagedByModule($request->managedByModule);
         $req = new CreateParameterDomainRequest;
         $req->setDomain($domainProto);
 

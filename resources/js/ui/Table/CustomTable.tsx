@@ -48,8 +48,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
   const confirmDelete = async () => {
     router.delete(rowToDelete.actions.deleteUrl, {
       onSuccess: (url, options, response) => {
-        url.props.flash?.message && toast.success(url.props.flash?.message)
-        url.props.flash?.error && toast.error(url.props.flash?.error)
         setShowDeleteModal(false)
       },
     })
