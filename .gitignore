@@ -23,3 +23,5 @@ yarn-error.log
 /.vscode
 /.zed
 /mise.toml
+
+/generated

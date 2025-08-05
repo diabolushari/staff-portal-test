@@ -4,14 +4,13 @@ namespace App\Http\Controllers\SystemModule;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SystemModule\SystemModuleFormRequest;
+use App\Services\Grpc\GrpcErrorService;
 use Inertia\Inertia;
-use Proto\Modules\SystemModuleServiceClient;
-use Grpc\ChannelCredentials;
-use Illuminate\Http\Request;
 use Proto\Modules\CreateSystemModuleRequest;
 use Proto\Modules\DeleteSystemModuleRequest;
 use Proto\Modules\ListSystemModulesRequest;
 use Proto\Modules\SystemModule;
+use Proto\Modules\SystemModuleServiceClient;
 use Proto\Modules\UpdateSystemModuleRequest;
 
 class SystemModuleController extends Controller
@@ -21,20 +20,23 @@ class SystemModuleController extends Controller
     public function __construct()
     {
         $this->client = new SystemModuleServiceClient(env('GRPC_HOST'), [
-            'credentials' => ChannelCredentials::createInsecure()
+            'credentials' => \Grpc\ChannelCredentials::createInsecure(),
         ]);
     }
+
     public function index()
     {
-        $req = new ListSystemModulesRequest();
+        $req = new ListSystemModulesRequest;
         $req->setPage(1);
         $req->setPageSize(5);
 
+        [$res, $status] = $this->client->ListSystemModules($req)->wait();
 
-        list($res, $status) = $this->client->ListSystemModules($req)->wait();
-
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errorResponse = GrpcErrorService::handleErrorResponse($status);
+            if ($errorResponse != null) {
+                return $errorResponse;
+            }
         }
 
         $systemModules = $res->getModules();
@@ -48,61 +50,59 @@ class SystemModuleController extends Controller
         }
 
         return Inertia::render('SystemModules/SystemModuleIndex', [
-            'systemModules' => $systemModulesArray
+            'systemModules' => $systemModulesArray,
         ]);
     }
+
     public function store(SystemModuleFormRequest $request)
     {
-
-        $systemModule = new SystemModule();
+        $systemModule = new SystemModule;
         $systemModule->setName($request->systemModuleName);
 
-        $grpcRequest = new CreateSystemModuleRequest();
+        $grpcRequest = new CreateSystemModuleRequest;
         $grpcRequest->setModule($systemModule);
 
+        [, $status] = $this->client->CreateSystemModule($grpcRequest)->wait();
 
-        list($response, $status) = $this->client->CreateSystemModule($grpcRequest)->wait();
-
-
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return redirect()->back()->withErrors(['grpc' => 'Failed to create module']);
+        $errorResponse = GrpcErrorService::handleErrorResponse($status);
+        if ($errorResponse != null) {
+            return $errorResponse;
         }
 
-        return redirect()->back()->with(['message', 'System Module created successfully.']);
+        return redirect()->back()->with('message', 'System Module created successfully.');
     }
 
     public function update(SystemModuleFormRequest $request, $id)
     {
-        $systemModule = new SystemModule();
+        $systemModule = new SystemModule;
         $systemModule->setName($request->systemModuleName);
         $systemModule->setId($id);
 
-
-        $grpcRequest = new UpdateSystemModuleRequest();
+        $grpcRequest = new UpdateSystemModuleRequest;
         $grpcRequest->setModule($systemModule);
 
+        [, $status] = $this->client->UpdateSystemModule($grpcRequest)->wait();
 
-        list($response, $status) = $this->client->UpdateSystemModule($grpcRequest)->wait();
-
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return redirect()->back()->with(['error' => 'Failed to update module']);
+        $errorResponse = GrpcErrorService::handleErrorResponse($status);
+        if ($errorResponse != null) {
+            return $errorResponse;
         }
-        return redirect()->back()->with(['message', 'System Module updated successfully.']);
+
+        return redirect()->back()->with('message', 'System Module updated successfully.');
     }
 
     public function destroy($id)
     {
-        $grpcRequest = new DeleteSystemModuleRequest();
+        $grpcRequest = new DeleteSystemModuleRequest;
         $grpcRequest->setId($id);
 
-        list($response, $status) = $this->client->DeleteSystemModule($grpcRequest)->wait();
-        if ($status->code !== \Grpc\STATUS_OK) {
+        [, $status] = $this->client->DeleteSystemModule($grpcRequest)->wait();
 
-            if ($status->code !== \Grpc\STATUS_OK) {
-                return redirect()->back()->with(['error' => 'Failed to delete module']);
-            }
+        $errorResponse = GrpcErrorService::handleErrorResponse($status);
+        if ($errorResponse != null) {
+            return $errorResponse;
         }
 
-        return redirect()->back()->with(['message', 'System Module deleted successfully.']);
+        return redirect()->back()->with('message', 'System Module deleted successfully.');
     }
 }

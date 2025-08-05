@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Parameter;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Parameters\ParameterDomainFormRequest;
-use Illuminate\Http\Request;
-use Proto\Parameters\ParameterDomainServiceClient;
+use App\Services\Grpc\GrpcErrorService;
 use Grpc\ChannelCredentials;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Proto\Modules\ListSystemModulesRequest;
 use Proto\Modules\SystemModuleServiceClient;
@@ -15,40 +15,43 @@ use Proto\Parameters\DeleteParameterDomainRequest;
 use Proto\Parameters\GetParameterDomainRequest;
 use Proto\Parameters\ListParameterDomainsRequest;
 use Proto\Parameters\ParameterDomainProto;
+use Proto\Parameters\ParameterDomainServiceClient;
 use Proto\Parameters\UpdateParameterDomainRequest;
 
 class ParameterDomainController extends Controller
 {
     private $client;
+
     private $systemModuleClient;
 
     public function __construct()
     {
         $this->client = new ParameterDomainServiceClient(env('GRPC_HOST'), [
-            'credentials' => ChannelCredentials::createInsecure()
+            'credentials' => ChannelCredentials::createInsecure(),
         ]);
         $this->systemModuleClient = new SystemModuleServiceClient(env('GRPC_HOST'), [
-            'credentials' => ChannelCredentials::createInsecure()
+            'credentials' => ChannelCredentials::createInsecure(),
         ]);
     }
+
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
         $pageSize = $request->input('page_size', 10);
 
-        $systemModuleReq = new ListSystemModulesRequest();
-        $req = new ListParameterDomainsRequest();
+        $systemModuleReq = new ListSystemModulesRequest;
+        $req = new ListParameterDomainsRequest;
         $req->setPage($page);
         $req->setPageSize($pageSize);
 
         // Fetch domains
-        list($res, $status) = $this->client->ListParameterDomains($req)->wait();
+        [$res, $status] = $this->client->ListParameterDomains($req)->wait();
         if ($status->code !== \Grpc\STATUS_OK) {
             return response()->json(['error' => $status->details], 500);
         }
 
         // Fetch system modules
-        list($systemModuleResponse, $moduleStatus) = $this->systemModuleClient->ListSystemModules($systemModuleReq)->wait();
+        [$systemModuleResponse, $moduleStatus] = $this->systemModuleClient->ListSystemModules($systemModuleReq)->wait();
         if ($moduleStatus->code !== \Grpc\STATUS_OK) {
             return response()->json(['error' => $moduleStatus->details], 500);
         }
@@ -75,17 +78,17 @@ class ParameterDomainController extends Controller
         }
 
         return Inertia::render('Parameters/ParameterDomain/ParameterDomainIndex', [
-            'domains' => $domainsArray
+            'domains' => $domainsArray,
         ]);
     }
 
     public function show($id)
     {
         // Fetch the domain by ID
-        $getReq = new GetParameterDomainRequest();
+        $getReq = new GetParameterDomainRequest;
         $getReq->setId($id);
 
-        list($domainRes, $status) = $this->client->GetParameterDomain($getReq)->wait();
+        [$domainRes, $status] = $this->client->GetParameterDomain($getReq)->wait();
 
         if ($status->code !== \Grpc\STATUS_OK) {
             return response()->json(['error' => $status->details], 500);
@@ -94,8 +97,8 @@ class ParameterDomainController extends Controller
         $domain = $domainRes;
 
         // Fetch system modules to map module ID to module name
-        $systemModuleReq = new ListSystemModulesRequest();
-        list($systemModuleResponse, $moduleStatus) = $this->systemModuleClient->ListSystemModules($systemModuleReq)->wait();
+        $systemModuleReq = new ListSystemModulesRequest;
+        [$systemModuleResponse, $moduleStatus] = $this->systemModuleClient->ListSystemModules($systemModuleReq)->wait();
 
         if ($moduleStatus->code !== \Grpc\STATUS_OK) {
             return response()->json(['error' => $moduleStatus->details], 500);
@@ -120,26 +123,26 @@ class ParameterDomainController extends Controller
         ];
 
         return Inertia::render('Parameters/ParameterDomain/ParameterDomainShow', [
-            'domain' => $domainArray
+            'domain' => $domainArray,
         ]);
     }
-
 
     public function store(ParameterDomainFormRequest $request)
     {
 
-        $domainProto = new ParameterDomainProto();
-        $domainProto->setDomainName($request->domainName);
-        $domainProto->setDescription($request->description);
-        $domainProto->setDomainCode($request->domainCode);
-        $domainProto->setManagedByModule($request->managedByModule);
-        $req = new CreateParameterDomainRequest();
+        $domainProto = new ParameterDomainProto;
+        $domainProto->setDomainName('');
+        $domainProto->setDescription('');
+        $domainProto->setDomainCode('');
+        $domainProto->setManagedByModule(0);
+        $req = new CreateParameterDomainRequest;
         $req->setDomain($domainProto);
 
+        [$res, $status] = $this->client->CreateParameterDomain($req)->wait();
+        if ($status->code !== 0) { // 0 is STATUS_OK
+            $errors = GrpcErrorService::convertToValidationError($status);
 
-        list($res, $status) = $this->client->CreateParameterDomain($req)->wait();
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+            return redirect()->back()->withErrors($errors);
         }
 
         return redirect()->back()->with(['message' => 'Parameter domain created successfully.']);
@@ -148,10 +151,9 @@ class ParameterDomainController extends Controller
     public function update(ParameterDomainFormRequest $request, $id)
     {
 
+        $req = new UpdateParameterDomainRequest;
 
-        $req = new UpdateParameterDomainRequest();
-
-        $domainProto = new ParameterDomainProto();
+        $domainProto = new ParameterDomainProto;
         $domainProto->setId($id);
         $domainProto->setDomainName($request->domainName);
         $domainProto->setDescription($request->description);
@@ -159,7 +161,7 @@ class ParameterDomainController extends Controller
         $domainProto->setManagedByModule($request->managedByModule);
         $req->setDomain($domainProto);
 
-        list($res, $status) = $this->client->UpdateParameterDomain($req)->wait();
+        [$res, $status] = $this->client->UpdateParameterDomain($req)->wait();
         if ($status->code !== \Grpc\STATUS_OK) {
             return response()->json(['error' => $status->details], 500);
         }
@@ -168,11 +170,12 @@ class ParameterDomainController extends Controller
             'message' => 'Saved successfully',
         ]);
     }
+
     public function destroy($id)
     {
-        $req = new DeleteParameterDomainRequest();
+        $req = new DeleteParameterDomainRequest;
         $req->setId($id);
-        list($res, $status) = $this->client->DeleteParameterDomain($req)->wait();
+        [$res, $status] = $this->client->DeleteParameterDomain($req)->wait();
         if ($status->code !== \Grpc\STATUS_OK) {
             return response()->json(['error' => $status->details], 500);
         }
