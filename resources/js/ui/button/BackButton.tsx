@@ -1,8 +1,7 @@
+import { Button } from '@/components/ui/button'
 import { router } from '@inertiajs/react'
-import ButtonBorderIcon from './ButtonBorderIcon'
 import { ArrowLeftIcon } from 'lucide-react'
 import React from 'react'
-import { Button } from '@/Components/ui/button'
 
 interface Properties {
   link?: string
@@ -25,7 +24,7 @@ export default function BackButton({ onClick, link }: Properties) {
       size='icon'
       className='transition-transform hover:scale-105'
       onClick={handleClick}
-      variant='highlight'
+      variant='destructive'
     >
       <ArrowLeftIcon className='h-6 w-6' />
     </Button>

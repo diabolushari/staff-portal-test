@@ -1,8 +1,7 @@
-import React from 'react'
+import { Button } from '@/components/ui/button'
 import { router } from '@inertiajs/react'
-import ButtonBorderIcon from './ButtonBorderIcon'
 import { Trash } from 'lucide-react'
-import { Button } from '@/Components/ui/button'
+import React from 'react'
 
 interface Props {
   link?: string
