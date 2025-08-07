@@ -144,6 +144,7 @@ class ParameterDomainController extends Controller
         [$res, $status] = $this->client->CreateParameterDomain($req)->wait();
         if ($status->code !== 0) {
             $errors = GrpcErrorService::convertToValidationError($status);
+
             return redirect()->back()->withErrors($errors);
         }
 
@@ -180,6 +181,7 @@ class ParameterDomainController extends Controller
         $req->setId($id);
         [$res, $status] = $this->client->DeleteParameterDomain($req)->wait();
         if ($status->code !== 0) {
+
             $errors = GrpcErrorService::convertToValidationError($status);
             return redirect()->back()->withErrors($errors);
         }

@@ -11,6 +11,7 @@ import { route } from 'ziggy-js'
 import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import { SystemModule } from '@/interfaces/paramater_service'
+import DeleteModal from '@/ui/Modal/DeleteModal'
 
 export default function SystemModuleIndex({ systemModules }: { systemModules: SystemModule[] }) {
   const [editRow, setEditRow] = useState<SystemModule | null>(null)
@@ -30,11 +31,12 @@ export default function SystemModuleIndex({ systemModules }: { systemModules: Sy
     setSystemModuleFormModal(true)
   }
 
-  const handleDeleteClick = (id: number) => {
-    if (confirm('Are you sure you want to delete this system module?')) {
-      router.delete(route('system-module.destroy', id))
-    }
+  const handleDeleteClick = (row: SystemModule) => {
+    setEditRow(row)
+    setShowDeleteModal(true)
   }
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -62,7 +64,7 @@ export default function SystemModuleIndex({ systemModules }: { systemModules: Sy
                 <TableCell>
                   <div className='flex space-x-2'>
                     <EditButton onClick={() => handleEditClick(item)} />
-                    <DeleteButton onClick={() => handleDeleteClick(item.id)} />
+                    <DeleteButton onClick={() => handleDeleteClick(item)} />
                   </div>
                 </TableCell>
               </TableRow>
@@ -75,6 +77,13 @@ export default function SystemModuleIndex({ systemModules }: { systemModules: Sy
         <SystemModuleFormModal
           setShowModal={setSystemModuleFormModal}
           initialData={editRow}
+        />
+      )}
+      {showDeleteModal && editRow && (
+        <DeleteModal
+          setShowModal={setShowDeleteModal}
+          title='Delete System Module'
+          url={route('system-module.destroy', editRow.id)}
         />
       )}
     </AppLayout>

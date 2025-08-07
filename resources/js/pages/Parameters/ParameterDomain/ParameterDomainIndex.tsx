@@ -11,6 +11,7 @@ import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import { Card } from '@/components/ui/card'
 import { ParameterDomain } from '@/interfaces/paramater_service'
+import DeleteModal from '@/ui/Modal/DeleteModal'
 
 export default function ParameterDomainIndex({ domains }: { domains: ParameterDomain[] }) {
   const [editRow, setEditRow] = useState<ParameterDomain | null>(null)
@@ -38,11 +39,12 @@ export default function ParameterDomainIndex({ domains }: { domains: ParameterDo
     setShowModal(true)
   }
 
-  const handleDeleteClick = (id: number) => {
-    if (confirm('Are you sure you want to delete this parameter domain?')) {
-      router.delete(route('parameter-domain.destroy', id))
-    }
+  const handleDeleteClick = (row: ParameterDomain) => {
+    setEditRow(row)
+    setShowDeleteModal(true)
   }
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -73,7 +75,7 @@ export default function ParameterDomainIndex({ domains }: { domains: ParameterDo
                 <TableCell>
                   <div className='flex space-x-2'>
                     <EditButton onClick={() => handleEditClick(item)} />
-                    <DeleteButton onClick={() => handleDeleteClick(item.id)} />
+                    <DeleteButton onClick={() => handleDeleteClick(item)} />
                   </div>
                 </TableCell>
               </TableRow>
@@ -86,8 +88,14 @@ export default function ParameterDomainIndex({ domains }: { domains: ParameterDo
         <ParameterDomainActionModal
           title={editRow ? 'Edit Parameter Domain' : 'Add Parameter Domain'}
           setShowModal={setShowModal}
-          show={showModal}
           initialData={editRow}
+        />
+      )}
+      {showDeleteModal && editRow && (
+        <DeleteModal
+          setShowModal={setShowDeleteModal}
+          title='Delete Parameter Domain'
+          url={route('parameter-domain.destroy', editRow.id)}
         />
       )}
     </AppLayout>

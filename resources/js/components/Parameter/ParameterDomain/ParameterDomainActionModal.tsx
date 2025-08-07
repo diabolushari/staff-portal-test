@@ -1,6 +1,7 @@
 import capitalSnakeCase from '@/formaters/capitalcase'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
+import { ParameterDomain } from '@/interfaces/paramater_service'
 import SubHeading from '@/typography/SubHeading'
 import Button from '@/ui/button/Button'
 import DynamicSelectList from '@/ui/form/DynamicSelectList'
@@ -12,32 +13,29 @@ import { useEffect } from 'react'
 export default function ParameterDomainActionModal({
   title,
   setShowModal,
-  show,
   initialData,
 }: {
   title: string
   setShowModal: (value: boolean) => unknown
-  show: boolean
-  children?: React.ReactNode
-  initialData?: any
+  initialData?: ParameterDomain | null
 }) {
   const { formData, setFormValue } = useCustomForm({
-    domain_name: initialData?.domain_name,
+    domainName: initialData?.domainName,
     description: initialData?.description,
-    domain_code: initialData?.domain_code,
-    managed_by_module: initialData?.managed_by_module,
+    domainCode: initialData?.domainCode,
+    managedByModule: initialData?.managedByModule,
   })
   useEffect(() => {
     if (initialData) {
-      setFormValue('domain_name')(initialData?.domain_name)
+      setFormValue('domainName')(initialData?.domainName)
       setFormValue('description')(initialData?.description)
-      setFormValue('domain_code')(initialData?.domain_code)
-      setFormValue('managed_by_module')(initialData?.managed_by_module)
+      setFormValue('domainCode')(initialData?.domainCode)
+      setFormValue('managedByModule')(initialData?.managedByModule)
     } else {
-      setFormValue('domain_name')('')
+      setFormValue('domainName')('')
       setFormValue('description')('')
-      setFormValue('domain_code')('')
-      setFormValue('managed_by_module')('')
+      setFormValue('domainCode')('')
+      setFormValue('managedByModule')(0)
     }
   }, [initialData])
   const { post, errors, loading } = useInertiaPost(
@@ -58,7 +56,7 @@ export default function ParameterDomainActionModal({
   console.log(errors)
   return (
     <div>
-      <SubHeading>Create Parameter Domain</SubHeading>
+      <SubHeading>{title}</SubHeading>
       <Modal
         title={title}
         setShowModal={setShowModal}
@@ -68,8 +66,8 @@ export default function ParameterDomainActionModal({
             <div className='flex flex-col'>
               <Input
                 label='Domain Name'
-                value={formData.domain_name}
-                setValue={setFormValue('domain_name')}
+                value={formData.domainName}
+                setValue={setFormValue('domainName')}
                 error={errors?.domain_name}
               />
             </div>
@@ -85,8 +83,8 @@ export default function ParameterDomainActionModal({
             <div className='flex flex-col'>
               <Input
                 label='Domain Code'
-                value={formData.domain_code}
-                setValue={setFormValue('domain_code')}
+                value={formData.domainCode}
+                setValue={setFormValue('domainCode')}
                 error={errors?.domain_code}
                 formatter={capitalSnakeCase}
               />
@@ -96,8 +94,8 @@ export default function ParameterDomainActionModal({
                 url={`api/system-modules`}
                 dataKey='id'
                 displayKey='name'
-                setValue={setFormValue('managed_by_module')}
-                value={formData.managed_by_module}
+                setValue={setFormValue('managedByModule')}
+                value={formData.managedByModule}
                 label='Managed By Module'
                 error={errors?.managed_by_module}
               />
