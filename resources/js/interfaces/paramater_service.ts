@@ -9,21 +9,35 @@ export interface ParameterDomain {
   description: string
   domainCode: string
   managedByModule: number
+  managedByModuleName?: string
 }
 
 export interface ParameterDefinition {
   id: number
   name: string
   domainId: number
-  description: string
-  domainCode: string
-  managedByModule: number
+  domainName: string
+  attribute1: string
+  attribute2: string
+  attribute3: string
+  attribute4: string
+  attribute5: string
+  isEffectiveDateDriven: boolean
 }
 
-export interface ParameterValue {
+export interface ParameterValues {
   id: number
   name: string
-  description: string
-  domainCode: string
-  managedByModule: number
+  definitionId: number
+  parameterCode: string
+  parameterValue: string
+  attribute1: string
+  attribute2: string
+  attribute3: string
+  attribute4: string
+  attribute5: string
+  sortPriority: number
+  notes: string
+  effectiveStartDate: string
+  effectiveEndDate: string
 }

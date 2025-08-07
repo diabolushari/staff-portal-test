@@ -12,12 +12,12 @@ use Spatie\LaravelData\Attributes\Validation\Required;
 class ParameterDefinitionFormRequest extends Data
 {
     public function __construct(
-        public string $parameterName,
-        public ?string $attribute1Name,
-        public ?string $attribute2Name,
-        public ?string $attribute3Name,
-        public ?string $attribute4Name,
-        public ?string $attribute5Name,
+        public string $name,
+        public ?string $attribute1,
+        public ?string $attribute2,
+        public ?string $attribute3,
+        public ?string $attribute4,
+        public ?string $attribute5,
         public bool $isEffectiveDateDriven,
 
         #[Required]

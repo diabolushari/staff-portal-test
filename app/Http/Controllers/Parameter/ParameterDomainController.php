@@ -70,11 +70,11 @@ class ParameterDomainController extends Controller
 
             $domainsArray[] = [
                 'id' => $domain->getId(),
-                'domain_name' => $domain->getDomainName(),
+                'domainName' => $domain->getDomainName(),
                 'description' => $domain->getDescription(),
-                'domain_code' => $domain->getDomainCode(),
-                'managed_by_module' => $moduleId,
-                'managed_by_module_name' => $moduleName,
+                'domainCode' => $domain->getDomainCode(),
+                'managedByModule' => $moduleId,
+                'managedByModuleName' => $moduleName,
             ];
         }
 
@@ -118,11 +118,11 @@ class ParameterDomainController extends Controller
 
         $domainArray = [
             'id' => $domain->getId(),
-            'domain_name' => $domain->getDomainName(),
+            'domainName' => $domain->getDomainName(),
             'description' => $domain->getDescription(),
-            'domain_code' => $domain->getDomainCode(),
-            'managed_by_module' => $moduleId,
-            'managed_by_module_name' => $moduleName,
+            'domainCode' => $domain->getDomainCode(),
+            'managedByModule' => $moduleId,
+            'managedByModuleName' => $moduleName,
         ];
 
         return Inertia::render('Parameters/ParameterDomain/ParameterDomainShow', [

@@ -1,27 +1,26 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
+import { SystemModule } from '@/interfaces/paramater_service'
 import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
 import Modal from '@/ui/Modal/Modal'
 
 export default function SystemModuleFormModal({
   setShowModal,
-  show,
   initialData,
 }: {
   setShowModal: (show: boolean) => void
-  show: boolean
-  initialData?: any
+  initialData?: SystemModule | null
 }) {
   const { formData, setFormValue } = useCustomForm({
-    system_module_name: initialData?.name ?? '',
+    name: initialData?.name ?? '',
   })
   const { post, errors, loading } = useInertiaPost(
     initialData ? route('system-module.update', initialData.id) : route('system-module.store'),
     {
       onComplete: () => {
         setShowModal(false)
-        setFormValue('system_module_name')('')
+        setFormValue('name')('')
       },
     }
   )
@@ -40,8 +39,8 @@ export default function SystemModuleFormModal({
             <div className='flex flex-col gap-4'>
               <Input
                 label='System Module Name'
-                setValue={setFormValue('system_module_name')}
-                value={formData.system_module_name}
+                setValue={setFormValue('name')}
+                value={formData.name}
                 placeholder='Type your System Module Name'
                 error={errors?.name}
                 type='text'

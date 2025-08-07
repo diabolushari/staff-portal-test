@@ -52,14 +52,14 @@ class ParameterDefinitionController extends Controller
         foreach ($res->getDefinitions() as $parameterDefinition) {
             $parameterDefinitions[] = [
                 'id' => $parameterDefinition->getId(),
-                'parameter_name' => $parameterDefinition->getParameterName(),
-                'attribute1_name' => $parameterDefinition->getAttribute1Name(),
-                'attribute2_name' => $parameterDefinition->getAttribute2Name(),
-                'attribute3_name' => $parameterDefinition->getAttribute3Name(),
-                'attribute4_name' => $parameterDefinition->getAttribute4Name(),
-                'attribute5_name' => $parameterDefinition->getAttribute5Name(),
-                'domain_id' => $parameterDefinition->getDomainId(),
-                'domain_name' => $domainMap[$parameterDefinition->getDomainId()],
+                'name' => $parameterDefinition->getParameterName(),
+                'attribute1' => $parameterDefinition->getAttribute1Name(),
+                'attribute2' => $parameterDefinition->getAttribute2Name(),
+                'attribute3' => $parameterDefinition->getAttribute3Name(),
+                'attribute4' => $parameterDefinition->getAttribute4Name(),
+                'attribute5' => $parameterDefinition->getAttribute5Name(),
+                'domainId' => $parameterDefinition->getDomainId(),
+                'domainName' => $domainMap[$parameterDefinition->getDomainId()],
             ];
         }
         return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionIndex', [
@@ -79,23 +79,21 @@ class ParameterDefinitionController extends Controller
         $req = new CreateParameterDefinitionRequest();
 
         $definition = new ParameterDefinitionProto();
-        $definition->setParameterName($request->parameterName);
-        $definition->setAttribute1Name($request->attribute1Name ?? '');
-        $definition->setAttribute2Name($request->attribute2Name ?? '');
-        $definition->setAttribute3Name($request->attribute3Name ?? '');
-        $definition->setAttribute4Name($request->attribute4Name ?? '');
-        $definition->setAttribute5Name($request->attribute5Name ?? '');
+        $definition->setParameterName($request->name);
+        $definition->setAttribute1Name($request->attribute1 ?? '');
+        $definition->setAttribute2Name($request->attribute2 ?? '');
+        $definition->setAttribute3Name($request->attribute3 ?? '');
+        $definition->setAttribute4Name($request->attribute4 ?? '');
+        $definition->setAttribute5Name($request->attribute5 ?? '');
         $definition->setIsEffectiveDateDriven($request->isEffectiveDateDriven);
         $definition->setDomainId((int)$request->domainId);
 
         $req->setDefinition($definition);
 
 
-
-
-
         list($res, $status) = $this->client->CreateParameterDefinition($req)->wait();
         if ($status->code !== 0) {
+            dd($status);
             $errors = GrpcErrorService::convertToValidationError($status);
             return redirect()->back()->withErrors($errors);
         }
@@ -119,14 +117,14 @@ class ParameterDefinitionController extends Controller
         }
         $value = [
             'id' => $res->getId(),
-            'parameter_name' => $res->getParameterName(),
-            'attribute1_name' => $res->getAttribute1Name(),
-            'attribute2_name' => $res->getAttribute2Name(),
-            'attribute3_name' => $res->getAttribute3Name(),
-            'attribute4_name' => $res->getAttribute4Name(),
-            'attribute5_name' => $res->getAttribute5Name(),
-            'is_effective_date_driven' => $res->getIsEffectiveDateDriven(),
-            'domain_id' => $res->getDomainId(),
+            'name' => $res->getParameterName(),
+            'attribute1' => $res->getAttribute1Name(),
+            'attribute2' => $res->getAttribute2Name(),
+            'attribute3' => $res->getAttribute3Name(),
+            'attribute4' => $res->getAttribute4Name(),
+            'attribute5' => $res->getAttribute5Name(),
+            'isEffectiveDateDriven' => $res->getIsEffectiveDateDriven(),
+            'domainId' => $res->getDomainId(),
         ];
         return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionAction', [
             'data' => $value,
@@ -140,12 +138,12 @@ class ParameterDefinitionController extends Controller
 
         $definition = new ParameterDefinitionProto();
         $definition->setId($id);
-        $definition->setParameterName($request->parameterName);
-        $definition->setAttribute1Name($request->attribute1Name);
-        $definition->setAttribute2Name($request->attribute2Name);
-        $definition->setAttribute3Name($request->attribute3Name);
-        $definition->setAttribute4Name($request->attribute4Name);
-        $definition->setAttribute5Name($request->attribute5Name);
+        $definition->setParameterName($request->name);
+        $definition->setAttribute1Name($request->attribute1);
+        $definition->setAttribute2Name($request->attribute2);
+        $definition->setAttribute3Name($request->attribute3);
+        $definition->setAttribute4Name($request->attribute4);
+        $definition->setAttribute5Name($request->attribute5);
         $definition->setIsEffectiveDateDriven($request->isEffectiveDateDriven);
         $definition->setDomainId($request->domainId);
         $req->setDefinition($definition);

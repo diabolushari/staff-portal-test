@@ -10,9 +10,10 @@ import { TableRow, TableCell } from '@/components/ui/table'
 import { route } from 'ziggy-js'
 import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
+import { SystemModule } from '@/interfaces/paramater_service'
 
-export default function SystemModuleIndex({ systemModules }: { systemModules: any }) {
-  const [editRow, setEditRow] = useState<any>(null)
+export default function SystemModuleIndex({ systemModules }: { systemModules: SystemModule[] }) {
+  const [editRow, setEditRow] = useState<SystemModule | null>(null)
   const [systemModuleFormModal, setSystemModuleFormModal] = useState(false)
 
   const breadcrumbs: BreadcrumbItem[] = [
@@ -24,7 +25,7 @@ export default function SystemModuleIndex({ systemModules }: { systemModules: an
 
   const columns = ['S.No', 'ID', 'System Module Name', 'Actions']
 
-  const handleEditClick = (row: any) => {
+  const handleEditClick = (row: SystemModule) => {
     setEditRow(row)
     setSystemModuleFormModal(true)
   }
@@ -42,7 +43,10 @@ export default function SystemModuleIndex({ systemModules }: { systemModules: an
         <CardHeader
           breadCrumb={breadcrumbs}
           title='System Module'
-          onAddClick={() => setSystemModuleFormModal(true)}
+          onAddClick={() => {
+            setEditRow(null)
+            setSystemModuleFormModal(true)
+          }}
         />
 
         <Card className='p-4'>
@@ -50,7 +54,7 @@ export default function SystemModuleIndex({ systemModules }: { systemModules: an
             columns={columns}
             caption='List of system modules'
           >
-            {systemModules.map((item: any, index: number) => (
+            {systemModules.map((item: SystemModule, index: number) => (
               <TableRow key={item.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{item.id}</TableCell>
@@ -70,7 +74,6 @@ export default function SystemModuleIndex({ systemModules }: { systemModules: an
       {systemModuleFormModal && (
         <SystemModuleFormModal
           setShowModal={setSystemModuleFormModal}
-          show={systemModuleFormModal}
           initialData={editRow}
         />
       )}

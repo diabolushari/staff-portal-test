@@ -9,6 +9,7 @@ import { route } from 'ziggy-js'
 import { TableRow } from '@/components/ui/table'
 import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
+import { ParameterDefinition } from '@/interfaces/paramater_service'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -20,10 +21,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function ParameterDefinitionIndex({
   parameterDefinitions,
 }: {
-  parameterDefinitions: any
+  parameterDefinitions: ParameterDefinition[]
 }) {
   const [showModal, setShowModal] = useState(false)
-  const [editRow, setEditRow] = useState<any>(null)
+  const [editRow, setEditRow] = useState<ParameterDefinition | null>(null)
 
   const columns = [
     'S.No',
@@ -38,12 +39,12 @@ export default function ParameterDefinitionIndex({
     'Actions',
   ]
 
-  const handleEditClick = (item: any) => {
+  const handleEditClick = (item: ParameterDefinition) => {
     setEditRow(item)
     setShowModal(true)
   }
 
-  const handleDeleteClick = (item: any) => {
+  const handleDeleteClick = (item: ParameterDefinition) => {
     if (confirm('Are you sure you want to delete this item?')) {
       router.delete(route('parameter-definition.destroy', item.id))
     }
@@ -64,17 +65,17 @@ export default function ParameterDefinitionIndex({
           columns={columns}
           caption='List of Parameter Definitions'
         >
-          {parameterDefinitions.map((item: any, index: number) => (
+          {parameterDefinitions.map((item: ParameterDefinition, index: number) => (
             <TableRow key={item.id}>
               <td className='px-4 py-2'>{index + 1}</td>
               <td className='px-4 py-2'>{item.id}</td>
-              <td className='px-4 py-2'>{item.parameter_name}</td>
-              <td className='px-4 py-2'>{item.domain_name}</td>
-              <td className='px-4 py-2'>{item.attribute1_name}</td>
-              <td className='px-4 py-2'>{item.attribute2_name}</td>
-              <td className='px-4 py-2'>{item.attribute3_name}</td>
-              <td className='px-4 py-2'>{item.attribute4_name}</td>
-              <td className='px-4 py-2'>{item.attribute5_name}</td>
+              <td className='px-4 py-2'>{item.name}</td>
+              <td className='px-4 py-2'>{item.domainName}</td>
+              <td className='px-4 py-2'>{item.attribute1}</td>
+              <td className='px-4 py-2'>{item.attribute2}</td>
+              <td className='px-4 py-2'>{item.attribute3}</td>
+              <td className='px-4 py-2'>{item.attribute4}</td>
+              <td className='px-4 py-2'>{item.attribute5}</td>
               <td className='px-4 py-2'>
                 <div className='flex space-x-2'>
                   <EditButton onClick={() => handleEditClick(item)} />

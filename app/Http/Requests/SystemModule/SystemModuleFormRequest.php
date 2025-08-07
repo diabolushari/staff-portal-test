@@ -11,6 +11,6 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class SystemModuleFormRequest extends Data
 {
     public function __construct(
-        public ?string $systemModuleName,
+        public ?string $name,
     ) {}
 }

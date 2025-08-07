@@ -10,9 +10,10 @@ import { router } from '@inertiajs/react'
 import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import { Card } from '@/components/ui/card'
+import { ParameterDomain } from '@/interfaces/paramater_service'
 
-export default function ParameterDomainIndex({ domains }: { domains: any }) {
-  const [editRow, setEditRow] = useState<any>(null)
+export default function ParameterDomainIndex({ domains }: { domains: ParameterDomain[] }) {
+  const [editRow, setEditRow] = useState<ParameterDomain | null>(null)
   const [showModal, setShowModal] = useState(false)
 
   const breadcrumbs: BreadcrumbItem[] = [
@@ -28,11 +29,11 @@ export default function ParameterDomainIndex({ domains }: { domains: any }) {
     'Domain Name',
     'Description',
     'Domain Code',
-    'Managed By Module Name',
+    'Managed By Module',
     'Actions',
   ]
 
-  const handleEditClick = (row: any) => {
+  const handleEditClick = (row: ParameterDomain) => {
     setEditRow(row)
     setShowModal(true)
   }
@@ -61,14 +62,14 @@ export default function ParameterDomainIndex({ domains }: { domains: any }) {
             columns={columns}
             caption='List of parameter domains'
           >
-            {domains.map((item: any, index: number) => (
+            {domains.map((item: ParameterDomain, index: number) => (
               <TableRow key={item.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{item.id}</TableCell>
-                <TableCell>{item.domain_name}</TableCell>
+                <TableCell>{item.domainName}</TableCell>
                 <TableCell>{item.description}</TableCell>
-                <TableCell>{item.domain_code}</TableCell>
-                <TableCell>{item.managed_by_module_name}</TableCell>
+                <TableCell>{item.domainCode}</TableCell>
+                <TableCell>{item.managedByModule}</TableCell>
                 <TableCell>
                   <div className='flex space-x-2'>
                     <EditButton onClick={() => handleEditClick(item)} />

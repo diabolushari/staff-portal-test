@@ -10,6 +10,7 @@ import Input from '@/ui/form/Input'
 import TextArea from '@/ui/form/TextArea'
 import { BreadcrumbItem } from '@/types'
 import { useEffect, useState } from 'react'
+import { ParameterDefinition, ParameterValues } from '@/interfaces/paramater_service'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -21,29 +22,25 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/parameter-value/create',
   },
 ]
-export default function ParameterValueCreate({ data }: { data?: any }) {
+export default function ParameterValueCreate({ data }: { data?: ParameterValues }) {
   const attributeValuePresent =
-    data?.attribute1_value ||
-    data?.attribute2_value ||
-    data?.attribute3_value ||
-    data?.attribute4_value ||
-    data?.attribute5_value
-  const [selectedDefinition, setSelectedDefinition] = useState<any>(
-    attributeValuePresent ? data?.definition_id : null
+    data?.attribute1 || data?.attribute2 || data?.attribute3 || data?.attribute4 || data?.attribute5
+  const [selectedDefinition, setSelectedDefinition] = useState<ParameterDefinition | null>(
+    attributeValuePresent ? data?.definitionId : null
   )
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
-    definition_id: data?.definition_id || '',
-    parameter_code: data?.parameter_code || '',
-    parameter_value: data?.parameter_value || '',
-    attribute1_value: data?.attribute1_value || '',
-    attribute2_value: data?.attribute2_value || '',
-    attribute3_value: data?.attribute3_value || '',
-    attribute4_value: data?.attribute4_value || '',
-    attribute5_value: data?.attribute5_value || '',
-    effective_start_date: data?.effective_start_date || '',
-    effective_end_date: data?.effective_end_date || '',
-    sort_priority: data?.sort_priority || '',
-    notes: data?.notes || '',
+    definitionId: data?.definitionId ?? '',
+    parameterCode: data?.parameterCode ?? '',
+    parameterValue: data?.parameterValue ?? '',
+    attribute1Value: data?.attribute1 ?? '',
+    attribute2Value: data?.attribute2 ?? '',
+    attribute3Value: data?.attribute3 ?? '',
+    attribute4Value: data?.attribute4 ?? '',
+    attribute5Value: data?.attribute5 ?? '',
+    effectiveStartDate: data?.effectiveStartDate ?? '',
+    effectiveEndDate: data?.effectiveEndDate ?? '',
+    sortPriority: data?.sortPriority ?? '',
+    notes: data?.notes ?? '',
   })
 
   const { post, errors } = useInertiaPost(
@@ -54,7 +51,7 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
       },
     }
   )
-  const [definitions] = useFetchRecord(`/api/parameter-definitions`)
+  const [definitions] = useFetchRecord<ParameterDefinition[]>(`/api/parameter-definitions`)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -62,11 +59,11 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
   }
 
   useEffect(() => {
-    if (formData.definition_id && definitions?.length) {
-      const definition = definitions.find((d: any) => d.id == formData.definition_id)
+    if (formData.definitionId && definitions?.length) {
+      const definition = definitions.find((d: ParameterDefinition) => d.id == formData.definitionId)
       setSelectedDefinition(definition)
     }
-  }, [formData.definition_id, definitions])
+  }, [formData.definitionId, definitions])
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -89,18 +86,18 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                   dataKey='id'
                   displayKey='parameter_name'
                   label='Definition'
-                  setValue={setFormValue('definition_id')}
-                  value={formData.definition_id}
-                  error={errors?.definition_id}
+                  setValue={setFormValue('definitionId')}
+                  value={formData.definitionId}
+                  error={errors?.definitionId}
                 />
               </div>
 
               <div className='flex flex-col'>
                 <Input
                   label='Parameter Code'
-                  value={formData.parameter_code}
-                  setValue={setFormValue('parameter_code')}
-                  error={errors?.parameter_code}
+                  value={formData.parameterCode}
+                  setValue={setFormValue('parameterCode')}
+                  error={errors?.parameterCode}
                   formatter={capitalSnakeCase}
                 />
               </div>
@@ -108,9 +105,9 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
               <div className='flex flex-col'>
                 <Input
                   label='Parameter Value'
-                  value={formData.parameter_value}
-                  setValue={setFormValue('parameter_value')}
-                  error={errors?.parameter_value}
+                  value={formData.parameterValue}
+                  setValue={setFormValue('parameterValue')}
+                  error={errors?.parameterValue}
                 />
               </div>
 
@@ -120,53 +117,53 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                     <StrongText className='dark:text-gray-300'>Attribute Values</StrongText>
                   </div>
 
-                  {selectedDefinition.attribute1_name && (
+                  {selectedDefinition.attribute1 && (
                     <div className='flex flex-col'>
                       <Input
-                        label={selectedDefinition.attribute1_name}
-                        value={formData.attribute1_value}
-                        setValue={setFormValue('attribute1_value')}
-                        error={errors?.attribute1_value}
+                        label={selectedDefinition.attribute1}
+                        value={formData.attribute1Value}
+                        setValue={setFormValue('attribute1Value')}
+                        error={errors?.attribute1Value}
                       />
                     </div>
                   )}
-                  {selectedDefinition.attribute2_name && (
+                  {selectedDefinition.attribute2 && (
                     <div className='flex flex-col'>
                       <Input
-                        label={selectedDefinition.attribute2_name}
-                        value={formData.attribute2_value}
-                        setValue={setFormValue('attribute2_value')}
-                        error={errors?.attribute2_value}
+                        label={selectedDefinition.attribute2}
+                        value={formData.attribute2Value}
+                        setValue={setFormValue('attribute2Value')}
+                        error={errors?.attribute2Value}
                       />
                     </div>
                   )}
-                  {selectedDefinition.attribute3_name && (
+                  {selectedDefinition.attribute3 && (
                     <div className='flex flex-col'>
                       <Input
-                        label={selectedDefinition.attribute3_name}
-                        value={formData.attribute3_value}
-                        setValue={setFormValue('attribute3_value')}
-                        error={errors?.attribute3_value}
+                        label={selectedDefinition.attribute3}
+                        value={formData.attribute3Value}
+                        setValue={setFormValue('attribute3Value')}
+                        error={errors?.attribute3Value}
                       />
                     </div>
                   )}
-                  {selectedDefinition.attribute4_name && (
+                  {selectedDefinition.attribute4 && (
                     <div className='flex flex-col'>
                       <Input
-                        label={selectedDefinition.attribute4_name}
-                        value={formData.attribute4_value}
-                        setValue={setFormValue('attribute4_value')}
-                        error={errors?.attribute4_value}
+                        label={selectedDefinition.attribute4}
+                        value={formData.attribute4Value}
+                        setValue={setFormValue('attribute4Value')}
+                        error={errors?.attribute4Value}
                       />
                     </div>
                   )}
-                  {selectedDefinition.attribute5_name && (
+                  {selectedDefinition.attribute5 && (
                     <div className='flex flex-col'>
                       <Input
-                        label={selectedDefinition.attribute5_name}
-                        value={formData.attribute5_value}
-                        setValue={setFormValue('attribute5_value')}
-                        error={errors?.attribute5_value}
+                        label={selectedDefinition.attribute5}
+                        value={formData.attribute5Value}
+                        setValue={setFormValue('attribute5Value')}
+                        error={errors?.attribute5Value}
                       />
                     </div>
                   )}
@@ -178,9 +175,9 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                   <Input
                     label='Effective Start Date'
                     type='date'
-                    value={formData.effective_start_date}
-                    setValue={setFormValue('effective_start_date')}
-                    error={errors?.effective_start_date}
+                    value={formData.effectiveStartDate}
+                    setValue={setFormValue('effectiveStartDate')}
+                    error={errors?.effectiveStartDate}
                   />
                 </div>
               )}
@@ -189,9 +186,9 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                   <Input
                     label='Effective End Date'
                     type='date'
-                    value={formData.effective_end_date}
-                    setValue={setFormValue('effective_end_date')}
-                    error={errors?.effective_end_date}
+                    value={formData.effectiveEndDate}
+                    setValue={setFormValue('effectiveEndDate')}
+                    error={errors?.effectiveEndDate}
                   />
                 </div>
               )}
@@ -200,9 +197,9 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                 <Input
                   label='Sort Priority'
                   type='number'
-                  value={formData.sort_priority}
-                  setValue={setFormValue('sort_priority')}
-                  error={errors?.sort_priority}
+                  value={formData.sortPriority}
+                  setValue={setFormValue('sortPriority')}
+                  error={errors?.sortPriority}
                 />
               </div>
 

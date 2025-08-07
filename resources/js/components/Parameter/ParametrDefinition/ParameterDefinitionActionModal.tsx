@@ -1,5 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
+import { ParameterDefinition } from '@/interfaces/paramater_service'
 import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
 import DynamicSelectList from '@/ui/form/DynamicSelectList'
@@ -14,26 +15,26 @@ export default function ParameterDefinitionActionModal({
 }: {
   show: boolean
   onClose: () => void
-  editRow: any
+  editRow: ParameterDefinition | null
 }) {
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
-    parameter_name: editRow?.parameter_name || '',
-    attribute1_name: editRow?.attribute1_name || '',
-    attribute2_name: editRow?.attribute2_name || '',
-    attribute3_name: editRow?.attribute3_name || '',
-    attribute4_name: editRow?.attribute4_name || '',
-    attribute5_name: editRow?.attribute5_name || '',
-    is_effective_date_driven: editRow?.is_effective_date_driven || false,
-    domain_id: editRow?.domain_id || 0,
+    name: editRow?.name ?? '',
+    attribute1: editRow?.attribute1 ?? '',
+    attribute2: editRow?.attribute2 ?? '',
+    attribute3: editRow?.attribute3 ?? '',
+    attribute4: editRow?.attribute4 ?? '',
+    attribute5: editRow?.attribute5 ?? '',
+    isEffectiveDateDriven: editRow?.isEffectiveDateDriven ?? false,
+    domainId: editRow?.domainId ?? 0,
   })
 
   // Track which attributes are visible
   const initialVisibility = [
-    !!editRow?.attribute1_name,
-    !!editRow?.attribute2_name,
-    !!editRow?.attribute3_name,
-    !!editRow?.attribute4_name,
-    !!editRow?.attribute5_name,
+    !!editRow?.attribute1,
+    !!editRow?.attribute2,
+    !!editRow?.attribute3,
+    !!editRow?.attribute4,
+    !!editRow?.attribute5,
   ]
   const [visibleAttrs, setVisibleAttrs] = useState<boolean[]>(() => {
     const defaults = [...initialVisibility]
@@ -68,12 +69,12 @@ export default function ParameterDefinitionActionModal({
     const updated = [...visibleAttrs]
     updated[index] = false
     // Also clear the value from formData
-    setFormValue(`attribute${index + 1}_name`)('')
+    setFormValue(`attribute${index + 1}`)('')
     setVisibleAttrs(updated)
   }
 
   const renderAttributeInput = (index: number) => {
-    const attrKey = `attribute${index + 1}_name`
+    const attrKey = `attribute${index + 1}`
     if (!visibleAttrs[index]) return null
 
     return (
@@ -109,9 +110,9 @@ export default function ParameterDefinitionActionModal({
             <div className='flex flex-col'>
               <Input
                 label='Parameter Name'
-                value={formData.parameter_name}
-                setValue={setFormValue('parameter_name')}
-                error={errors?.parameter_name}
+                value={formData.name}
+                setValue={setFormValue('name')}
+                error={errors?.name}
               />
             </div>
             <div className='flex flex-col gap-1'>
@@ -119,10 +120,10 @@ export default function ParameterDefinitionActionModal({
                 url='api/parameter-domains'
                 dataKey='id'
                 displayKey='name'
-                setValue={setFormValue('domain_id')}
-                value={formData.domain_id}
+                setValue={setFormValue('domainId')}
+                value={formData.domainId}
                 label='Parameter Domain'
-                error={errors?.domain_id}
+                error={errors?.domainId}
               />
             </div>
 
@@ -132,8 +133,8 @@ export default function ParameterDefinitionActionModal({
             <div className='flex flex-col'>
               <CheckBox
                 label='Is Effective Date Driven'
-                value={formData.is_effective_date_driven}
-                toggleValue={toggleBoolean('is_effective_date_driven')}
+                value={formData.isEffectiveDateDriven}
+                toggleValue={toggleBoolean('isEffectiveDateDriven')}
               />
             </div>
 

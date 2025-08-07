@@ -57,7 +57,7 @@ class SystemModuleController extends Controller
     public function store(SystemModuleFormRequest $request)
     {
         $systemModule = new SystemModule;
-        $systemModule->setName($request->systemModuleName);
+        $systemModule->setName($request->name);
 
         $grpcRequest = new CreateSystemModuleRequest;
         $grpcRequest->setModule($systemModule);
@@ -75,7 +75,7 @@ class SystemModuleController extends Controller
     public function update(SystemModuleFormRequest $request, $id)
     {
         $systemModule = new SystemModule;
-        $systemModule->setName($request->systemModuleName);
+        $systemModule->setName($request->name);
         $systemModule->setId($id);
 
         $grpcRequest = new UpdateSystemModuleRequest;
