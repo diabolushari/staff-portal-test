@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Parameter;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Parameters\ParameterValueFormRequest;
+use App\Services\Grpc\GrpcErrorService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -43,8 +44,9 @@ class ParameterValueController extends Controller
 
         list($res, $status) = $this->client->GetParameterValue($req)->wait();
 
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         $value = [
@@ -81,10 +83,9 @@ class ParameterValueController extends Controller
         $defReq = new ListParameterDefinitionsRequest();
         list($defRes, $defStatus) = $this->parameterDefinitionClient->ListParameterDefinitions($defReq)->wait();
 
-        if ($defStatus->code === \Grpc\STATUS_OK) {
-            foreach ($defRes->getDefinitions() as $definition) {
-                $definitionMap[$definition->getId()] = $definition->getParameterName(); // or ->getDefinitionName() if available
-            }
+        if ($defStatus->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($defStatus);
+            return redirect()->back()->withErrors($errors);
         }
 
         // 2. Fetch Parameter Values
@@ -94,8 +95,9 @@ class ParameterValueController extends Controller
 
         list($res, $status) = $this->client->ListParameterValues($req)->wait();
 
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         // 3. Map values with definition name
@@ -141,8 +143,9 @@ class ParameterValueController extends Controller
 
         list($res, $status) = $this->client->GetParameterValue($req)->wait();
 
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         $value = [
@@ -193,8 +196,9 @@ class ParameterValueController extends Controller
         $req->setValue($proto);
 
         list($res, $status) = $this->client->CreateParameterValue($req)->wait();
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         return redirect()->back()->with(['message' => 'Parameter value created successfully.']);
@@ -226,8 +230,9 @@ class ParameterValueController extends Controller
         $req->setValue($proto);
 
         list($res, $status) = $this->client->UpdateParameterValue($req)->wait();
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         return redirect()->back()->with(['message' => 'Parameter value updated successfully.']);
@@ -240,8 +245,9 @@ class ParameterValueController extends Controller
 
         list($res, $status) = $this->client->DeleteParameterValue($req)->wait();
 
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         return redirect()->route('parameter-value.index')->with(['message' => 'Deleted successfully.']);

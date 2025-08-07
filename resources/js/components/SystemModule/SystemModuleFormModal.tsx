@@ -35,7 +35,7 @@ export default function SystemModuleFormModal({
       title='System Module'
       setShowModal={setShowModal}
     >
-      <div className='p-4'>
+      <div className='p-4 text-gray-800 dark:text-gray-100'>
         <form onSubmit={handleSubmit}>
           <div className='flex flex-col gap-4'>
             <div className='flex flex-col gap-4'>

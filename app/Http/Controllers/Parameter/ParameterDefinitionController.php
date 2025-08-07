@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Parameter;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Parameters\ParameterDefinitionFormRequest;
-use GPBMetadata\ParameterDefinition;
-use Illuminate\Http\Request;
+use App\Services\Grpc\GrpcErrorService;
 use Inertia\Inertia;
 use Proto\Parameters\ParameterDefinitionServiceClient;
 use Grpc\ChannelCredentials;
@@ -35,15 +34,17 @@ class ParameterDefinitionController extends Controller
     {
         $req = new ListParameterDefinitionsRequest();
         list($res, $status) = $this->client->ListParameterDefinitions($req)->wait();
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
         $parameterDefinitions = [];
         $domainMap = [];
         $parameterDomainReq = new ListParameterDomainsRequest();
         list($parameterDomainRes, $parameterDomainStatus) = $this->parameterDomainClient->ListParameterDomains($parameterDomainReq)->wait();
-        if ($parameterDomainStatus->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $parameterDomainStatus->details], 500);
+        if ($parameterDomainStatus->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($parameterDomainStatus);
+            return redirect()->back()->withErrors($errors);
         }
         foreach ($parameterDomainRes->getDomains() as $parameterDomain) {
             $domainMap[$parameterDomain->getId()] = $parameterDomain->getDomainName();
@@ -87,14 +88,16 @@ class ParameterDefinitionController extends Controller
         $definition->setIsEffectiveDateDriven($request->isEffectiveDateDriven);
         $definition->setDomainId((int)$request->domainId);
 
-
-
         $req->setDefinition($definition);
-        dd($definition->getDomainId(), gettype($definition->getDomainId()));
+
+
+
+
 
         list($res, $status) = $this->client->CreateParameterDefinition($req)->wait();
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
         return redirect()->back()->with([
             'message' => 'Parameter definition created successfully',
@@ -110,8 +113,9 @@ class ParameterDefinitionController extends Controller
         $req = new GetParameterDefinitionRequest();
         $req->setId($id);
         list($res, $status) = $this->client->GetParameterDefinition($req)->wait();
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
         $value = [
             'id' => $res->getId(),
@@ -146,8 +150,9 @@ class ParameterDefinitionController extends Controller
         $definition->setDomainId($request->domainId);
         $req->setDefinition($definition);
         list($res, $status) = $this->client->UpdateParameterDefinition($req)->wait();
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
         return redirect()->back()->with([
             'message' => 'Parameter definition updated successfully',
@@ -159,8 +164,9 @@ class ParameterDefinitionController extends Controller
         $req = new DeleteParameterDefinitionRequest();
         $req->setId($id);
         list($res, $status) = $this->client->DeleteParameterDefinition($req)->wait();
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
         return redirect()->back()->with([
             'message' => 'Parameter definition deleted successfully',

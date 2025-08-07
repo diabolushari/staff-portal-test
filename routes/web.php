@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\OfficeListApiController;
 use App\Http\Controllers\Api\ParameterDefinitionItemApiController;
 use App\Http\Controllers\Api\ParameterDefinitionListApiController;
 use App\Http\Controllers\Api\ParameterDomainListApiController;
 use App\Http\Controllers\Api\SystemModuleApiController;
+use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
@@ -23,6 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('parameter-domain', ParameterDomainController::class);
     Route::resource('parameter-definition', ParameterDefinitionController::class);
     Route::resource('parameter-value', ParameterValueController::class);
+    Route::resource('offices', OfficeController::class);
 });
 
 # API List
@@ -30,6 +33,7 @@ Route::get('api/system-modules', SystemModuleApiController::class);
 Route::get('api/parameter-domains', ParameterDomainListApiController::class);
 Route::get('api/parameter-definitions', ParameterDefinitionListApiController::class);
 Route::get('api/parameter-definitions/{id}', ParameterDefinitionItemApiController::class);
+#Route::get('api/offices', OfficeListApiController::class);
 
 
 

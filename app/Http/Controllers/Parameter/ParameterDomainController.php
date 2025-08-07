@@ -44,16 +44,17 @@ class ParameterDomainController extends Controller
         $req->setPage($page);
         $req->setPageSize($pageSize);
 
-        // Fetch domains
         [$res, $status] = $this->client->ListParameterDomains($req)->wait();
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         // Fetch system modules
         [$systemModuleResponse, $moduleStatus] = $this->systemModuleClient->ListSystemModules($systemModuleReq)->wait();
-        if ($moduleStatus->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $moduleStatus->details], 500);
+        if ($moduleStatus->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($moduleStatus);
+            return redirect()->back()->withErrors($errors);
         }
 
         // Create a map of system module id => name
@@ -84,24 +85,26 @@ class ParameterDomainController extends Controller
 
     public function show($id)
     {
-        // Fetch the domain by ID
+
         $getReq = new GetParameterDomainRequest;
         $getReq->setId($id);
 
         [$domainRes, $status] = $this->client->GetParameterDomain($getReq)->wait();
 
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         $domain = $domainRes;
 
-        // Fetch system modules to map module ID to module name
+
         $systemModuleReq = new ListSystemModulesRequest;
         [$systemModuleResponse, $moduleStatus] = $this->systemModuleClient->ListSystemModules($systemModuleReq)->wait();
 
-        if ($moduleStatus->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $moduleStatus->details], 500);
+        if ($moduleStatus->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($moduleStatus);
+            return redirect()->back()->withErrors($errors);
         }
 
         $moduleMap = [];
@@ -112,7 +115,7 @@ class ParameterDomainController extends Controller
         $moduleId = $domain->getManagedByModule();
         $moduleName = $moduleMap[$moduleId] ?? 'Unknown';
 
-        // Format data for frontend
+
         $domainArray = [
             'id' => $domain->getId(),
             'domain_name' => $domain->getDomainName(),
@@ -139,9 +142,8 @@ class ParameterDomainController extends Controller
         $req->setDomain($domainProto);
 
         [$res, $status] = $this->client->CreateParameterDomain($req)->wait();
-        if ($status->code !== 0) { // 0 is STATUS_OK
+        if ($status->code !== 0) {
             $errors = GrpcErrorService::convertToValidationError($status);
-
             return redirect()->back()->withErrors($errors);
         }
 
@@ -162,8 +164,9 @@ class ParameterDomainController extends Controller
         $req->setDomain($domainProto);
 
         [$res, $status] = $this->client->UpdateParameterDomain($req)->wait();
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         return redirect()->back()->with([
@@ -176,8 +179,9 @@ class ParameterDomainController extends Controller
         $req = new DeleteParameterDomainRequest;
         $req->setId($id);
         [$res, $status] = $this->client->DeleteParameterDomain($req)->wait();
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         return redirect()->route('parameter-domain.index')->with(['message' => 'deleted successfully']);
