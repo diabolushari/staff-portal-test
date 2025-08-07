@@ -92,9 +92,6 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                   setValue={setFormValue('definition_id')}
                   value={formData.definition_id}
                   error={errors?.definition_id}
-                  required
-                  // If your DynamicSelectList supports dark mode internally,
-                  // no extra props needed, else customize here
                 />
               </div>
 
@@ -105,8 +102,6 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                   setValue={setFormValue('parameter_code')}
                   error={errors?.parameter_code}
                   formatter={capitalSnakeCase}
-                  required
-                  style='dark' // If your Input supports style prop to toggle dark mode styles
                 />
               </div>
 
@@ -116,8 +111,6 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                   value={formData.parameter_value}
                   setValue={setFormValue('parameter_value')}
                   error={errors?.parameter_value}
-                  required
-                  style='dark'
                 />
               </div>
 
@@ -134,7 +127,6 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                         value={formData.attribute1_value}
                         setValue={setFormValue('attribute1_value')}
                         error={errors?.attribute1_value}
-                        style='dark'
                       />
                     </div>
                   )}
@@ -145,7 +137,6 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                         value={formData.attribute2_value}
                         setValue={setFormValue('attribute2_value')}
                         error={errors?.attribute2_value}
-                        style='dark'
                       />
                     </div>
                   )}
@@ -156,7 +147,6 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                         value={formData.attribute3_value}
                         setValue={setFormValue('attribute3_value')}
                         error={errors?.attribute3_value}
-                        style='dark'
                       />
                     </div>
                   )}
@@ -167,7 +157,6 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                         value={formData.attribute4_value}
                         setValue={setFormValue('attribute4_value')}
                         error={errors?.attribute4_value}
-                        style='dark'
                       />
                     </div>
                   )}
@@ -178,7 +167,6 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                         value={formData.attribute5_value}
                         setValue={setFormValue('attribute5_value')}
                         error={errors?.attribute5_value}
-                        style='dark'
                       />
                     </div>
                   )}
@@ -193,7 +181,6 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                     value={formData.effective_start_date}
                     setValue={setFormValue('effective_start_date')}
                     error={errors?.effective_start_date}
-                    style='dark'
                   />
                 </div>
               )}
@@ -205,7 +192,6 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                     value={formData.effective_end_date}
                     setValue={setFormValue('effective_end_date')}
                     error={errors?.effective_end_date}
-                    style='dark'
                   />
                 </div>
               )}
@@ -217,7 +203,6 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                   value={formData.sort_priority}
                   setValue={setFormValue('sort_priority')}
                   error={errors?.sort_priority}
-                  style='dark'
                 />
               </div>
 
@@ -227,7 +212,6 @@ export default function ParameterValueCreate({ data }: { data?: any }) {
                   value={formData.notes}
                   setValue={setFormValue('notes')}
                   error={errors?.notes}
-                  style='dark'
                 />
               </div>
 

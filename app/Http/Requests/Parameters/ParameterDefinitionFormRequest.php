@@ -6,6 +6,7 @@ namespace App\Http\Requests\Parameters;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
+use Spatie\LaravelData\Attributes\Validation\Required;
 
 #[MapName(SnakeCaseMapper::class)]
 class ParameterDefinitionFormRequest extends Data
@@ -18,6 +19,8 @@ class ParameterDefinitionFormRequest extends Data
         public ?string $attribute4Name,
         public ?string $attribute5Name,
         public bool $isEffectiveDateDriven,
+
+        #[Required]
         public int $domainId,
     ) {}
 }

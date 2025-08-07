@@ -6,6 +6,12 @@ import CustomTable from '@/ui/Table/CustomTable'
 import { TableRow, TableCell } from '@/components/ui/table'
 import { router } from '@inertiajs/react'
 import { route } from 'ziggy-js'
+import SelectList from '@/ui/form/SelectList'
+import useCustomForm from '@/hooks/useCustomForm'
+import Button from '@/ui/button/Button'
+import { ParameterDefinition, ParameterDomain } from '@/interfaces/paramater_service'
+import EditButton from '@/ui/button/EditButton'
+import DeleteButton from '@/ui/button/DeleteButton'
 
 const columns = [
   'S.No',
@@ -24,12 +30,44 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ]
 
-export default function ParameterValueIndex({ values }: { values: any[] }) {
+export default function ParameterValueIndex({
+  values,
+  domains,
+  definitions,
+  filters,
+}: {
+  values: any[]
+  domains: ParameterDomain[]
+  definitions: ParameterDefinition[]
+  filters: {
+    domainName: string
+    defenitionName: string
+  }
+}) {
+  const { formData, setFormValue } = useCustomForm({
+    domainName: filters.domainName ?? '',
+    defenitionName: filters.defenitionName ?? '',
+  })
+
   const handleDeleteClick = (item: any) => {
     if (confirm('Are you sure you want to delete this item?')) {
       router.delete(route('parameter-value.destroy', item.id))
     }
   }
+  console.log(formData)
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    router.get(route('parameter-value.index'), { ...formData })
+  }
+
+  const handleEditClick = (item: any) => {
+    router.get(route('parameter-value.edit', item.id))
+  }
+  const selectedDomain = domains.find((d) => d.domainName === formData.domainName)
+
+  const filteredDefinitions = selectedDomain
+    ? definitions.filter((def) => def.domainId === selectedDomain.id)
+    : definitions
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -39,6 +77,60 @@ export default function ParameterValueIndex({ values }: { values: any[] }) {
           subheading='Add a new parameter value.'
           addUrl={route('parameter-value.create')}
         />
+
+        <form
+          onSubmit={handleSubmit}
+          className='w-1/2'
+        >
+          <div className='grid grid-cols-3 gap-4'>
+            <div className='relative flex flex-col'>
+              <SelectList
+                label='Domain Name'
+                setValue={setFormValue('domainName')}
+                value={formData.domainName}
+                list={domains}
+                dataKey='domainName'
+                displayKey='domainName'
+              />
+              {formData.domainName && (
+                <button
+                  type='button'
+                  onClick={() => setFormValue('domainName')('')}
+                  className='absolute top-9 right-2 text-lg text-gray-500 hover:text-red-600'
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            <div className='relative flex flex-col'>
+              <SelectList
+                label='Definition Name'
+                setValue={setFormValue('defenitionName')}
+                value={formData.defenitionName}
+                list={filteredDefinitions}
+                dataKey='parameterName'
+                displayKey='parameterName'
+              />
+              {formData.defenitionName && (
+                <button
+                  type='button'
+                  onClick={() => setFormValue('defenitionName')('')}
+                  className='absolute top-9 right-2 text-lg text-gray-500 hover:text-red-600'
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            <div className='flex items-end'>
+              <Button
+                label='Search'
+                type='submit'
+              />
+            </div>
+          </div>
+        </form>
 
         <CustomTable
           columns={columns}
@@ -54,18 +146,9 @@ export default function ParameterValueIndex({ values }: { values: any[] }) {
               <TableCell>{item.notes}</TableCell>
               <TableCell>
                 <div className='flex space-x-2'>
-                  <a
-                    href={route('parameter-value.edit', item.id)}
-                    className='rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700'
-                  >
-                    Edit
-                  </a>
-                  <button
-                    onClick={() => handleDeleteClick(item)}
-                    className='rounded bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700'
-                  >
-                    Delete
-                  </button>
+                  <EditButton onClick={() => handleEditClick(item)} />
+                  <DeleteButton onClick={() => handleDeleteClick(item)} />
+
                   <a
                     href={route('parameter-value.show', item.id)}
                     className='rounded bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700'

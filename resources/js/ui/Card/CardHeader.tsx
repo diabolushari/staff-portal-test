@@ -59,7 +59,7 @@ export default function CardHeader({
     <div className=''>
       <div className='flex flex-wrap items-center justify-between gap-5 py-4'>
         <div>
-          <Heading className={`subheader-1stop uppercase ${titleClassName}`}>{title}</Heading>
+          <Heading className={`subheader-1stop font-bold ${titleClassName}`}>{title}</Heading>
           {breadCrumb && <Breadcrumbs breadcrumbs={breadCrumb} />}
         </div>
         <div className='flex items-center gap-5'>

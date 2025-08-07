@@ -10,30 +10,50 @@ import "google/protobuf/timestamp.proto";
 
 // ----------- MESSAGE ------------
 message ParameterValueProto {
-  int64  id                 = 1;
-  int64  definition_id      = 2;
-  string parameter_code     = 3;
-  int64  parent_id          = 4;
-  string parameter_value    = 5;
-  string attribute1_value   = 6;
-  string attribute2_value   = 7;
-  string attribute3_value   = 8;
-  string attribute4_value   = 9;
-  string attribute5_value   = 10;
+  int64  id                   = 1;
+  int64  definition_id        = 2;
+  string parameter_code       = 3;
+  int64  parent_id            = 4;
+  string parameter_value      = 5;
+  string attribute1_value     = 6;
+  string attribute2_value     = 7;
+  string attribute3_value     = 8;
+  string attribute4_value     = 9;
+  string attribute5_value     = 10;
   string effective_start_date = 11;
   string effective_end_date   = 12;
-  bool   is_active          = 13;
-  int32  sort_priority      = 14;
-  string notes              = 15;
+  bool   is_active            = 13;
+  int32  sort_priority        = 14;
+  string notes                = 15;
 }
 
 // ----------- REQUEST/RESPONSE ------------
-message CreateParameterValueRequest  { ParameterValueProto value = 1; }
-message UpdateParameterValueRequest  { ParameterValueProto value = 1; }
-message GetParameterValueRequest     { int64 id = 1; }
-message DeleteParameterValueRequest  { int64 id = 1; }
-message ListParameterValuesRequest   { int32 page = 1; int32 page_size = 2; }
-message ListParameterValuesResponse  { repeated ParameterValueProto values = 1; }
+message CreateParameterValueRequest {
+  ParameterValueProto value = 1;
+}
+
+message UpdateParameterValueRequest {
+  ParameterValueProto value = 1;
+}
+
+message GetParameterValueRequest {
+  int64 id = 1;
+}
+
+message DeleteParameterValueRequest {
+  int64 id = 1;
+}
+
+message ListParameterValuesRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  string domain_name = 3;         // ✅ Added back
+  string parameter_name = 4;      // ✅ Added back
+}
+
+message ListParameterValuesResponse {
+  repeated ParameterValueProto values = 1;
+}
 
 // ----------- SERVICE ------------
 service ParameterValueService {

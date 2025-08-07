@@ -5,7 +5,7 @@ export interface SystemModule {
 
 export interface ParameterDomain {
   id: number
-  name: string
+  domainName: string
   description: string
   domainCode: string
   managedByModule: number
@@ -14,6 +14,7 @@ export interface ParameterDomain {
 export interface ParameterDefinition {
   id: number
   name: string
+  domainId: number
   description: string
   domainCode: string
   managedByModule: number

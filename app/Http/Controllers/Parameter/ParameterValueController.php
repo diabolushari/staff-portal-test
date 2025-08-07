@@ -18,12 +18,15 @@ use Proto\Parameters\ListParameterValuesRequest;
 
 use Grpc\ChannelCredentials;
 use Proto\Parameters\ListParameterDefinitionsRequest;
+use Proto\Parameters\ListParameterDomainsRequest;
 use Proto\Parameters\ParameterDefinitionServiceClient;
+use Proto\Parameters\ParameterDomainServiceClient;
 
 class ParameterValueController extends Controller
 {
     private $parameterDefinitionClient;
     private $client;
+    private $parameterDomainClient;
 
     public function __construct()
     {
@@ -31,6 +34,9 @@ class ParameterValueController extends Controller
             'credentials' => ChannelCredentials::createInsecure()
         ]);
         $this->client = new ParameterValueServiceClient(env('GRPC_HOST'), [
+            'credentials' => ChannelCredentials::createInsecure()
+        ]);
+        $this->parameterDomainClient = new ParameterDomainServiceClient(env('GRPC_HOST'), [
             'credentials' => ChannelCredentials::createInsecure()
         ]);
     }
@@ -75,36 +81,70 @@ class ParameterValueController extends Controller
 
     public function index(Request $request)
     {
+
         $page = $request->input('page', 1);
         $pageSize = $request->input('page_size', 10);
+        $requestDomainName = $request->input('domainName');
+        $requestDefentionName = $request->input('defenitionName');
 
-        // 1. Fetch Parameter Definitions to get definition names
+        $parameterDomainRequest = new ListParameterDomainsRequest();
+        [$parameterDomainResponse, $parameterDomainStatus] = $this->parameterDomainClient
+            ->ListParameterDomains($parameterDomainRequest)
+            ->wait();
+
+        if ($parameterDomainStatus->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($parameterDomainStatus);
+            return redirect()->back()->withErrors($errors);
+        }
+
+        // Convert domains to array
+        $domains = [];
+        foreach ($parameterDomainResponse->getDomains() as $domain) {
+            $domains[] = json_decode($domain->serializeToJsonString(), true);
+        }
+
+        // 2. Fetch Parameter Definitions
         $definitionMap = [];
+        $definitions = [];
+
         $defReq = new ListParameterDefinitionsRequest();
-        list($defRes, $defStatus) = $this->parameterDefinitionClient->ListParameterDefinitions($defReq)->wait();
+        [$defRes, $defStatus] = $this->parameterDefinitionClient
+            ->ListParameterDefinitions($defReq)
+            ->wait();
 
         if ($defStatus->code !== 0) {
             $errors = GrpcErrorService::convertToValidationError($defStatus);
             return redirect()->back()->withErrors($errors);
         }
 
-        // 2. Fetch Parameter Values
+        foreach ($defRes->getDefinitions() as $definition) {
+            $defArr = json_decode($definition->serializeToJsonString(), true);
+            $definitions[] = $defArr;
+
+            // Store name by ID for lookup
+            $definitionMap[$defArr['id']] = $defArr['definition_name'] ?? '—';
+        }
+
+        // 3. Fetch Parameter Values
+
         $req = new ListParameterValuesRequest();
         $req->setPage($page);
         $req->setPageSize($pageSize);
+        $req->setDomainName($requestDomainName);
+        $req->setParameterName($requestDefentionName);
 
-        list($res, $status) = $this->client->ListParameterValues($req)->wait();
+        [$res, $status] = $this->client->ListParameterValues($req)->wait();
 
         if ($status->code !== 0) {
             $errors = GrpcErrorService::convertToValidationError($status);
             return redirect()->back()->withErrors($errors);
         }
 
-        // 3. Map values with definition name
+        // 4. Map values with definition name
         $values = [];
         foreach ($res->getValues() as $value) {
             $definitionId = $value->getDefinitionId();
-            $definitionName = $definitionMap[$definitionId] ?? '—'; // fallback if not found
+            $definitionName = $definitionMap[$definitionId] ?? '—';
 
             $values[] = [
                 'id' => $value->getId(),
@@ -125,8 +165,16 @@ class ParameterValueController extends Controller
             ];
         }
 
+        // 5. Return all data to the frontend
         return Inertia::render('Parameters/ParameterValue/ParameterValueIndex', [
-            'values' => $values
+            'values' => $values,
+            'domains' => $domains,
+            'definitions' => $definitions,
+            'filters' => [
+                'domainName' => $request->input('domainName'),
+                'defenitionName' => $request->input('defenitionName'),
+            ],
+
         ]);
     }
 

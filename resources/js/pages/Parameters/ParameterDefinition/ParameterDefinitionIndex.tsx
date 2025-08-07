@@ -7,6 +7,8 @@ import CustomTable from '@/ui/Table/CustomTable'
 import { router } from '@inertiajs/react'
 import { route } from 'ziggy-js'
 import { TableRow } from '@/components/ui/table'
+import EditButton from '@/ui/button/EditButton'
+import DeleteButton from '@/ui/button/DeleteButton'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -75,18 +77,8 @@ export default function ParameterDefinitionIndex({
               <td className='px-4 py-2'>{item.attribute5_name}</td>
               <td className='px-4 py-2'>
                 <div className='flex space-x-2'>
-                  <button
-                    onClick={() => handleEditClick(item)}
-                    className='rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700'
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(item)}
-                    className='rounded bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700'
-                  >
-                    Delete
-                  </button>
+                  <EditButton onClick={() => handleEditClick(item)} />
+                  <DeleteButton onClick={() => handleDeleteClick(item)} />
                   {/* Optional View button */}
                   {/* <a
                     href={route('parameter-definition.show', item.id)}

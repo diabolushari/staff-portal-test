@@ -19,7 +19,6 @@ export default function SystemModuleFormModal({
   const { post, errors, loading } = useInertiaPost(
     initialData ? route('system-module.update', initialData.id) : route('system-module.store'),
     {
-      showErrorToast: true,
       onComplete: () => {
         setShowModal(false)
         setFormValue('system_module_name')('')
@@ -44,7 +43,7 @@ export default function SystemModuleFormModal({
                 setValue={setFormValue('system_module_name')}
                 value={formData.system_module_name}
                 placeholder='Type your System Module Name'
-                error={errors?.system_module_name}
+                error={errors?.name}
                 type='text'
               />
             </div>

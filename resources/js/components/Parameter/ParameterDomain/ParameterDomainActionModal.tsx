@@ -55,7 +55,7 @@ export default function ParameterDomainActionModal({
     e.preventDefault()
     initialData ? post({ ...formData, _method: 'PUT' }) : post(formData)
   }
-
+  console.log(errors)
   return (
     <div>
       <SubHeading>Create Parameter Domain</SubHeading>

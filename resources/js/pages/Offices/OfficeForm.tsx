@@ -1,6 +1,8 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
+import { Office } from '@/interfaces/consumers'
 import AppLayout from '@/layouts/app-layout'
+import Heading from '@/typography/Heading'
 import Button from '@/ui/button/Button'
 import CardHeader from '@/ui/Card/CardHeader'
 import ComboBox from '@/ui/form/ComboBox'
@@ -9,34 +11,64 @@ import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
 import { router } from '@inertiajs/react'
+import { useEffect } from 'react'
 
-export default function OfficeForm({ parameterValues }: { parameterValues: any[] }) {
+export default function OfficeForm({
+  parameterValues,
+  office,
+}: {
+  parameterValues: any[]
+  office?: Office
+}) {
+  const { formData: contactFolioForm, setFormValue: setContactFolioValue } = useCustomForm({
+    phone: office?.contactFolio?.phone ?? '',
+    email: office?.contactFolio?.email ?? '',
+    name: office?.contactFolio?.name ?? '',
+    address: office?.contactFolio?.address ?? '',
+  })
   const { formData, setFormValue } = useCustomForm({
-    officeName: '',
-    officeCode: 0,
-    officeDescription: '',
-    officeType: '',
-    parentOffice: '',
-    effectiveStartDate: new Date(),
-    effectiveEndDate: new Date(),
+    officeCode: office?.officeCode ?? 0,
+    officeDescription: office?.officeDescription ?? '',
+    officeTypeId: office?.officeTypeId ?? '',
+    parentOfficeId: office?.parentOfficeId ?? '',
+    effectiveStartDate: office?.effectiveStartDate
+      ? new Date(office.effectiveStartDate).toISOString().split('T')[0]
+      : new Date().toISOString().split('T')[0],
+    effectiveEndDate: office?.effectiveEndDate
+      ? new Date(office.effectiveEndDate).toISOString().split('T')[0]
+      : new Date().toISOString().split('T')[0],
+    contactFolio: office?.contactFolio ?? {},
   })
-  const { post, errors, loading } = useInertiaPost(route('offices.store'), {
-    showErrorToast: true,
-    onComplete: (value) => {
-      console.log(value)
-      router.visit(route('offices.index'))
-    },
-  })
+
+  useEffect(() => {
+    contactFolioForm.phone && setFormValue('contactFolio', contactFolioForm)
+    contactFolioForm.email && setFormValue('contactFolio', contactFolioForm)
+    contactFolioForm.name && setFormValue('contactFolio', contactFolioForm)
+    contactFolioForm.address && setFormValue('contactFolio', contactFolioForm)
+  }, [])
+
+  console.log(formData, office)
+
+  const { post, errors, loading } = useInertiaPost(
+    office ? route('offices.update', office.officeId) : route('offices.store'),
+    {
+      showErrorToast: true,
+      onComplete: () => {
+        router.visit(route('offices.index'))
+      },
+    }
+  )
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const completeFormData = { ...formData, contactFolio: contactFolioForm }
     e.preventDefault()
-    post(formData)
+    post(office ? { ...completeFormData, _method: 'PUT' } : completeFormData)
   }
   return (
     <AppLayout>
       <div className='p-4 text-gray-800 dark:text-gray-100'>
         <CardHeader
           title='Offices'
-          subheading='Add a new office.'
+          subheading={office ? 'Edit Office' : 'Add a new office.'}
         />
         <form onSubmit={handleSubmit}>
           <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
@@ -46,7 +78,7 @@ export default function OfficeForm({ parameterValues }: { parameterValues: any[]
                 setValue={setFormValue('officeCode')}
                 value={formData.officeCode}
                 placeholder='Type your Office Code'
-                error={errors?.office_code}
+                error={errors?.officeCode}
                 type='number'
               />
             </div>
@@ -62,10 +94,10 @@ export default function OfficeForm({ parameterValues }: { parameterValues: any[]
             <div className='flex flex-col'>
               <SelectList
                 label='Office Type'
-                setValue={setFormValue('officeType')}
-                value={formData.officeType}
+                setValue={setFormValue('officeTypeId')}
+                value={formData.officeTypeId}
                 placeholder='Select Office Type'
-                error={errors?.officeType}
+                error={errors?.officeTypeId}
                 dataKey='id'
                 displayKey='parameterValue'
                 list={parameterValues}
@@ -75,12 +107,54 @@ export default function OfficeForm({ parameterValues }: { parameterValues: any[]
               <ComboBox
                 label='Parrent Office'
                 url={'/api/system-modules'}
-                setValue={setFormValue('parentOffice')}
-                value={formData.parentOffice}
+                setValue={setFormValue('parentOfficeId')}
+                value={formData.parentOfficeId}
                 placeholder='Select Parrent Office'
-                error={errors?.parentOffice}
+                error={errors?.parentOfficeId}
                 dataKey='id'
                 displayKey='name'
+              />
+            </div>
+            <div className='col-span-2 flex flex-col'>
+              <Heading>Contact Folio</Heading>
+            </div>
+            <div className='flex flex-col'>
+              <Input
+                label='Email'
+                setValue={setContactFolioValue('email')}
+                value={contactFolioForm.email}
+                placeholder='Type your Email'
+                error={errors?.email}
+                type='email'
+              />
+            </div>
+            <div className='flex flex-col'>
+              <Input
+                label='Phone'
+                setValue={setContactFolioValue('phone')}
+                value={contactFolioForm.phone}
+                placeholder='Type your Phone'
+                error={errors?.phone}
+                type='number'
+              />
+            </div>
+            <div className='flex flex-col'>
+              <Input
+                label='Name'
+                setValue={setContactFolioValue('name')}
+                value={contactFolioForm.name}
+                placeholder='Type your Name'
+                error={errors?.name}
+                type='text'
+              />
+            </div>
+            <div className='flex flex-col'>
+              <TextArea
+                label='Address'
+                setValue={setContactFolioValue('address')}
+                value={contactFolioForm.address}
+                placeholder='Type your Address'
+                error={errors?.address}
               />
             </div>
             <div className='flex flex-col'>
