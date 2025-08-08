@@ -60,7 +60,6 @@ class OfficeController extends Controller
         $request = new ListParameterValuesRequest();
         $request->setDomainName('Organization');
         $request->setParameterName('Distribution Office Types');
-
         [$response, $status] = $this->parameterValueClient
             ->ListParameterValues($request)
             ->wait();
@@ -77,6 +76,7 @@ class OfficeController extends Controller
                 'parameterValue' => $item->getParameterValue(),
             ])
             ->toArray();
+
 
         return Inertia::render('Offices/OfficeForm', [
             'parameterValues' => $allValues,

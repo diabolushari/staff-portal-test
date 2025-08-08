@@ -8,16 +8,24 @@ import Input from '@/ui/form/Input'
 import Modal from '@/ui/Modal/Modal'
 import { useState } from 'react'
 
+interface ParameterDefinitionFormRequest {
+  name: string
+  attribute1: string
+  attribute2: string
+  attribute3: string
+  attribute4: string
+  attribute5: string
+  isEffectiveDateDriven: boolean
+  domainId: number | string
+}
 export default function ParameterDefinitionActionModal({
-  show,
   onClose,
   editRow,
 }: {
-  show: boolean
   onClose: () => void
   editRow: ParameterDefinition | null
 }) {
-  const { formData, setFormValue, toggleBoolean } = useCustomForm({
+  const { formData, setFormValue, toggleBoolean } = useCustomForm<ParameterDefinitionFormRequest>({
     name: editRow?.name ?? '',
     attribute1: editRow?.attribute1 ?? '',
     attribute2: editRow?.attribute2 ?? '',
@@ -48,6 +56,7 @@ export default function ParameterDefinitionActionModal({
       : route('parameter-definition.store'),
     {
       onComplete: () => onClose(),
+      showErrorToast: true,
     }
   )
 
@@ -68,8 +77,7 @@ export default function ParameterDefinitionActionModal({
   const removeAttribute = (index: number) => {
     const updated = [...visibleAttrs]
     updated[index] = false
-    // Also clear the value from formData
-    setFormValue(`attribute${index + 1}`)('')
+    setFormValue(`attribute${index + 1}` as keyof ParameterDefinitionFormRequest)('')
     setVisibleAttrs(updated)
   }
 
@@ -84,8 +92,8 @@ export default function ParameterDefinitionActionModal({
       >
         <Input
           label={`Attribute ${index + 1} Name`}
-          value={formData[attrKey]}
-          setValue={setFormValue(attrKey)}
+          value={formData[attrKey as keyof ParameterDefinitionFormRequest]}
+          setValue={setFormValue(attrKey as keyof ParameterDefinitionFormRequest)}
           error={errors?.[attrKey]}
         />
         <button
@@ -101,7 +109,7 @@ export default function ParameterDefinitionActionModal({
 
   return (
     <Modal
-      title='Edit Parameter Definition'
+      title={`${editRow ? 'Edit' : 'Add'} Parameter Definition`}
       setShowModal={onClose}
     >
       <div className='p-4'>
@@ -117,13 +125,13 @@ export default function ParameterDefinitionActionModal({
             </div>
             <div className='flex flex-col gap-1'>
               <DynamicSelectList
-                url='api/parameter-domains'
+                url='/api/parameter-domains'
                 dataKey='id'
                 displayKey='name'
                 setValue={setFormValue('domainId')}
                 value={formData.domainId}
                 label='Parameter Domain'
-                error={errors?.domainId}
+                error={errors?.domain_id}
               />
             </div>
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import AppLayout from '@/layouts/app-layout'
 import { BreadcrumbItem } from '@/types'
 import CardHeader from '@/ui/Card/CardHeader'
@@ -9,9 +9,14 @@ import { route } from 'ziggy-js'
 import SelectList from '@/ui/form/SelectList'
 import useCustomForm from '@/hooks/useCustomForm'
 import Button from '@/ui/button/Button'
-import { ParameterDefinition, ParameterDomain } from '@/interfaces/paramater_service'
+import {
+  ParameterDefinition,
+  ParameterDomain,
+  ParameterValues,
+} from '@/interfaces/paramater_service'
 import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
+import DeleteModal from '@/ui/Modal/DeleteModal'
 
 const columns = [
   'S.No',
@@ -36,7 +41,7 @@ export default function ParameterValueIndex({
   definitions,
   filters,
 }: {
-  values: any[]
+  values: ParameterValues[]
   domains: ParameterDomain[]
   definitions: ParameterDefinition[]
   filters: {
@@ -48,13 +53,12 @@ export default function ParameterValueIndex({
     domainName: filters.domainName ?? '',
     defenitionName: filters.defenitionName ?? '',
   })
-
-  const handleDeleteClick = (item: any) => {
-    if (confirm('Are you sure you want to delete this item?')) {
-      router.delete(route('parameter-value.destroy', item.id))
-    }
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [editRow, setEditRow] = useState<ParameterValues | null>(null)
+  const handleDeleteClick = (item: ParameterValues) => {
+    setShowDeleteModal(true)
+    setEditRow(item)
   }
-  console.log(formData)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     router.get(route('parameter-value.index'), { ...formData })
@@ -140,9 +144,9 @@ export default function ParameterValueIndex({
             <TableRow key={item.id}>
               <TableCell>{index + 1}</TableCell>
               <TableCell>{item.id}</TableCell>
-              <TableCell>{item.parameter_code}</TableCell>
-              <TableCell>{item.parameter_value}</TableCell>
-              <TableCell>{item.definition_name}</TableCell>
+              <TableCell>{item.parameterCode}</TableCell>
+              <TableCell>{item.parameterValue}</TableCell>
+              <TableCell>{item.definitionName}</TableCell>
               <TableCell>{item.notes}</TableCell>
               <TableCell>
                 <div className='flex space-x-2'>
@@ -160,6 +164,13 @@ export default function ParameterValueIndex({
             </TableRow>
           ))}
         </CustomTable>
+        {showDeleteModal && editRow && (
+          <DeleteModal
+            setShowModal={setShowDeleteModal}
+            title={`Delete ${editRow.parameterValue}`}
+            url={route('parameter-value.destroy', editRow.id)}
+          />
+        )}
       </div>
     </AppLayout>
   )

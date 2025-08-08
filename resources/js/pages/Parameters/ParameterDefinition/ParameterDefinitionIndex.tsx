@@ -10,6 +10,7 @@ import { TableRow } from '@/components/ui/table'
 import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import { ParameterDefinition } from '@/interfaces/paramater_service'
+import DeleteModal from '@/ui/Modal/DeleteModal'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -43,11 +44,10 @@ export default function ParameterDefinitionIndex({
     setEditRow(item)
     setShowModal(true)
   }
-
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const handleDeleteClick = (item: ParameterDefinition) => {
-    if (confirm('Are you sure you want to delete this item?')) {
-      router.delete(route('parameter-definition.destroy', item.id))
-    }
+    setEditRow(item)
+    setShowDeleteModal(true)
   }
 
   return (
@@ -96,9 +96,15 @@ export default function ParameterDefinitionIndex({
 
       {showModal && (
         <ParameterDefinitionActionModal
-          show={showModal}
           onClose={() => setShowModal(false)}
           editRow={editRow}
+        />
+      )}
+      {showDeleteModal && editRow && (
+        <DeleteModal
+          setShowModal={setShowDeleteModal}
+          title='Delete Parameter Definition'
+          url={route('parameter-definition.destroy', editRow.id)}
         />
       )}
     </AppLayout>

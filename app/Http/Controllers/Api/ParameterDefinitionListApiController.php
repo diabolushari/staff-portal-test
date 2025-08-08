@@ -37,14 +37,14 @@ class ParameterDefinitionListApiController extends Controller
         foreach ($definitions as $definition) {
             $definitionArray[] = [
                 'id' => $definition->getId(),
-                'domain_id' => $definition->getDomainId(),
-                'is_effective_date_driven' => $definition->getIsEffectiveDateDriven(),
-                'parameter_name' => $definition->getParameterName(),
-                'attribute1_name' => $definition->getAttribute1Name(),
-                'attribute2_name' => $definition->getAttribute2Name(),
-                'attribute3_name' => $definition->getAttribute3Name(),
-                'attribute4_name' => $definition->getAttribute4Name(),
-                'attribute5_name' => $definition->getAttribute5Name(),
+                'domainId' => $definition->getDomainId(),
+                'isEffectiveDateDriven' => $definition->getIsEffectiveDateDriven(),
+                'parameterName' => $definition->getParameterName(),
+                'attribute1' => $definition->getAttribute1Name(),
+                'attribute2' => $definition->getAttribute2Name(),
+                'attribute3' => $definition->getAttribute3Name(),
+                'attribute4' => $definition->getAttribute4Name(),
+                'attribute5' => $definition->getAttribute5Name(),
             ];
         }
 

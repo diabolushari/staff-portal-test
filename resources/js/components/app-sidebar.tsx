@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import { type NavItem } from '@/types'
-import { ListTreeIcon, SettingsIcon } from 'lucide-react'
+import { BuildingIcon, ListTreeIcon, SettingsIcon } from 'lucide-react'
 
 const mainNavItems: NavItem[] = [
   {
@@ -20,12 +20,28 @@ const mainNavItems: NavItem[] = [
     icon: ListTreeIcon,
   },
   {
+    title: 'Connections',
+    href: '/',
+    icon: BuildingIcon,
+    children: [
+      {
+        title: 'Parties',
+        href: '/parties',
+      },
+      {
+        title: 'Connections',
+        href: '/connections',
+      },
+    ],
+  },
+  {
     title: 'Settings',
     href: '/settings',
     icon: SettingsIcon,
     children: [
       {
         title: 'Parameter Master',
+        href: '/parameter-domain',
         children: [
           { title: 'Domain', href: '/parameter-domain' },
           { title: 'Definition', href: '/parameter-definition' },

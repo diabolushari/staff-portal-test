@@ -24,7 +24,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 export default function ParameterValueCreate({ data }: { data?: ParameterValues }) {
   const attributeValuePresent =
-    data?.attribute1 || data?.attribute2 || data?.attribute3 || data?.attribute4 || data?.attribute5
+    data?.attribute1Value ||
+    data?.attribute2Value ||
+    data?.attribute3Value ||
+    data?.attribute4Value ||
+    data?.attribute5Value
   const [selectedDefinition, setSelectedDefinition] = useState<ParameterDefinition | null>(
     attributeValuePresent ? data?.definitionId : null
   )
@@ -32,11 +36,11 @@ export default function ParameterValueCreate({ data }: { data?: ParameterValues 
     definitionId: data?.definitionId ?? '',
     parameterCode: data?.parameterCode ?? '',
     parameterValue: data?.parameterValue ?? '',
-    attribute1Value: data?.attribute1 ?? '',
-    attribute2Value: data?.attribute2 ?? '',
-    attribute3Value: data?.attribute3 ?? '',
-    attribute4Value: data?.attribute4 ?? '',
-    attribute5Value: data?.attribute5 ?? '',
+    attribute1Value: data?.attribute1Value ?? '',
+    attribute2Value: data?.attribute2Value ?? '',
+    attribute3Value: data?.attribute3Value ?? '',
+    attribute4Value: data?.attribute4Value ?? '',
+    attribute5Value: data?.attribute5Value ?? '',
     effectiveStartDate: data?.effectiveStartDate ?? '',
     effectiveEndDate: data?.effectiveEndDate ?? '',
     sortPriority: data?.sortPriority ?? '',
@@ -61,13 +65,12 @@ export default function ParameterValueCreate({ data }: { data?: ParameterValues 
   useEffect(() => {
     if (formData.definitionId && definitions?.length) {
       const definition = definitions.find((d: ParameterDefinition) => d.id == formData.definitionId)
-      setSelectedDefinition(definition)
+      setSelectedDefinition(definition ?? null)
     }
   }, [formData.definitionId, definitions])
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      {/* Outer container: white bg for light, dark bg for dark mode */}
       <div className='flex min-h-screen items-center justify-center bg-white dark:bg-gray-900'>
         <div className='w-3/4 rounded-xl bg-white p-8 py-8 shadow-md dark:bg-gray-800'>
           <div className='mx-auto max-w-5xl py-8'>
@@ -84,11 +87,11 @@ export default function ParameterValueCreate({ data }: { data?: ParameterValues 
                 <DynamicSelectList
                   url='/api/parameter-definitions'
                   dataKey='id'
-                  displayKey='parameter_name'
+                  displayKey='parameterName'
                   label='Definition'
                   setValue={setFormValue('definitionId')}
                   value={formData.definitionId}
-                  error={errors?.definitionId}
+                  error={errors?.definition_id}
                 />
               </div>
 
@@ -97,7 +100,7 @@ export default function ParameterValueCreate({ data }: { data?: ParameterValues 
                   label='Parameter Code'
                   value={formData.parameterCode}
                   setValue={setFormValue('parameterCode')}
-                  error={errors?.parameterCode}
+                  error={errors?.parameter_code}
                   formatter={capitalSnakeCase}
                 />
               </div>
@@ -107,7 +110,7 @@ export default function ParameterValueCreate({ data }: { data?: ParameterValues 
                   label='Parameter Value'
                   value={formData.parameterValue}
                   setValue={setFormValue('parameterValue')}
-                  error={errors?.parameterValue}
+                  error={errors?.parameter_value}
                 />
               </div>
 
@@ -117,17 +120,17 @@ export default function ParameterValueCreate({ data }: { data?: ParameterValues 
                     <StrongText className='dark:text-gray-300'>Attribute Values</StrongText>
                   </div>
 
-                  {selectedDefinition.attribute1 && (
+                  {selectedDefinition?.attribute1 && (
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute1}
                         value={formData.attribute1Value}
                         setValue={setFormValue('attribute1Value')}
-                        error={errors?.attribute1Value}
+                        error={errors?.attribute1_value}
                       />
                     </div>
                   )}
-                  {selectedDefinition.attribute2 && (
+                  {selectedDefinition?.attribute2 && (
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute2}
@@ -137,7 +140,7 @@ export default function ParameterValueCreate({ data }: { data?: ParameterValues 
                       />
                     </div>
                   )}
-                  {selectedDefinition.attribute3 && (
+                  {selectedDefinition?.attribute3 && (
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute3}
@@ -147,7 +150,7 @@ export default function ParameterValueCreate({ data }: { data?: ParameterValues 
                       />
                     </div>
                   )}
-                  {selectedDefinition.attribute4 && (
+                  {selectedDefinition?.attribute4 && (
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute4}
@@ -157,7 +160,7 @@ export default function ParameterValueCreate({ data }: { data?: ParameterValues 
                       />
                     </div>
                   )}
-                  {selectedDefinition.attribute5 && (
+                  {selectedDefinition?.attribute5 && (
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute5}
@@ -170,7 +173,7 @@ export default function ParameterValueCreate({ data }: { data?: ParameterValues 
                 </>
               )}
 
-              {selectedDefinition?.is_effective_date_driven && (
+              {selectedDefinition?.isEffectiveDateDriven && (
                 <div className='flex flex-col'>
                   <Input
                     label='Effective Start Date'
@@ -181,7 +184,7 @@ export default function ParameterValueCreate({ data }: { data?: ParameterValues 
                   />
                 </div>
               )}
-              {selectedDefinition?.is_effective_date_driven && (
+              {selectedDefinition?.isEffectiveDateDriven && (
                 <div className='flex flex-col'>
                   <Input
                     label='Effective End Date'

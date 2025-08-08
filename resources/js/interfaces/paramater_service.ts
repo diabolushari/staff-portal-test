@@ -16,7 +16,7 @@ export interface ParameterDefinition {
   id: number
   name: string
   domainId: number
-  domainName: string
+  domainName?: string
   attribute1: string
   attribute2: string
   attribute3: string
@@ -31,11 +31,12 @@ export interface ParameterValues {
   definitionId: number
   parameterCode: string
   parameterValue: string
-  attribute1: string
-  attribute2: string
-  attribute3: string
-  attribute4: string
-  attribute5: string
+  definitionName?: string
+  attribute1Value?: string
+  attribute2Value?: string
+  attribute3Value?: string
+  attribute4Value?: string
+  attribute5Value?: string
   sortPriority: number
   notes: string
   effectiveStartDate: string

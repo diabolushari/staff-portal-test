@@ -87,15 +87,15 @@ class ParameterDefinitionController extends Controller
         $definition->setAttribute5Name($request->attribute5 ?? '');
         $definition->setIsEffectiveDateDriven($request->isEffectiveDateDriven);
         $definition->setDomainId((int)$request->domainId);
-
         $req->setDefinition($definition);
+
 
 
         list($res, $status) = $this->client->CreateParameterDefinition($req)->wait();
         if ($status->code !== 0) {
-            dd($status);
-            $errors = GrpcErrorService::convertToValidationError($status);
-            return redirect()->back()->withErrors($errors);
+            return redirect()->back()->withErrors([
+                'message' => 'Parameter definition created failed',
+            ]);
         }
         return redirect()->back()->with([
             'message' => 'Parameter definition created successfully',
@@ -145,7 +145,7 @@ class ParameterDefinitionController extends Controller
         $definition->setAttribute4Name($request->attribute4);
         $definition->setAttribute5Name($request->attribute5);
         $definition->setIsEffectiveDateDriven($request->isEffectiveDateDriven);
-        $definition->setDomainId($request->domainId);
+        $definition->setDomainId((int)$request->domainId);
         $req->setDefinition($definition);
         list($res, $status) = $this->client->UpdateParameterDefinition($req)->wait();
         if ($status->code !== 0) {
@@ -163,6 +163,7 @@ class ParameterDefinitionController extends Controller
         $req->setId($id);
         list($res, $status) = $this->client->DeleteParameterDefinition($req)->wait();
         if ($status->code !== 0) {
+
             $errors = GrpcErrorService::convertToValidationError($status);
             return redirect()->back()->withErrors($errors);
         }

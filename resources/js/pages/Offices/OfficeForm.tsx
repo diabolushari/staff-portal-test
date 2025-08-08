@@ -1,6 +1,7 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { Office } from '@/interfaces/consumers'
+import { ParameterValues } from '@/interfaces/paramater_service'
 import AppLayout from '@/layouts/app-layout'
 import Heading from '@/typography/Heading'
 import Button from '@/ui/button/Button'
@@ -17,7 +18,7 @@ export default function OfficeForm({
   parameterValues,
   office,
 }: {
-  parameterValues: any[]
+  parameterValues: ParameterValues[]
   office?: Office
 }) {
   const { formData: contactFolioForm, setFormValue: setContactFolioValue } = useCustomForm({
@@ -33,10 +34,10 @@ export default function OfficeForm({
     parentOfficeId: office?.parentOfficeId ?? '',
     effectiveStartDate: office?.effectiveStartDate
       ? new Date(office.effectiveStartDate).toISOString().split('T')[0]
-      : new Date().toISOString().split('T')[0],
+      : '',
     effectiveEndDate: office?.effectiveEndDate
       ? new Date(office.effectiveEndDate).toISOString().split('T')[0]
-      : new Date().toISOString().split('T')[0],
+      : '',
     contactFolio: office?.contactFolio ?? {},
   })
 
@@ -106,13 +107,13 @@ export default function OfficeForm({
             <div className='flex flex-col'>
               <ComboBox
                 label='Parrent Office'
-                url={'/api/system-modules'}
+                url={'/api/offices?q='}
                 setValue={setFormValue('parentOfficeId')}
                 value={formData.parentOfficeId}
                 placeholder='Select Parrent Office'
                 error={errors?.parentOfficeId}
-                dataKey='id'
-                displayKey='name'
+                dataKey='officeId'
+                displayKey='officeCode'
               />
             </div>
             <div className='col-span-2 flex flex-col'>

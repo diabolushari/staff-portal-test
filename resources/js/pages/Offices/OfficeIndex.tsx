@@ -6,8 +6,10 @@ import Button from '@/ui/button/Button'
 import DeleteButton from '@/ui/button/DeleteButton'
 import EditButton from '@/ui/button/EditButton'
 import CardHeader from '@/ui/Card/CardHeader'
+import DeleteModal from '@/ui/Modal/DeleteModal'
 import CustomTable from '@/ui/Table/CustomTable'
 import { router } from '@inertiajs/react'
+import { useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -21,8 +23,11 @@ export default function OfficeIndex({ offices }: { offices: Office[] }) {
   const handleEditClick = (item: any) => {
     router.get(route('offices.edit', item.officeId))
   }
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [editRow, setEditRow] = useState<Office | null>(null)
   const handleDeleteClick = (item: any) => {
-    router.delete(route('offices.destroy', item.officeId))
+    setEditRow(item)
+    setShowDeleteModal(true)
   }
 
   return (
@@ -36,12 +41,12 @@ export default function OfficeIndex({ offices }: { offices: Office[] }) {
         <div>
           <CustomTable
             columns={columns}
-            caption='List of Parameter Definitions'
+            caption='List of Offices'
           >
             {offices.map((item: any, index: number) => (
               <TableRow key={item.id}>
                 <td className='px-4 py-2'>{index + 1}</td>
-                <td className='px-4 py-2'>{item.id}</td>
+                <td className='px-4 py-2'>{item.officeId}</td>
                 <td className='px-4 py-2'>{item.officeCode}</td>
                 <td className='px-4 py-2'>{item.officeDescription}</td>
                 <td className='px-4 py-2'>{item.officeTypeId}</td>
@@ -61,6 +66,13 @@ export default function OfficeIndex({ offices }: { offices: Office[] }) {
           </CustomTable>
         </div>
       </div>
+      {showDeleteModal && editRow && (
+        <DeleteModal
+          setShowModal={setShowDeleteModal}
+          title='Delete Office'
+          url={route('offices.destroy', editRow.officeId)}
+        />
+      )}
     </AppLayout>
   )
 }
