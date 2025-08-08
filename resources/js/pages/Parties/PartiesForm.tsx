@@ -1,6 +1,5 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import AppLayout from '@/layouts/app-layout'
-import Heading from '@/typography/Heading'
 import Button from '@/ui/button/Button'
 import Card from '@/ui/Card/Card'
 import CardHeader from '@/ui/Card/CardHeader'

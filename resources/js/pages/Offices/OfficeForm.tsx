@@ -27,43 +27,44 @@ export default function OfficeForm({
     name: office?.contactFolio?.name ?? '',
     address: office?.contactFolio?.address ?? '',
   })
+
   const { formData, setFormValue } = useCustomForm({
     officeCode: office?.officeCode ?? 0,
     officeDescription: office?.officeDescription ?? '',
     officeTypeId: office?.officeTypeId ?? '',
     parentOfficeId: office?.parentOfficeId ?? '',
-    effectiveStartDate: office?.effectiveStartDate
-      ? new Date(office.effectiveStartDate).toISOString().split('T')[0]
+    effectiveStartDate: office?.effectiveStart
+      ? new Date(office.effectiveStart).toISOString().split('T')[0]
       : '',
-    effectiveEndDate: office?.effectiveEndDate
-      ? new Date(office.effectiveEndDate).toISOString().split('T')[0]
+    effectiveEndDate: office?.effectiveEnd
+      ? new Date(office.effectiveEnd).toISOString().split('T')[0]
       : '',
     contactFolio: office?.contactFolio ?? {},
   })
 
   useEffect(() => {
-    contactFolioForm.phone && setFormValue('contactFolio', contactFolioForm)
-    contactFolioForm.email && setFormValue('contactFolio', contactFolioForm)
-    contactFolioForm.name && setFormValue('contactFolio', contactFolioForm)
-    contactFolioForm.address && setFormValue('contactFolio', contactFolioForm)
+    if (contactFolioForm.phone) setFormValue('contactFolio', contactFolioForm)
+    if (contactFolioForm.email) setFormValue('contactFolio', contactFolioForm)
+    if (contactFolioForm.name) setFormValue('contactFolio', contactFolioForm)
+    if (contactFolioForm.address) setFormValue('contactFolio', contactFolioForm)
   }, [])
-
-  console.log(formData, office)
 
   const { post, errors, loading } = useInertiaPost(
     office ? route('offices.update', office.officeId) : route('offices.store'),
     {
-      showErrorToast: true,
       onComplete: () => {
         router.visit(route('offices.index'))
       },
     }
   )
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const completeFormData = { ...formData, contactFolio: contactFolioForm }
+
     e.preventDefault()
     post(office ? { ...completeFormData, _method: 'PUT' } : completeFormData)
   }
+  console.log('data:', office)
   return (
     <AppLayout>
       <div className='p-4 text-gray-800 dark:text-gray-100'>
@@ -105,16 +106,19 @@ export default function OfficeForm({
               />
             </div>
             <div className='flex flex-col'>
-              <ComboBox
-                label='Parrent Office'
-                url={'/api/offices?q='}
-                setValue={setFormValue('parentOfficeId')}
-                value={formData.parentOfficeId}
-                placeholder='Select Parrent Office'
-                error={errors?.parentOfficeId}
-                dataKey='officeId'
-                displayKey='officeCode'
-              />
+              {formData.officeTypeId && Number(formData.officeTypeId) > 1 && (
+                <ComboBox
+                  label='Parrent Office'
+                  url={`/api/offices?officeTypeId=${formData.officeTypeId}&q=`}
+                  setValue={setFormValue('parentOfficeId')}
+                  value={formData.parentOfficeId}
+                  placeholder='Select Parrent Office'
+                  error={errors?.parentOfficeId}
+                  dataKey='officeId'
+                  displayKey='officeCode'
+                  displayValue2='officeCode'
+                />
+              )}
             </div>
             <div className='col-span-2 flex flex-col'>
               <Heading>Contact Folio</Heading>
@@ -161,7 +165,10 @@ export default function OfficeForm({
             <div className='flex flex-col'>
               <DatePicker
                 label='Effective Start  Date'
-                setValue={setFormValue('effectiveStartDate')}
+                setValue={(date: string) => {
+                  console.debug('Start Date changed:', date)
+                  setFormValue('effectiveStartDate')(date)
+                }}
                 value={formData.effectiveStartDate}
                 placeholder='Select Effective Start Date'
                 error={errors?.effectiveStartDate}
@@ -170,7 +177,10 @@ export default function OfficeForm({
             <div className='flex flex-col'>
               <DatePicker
                 label='Effective End Date'
-                setValue={setFormValue('effectiveEndDate')}
+                setValue={(date: string) => {
+                  console.debug('End Date changed:', date)
+                  setFormValue('effectiveEndDate')(date)
+                }}
                 value={formData.effectiveEndDate}
                 placeholder='Select Effective End Date'
                 error={errors?.effectiveEndDate}

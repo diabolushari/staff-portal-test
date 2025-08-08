@@ -1,5 +1,6 @@
 import AppLayout from '@/layouts/app-layout'
 import Heading from '@/typography/Heading'
+import { router } from '@inertiajs/react'
 
 export default function PartiesShow() {
   const party = {
@@ -48,7 +49,10 @@ export default function PartiesShow() {
               <div className='text-gray-600'>Connected: {party.effective_start.split('T')[0]}</div>
             </div>
           </div>
-          <button className='rounded-md bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300'>
+          <button
+            onClick={() => router.visit(route('parties.edit', party.party_id))}
+            className='rounded-md bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300'
+          >
             Edit Profile
           </button>
         </div>

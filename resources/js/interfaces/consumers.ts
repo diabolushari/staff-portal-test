@@ -4,8 +4,8 @@ export interface Office {
   officeDescription: string
   officeTypeId: number
   parentOfficeId: number
-  effectiveStartDate: string
-  effectiveEndDate: string
+  effectiveStart: string
+  effectiveEnd: string
   contactFolio: {
     phone: string
     email: string

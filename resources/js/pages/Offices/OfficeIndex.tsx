@@ -19,7 +19,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function OfficeIndex({ offices }: { offices: Office[] }) {
-  const columns = ['S.No', 'ID', 'Office Code', 'Office Description', 'Actions']
+  const columns = ['S.No', 'ID', 'Office Code', 'Office Type', 'Actions']
   const handleEditClick = (item: any) => {
     router.get(route('offices.edit', item.officeId))
   }
@@ -48,7 +48,6 @@ export default function OfficeIndex({ offices }: { offices: Office[] }) {
                 <td className='px-4 py-2'>{index + 1}</td>
                 <td className='px-4 py-2'>{item.officeId}</td>
                 <td className='px-4 py-2'>{item.officeCode}</td>
-                <td className='px-4 py-2'>{item.officeDescription}</td>
                 <td className='px-4 py-2'>{item.officeTypeId}</td>
 
                 <td className='px-4 py-2'>

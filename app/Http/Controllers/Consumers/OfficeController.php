@@ -83,10 +83,6 @@ class OfficeController extends Controller
         ]);
     }
 
-
-
-
-
     public function store(Request $request)
     {
         $req = new CreateOfficeRequest();
@@ -105,10 +101,8 @@ class OfficeController extends Controller
         $req->setOfficeCode((int) $request->officeCode);
         $req->setOfficeDescription($request->officeDescription);
         $req->setOfficeTypeId((int) $request->officeTypeId);
-
+        $req->setParentOfficeId((int) $request->parentOfficeId ?? null);
         $req->setIsCurrent(true);
-
-
         $start = new Timestamp();
         $start->fromDateTime(new \DateTime($request->effectiveStartDate));
         $req->setEffectiveStart($start);
@@ -119,7 +113,6 @@ class OfficeController extends Controller
         [$res, $status] = $this->client->CreateOffice($req)->wait();
 
         if ($status->code !== 0) {
-            dd($status);
             $errors = GrpcErrorService::convertToValidationError($status);
 
             return redirect()->back()->withErrors($errors);
@@ -142,7 +135,6 @@ class OfficeController extends Controller
             ]);
         }
 
-        // Convert OfficeProto to associative array
         $office = $response->getOffice();
         $officeArray = json_decode($office->serializeToJsonString(), true);
 
@@ -167,6 +159,7 @@ class OfficeController extends Controller
 
         $office = $response->getOffice();
         $officeArray = json_decode($office->serializeToJsonString(), true);
+
         $parameterValuesRequest = new ListParameterValuesRequest();
         $parameterValuesRequest->setDomainName('Organization');
         $parameterValuesRequest->setParameterName('Distribution Office Types');
@@ -205,7 +198,9 @@ class OfficeController extends Controller
         $start = new Timestamp();
         $start->fromDateTime(new \DateTime($request->effectiveStartDate));
         $req->setEffectiveStart($start);
-
+        if ($request->parentOfficeId) {
+            $req->setParentOfficeId((int) $request->parentOfficeId['officeId']);
+        }
         $end = new Timestamp();
         $end->fromDateTime(new \DateTime($request->effectiveEndDate));
         $req->setEffectiveEnd($end);
