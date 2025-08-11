@@ -50,14 +50,14 @@ class ParameterDomainController extends Controller
             return redirect()->back()->withErrors($errors);
         }
 
-        // Fetch system modules
+
         [$systemModuleResponse, $moduleStatus] = $this->systemModuleClient->ListSystemModules($systemModuleReq)->wait();
         if ($moduleStatus->code !== 0) {
             $errors = GrpcErrorService::convertToValidationError($moduleStatus);
             return redirect()->back()->withErrors($errors);
         }
 
-        // Create a map of system module id => name
+
         $moduleMap = [];
         foreach ($systemModuleResponse->getModules() as $module) {
             $moduleMap[$module->getId()] = $module->getName();

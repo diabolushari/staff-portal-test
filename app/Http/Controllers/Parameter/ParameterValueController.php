@@ -97,13 +97,13 @@ class ParameterValueController extends Controller
             return redirect()->back()->withErrors($errors);
         }
 
-        // Convert domains to array
+
         $domains = [];
         foreach ($parameterDomainResponse->getDomains() as $domain) {
             $domains[] = json_decode($domain->serializeToJsonString(), true);
         }
 
-        // 2. Fetch Parameter Definitions
+
         $definitionMap = [];
         $definitions = [];
 
@@ -142,6 +142,9 @@ class ParameterValueController extends Controller
 
         // 4. Map values with definition name
         $values = [];
+        $res->getValues();
+
+
         foreach ($res->getValues() as $value) {
             $definitionId = $value->getDefinitionId();
             $definitionName = $definitionMap[$definitionId] ?? '—';
