@@ -1,109 +1,120 @@
-import { Card } from '@/components/ui/card'
-import useCustomForm from '@/hooks/useCustomForm'
-import useInertiaPost from '@/hooks/useInertiaPost'
+import { TableCell, TableRow } from '@/components/ui/table'
+import { SystemModule } from '@/interfaces/paramater_service'
 import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem } from '@/types'
-import Button from '@/ui/button/Button'
+import DeleteButton from '@/ui/button/DeleteButton'
+import EditButton from '@/ui/button/EditButton'
 import CardHeader from '@/ui/Card/CardHeader'
-import Input from '@/ui/form/Input'
-import CustomTable from '@/ui/Table/CustomTable'
+import DeleteModal from '@/ui/Modal/DeleteModal'
+import Modal from '@/ui/Modal/Modal'
+import Table from '@/ui/Table/Table'
 import { Head } from '@inertiajs/react'
-import { useState } from 'react'
+import { AnimatePresence } from 'framer-motion'
+import { useCallback, useState } from 'react'
 import { route } from 'ziggy-js'
+import SystemModuleForm from './components/SystemModuleForm'
 
-export default function SystemModuleIndex({ systemModules }: { systemModules: any }) {
-  const [editRow, setEditRow] = useState<any>(null)
+interface Props {
+  systemModules: SystemModule[]
+}
+
+const tableHeads = ['S.No', 'ID', 'System Module Name', 'Actions']
+
+export default function SystemModuleIndex({ systemModules }: Readonly<Props>) {
+  const [moduleToEdit, setModuleToEdit] = useState<SystemModule | null>(null)
+  const [showModal, setShowModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [moduleToDelete, setModuleToDelete] = useState<SystemModule | null>(null)
+
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'System Modules',
       href: '/system-module',
     },
   ]
-  const { formData, setFormValue } = useCustomForm({
-    system_module_name: '',
-  })
-  const { post, errors, loading } = useInertiaPost(
-    editRow ? route('system-module.update', editRow.id) : route('system-module.store'),
-    {
-      showErrorToast: true,
-      onComplete: () => {
-        setEditRow(null)
-        setFormValue('system_module_name')('')
-      },
-    }
-  )
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    post(editRow ? { ...formData, _method: 'PUT' } : formData)
-  }
-  const columns = [
-    { header: 'ID', accessor: 'id' },
-    { header: 'System Module Name', accessor: 'name' },
-    { header: 'Actions', accessor: 'actions' },
-  ]
 
-  const handleEditClick = (row: any) => {
-    setEditRow(row)
-    setFormValue('system_module_name')(row.name)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+  const handleCreateClick = useCallback(() => {
+    setModuleToEdit(null)
+    setShowModal(true)
+  }, [])
+
+  const handleEditClick = useCallback((module: SystemModule) => {
+    setModuleToEdit(module)
+    setShowModal(true)
+  }, [])
+
+  const handleDeleteClick = useCallback((module: SystemModule) => {
+    setModuleToDelete(module)
+    setShowDeleteModal(true)
+  }, [])
+
+  const handleModalClose = () => {
+    setShowModal(false)
+    setModuleToEdit(null)
   }
-  const data = systemModules
-  const dataWithActions = data.map((item: any) => ({
-    ...item,
-    actions: {
-      editOnclick: () => handleEditClick(item),
-      deleteUrl: route('system-module.destroy', item.id),
-    },
-  }))
+
+  const handleDeleteSuccess = () => {
+    setShowDeleteModal(false)
+    setModuleToDelete(null)
+  }
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title='System Modules' />
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
-        <div className='p-2 lg:w-[50%]'>
-          <CardHeader
-            title='System Module'
-            subheading='Here you can create System module names. Only admin can create system module names.'
-          />
-          <Card className='p-4'>
-            <form onSubmit={handleSubmit}>
-              <div className='flex flex-col gap-4 md:grid md:grid-cols-2'>
-                <div className='flex flex-col gap-4'>
-                  <Input
-                    label={editRow ? 'Edit System Module Name' : 'Create System Module'}
-                    setValue={setFormValue('system_module_name')}
-                    value={formData.system_module_name}
-                    placeholder={editRow ? '' : 'Type your System Module Name'}
-                    error={errors?.system_module_name}
-                    type='text'
-                  />
-                </div>
-                <div className='mt-12'>
-                  {editRow && (
-                    <Button
-                      label='Cancel'
-                      onClick={() => {
-                        setEditRow(null)
-                        setFormValue('system_module_name')('')
-                      }}
-                    />
-                  )}
-                </div>
-              </div>
-              <div className='mt-5'>
-                <Button
-                  type='submit'
-                  label={editRow ? 'Update' : 'Submit'}
-                />
-              </div>
-            </form>
-          </Card>
-        </div>
-        <CustomTable
-          columns={columns}
-          data={dataWithActions}
-          serialNumber={true}
+        <CardHeader
+          title='System Module'
+          subheading='Here you can create System module names. Only admin can create system module names.'
+          onAddClick={handleCreateClick}
         />
+
+        <Table heads={tableHeads}>
+          {systemModules.map((module, index) => (
+            <TableRow key={module.id}>
+              <TableCell>{index + 1}</TableCell>
+              <TableCell>{module.id}</TableCell>
+              <TableCell>{module.name}</TableCell>
+              <TableCell>
+                <div className='flex space-x-3'>
+                  <EditButton onClick={() => handleEditClick(module)} />
+                  <DeleteButton onClick={() => handleDeleteClick(module)} />
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </Table>
+
+        {/* Single Modal for Create/Edit */}
+        <AnimatePresence>
+          {showModal && (
+            <Modal
+              setShowModal={setShowModal}
+              title={moduleToEdit ? 'Edit System Module' : 'Create System Module'}
+            >
+              <SystemModuleForm
+                selectedSystemModule={moduleToEdit}
+                onSuccess={handleModalClose}
+                onCancel={handleModalClose}
+              />
+            </Modal>
+          )}
+        </AnimatePresence>
+
+        {/* Delete Confirmation Modal */}
+        <AnimatePresence>
+          {showDeleteModal && moduleToDelete && (
+            <DeleteModal
+              setShowModal={setShowDeleteModal}
+              title='Confirm Deletion'
+              url={route('system-module.destroy', moduleToDelete.id)}
+              onSuccess={handleDeleteSuccess}
+            >
+              <div className='text-gray-700'>
+                Are you sure you want to delete <strong>{moduleToDelete.name}</strong>?
+              </div>
+            </DeleteModal>
+          )}
+        </AnimatePresence>
       </div>
     </AppLayout>
   )

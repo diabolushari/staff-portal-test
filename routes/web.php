@@ -8,6 +8,9 @@ use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
+use App\Http\Requests\SystemModule\SystemModuleFormRequest;
+use App\Services\SystemModule\SystemModuleService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -17,6 +20,8 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
+        Log::info('Accessing dashboard');
+
         return Inertia::render('dashboard');
     })->name('dashboard');
     Route::resource('system-module', SystemModuleController::class);
@@ -25,14 +30,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('parameter-value', ParameterValueController::class);
 });
 
-# API List
+// API List
 Route::get('api/system-modules', SystemModuleApiController::class);
 Route::get('api/parameter-domains', ParameterDomainListApiController::class);
 Route::get('api/parameter-definitions', ParameterDefinitionListApiController::class);
 Route::get('api/parameter-definitions/{id}', ParameterDefinitionItemApiController::class);
 
+Route::get('consumer-test', function (SystemModuleService $service) {
+    $response = $service->createSystemModule(
+        new SystemModuleFormRequest('Test Module')
+    );
+    return response()->json($response);
+});
 
 
-
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';
