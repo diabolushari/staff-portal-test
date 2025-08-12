@@ -1,69 +1,125 @@
-import ParameterDomainActionModal from '@/components/Parameter/ParameterDomain/ParameterDomainActionModal'
+import ParameterDomainForm from '@/components/Parameter/ParameterDomain/ParameterDomainForm'
+import { TableCell, TableRow } from '@/components/ui/table'
+import { ParameterDomain } from '@/interfaces/paramater_types'
 import AppLayout from '@/layouts/app-layout'
-import { BreadcrumbItem } from '@/types'
+import { type BreadcrumbItem } from '@/types'
+import DeleteButton from '@/ui/button/DeleteButton'
+import EditButton from '@/ui/button/EditButton'
 import CardHeader from '@/ui/Card/CardHeader'
-import CustomTable from '@/ui/Table/CustomTable'
-import { useState } from 'react'
-const columns = [
-  { header: 'ID', accessor: 'id' },
-  { header: 'Domain Name', accessor: 'domain_name' },
-  { header: 'Description', accessor: 'description' },
-  { header: 'Domain Code', accessor: 'domain_code' },
-  { header: 'Managed By Module Name', accessor: 'managed_by_module_name' },
-  { header: 'Actions', accessor: 'actions' },
-]
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Parameter Domains',
-    href: '/parameter-domain',
-  },
-]
-export default function ParameterDomainIndex({ domains }: { domains: any }) {
-  const [editRow, setEditRow] = useState<any>(null)
+import DeleteModal from '@/ui/Modal/DeleteModal'
+import Table from '@/ui/Table/Table'
+import { Head } from '@inertiajs/react'
+import { AnimatePresence } from 'framer-motion'
+import { useCallback, useState } from 'react'
+import { route } from 'ziggy-js'
 
-  const dataWithActions = domains.map((item: any) => ({
-    ...item,
-    actions: {
-      editOnclick: () => handleEditClick(item),
-      deleteUrl: route('parameter-domain.destroy', item.id),
-      viewUrl: route('parameter-domain.show', item.id),
-    },
-  }))
+const tableHeads = [
+  'S.No',
+  'ID',
+  'Domain Name',
+  'Description',
+  'Domain Code',
+  'Managed By Module',
+  'Actions',
+]
 
-  const handleEditClick = (item: any) => {
-    setEditRow(item)
-    setShowModal(true)
-  }
+interface Props {
+  domains: ParameterDomain[]
+}
+
+export default function ParameterDomainIndex({ domains }: Readonly<Props>) {
+  const [parameterDomainToEdit, setParameterDomainToEdit] = useState<ParameterDomain | null>(null)
   const [showModal, setShowModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [parameterDomainToDelete, setParameterDomainToDelete] = useState<ParameterDomain | null>(
+    null
+  )
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Parameter Domains',
+      href: '/parameter-domain',
+    },
+  ]
+
+  const handleCreateClick = useCallback(() => {
+    setParameterDomainToEdit(null)
+    setShowModal(true)
+  }, [])
+
+  const handleEditClick = useCallback((item: ParameterDomain) => {
+    setParameterDomainToEdit(item)
+    setShowModal(true)
+  }, [])
+
+  const handleDeleteClick = useCallback((item: ParameterDomain) => {
+    setParameterDomainToDelete(item)
+    setShowDeleteModal(true)
+  }, [])
+
+  const handleDeleteSuccess = () => {
+    setShowDeleteModal(false)
+    setParameterDomainToDelete(null)
+  }
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
+      <Head title='Parameter Domains' />
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <CardHeader
           title='Parameter Domains'
-          subheading='Add a new parameter domain.'
-          onAddClick={() => {
-            setEditRow(false)
-            setShowModal(true)
-          }}
+          subheading='Add and manage parameter domains.'
+          onAddClick={handleCreateClick}
         />
 
-        <div>
-          <CustomTable
-            columns={columns}
-            data={dataWithActions}
-            serialNumber={true}
-          />
-        </div>
+        <Table heads={tableHeads}>
+          {domains.map((item, index) => (
+            <TableRow key={item.id}>
+              <TableCell>{index + 1}</TableCell>
+              <TableCell>{item.id}</TableCell>
+              <TableCell>{item.domain_name}</TableCell>
+              <TableCell>{item.description}</TableCell>
+              <TableCell>{item.domain_code}</TableCell>
+              <TableCell>{item.managed_by_module_name}</TableCell>
+              <TableCell>
+                <div className='flex space-x-3'>
+                  <EditButton onClick={() => handleEditClick(item)} />
+                  <DeleteButton onClick={() => handleDeleteClick(item)} />
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </Table>
+
+        {/* Create/Edit Modal */}
+        <AnimatePresence>
+          {showModal && (
+            <ParameterDomainForm
+              title={parameterDomainToEdit ? 'Edit Parameter Domain' : 'Add Parameter Domain'}
+              setShowModal={setShowModal}
+              show={showModal}
+              parameterDomain={parameterDomainToEdit ?? undefined}
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Delete Confirmation Modal */}
+        <AnimatePresence>
+          {showDeleteModal && parameterDomainToDelete && (
+            <DeleteModal
+              setShowModal={setShowDeleteModal}
+              title='Confirm Deletion'
+              url={route('parameter-domain.destroy', parameterDomainToDelete.id)}
+              onSuccess={handleDeleteSuccess}
+            >
+              <div className='text-gray-700'>
+                Are you sure you want to delete{' '}
+                <strong>{parameterDomainToDelete.domain_name}</strong>?
+              </div>
+            </DeleteModal>
+          )}
+        </AnimatePresence>
       </div>
-      {showModal && (
-        <ParameterDomainActionModal
-          title='Add Parameter Domain'
-          setShowModal={setShowModal}
-          show={showModal}
-          initialData={editRow}
-        />
-      )}
     </AppLayout>
   )
 }

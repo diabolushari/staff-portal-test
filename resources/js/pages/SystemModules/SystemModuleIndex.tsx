@@ -1,5 +1,5 @@
 import { TableCell, TableRow } from '@/components/ui/table'
-import { SystemModule } from '@/interfaces/paramater_service'
+import { SystemModule } from '@/interfaces/paramater_types'
 import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem } from '@/types'
 import DeleteButton from '@/ui/button/DeleteButton'

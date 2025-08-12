@@ -1,7 +1,7 @@
+import { Button } from '@/components/ui/button'
+import useInertiaPost from '@/hooks/useInertiaPost'
 import React from 'react'
 import Modal from './Modal'
-import useInertiaPost from '@/hooks/useInertiaPost'
-import { Button } from '@/Components/ui/button'
 
 interface Properties {
   setShowModal: (show: boolean) => any

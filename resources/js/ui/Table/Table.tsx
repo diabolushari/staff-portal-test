@@ -18,8 +18,8 @@ export default function Table({
 }) {
   return (
     <ShadcnTable>
-      <TableHeader className='rounded-md bg-gray-50 p-3'>
-        <TableRow className='text-xs font-medium text-gray-500'>
+      <TableHeader className='rounded-md bg-gray-50 p-3 dark:bg-gray-800'>
+        <TableRow className='text-xs font-medium text-gray-500 dark:text-gray-400'>
           {heads.map((head) => (
             <TableHead key={head}>{head}</TableHead>
           ))}

@@ -11,9 +11,8 @@ class SystemModuleController extends Controller
 {
 
 
-    public function __construct(private SystemModuleService $systemModuleService)
-    {
-        $this->systemModuleService = $systemModuleService;
+    public function __construct(private SystemModuleService $systemModuleService){
+
     }
 
     public function index()
