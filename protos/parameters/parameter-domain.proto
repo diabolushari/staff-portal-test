@@ -23,7 +23,13 @@ message UpdateParameterDomainRequest  { ParameterDomainProto  domain = 1; }
 message GetParameterDomainRequest     { int64 id = 1; }
 message DeleteParameterDomainRequest  { int64 id = 1; }
 
-message ListParameterDomainsRequest  { int32 page = 1; int32 page_size = 2; }
+message ListParameterDomainsRequest  {
+  int32 page = 1;
+  int32 page_size = 2;
+  optional string search = 3;     // optional: case-insensitive match on code/name/description
+  optional int64  module_id = 4;  // optional: filter by managed_by_module
+}
+
 message ListParameterDomainsResponse { repeated ParameterDomainProto  domains = 1; }
 
 // ------------ SERVICE ------------

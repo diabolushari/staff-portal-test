@@ -29,11 +29,19 @@ class ParameterDomainService
     /**
      * Get paginated list of parameter domains
      */
-    public function getParameterDomains(int $page = 1, int $pageSize = 10): GrpcServiceResponse
+    public function getParameterDomains(int $page, int $pageSize, ?string $search, ?int $moduleId): GrpcServiceResponse
     {
         $request = new ListParameterDomainsRequest;
-        $request->setPage($page);
-        $request->setPageSize($pageSize);
+        $request->setPage($page ?? 1);
+        $request->setPageSize($pageSize ?? 10);
+
+        if ($search !== null) {
+            $request->setSearch($search);
+        }
+
+        if ($moduleId !== null && $moduleId > 0) {
+            $request->setModuleId($moduleId);
+        }
 
         [$response, $status] = $this->client->ListParameterDomains($request)->wait();
 
