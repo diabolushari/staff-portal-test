@@ -6,14 +6,16 @@ option php_namespace = "Proto\\Parameters";
 option php_metadata_namespace = "GPBMetadata";
 
 import "google/protobuf/empty.proto";
+import "modules/system-modules.proto";
 
 // ------------ MESSAGES ------------
 message ParameterDomainProto  {
-  int64  id                = 1;
-  string domain_code       = 2;
-  string domain_name       = 3;
-  string description       = 4;
+  int64  id               = 1;
+  string domain_code      = 2;
+  string domain_name      = 3;
+  string description      = 4;
   int64  managed_by_module = 5;
+  com.kseb.consumerservice.proto.modules.SystemModule system_module = 6;
 }
 
 message CreateParameterDomainRequest  { ParameterDomainProto  domain = 1; }
@@ -26,9 +28,9 @@ message ListParameterDomainsResponse { repeated ParameterDomainProto  domains = 
 
 // ------------ SERVICE ------------
 service ParameterDomainService {
-  rpc CreateParameterDomain (CreateParameterDomainRequest)  returns (ParameterDomainProto);
-  rpc GetParameterDomain    (GetParameterDomainRequest)     returns (ParameterDomainProto);
-  rpc UpdateParameterDomain (UpdateParameterDomainRequest)  returns (ParameterDomainProto);
+  rpc CreateParameterDomain (CreateParameterDomainRequest)  returns (ParameterDomainProto );
+  rpc GetParameterDomain    (GetParameterDomainRequest)     returns (ParameterDomainProto );
+  rpc UpdateParameterDomain (UpdateParameterDomainRequest)  returns (ParameterDomainProto );
   rpc DeleteParameterDomain (DeleteParameterDomainRequest)  returns (google.protobuf.Empty);
   rpc ListParameterDomains  (ListParameterDomainsRequest)   returns (ListParameterDomainsResponse);
 }

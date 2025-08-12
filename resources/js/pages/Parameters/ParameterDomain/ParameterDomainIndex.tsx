@@ -19,7 +19,7 @@ const tableHeads = [
   'Domain Name',
   'Description',
   'Domain Code',
-  'Managed By Module',
+  'System Module',
   'Actions',
 ]
 
@@ -80,7 +80,7 @@ export default function ParameterDomainIndex({ domains }: Readonly<Props>) {
               <TableCell>{item.domain_name}</TableCell>
               <TableCell>{item.description}</TableCell>
               <TableCell>{item.domain_code}</TableCell>
-              <TableCell>{item.managed_by_module_name}</TableCell>
+              <TableCell>{item.system_module?.name}</TableCell>
               <TableCell>
                 <div className='flex space-x-3'>
                   <EditButton onClick={() => handleEditClick(item)} />
