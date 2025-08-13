@@ -1,6 +1,6 @@
 import ParameterDomainForm from '@/components/Parameter/ParameterDomain/ParameterDomainForm'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { ParameterDomain } from '@/interfaces/paramater_types'
+import { ParameterDomain, SystemModule } from '@/interfaces/paramater_types'
 import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem } from '@/types'
 import DeleteButton from '@/ui/button/DeleteButton'
@@ -25,9 +25,10 @@ const tableHeads = [
 
 interface Props {
   domains: ParameterDomain[]
+  modules: SystemModule[]
 }
 
-export default function ParameterDomainIndex({ domains }: Readonly<Props>) {
+export default function ParameterDomainIndex({ domains, modules }: Readonly<Props>) {
   const [parameterDomainToEdit, setParameterDomainToEdit] = useState<ParameterDomain | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -99,6 +100,7 @@ export default function ParameterDomainIndex({ domains }: Readonly<Props>) {
               setShowModal={setShowModal}
               show={showModal}
               parameterDomain={parameterDomainToEdit ?? undefined}
+              modules={modules}
             />
           )}
         </AnimatePresence>
