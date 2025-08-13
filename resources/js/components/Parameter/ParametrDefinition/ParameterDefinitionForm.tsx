@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ParameterDefinition } from '@/interfaces/paramater_types'
+import { ParameterDefinition, ParameterDomain } from '@/interfaces/paramater_types'
 import CheckBox from '@/ui/form/CheckBox'
 import Input from '@/ui/form/Input'
 import Modal from '@/ui/Modal/Modal'
 import AttributeInput from './AttributeInput'
 import Button from '@/ui/button/Button'
 import SubHeading from '@/typography/SubHeading'
+import SelectList from '@/ui/form/SelectList'
 
 interface Props {
   title: string
@@ -15,6 +16,7 @@ interface Props {
   show: boolean
   children?: React.ReactNode
   parameterDefinition?: ParameterDefinition | null
+  domains: ParameterDomain[]
 }
 
 export default function ParameterDefinitionForm({
@@ -22,6 +24,7 @@ export default function ParameterDefinitionForm({
   setShowModal,
   show,
   parameterDefinition,
+  domains,
 }: Readonly<Props>) {
   const [visibleAttrs, setVisibleAttrs] = useState<boolean[]>(() => {
     const initialVisibility = [
@@ -60,7 +63,7 @@ export default function ParameterDefinitionForm({
   const removeAttribute = (index: number) => {
     const updated = [...visibleAttrs]
     updated[index] = false
-    setFormValue(`attribute${index + 1}_name` as keyof ParameterDefinition)('')
+    setFormValue(`attribute${index + 1}_name`)('')
     setVisibleAttrs(updated)
   }
 
@@ -88,19 +91,22 @@ export default function ParameterDefinitionForm({
             <div className='flex flex-col'>
               <Input
                 label='Parameter Name'
-                setValue={setFormValue('name')}
-                value={formData.name}
+                setValue={setFormValue('parameter_name')}
+                value={formData.parameter_name}
                 placeholder='Type your Parameter Name'
-                error={errors?.name}
+                error={errors?.parameter_name}
               />
             </div>
             <div className='flex flex-col'>
-              <Input
+              <SelectList
                 label='Domain'
                 setValue={setFormValue('domain_id')}
                 value={formData.domain_id}
                 placeholder='Type your Domain'
                 error={errors?.domain_id}
+                list={domains}
+                dataKey='id'
+                displayKey='domain_name'
               />
             </div>
 

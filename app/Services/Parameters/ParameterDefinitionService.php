@@ -136,7 +136,7 @@ class ParameterDefinitionService
     {
         $proto = new ParameterDefinitionProto();
         $proto->setId($id);
-        $proto->setParameterName($request->name);
+        $proto->setParameterName($request->parameterName);
         $proto->setAttribute1Name($request->attribute1Name);
         $proto->setAttribute2Name($request->attribute2Name);
         $proto->setAttribute3Name($request->attribute3Name);
@@ -158,8 +158,19 @@ class ParameterDefinitionService
                 $status->details
             );
         }
+        $parameterDefinitionArray = [
+            'id' => $response->getId(),
+            'parameter_name' => $response->getParameterName(),
+            'attribute1_name' => $response->getAttribute1Name(),
+            'attribute2_name' => $response->getAttribute2Name(),
+            'attribute3_name' => $response->getAttribute3Name(),
+            'attribute4_name' => $response->getAttribute4Name(),
+            'attribute5_name' => $response->getAttribute5Name(),
+            'is_effective_date_driven' => $response->getIsEffectiveDateDriven(),
+            'domain_id' => $response->getDomainId(),
+        ];
 
-        return GrpcServiceResponse::success($response, $response, $status->code, $status->details);
+        return GrpcServiceResponse::success($parameterDefinitionArray, $response, $status->code, $status->details);
     }
 
     public function deleteParameterDefinition(string|int $id): GrpcServiceResponse

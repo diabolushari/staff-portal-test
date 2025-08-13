@@ -55,32 +55,37 @@ export default function Input({
   return (
     <>
       {label != null && (
-        <label className='small-1stop mb-1 tracking-normal text-gray-800 dark:text-gray-200'>
+        <label className='small-1stop relative mb-1 tracking-normal text-gray-800 dark:text-gray-200'>
           {label}
         </label>
       )}
-      <input
-        type={type}
-        value={value}
-        onKeyDown={handleKeydown}
-        onChange={(event) =>
-          formatter ? setValue(formatter(event.target.value)) : setValue(event.target.value)
-        }
-        placeholder={placeholder}
-        className={getFormStyle(style)}
-        disabled={disabled}
-        readOnly={readonly}
-        required={required}
-      />
-      {showClearButton && value && (
-        <button
-          type='button'
-          onClick={() => setValue('')}
-          className='absolute top-8 right-2 text-2xl text-gray-500 hover:text-red-500'
-        >
-          ✕
-        </button>
-      )}
+
+      <div className='relative'>
+        <input
+          type={type}
+          value={value}
+          onKeyDown={handleKeydown}
+          onChange={(event) =>
+            formatter ? setValue(formatter(event.target.value)) : setValue(event.target.value)
+          }
+          placeholder={placeholder}
+          className={getFormStyle(style) + ' pr-10'} // extra right padding so ✕ doesn’t overlap text
+          disabled={disabled}
+          readOnly={readonly}
+          required={required}
+        />
+
+        {showClearButton && value && (
+          <button
+            type='button'
+            onClick={() => setValue('')}
+            className='absolute top-1/2 right-2 -translate-y-1/2 text-xl text-gray-500 hover:text-red-500'
+          >
+            ✕
+          </button>
+        )}
+      </div>
+
       {error && <ErrorText>{error}</ErrorText>}
     </>
   )

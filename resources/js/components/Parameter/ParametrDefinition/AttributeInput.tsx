@@ -16,7 +16,7 @@ export default function AttributeInput({
   errors: Record<string, string> | undefined
   removeAttribute: (index: number) => void
 }) {
-  const attrKey = `attribute${index + 1}`
+  const attrKey = `attribute${index + 1}_name`
   if (!visibleAttrs[index]) return null
 
   return (

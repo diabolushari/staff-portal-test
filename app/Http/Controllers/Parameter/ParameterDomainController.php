@@ -34,7 +34,6 @@ class ParameterDomainController extends Controller
         if ($response->hasError()) {
             return $response->error;
         }
-        dd($response->data);
 
         $modulesResponse = $this->systemModuleService->getSystemModules();
 

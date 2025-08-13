@@ -4,7 +4,7 @@ export interface SystemModule {
 }
 
 export interface ParameterDomain {
-  id: number | string
+  id: number
   domain_name: string
   description?: string
   domain_code?: string

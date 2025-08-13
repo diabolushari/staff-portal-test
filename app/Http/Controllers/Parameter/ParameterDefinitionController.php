@@ -5,18 +5,22 @@ namespace App\Http\Controllers\Parameter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Parameters\ParameterDefinitionFormRequest;
 use App\Services\Parameters\ParameterDefinitionService;
+use App\Services\Parameters\ParameterDomainService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ParameterDefinitionController extends Controller
 {
-    public function __construct(private ParameterDefinitionService $parameterDefinitionService) {}
+    public function __construct(
+        private ParameterDefinitionService $parameterDefinitionService,
+        private ParameterDomainService $parameterDomainService
+    ) {}
 
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
         $pageSize = $request->input('page_size', 10);
-
+        $domainsResponse = $this->parameterDomainService->getParameterDomains($page, $pageSize, null, null);
         $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize);
 
         if ($response->hasError()) {
@@ -25,6 +29,7 @@ class ParameterDefinitionController extends Controller
 
         return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionIndex', [
             'parameter_definitions' => $response->data,
+            'domains' => $domainsResponse->data,
             'grpcStatus' => [
                 'code' => $response->statusCode,
                 'details' => $response->statusDetails,

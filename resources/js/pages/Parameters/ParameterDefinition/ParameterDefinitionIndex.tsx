@@ -1,18 +1,16 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import AppLayout from '@/layouts/app-layout'
 import ParameterDefinitionActionModal from '@/components/Parameter/ParametrDefinition/ParameterDefinitionActionModal'
 import { BreadcrumbItem } from '@/types'
 import CardHeader from '@/ui/Card/CardHeader'
-import CustomTable from '@/ui/Table/CustomTable'
-import { router } from '@inertiajs/react'
-import { route } from 'ziggy-js'
 import { TableCell, TableRow } from '@/components/ui/table'
 import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
-import { ParameterDefinition } from '@/interfaces/paramater_types'
+import { ParameterDefinition, ParameterDomain } from '@/interfaces/paramater_types'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import Table from '@/ui/Table/Table'
 import ParameterDefinitionForm from '@/components/Parameter/ParametrDefinition/ParameterDefinitionForm'
+import ParameterDefinitionSearchForm from '@/components/Parameter/ParametrDefinition/ParameterDefinitionSearchForm'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -35,8 +33,10 @@ const tableHeads = [
 
 export default function ParameterDefinitionIndex({
   parameter_definitions,
+  domains,
 }: {
   parameter_definitions: ParameterDefinition[]
+  domains: ParameterDomain[]
 }) {
   const [parameterDefinitionToEdit, setParameterDefinitionToEdit] =
     useState<ParameterDefinition | null>(null)
@@ -45,19 +45,20 @@ export default function ParameterDefinitionIndex({
   const [paramterFormModal, setParamterFormModal] = useState(false)
   const [paramterDeleteModal, setParamterDeleteModal] = useState(false)
 
-  const handleEditClick = (item: ParameterDefinition) => {
+  const handleEditClick = useCallback((item: ParameterDefinition) => {
     setParameterDefinitionToEdit(item)
     setParamterFormModal(true)
-  }
+  }, [])
 
-  const handleDeleteClick = (item: ParameterDefinition) => {
+  const handleDeleteClick = useCallback((item: ParameterDefinition) => {
     setParametrDefinitionTODelete(item)
     setParamterDeleteModal(true)
-  }
-  const handleCreateClick = () => {
+  }, [])
+
+  const handleCreateClick = useCallback(() => {
     setParameterDefinitionToEdit(null)
     setParamterFormModal(true)
-  }
+  }, [])
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <div className='p-4'>
@@ -66,6 +67,13 @@ export default function ParameterDefinitionIndex({
           title='Parameter Definition'
           subheading='Add and manage parameter definition.'
           onAddClick={handleCreateClick}
+        />
+        <ParameterDefinitionSearchForm
+          parameterDomains={domains}
+          filters={{
+            search: '',
+            domain_id: '',
+          }}
         />
         <Table heads={tableHeads}>
           {parameter_definitions.map((item, index) => (
@@ -98,6 +106,14 @@ export default function ParameterDefinitionIndex({
           setShowModal={setParamterFormModal}
           show={paramterFormModal}
           parameterDefinition={parameterDefinitionToEdit ?? null}
+          domains={domains}
+        />
+      )}
+      {paramterDeleteModal && (
+        <DeleteModal
+          title='Delete Parameter Definition'
+          setShowModal={setParamterDeleteModal}
+          url={route('parameter-definition.destroy', ParametrDefinitionTODelete?.id)}
         />
       )}
     </AppLayout>
