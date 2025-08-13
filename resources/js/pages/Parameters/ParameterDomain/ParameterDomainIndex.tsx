@@ -1,6 +1,7 @@
 import ParameterDomainForm from '@/components/Parameter/ParameterDomain/ParameterDomainForm'
+import ParameterDomainSearchForm from '@/components/Parameter/ParameterDomain/ParameterDomainSearchForm'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { ParameterDomain } from '@/interfaces/paramater_types'
+import { ParameterDomain, SystemModule } from '@/interfaces/paramater_types'
 import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem } from '@/types'
 import DeleteButton from '@/ui/button/DeleteButton'
@@ -19,15 +20,20 @@ const tableHeads = [
   'Domain Name',
   'Description',
   'Domain Code',
-  'Managed By Module',
+  'System Module',
   'Actions',
 ]
 
 interface Props {
   domains: ParameterDomain[]
+  modules: SystemModule[]
+  filters: {
+    search: string
+    module_id: number
+  }
 }
 
-export default function ParameterDomainIndex({ domains }: Readonly<Props>) {
+export default function ParameterDomainIndex({ domains, modules, filters }: Readonly<Props>) {
   const [parameterDomainToEdit, setParameterDomainToEdit] = useState<ParameterDomain | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -72,6 +78,10 @@ export default function ParameterDomainIndex({ domains }: Readonly<Props>) {
           subheading='Add and manage parameter domains.'
           onAddClick={handleCreateClick}
         />
+        <ParameterDomainSearchForm
+          systemModules={modules}
+          filters={filters}
+        />
 
         <Table heads={tableHeads}>
           {domains.map((item, index) => (
@@ -81,7 +91,7 @@ export default function ParameterDomainIndex({ domains }: Readonly<Props>) {
               <TableCell>{item.domain_name}</TableCell>
               <TableCell>{item.description}</TableCell>
               <TableCell>{item.domain_code}</TableCell>
-              <TableCell>{item.managed_by_module_name}</TableCell>
+              <TableCell>{item.system_module?.name}</TableCell>
               <TableCell>
                 <div className='flex space-x-3'>
                   <EditButton onClick={() => handleEditClick(item)} />
@@ -100,6 +110,7 @@ export default function ParameterDomainIndex({ domains }: Readonly<Props>) {
               setShowModal={setShowModal}
               show={showModal}
               parameterDomain={parameterDomainToEdit ?? undefined}
+              modules={modules}
             />
           )}
         </AnimatePresence>
