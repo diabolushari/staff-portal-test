@@ -21,6 +21,18 @@ class ListParameterDomainsRequest extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>int32 page_size = 2;</code>
      */
     protected $page_size = 0;
+    /**
+     * optional: case-insensitive match on code/name/description
+     *
+     * Generated from protobuf field <code>optional string search = 3;</code>
+     */
+    protected $search = null;
+    /**
+     * optional: filter by managed_by_module
+     *
+     * Generated from protobuf field <code>optional int64 module_id = 4;</code>
+     */
+    protected $module_id = null;
 
     /**
      * Constructor.
@@ -30,6 +42,10 @@ class ListParameterDomainsRequest extends \Google\Protobuf\Internal\Message
      *
      *     @type int $page
      *     @type int $page_size
+     *     @type string $search
+     *           optional: case-insensitive match on code/name/description
+     *     @type int|string $module_id
+     *           optional: filter by managed_by_module
      * }
      */
     public function __construct($data = NULL) {
@@ -77,6 +93,78 @@ class ListParameterDomainsRequest extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkInt32($var);
         $this->page_size = $var;
+
+        return $this;
+    }
+
+    /**
+     * optional: case-insensitive match on code/name/description
+     *
+     * Generated from protobuf field <code>optional string search = 3;</code>
+     * @return string
+     */
+    public function getSearch()
+    {
+        return isset($this->search) ? $this->search : '';
+    }
+
+    public function hasSearch()
+    {
+        return isset($this->search);
+    }
+
+    public function clearSearch()
+    {
+        unset($this->search);
+    }
+
+    /**
+     * optional: case-insensitive match on code/name/description
+     *
+     * Generated from protobuf field <code>optional string search = 3;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setSearch($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->search = $var;
+
+        return $this;
+    }
+
+    /**
+     * optional: filter by managed_by_module
+     *
+     * Generated from protobuf field <code>optional int64 module_id = 4;</code>
+     * @return int|string
+     */
+    public function getModuleId()
+    {
+        return isset($this->module_id) ? $this->module_id : 0;
+    }
+
+    public function hasModuleId()
+    {
+        return isset($this->module_id);
+    }
+
+    public function clearModuleId()
+    {
+        unset($this->module_id);
+    }
+
+    /**
+     * optional: filter by managed_by_module
+     *
+     * Generated from protobuf field <code>optional int64 module_id = 4;</code>
+     * @param int|string $var
+     * @return $this
+     */
+    public function setModuleId($var)
+    {
+        GPBUtil::checkInt64($var);
+        $this->module_id = $var;
 
         return $this;
     }

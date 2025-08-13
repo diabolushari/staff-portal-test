@@ -29,24 +29,25 @@ class ParameterDomainService
     /**
      * Get paginated list of parameter domains
      */
-    public function getParameterDomains(int $page = 1, int $pageSize = 10): GrpcServiceResponse
+    public function getParameterDomains(int $page, int $pageSize, ?string $search, ?int $moduleId): GrpcServiceResponse
     {
         $request = new ListParameterDomainsRequest;
-        $request->setPage($page);
-        $request->setPageSize($pageSize);
+        $request->setPage($page ?? 1);
+        $request->setPageSize($pageSize ?? 10);
+
+        if ($search !== null) {
+            $request->setSearch($search);
+        }
+
+        if ($moduleId !== null && $moduleId > 0) {
+            $request->setModuleId($moduleId);
+        }
 
         [$response, $status] = $this->client->ListParameterDomains($request)->wait();
 
-        if ($status->code !== 0) {
-            $errorResponse = GrpcErrorService::handleErrorResponse($status);
-
-            return GrpcServiceResponse::error(
-                $errorResponse,
-                $response,
-                $status->code,
-                $status->details,
-                []
-            );
+        $errorResponse = GrpcErrorService::handleErrorResponse($status);
+        if ($errorResponse !== null) {
+            return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
         }
 
         $domains = $response?->getDomains();
@@ -54,12 +55,21 @@ class ParameterDomainService
 
         if ($domains) {
             foreach ($domains as $domain) {
+                $systemModule = $domain->getSystemModule();
+                $systemModuleArray = null;
+                if ($systemModule) {
+                    $systemModuleArray = [
+                        'id' => $systemModule->getId(),
+                        'name' => $systemModule->getName(),
+                    ];
+                }
                 $domainsArray[] = [
                     'id' => $domain->getId(),
                     'domain_name' => $domain->getDomainName(),
                     'description' => $domain->getDescription(),
                     'domain_code' => $domain->getDomainCode(),
                     'managed_by_module' => $domain->getManagedByModule(),
+                    'system_module' => $systemModuleArray,
                 ];
             }
         }
@@ -77,26 +87,27 @@ class ParameterDomainService
 
         [$response, $status] = $this->client->GetParameterDomain($request)->wait();
 
-        if ($status->code !== 0) {
-            $errorResponse = GrpcErrorService::handleErrorResponse($status);
-
-            return GrpcServiceResponse::error(
-                $errorResponse,
-                $response,
-                $status->code,
-                $status->details,
-                []
-            );
+        $errorResponse = GrpcErrorService::handleErrorResponse($status);
+        if ($errorResponse !== null) {
+            return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
         }
 
         $domain = $response;
-
+        $systemModule = $domain?->getSystemModule();
+        $systemModuleArray = null;
+        if ($systemModule) {
+            $systemModuleArray = [
+                'id' => $systemModule->getId(),
+                'name' => $systemModule->getName(),
+            ];
+        }
         $domainArray = [
             'id' => $domain->getId(),
             'domain_name' => $domain->getDomainName(),
             'description' => $domain->getDescription(),
             'domain_code' => $domain->getDomainCode(),
             'managed_by_module' => $domain->getManagedByModule(),
+            'system_module' => $systemModuleArray,
         ];
 
         return GrpcServiceResponse::success($domainArray, $response, $status->code, $status->details);
