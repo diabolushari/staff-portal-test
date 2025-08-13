@@ -6,17 +6,24 @@ export const getFormStyle = (style: 'normal' | 'bottom-border' | 'dark') => {
   switch (style) {
     case 'normal': {
       return (
-        ' rounded-lg border border-gray-300 py-3 pl-3 text-sm text-gray-800\n' +
-        '            shadow-xs focus:border-indigo-700 focus:outline-hidden disabled:bg-gray-100'
+        'rounded-lg border border-gray-300 py-3 pl-3 text-sm text-gray-800 shadow-xs ' +
+        'focus:border-indigo-700 focus:outline-hidden disabled:bg-gray-100 ' +
+        'dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-indigo-500 dark:disabled:bg-gray-700'
       )
     }
     case 'bottom-border': {
-      return `mt-0 block w-full border-0 border-b-2 border-gray-200
-        px-0.5 font-nav text-sm focus:border-black focus:ring-0`
+      return (
+        'mt-0 block w-full border-0 border-b-2 border-gray-200 px-0.5 font-nav text-sm ' +
+        'focus:border-black focus:ring-0 dark:border-gray-600 dark:text-gray-300 dark:focus:border-indigo-500'
+      )
     }
 
     case 'dark': {
-      return 'flex h-11 items-center rounded-sm border border-gray-300 bg-white pr-20 pl-10 text-sm body-1stop text-gray-600 shadow-sm focus:border focus:border-indigo-700 focus:outline-hidden dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 sm:pr-52'
+      return (
+        'flex h-11 items-center rounded-sm border border-gray-300 bg-white pr-20 pl-10 text-sm body-1stop ' +
+        'text-gray-600 shadow-sm focus:border-indigo-700 focus:outline-hidden ' +
+        'dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 sm:pr-52'
+      )
     }
     default: {
       return ''
@@ -47,7 +54,9 @@ export default function Input({
   return (
     <>
       {label != null && (
-        <label className='small-1stop mb-1 tracking-normal text-gray-800'>{label}</label>
+        <label className='small-1stop mb-1 tracking-normal text-gray-800 dark:text-gray-200'>
+          {label}
+        </label>
       )}
       <input
         type={type}

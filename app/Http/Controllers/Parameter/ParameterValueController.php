@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Parameter;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Parameters\ParameterValueFormRequest;
+use App\Services\Grpc\GrpcErrorService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -17,12 +18,15 @@ use Proto\Parameters\ListParameterValuesRequest;
 
 use Grpc\ChannelCredentials;
 use Proto\Parameters\ListParameterDefinitionsRequest;
+use Proto\Parameters\ListParameterDomainsRequest;
 use Proto\Parameters\ParameterDefinitionServiceClient;
+use Proto\Parameters\ParameterDomainServiceClient;
 
 class ParameterValueController extends Controller
 {
     private $parameterDefinitionClient;
     private $client;
+    private $parameterDomainClient;
 
     public function __construct()
     {
@@ -30,6 +34,9 @@ class ParameterValueController extends Controller
             'credentials' => ChannelCredentials::createInsecure()
         ]);
         $this->client = new ParameterValueServiceClient(env('GRPC_HOST'), [
+            'credentials' => ChannelCredentials::createInsecure()
+        ]);
+        $this->parameterDomainClient = new ParameterDomainServiceClient(env('GRPC_HOST'), [
             'credentials' => ChannelCredentials::createInsecure()
         ]);
     }
@@ -43,25 +50,26 @@ class ParameterValueController extends Controller
 
         list($res, $status) = $this->client->GetParameterValue($req)->wait();
 
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         $value = [
             'id' => $res->getId(),
-            'parameter_code' => $res->getParameterCode(),
-            'parameter_value' => $res->getParameterValue(),
-            'definition_id' => $res->getDefinitionId(),
-            'parent_id' => $res->getParentId(),
-            'attribute1_value' => $res->getAttribute1Value(),
-            'attribute2_value' => $res->getAttribute2Value(),
-            'attribute3_value' => $res->getAttribute3Value(),
-            'attribute4_value' => $res->getAttribute4Value(),
-            'attribute5_value' => $res->getAttribute5Value(),
-            'effective_start_date' => $res->getEffectiveStartDate(),
-            'effective_end_date' => $res->getEffectiveEndDate(),
+            'parameterCode' => $res->getParameterCode(),
+            'parameterValue' => $res->getParameterValue(),
+            'definitionId' => $res->getDefinitionId(),
+            'parentId' => $res->getParentId(),
+            'attribute1Value' => $res->getAttribute1Value(),
+            'attribute2Value' => $res->getAttribute2Value(),
+            'attribute3Value' => $res->getAttribute3Value(),
+            'attribute4Value' => $res->getAttribute4Value(),
+            'attribute5Value' => $res->getAttribute5Value(),
+            'effectiveStartDate' => $res->getEffectiveStartDate(),
+            'effectiveEndDate' => $res->getEffectiveEndDate(),
             'is_active' => $res->getIsActive(),
-            'sort_priority' => $res->getSortPriority(),
+            'sortPriority' => $res->getSortPriority(),
             'notes' => $res->getNotes(),
         ];
 
@@ -73,58 +81,103 @@ class ParameterValueController extends Controller
 
     public function index(Request $request)
     {
+
         $page = $request->input('page', 1);
         $pageSize = $request->input('page_size', 10);
+        $requestDomainName = $request->input('domainName');
+        $requestDefentionName = $request->input('defenitionName');
 
-        // 1. Fetch Parameter Definitions to get definition names
-        $definitionMap = [];
-        $defReq = new ListParameterDefinitionsRequest();
-        list($defRes, $defStatus) = $this->parameterDefinitionClient->ListParameterDefinitions($defReq)->wait();
+        $parameterDomainRequest = new ListParameterDomainsRequest();
+        [$parameterDomainResponse, $parameterDomainStatus] = $this->parameterDomainClient
+            ->ListParameterDomains($parameterDomainRequest)
+            ->wait();
 
-        if ($defStatus->code === \Grpc\STATUS_OK) {
-            foreach ($defRes->getDefinitions() as $definition) {
-                $definitionMap[$definition->getId()] = $definition->getParameterName(); // or ->getDefinitionName() if available
-            }
+        if ($parameterDomainStatus->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($parameterDomainStatus);
+            return redirect()->back()->withErrors($errors);
         }
 
-        // 2. Fetch Parameter Values
+
+        $domains = [];
+        foreach ($parameterDomainResponse->getDomains() as $domain) {
+            $domains[] = json_decode($domain->serializeToJsonString(), true);
+        }
+
+
+        $definitionMap = [];
+        $definitions = [];
+
+        $defReq = new ListParameterDefinitionsRequest();
+        [$defRes, $defStatus] = $this->parameterDefinitionClient
+            ->ListParameterDefinitions($defReq)
+            ->wait();
+
+        if ($defStatus->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($defStatus);
+            return redirect()->back()->withErrors($errors);
+        }
+
+        foreach ($defRes->getDefinitions() as $definition) {
+            $defArr = json_decode($definition->serializeToJsonString(), true);
+            $definitions[] = $defArr;
+
+            // Store name by ID for lookup
+            $definitionMap[$defArr['id']] = $defArr['definition_name'] ?? '—';
+        }
+
+        // 3. Fetch Parameter Values
+
         $req = new ListParameterValuesRequest();
         $req->setPage($page);
         $req->setPageSize($pageSize);
+        $req->setDomainName($requestDomainName);
+        $req->setParameterName($requestDefentionName);
 
-        list($res, $status) = $this->client->ListParameterValues($req)->wait();
+        [$res, $status] = $this->client->ListParameterValues($req)->wait();
 
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
-        // 3. Map values with definition name
+        // 4. Map values with definition name
         $values = [];
+        $res->getValues();
+
+
         foreach ($res->getValues() as $value) {
             $definitionId = $value->getDefinitionId();
-            $definitionName = $definitionMap[$definitionId] ?? '—'; // fallback if not found
+            $definitionName = $definitionMap[$definitionId] ?? '—';
 
             $values[] = [
                 'id' => $value->getId(),
-                'parameter_code' => $value->getParameterCode(),
-                'parameter_value' => $value->getParameterValue(),
-                'definition_id' => $definitionId,
-                'definition_name' => $definitionName,
-                'attribute1_value' => $value->getAttribute1Value(),
-                'attribute2_value' => $value->getAttribute2Value(),
-                'attribute3_value' => $value->getAttribute3Value(),
-                'attribute4_value' => $value->getAttribute4Value(),
-                'attribute5_value' => $value->getAttribute5Value(),
+                'parameterCode' => $value->getParameterCode(),
+                'parameterValue' => $value->getParameterValue(),
+                'definitionId' => $definitionId,
+                'definitionName' => $definitionName,
+                'attribute1Value' => $value->getAttribute1Value(),
+                'attribute2Value' => $value->getAttribute2Value(),
+                'attribute3Value' => $value->getAttribute3Value(),
+                'attribute4Value' => $value->getAttribute4Value(),
+                'attribute5Value' => $value->getAttribute5Value(),
                 'effective_start_date' => $value->getEffectiveStartDate(),
                 'effective_end_date' => $value->getEffectiveEndDate(),
                 'is_active' => $value->getIsActive(),
-                'sort_priority' => $value->getSortPriority(),
+                'sortPriority' => $value->getSortPriority(),
                 'notes' => $value->getNotes(),
             ];
         }
 
+        // 5. Return all data to the frontend
         return Inertia::render('Parameters/ParameterValue/ParameterValueIndex', [
-            'values' => $values
+            'values' => $values,
+            'domains' => $domains,
+            'definitions' => $definitions,
+            'filters' => [
+                'domainName' => $request->input('domainName'),
+                'defenitionName' => $request->input('defenitionName'),
+            ],
+
         ]);
     }
 
@@ -141,25 +194,26 @@ class ParameterValueController extends Controller
 
         list($res, $status) = $this->client->GetParameterValue($req)->wait();
 
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         $value = [
             'id' => $res->getId(),
-            'parameter_code' => $res->getParameterCode(),
-            'parameter_value' => $res->getParameterValue(),
-            'definition_id' => $res->getDefinitionId(),
-            'parent_id' => $res->getParentId(),
-            'attribute1_value' => $res->getAttribute1Value(),
-            'attribute2_value' => $res->getAttribute2Value(),
-            'attribute3_value' => $res->getAttribute3Value(),
-            'attribute4_value' => $res->getAttribute4Value(),
-            'attribute5_value' => $res->getAttribute5Value(),
-            'effective_start_date' => $res->getEffectiveStartDate(),
-            'effective_end_date' => $res->getEffectiveEndDate(),
+            'parameterCode' => $res->getParameterCode(),
+            'parameterValue' => $res->getParameterValue(),
+            'definitionId' => $res->getDefinitionId(),
+            'parentId' => $res->getParentId(),
+            'attribute1Value' => $res->getAttribute1Value(),
+            'attribute2Value' => $res->getAttribute2Value(),
+            'attribute3Value' => $res->getAttribute3Value(),
+            'attribute4Value' => $res->getAttribute4Value(),
+            'attribute5Value' => $res->getAttribute5Value(),
+            'effectiveStartDate' => $res->getEffectiveStartDate(),
+            'effectiveEndDate' => $res->getEffectiveEndDate(),
             'is_active' => $res->getIsActive(),
-            'sort_priority' => $res->getSortPriority(),
+            'sortPriority' => $res->getSortPriority(),
             'notes' => $res->getNotes(),
         ];
 
@@ -193,8 +247,9 @@ class ParameterValueController extends Controller
         $req->setValue($proto);
 
         list($res, $status) = $this->client->CreateParameterValue($req)->wait();
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         return redirect()->back()->with(['message' => 'Parameter value created successfully.']);
@@ -226,8 +281,9 @@ class ParameterValueController extends Controller
         $req->setValue($proto);
 
         list($res, $status) = $this->client->UpdateParameterValue($req)->wait();
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         return redirect()->back()->with(['message' => 'Parameter value updated successfully.']);
@@ -240,8 +296,9 @@ class ParameterValueController extends Controller
 
         list($res, $status) = $this->client->DeleteParameterValue($req)->wait();
 
-        if ($status->code !== \Grpc\STATUS_OK) {
-            return response()->json(['error' => $status->details], 500);
+        if ($status->code !== 0) {
+            $errors = GrpcErrorService::convertToValidationError($status);
+            return redirect()->back()->withErrors($errors);
         }
 
         return redirect()->route('parameter-value.index')->with(['message' => 'Deleted successfully.']);

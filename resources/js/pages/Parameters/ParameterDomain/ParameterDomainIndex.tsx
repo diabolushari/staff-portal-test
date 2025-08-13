@@ -67,6 +67,7 @@ export default function ParameterDomainIndex({ domains }: Readonly<Props>) {
       <Head title='Parameter Domains' />
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <CardHeader
+          breadCrumb={breadcrumbs}
           title='Parameter Domains'
           subheading='Add and manage parameter domains.'
           onAddClick={handleCreateClick}
