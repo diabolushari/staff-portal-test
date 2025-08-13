@@ -35,6 +35,10 @@ class ParameterDomainProto extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>int64 managed_by_module = 5;</code>
      */
     protected $managed_by_module = 0;
+    /**
+     * Generated from protobuf field <code>.com.kseb.consumerservice.proto.modules.SystemModule system_module = 6;</code>
+     */
+    protected $system_module = null;
 
     /**
      * Constructor.
@@ -47,6 +51,7 @@ class ParameterDomainProto extends \Google\Protobuf\Internal\Message
      *     @type string $domain_name
      *     @type string $description
      *     @type int|string $managed_by_module
+     *     @type \Proto\Modules\SystemModule $system_module
      * }
      */
     public function __construct($data = NULL) {
@@ -160,6 +165,38 @@ class ParameterDomainProto extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkInt64($var);
         $this->managed_by_module = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>.com.kseb.consumerservice.proto.modules.SystemModule system_module = 6;</code>
+     * @return \Proto\Modules\SystemModule|null
+     */
+    public function getSystemModule()
+    {
+        return $this->system_module;
+    }
+
+    public function hasSystemModule()
+    {
+        return isset($this->system_module);
+    }
+
+    public function clearSystemModule()
+    {
+        unset($this->system_module);
+    }
+
+    /**
+     * Generated from protobuf field <code>.com.kseb.consumerservice.proto.modules.SystemModule system_module = 6;</code>
+     * @param \Proto\Modules\SystemModule $var
+     * @return $this
+     */
+    public function setSystemModule($var)
+    {
+        GPBUtil::checkMessage($var, \Proto\Modules\SystemModule::class);
+        $this->system_module = $var;
 
         return $this;
     }

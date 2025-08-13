@@ -10,6 +10,7 @@ export interface ParameterDomain {
   domain_code?: string
   managed_by_module?: number | string
   managed_by_module_name?: string
+  system_module?: Partial<SystemModule> | null
 }
 export interface ParameterDefinition {
   id: number | string

@@ -8,7 +8,7 @@ import DynamicSelectList from '@/ui/form/DynamicSelectList'
 import Input from '@/ui/form/Input'
 import TextArea from '@/ui/form/TextArea'
 import Modal from '@/ui/Modal/Modal'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 
 interface Props {
   title: string
@@ -45,15 +45,16 @@ export default function ParameterDomainForm({
     }
   }, [parameterDomain, setFormValue])
 
-  const { post, errors, loading } = useInertiaPost(
+  const onComplete = useCallback(() => {
+    setShowModal(false)
+  }, [setShowModal])
+
+  const { post, errors } = useInertiaPost(
     parameterDomain
       ? route('parameter-domain.update', parameterDomain.id)
       : route('parameter-domain.store'),
     {
-      showErrorToast: true,
-      onComplete: () => {
-        setShowModal(false)
-      },
+      onComplete: onComplete,
     }
   )
 

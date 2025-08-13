@@ -17,7 +17,12 @@ class ParameterDomainController extends Controller
         $page = $request->input('page', 1);
         $pageSize = $request->input('page_size', 10);
 
-        $response = $this->parameterDomainService->getParameterDomains($page, $pageSize);
+        $response = $this->parameterDomainService->getParameterDomains(
+            $page,
+            $pageSize,
+            $request->input('search'),
+            $request->input('module_id')
+        );
 
         if ($response->hasError()) {
             return $response->error;
@@ -39,6 +44,8 @@ class ParameterDomainController extends Controller
         if ($response->hasError()) {
             return $response->error;
         }
+
+        return $response->data;
 
         return Inertia::render('Parameters/ParameterDomain/ParameterDomainShow', [
             'domain' => $response->data,

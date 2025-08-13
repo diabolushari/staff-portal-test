@@ -8,8 +8,11 @@ NC='\033[0m' # No Color
 
 echo -e "${BLUE}🔄 Generating gRPC PHP files...${NC}"
 
-# Clean previous generation
-rm -rf generated/GPBMetadata generated/Proto
+# Clean previous generation (all namespaces)
+rm -rf generated/GPBMetadata generated/Proto generated/Com
+
+# Ensure output directory exists
+mkdir -p generated
 
 # Generate all proto files
 protoc \
@@ -21,11 +24,11 @@ protoc \
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✅ gRPC PHP files generated successfully!${NC}"
-    
+
     # Count generated files
     php_files=$(find generated/ -name "*.php" | wc -l)
     echo -e "${GREEN}📁 Generated ${php_files} PHP files${NC}"
-    
+
     # Refresh autoloader
     composer dump-autoload
     echo -e "${GREEN}🔄 Composer autoloader refreshed${NC}"
