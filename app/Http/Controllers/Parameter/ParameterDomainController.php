@@ -49,8 +49,8 @@ class ParameterDomainController extends Controller
                 'details' => $response->statusDetails,
             ],
             'filters' => [
-                'search' => $search,
-                'module_id' => $moduleId,
+                'search' => $request->input('search', ''),
+                'module_id' => $request->input('module_id', ''),
             ],
         ]);
     }

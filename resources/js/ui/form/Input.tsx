@@ -37,6 +37,7 @@ export default function Input({
   required = false,
   type = 'text',
   formatter,
+  showClearButton = false,
 }: FormFieldProp) {
   const handleKeydown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (preventFormSubmit && event.key === 'Enter') {
@@ -62,6 +63,15 @@ export default function Input({
         readOnly={readonly}
         required={required}
       />
+      {showClearButton && value && (
+        <button
+          type='button'
+          onClick={() => setValue('')}
+          className='absolute top-8 right-2 text-2xl text-gray-500 hover:text-red-500'
+        >
+          ✕
+        </button>
+      )}
       {error && <ErrorText>{error}</ErrorText>}
     </>
   )
