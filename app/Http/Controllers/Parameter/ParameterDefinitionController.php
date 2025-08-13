@@ -24,7 +24,7 @@ class ParameterDefinitionController extends Controller
         }
 
         return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionIndex', [
-            'parameterDefinitions' => $response->data,
+            'parameter_definitions' => $response->data,
             'grpcStatus' => [
                 'code' => $response->statusCode,
                 'details' => $response->statusDetails,
@@ -48,9 +48,6 @@ class ParameterDefinitionController extends Controller
             ],
         ]);
     }
-
-    
-    
 
     public function store(ParameterDefinitionFormRequest $request)
     {

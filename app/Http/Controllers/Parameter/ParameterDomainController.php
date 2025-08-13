@@ -22,6 +22,7 @@ class ParameterDomainController extends Controller
         if ($response->hasError()) {
             return $response->error;
         }
+        dd($response->data);
 
         return Inertia::render('Parameters/ParameterDomain/ParameterDomainIndex', [
             'domains' => $response->data,

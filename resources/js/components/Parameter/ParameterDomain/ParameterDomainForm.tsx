@@ -64,7 +64,7 @@ export default function ParameterDomainForm({
 
   return (
     <div>
-      <SubHeading>Create Parameter Domain</SubHeading>
+      <SubHeading>Parameter Domain</SubHeading>
       <Modal
         title={title}
         setShowModal={setShowModal}
