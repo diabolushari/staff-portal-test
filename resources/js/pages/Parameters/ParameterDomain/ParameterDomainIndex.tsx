@@ -1,4 +1,5 @@
 import ParameterDomainForm from '@/components/Parameter/ParameterDomain/ParameterDomainForm'
+import ParameterDomainSearchForm from '@/components/Parameter/ParameterDomain/ParameterDomainSearchForm'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { ParameterDomain, SystemModule } from '@/interfaces/paramater_types'
 import AppLayout from '@/layouts/app-layout'
@@ -35,6 +36,7 @@ export default function ParameterDomainIndex({ domains, modules }: Readonly<Prop
   const [parameterDomainToDelete, setParameterDomainToDelete] = useState<ParameterDomain | null>(
     null
   )
+  const [systemModuleId, setSystemModuleId] = useState<number | null>(null)
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -71,6 +73,10 @@ export default function ParameterDomainIndex({ domains, modules }: Readonly<Prop
           title='Parameter Domains'
           subheading='Add and manage parameter domains.'
           onAddClick={handleCreateClick}
+        />
+        <ParameterDomainSearchForm
+          systemModules={modules}
+          setSystemModuleId={setSystemModuleId}
         />
 
         <Table heads={tableHeads}>
