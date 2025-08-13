@@ -21,11 +21,14 @@ class ParameterDomainController extends Controller
         $page = $request->input('page', 1);
         $pageSize = $request->input('page_size', 10);
 
+        $search = $request->input('search');
+        $moduleId = $request->input('module_id') ? (int) $request->input('module_id') : null;
+
         $response = $this->parameterDomainService->getParameterDomains(
             $page,
             $pageSize,
-            $request->input('search'),
-            $request->input('module_id')
+            $search,
+            $moduleId
         );
 
         if ($response->hasError()) {
@@ -44,6 +47,10 @@ class ParameterDomainController extends Controller
             'grpcStatus' => [
                 'code' => $response->statusCode,
                 'details' => $response->statusDetails,
+            ],
+            'filters' => [
+                'search' => $search,
+                'module_id' => $moduleId,
             ],
         ]);
     }

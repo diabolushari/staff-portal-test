@@ -27,16 +27,19 @@ const tableHeads = [
 interface Props {
   domains: ParameterDomain[]
   modules: SystemModule[]
+  filters: {
+    search: string
+    module_id: number
+  }
 }
 
-export default function ParameterDomainIndex({ domains, modules }: Readonly<Props>) {
+export default function ParameterDomainIndex({ domains, modules, filters }: Readonly<Props>) {
   const [parameterDomainToEdit, setParameterDomainToEdit] = useState<ParameterDomain | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [parameterDomainToDelete, setParameterDomainToDelete] = useState<ParameterDomain | null>(
     null
   )
-  const [systemModuleId, setSystemModuleId] = useState<number | null>(null)
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -76,7 +79,7 @@ export default function ParameterDomainIndex({ domains, modules }: Readonly<Prop
         />
         <ParameterDomainSearchForm
           systemModules={modules}
-          setSystemModuleId={setSystemModuleId}
+          filters={filters}
         />
 
         <Table heads={tableHeads}>
