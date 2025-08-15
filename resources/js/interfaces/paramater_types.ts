@@ -22,6 +22,24 @@ export interface ParameterDefinition {
   attribute3_name?: string
   attribute4_name?: string
   attribute5_name?: string
-  domain_name?: string
+  domain?: {id: number, domain_name: string}
+}
+
+export interface ParameterValues {
+  id: number
+  parameter_code: string
+  parameter_value: string
+  definition_id: number
+  parent_id: number
+  attribute1_value: string
+  attribute2_value: string
+  attribute3_value: string
+  attribute4_value: string
+  attribute5_value: string
+  effective_start_date: string
+  effective_end_date: string
+  is_active: boolean
+  sort_priority: number
+  notes: string
 }
   

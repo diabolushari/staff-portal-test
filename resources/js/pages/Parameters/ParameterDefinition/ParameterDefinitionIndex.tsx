@@ -34,9 +34,14 @@ const tableHeads = [
 export default function ParameterDefinitionIndex({
   parameter_definitions,
   domains,
+  filters,
 }: {
   parameter_definitions: ParameterDefinition[]
   domains: ParameterDomain[]
+  filters: {
+    search: string
+    domain_name: string
+  }
 }) {
   const [parameterDefinitionToEdit, setParameterDefinitionToEdit] =
     useState<ParameterDefinition | null>(null)
@@ -70,10 +75,7 @@ export default function ParameterDefinitionIndex({
         />
         <ParameterDefinitionSearchForm
           parameterDomains={domains}
-          filters={{
-            search: '',
-            domain_id: '',
-          }}
+          filters={filters}
         />
         <Table heads={tableHeads}>
           {parameter_definitions.map((item, index) => (
@@ -81,7 +83,7 @@ export default function ParameterDefinitionIndex({
               <TableCell>{index + 1}</TableCell>
               <TableCell>{item.id}</TableCell>
               <TableCell>{item.parameter_name}</TableCell>
-              <TableCell>{item.domain_name}</TableCell>
+              <TableCell>{item.domain?.domain_name}</TableCell>
               <TableCell>{item.attribute1_name}</TableCell>
               <TableCell>{item.attribute2_name}</TableCell>
               <TableCell>{item.attribute3_name}</TableCell>

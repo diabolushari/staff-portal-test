@@ -2,37 +2,54 @@ syntax = "proto3";
 
 package com.kseb.consumerservice.proto.parameters;
 
+// Java options
+option java_multiple_files = true;
+option java_package        = "com.kseb.consumerservice.proto.parameters";
+option java_outer_classname = "ParameterDefinitionOuter";
+
+// PHP options
 option php_namespace = "Proto\\Parameters";
 option php_metadata_namespace = "GPBMetadata";
 
 import "google/protobuf/empty.proto";
+import "parameters/parameter-domain.proto";
 
 // ------------ MESSAGE ------------
 message ParameterDefinitionProto {
-  int64 id                       = 1;
-  int64 domain_id                = 2;
+  int64 id = 1;
+  int64 domain_id = 2;
   bool is_effective_date_driven = 3;
-  string parameter_name          = 4;
-  string attribute1_name         = 5;
-  string attribute2_name         = 6;
-  string attribute3_name         = 7;
-  string attribute4_name         = 8;
-  string attribute5_name         = 9;
+  string parameter_name = 4;
+  string attribute1_name = 5;
+  string attribute2_name = 6;
+  string attribute3_name = 7;
+  string attribute4_name = 8;
+  string attribute5_name = 9;
+  com.kseb.consumerservice.proto.parameters.ParameterDomainProto domain = 10;
 }
 
 // ------------ REQUEST/RESPONSE ------------
-message CreateParameterDefinitionRequest  { ParameterDefinitionProto definition = 1; }
-message UpdateParameterDefinitionRequest  { ParameterDefinitionProto definition = 1; }
-message GetParameterDefinitionRequest     { int64 id = 1; }
-message DeleteParameterDefinitionRequest  { int64 id = 1; }
-message ListParameterDefinitionsRequest   { int32 page = 1; int32 page_size = 2; }
-message ListParameterDefinitionsResponse  { repeated ParameterDefinitionProto definitions = 1; }
+message CreateParameterDefinitionRequest { ParameterDefinitionProto definition = 1; }
+message UpdateParameterDefinitionRequest { ParameterDefinitionProto definition = 1; }
+message GetParameterDefinitionRequest    { int64 id = 1; }
+message DeleteParameterDefinitionRequest { int64 id = 1; }
+
+message ListParameterDefinitionsRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  optional string search = 3;     // optional: case-insensitive match on code/name/description
+  optional string domain_name = 4;  // optional: filter by managed_by_module
+}
+
+message ListParameterDefinitionsResponse {
+  repeated ParameterDefinitionProto definitions = 1;
+}
 
 // ------------ SERVICE ------------
 service ParameterDefinitionService {
-  rpc CreateParameterDefinition (CreateParameterDefinitionRequest)  returns (ParameterDefinitionProto);
-  rpc GetParameterDefinition    (GetParameterDefinitionRequest)     returns (ParameterDefinitionProto);
-  rpc UpdateParameterDefinition (UpdateParameterDefinitionRequest)  returns (ParameterDefinitionProto);
-  rpc DeleteParameterDefinition (DeleteParameterDefinitionRequest)  returns (google.protobuf.Empty);
-  rpc ListParameterDefinitions  (ListParameterDefinitionsRequest)   returns (ListParameterDefinitionsResponse);
+  rpc CreateParameterDefinition (CreateParameterDefinitionRequest) returns (ParameterDefinitionProto);
+  rpc GetParameterDefinition    (GetParameterDefinitionRequest)    returns (ParameterDefinitionProto);
+  rpc UpdateParameterDefinition (UpdateParameterDefinitionRequest) returns (ParameterDefinitionProto);
+  rpc DeleteParameterDefinition (DeleteParameterDefinitionRequest) returns (google.protobuf.Empty);
+  rpc ListParameterDefinitions  (ListParameterDefinitionsRequest)  returns (ListParameterDefinitionsResponse);
 }

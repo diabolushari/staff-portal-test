@@ -20,8 +20,10 @@ class ParameterDefinitionController extends Controller
     {
         $page = $request->input('page', 1);
         $pageSize = $request->input('page_size', 10);
+        $domainName = $request->input('domain_name');
+        $search = $request->input('search');
         $domainsResponse = $this->parameterDomainService->getParameterDomains($page, $pageSize, null, null);
-        $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize);
+        $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, $domainName, $search);
 
         if ($response->hasError()) {
             return $response->error;
@@ -33,6 +35,10 @@ class ParameterDefinitionController extends Controller
             'grpcStatus' => [
                 'code' => $response->statusCode,
                 'details' => $response->statusDetails,
+            ],
+            'filters' => [
+                'domain_name' => $request->input('domain_name'),
+                'search' => $request->input('search'),
             ],
         ]);
     }

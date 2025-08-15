@@ -69,7 +69,7 @@ export default function Input({
             formatter ? setValue(formatter(event.target.value)) : setValue(event.target.value)
           }
           placeholder={placeholder}
-          className={getFormStyle(style) + ' pr-10'} // extra right padding so ✕ doesn’t overlap text
+          className={getFormStyle(style) + ' pr-4'}
           disabled={disabled}
           readOnly={readonly}
           required={required}

@@ -10,7 +10,7 @@ interface Props {
   parameterDomains: ParameterDomain[]
   filters: {
     search: string
-    domain_id: string
+    domain_name: string
   }
 }
 
@@ -19,7 +19,7 @@ export default function ParameterDefinitionSearchForm({
   filters,
 }: Readonly<Props>) {
   const { formData, setFormValue } = useCustomForm({
-    domain_id: filters.domain_id?.toString() ?? '',
+    domain_name: filters.domain_name ?? '',
     search: filters.search ?? '',
   })
 
@@ -32,13 +32,13 @@ export default function ParameterDefinitionSearchForm({
     <div>
       <form onSubmit={handleSubmit}>
         <div className='grid w-2/3 items-end gap-2 md:grid-cols-3'>
-          <div className='relative flex flex-col'>
+          <div className='flex flex-col'>
             <SelectList
               list={parameterDomains}
-              dataKey='id'
+              dataKey='domain_name'
               displayKey='domain_name'
-              setValue={setFormValue('domain_id')}
-              value={formData.domain_id}
+              setValue={setFormValue('domain_name')}
+              value={formData.domain_name}
               label='Parameter Domain'
               showAllOption
               allOptionText='All Domains'

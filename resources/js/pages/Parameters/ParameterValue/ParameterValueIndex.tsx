@@ -9,11 +9,7 @@ import { route } from 'ziggy-js'
 import SelectList from '@/ui/form/SelectList'
 import useCustomForm from '@/hooks/useCustomForm'
 import Button from '@/ui/button/Button'
-import {
-  ParameterDefinition,
-  ParameterDomain,
-  ParameterValues,
-} from '@/interfaces/paramater_service'
+import { ParameterDefinition, ParameterDomain, ParameterValues } from '@/interfaces/paramater_types'
 import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import DeleteModal from '@/ui/Modal/DeleteModal'
@@ -67,11 +63,6 @@ export default function ParameterValueIndex({
   const handleEditClick = (item: any) => {
     router.get(route('parameter-value.edit', item.id))
   }
-  const selectedDomain = domains.find((d) => d.domainName === formData.domainName)
-
-  const filteredDefinitions = selectedDomain
-    ? definitions.filter((def) => def.domainId === selectedDomain.id)
-    : definitions
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -93,8 +84,8 @@ export default function ParameterValueIndex({
                 setValue={setFormValue('domainName')}
                 value={formData.domainName}
                 list={domains}
-                dataKey='domainName'
-                displayKey='domainName'
+                dataKey='id'
+                displayKey='domain_name'
               />
               {formData.domainName && (
                 <button
@@ -112,9 +103,9 @@ export default function ParameterValueIndex({
                 label='Definition Name'
                 setValue={setFormValue('defenitionName')}
                 value={formData.defenitionName}
-                list={filteredDefinitions}
-                dataKey='parameterName'
-                displayKey='parameterName'
+                list={definitions}
+                dataKey='parameter_name'
+                displayKey='parameter_name'
               />
               {formData.defenitionName && (
                 <button
@@ -144,9 +135,9 @@ export default function ParameterValueIndex({
             <TableRow key={item.id}>
               <TableCell>{index + 1}</TableCell>
               <TableCell>{item.id}</TableCell>
-              <TableCell>{item.parameterCode}</TableCell>
-              <TableCell>{item.parameterValue}</TableCell>
-              <TableCell>{item.definitionName}</TableCell>
+              <TableCell>{item.parameter_code}</TableCell>
+              <TableCell>{item.parameter_value}</TableCell>
+              <TableCell>{item.definition_id}</TableCell>
               <TableCell>{item.notes}</TableCell>
               <TableCell>
                 <div className='flex space-x-2'>
@@ -167,7 +158,7 @@ export default function ParameterValueIndex({
         {showDeleteModal && editRow && (
           <DeleteModal
             setShowModal={setShowDeleteModal}
-            title={`Delete ${editRow.parameterValue}`}
+            title={`Delete ${editRow.parameter_value}`}
             url={route('parameter-value.destroy', editRow.id)}
           />
         )}
