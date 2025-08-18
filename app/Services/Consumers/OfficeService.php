@@ -24,9 +24,18 @@ class OfficeService
             ["credentials" => ChannelCredentials::createInsecure()]
         );
     }
-    public function getOffices(int $page = 1, int $pageSize = 10, ?string $search = null, ?string $officeType = null, ?string $officeName = null): GrpcServiceResponse
+    public function getOffices(int $page = 1, int $pageSize = 10, ?string $search, ?string $officeType, ?string $officeName): GrpcServiceResponse
     {
         $request = new OfficeListRequest();
+        if ($search !== null) {
+            $request->setSearch($search);
+        }
+        if ($officeType !== null) {
+            $request->setOfficeType($officeType);
+        }
+        if ($officeName !== null) {
+            $request->setOfficeName($officeName);
+        }
 
         [$response, $status] = $this->client->ListOffices($request)->wait();
         if ($status->code !== 0) {
