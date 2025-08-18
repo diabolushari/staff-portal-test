@@ -64,6 +64,7 @@ export default function ParameterDefinitionIndex({
     setParameterDefinitionToEdit(null)
     setParamterFormModal(true)
   }, [])
+  console.log(parameter_definitions)
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <div className='p-4'>
@@ -78,25 +79,29 @@ export default function ParameterDefinitionIndex({
           filters={filters}
         />
         <Table heads={tableHeads}>
-          {parameter_definitions.map((item, index) => (
-            <TableRow key={item.id}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>{item.id}</TableCell>
-              <TableCell>{item.parameter_name}</TableCell>
-              <TableCell>{item.domain?.domain_name}</TableCell>
-              <TableCell>{item.attribute1_name}</TableCell>
-              <TableCell>{item.attribute2_name}</TableCell>
-              <TableCell>{item.attribute3_name}</TableCell>
-              <TableCell>{item.attribute4_name}</TableCell>
-              <TableCell>{item.attribute5_name}</TableCell>
-              <TableCell>
-                <div className='flex space-x-3'>
-                  <EditButton onClick={() => handleEditClick(item)} />
-                  <DeleteButton onClick={() => handleDeleteClick(item)} />
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
+          {parameter_definitions && (
+            <>
+              {parameter_definitions.map((item, index) => (
+                <TableRow key={item.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{item.id}</TableCell>
+                  <TableCell>{item.parameter_name}</TableCell>
+                  <TableCell>{item.domain?.domain_name}</TableCell>
+                  <TableCell>{item.attribute1_name}</TableCell>
+                  <TableCell>{item.attribute2_name}</TableCell>
+                  <TableCell>{item.attribute3_name}</TableCell>
+                  <TableCell>{item.attribute4_name}</TableCell>
+                  <TableCell>{item.attribute5_name}</TableCell>
+                  <TableCell>
+                    <div className='flex space-x-3'>
+                      <EditButton onClick={() => handleEditClick(item)} />
+                      <DeleteButton onClick={() => handleDeleteClick(item)} />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </>
+          )}
         </Table>
       </div>
 

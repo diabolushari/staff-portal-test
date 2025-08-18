@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.consumers;
+
+option php_namespace = "Proto\\Consumers";
+option php_metadata_namespace = "GPBMetadata";
+
+// Imports
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// ------------ MESSAGE ------------
+
+message OrgElementAddressMessage {
+  int32 org_element_address_id = 1;
+  string address_line1 = 2;
+  string address_line2 = 3;
+  string city_town_village = 4;
+  string pincode = 5;
+  int32 district_id = 6;
+  int32 state_id = 7;
+  double latitude = 8;
+  double longitude = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+  int32 created_by = 12;
+  int32 updated_by = 13;
+}
+
+// ------------ REQUESTS ------------
+
+message OrgElementAddressCreateRequest {
+  string address_line1 = 1;
+  string address_line2 = 2;
+  string city_town_village = 3;
+  string pincode = 4;
+  int32 district_id = 5;
+  int32 state_id = 6;
+  double latitude = 7;
+  double longitude = 8;
+  int32 created_by = 9;
+  int32 updated_by = 10;
+}
+
+message OrgElementAddressUpdateRequest {
+  int32 org_element_address_id = 1;
+  string address_line1 = 2;
+  string address_line2 = 3;
+  string city_town_village = 4;
+  string pincode = 5;
+  int32 district_id = 6;
+  int32 state_id = 7;
+  double latitude = 8;
+  double longitude = 9;
+  int32 updated_by = 10;
+}
+
+// ------------ RESPONSES ------------
+
+message OrgElementAddressResponse {
+  OrgElementAddressMessage address = 1;
+}
+
+message OrgElementAddressListResponse {
+  repeated OrgElementAddressMessage addresses = 1;
+}
+
+// ------------ BY ID ------------
+
+message OrgElementAddressIdRequest {
+  int32 org_element_address_id = 1;
+}
+
+// ------------ SERVICE ------------
+
+service OrgElementAddressService {
+  rpc CreateOrgElementAddress(OrgElementAddressCreateRequest) returns (OrgElementAddressResponse);
+  rpc GetOrgElementAddressById(OrgElementAddressIdRequest) returns (OrgElementAddressResponse);
+  rpc ListOrgElementAddresses(google.protobuf.Empty) returns (OrgElementAddressListResponse);
+  rpc UpdateOrgElementAddress(OrgElementAddressUpdateRequest) returns (OrgElementAddressResponse);
+  rpc DeleteOrgElementAddress(OrgElementAddressIdRequest) returns (google.protobuf.Empty);
+}

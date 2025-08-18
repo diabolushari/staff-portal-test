@@ -13,7 +13,7 @@ export interface ParameterDomain {
   system_module?: Partial<SystemModule> | null
 }
 export interface ParameterDefinition {
-  id: number | string
+  id: number
   parameter_name: string
   domain_id: number
   is_effective_date_driven: boolean

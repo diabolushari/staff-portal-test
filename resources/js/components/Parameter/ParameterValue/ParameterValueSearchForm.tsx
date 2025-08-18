@@ -1,5 +1,5 @@
 import useCustomForm from '@/hooks/useCustomForm'
-import { ParameterDomain } from '@/interfaces/paramater_types'
+import { ParameterDefinition, ParameterDomain } from '@/interfaces/paramater_types'
 import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
@@ -8,24 +8,28 @@ import { route } from 'ziggy-js'
 
 interface Props {
   parameterDomains: ParameterDomain[]
+  parameterDefinitions: ParameterDefinition[]
   filters: {
     search: string
     domain_name: string
+    parameter_name: string
   }
 }
 
-export default function ParameterDefinitionSearchForm({
+export default function ParameterValueSearchForm({
   parameterDomains,
+  parameterDefinitions,
   filters,
 }: Readonly<Props>) {
   const { formData, setFormValue } = useCustomForm({
     domain_name: filters.domain_name ?? '',
+    parameter_name: filters.parameter_name ?? '',
     search: filters.search ?? '',
   })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    router.get(route('parameter-definition.index', formData))
+    router.get(route('parameter-value.index', formData))
   }
 
   return (
@@ -43,6 +47,21 @@ export default function ParameterDefinitionSearchForm({
                 label='Parameter Domain'
                 showAllOption
                 allOptionText='All Domains'
+              />
+            )}
+          </div>
+
+          <div className='flex flex-col'>
+            {parameterDefinitions && (
+              <SelectList
+                list={parameterDefinitions}
+                dataKey='parameter_name'
+                displayKey='parameter_name'
+                setValue={setFormValue('parameter_name')}
+                value={formData.parameter_name}
+                label='Parameter Definition'
+                showAllOption
+                allOptionText='All Definitions'
               />
             )}
           </div>

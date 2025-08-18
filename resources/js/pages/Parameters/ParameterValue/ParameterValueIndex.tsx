@@ -13,6 +13,7 @@ import { ParameterDefinition, ParameterDomain, ParameterValues } from '@/interfa
 import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import ParameterValueSearchForm from '@/components/Parameter/ParameterValue/ParameterValueSearchForm'
 
 const columns = [
   'S.No',
@@ -41,13 +42,15 @@ export default function ParameterValueIndex({
   domains: ParameterDomain[]
   definitions: ParameterDefinition[]
   filters: {
-    domainName: string
-    defenitionName: string
+    domain_name: string
+    parameter_name: string
+    search: string
   }
 }) {
   const { formData, setFormValue } = useCustomForm({
-    domainName: filters.domainName ?? '',
-    defenitionName: filters.defenitionName ?? '',
+    domain_name: filters.domain_name ?? '',
+    parameter_name: filters.parameter_name ?? '',
+    search: filters.search ?? '',
   })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [editRow, setEditRow] = useState<ParameterValues | null>(null)
@@ -73,59 +76,11 @@ export default function ParameterValueIndex({
           addUrl={route('parameter-value.create')}
         />
 
-        <form
-          onSubmit={handleSubmit}
-          className='w-1/2'
-        >
-          <div className='grid grid-cols-3 gap-4'>
-            <div className='relative flex flex-col'>
-              <SelectList
-                label='Domain Name'
-                setValue={setFormValue('domainName')}
-                value={formData.domainName}
-                list={domains}
-                dataKey='id'
-                displayKey='domain_name'
-              />
-              {formData.domainName && (
-                <button
-                  type='button'
-                  onClick={() => setFormValue('domainName')('')}
-                  className='absolute top-9 right-2 text-lg text-gray-500 hover:text-red-600'
-                >
-                  ×
-                </button>
-              )}
-            </div>
-
-            <div className='relative flex flex-col'>
-              <SelectList
-                label='Definition Name'
-                setValue={setFormValue('defenitionName')}
-                value={formData.defenitionName}
-                list={definitions}
-                dataKey='parameter_name'
-                displayKey='parameter_name'
-              />
-              {formData.defenitionName && (
-                <button
-                  type='button'
-                  onClick={() => setFormValue('defenitionName')('')}
-                  className='absolute top-9 right-2 text-lg text-gray-500 hover:text-red-600'
-                >
-                  ×
-                </button>
-              )}
-            </div>
-
-            <div className='flex items-end'>
-              <Button
-                label='Search'
-                type='submit'
-              />
-            </div>
-          </div>
-        </form>
+        <ParameterValueSearchForm
+          parameterDomains={domains}
+          parameterDefinitions={definitions}
+          filters={filters}
+        />
 
         <CustomTable
           columns={columns}

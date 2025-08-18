@@ -1,7 +1,7 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { Office } from '@/interfaces/consumers'
-import { ParameterValues } from '@/interfaces/paramater_service'
+import { ParameterValues } from '@/interfaces/paramater_types'
 import AppLayout from '@/layouts/app-layout'
 import Heading from '@/typography/Heading'
 import Button from '@/ui/button/Button'
@@ -22,35 +22,36 @@ export default function OfficeForm({
   office?: Office
 }) {
   const { formData: contactFolioForm, setFormValue: setContactFolioValue } = useCustomForm({
-    phone: office?.contactFolio?.phone ?? '',
-    email: office?.contactFolio?.email ?? '',
-    name: office?.contactFolio?.name ?? '',
-    address: office?.contactFolio?.address ?? '',
+    phone: office?.contact_folio?.phone ?? '',
+    email: office?.contact_folio?.email ?? '',
+    name: office?.contact_folio?.name ?? '',
+    address: office?.contact_folio?.address ?? '',
   })
 
   const { formData, setFormValue } = useCustomForm({
-    officeCode: office?.officeCode ?? 0,
-    officeDescription: office?.officeDescription ?? '',
-    officeTypeId: office?.officeTypeId ?? '',
-    parentOfficeId: office?.parentOfficeId ?? '',
-    effectiveStartDate: office?.effectiveStart
-      ? new Date(office.effectiveStart).toISOString().split('T')[0]
+    office_name: office?.office_name ?? '',
+    office_code: office?.office_code ?? 0,
+    office_description: office?.office_description ?? '',
+    office_type_id: office?.office_type_id ?? '',
+    parent_office_id: office?.parent_office_id ?? '',
+    effective_start: office?.effective_start
+      ? new Date(office.effective_start).toISOString().split('T')[0]
       : '',
-    effectiveEndDate: office?.effectiveEnd
-      ? new Date(office.effectiveEnd).toISOString().split('T')[0]
+    effective_end: office?.effective_end
+      ? new Date(office.effective_end).toISOString().split('T')[0]
       : '',
-    contactFolio: office?.contactFolio ?? {},
+    contact_folio: office?.contact_folio ?? {},
   })
 
   useEffect(() => {
-    if (contactFolioForm.phone) setFormValue('contactFolio', contactFolioForm)
-    if (contactFolioForm.email) setFormValue('contactFolio', contactFolioForm)
-    if (contactFolioForm.name) setFormValue('contactFolio', contactFolioForm)
-    if (contactFolioForm.address) setFormValue('contactFolio', contactFolioForm)
+    if (contactFolioForm.phone) setFormValue('contact_folio', contactFolioForm)
+    if (contactFolioForm.email) setFormValue('contact_folio', contactFolioForm)
+    if (contactFolioForm.name) setFormValue('contact_folio', contactFolioForm)
+    if (contactFolioForm.address) setFormValue('contact_folio', contactFolioForm)
   }, [])
 
   const { post, errors, loading } = useInertiaPost(
-    office ? route('offices.update', office.officeId) : route('offices.store'),
+    office ? route('offices.update', office.id) : route('offices.store'),
     {
       onComplete: () => {
         router.visit(route('offices.index'))
@@ -59,7 +60,7 @@ export default function OfficeForm({
   )
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    const completeFormData = { ...formData, contactFolio: contactFolioForm }
+    const completeFormData = { ...formData, contact_folio: contactFolioForm }
 
     e.preventDefault()
     post(office ? { ...completeFormData, _method: 'PUT' } : completeFormData)
@@ -76,47 +77,57 @@ export default function OfficeForm({
           <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
             <div className='flex flex-col'>
               <Input
+                label='Office Name'
+                setValue={setFormValue('office_name')}
+                value={formData.office_name}
+                placeholder='Type your Office Name'
+                error={errors?.office_name}
+                type='text'
+              />
+            </div>
+            <div className='flex flex-col'>
+              <Input
                 label='Office Code'
-                setValue={setFormValue('officeCode')}
-                value={formData.officeCode}
+                setValue={setFormValue('office_code')}
+                value={formData.office_code}
                 placeholder='Type your Office Code'
-                error={errors?.officeCode}
+                error={errors?.office_code}
                 type='number'
               />
             </div>
             <div className='flex flex-col'>
               <TextArea
                 label='Office Description'
-                setValue={setFormValue('officeDescription')}
-                value={formData.officeDescription}
+                setValue={setFormValue('office_description')}
+                value={formData.office_description}
                 placeholder='Type your Office Description'
-                error={errors?.officeDescription}
+                error={errors?.office_description}
               />
             </div>
             <div className='flex flex-col'>
               <SelectList
                 label='Office Type'
-                setValue={setFormValue('officeTypeId')}
-                value={formData.officeTypeId}
+                setValue={setFormValue('office_type_id')}
+                value={formData.office_type_id}
                 placeholder='Select Office Type'
-                error={errors?.officeTypeId}
+                error={errors?.office_type_id}
                 dataKey='id'
-                displayKey='parameterValue'
+                displayKey='parameter_value'
                 list={parameterValues}
               />
             </div>
             <div className='flex flex-col'>
-              {formData.officeTypeId && Number(formData.officeTypeId) > 1 && (
+              {formData.office_type_id && Number(formData.office_type_id) > 1 && (
                 <ComboBox
                   label='Parrent Office'
-                  url={`/api/offices?officeTypeId=${formData.officeTypeId}&q=`}
-                  setValue={setFormValue('parentOfficeId')}
-                  value={formData.parentOfficeId}
+                  url={`/api/offices?officeTypeId=${formData.office_type_id}&q=`}
+                  setValue={setFormValue('parent_office_id')}
+                  value={formData.parent_office_id}
                   placeholder='Select Parrent Office'
-                  error={errors?.parentOfficeId}
-                  dataKey='officeId'
-                  displayKey='officeCode'
-                  displayValue2='officeCode'
+                  error={errors?.parent_office_id}
+                  dataKey='id'
+                  displayKey='office_code'
+                  displayValue2='office_code'
                 />
               )}
             </div>
@@ -167,11 +178,11 @@ export default function OfficeForm({
                 label='Effective Start  Date'
                 setValue={(date: string) => {
                   console.debug('Start Date changed:', date)
-                  setFormValue('effectiveStartDate')(date)
+                  setFormValue('effective_start')(date)
                 }}
-                value={formData.effectiveStartDate}
+                value={formData.effective_start}
                 placeholder='Select Effective Start Date'
-                error={errors?.effectiveStartDate}
+                error={errors?.effective_start}
               />
             </div>
             <div className='flex flex-col'>
@@ -179,11 +190,11 @@ export default function OfficeForm({
                 label='Effective End Date'
                 setValue={(date: string) => {
                   console.debug('End Date changed:', date)
-                  setFormValue('effectiveEndDate')(date)
+                  setFormValue('effective_end')(date)
                 }}
-                value={formData.effectiveEndDate}
+                value={formData.effective_end}
                 placeholder='Select Effective End Date'
-                error={errors?.effectiveEndDate}
+                error={errors?.effective_end}
               />
             </div>
           </div>
