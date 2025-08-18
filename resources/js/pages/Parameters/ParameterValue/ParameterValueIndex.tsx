@@ -66,7 +66,7 @@ export default function ParameterValueIndex({
   const handleEditClick = (item: any) => {
     router.get(route('parameter-value.edit', item.id))
   }
-
+  console.log(values)
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>

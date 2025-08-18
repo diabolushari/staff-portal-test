@@ -6,6 +6,7 @@ option php_namespace = "Proto\\Parameters";
 option php_metadata_namespace = "GPBMetadata";
 
 import "google/protobuf/empty.proto";
+import "parameters/parameter-definition.proto"; 
 
 // ----------- MESSAGE ------------
 message ParameterValueProto {
@@ -24,6 +25,7 @@ message ParameterValueProto {
   bool   is_active            = 13;
   int32  sort_priority        = 14;
   string notes                = 15;
+  ParameterDefinitionProto definition = 16; 
 }
 
 // ----------- REQUEST/RESPONSE ------------
@@ -46,8 +48,8 @@ message DeleteParameterValueRequest {
 message ListParameterValuesRequest {
   int32 page = 1;
   int32 page_size = 2;
-  string domain_name = 3;         // ✅ Added back
-  string parameter_name = 4;      // ✅ Added back
+  string domain_name = 3;
+  string parameter_name = 4;
 }
 
 message ListParameterValuesResponse {

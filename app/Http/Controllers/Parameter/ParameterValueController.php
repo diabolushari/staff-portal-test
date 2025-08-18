@@ -42,7 +42,7 @@ class ParameterValueController extends Controller
         $value = $this->parameterValueService->getParameterValue($id);
 
         return Inertia::render('Parameters/ParameterValue/ParameterValueCreate', [
-            'data' => $value
+            'parameter_value' => $value->data
         ]);
     }
 
@@ -83,36 +83,12 @@ class ParameterValueController extends Controller
 
     public function show($id)
     {
-        $req = new GetParameterValueRequest();
-        $req->setId($id);
-
-        list($res, $status) = $this->client->GetParameterValue($req)->wait();
-
-        if ($status->code !== 0) {
-            $errors = GrpcErrorService::convertToValidationError($status);
-            return redirect()->back()->withErrors($errors);
+        $value = $this->parameterValueService->getParameterValue($id);
+        if ($value->hasError()) {
+            return $value->error;
         }
-
-        $value = [
-            'id' => $res->getId(),
-            'parameterCode' => $res->getParameterCode(),
-            'parameterValue' => $res->getParameterValue(),
-            'definitionId' => $res->getDefinitionId(),
-            'parentId' => $res->getParentId(),
-            'attribute1Value' => $res->getAttribute1Value(),
-            'attribute2Value' => $res->getAttribute2Value(),
-            'attribute3Value' => $res->getAttribute3Value(),
-            'attribute4Value' => $res->getAttribute4Value(),
-            'attribute5Value' => $res->getAttribute5Value(),
-            'effectiveStartDate' => $res->getEffectiveStartDate(),
-            'effectiveEndDate' => $res->getEffectiveEndDate(),
-            'is_active' => $res->getIsActive(),
-            'sortPriority' => $res->getSortPriority(),
-            'notes' => $res->getNotes(),
-        ];
-
         return Inertia::render('Parameters/ParameterValue/ParameterValueShow', [
-            'data' => $value
+            'parameter_value' => $value->data
         ]);
     }
 
@@ -136,36 +112,21 @@ class ParameterValueController extends Controller
 
     public function update(ParameterValueFormRequest $request, $id)
     {
-        if (!$request->effectiveStartDate) {
-            $request->effectiveStartDate = date('Y-m-d');
-        }
-        $proto = new ParameterValueProto();
-        $proto->setId($id);
-        $proto->setParameterCode($request->parameterCode);
-        $proto->setParameterValue($request->parameterValue);
-        $proto->setDefinitionId($request->definitionId);
-        $proto->setParentId($request->parentParameterValue ?? 0);
-        $proto->setAttribute1Value($request->attribute1Value ?? '');
-        $proto->setAttribute2Value($request->attribute2Value ?? '');
-        $proto->setAttribute3Value($request->attribute3Value ?? '');
-        $proto->setAttribute4Value($request->attribute4Value ?? '');
-        $proto->setAttribute5Value($request->attribute5Value ?? '');
-        $proto->setEffectiveStartDate($request->effectiveStartDate);
-        $proto->setEffectiveEndDate($request->effectiveEndDate ?? '');
-        $proto->setIsActive($request->isActive ?? true);
-        $proto->setSortPriority($request->sortPriority ?? 0);
-        $proto->setNotes($request->notes ?? '');
 
-        $req = new UpdateParameterValueRequest();
-        $req->setValue($proto);
+        $response = $this->parameterValueService->updateParameterValue($request, $id);
 
-        list($res, $status) = $this->client->UpdateParameterValue($req)->wait();
-        if ($status->code !== 0) {
-            $errors = GrpcErrorService::convertToValidationError($status);
-            return redirect()->back()->withErrors($errors);
+        if ($response->hasError()) {
+            return $response->error;
         }
 
-        return redirect()->back()->with(['message' => 'Parameter value updated successfully.']);
+
+        return redirect()->back()->with([
+            'message' => 'Parameter value updated successfully.',
+            'grpcStatus' => [
+                'code' => $response->statusCode,
+                'details' => $response->statusDetails,
+            ],
+        ]);
     }
 
     public function destroy($id)
