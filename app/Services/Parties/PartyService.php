@@ -3,7 +3,6 @@
 namespace App\Services\Parties;
 
 use App\Http\Requests\Parties\PartiesFormRequest;
-use App\Http\Requests\Parties\PartyFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Carbon\Carbon;
@@ -138,40 +137,49 @@ class PartyService
     /*
      * Update an existing party
      */
-    public function updateParty(PartyFormRequest $request, int $versionId): GrpcServiceResponse
+
+    public function updateParty(PartiesFormRequest $request, int $versionId): GrpcServiceResponse
     {
         $grpcRequest = new PartyUpdateRequest;
         $grpcRequest->setVersionId($versionId);
 
         // Set optional fields only if they exist
-        if ($request->has('party_id') && $request->party_id) {
-            $grpcRequest->setPartyId($request->party_id);
+        if ($request->partyId) {
+            $grpcRequest->setPartyId($request->partyId);
         }
-
-        if ($request->has('party_code') && $request->party_code) {
-            $grpcRequest->setPartyCode($request->party_code);
+        if ($request->partyCode) {
+            $grpcRequest->setPartyCode($request->partyCode);
         }
-
-        $grpcRequest->setPartyLegacyCode($request->party_legacy_code);
-        $grpcRequest->setName($request->name);
-
-        if ($request->has('party_type_id') && $request->party_type_id) {
-            $grpcRequest->setPartyTypeId($request->party_type_id);
+        if ($request->partyLegacyCode) {
+            $grpcRequest->setPartyLegacyCode($request->partyLegacyCode);
         }
-
-        if ($request->has('status_id') && $request->status_id) {
-            $grpcRequest->setStatusId($request->status_id);
+        if ($request->name) {
+            $grpcRequest->setName($request->name);
+        }
+        if ($request->partyTypeId) {
+            $grpcRequest->setPartyTypeId($request->partyTypeId);
+        }
+        if ($request->statusId) {
+            $grpcRequest->setStatusId($request->statusId);
         }
 
         // Handle timestamps
-        $grpcRequest->setEffectiveStart($this->convertToTimestamp($request->effective_start));
-        $grpcRequest->setEffectiveEnd($this->convertToTimestamp($request->effective_end));
-        $grpcRequest->setIsCurrent($request->is_current ?? true);
-        $grpcRequest->setUpdatedBy($request->updated_by);
+        if ($request->effectiveStart) {
+            $grpcRequest->setEffectiveStart($this->convertToTimestamp($request->effectiveStart));
+        }
+        if ($request->effectiveEnd) {
+            $grpcRequest->setEffectiveEnd($this->convertToTimestamp($request->effectiveEnd));
+        }
+
+        $grpcRequest->setIsCurrent($request->isCurrent ?? true);
+
+        if ($request->updatedBy) {
+            $grpcRequest->setUpdatedBy($request->updatedBy);
+        }
 
         [$response, $status] = $this->client->UpdateParty($grpcRequest)->wait();
-
         $errorResponse = GrpcErrorService::handleErrorResponse($status);
+
         if ($errorResponse !== null) {
             return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
         }

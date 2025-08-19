@@ -100,8 +100,12 @@ class PartiesController extends Controller
         ]);
     }
 
-    public function edit($id)
+    public function edit(int $id)
     {
+        $partyResponse = $this->partyService->getParty($id);
+
+        $party = $partyResponse->data;
+
         $request = new ListParameterValuesRequest;
         $statusRequest = new ListParameterValuesRequest;
         $request->setDomainName('Parties');
@@ -129,14 +133,17 @@ class PartiesController extends Controller
             ->toArray();
 
         return Inertia::render('Parties/PartiesForm', [
+            'party' => $party,
             'partyTypes' => $partyTypes,
             'partyStatus' => $partyStatus,
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(PartiesFormRequest $partiesFormRequest)
     {
-        return Inertia::render('Parties/PartiesIndex');
+        $this->partyService->updateParty($partiesFormRequest, $partiesFormRequest->versionId);
+
+        return redirect()->to('/parties');
     }
 
     public function destroy(int $id)

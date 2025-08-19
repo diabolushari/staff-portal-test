@@ -21,7 +21,7 @@ interface Props {
 
 export default function PartiesIndex({ parties }: Props) {
 	const handleEditClick = (row: any) => {
-		console.log("Edit:", row);
+		router.get(`/parties/${row.version_id}/edit`);
 	};
 
 	const handleDeleteClick = (row: any) => {
