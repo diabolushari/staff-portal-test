@@ -45,9 +45,13 @@ class ParameterDomainService
 
         [$response, $status] = $this->client->ListParameterDomains($request)->wait();
 
-        $errorResponse = GrpcErrorService::handleErrorResponse($status);
-        if ($errorResponse !== null) {
-            return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
         }
 
         $domains = $response?->getDomains();

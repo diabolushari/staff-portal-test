@@ -21,6 +21,14 @@ class ListParameterValuesRequest extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>int32 page_size = 2;</code>
      */
     protected $page_size = 0;
+    /**
+     * Generated from protobuf field <code>string domain_name = 3;</code>
+     */
+    protected $domain_name = '';
+    /**
+     * Generated from protobuf field <code>string parameter_name = 4;</code>
+     */
+    protected $parameter_name = '';
 
     /**
      * Constructor.
@@ -30,6 +38,8 @@ class ListParameterValuesRequest extends \Google\Protobuf\Internal\Message
      *
      *     @type int $page
      *     @type int $page_size
+     *     @type string $domain_name
+     *     @type string $parameter_name
      * }
      */
     public function __construct($data = NULL) {
@@ -77,6 +87,50 @@ class ListParameterValuesRequest extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkInt32($var);
         $this->page_size = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string domain_name = 3;</code>
+     * @return string
+     */
+    public function getDomainName()
+    {
+        return $this->domain_name;
+    }
+
+    /**
+     * Generated from protobuf field <code>string domain_name = 3;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setDomainName($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->domain_name = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string parameter_name = 4;</code>
+     * @return string
+     */
+    public function getParameterName()
+    {
+        return $this->parameter_name;
+    }
+
+    /**
+     * Generated from protobuf field <code>string parameter_name = 4;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setParameterName($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->parameter_name = $var;
 
         return $this;
     }

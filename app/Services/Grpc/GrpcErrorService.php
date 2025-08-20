@@ -24,7 +24,6 @@ class GrpcErrorService
         // Check if this is a validation error (codes 3, 6, 9, 11)
         if (self::isValidationError($status->code)) {
             $validationErrors = self::convertToValidationError($status);
-
             if (! empty($validationErrors)) {
                 return redirect()->back()->withErrors($validationErrors)->withInput();
             }
@@ -48,7 +47,6 @@ class GrpcErrorService
     {
         $validationErrors = [];
         $extractedErrors = GrpcErrorHandler::extractError($status);
-
         foreach ($extractedErrors as $error) {
             if ($error['type'] === 'ErrorInfo' && isset($error['metadata'])) {
                 $validationErrors = array_merge($validationErrors, self::processErrorInfo($error, $status->code));

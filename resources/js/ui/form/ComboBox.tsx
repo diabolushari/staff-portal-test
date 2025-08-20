@@ -135,6 +135,7 @@ const ComboBox = <
               <button
                 className='cursor-pointer rounded-full p-1 hover:bg-gray-50'
                 onClick={() => handleSelection(null)}
+                type='button'
               >
                 <XIcon />
               </button>

@@ -5,34 +5,52 @@ namespace App\Http\Controllers\Parameter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Parameters\ParameterDomainFormRequest;
 use App\Services\Parameters\ParameterDomainService;
+use App\Services\SystemModule\SystemModuleService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ParameterDomainController extends Controller
 {
-    public function __construct(private ParameterDomainService $parameterDomainService) {}
+    public function __construct(
+        private ParameterDomainService $parameterDomainService,
+        private SystemModuleService $systemModuleService
+    ) {}
 
     public function index(Request $request)
     {
         $page = $request->input('page', 1);
         $pageSize = $request->input('page_size', 10);
 
+        $search = $request->input('search');
+        $moduleId = $request->input('module_id') ? (int) $request->input('module_id') : null;
+
         $response = $this->parameterDomainService->getParameterDomains(
             $page,
             $pageSize,
-            $request->input('search'),
-            $request->input('module_id')
+            $search,
+            $moduleId
         );
 
         if ($response->hasError()) {
             return $response->error;
         }
 
+        $modulesResponse = $this->systemModuleService->getSystemModules();
+
+        if ($modulesResponse->hasError()) {
+            return $modulesResponse->error;
+        }
+
         return Inertia::render('Parameters/ParameterDomain/ParameterDomainIndex', [
             'domains' => $response->data,
+            'modules' => $modulesResponse->data,
             'grpcStatus' => [
                 'code' => $response->statusCode,
                 'details' => $response->statusDetails,
+            ],
+            'filters' => [
+                'search' => $request->input('search', ''),
+                'module_id' => $request->input('module_id', ''),
             ],
         ]);
     }
@@ -44,8 +62,6 @@ class ParameterDomainController extends Controller
         if ($response->hasError()) {
             return $response->error;
         }
-
-        return $response->data;
 
         return Inertia::render('Parameters/ParameterDomain/ParameterDomainShow', [
             'domain' => $response->data,

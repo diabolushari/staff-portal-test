@@ -51,6 +51,10 @@ class ParameterDefinitionProto extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>string attribute5_name = 9;</code>
      */
     protected $attribute5_name = '';
+    /**
+     * Generated from protobuf field <code>.com.kseb.consumerservice.proto.parameters.ParameterDomainProto domain = 10;</code>
+     */
+    protected $domain = null;
 
     /**
      * Constructor.
@@ -67,6 +71,7 @@ class ParameterDefinitionProto extends \Google\Protobuf\Internal\Message
      *     @type string $attribute3_name
      *     @type string $attribute4_name
      *     @type string $attribute5_name
+     *     @type \Proto\Parameters\ParameterDomainProto $domain
      * }
      */
     public function __construct($data = NULL) {
@@ -268,6 +273,38 @@ class ParameterDefinitionProto extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->attribute5_name = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>.com.kseb.consumerservice.proto.parameters.ParameterDomainProto domain = 10;</code>
+     * @return \Proto\Parameters\ParameterDomainProto|null
+     */
+    public function getDomain()
+    {
+        return $this->domain;
+    }
+
+    public function hasDomain()
+    {
+        return isset($this->domain);
+    }
+
+    public function clearDomain()
+    {
+        unset($this->domain);
+    }
+
+    /**
+     * Generated from protobuf field <code>.com.kseb.consumerservice.proto.parameters.ParameterDomainProto domain = 10;</code>
+     * @param \Proto\Parameters\ParameterDomainProto $var
+     * @return $this
+     */
+    public function setDomain($var)
+    {
+        GPBUtil::checkMessage($var, \Proto\Parameters\ParameterDomainProto::class);
+        $this->domain = $var;
 
         return $this;
     }
