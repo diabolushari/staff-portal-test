@@ -25,6 +25,23 @@ fi
 # Extract numeric version (expects: libprotoc X.Y.Z)
 PROTOC_VERSION=$(echo "$PROTOC_VERSION_RAW" | awk '{print $2}')
 
+# Locate grpc_php_plugin (allow override via GRPC_PHP_PLUGIN env)
+if [[ -n "$GRPC_PHP_PLUGIN" ]]; then
+  GRPC_PLUGIN_PATH="$GRPC_PHP_PLUGIN"
+else
+  GRPC_PLUGIN_PATH=$(which grpc_php_plugin 2>/dev/null)
+fi
+
+if [[ -z "$GRPC_PLUGIN_PATH" || ! -x "$GRPC_PLUGIN_PATH" ]]; then
+  echo -e "${RED}❌ grpc_php_plugin not found (needed for --grpc_out).${NC}"
+  echo -e "${BLUE}👉 Installation options:${NC}"
+  echo -e "  1) PECL: sudo pecl install grpc (then ensure extension_dir contains grpc_php_plugin)"
+  echo -e "  2) Build from source: git clone https://github.com/grpc/grpc && cd grpc && git submodule update --init && mkdir -p cmake/build && cd cmake/build && cmake ../.. -DgRPC_BUILD_TESTS=OFF && make -j$(nproc) grpc_php_plugin && cp grpc_php_plugin /usr/local/bin/" 
+  echo -e "  3) Package (if available): sudo apt install grpc-php-plugin (Ubuntu often lacks latest)"
+  echo -e "Then re-run: GRPC_PHP_PLUGIN=/full/path/to/grpc_php_plugin bash scripts/generate-grpc.sh"
+  exit 1
+fi
+
 # Determine if we need experimental flag for proto3 optional (required < 3.15.0)
 NEEDS_OPTIONAL_FLAG=0
 MIN_OPTIONAL_VERSION="3.15.0"
@@ -60,7 +77,7 @@ protoc \
   --proto_path=./protos \
   --php_out=./generated \
   --grpc_out=./generated \
-  --plugin=protoc-gen-grpc=$(which grpc_php_plugin) \
+  --plugin=protoc-gen-grpc=$GRPC_PLUGIN_PATH \
   $(find ./protos -name "*.proto")
 
 if [ $? -eq 0 ]; then
