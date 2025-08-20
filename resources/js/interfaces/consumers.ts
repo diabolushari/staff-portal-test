@@ -1,5 +1,5 @@
 export interface Office {
-  id: number
+  office_id: number
   office_name: string
   office_code: string
   office_description: string
@@ -12,6 +12,11 @@ export interface Office {
     email: string
     name: string
     address: string
+  }
+  office_type: {
+    office_type_id: number
+    parameter_code: string
+    parameter_value: string
   }
   location: {
     name: string

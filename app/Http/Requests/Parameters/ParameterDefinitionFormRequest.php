@@ -19,6 +19,6 @@ class ParameterDefinitionFormRequest extends Data
         public ?string $attribute4Name,
         public ?string $attribute5Name,
         public bool $isEffectiveDateDriven,
-        public ?int $domainId,
+        public int $domainId,
     ) {}
 }

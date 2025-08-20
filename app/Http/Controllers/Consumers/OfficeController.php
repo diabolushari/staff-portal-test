@@ -21,14 +21,13 @@ class OfficeController extends Controller
 
     public function index(Request $request)
     {
-        $search = $request->input('search') ?? null;
         $officeType = $request->input('office_type') ?? null;
         $officeName = $request->input('office_name') ?? null;
 
         $offices = $this->officeService->getOffices(
             page: 1,
             pageSize: 10,
-            search: $search,
+            search: null,
             officeType: $officeType,
             officeName: $officeName
         );
@@ -43,7 +42,6 @@ class OfficeController extends Controller
             'offices' => $offices->data,
             'office_types' => $officeTypes->data,
             'filters' => [
-                'search' => $search,
                 'office_type' => $officeType,
                 'office_name' => $officeName,
             ],
@@ -51,7 +49,7 @@ class OfficeController extends Controller
     }
     public function create()
     {
-        $parameterValues = $this->parameterValueService->getParameterValues(1, 100, null, null, null);
+        $parameterValues = $this->parameterValueService->getParameterValues(1, 100, null, null, 'Distribution Office Type');
         if ($parameterValues->hasError()) {
             return $parameterValues->error;
         }
@@ -60,9 +58,43 @@ class OfficeController extends Controller
             'parameterValues' => $parameterValues->data,
         ]);
     }
-    public function edit($id) {}
-    public function update(Request $request, $id) {}
-    public function destroy($id) {}
+    public function edit($id)
+    {
+        $office = $this->officeService->getOffice($id);
+        if ($office->hasError()) {
+            return $office->error;
+        }
+        $parameterValues = $this->parameterValueService->getParameterValues(1, 100, null, null, 'Distribution Office Type');
+
+
+        return Inertia::render('Offices/OfficeForm', [
+            'office' => $office->data,
+            'parameterValues' => $parameterValues->data,
+        ]);
+    }
+    public function update(OfficeFormRequest $request, $id)
+    {
+        $office = $this->officeService->updateOffice($request, $id);
+        if ($office->hasError()) {
+            return $office->error;
+        }
+        return redirect()->route('offices.index');
+    }
+    public function destroy($id)
+    {
+        $response = $this->officeService->deleteOffice($id);
+        if ($response->hasError()) {
+            return $response->error;
+        }
+
+        return redirect()->back()->with([
+            'message' => 'Office deleted successfully.',
+            'grpcStatus' => [
+                'code' => $response->statusCode,
+                'details' => $response->statusDetails,
+            ],
+        ]);
+    }
 
     public function show($id)
     {

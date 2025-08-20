@@ -92,7 +92,7 @@ export default function ParameterValueIndex({
               <TableCell>{item.id}</TableCell>
               <TableCell>{item.parameter_code}</TableCell>
               <TableCell>{item.parameter_value}</TableCell>
-              <TableCell>{item.definition_id}</TableCell>
+              <TableCell>{item.definition?.parameter_name}</TableCell>
               <TableCell>{item.notes}</TableCell>
               <TableCell>
                 <div className='flex space-x-2'>

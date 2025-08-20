@@ -28,14 +28,13 @@ export default function OfficeIndex({
   offices: Office[]
   office_types: ParameterValues[]
   filters: {
-    search: string
     office_type: string
     office_name: string
   }
 }) {
-  const columns = ['S.No', 'ID', 'Office Code', 'Office Type', 'Actions']
+  const columns = ['S.No', 'ID', 'Office Name', 'Office Code', 'Office Type', 'Actions']
   const handleEditClick = (item: any) => {
-    router.get(route('offices.edit', item.officeId))
+    router.get(route('offices.edit', item.office_id))
   }
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [editRow, setEditRow] = useState<Office | null>(null)
@@ -43,6 +42,7 @@ export default function OfficeIndex({
     setEditRow(item)
     setShowDeleteModal(true)
   }
+  console.log('offices', offices)
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
@@ -68,20 +68,15 @@ export default function OfficeIndex({
                   <TableRow key={item.id}>
                     <td className='px-4 py-2'>{index + 1}</td>
                     <td className='px-4 py-2'>{item.office_id}</td>
+                    <td className='px-4 py-2'>{item.office_name}</td>
                     <td className='px-4 py-2'>{item.office_code}</td>
-                    <td className='px-4 py-2'>
-                      {
-                        office_types.find((type) => type.id === item.office_type_id)
-                          ?.parameter_value
-                      }
-                    </td>
-
+                    <td className='px-4 py-2'>{item.office_type?.parameter_value}</td>
                     <td className='px-4 py-2'>
                       <div className='flex space-x-2'>
                         <EditButton onClick={() => handleEditClick(item)} />
                         <DeleteButton onClick={() => handleDeleteClick(item)} />
                         <Button
-                          onClick={() => router.get(route('offices.show', item.officeId))}
+                          onClick={() => router.get(route('offices.show', item.office_id))}
                           label='View'
                         />
                       </div>
@@ -97,7 +92,7 @@ export default function OfficeIndex({
         <DeleteModal
           setShowModal={setShowDeleteModal}
           title='Delete Office'
-          url={route('offices.destroy', editRow.officeId)}
+          url={route('offices.destroy', editRow.office_id)}
         />
       )}
     </AppLayout>

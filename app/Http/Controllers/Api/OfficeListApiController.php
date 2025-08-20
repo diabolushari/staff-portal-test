@@ -3,58 +3,47 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Google\Protobuf\GPBEmpty;
-use Proto\consumers\OfficeServiceClient;
-use Grpc\ChannelCredentials;
+use App\Services\Consumers\OfficeService;
+use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\Request;
+use Proto\Consumers\OfficeListRequest;
 
 class OfficeListApiController extends Controller
 {
-    private $client;
-
-    public function __construct()
-    {
-        $this->client = new OfficeServiceClient(env('GRPC_HOST'), [
-            'credentials' => ChannelCredentials::createInsecure()
-        ]);
-    }
+    public function __construct(private OfficeService $officeService, private ParameterValueService $parameterValueService) {}
 
     public function __invoke(Request $request)
     {
-        $req = new GPBEmpty();
+        $sortPriority = $request->query('sortPriority') - 1;
 
-        [$response, $status] = $this->client->ListOffices($req)->wait();
+        $officeType = null;
 
-        if ($status->code !== 0) {
-            return response()->json([
-                'error' => $status->details,
-            ], 500);
-        }
+        if ($sortPriority !== null) {
+            $parameterValues = $this->parameterValueService->getParameterValues(
+                1,
+                100,
+                null,
+                null,
+                'Distribution Office Type'
+            )?->data ?? [];
 
-        $offices = $response->getOffices();
-        $officeArray = [];
-
-        foreach ($offices as $office) {
-            $data = json_decode($office->serializeToJsonString(), true);
-            $officeArray[] = $data;
-        }
-
-        // Filtering logic
-        $officeTypeId = $request->query('officeTypeId') - 1;
-        $query = $request->query('q');
-
-        $filtered = collect($officeArray)
-            ->when($officeTypeId, function ($collection) use ($officeTypeId) {
-                return $collection->where('officeTypeId', (int) $officeTypeId);
-            })
-            ->when($query, function ($collection) use ($query) {
-                return $collection->filter(function ($item) use ($query) {
-                    $name = $item['officeCode'] ?? '';
-                    return stripos($name, $query) === 0; // name starts with query
+            $officeType = collect($parameterValues)
+                ->first(function ($parameterValue) use ($sortPriority) {
+                    return ($parameterValue['sort_priority'] ?? 0) == $sortPriority;
                 });
-            })
-            ->values(); // Reindex array
+        }
+        // Now $officeType is a single array (or null if not found)
+        $officeTypeValue = $officeType['parameter_value'] ?? null;
+        $query = $request->query('q');
+        $offices = $this->officeService->getOffices(1, 10, null, $officeTypeValue, $query)->data;
+        $officeArray = [];
+        foreach ($offices as $office) {
+            $officeArray[] = [
+                'office_id' => $office['office_id'],
+                'office_name' => $office['office_name'],
+            ];
+        }
 
-        return response()->json($filtered);
+        return response()->json($officeArray);
     }
 }

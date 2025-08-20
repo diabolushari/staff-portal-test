@@ -54,12 +54,20 @@ class ParameterValueService
         $parameterValues = $response?->getValues();
         $parameterValuesArray = [];
 
+
         if ($parameterValues) {
             foreach ($parameterValues as $parameterValue) {
+
+                $definition = $parameterValue->getDefinition();
+                $definitionArray = [
+                    'id' => $definition->getId(),
+                    'parameter_name' => $definition->getParameterName(),
+                ];
+
                 $parameterValuesArray[] = [
                     'id' => $parameterValue->getId(),
                     'parameter_value' => $parameterValue->getParameterValue(),
-                    'parameter_value_code' => $parameterValue->getParameterCode(),
+                    'parameter_code' => $parameterValue->getParameterCode(),
                     'attribute1_value' => $parameterValue->getAttribute1Value(),
                     'attribute2_value' => $parameterValue->getAttribute2Value(),
                     'attribute3_value' => $parameterValue->getAttribute3Value(),
@@ -68,6 +76,7 @@ class ParameterValueService
                     'is_active' => $parameterValue->getIsActive(),
                     'sort_priority' => $parameterValue->getSortPriority(),
                     'notes' => $parameterValue->getNotes(),
+                    'definition' => $definitionArray,
                 ];
             }
         }
@@ -105,8 +114,6 @@ class ParameterValueService
         $defenition = [
             'id' => $response->getDefinition()->getId(),
             'parameter_name' => $response->getDefinition()->getParameterName(),
-            'definition_id' => $response->getDefinition()->getParameterId(),
-            'domain' => $response->getDefinition()->getParameterDomain(),
         ];
         $parameterValueArray = [
             'id' => $response->getId(),
@@ -117,7 +124,6 @@ class ParameterValueService
             'attribute3_value' => $response->getAttribute3Value(),
             'attribute4_value' => $response->getAttribute4Value(),
             'attribute5_value' => $response->getAttribute5Value(),
-            'parameter_domain_id' => $response->getParameterDomainId(),
             'is_active' => $response->getIsActive(),
             'sort_priority' => $response->getSortPriority(),
             'notes' => $response->getNotes(),
@@ -219,7 +225,6 @@ class ParameterValueService
         ];
         return GrpcServiceResponse::success($parameterValueArray, $response, $status->code, $status->details);
     }
-
 
 
     public function deleteParameterValue(int|string $id): GrpcServiceResponse
