@@ -1,5 +1,5 @@
 import OfficeSearchForm from '@/components/Offices/OfficeSearchForm'
-import { TableRow } from '@/components/ui/table'
+import { TableCell, TableRow } from '@/components/ui/table'
 import { Office } from '@/interfaces/consumers'
 import { ParameterValues } from '@/interfaces/paramater_types'
 import AppLayout from '@/layouts/app-layout'
@@ -66,7 +66,7 @@ export default function OfficeIndex({
               <>
                 {offices.map((item: any, index: number) => (
                   <TableRow key={item.id}>
-                    <td className='px-4 py-2'>{index + 1}</td>
+                    <TableCell className='px-4 py-2'>{index + 1}</TableCell>
                     <td className='px-4 py-2'>{item.office_id}</td>
                     <td className='px-4 py-2'>{item.office_name}</td>
                     <td className='px-4 py-2'>{item.office_code}</td>

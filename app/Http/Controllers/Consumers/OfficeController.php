@@ -5,19 +5,16 @@ namespace App\Http\Controllers\Consumers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Consumers\OfficeFormRequest;
 use App\Services\Consumers\OfficeService;
+use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Services\Parameters\ParameterValueService;
-
 
 class OfficeController extends Controller
 {
-
     public function __construct(
         private OfficeService $officeService,
         private ParameterValueService $parameterValueService,
     ) {}
-
 
     public function index(Request $request)
     {
@@ -35,7 +32,7 @@ class OfficeController extends Controller
             return $offices->error;
         }
 
-        $parameterValueService = new ParameterValueService();
+        $parameterValueService = new ParameterValueService;
         $officeTypes = $parameterValueService->getParameterValues(1, 100, null, null, 'Distribution Office Type');
 
         return Inertia::render('Offices/OfficeIndex', [
@@ -47,9 +44,17 @@ class OfficeController extends Controller
             ],
         ]);
     }
+
     public function create()
     {
-        $parameterValues = $this->parameterValueService->getParameterValues(1, 100, null, null, 'Distribution Office Type');
+        $parameterValues = $this->parameterValueService->getParameterValues(
+            1,
+            100,
+            null,
+            'Organization-Distribution',
+            'Office Type'
+        );
+
         if ($parameterValues->hasError()) {
             return $parameterValues->error;
         }
@@ -58,28 +63,37 @@ class OfficeController extends Controller
             'parameterValues' => $parameterValues->data,
         ]);
     }
+
     public function edit($id)
     {
         $office = $this->officeService->getOffice($id);
         if ($office->hasError()) {
             return $office->error;
         }
-        $parameterValues = $this->parameterValueService->getParameterValues(1, 100, null, null, 'Distribution Office Type');
-
+        $parameterValues = $this->parameterValueService->getParameterValues(
+            1,
+            100,
+            null,
+            'Organization-Distribution',
+            'Office Type'
+        );
 
         return Inertia::render('Offices/OfficeForm', [
             'office' => $office->data,
             'parameterValues' => $parameterValues->data,
         ]);
     }
+
     public function update(OfficeFormRequest $request, $id)
     {
         $office = $this->officeService->updateOffice($request, $id);
         if ($office->hasError()) {
             return $office->error;
         }
+
         return redirect()->route('offices.index');
     }
+
     public function destroy($id)
     {
         $response = $this->officeService->deleteOffice($id);
@@ -103,7 +117,6 @@ class OfficeController extends Controller
             return $office->error;
         }
 
-
         return Inertia::render('Offices/OfficeShow', [
             'office' => $office->data,
         ]);
@@ -116,6 +129,7 @@ class OfficeController extends Controller
         if ($office->hasError()) {
             return $office->error;
         }
+
         return redirect()->route('offices.index');
     }
 }

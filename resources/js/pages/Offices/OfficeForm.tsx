@@ -41,11 +41,12 @@ export default function OfficeForm({
     effective_end: office?.effective_end ?? '',
     contact_folio: office?.contact_folio ?? {},
   })
+
   const [parentOfficeData, setParentOfficeData] = useState<Office | null>(null)
   const [data] = useFetchList<{ success: boolean; data: Office[] }>(
     `/api/office/${office?.parent_office_id ? office.parent_office_id : 0}`
   )
-  console.log(data)
+
   useEffect(() => {
     const sortPriorityValue = parameterValues.find(
       (item: ParameterValues) => item.id == Number(formData.office_type_id)
@@ -62,6 +63,7 @@ export default function OfficeForm({
       },
     }
   )
+
   const handleParrentOfficeChange = (item: Office | null) => {
     if (item) {
       setFormValue('parent_office_id')(item?.office_id ?? '')
