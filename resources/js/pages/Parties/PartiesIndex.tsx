@@ -74,7 +74,7 @@ export default function PartiesIndex({ parties }: Props) {
 			return;
 		try {
 			setDeletingId(row.version_id);
-			await router.delete(`/parties/${row.version_id}`, {
+			await router.delete(`/parties/${row.party_id}`, {
 				preserveScroll: true,
 				onFinish: () => setDeletingId(null),
 			});

@@ -71,9 +71,13 @@ class PartyService
         // Updated gRPC method call
         [$response, $status] = $this->client->GetPartyByVersionId($request)->wait();
 
-        $errorResponse = GrpcErrorService::handleErrorResponse($status);
-        if ($errorResponse !== null) {
-            return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
         }
 
         $party = $response->getParty();
@@ -138,11 +142,14 @@ class PartyService
 
         [$response, $status] = $this->client->CreateParty($grpcRequest)->wait();
 
-        dd($status->code);
 
-        $errorResponse = GrpcErrorService::handleErrorResponse($status);
-        if ($errorResponse !== null) {
-            return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
         }
 
         $party = $response->getParty();
@@ -210,9 +217,13 @@ class PartyService
 
         [$response, $status] = $this->client->UpdateParty($grpcRequest)->wait();
 
-        $errorResponse = GrpcErrorService::handleErrorResponse($status);
-        if ($errorResponse !== null) {
-            return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
         }
 
         $party = $response->getParty();
@@ -224,17 +235,21 @@ class PartyService
     /**
      * Delete a party
      */
-    public function deleteParty(int $versionId): GrpcServiceResponse
+    public function deleteParty(int $partyId): GrpcServiceResponse
     {
         // Updated request message. Assuming $versionId passed is the party_id.
         $grpcRequest = new DeletePartyRequest;
-        $grpcRequest->setPartyId($versionId);
+        $grpcRequest->setPartyId($partyId);
 
         [$response, $status] = $this->client->DeleteParty($grpcRequest)->wait();
 
-        $errorResponse = GrpcErrorService::handleErrorResponse($status);
-        if ($errorResponse !== null) {
-            return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
         }
 
         // Delete returns Empty; no payload data
@@ -251,9 +266,13 @@ class PartyService
 
         [$response, $status] = $this->client->GetCurrentParty($request)->wait();
 
-        $errorResponse = GrpcErrorService::handleErrorResponse($status);
-        if ($errorResponse !== null) {
-            return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
         }
 
         $party = $response->getParty();

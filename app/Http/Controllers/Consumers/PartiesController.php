@@ -36,8 +36,8 @@ class PartiesController extends Controller
     {
         $partiesResponse = $this->partyService->getParties();
 
-        if (!$partiesResponse->success) {
-            return $partiesResponse->error ?? back()->withErrors(['grpc_error' => 'An unknown error occurred while fetching parties.']);
+        if ($partiesResponse->hasError()) {
+            return $partiesResponse->error;
         }
 
         return Inertia::render('Parties/PartiesIndex', [
@@ -47,7 +47,6 @@ class PartiesController extends Controller
 
     /**
      * Show the form for creating a new party.
-     * --- THIS METHOD IS REVERTED TO THE ORIGINAL VERSION ---
      */
     public function create(): Response|RedirectResponse
     {
@@ -94,8 +93,8 @@ class PartiesController extends Controller
         $request->createdBy = auth()->id();
         $response = $this->partyService->createParty($request);
 
-        if (!$response->success) {
-            return $response->error ?? back()->withInput()->withErrors(['grpc_error' => 'Failed to create the party.']);
+        if ($response->hasError()) {
+            return $response->error;
         }
 
         return redirect()->route('parties.index')->with('success', 'Party created successfully.');
@@ -108,8 +107,8 @@ class PartiesController extends Controller
     {
         $partyResponse = $this->partyService->getParty($id);
 
-        if (!$partyResponse->success) {
-            return $partyResponse->error ?? redirect()->route('parties.index')->withErrors(['grpc_error' => 'Could not find the requested party.']);
+        if ($partyResponse->hasError()) {
+            return $partyResponse->error;
         }
 
         return Inertia::render('Parties/PartiesShow', [
@@ -119,14 +118,13 @@ class PartiesController extends Controller
 
     /**
      * Show the form for editing the specified party.
-     * --- THIS METHOD IS REVERTED TO THE ORIGINAL VERSION ---
      */
     public function edit(int $id): Response|RedirectResponse
     {
         // First, get the specific party to edit
         $partyResponse = $this->partyService->getParty($id);
-        if (!$partyResponse->success) {
-            return $partyResponse->error ?? redirect()->route('parties.index')->withErrors(['grpc_error' => 'Could not find the party to edit.']);
+        if ($partyResponse->hasError()) {
+            return $partyResponse->error;
         }
         $party = $partyResponse->data;
 
@@ -177,8 +175,8 @@ class PartiesController extends Controller
         $request->updatedBy = auth()->id();
         $response = $this->partyService->updateParty($request);
 
-        if (!$response->success) {
-            return $response->error ?? back()->withInput()->withErrors(['grpc_error' => 'Failed to update the party.']);
+        if ($response->hasError()) {
+            return $response->error;
         }
 
         return redirect()->route('parties.index')->with('success', 'Party updated successfully.');
@@ -191,8 +189,8 @@ class PartiesController extends Controller
     {
         $response = $this->partyService->deleteParty($id);
 
-        if (!$response->success) {
-            return $response->error ?? back()->withErrors(['grpc_error' => 'Failed to delete the party.']);
+        if ($response->hasError()) {
+            return $response->error;
         }
 
         return redirect()->route('parties.index')->with('success', 'Party deleted successfully.');
