@@ -2,10 +2,11 @@ import AppLayout from '@/layouts/app-layout'
 import CardHeader from '@/ui/Card/CardHeader'
 import { Office } from '@/interfaces/consumers'
 import { router } from '@inertiajs/react'
+import MainLayout from '@/layouts/main-layout'
 
 export default function OfficeShow({ office }: { office: Office }) {
   const {
-    id,
+    office_id,
     office_name,
     office_code,
     office_description,
@@ -20,7 +21,7 @@ export default function OfficeShow({ office }: { office: Office }) {
   const formatDate = (dateStr?: string) => (dateStr ? new Date(dateStr).toLocaleDateString() : '-')
   console.log(office)
   return (
-    <AppLayout>
+    <MainLayout>
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4'>
         <CardHeader
           titleClassName='2xl:text-2xl'
@@ -43,7 +44,7 @@ export default function OfficeShow({ office }: { office: Office }) {
             </div>
             <button
               className='ml-auto rounded bg-gray-200 px-4 py-2 text-sm text-gray-700'
-              onClick={() => router.visit(route('offices.edit', office.id))}
+              onClick={() => router.visit(route('offices.edit', office.office_id))}
             >
               Edit Office
             </button>
@@ -94,6 +95,6 @@ export default function OfficeShow({ office }: { office: Office }) {
           <div className='grid grid-cols-1 gap-4 md:grid-cols-2'></div>
         </div>
       </div>
-    </AppLayout>
+    </MainLayout>
   )
 }

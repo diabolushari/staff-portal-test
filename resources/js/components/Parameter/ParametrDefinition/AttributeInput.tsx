@@ -1,4 +1,4 @@
-import { ParameterDefinition } from '@/interfaces/paramater_types'
+import { ParameterDefinition } from '@/interfaces/parameter_types'
 import Input from '@/ui/form/Input'
 
 export default function AttributeInput({

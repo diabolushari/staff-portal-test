@@ -7,7 +7,10 @@ use App\Http\Requests\Consumers\OfficeFormRequest;
 use App\Services\Consumers\OfficeService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class OfficeController extends Controller
 {
@@ -16,7 +19,7 @@ class OfficeController extends Controller
         private ParameterValueService $parameterValueService,
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): Response|RedirectResponse
     {
         $officeType = $request->input('office_type') ?? null;
         $officeName = $request->input('office_name') ?? null;
@@ -64,6 +67,29 @@ class OfficeController extends Controller
         ]);
     }
 
+    public function store(OfficeFormRequest $request)
+    {
+
+        $office = $this->officeService->createOffice($request);
+        if ($office->hasError()) {
+            return $office->error;
+        }
+
+        return redirect()->route('offices.index');
+    }
+
+    public function show($id)
+    {
+        $office = $this->officeService->getOffice($id);
+        if ($office->hasError()) {
+            return $office->error;
+        }
+
+        return Inertia::render('Offices/OfficeShow', [
+            'office' => $office->data,
+        ]);
+    }
+
     public function edit($id)
     {
         $office = $this->officeService->getOffice($id);
@@ -108,28 +134,5 @@ class OfficeController extends Controller
                 'details' => $response->statusDetails,
             ],
         ]);
-    }
-
-    public function show($id)
-    {
-        $office = $this->officeService->getOffice($id);
-        if ($office->hasError()) {
-            return $office->error;
-        }
-
-        return Inertia::render('Offices/OfficeShow', [
-            'office' => $office->data,
-        ]);
-    }
-
-    public function store(OfficeFormRequest $request)
-    {
-
-        $office = $this->officeService->createOffice($request);
-        if ($office->hasError()) {
-            return $office->error;
-        }
-
-        return redirect()->route('offices.index');
     }
 }

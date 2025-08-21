@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ParameterDefinition, ParameterDomain } from '@/interfaces/paramater_types'
+import { ParameterDefinition, ParameterDomain } from '@/interfaces/parameter_types'
 import CheckBox from '@/ui/form/CheckBox'
 import Input from '@/ui/form/Input'
 import Modal from '@/ui/Modal/Modal'

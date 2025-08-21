@@ -5,27 +5,30 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Proto\Parameters\ParameterDefinitionServiceClient;
 use Grpc\ChannelCredentials;
+use Illuminate\Http\JsonResponse;
 use Proto\Parameters\GetParameterDefinitionRequest;
+
 
 class ParameterDefinitionItemApiController extends Controller
 {
+    /** @var \Proto\Parameters\ParameterDefinitionServiceClient */
     private $client;
 
     public function __construct()
     {
-        $this->client = new ParameterDefinitionServiceClient(env('GRPC_HOST'), [
+        $this->client = new ParameterDefinitionServiceClient(config('app.parameter_service_grpc_host'), [
             'credentials' => ChannelCredentials::createInsecure()
         ]);
     }
 
-    public function __invoke($id)
+    public function __invoke(int $id): JsonResponse
     {
         $req = new GetParameterDefinitionRequest();
         $req->setId($id);
 
-        list($res, $status) = $this->client->GetParameterDefinition($req)->wait();
+        [$res, $status] = $this->client->GetParameterDefinition($req)->wait();
 
-        if ($status->code !== \Grpc\STATUS_OK) {
+        if ($status->code !== 0) {
             return response()->json(['error' => $status->details], 500);
         }
 

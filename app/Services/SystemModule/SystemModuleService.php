@@ -15,7 +15,7 @@ use Proto\Modules\UpdateSystemModuleRequest;
 
 class SystemModuleService
 {
-    private SystemModuleServiceClient $client;
+    private $client;
 
     public function __construct()
     {
@@ -131,7 +131,7 @@ class SystemModuleService
             return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
         }
 
-    // Delete returns Empty; no payload data
-    return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
+        // Delete returns Empty; no payload data
+        return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
     }
 }

@@ -1,5 +1,5 @@
 import useCustomForm from '@/hooks/useCustomForm'
-import { ParameterDomain } from '@/interfaces/paramater_types'
+import { ParameterDomain } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'

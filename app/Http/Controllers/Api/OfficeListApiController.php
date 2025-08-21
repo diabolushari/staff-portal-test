@@ -6,26 +6,30 @@ use App\Http\Controllers\Controller;
 use App\Services\Consumers\OfficeService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Proto\Consumers\OfficeListRequest;
 
 class OfficeListApiController extends Controller
 {
     public function __construct(private OfficeService $officeService, private ParameterValueService $parameterValueService) {}
 
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): JsonResponse
     {
-        $sortPriority = $request->query('sortPriority') - 1;
+        $sortPriority = $request->query('sortPriority');
+        if ($sortPriority !== null) {
+            $sortPriority = (int)$sortPriority - 1;
+        }
 
         $officeType = null;
 
-        if ($sortPriority !== null) {
+        if ($sortPriority != null) {
             $parameterValues = $this->parameterValueService->getParameterValues(
                 1,
                 100,
                 null,
                 null,
                 'Distribution Office Type'
-            )?->data ?? [];
+            )->data;
 
             $officeType = collect($parameterValues)
                 ->first(function ($parameterValue) use ($sortPriority) {
@@ -37,13 +41,14 @@ class OfficeListApiController extends Controller
         $query = $request->query('q');
         $offices = $this->officeService->getOffices(1, 10, null, $officeTypeValue, $query)->data;
         $officeArray = [];
-        foreach ($offices as $office) {
-            $officeArray[] = [
-                'office_id' => $office['office_id'],
-                'office_name' => $office['office_name'],
-            ];
+        if ($offices !== null) {
+            foreach ($offices as $office) {
+                $officeArray[] = [
+                    'office_id' => $office['office_id'],
+                    'office_name' => $office['office_name'],
+                ];
+            }
         }
-
         return response()->json($officeArray);
     }
 }

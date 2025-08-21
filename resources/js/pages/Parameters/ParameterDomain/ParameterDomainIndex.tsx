@@ -1,7 +1,7 @@
 import ParameterDomainForm from '@/components/Parameter/ParameterDomain/ParameterDomainForm'
 import ParameterDomainSearchForm from '@/components/Parameter/ParameterDomain/ParameterDomainSearchForm'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { ParameterDomain, SystemModule } from '@/interfaces/paramater_types'
+import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem } from '@/types'
 import DeleteButton from '@/ui/button/DeleteButton'

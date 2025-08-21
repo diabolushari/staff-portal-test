@@ -14,18 +14,23 @@ export default function TextArea({
 }: FormFieldProp) {
   return (
     <>
-      <label className='small-1stop mb-1 text-sm tracking-normal text-gray-800 dark:text-gray-200'>
-        {label}
-      </label>
-      <textarea
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder={placeholder}
-        name='description'
-        disabled={disabled}
-        className={getFormStyle(style)}
-      ></textarea>
-      {error && <ErrorText>{error}</ErrorText>}
+      <div>
+        {label != null && (
+          <label className='font-inter text-left align-top text-sm leading-[1.4] tracking-[-0.006em] text-gray-800 dark:text-gray-200'>
+            {label}
+          </label>
+        )}
+
+        <textarea
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder={placeholder}
+          name='description'
+          disabled={disabled}
+          className={getFormStyle(style)}
+        ></textarea>
+        {error && <ErrorText>{error}</ErrorText>}
+      </div>
     </>
   )
 }

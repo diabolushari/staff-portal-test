@@ -2,8 +2,10 @@ import useCustomForm from '@/hooks/useCustomForm'
 import useFetchList from '@/hooks/useFetchList'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { Office } from '@/interfaces/consumers'
-import { ParameterValues } from '@/interfaces/paramater_types'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import AppLayout from '@/layouts/app-layout'
+import MainLayout from '@/layouts/main-layout'
+import { BreadcrumbItem } from '@/types'
 import Heading from '@/typography/Heading'
 import Button from '@/ui/button/Button'
 import CardHeader from '@/ui/Card/CardHeader'
@@ -15,21 +17,23 @@ import TextArea from '@/ui/form/TextArea'
 import { router } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
 
-export default function OfficeForm({
-  parameterValues,
-  office,
-}: {
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Offices',
+    href: '/offices',
+  },
+  {
+    title: 'Add Office',
+    href: '/offices/create',
+  },
+]
+interface Props {
   parameterValues: ParameterValues[]
   office?: Office
-}) {
+}
+export default function OfficeForm({ parameterValues, office }: Props) {
   const [sortPriority, setSortPriority] = useState<number | null | undefined>(null)
-
-  const { formData: contactFolioForm, setFormValue: setContactFolioValue } = useCustomForm({
-    phone: office?.contact_folio?.phone ?? '',
-    email: office?.contact_folio?.email ?? '',
-    name: office?.contact_folio?.name ?? '',
-    address: office?.contact_folio?.address ?? '',
-  })
+  const [parentOfficeData, setParentOfficeData] = useState<Office | null>(null)
 
   const { formData, setFormValue } = useCustomForm({
     office_name: office?.office_name ?? '',
@@ -40,9 +44,21 @@ export default function OfficeForm({
     effective_start: office?.effective_start ?? '',
     effective_end: office?.effective_end ?? '',
     contact_folio: office?.contact_folio ?? {},
+    phone: office?.contact_folio?.phone ?? '',
+    email: office?.contact_folio?.email ?? '',
+    name: office?.contact_folio?.name ?? '',
+    address: office?.contact_folio?.address ?? '',
   })
+  const { post, errors, loading } = useInertiaPost<typeof formData>(
+    office ? route('offices.update', office.office_id) : route('offices.store'),
+    {
+      showErrorToast: true,
+      onComplete: () => {
+        router.visit(route('offices.index'))
+      },
+    }
+  )
 
-  const [parentOfficeData, setParentOfficeData] = useState<Office | null>(null)
   const [data] = useFetchList<{ success: boolean; data: Office[] }>(
     `/api/office/${office?.parent_office_id ? office.parent_office_id : 0}`
   )
@@ -54,17 +70,7 @@ export default function OfficeForm({
     setSortPriority(sortPriorityValue?.sort_priority)
   }, [formData.office_type_id])
 
-  const { post, errors, loading } = useInertiaPost(
-    office ? route('offices.update', office.office_id) : route('offices.store'),
-    {
-      showErrorToast: true,
-      onComplete: () => {
-        router.visit(route('offices.index'))
-      },
-    }
-  )
-
-  const handleParrentOfficeChange = (item: Office | null) => {
+  const handleParentOfficeChange = (item: Office | null) => {
     if (item) {
       setFormValue('parent_office_id')(item?.office_id ?? '')
       setParentOfficeData(item)
@@ -77,154 +83,151 @@ export default function OfficeForm({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     console.log('form data:', formData)
 
-    const completeFormData = { ...formData, contact_folio: contactFolioForm }
+    const contactFolioData = {
+      phone: formData.phone,
+      email: formData.email,
+      name: formData.name,
+      address: formData.address,
+    }
+    const completeFormData = {
+      office_name: formData.office_name,
+      office_code: formData.office_code,
+      office_description: formData.office_description,
+      office_type_id: formData.office_type_id,
+      parent_office_id: formData.parent_office_id,
+      effective_start: formData.effective_start,
+      effective_end: formData.effective_end,
+      contact_folio: contactFolioData,
+    }
     e.preventDefault()
     post(office ? { ...completeFormData, _method: 'PUT' } : completeFormData)
   }
-  console.log('data:', office, parameterValues)
   return (
-    <AppLayout>
+    <MainLayout breadcrumb={breadcrumbs}>
       <div className='p-4 text-gray-800 dark:text-gray-100'>
         <CardHeader
           title='Offices'
           subheading={office ? 'Edit Office' : 'Add a new office.'}
         />
         <form onSubmit={handleSubmit}>
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-            <div className='flex flex-col'>
-              <Input
-                label='Office Name'
-                setValue={setFormValue('office_name')}
-                value={formData.office_name}
-                placeholder='Type your Office Name'
-                error={errors?.office_name}
-                type='text'
-              />
-            </div>
-            <div className='flex flex-col'>
-              <Input
-                label='Office Code'
-                setValue={setFormValue('office_code')}
-                value={formData.office_code}
-                placeholder='Type your Office Code'
-                error={errors?.office_code}
-                type='number'
-              />
-            </div>
-            <div className='flex flex-col'>
-              <TextArea
-                label='Office Description'
-                setValue={setFormValue('office_description')}
-                value={formData.office_description}
-                placeholder='Type your Office Description'
-                error={errors?.office_description}
-              />
-            </div>
-            <div className='flex flex-col'>
-              <SelectList
-                label='Office Type'
-                setValue={setFormValue('office_type_id')}
-                value={formData.office_type_id}
-                placeholder='Select Office Type'
-                error={errors?.office_type_id}
-                dataKey='id'
-                displayKey='parameter_value'
-                list={parameterValues}
-              />
-            </div>
-            <div className='flex flex-col'>
-              {formData.office_type_id &&
-                Number(formData.office_type_id) > 1 &&
-                sortPriority !== null && (
-                  <ComboBox
-                    label='Parrent Office'
-                    url={`/api/offices?sortPriority=${sortPriority}&q=`}
-                    setValue={handleParrentOfficeChange}
-                    value={parentOfficeData}
-                    placeholder='Select Parrent Office'
-                    error={errors?.parent_office_id}
-                    dataKey='office_id'
-                    displayKey='office_name'
-                    displayValue2='office_code'
-                  />
-                )}
-            </div>
+          <div className='grid grid-cols-1 gap-8 md:grid-cols-2'>
+            <Input
+              label='Office Code'
+              setValue={setFormValue('office_code')}
+              value={formData.office_code}
+              error={errors?.office_code}
+              type='text'
+            />
+            <Input
+              label='Name'
+              setValue={setFormValue('office_name')}
+              value={formData.office_name}
+              error={errors?.office_name}
+              type='text'
+            />
+            <TextArea
+              label='Office Description'
+              setValue={setFormValue('office_description')}
+              value={formData.office_description}
+              error={errors?.office_description}
+            />
+
+            <SelectList
+              label='Office Type'
+              setValue={setFormValue('office_type_id')}
+              value={formData.office_type_id}
+              placeholder='Select Office Type'
+              error={errors?.office_type_id}
+              dataKey='id'
+              displayKey='parameter_value'
+              list={parameterValues}
+            />
+
+            {formData.office_type_id &&
+              Number(formData.office_type_id) > 1 &&
+              sortPriority !== null && (
+                <ComboBox
+                  label='Parent Office'
+                  url={`/api/offices?sortPriority=${sortPriority}&q=`}
+                  setValue={handleParentOfficeChange}
+                  value={parentOfficeData}
+                  placeholder='Select Parent Office'
+                  error={errors?.parent_office_id}
+                  dataKey='office_id'
+                  displayKey='office_name'
+                  displayValue2='office_code'
+                />
+              )}
             <div className='col-span-2 flex flex-col'>
               <Heading>Contact Folio</Heading>
             </div>
-            <div className='flex flex-col'>
-              <Input
-                label='Email'
-                setValue={setContactFolioValue('email')}
-                value={contactFolioForm.email}
-                placeholder='Type your Email'
-                error={errors?.email}
-                type='email'
-              />
-            </div>
-            <div className='flex flex-col'>
-              <Input
-                label='Phone'
-                setValue={setContactFolioValue('phone')}
-                value={contactFolioForm.phone}
-                placeholder='Type your Phone'
-                error={errors?.phone}
-                type='number'
-              />
-            </div>
-            <div className='flex flex-col'>
-              <Input
-                label='Name'
-                setValue={setContactFolioValue('name')}
-                value={contactFolioForm.name}
-                placeholder='Type your Name'
-                error={errors?.name}
-                type='text'
-              />
-            </div>
-            <div className='flex flex-col'>
-              <TextArea
-                label='Address'
-                setValue={setContactFolioValue('address')}
-                value={contactFolioForm.address}
-                placeholder='Type your Address'
-                error={errors?.address}
-              />
-            </div>
-            <div className='flex flex-col'>
-              <DatePicker
-                label='Effective Start  Date'
-                setValue={(date: string) => {
-                  console.debug('Start Date changed:', date)
-                  setFormValue('effective_start')(date)
-                }}
-                value={formData.effective_start}
-                placeholder='Select Effective Start Date'
-                error={errors?.effective_start}
-              />
-            </div>
-            <div className='flex flex-col'>
-              <DatePicker
-                label='Effective End Date'
-                setValue={(date: string) => {
-                  console.debug('End Date changed:', date)
-                  setFormValue('effective_end')(date)
-                }}
-                value={formData.effective_end}
-                placeholder='Select Effective End Date'
-                error={errors?.effective_end}
-              />
-            </div>
+            <Input
+              label='Email'
+              setValue={setFormValue('email')}
+              value={formData.email}
+              placeholder='Type your Email'
+              error={errors?.email}
+              type='email'
+            />
+
+            <Input
+              label='Phone'
+              setValue={setFormValue('phone')}
+              value={formData.phone}
+              placeholder='Type your Phone'
+              error={errors?.phone}
+              type='number'
+            />
+
+            <Input
+              label='Name'
+              setValue={setFormValue('name')}
+              value={formData.name}
+              placeholder='Type your Name'
+              error={errors?.name}
+              type='text'
+            />
+
+            <TextArea
+              label='Address'
+              setValue={setFormValue('address')}
+              value={formData.address}
+              placeholder='Type your Address'
+              error={errors?.address}
+            />
+
+            <DatePicker
+              label='Effective Start  Date'
+              setValue={(date: string) => {
+                console.debug('Start Date changed:', date)
+                setFormValue('effective_start')(date)
+              }}
+              value={formData.effective_start}
+              placeholder='Select Effective Start Date'
+              error={errors?.effective_start}
+            />
+
+            <DatePicker
+              label='Effective End Date'
+              setValue={(date: string) => {
+                console.debug('End Date changed:', date)
+                setFormValue('effective_end')(date)
+              }}
+              value={formData.effective_end}
+              placeholder='Select Effective End Date'
+              error={errors?.effective_end}
+            />
           </div>
           <div className='flex justify-end'>
             <Button
               type='submit'
               disabled={loading}
               label='Submit'
+              variant='primary'
             />
           </div>
         </form>
       </div>
-    </AppLayout>
+    </MainLayout>
   )
 }

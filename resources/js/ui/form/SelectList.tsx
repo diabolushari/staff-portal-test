@@ -22,9 +22,7 @@ export interface Properties<
 const getStyle = (style: 'normal' | 'bottom-border' | 'dark' | 'disabled') => {
   switch (style) {
     case 'normal':
-      return `w-full appearance-none rounded-lg border border-gray-300 py-3 pl-3 text-sm text-gray-800
-        shadow-sm focus:border-indigo-700 focus:outline-none disabled:bg-gray-100
-        dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-indigo-500 dark:disabled:bg-gray-700`
+      return 'w-full rounded border text-sm border-[#8EA6BE] bg-[#F9FAFB]/50 dark:bg-[#F9FAFB]/10 text-[#000000] dark:text-white font-inter font-medium p-2'
 
     case 'bottom-border':
       return `mt-0 block w-full border-0 border-b-2 border-gray-200 bg-neutral-50 px-0.5 bodybold text-sm
@@ -68,35 +66,39 @@ export default function SelectList<
 
   return (
     <>
-      {label != null && showLabel && (
-        <label className='standard-label small-1stop dark:text-gray-200'>{label}</label>
-      )}
-      <select
-        name='type'
-        value={selectedOption}
-        onChange={(e) => setValue(e.target.value)}
-        className={getStyle(style)}
-        disabled={disabled}
-      >
-        {showAllOption && <option value=''>{allOptionText}</option>}
-        {!showAllOption && label != null && (
-          <option
-            value=''
-            disabled
-          >
-            Select {label}
-          </option>
+      <div>
+        {label != null && showLabel && (
+          <label className='font-inter text-left align-top text-sm leading-[1.4] tracking-[-0.006em] text-gray-800 dark:text-gray-200'>
+            {label}
+          </label>
         )}
-        {list.map((item: T) => (
-          <option
-            value={item[dataKey]}
-            key={item[dataKey]}
-          >
-            {item[displayKey]}
-          </option>
-        ))}
-      </select>
-      {error && <ErrorText>{error}</ErrorText>}
+        <select
+          name='type'
+          value={selectedOption}
+          onChange={(e) => setValue(e.target.value)}
+          className={getStyle(style)}
+          disabled={disabled}
+        >
+          {showAllOption && <option value=''>{allOptionText}</option>}
+          {!showAllOption && label != null && (
+            <option
+              value=''
+              disabled
+            >
+              Select {label}
+            </option>
+          )}
+          {list.map((item: T) => (
+            <option
+              value={item[dataKey]}
+              key={item[dataKey]}
+            >
+              {item[displayKey]}
+            </option>
+          ))}
+        </select>
+        {error && <ErrorText>{error}</ErrorText>}
+      </div>
     </>
   )
 }

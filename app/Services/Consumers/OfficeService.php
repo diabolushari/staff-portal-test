@@ -4,7 +4,6 @@ namespace App\Services\Consumers;
 
 use App\Http\Requests\Consumers\OfficeFormRequest;
 use App\Services\Grpc\GrpcErrorService;
-use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use DateTime;
 use Google\Protobuf\Struct;
@@ -27,8 +26,13 @@ class OfficeService
             ["credentials" => ChannelCredentials::createInsecure()]
         );
     }
-    public function getOffices(int $page = 1, int $pageSize = 10, ?string $search, ?string $officeType, ?string $officeName): GrpcServiceResponse
-    {
+    public function getOffices(
+        int $page = 1,
+        int $pageSize = 10,
+        ?string $search = null,
+        ?string $officeType = null,
+        ?string $officeName = null
+    ): GrpcServiceResponse {
         $request = new OfficeListRequest();
         if ($search !== null) {
             $request->setSearch($search);
@@ -87,7 +91,9 @@ class OfficeService
         $proto->setOfficeCode($request->officeCode);
         $proto->setOfficeDescription($request->officeDescription);
         $proto->setOfficeTypeId($request->officeTypeId);
-        $proto->setParentOfficeId((int)$request->parentOfficeId ?? null);
+        if ($request->parentOfficeId !== null) {
+            $proto->setParentOfficeId($request->parentOfficeId);
+        }
         $contactFolioStruct = new Struct();
         $fields = [];
 
@@ -154,7 +160,7 @@ class OfficeService
 
         $office = $response->getOffice();
         $contactFolioStruct = $office->getContactFolio();
-
+        $contactFolio = [];
         if ($contactFolioStruct) {
             // convert Struct -> PHP array
             $contactFolioArray = $contactFolioStruct->getFields();
@@ -168,7 +174,7 @@ class OfficeService
 
 
             $contactFolioJsonString = $contactFolioStruct->serializeToJsonString();
-            $contactFolioObject = json_decode($contactFolioJsonString);
+            $contactFolio = json_decode($contactFolioJsonString);
         }
         $effectiveStart = $office->getEffectiveStart()
             ? $office->getEffectiveStart()->toDateTime()->format('Y-m-d')
@@ -194,7 +200,7 @@ class OfficeService
             'effective_end' => $effectiveEnd,
             'created_at' => $office->getCreatedAt(),
             'updated_at' => $office->getUpdatedAt(),
-            'contact_folio' => $contactFolioObject,
+            'contact_folio' => $contactFolio,
             'office_type' => $officeTypeArray,
         ];
         return GrpcServiceResponse::success($officeArray, $response, $status->code, $status->details);
@@ -207,7 +213,9 @@ class OfficeService
         $proto->setOfficeCode($request->officeCode);
         $proto->setOfficeDescription($request->officeDescription);
         $proto->setOfficeTypeId($request->officeTypeId);
-        $proto->setParentOfficeId($request->parentOfficeId ?? null);
+        if ($request->parentOfficeId !== null) {
+            $proto->setParentOfficeId($request->parentOfficeId);
+        }
         $contactFolioStruct = new Struct();
         $fields = [];
 

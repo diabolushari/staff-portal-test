@@ -1,14 +1,15 @@
 import OfficeSearchForm from '@/components/Offices/OfficeSearchForm'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { Office } from '@/interfaces/consumers'
-import { ParameterValues } from '@/interfaces/paramater_types'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import AppLayout from '@/layouts/app-layout'
+import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
 import DeleteButton from '@/ui/button/DeleteButton'
 import EditButton from '@/ui/button/EditButton'
-import CardHeader from '@/ui/Card/CardHeader'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import ListSearch from '@/ui/Search/ListSearch'
 import CustomTable from '@/ui/Table/CustomTable'
 import { router } from '@inertiajs/react'
 import { useState } from 'react'
@@ -44,18 +45,18 @@ export default function OfficeIndex({
   }
   console.log('offices', offices)
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
+    <MainLayout breadcrumb={breadcrumbs}>
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
-        <CardHeader
-          title='Offices'
-          subheading='Add a new office.'
-          addUrl={route('offices.create')}
+        <ListSearch
+          title='Office Search'
+          placeholder='Enter office name or code'
         />
         <div>
           {office_types && (
             <OfficeSearchForm
               office_types={office_types}
               filters={filters}
+              placeholder='Enter office name or code'
             />
           )}
           <CustomTable
@@ -67,11 +68,11 @@ export default function OfficeIndex({
                 {offices.map((item: any, index: number) => (
                   <TableRow key={item.id}>
                     <TableCell className='px-4 py-2'>{index + 1}</TableCell>
-                    <td className='px-4 py-2'>{item.office_id}</td>
-                    <td className='px-4 py-2'>{item.office_name}</td>
-                    <td className='px-4 py-2'>{item.office_code}</td>
-                    <td className='px-4 py-2'>{item.office_type?.parameter_value}</td>
-                    <td className='px-4 py-2'>
+                    <TableCell className='px-4 py-2'>{item.office_id}</TableCell>
+                    <TableCell className='px-4 py-2'>{item.office_name}</TableCell>
+                    <TableCell className='px-4 py-2'>{item.office_code}</TableCell>
+                    <TableCell className='px-4 py-2'>{item.office_type?.parameter_value}</TableCell>
+                    <TableCell className='px-4 py-2'>
                       <div className='flex space-x-2'>
                         <EditButton onClick={() => handleEditClick(item)} />
                         <DeleteButton onClick={() => handleDeleteClick(item)} />
@@ -80,7 +81,7 @@ export default function OfficeIndex({
                           label='View'
                         />
                       </div>
-                    </td>
+                    </TableCell>
                   </TableRow>
                 ))}
               </>
@@ -95,6 +96,6 @@ export default function OfficeIndex({
           url={route('offices.destroy', editRow.office_id)}
         />
       )}
-    </AppLayout>
+    </MainLayout>
   )
 }

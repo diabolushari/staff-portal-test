@@ -10,7 +10,7 @@ import Input from '@/ui/form/Input'
 import TextArea from '@/ui/form/TextArea'
 import { BreadcrumbItem } from '@/types'
 import { useEffect, useState } from 'react'
-import { ParameterDefinition, ParameterValues } from '@/interfaces/paramater_types'
+import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
 import DatePicker from '@/ui/form/DatePicker'
 
 const breadcrumbs: BreadcrumbItem[] = [

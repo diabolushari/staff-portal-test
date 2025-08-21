@@ -1,5 +1,5 @@
 import ViewParameterDetail from '@/components/Parameter/ViewParameterDetails'
-import { ParameterValues } from '@/interfaces/paramater_types'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import AppLayout from '@/layouts/app-layout'
 
 export default function ParameterValueShow({
