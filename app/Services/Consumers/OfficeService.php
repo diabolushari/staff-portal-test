@@ -80,6 +80,7 @@ class OfficeService
                 'created_at' => $office->getCreatedAt(),
                 'updated_at' => $office->getUpdatedAt(),
                 'office_type' => $officeTypeArray,
+                'is_current' => $office->getIsCurrent(),
             ];
         }
         return GrpcServiceResponse::success($officesArray, $response, $status->code, $status->details);
@@ -107,20 +108,23 @@ class OfficeService
         $contactFolioStruct->setFields($fields);
         $proto->setContactFolio($contactFolioStruct);
 
-        if (empty($request->effectiveStart)) {
-            $request->effectiveStart = date('Y-m-d');
+        if ($request->effectiveStart) {
+
+            $effectiveStart = new Timestamp();
+            $effectiveStart->fromDateTime(new DateTime($request->effectiveStart));
+            $proto->setEffectiveStart($effectiveStart);
+        } else {
+            $effectiveStart = new Timestamp();
+            $effectiveStart->fromDateTime(new DateTime(date('Y-m-d')));
+            $proto->setEffectiveStart($effectiveStart);
         }
-
-        $effectiveStart = new Timestamp();
-        $effectiveStart->fromDateTime(new DateTime($request->effectiveStart));
-        $proto->setEffectiveStart($effectiveStart);
-
         if (!empty($request->effectiveEnd)) {
             $effectiveEnd = new Timestamp();
             $effectiveEnd->fromDateTime(new DateTime($request->effectiveEnd));
             $proto->setEffectiveEnd($effectiveEnd);
         }
         [$response, $status] = $this->client->CreateOffice($proto)->wait();
+        $office = $response->getOffice();
         $officeArray = [];
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -131,15 +135,15 @@ class OfficeService
             );
         }
         $officeArray = [
-            'office_name' => $response->getOfficeName(),
-            'office_code' => $response->getOfficeCode(),
-            'description' => $response->getOfficeDescription(),
-            'office_type_id' => $response->getOfficeTypeId(),
-            'parent_office_id' => $response->getParentOfficeId(),
-            'effective_start' => $response->getEffectiveStart(),
-            'effective_end' => $response->getEffectiveEnd(),
-            'created_at' => $response->getCreatedAt(),
-            'updated_at' => $response->getUpdatedAt(),
+            'office_name' => $office->getOfficeName(),
+            'office_code' => $office->getOfficeCode(),
+            'description' => $office->getOfficeDescription(),
+            'office_type_id' => $office->getOfficeTypeId(),
+            'parent_office_id' => $office->getParentOfficeId(),
+            'effective_start' => $office->getEffectiveStart(),
+            'effective_end' => $office->getEffectiveEnd(),
+            'created_at' => $office->getCreatedAt(),
+            'updated_at' => $office->getUpdatedAt(),
         ];
         return GrpcServiceResponse::success($officeArray, $response, $status->code, $status->details);
     }

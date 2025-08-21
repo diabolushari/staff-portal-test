@@ -31,7 +31,7 @@ export const getFormStyle = (
     }
     case 'disabled': {
       return (
-        'w-full rounded-sm border border-transparent bg-white opacity-50 py-2 pl-6 pr-12 text-black-1000 shadow-sm ' +
+        'w-full font-medium text-sm rounded border border-transparent bg-[#F9FAFB] opacity-100 py-2 pl-6 pr-12 text-black-1000 shadow-sm ' +
         'focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 ' +
         'dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-900'
       )
@@ -66,7 +66,7 @@ export default function Input({
 
   return (
     <>
-      <div>
+      <div className={style === 'google' ? 'w-full' : ''}>
         {label != null && (
           <label className='font-inter text-left align-top text-sm leading-[1.4] tracking-[-0.006em] text-gray-800 dark:text-gray-200'>
             {label}

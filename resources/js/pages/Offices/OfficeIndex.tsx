@@ -8,6 +8,7 @@ import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
 import DeleteButton from '@/ui/button/DeleteButton'
 import EditButton from '@/ui/button/EditButton'
+import OfficeList from '@/ui/List/OfficeList'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import ListSearch from '@/ui/Search/ListSearch'
 import CustomTable from '@/ui/Table/CustomTable'
@@ -59,34 +60,7 @@ export default function OfficeIndex({
               placeholder='Enter office name or code'
             />
           )}
-          <CustomTable
-            columns={columns}
-            caption='List of Offices'
-          >
-            {offices && (
-              <>
-                {offices.map((item: any, index: number) => (
-                  <TableRow key={item.id}>
-                    <TableCell className='px-4 py-2'>{index + 1}</TableCell>
-                    <TableCell className='px-4 py-2'>{item.office_id}</TableCell>
-                    <TableCell className='px-4 py-2'>{item.office_name}</TableCell>
-                    <TableCell className='px-4 py-2'>{item.office_code}</TableCell>
-                    <TableCell className='px-4 py-2'>{item.office_type?.parameter_value}</TableCell>
-                    <TableCell className='px-4 py-2'>
-                      <div className='flex space-x-2'>
-                        <EditButton onClick={() => handleEditClick(item)} />
-                        <DeleteButton onClick={() => handleDeleteClick(item)} />
-                        <Button
-                          onClick={() => router.get(route('offices.show', item.office_id))}
-                          label='View'
-                        />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </>
-            )}
-          </CustomTable>
+          <OfficeList offices={offices} />
         </div>
       </div>
       {showDeleteModal && editRow && (

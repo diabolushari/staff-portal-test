@@ -3,8 +3,23 @@ import CardHeader from '@/ui/Card/CardHeader'
 import { Office } from '@/interfaces/consumers'
 import { router } from '@inertiajs/react'
 import MainLayout from '@/layouts/main-layout'
+import { BreadcrumbItem } from '@/types'
+import StrongText from '@/typography/StrongText'
+import TinyContainer from '@/ui/Card/TinyContainer'
+import OfficeDetails from '@/components/Offices/OfficeDetails'
+import { DetailPageTabGroup } from '@/ui/Tabs/DetailPageTabGroup'
 
 export default function OfficeShow({ office }: { office: Office }) {
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Offices',
+      href: '/offices',
+    },
+    {
+      title: 'Detail',
+      href: `/offices/${office.office_id}`,
+    },
+  ]
   const {
     office_id,
     office_name,
@@ -16,84 +31,38 @@ export default function OfficeShow({ office }: { office: Office }) {
     effective_end,
     contact_folio,
     office_type,
+    is_current,
   } = office
 
   const formatDate = (dateStr?: string) => (dateStr ? new Date(dateStr).toLocaleDateString() : '-')
   console.log(office)
+  const tabs = [
+    {
+      value: 'detail',
+      label: 'Office Detail',
+      content: <OfficeDetails office={office} />,
+    },
+    {
+      value: 'Substations',
+      label: 'Substations',
+      content: <div>Substations</div>,
+    },
+    {
+      value: 'Consumers',
+      label: 'Consumers',
+      content: <div>Consumers</div>,
+    },
+  ]
   return (
-    <MainLayout>
-      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4'>
-        <CardHeader
-          titleClassName='2xl:text-2xl'
-          title='Office Details'
-          subheading='Manage office information and details.'
-        />
-
-        {/* Office Summary */}
-        <div className='rounded-lg border bg-white p-6 shadow-sm'>
-          <div className='mb-4 flex items-center'>
-            <div className='mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400 text-2xl font-bold text-white'>
-              {office_code}
-            </div>
-            <div>
-              <div className='text-lg font-semibold text-gray-800'>{office_name}</div>
-              <div className='text-sm text-gray-500'>Office Description: {office_description}</div>
-              <div className='text-sm text-gray-500'>
-                Office Type: {office_type?.parameter_value}
-              </div>
-            </div>
-            <button
-              className='ml-auto rounded bg-gray-200 px-4 py-2 text-sm text-gray-700'
-              onClick={() => router.visit(route('offices.edit', office.office_id))}
-            >
-              Edit Office
-            </button>
-          </div>
+    <MainLayout breadcrumb={breadcrumbs}>
+      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
+        <div className='flex items-center gap-2'>
+          <StrongText className='text-2xl font-semibold'>{`${office_code} - ${office_name}`}</StrongText>
+          <TinyContainer variant={office.is_current ? 'success' : 'danger'}>
+            {office.is_current ? 'Active' : 'Inactive'}
+          </TinyContainer>
         </div>
-
-        {/* Contact Information */}
-        <div className='rounded-lg border bg-white p-6 shadow-sm'>
-          <div className='mb-4 text-lg font-semibold text-gray-800'>Contact Information</div>
-          {/* <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-            <div>
-              <div className='text-sm text-gray-500'>Name</div>
-              <div className='font-medium text-gray-800'>{contactFolio?.name ?? '-'}</div>
-            </div>
-            <div>
-              <div className='text-sm text-gray-500'>Email</div>
-              <div className='font-medium text-gray-800'>{contactFolio?.email ?? '-'}</div>
-            </div>
-            <div>
-              <div className='text-sm text-gray-500'>Phone</div>
-              <div className='font-medium text-gray-800'>{contactFolio?.phone ?? '-'}</div>
-            </div>
-            <div>
-              <div className='text-sm text-gray-500'>Address</div>
-              <div className='font-medium text-gray-800'>{contactFolio?.address ?? '-'}</div>
-            </div>
-          </div> */}
-        </div>
-
-        {/* Validity Dates */}
-        <div className='rounded-lg border bg-white p-6 shadow-sm'>
-          <div className='mb-4 text-lg font-semibold text-gray-800'>Validity Period</div>
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-            <div>
-              <div className='text-sm text-gray-500'>Effective Start</div>
-              <div className='font-medium text-gray-800'>{formatDate(effective_start)}</div>
-            </div>
-            <div>
-              <div className='text-sm text-gray-500'>Effective End</div>
-              <div className='font-medium text-gray-800'>{formatDate(effective_end)}</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Meta Info */}
-        <div className='rounded-lg border bg-white p-6 shadow-sm'>
-          <div className='mb-4 text-lg font-semibold text-gray-800'>Record Metadata</div>
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'></div>
-        </div>
+        <DetailPageTabGroup tabs={tabs} />
       </div>
     </MainLayout>
   )

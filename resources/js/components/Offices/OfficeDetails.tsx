@@ -1,0 +1,66 @@
+import { Office } from '@/interfaces/consumers'
+import StrongText from '@/typography/StrongText'
+import { Card } from '../ui/card'
+import useCustomForm from '@/hooks/useCustomForm'
+import Input from '@/ui/form/Input'
+
+export default function OfficeDetails({ office }: { office: Office }) {
+  const {
+    office_id,
+    office_name,
+    office_code,
+    office_description,
+    office_type_id,
+    parent_office_id,
+    effective_start,
+    effective_end,
+    contact_folio,
+    office_type,
+    is_current,
+  } = office
+  const { formData, setFormValue } = useCustomForm({
+    office_id,
+    office_name,
+    office_code,
+    office_description,
+    office_type_id,
+    parent_office_id,
+    effective_start,
+    effective_end,
+    contact_folio,
+    office_type,
+    is_current,
+  })
+  return (
+    <div className='flex w-full flex-col gap-4'>
+      <Card>
+        <div className='flex justify-between border-b-2 border-gray-200 py-4'>
+          <StrongText className='text-base font-semibold'>Basic Information</StrongText>
+        </div>
+        <div className='grid gap-4 gap-y-8 p-4 md:grid-cols-2'>
+          <Input
+            label='Office Code'
+            setValue={setFormValue('office_code')}
+            value={formData.office_code}
+            disabled={true}
+            style='disabled'
+          />
+          <Input
+            label='Office Name'
+            setValue={setFormValue('office_name')}
+            value={formData.office_name}
+            disabled={true}
+            style='disabled'
+          />
+          <Input
+            label='Office Type'
+            setValue={setFormValue('office_type_id')}
+            value={formData.office_type.parameter_value}
+            disabled={true}
+            style='disabled'
+          />
+        </div>
+      </Card>
+    </div>
+  )
+}

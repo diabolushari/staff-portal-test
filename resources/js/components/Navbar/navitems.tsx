@@ -12,23 +12,10 @@ export const settingsNavItems: navItem[] = [
     href: '/offices',
     icon: <ListIcon className='h-4 w-4' />,
   },
-  {
-    title: 'Test',
-    href: '/page-ui',
-    icon: <ListIcon className='h-4 w-4' />,
-  },
+
   {
     title: 'Add Office',
     href: '/offices/create',
     icon: <HomeIcon className='h-4 w-4' />,
-  },
-  {
-    title: 'Settings',
-    href: '/settings',
-    icon: <SettingsIcon className='h-4 w-4' />,
-    children: [
-      { title: 'Profile', href: '/settings/profile' },
-      { title: 'Account', href: '/settings/account' },
-    ],
   },
 ]

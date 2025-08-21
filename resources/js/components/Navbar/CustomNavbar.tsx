@@ -18,11 +18,17 @@ export function CustomNavbar() {
     { title: 'Accounts', href: '/accounts', description: 'User accounts and permissions' },
     {
       title: 'Settings',
-      href: '/settings',
+      href: '/offices',
       description: 'System configuration and options',
-      children: [{ title: 'Offices', href: '/offices', description: 'Manage office locations' }],
+      children: [
+        { title: 'Offices', href: '/offices', description: 'Manage office locations' },
+        {
+          title: 'Reference Data Management',
+          href: '/parameter-values',
+          description: 'Manage reference data',
+        },
+      ],
     },
-    { title: 'Test', href: '/page-ui', description: 'UI testing page' },
   ]
 
   return (
@@ -46,7 +52,10 @@ export function CustomNavbar() {
                     </li>
                     {item.children.map((child) => (
                       <li key={child.title}>
-                        <NavigationMenuLink asChild>
+                        <NavigationMenuLink
+                          asChild
+                          className='bg:white hover:bg-gray-100'
+                        >
                           <Link href={child.href}>
                             <div className='font-medium'>{child.title}</div>
                             <div className='text-muted-foreground text-sm'>{child.description}</div>
