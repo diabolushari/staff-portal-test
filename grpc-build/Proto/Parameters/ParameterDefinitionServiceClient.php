@@ -21,7 +21,7 @@ class ParameterDefinitionServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\CreateParameterDefinitionRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall<\Proto\Parameters\ParameterDefinitionProto>
+     * @return \Grpc\UnaryCall
      */
     public function CreateParameterDefinition(\Proto\Parameters\CreateParameterDefinitionRequest $argument,
       $metadata = [], $options = []) {
@@ -35,7 +35,7 @@ class ParameterDefinitionServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\GetParameterDefinitionRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall<\Proto\Parameters\ParameterDefinitionProto>
+     * @return \Grpc\UnaryCall
      */
     public function GetParameterDefinition(\Proto\Parameters\GetParameterDefinitionRequest $argument,
       $metadata = [], $options = []) {
@@ -49,7 +49,7 @@ class ParameterDefinitionServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\UpdateParameterDefinitionRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall<\Proto\Parameters\ParameterDefinitionProto>
+     * @return \Grpc\UnaryCall
      */
     public function UpdateParameterDefinition(\Proto\Parameters\UpdateParameterDefinitionRequest $argument,
       $metadata = [], $options = []) {
@@ -63,7 +63,7 @@ class ParameterDefinitionServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\DeleteParameterDefinitionRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall<\Google\Protobuf\GPBEmpty>
+     * @return \Grpc\UnaryCall
      */
     public function DeleteParameterDefinition(\Proto\Parameters\DeleteParameterDefinitionRequest $argument,
       $metadata = [], $options = []) {
@@ -77,7 +77,7 @@ class ParameterDefinitionServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\ListParameterDefinitionsRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall<\Proto\Parameters\ListParameterDefinitionsResponse>
+     * @return \Grpc\UnaryCall
      */
     public function ListParameterDefinitions(\Proto\Parameters\ListParameterDefinitionsRequest $argument,
       $metadata = [], $options = []) {
