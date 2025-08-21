@@ -21,7 +21,7 @@ class ParameterDomainServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\CreateParameterDomainRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Proto\Parameters\ParameterDomainProto>
      */
     public function CreateParameterDomain(\Proto\Parameters\CreateParameterDomainRequest $argument,
       $metadata = [], $options = []) {
@@ -35,7 +35,7 @@ class ParameterDomainServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\GetParameterDomainRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Proto\Parameters\ParameterDomainProto>
      */
     public function GetParameterDomain(\Proto\Parameters\GetParameterDomainRequest $argument,
       $metadata = [], $options = []) {
@@ -49,7 +49,7 @@ class ParameterDomainServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\UpdateParameterDomainRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Proto\Parameters\ParameterDomainProto>
      */
     public function UpdateParameterDomain(\Proto\Parameters\UpdateParameterDomainRequest $argument,
       $metadata = [], $options = []) {
@@ -63,7 +63,7 @@ class ParameterDomainServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\DeleteParameterDomainRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Google\Protobuf\GPBEmpty>
      */
     public function DeleteParameterDomain(\Proto\Parameters\DeleteParameterDomainRequest $argument,
       $metadata = [], $options = []) {
@@ -77,7 +77,7 @@ class ParameterDomainServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\ListParameterDomainsRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Proto\Parameters\ListParameterDomainsResponse>
      */
     public function ListParameterDomains(\Proto\Parameters\ListParameterDomainsRequest $argument,
       $metadata = [], $options = []) {

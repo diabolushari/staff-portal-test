@@ -85,6 +85,7 @@ class PartiesController extends Controller
     public function store(PartiesFormRequest $request)
     {
 
+        $request->createdBy = auth()->id();
         $response = $this->partyService->createParty($request);
 
         return redirect()->to('/parties');

@@ -22,7 +22,7 @@ class SystemModuleServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Modules\CreateSystemModuleRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Proto\Modules\SystemModule>
      */
     public function CreateSystemModule(\Proto\Modules\CreateSystemModuleRequest $argument,
       $metadata = [], $options = []) {
@@ -36,7 +36,7 @@ class SystemModuleServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Modules\GetSystemModuleRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Proto\Modules\SystemModule>
      */
     public function GetSystemModule(\Proto\Modules\GetSystemModuleRequest $argument,
       $metadata = [], $options = []) {
@@ -50,7 +50,7 @@ class SystemModuleServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Modules\UpdateSystemModuleRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Proto\Modules\SystemModule>
      */
     public function UpdateSystemModule(\Proto\Modules\UpdateSystemModuleRequest $argument,
       $metadata = [], $options = []) {
@@ -64,7 +64,7 @@ class SystemModuleServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Modules\DeleteSystemModuleRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Google\Protobuf\GPBEmpty>
      */
     public function DeleteSystemModule(\Proto\Modules\DeleteSystemModuleRequest $argument,
       $metadata = [], $options = []) {
@@ -78,7 +78,7 @@ class SystemModuleServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Modules\ListSystemModulesRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Proto\Modules\ListSystemModulesResponse>
      */
     public function ListSystemModules(\Proto\Modules\ListSystemModulesRequest $argument,
       $metadata = [], $options = []) {

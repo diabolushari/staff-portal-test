@@ -9,10 +9,13 @@ use Carbon\Carbon;
 use Google\Protobuf\GPBEmpty;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
-use Proto\Consumers\PartyCreateRequest;
-use Proto\Consumers\PartyIdRequest;
+use Proto\Consumers\CreatePartyRequest;
+use Proto\Consumers\DeletePartyRequest;
+use Proto\Consumers\GetCurrentPartyRequest;
+use Proto\Consumers\GetPartyByVersionIdRequest;
+use Proto\Consumers\GetPartyHistoryRequest;
 use Proto\Consumers\PartyServiceClient;
-use Proto\Consumers\PartyUpdateRequest;
+use Proto\Consumers\UpdatePartyRequest;
 
 class PartyService
 {
@@ -27,13 +30,13 @@ class PartyService
     }
 
     /**
-     * Get list of all parties
+     * Get list of all current parties
      */
     public function getParties(): GrpcServiceResponse
     {
         $request = new GPBEmpty;
-
-        [$response, $status] = $this->client->ListParties($request)->wait();
+        // Updated gRPC method call
+        [$response, $status] = $this->client->ListCurrentParties($request)->wait();
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -61,10 +64,12 @@ class PartyService
      */
     public function getParty(int $versionId): GrpcServiceResponse
     {
-        $request = new PartyIdRequest;
+        // Updated request message
+        $request = new GetPartyByVersionIdRequest;
         $request->setVersionId($versionId);
 
-        [$response, $status] = $this->client->GetPartyById($request)->wait();
+        // Updated gRPC method call
+        [$response, $status] = $this->client->GetPartyByVersionId($request)->wait();
 
         $errorResponse = GrpcErrorService::handleErrorResponse($status);
         if ($errorResponse !== null) {
@@ -82,43 +87,53 @@ class PartyService
      */
     public function createParty(PartiesFormRequest $request): GrpcServiceResponse
     {
-        // Convert to array to get snake_case keys
-        $requestData = $request->toArray();
+        // Updated request message
+        $grpcRequest = new CreatePartyRequest;
 
-        $grpcRequest = new PartyCreateRequest;
-
-        // Set optional fields only if they exist
-        if (! empty($requestData['party_id'])) {
-            $grpcRequest->setPartyId($requestData['party_id']);
-        }
-        if (! empty($requestData['party_code'])) {
-            $grpcRequest->setPartyCode($requestData['party_code']);
-        }
-        if (! empty($requestData['party_legacy_code'])) {
-            $grpcRequest->setPartyLegacyCode($requestData['party_legacy_code']);
-        }
-        if (! empty($requestData['name'])) {
-            $grpcRequest->setName($requestData['name']);
-        }
-        if (! empty($requestData['party_type_id'])) {
-            $grpcRequest->setPartyTypeId($requestData['party_type_id']);
-        }
-        if (! empty($requestData['status_id'])) {
-            $grpcRequest->setStatusId($requestData['status_id']);
+        // Set fields based on the new proto definition
+        if ($request->partyCode) {
+            $grpcRequest->setPartyCode($request->partyCode);
         }
 
-        // Handle timestamps
-        if (! empty($requestData['effective_start'])) {
-            $grpcRequest->setEffectiveStart($this->convertToTimestamp($requestData['effective_start']));
-        }
-        if (! empty($requestData['effective_end'])) {
-            $grpcRequest->setEffectiveEnd($this->convertToTimestamp($requestData['effective_end']));
+        if ($request->partyLegacyCode) {
+            $grpcRequest->setPartyLegacyCode($request->partyLegacyCode);
         }
 
-        $grpcRequest->setIsCurrent($requestData['is_current'] ?? true);
+        if ($request->name) {
+            $grpcRequest->setName($request->name);
+        }
 
-        if (! empty($requestData['created_by'])) {
-            $grpcRequest->setCreatedBy($requestData['created_by']);
+        if ($request->partyTypeId) {
+            $grpcRequest->setPartyTypeId($request->partyTypeId);
+        }
+
+        if ($request->statusId) {
+            $grpcRequest->setStatusId($request->statusId);
+        }
+
+        if ($request->createdBy) {
+            $grpcRequest->setCreatedBy($request->createdBy);
+        }
+
+        // Contact information fields
+        if ($request->mobileNumber) {
+            $grpcRequest->setMobileNumber($request->mobileNumber);
+        }
+
+        if ($request->telephoneNumber) {
+            $grpcRequest->setTelephoneNumber($request->telephoneNumber);
+        }
+
+        if ($request->emailAddress) {
+            $grpcRequest->setEmailAddress($request->emailAddress);
+        }
+
+        if ($request->address) {
+            $grpcRequest->setAddress($request->address);
+        }
+
+        if ($request->faxNumber) {
+            $grpcRequest->setFaxNumber($request->faxNumber);
         }
 
         [$response, $status] = $this->client->CreateParty($grpcRequest)->wait();
@@ -128,58 +143,72 @@ class PartyService
             return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
         }
 
-        $party = $response->getParty();  // Access party as property, not getParty()
+        $party = $response->getParty();
         $partyArray = $this->transformPartyToArray($party);
 
         return GrpcServiceResponse::success($partyArray, $response, $status->code, $status->details);
     }
 
-    /*
+    /**
      * Update an existing party
      */
-
     public function updateParty(PartiesFormRequest $request, int $versionId): GrpcServiceResponse
     {
-        $grpcRequest = new PartyUpdateRequest;
-        $grpcRequest->setVersionId($versionId);
+        // Updated request message
+        $grpcRequest = new UpdatePartyRequest;
 
-        // Set optional fields only if they exist
-        if ($request->partyId) {
-            $grpcRequest->setPartyId($request->partyId);
-        }
+        // Proto requires party_id for update, using it from the request object
+        $grpcRequest->setPartyId($request->partyId);
+
+        // Set fields based on the new proto definition
         if ($request->partyCode) {
             $grpcRequest->setPartyCode($request->partyCode);
         }
+
         if ($request->partyLegacyCode) {
             $grpcRequest->setPartyLegacyCode($request->partyLegacyCode);
         }
+
         if ($request->name) {
             $grpcRequest->setName($request->name);
         }
+
         if ($request->partyTypeId) {
             $grpcRequest->setPartyTypeId($request->partyTypeId);
         }
+
         if ($request->statusId) {
             $grpcRequest->setStatusId($request->statusId);
         }
-
-        // Handle timestamps
-        if ($request->effectiveStart) {
-            $grpcRequest->setEffectiveStart($this->convertToTimestamp($request->effectiveStart));
-        }
-        if ($request->effectiveEnd) {
-            $grpcRequest->setEffectiveEnd($this->convertToTimestamp($request->effectiveEnd));
-        }
-
-        $grpcRequest->setIsCurrent($request->isCurrent ?? true);
 
         if ($request->updatedBy) {
             $grpcRequest->setUpdatedBy($request->updatedBy);
         }
 
-        [$response, $status] = $this->client->UpdateParty($grpcRequest)->wait();
-        $errorResponse = GrpcErrorService::handleErrorResponse($status);
+        // Contact information fields
+        if ($request->mobileNumber) {
+            $grpcRequest->setMobileNumber($request->mobileNumber);
+        }
 
+        if ($request->telephoneNumber) {
+            $grpcRequest->setTelephoneNumber($request->telephoneNumber);
+        }
+
+        if ($request->emailAddress) {
+            $grpcRequest->setEmailAddress($request->emailAddress);
+        }
+
+        if ($request->address) {
+            $grpcRequest->setAddress($request->address);
+        }
+
+        if ($request->faxNumber) {
+            $grpcRequest->setFaxNumber($request->faxNumber);
+        }
+
+        [$response, $status] = $this->client->UpdateParty($grpcRequest)->wait();
+
+        $errorResponse = GrpcErrorService::handleErrorResponse($status);
         if ($errorResponse !== null) {
             return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
         }
@@ -195,8 +224,9 @@ class PartyService
      */
     public function deleteParty(int $versionId): GrpcServiceResponse
     {
-        $grpcRequest = new PartyIdRequest;
-        $grpcRequest->setVersionId($versionId);
+        // Updated request message. Assuming $versionId passed is the party_id.
+        $grpcRequest = new DeletePartyRequest;
+        $grpcRequest->setPartyId($versionId);
 
         [$response, $status] = $this->client->DeleteParty($grpcRequest)->wait();
 
@@ -207,6 +237,58 @@ class PartyService
 
         // Delete returns Empty; no payload data
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
+    }
+
+    /**
+     * Get the current version of a party by party ID.
+     */
+    public function getCurrentParty(int $partyId): GrpcServiceResponse
+    {
+        $request = new GetCurrentPartyRequest;
+        $request->setPartyId($partyId);
+
+        [$response, $status] = $this->client->GetCurrentParty($request)->wait();
+
+        $errorResponse = GrpcErrorService::handleErrorResponse($status);
+        if ($errorResponse !== null) {
+            return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
+        }
+
+        $party = $response->getParty();
+        $partyArray = $this->transformPartyToArray($party);
+
+        return GrpcServiceResponse::success($partyArray, $response, $status->code, $status->details);
+    }
+
+    /**
+     * Get the version history of a party.
+     */
+    public function getPartyHistory(int $partyId): GrpcServiceResponse
+    {
+        $request = new GetPartyHistoryRequest;
+        $request->setPartyId($partyId);
+
+        [$response, $status] = $this->client->GetPartyHistory($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $parties = $response?->getParties();
+        $partiesArray = [];
+
+        if ($parties) {
+            foreach ($parties as $party) {
+                $partiesArray[] = $this->transformPartyToArray($party);
+            }
+        }
+
+        return GrpcServiceResponse::success($partiesArray, $response, $status->code, $status->details);
     }
 
     /**
@@ -221,7 +303,9 @@ class PartyService
             'party_legacy_code' => $party->getPartyLegacyCode(),
             'name' => $party->getName(),
             'party_type_id' => $party->getPartyTypeId(),
+            'party_type' => $this->transformParameterValueToArray($party->getPartyType()),
             'status_id' => $party->getStatusId(),
+            'status' => $this->transformParameterValueToArray($party->getStatus()),
             'effective_start' => $this->convertFromTimestamp($party->getEffectiveStart()),
             'effective_end' => $this->convertFromTimestamp($party->getEffectiveEnd()),
             'is_current' => $party->getIsCurrent(),
@@ -229,6 +313,28 @@ class PartyService
             'updated_by' => $party->getUpdatedBy(),
             'created_at' => $this->convertFromTimestamp($party->getCreatedAt()),
             'updated_at' => $this->convertFromTimestamp($party->getUpdatedAt()),
+            // Contact information fields
+            'mobile_number' => $party->getMobileNumber(),
+            'telephone_number' => $party->getTelephoneNumber(),
+            'email_address' => $party->getEmailAddress(),
+            'address' => $party->getAddress(),
+            'fax_number' => $party->getFaxNumber(),
+        ];
+    }
+
+    /**
+     * Transform ParameterValueProto to PHP array
+     */
+    private function transformParameterValueToArray($parameterValue): ?array
+    {
+        if ($parameterValue === null) {
+            return null;
+        }
+
+        // The structure is assumed based on usage in the provided controller context
+        return [
+            'id' => $parameterValue->getId(),
+            'parameter_value' => $parameterValue->getParameterValue(),
         ];
     }
 
@@ -244,7 +350,8 @@ class PartyService
         } elseif ($dateTime instanceof \DateTime) {
             $carbon = Carbon::instance($dateTime);
         } else {
-            $carbon = Carbon::now();
+            // Return a new Timestamp object if the input is not a valid date format
+            return new Timestamp;
         }
 
         $timestamp = new Timestamp;
@@ -265,6 +372,11 @@ class PartyService
 
         $seconds = $timestamp->getSeconds();
         $nanos = $timestamp->getNanos();
+
+        // Check for default/unset timestamp
+        if ($seconds === 0 && $nanos === 0) {
+            return null;
+        }
 
         $carbon = Carbon::createFromTimestamp($seconds);
         $carbon->addMicroseconds(intval($nanos / 1000));

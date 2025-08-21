@@ -22,5 +22,11 @@ class PartiesFormRequest extends Data
         public ?bool $isCurrent,
         public ?int $createdBy,
         public ?int $updatedBy,
+        // Contact information fields
+        public ?int $mobileNumber,
+        public ?int $telephoneNumber,
+        public ?string $emailAddress,
+        public ?string $address,
+        public ?int $faxNumber,
     ) {}
 }

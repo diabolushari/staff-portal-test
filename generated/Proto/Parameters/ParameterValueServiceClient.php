@@ -21,7 +21,7 @@ class ParameterValueServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\CreateParameterValueRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Proto\Parameters\ParameterValueProto>
      */
     public function CreateParameterValue(\Proto\Parameters\CreateParameterValueRequest $argument,
       $metadata = [], $options = []) {
@@ -35,7 +35,7 @@ class ParameterValueServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\UpdateParameterValueRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Proto\Parameters\ParameterValueProto>
      */
     public function UpdateParameterValue(\Proto\Parameters\UpdateParameterValueRequest $argument,
       $metadata = [], $options = []) {
@@ -49,7 +49,7 @@ class ParameterValueServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\GetParameterValueRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Proto\Parameters\ParameterValueProto>
      */
     public function GetParameterValue(\Proto\Parameters\GetParameterValueRequest $argument,
       $metadata = [], $options = []) {
@@ -63,7 +63,7 @@ class ParameterValueServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\DeleteParameterValueRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Google\Protobuf\GPBEmpty>
      */
     public function DeleteParameterValue(\Proto\Parameters\DeleteParameterValueRequest $argument,
       $metadata = [], $options = []) {
@@ -77,7 +77,7 @@ class ParameterValueServiceClient extends \Grpc\BaseStub {
      * @param \Proto\Parameters\ListParameterValuesRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return \Grpc\UnaryCall
+     * @return \Grpc\UnaryCall<\Proto\Parameters\ListParameterValuesResponse>
      */
     public function ListParameterValues(\Proto\Parameters\ListParameterValuesRequest $argument,
       $metadata = [], $options = []) {
