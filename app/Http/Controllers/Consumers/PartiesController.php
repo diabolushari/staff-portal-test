@@ -11,10 +11,12 @@ use Inertia\Inertia;
 use Proto\Parameters\ListParameterValuesRequest;
 use Proto\Parameters\ParameterValueServiceClient;
 
+// TODO: FIX Error Handling.
 class PartiesController extends Controller
 {
     private PartyService $partyService;
 
+    // TODO: Dependency Injection
     private $parameterValueClient;
 
     public function __construct()
@@ -50,6 +52,7 @@ class PartiesController extends Controller
 
     public function create()
     {
+        // TODO use paramater value service
         $request = new ListParameterValuesRequest;
         $statusRequest = new ListParameterValuesRequest;
         $request->setDomainName('Parties');
@@ -63,12 +66,14 @@ class PartiesController extends Controller
                 'grpc_error' => $partyTypeStatus->details,
             ]);
         }
+
         $partyTypes = collect($partyTypes->getValues())
             ->map(fn ($item) => [
                 'id' => $item->getId(),
                 'parameterValue' => $item->getParameterValue(),
             ])
             ->toArray();
+
         $partyStatus = collect($partyStatus->getValues())
             ->map(fn ($item) => [
                 'id' => $item->getId(),
@@ -85,8 +90,8 @@ class PartiesController extends Controller
     public function store(PartiesFormRequest $request)
     {
 
-        $request->createdBy = auth()->id();
-        $request->updatedBy = auth()->id();
+        $request->createdBy = auth()->user()?->id;
+        $request->updatedBy = auth()->user()?->id;
         $response = $this->partyService->createParty($request);
 
         return redirect()->to('/parties');

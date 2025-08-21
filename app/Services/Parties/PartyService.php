@@ -138,6 +138,8 @@ class PartyService
 
         [$response, $status] = $this->client->CreateParty($grpcRequest)->wait();
 
+        dd($status->code);
+
         $errorResponse = GrpcErrorService::handleErrorResponse($status);
         if ($errorResponse !== null) {
             return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
