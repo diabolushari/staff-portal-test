@@ -15,8 +15,9 @@ class OfficeFormRequest extends Data
         public ?string $officeCode,
         public ?string $officeDescription,
         public ?int $officeTypeId,
-        public ?int $parentId,
+        public ?int $parentOfficeId,
         public ?string $effectiveStart,
         public ?string $effectiveEnd,
+        public ?array $contactFolio,
     ) {}
 }

@@ -23,6 +23,7 @@ export interface ParameterDefinition {
   attribute4_name?: string
   attribute5_name?: string
   domain?: {id: number, domain_name: string}
+
 }
 
 export interface ParameterValues {
@@ -41,5 +42,6 @@ export interface ParameterValues {
   is_active: boolean
   sort_priority: number
   notes: string
+  definition: Partial<ParameterDefinition> | null
 }
   

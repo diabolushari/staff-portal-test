@@ -1,5 +1,5 @@
 import ViewParameterDetails from '@/components/Parameter/ViewParameterDetails' // adjust path
-import { ParameterDomain } from '@/interfaces/paramater_service'
+import { ParameterDomain } from '@/interfaces/paramater_types'
 import AppLayout from '@/layouts/app-layout'
 import Card from '@/ui/Card/Card'
 import CardHeader from '@/ui/Card/CardHeader'
@@ -11,6 +11,7 @@ export default function ParameterDomainShow({ domain }: { domain: ParameterDomai
     { label: 'Domain Code', key: 'domainCode' },
     { label: 'Managed By Module', key: 'managedByModuleName' },
   ]
+  console.log(domain)
 
   return (
     <AppLayout>

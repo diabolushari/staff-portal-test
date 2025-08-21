@@ -9,7 +9,6 @@ import { route } from 'ziggy-js'
 interface Props {
   office_types: ParameterValues[]
   filters: {
-    search: string
     office_name: string
     office_type: string
   }
@@ -19,7 +18,6 @@ export default function OfficeSearchForm({ office_types, filters }: Readonly<Pro
   const { formData, setFormValue } = useCustomForm({
     office_type: filters.office_type?.toString() ?? '',
     office_name: filters.office_name?.toString() ?? '',
-    search: filters.search ?? '',
   })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -46,9 +44,9 @@ export default function OfficeSearchForm({ office_types, filters }: Readonly<Pro
 
           <div className='flex flex-col'>
             <Input
-              label='Search'
-              value={formData.search}
-              setValue={setFormValue('search')}
+              label='Office Name'
+              value={formData.office_name}
+              setValue={setFormValue('office_name')}
               showClearButton={true}
             />
           </div>

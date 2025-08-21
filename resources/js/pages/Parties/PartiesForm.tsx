@@ -10,7 +10,7 @@ import Input from "@/ui/form/Input";
 import SelectList from "@/ui/form/SelectList";
 
 interface Party {
-	// Identifiers owned by backend (not shown or sent in payloads)
+	// Backend-owned identifiers (not rendered)
 	version_id: number;
 	party_id: number;
 
@@ -76,6 +76,9 @@ export default function PartiesForm({
 					fax_number: party.fax_number?.toString() ?? "",
 					// meta for backend auditing, adjust as needed
 					updated_by: 1,
+					// keep identifiers internally for update payload only
+					__party_id: party.party_id,
+					__version_id: party.version_id,
 				}
 			: {
 					// create mode
@@ -115,7 +118,7 @@ export default function PartiesForm({
 
 	const errors = useMemo(() => {
 		const e: Record<string, string> = {};
-		// Required: party_code (must be a number)
+		// Required: party_code (digits only)
 		if (!formData.party_code?.toString().trim()) {
 			e.party_code = "Party Code is required.";
 		} else if (!/^\d+$/.test(String(formData.party_code))) {
@@ -155,15 +158,17 @@ export default function PartiesForm({
 	const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		// Mark required fields as touched to show errors if any
+		// Ensure required fields show errors
 		markTouched("party_code");
 		markTouched("name");
 
 		if (Object.keys(errors).length > 0) return;
 
 		if (isEditing) {
-			// Update payload: exclude party_id and version_id entirely
+			// Update payload: include party_id and version_id as requested (not shown in UI)
 			const updatePayload: Record<string, any> = {
+				version_id: (formData as any).__version_id,
+				party_id: (formData as any).__party_id,
 				party_code: toNumberOrUndef(formData.party_code),
 				party_legacy_code: formData.party_legacy_code,
 				name: formData.name,
@@ -181,9 +186,8 @@ export default function PartiesForm({
 				_method: "PUT",
 			};
 
-			// Use your route identifier in the URL (not sent in payload).
-			// If your edit page was loaded for a specific version, you likely have party?.version_id.
-			router.post(`/parties/${(party as any).version_id}`, updatePayload);
+			// URL can still use version_id (or party_id) per your routes; payload contains both as required.
+			router.post(`/parties/${(formData as any).__version_id}`, updatePayload);
 		} else {
 			const createPayload: Record<string, any> = {
 				party_code: toNumberOrUndef(formData.party_code),
@@ -313,7 +317,7 @@ export default function PartiesForm({
 									onBlur={() => markTouched("email_address")}
 								/>
 
-								{/* Address - improved UI with multiline textarea, soft character counter */}
+								{/* Address - polished multiline textarea with counter */}
 								<div className="md:col-span-2">
 									<label className="mb-1 block text-sm font-medium text-slate-700">
 										Address

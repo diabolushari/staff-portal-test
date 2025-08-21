@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\GetOfficeByIdApiController;
 use App\Http\Controllers\Api\OfficeListApiController;
 use App\Http\Controllers\Api\ParameterDefinitionItemApiController;
 use App\Http\Controllers\Api\ParameterDefinitionListApiController;
@@ -41,6 +42,7 @@ Route::get('api/parameter-domains', ParameterDomainListApiController::class);
 Route::get('api/parameter-definitions', ParameterDefinitionListApiController::class);
 Route::get('api/parameter-definitions/{id}', ParameterDefinitionItemApiController::class);
 Route::get('api/offices', OfficeListApiController::class);
+Route::get('api/office/{id}', GetOfficeByIdApiController::class);
 
 Route::get('consumer-test', function (SystemModuleService $service) {
     $response = $service->createSystemModule(
@@ -50,5 +52,5 @@ Route::get('consumer-test', function (SystemModuleService $service) {
 });
 
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

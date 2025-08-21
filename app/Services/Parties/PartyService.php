@@ -152,7 +152,7 @@ class PartyService
     /**
      * Update an existing party
      */
-    public function updateParty(PartiesFormRequest $request, int $versionId): GrpcServiceResponse
+    public function updateParty(PartiesFormRequest $request): GrpcServiceResponse
     {
         // Updated request message
         $grpcRequest = new UpdatePartyRequest;

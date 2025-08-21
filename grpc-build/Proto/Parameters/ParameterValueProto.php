@@ -76,6 +76,10 @@ class ParameterValueProto extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>string notes = 15;</code>
      */
     protected $notes = '';
+    /**
+     * Generated from protobuf field <code>.com.kseb.consumerservice.proto.parameters.ParameterDefinitionProto definition = 16;</code>
+     */
+    protected $definition = null;
 
     /**
      * Constructor.
@@ -98,6 +102,7 @@ class ParameterValueProto extends \Google\Protobuf\Internal\Message
      *     @type bool $is_active
      *     @type int $sort_priority
      *     @type string $notes
+     *     @type \Proto\Parameters\ParameterDefinitionProto $definition
      * }
      */
     public function __construct($data = NULL) {
@@ -431,6 +436,38 @@ class ParameterValueProto extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->notes = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>.com.kseb.consumerservice.proto.parameters.ParameterDefinitionProto definition = 16;</code>
+     * @return \Proto\Parameters\ParameterDefinitionProto|null
+     */
+    public function getDefinition()
+    {
+        return $this->definition;
+    }
+
+    public function hasDefinition()
+    {
+        return isset($this->definition);
+    }
+
+    public function clearDefinition()
+    {
+        unset($this->definition);
+    }
+
+    /**
+     * Generated from protobuf field <code>.com.kseb.consumerservice.proto.parameters.ParameterDefinitionProto definition = 16;</code>
+     * @param \Proto\Parameters\ParameterDefinitionProto $var
+     * @return $this
+     */
+    public function setDefinition($var)
+    {
+        GPBUtil::checkMessage($var, \Proto\Parameters\ParameterDefinitionProto::class);
+        $this->definition = $var;
 
         return $this;
     }

@@ -23,14 +23,10 @@ class ListParameterValuesRequest extends \Google\Protobuf\Internal\Message
      */
     protected $page_size = 0;
     /**
-     * ✅ Added back
-     *
      * Generated from protobuf field <code>string domain_name = 3;</code>
      */
     protected $domain_name = '';
     /**
-     * ✅ Added back
-     *
      * Generated from protobuf field <code>string parameter_name = 4;</code>
      */
     protected $parameter_name = '';
@@ -44,9 +40,7 @@ class ListParameterValuesRequest extends \Google\Protobuf\Internal\Message
      *     @type int $page
      *     @type int $page_size
      *     @type string $domain_name
-     *           ✅ Added back
      *     @type string $parameter_name
-     *           ✅ Added back
      * }
      */
     public function __construct($data = NULL) {
@@ -99,8 +93,6 @@ class ListParameterValuesRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * ✅ Added back
-     *
      * Generated from protobuf field <code>string domain_name = 3;</code>
      * @return string
      */
@@ -110,8 +102,6 @@ class ListParameterValuesRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * ✅ Added back
-     *
      * Generated from protobuf field <code>string domain_name = 3;</code>
      * @param string $var
      * @return $this
@@ -125,8 +115,6 @@ class ListParameterValuesRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * ✅ Added back
-     *
      * Generated from protobuf field <code>string parameter_name = 4;</code>
      * @return string
      */
@@ -136,8 +124,6 @@ class ListParameterValuesRequest extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * ✅ Added back
-     *
      * Generated from protobuf field <code>string parameter_name = 4;</code>
      * @param string $var
      * @return $this

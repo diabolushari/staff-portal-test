@@ -86,6 +86,7 @@ class PartiesController extends Controller
     {
 
         $request->createdBy = auth()->id();
+        $request->updatedBy = auth()->id();
         $response = $this->partyService->createParty($request);
 
         return redirect()->to('/parties');
@@ -142,7 +143,8 @@ class PartiesController extends Controller
 
     public function update(PartiesFormRequest $partiesFormRequest)
     {
-        $this->partyService->updateParty($partiesFormRequest, $partiesFormRequest->versionId);
+        $partiesFormRequest->updatedBy = auth()->id();
+        $this->partyService->updateParty($partiesFormRequest);
 
         return redirect()->to('/parties');
     }

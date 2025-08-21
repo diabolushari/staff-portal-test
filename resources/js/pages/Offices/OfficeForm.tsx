@@ -1,4 +1,5 @@
 import useCustomForm from '@/hooks/useCustomForm'
+import useFetchList from '@/hooks/useFetchList'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { Office } from '@/interfaces/consumers'
 import { ParameterValues } from '@/interfaces/paramater_types'
@@ -12,7 +13,7 @@ import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
 import { router } from '@inertiajs/react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function OfficeForm({
   parameterValues,
@@ -21,6 +22,8 @@ export default function OfficeForm({
   parameterValues: ParameterValues[]
   office?: Office
 }) {
+  const [sortPriority, setSortPriority] = useState<number | null | undefined>(null)
+
   const { formData: contactFolioForm, setFormValue: setContactFolioValue } = useCustomForm({
     phone: office?.contact_folio?.phone ?? '',
     email: office?.contact_folio?.email ?? '',
@@ -30,42 +33,55 @@ export default function OfficeForm({
 
   const { formData, setFormValue } = useCustomForm({
     office_name: office?.office_name ?? '',
-    office_code: office?.office_code ?? 0,
+    office_code: office?.office_code.toString() ?? '',
     office_description: office?.office_description ?? '',
     office_type_id: office?.office_type_id ?? '',
     parent_office_id: office?.parent_office_id ?? '',
-    effective_start: office?.effective_start
-      ? new Date(office.effective_start).toISOString().split('T')[0]
-      : '',
-    effective_end: office?.effective_end
-      ? new Date(office.effective_end).toISOString().split('T')[0]
-      : '',
+    effective_start: office?.effective_start ?? '',
+    effective_end: office?.effective_end ?? '',
     contact_folio: office?.contact_folio ?? {},
   })
 
+  const [parentOfficeData, setParentOfficeData] = useState<Office | null>(null)
+  const [data] = useFetchList<{ success: boolean; data: Office[] }>(
+    `/api/office/${office?.parent_office_id ? office.parent_office_id : 0}`
+  )
+
   useEffect(() => {
-    if (contactFolioForm.phone) setFormValue('contact_folio', contactFolioForm)
-    if (contactFolioForm.email) setFormValue('contact_folio', contactFolioForm)
-    if (contactFolioForm.name) setFormValue('contact_folio', contactFolioForm)
-    if (contactFolioForm.address) setFormValue('contact_folio', contactFolioForm)
-  }, [])
+    const sortPriorityValue = parameterValues.find(
+      (item: ParameterValues) => item.id == Number(formData.office_type_id)
+    )
+    setSortPriority(sortPriorityValue?.sort_priority)
+  }, [formData.office_type_id])
 
   const { post, errors, loading } = useInertiaPost(
-    office ? route('offices.update', office.id) : route('offices.store'),
+    office ? route('offices.update', office.office_id) : route('offices.store'),
     {
+      showErrorToast: true,
       onComplete: () => {
         router.visit(route('offices.index'))
       },
     }
   )
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    const completeFormData = { ...formData, contact_folio: contactFolioForm }
+  const handleParrentOfficeChange = (item: Office | null) => {
+    if (item) {
+      setFormValue('parent_office_id')(item?.office_id ?? '')
+      setParentOfficeData(item)
+    } else {
+      setFormValue('parent_office_id')('')
+      setParentOfficeData(null)
+    }
+  }
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    console.log('form data:', formData)
+
+    const completeFormData = { ...formData, contact_folio: contactFolioForm }
     e.preventDefault()
     post(office ? { ...completeFormData, _method: 'PUT' } : completeFormData)
   }
-  console.log('data:', office)
+  console.log('data:', office, parameterValues)
   return (
     <AppLayout>
       <div className='p-4 text-gray-800 dark:text-gray-100'>
@@ -117,19 +133,21 @@ export default function OfficeForm({
               />
             </div>
             <div className='flex flex-col'>
-              {formData.office_type_id && Number(formData.office_type_id) > 1 && (
-                <ComboBox
-                  label='Parrent Office'
-                  url={`/api/offices?officeTypeId=${formData.office_type_id}&q=`}
-                  setValue={setFormValue('parent_office_id')}
-                  value={formData.parent_office_id}
-                  placeholder='Select Parrent Office'
-                  error={errors?.parent_office_id}
-                  dataKey='id'
-                  displayKey='office_code'
-                  displayValue2='office_code'
-                />
-              )}
+              {formData.office_type_id &&
+                Number(formData.office_type_id) > 1 &&
+                sortPriority !== null && (
+                  <ComboBox
+                    label='Parrent Office'
+                    url={`/api/offices?sortPriority=${sortPriority}&q=`}
+                    setValue={handleParrentOfficeChange}
+                    value={parentOfficeData}
+                    placeholder='Select Parrent Office'
+                    error={errors?.parent_office_id}
+                    dataKey='office_id'
+                    displayKey='office_name'
+                    displayValue2='office_code'
+                  />
+                )}
             </div>
             <div className='col-span-2 flex flex-col'>
               <Heading>Contact Folio</Heading>
