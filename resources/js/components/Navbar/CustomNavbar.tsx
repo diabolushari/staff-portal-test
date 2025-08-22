@@ -19,12 +19,12 @@ export function CustomNavbar() {
     {
       title: 'Settings',
       href: '/offices',
-      description: 'System configuration and options',
+      description: '',
       children: [
         { title: 'Offices', href: '/offices', description: 'Manage office locations' },
         {
           title: 'Reference Data Management',
-          href: '/parameter-values',
+          href: '/parameter-value',
           description: 'Manage reference data',
         },
       ],
@@ -33,9 +33,12 @@ export function CustomNavbar() {
 
   return (
     <NavigationMenu>
-      <NavigationMenuList>
+      <NavigationMenuList className='relative z-50 bg-white dark:bg-gray-800'>
         {items.map((item) => (
-          <NavigationMenuItem key={item.title}>
+          <NavigationMenuItem
+            key={item.title}
+            className='flex gap-4 bg-white px-4 py-2'
+          >
             {item.children ? (
               <>
                 <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>

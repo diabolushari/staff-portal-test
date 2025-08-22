@@ -29,6 +29,7 @@ export default function OfficeForm({
   const [parentOfficeData, setParentOfficeData] = useState<Office | null>(null)
   const [showModal, setShowModal] = useState(false)
 
+  console.log('office:', office, parameterValues)
   const { formData, setFormValue } = useCustomForm({
     office_name: office?.office_name ?? '',
     office_code: office?.office_code.toString() ?? '',
@@ -121,7 +122,7 @@ export default function OfficeForm({
               setValue={setFormValue('office_code')}
               value={formData.office_code}
               error={errors?.office_code}
-              type='text'
+              type='number'
             />
 
             <TextArea
@@ -163,7 +164,7 @@ export default function OfficeForm({
         <Card>
           <div className='flex flex-col justify-between border-b-2 border-gray-200 py-4'>
             <StrongText className='text-base font-semibold'>Contact Folio</StrongText>
-            {formData.contact_folio && (
+            {formData.contact_folio && formData.contact_folio.length > 0 && (
               <div className=''>
                 {formData.contact_folio.map((contact, index) => (
                   <div

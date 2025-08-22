@@ -3,6 +3,10 @@ import StrongText from '@/typography/StrongText'
 import { Card } from '../ui/card'
 import useCustomForm from '@/hooks/useCustomForm'
 import Input from '@/ui/form/Input'
+import EditButton from '@/ui/button/EditButton'
+import { router } from '@inertiajs/react'
+import { useState } from 'react'
+import OfficeBasicInfoForm from './OfficeBasicInfoForm'
 
 export default function OfficeDetails({ office }: { office: Office }) {
   const {
@@ -31,11 +35,13 @@ export default function OfficeDetails({ office }: { office: Office }) {
     office_type,
     is_current,
   })
+  const [showBasicInfoEditModal, setShowBasicInfoEditModal] = useState(false)
   return (
     <div className='flex w-full flex-col gap-4'>
       <Card>
-        <div className='flex justify-between border-b-2 border-gray-200 py-4'>
+        <div className='flex justify-between border-b-2 border-gray-200 py-4 pe-8'>
           <StrongText className='text-base font-semibold'>Basic Information</StrongText>
+          <EditButton onClick={() => router.visit(route('offices.edit', office.office_id))} />
         </div>
         <div className='grid gap-4 gap-y-8 p-4 md:grid-cols-2'>
           <Input
@@ -82,6 +88,7 @@ export default function OfficeDetails({ office }: { office: Office }) {
           />
         </div>
       </Card>
+      {showBasicInfoEditModal && <OfficeBasicInfoForm />}
     </div>
   )
 }

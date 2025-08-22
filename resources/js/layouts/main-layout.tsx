@@ -4,7 +4,7 @@ import TopNavBar from '@/components/Navbar/TopNavBar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { BreadcrumbItem } from '@/types'
 import { CustomBreadcrumb } from '@/ui/BreadCrumb'
-import { settingsNavItems } from '@/components/Navbar/navitems'
+import { settingsOffices } from '@/components/Navbar/navitems'
 interface Props {
   children: React.ReactNode
   breadcrumb?: BreadcrumbItem[]
@@ -23,7 +23,7 @@ export default function MainLayout({ children, breadcrumb, navItems }: Props) {
           <div className='w-60 border-r'>
             <LeftNavBar
               title='Navigation'
-              items={navItems ?? settingsNavItems}
+              items={navItems}
             />
           </div>
 

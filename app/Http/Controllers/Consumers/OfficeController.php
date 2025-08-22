@@ -22,14 +22,16 @@ class OfficeController extends Controller
     public function index(Request $request): Response|RedirectResponse
     {
         $officeType = $request->input('office_type') ?? null;
-        $officeName = $request->input('office_name') ?? null;
+        $officeName = $request->input('search') ?? null;
+        $search = $request->input('search') ?? null;
+
 
         $offices = $this->officeService->getOffices(
             page: 1,
             pageSize: 10,
             search: null,
             officeType: $officeType,
-            officeName: $officeName
+            officeName: $search
         );
         if ($offices->hasError()) {
             return $offices->error;
@@ -78,7 +80,7 @@ class OfficeController extends Controller
         return redirect()->route('offices.index');
     }
 
-    public function show($id)
+    public function show(int $id)
     {
         $office = $this->officeService->getOffice($id);
         if ($office->hasError()) {
@@ -90,7 +92,7 @@ class OfficeController extends Controller
         ]);
     }
 
-    public function edit($id)
+    public function edit(int $id)
     {
         $office = $this->officeService->getOffice($id);
         if ($office->hasError()) {

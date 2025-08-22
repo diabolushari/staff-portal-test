@@ -2,16 +2,27 @@ import StrongText from '@/typography/StrongText'
 import Input from '../form/Input'
 import useCustomForm from '@/hooks/useCustomForm'
 import Button from '../button/Button'
+import { router } from '@inertiajs/react'
 
 interface Props {
   title?: string
   placeholder?: string
+  url?: string
+  search?: string
 }
 
-export default function ListSearch({ title, placeholder }: Props) {
+export default function ListSearch({ title, placeholder, url, search }: Props) {
   const { formData, setFormValue } = useCustomForm({
-    search: '',
+    search: search ?? '',
   })
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (url) {
+      router.get(url, formData)
+    }
+  }
+
   return (
     <div className='relative flex flex-col items-center bg-white p-6 shadow-sm'>
       <div className='absolute top-0 left-6 size-18 h-2/3 w-1/4 rounded-b-full bg-radial-[at_1%] from-[#0078D4]/0 to-[#0078D4]/5 to-5%'></div>
@@ -25,6 +36,7 @@ export default function ListSearch({ title, placeholder }: Props) {
           <form
             action=''
             className='w-2/3'
+            onSubmit={handleSubmit}
           >
             <div className='relative flex w-full items-center justify-center gap-3'>
               <Input

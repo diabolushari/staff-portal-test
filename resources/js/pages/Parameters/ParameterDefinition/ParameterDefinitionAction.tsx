@@ -1,7 +1,9 @@
+import { settingsReferenceData } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ParameterDefinition } from '@/interfaces/paramater_service'
-import AppLayout from '@/layouts/app-layout'
+import { ParameterDefinition } from '@/interfaces/parameter_types'
+import MainLayout from '@/layouts/main-layout'
+import { BreadcrumbItem } from '@/types'
 import NormalText from '@/typography/NormalText'
 import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
@@ -9,16 +11,27 @@ import DynamicSelectList from '@/ui/form/DynamicSelectList'
 import Input from '@/ui/form/Input'
 import { router } from '@inertiajs/react'
 
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Parameter Definitions',
+    href: '/parameter-definition',
+  },
+  {
+    title: 'Create Parameter Definition',
+    href: '/parameter-definition/create',
+  },
+]
+
 export default function ParameterDefinitionAction({ data }: { data: ParameterDefinition }) {
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
-    name: data?.name ?? '',
-    attribute1: data?.attribute1 ?? '',
-    attribute2: data?.attribute2 ?? '',
-    attribute3: data?.attribute3 ?? '',
-    attribute4: data?.attribute4 ?? '',
-    attribute5: data?.attribute5 ?? '',
-    isEffectiveDateDriven: data?.isEffectiveDateDriven ?? false,
-    domainId: data?.domainId ?? 0,
+    name: data?.parameter_name ?? '',
+    attribute1_name: data?.attribute1_name ?? '',
+    attribute2_name: data?.attribute2_name ?? '',
+    attribute3_name: data?.attribute3_name ?? '',
+    attribute4_name: data?.attribute4_name ?? '',
+    attribute5_name: data?.attribute5_name ?? '',
+    is_effective_date_driven: data?.is_effective_date_driven ?? false,
+    domain_id: data?.domain_id ?? 0,
   })
 
   const { post, errors } = useInertiaPost(
@@ -35,7 +48,10 @@ export default function ParameterDefinitionAction({ data }: { data: ParameterDef
   }
 
   return (
-    <AppLayout>
+    <MainLayout
+      breadcrumb={breadcrumbs}
+      navItems={settingsReferenceData}
+    >
       <div className='flex items-center justify-center'>
         <div className='w-3/4 items-center justify-center rounded-xl bg-white p-8 py-8 shadow-md'>
           <h2 className='mb-4 text-2xl font-bold'>
@@ -48,11 +64,11 @@ export default function ParameterDefinitionAction({ data }: { data: ParameterDef
                   url='/api/parameter-domains'
                   dataKey='id'
                   displayKey='name'
-                  setValue={setFormValue('domainId')}
-                  value={formData.domainId}
+                  setValue={setFormValue('domain_id')}
+                  value={formData.domain_id}
                   label='Parameter Domain'
                   required
-                  error={errors?.domainId}
+                  error={errors?.domain_id}
                 />
               </div>
               <div className='flex flex-col'>
@@ -67,8 +83,8 @@ export default function ParameterDefinitionAction({ data }: { data: ParameterDef
               <div className='flex flex-col'>
                 <CheckBox
                   label='Is Effective Date Driven'
-                  value={formData.isEffectiveDateDriven}
-                  toggleValue={toggleBoolean('isEffectiveDateDriven')}
+                  value={formData.is_effective_date_driven}
+                  toggleValue={toggleBoolean('is_effective_date_driven')}
                 />
               </div>
               <div className='col-span-2'>
@@ -77,41 +93,41 @@ export default function ParameterDefinitionAction({ data }: { data: ParameterDef
               <div className='flex flex-col'>
                 <Input
                   label='Attribute 1'
-                  value={formData.attribute1}
-                  setValue={setFormValue('attribute1')}
-                  error={errors?.attribute1}
+                  value={formData.attribute1_name}
+                  setValue={setFormValue('attribute1_name')}
+                  error={errors?.attribute1_name}
                 />
               </div>
               <div className='flex flex-col'>
                 <Input
                   label='Attribute 2'
-                  value={formData.attribute2}
-                  setValue={setFormValue('attribute2')}
-                  error={errors?.attribute2}
+                  value={formData.attribute2_name}
+                  setValue={setFormValue('attribute2_name')}
+                  error={errors?.attribute2_name}
                 />
               </div>
               <div className='flex flex-col'>
                 <Input
                   label='Attribute 3'
-                  value={formData.attribute3}
-                  setValue={setFormValue('attribute3')}
-                  error={errors?.attribute3}
+                  value={formData.attribute3_name}
+                  setValue={setFormValue('attribute3_name')}
+                  error={errors?.attribute3_name}
                 />
               </div>
               <div className='flex flex-col'>
                 <Input
                   label='Attribute 4'
-                  value={formData.attribute4}
-                  setValue={setFormValue('attribute4')}
-                  error={errors?.attribute4}
+                  value={formData.attribute4_name}
+                  setValue={setFormValue('attribute4_name')}
+                  error={errors?.attribute4_name}
                 />
               </div>
               <div className='flex flex-col'>
                 <Input
                   label='Attribute 5'
-                  value={formData.attribute5}
-                  setValue={setFormValue('attribute5')}
-                  error={errors?.attribute5}
+                  value={formData.attribute5_name}
+                  setValue={setFormValue('attribute5_name')}
+                  error={errors?.attribute5_name}
                 />
               </div>
             </div>
@@ -130,6 +146,6 @@ export default function ParameterDefinitionAction({ data }: { data: ParameterDef
           </form>
         </div>
       </div>
-    </AppLayout>
+    </MainLayout>
   )
 }

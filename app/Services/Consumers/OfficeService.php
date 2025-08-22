@@ -124,8 +124,7 @@ class OfficeService
             $proto->setEffectiveEnd($effectiveEnd);
         }
         [$response, $status] = $this->client->CreateOffice($proto)->wait();
-        $office = $response->getOffice();
-        $officeArray = [];
+
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -134,6 +133,8 @@ class OfficeService
                 $status->details
             );
         }
+        $office = $response?->getOffice();
+        $officeArray = [];
         $officeArray = [
             'office_name' => $office->getOfficeName(),
             'office_code' => $office->getOfficeCode(),

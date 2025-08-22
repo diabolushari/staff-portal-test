@@ -1,3 +1,4 @@
+import { settingsOffices } from '@/components/Navbar/navitems'
 import OfficeForm from '@/components/Offices/OfficeForm'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Office } from '@/interfaces/consumers'
@@ -41,7 +42,10 @@ export default function OfficeCreate({ parameterValues, office }: Props) {
   ]
 
   return (
-    <MainLayout breadcrumb={breadcrumbs}>
+    <MainLayout
+      breadcrumb={breadcrumbs}
+      navItems={settingsOffices}
+    >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
         <div className='flex items-center gap-2'>
           <StrongText className='text-2xl font-semibold'>Add Office</StrongText>

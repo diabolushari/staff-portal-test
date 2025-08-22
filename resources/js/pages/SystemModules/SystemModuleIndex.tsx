@@ -13,6 +13,8 @@ import { AnimatePresence } from 'framer-motion'
 import { useCallback, useState } from 'react'
 import { route } from 'ziggy-js'
 import SystemModuleForm from './components/SystemModuleForm'
+import MainLayout from '@/layouts/main-layout'
+import { settingsReferenceData } from '@/components/Navbar/navitems'
 
 interface Props {
   systemModules: SystemModule[]
@@ -59,7 +61,10 @@ export default function SystemModuleIndex({ systemModules }: Readonly<Props>) {
   }
 
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
+    <MainLayout
+      breadcrumb={breadcrumbs}
+      navItems={settingsReferenceData}
+    >
       <Head title='System Modules' />
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <CardHeader
@@ -116,6 +121,6 @@ export default function SystemModuleIndex({ systemModules }: Readonly<Props>) {
           )}
         </AnimatePresence>
       </div>
-    </AppLayout>
+    </MainLayout>
   )
 }

@@ -8,6 +8,7 @@ import StrongText from '@/typography/StrongText'
 import TinyContainer from '@/ui/Card/TinyContainer'
 import OfficeDetails from '@/components/Offices/OfficeDetails'
 import { DetailPageTabGroup } from '@/ui/Tabs/DetailPageTabGroup'
+import { settingsOffices } from '@/components/Navbar/navitems'
 
 export default function OfficeShow({ office }: { office: Office }) {
   const breadcrumbs: BreadcrumbItem[] = [
@@ -54,7 +55,10 @@ export default function OfficeShow({ office }: { office: Office }) {
     },
   ]
   return (
-    <MainLayout breadcrumb={breadcrumbs}>
+    <MainLayout
+      breadcrumb={breadcrumbs}
+      navItems={settingsOffices}
+    >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
         <div className='flex items-center gap-2'>
           <StrongText className='text-2xl font-semibold'>{`${office_code} - ${office_name}`}</StrongText>
