@@ -54,8 +54,29 @@ export default function OfficeDetails({ office }: { office: Office }) {
           />
           <Input
             label='Office Type'
-            setValue={setFormValue('office_type_id')}
+            setValue={() => {}}
             value={formData.office_type.parameter_value}
+            disabled={true}
+            style='disabled'
+          />
+        </div>
+      </Card>
+      <Card>
+        <div className='flex justify-between border-b-2 border-gray-200 py-4'>
+          <StrongText className='text-base font-semibold'>Other Information</StrongText>
+        </div>
+        <div className='grid gap-4 gap-y-8 p-4 md:grid-cols-2'>
+          <Input
+            label='Effective Start'
+            setValue={setFormValue('effective_start')}
+            value={formData.effective_start}
+            disabled={true}
+            style='disabled'
+          />
+          <Input
+            label='Effective End'
+            setValue={setFormValue('effective_end')}
+            value={formData.effective_end}
             disabled={true}
             style='disabled'
           />

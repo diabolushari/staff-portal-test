@@ -45,12 +45,12 @@ export default function OfficeShow({ office }: { office: Office }) {
     {
       value: 'Substations',
       label: 'Substations',
-      content: <div>Substations</div>,
+      content: <OfficeDetails office={office} />,
     },
     {
       value: 'Consumers',
       label: 'Consumers',
-      content: <div>Consumers</div>,
+      content: <OfficeDetails office={office} />,
     },
   ]
   return (

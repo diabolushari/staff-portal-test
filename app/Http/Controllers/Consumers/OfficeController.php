@@ -62,7 +62,7 @@ class OfficeController extends Controller
             return $parameterValues->error;
         }
 
-        return Inertia::render('Offices/OfficeForm', [
+        return Inertia::render('Offices/OfficeCreate', [
             'parameterValues' => $parameterValues->data,
         ]);
     }
@@ -104,7 +104,7 @@ class OfficeController extends Controller
             'Office Type'
         );
 
-        return Inertia::render('Offices/OfficeForm', [
+        return Inertia::render('Offices/OfficeCreate', [
             'office' => $office->data,
             'parameterValues' => $parameterValues->data,
         ]);

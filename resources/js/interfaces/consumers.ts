@@ -11,8 +11,8 @@ export interface Office {
     phone: string
     email: string
     name: string
-    address: string
-  }
+    employee_id: string
+  }[]
   office_type: {
     office_type_id: number
     parameter_code: string
