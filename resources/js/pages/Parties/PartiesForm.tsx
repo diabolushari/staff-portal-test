@@ -1,135 +1,222 @@
-import useCustomForm from '@/hooks/useCustomForm'
-import AppLayout from '@/layouts/app-layout'
-import Button from '@/ui/button/Button'
-import Card from '@/ui/Card/Card'
-import CardHeader from '@/ui/Card/CardHeader'
-import DatePicker from '@/ui/form/DatePicker'
-import Input from '@/ui/form/Input'
-import SelectList from '@/ui/form/SelectList'
+import { router } from "@inertiajs/react";
+import useCustomForm from "@/hooks/useCustomForm";
+import useInertiaPost from "@/hooks/useInertiaPost";
+import AppLayout from "@/layouts/app-layout";
+import { Party } from "@/interfaces/parties";
+import Button from "@/ui/button/Button";
+import Card from "@/ui/Card/Card";
+import CardHeader from "@/ui/Card/CardHeader";
+import DatePicker from "@/ui/form/DatePicker";
+import Input from "@/ui/form/Input";
+import SelectList from "@/ui/form/SelectList";
+import TextArea from "@/ui/form/TextArea";
 
-export default function PartiesForm({ partyTypes, partyStatus }: any) {
-  const { formData, setFormValue, toggleBoolean } = useCustomForm({
-    name: '',
-    party_type_id: 1,
-    status_id: 1,
-    mobile_number: '',
-    telephone_number: '',
-    email_address: '',
-    address: '',
-    fax_number: '',
-    effective_start: '',
-    effective_end: '',
-    is_current: true,
-    created_by: 1,
-    updated_by: 1,
-  })
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    alert('Submitted')
-    console.log(formData)
-  }
+interface PartiesFormProps {
+  partyTypes: Array<{ id: number; parameterValue: string }>;
+  partyStatus: Array<{ id:number; parameterValue: string }>;
+  party?: Party; // provided in edit mode
+}
+
+// --- Helper Functions ---
+const toYMD = (iso?: string | null): string => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return !Number.isNaN(d.getTime()) ? d.toISOString().split("T")[0] : "";
+};
+
+const toISOorNull = (ymd: string) => (ymd ? new Date(ymd).toISOString() : null);
+const toNumberOrUndef = (v: unknown) => {
+  if (v === null || v === undefined || v === "") return undefined;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : undefined;
+};
+
+export default function PartiesForm({
+                                      partyTypes,
+                                      partyStatus,
+                                      party,
+                                    }: PartiesFormProps) {
+  const isEditing = Boolean(party);
+
+  const { formData, setFormValue } = useCustomForm({
+    party_code: party?.party_code?.toString() ?? "",
+    party_legacy_code: party?.party_legacy_code ?? "",
+    name: party?.name ?? "",
+    party_type_id: party?.party_type_id ?? 1,
+    status_id: party?.status_id ?? 1,
+    effective_start: toYMD(party?.effective_start),
+    effective_end: toYMD(party?.effective_end),
+    mobile_number: party?.mobile_number?.toString() ?? "",
+    telephone_number: party?.telephone_number?.toString() ?? "",
+    email_address: party?.email_address ?? "",
+    address: party?.address ?? "",
+    fax_number: party?.fax_number?.toString() ?? "",
+    __party_id: party?.party_id,
+    __version_id: party?.version_id,
+  });
+
+  const { post, loading, errors } = useInertiaPost(
+    isEditing ? `/parties/${formData.__version_id}` : "/parties",
+  );
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const payload = {
+      party_code: toNumberOrUndef(formData.party_code),
+      party_legacy_code: formData.party_legacy_code || "",
+      name: formData.name,
+      party_type_id: toNumberOrUndef(formData.party_type_id),
+      status_id: toNumberOrUndef(formData.status_id),
+      effective_start: toISOorNull(formData.effective_start),
+      effective_end: toISOorNull(formData.effective_end),
+      mobile_number: toNumberOrUndef(formData.mobile_number),
+      telephone_number: toNumberOrUndef(formData.telephone_number),
+      email_address: formData.email_address || "",
+      address: formData.address || "",
+      fax_number: toNumberOrUndef(formData.fax_number),
+    };
+
+    if (isEditing) {
+      post({
+        ...payload,
+        party_id: formData.__party_id,
+        version_id: formData.__version_id,
+        _method: "PUT",
+      });
+    } else {
+      post(payload);
+    }
+  };
+
+  const renderSection = (title: string, children: React.ReactNode) => (
+    <div className="rounded-md border border-slate-200 p-4">
+      <h3 className="mb-4 text-lg font-medium">{title}</h3>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 items-start">
+        {children}
+      </div>
+    </div>
+  );
+
   return (
     <AppLayout>
-      <div className='p-6'>
-        <CardHeader title='Party Details' />
-
+      <div className="p-6">
+        <CardHeader
+          title={isEditing ? "Edit Party" : "Create New Party"}
+          subheading={isEditing ? "Update party details" : "Add a new party"}
+        />
         <Card>
-          <form onSubmit={onSubmit}>
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-              <div className='flex flex-col'>
-                <Input
-                  label='Name'
-                  value={formData.name}
-                  setValue={setFormValue('name')}
-                  type='text'
-                />
-              </div>
-              <div className='flex flex-col'>
-                <SelectList
-                  label='Party Type'
-                  value={formData.party_type_id}
-                  setValue={setFormValue('party_type_id')}
-                  type='number'
-                  list={partyTypes}
-                  dataKey='id'
-                  displayKey='parameterValue'
-                />
-              </div>
-              <div className='flex flex-col'>
-                <SelectList
-                  label='Status'
-                  value={formData.status_id}
-                  setValue={setFormValue('status_id')}
-                  type='number'
-                  list={partyStatus}
-                  dataKey='id'
-                  displayKey='parameterValue'
-                />
-              </div>
-              <div className='flex flex-col'>
-                <Input
-                  label='Mobile Number'
-                  value={formData.mobile_number}
-                  setValue={setFormValue('mobile_number')}
-                  type='number'
-                />
-              </div>
-              <div className='flex flex-col'>
-                <Input
-                  label='Telephone Number'
-                  value={formData.telephone_number}
-                  setValue={setFormValue('telephone_number')}
-                  type='number'
-                />
-              </div>
-              <div className='flex flex-col'>
-                <Input
-                  label='Email Address'
-                  value={formData.email_address}
-                  setValue={setFormValue('email_address')}
-                  type='email'
-                />
-              </div>
-              <div className='flex flex-col'>
-                <Input
-                  label='Address'
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {renderSection("Basic Information", <>
+              <Input
+                label="Party Code"
+                required
+                value={formData.party_code}
+                setValue={setFormValue("party_code")}
+                error={errors.party_code}
+                placeholder="Enter numeric party code"
+              />
+              <Input
+                label="Legacy Code"
+                value={formData.party_legacy_code}
+                setValue={setFormValue("party_legacy_code")}
+                error={errors.party_legacy_code}
+              />
+              <Input
+                label="Name"
+                required
+                value={formData.name}
+                setValue={setFormValue("name")}
+                error={errors.name}
+              />
+              <SelectList
+                label="Party Type"
+                value={formData.party_type_id}
+                setValue={setFormValue("party_type_id")}
+                list={partyTypes}
+                dataKey="id"
+                displayKey="parameterValue"
+              />
+              <SelectList
+                label="Status"
+                value={formData.status_id}
+                setValue={setFormValue("status_id")}
+                list={partyStatus}
+                dataKey="id"
+                displayKey="parameterValue"
+              />
+            </>)}
+
+            {renderSection("Contact Information", <>
+              <Input
+                label="Mobile Number"
+                type="tel"
+                value={formData.mobile_number}
+                setValue={setFormValue("mobile_number")}
+                error={errors.mobile_number}
+              />
+              <Input
+                label="Telephone Number"
+                type="tel"
+                value={formData.telephone_number}
+                setValue={setFormValue("telephone_number")}
+                error={errors.telephone_number}
+              />
+              <Input
+                label="Email Address"
+                type="email"
+                value={formData.email_address}
+                setValue={setFormValue("email_address")}
+                error={errors.email_address}
+              />
+              <div className="md:col-span-2">
+                <TextArea
+                  label="Address"
                   value={formData.address}
-                  setValue={setFormValue('address')}
-                  type='text'
+                  setValue={setFormValue("address")}
+                  rows={3}
+                  maxLength={500}
                 />
               </div>
-              <div className='flex flex-col'>
-                <Input
-                  label='Fax Number'
-                  value={formData.fax_number}
-                  setValue={setFormValue('fax_number')}
-                  type='number'
-                />
-              </div>
-              <div className='flex flex-col'>
-                <DatePicker
-                  label='Effective Start Date'
-                  value={formData.effective_start}
-                  setValue={setFormValue('effective_start')}
-                />
-              </div>
-              <div className='flex flex-col'>
-                <DatePicker
-                  label='Effective End Date'
-                  value={formData.effective_end}
-                  setValue={setFormValue('effective_end')}
-                />
-              </div>
-            </div>
-            <div className='mt-5'>
+              <Input
+                label="Fax Number"
+                type="tel"
+                value={formData.fax_number}
+                setValue={setFormValue("fax_number")}
+                error={errors.fax_number}
+              />
+            </>)}
+
+            {renderSection("Validity Period", <>
+              <DatePicker
+                label="Effective Start Date"
+                value={formData.effective_start}
+                setValue={setFormValue("effective_start")}
+              />
+              <DatePicker
+                label="Effective End Date"
+                value={formData.effective_end}
+                setValue={setFormValue("effective_end")}
+              />
+            </>)}
+
+            <div className="flex justify-end gap-3 border-t pt-6">
               <Button
-                type='submit'
-                label='Submit'
+                type="button"
+                label="Cancel"
+                variant="secondary"
+                onClick={() => router.get("/parties")}
+                disabled={loading}
+              />
+              <Button
+                type="submit"
+                label={isEditing ? "Update Party" : "Create Party"}
+                disabled={loading}
               />
             </div>
           </form>
         </Card>
       </div>
     </AppLayout>
-  )
+  );
 }

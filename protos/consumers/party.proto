@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.consumers;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "parameters/parameter-value.proto";
+
+option java_multiple_files = true;
+option java_package = "com.kseb.consumerservice.proto.consumers";
+option java_outer_classname = "PartyProto";
+
+option php_namespace = "Proto\\Consumers";
+option php_metadata_namespace = "GPBMetadata";
+
+// Service to manage Party entities with versioning.
+service PartyService {
+  rpc CreateParty(CreatePartyRequest) returns (PartyResponse);
+  rpc UpdateParty(UpdatePartyRequest) returns (PartyResponse);
+  rpc DeleteParty(DeletePartyRequest) returns (google.protobuf.Empty);
+  rpc GetCurrentParty(GetCurrentPartyRequest) returns (PartyResponse);
+  rpc GetPartyByVersionId(GetPartyByVersionIdRequest) returns (PartyResponse);
+  rpc GetPartyHistory(GetPartyHistoryRequest) returns (PartyListResponse);
+  rpc ListCurrentParties(google.protobuf.Empty) returns (PartyListResponse);
+}
+
+message PartyMessage {
+  int64 version_id = 1;
+  int32 party_id = 2;
+  int32 party_code = 3;
+  string party_legacy_code = 4;
+  string name = 5;
+  int64 party_type_id = 6;
+  // THIS IS THE FIX: Changed from ParameterValueMessage to ParameterValueProto
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto party_type = 7;
+  int64 status_id = 8;
+  // THIS IS THE FIX: Changed from ParameterValueMessage to ParameterValueProto
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto status = 9;
+  int64 mobile_number = 10;
+  int64 telephone_number = 11;
+  string email_address = 12;
+  string address = 13;
+  int64 fax_number = 14;
+  google.protobuf.Timestamp effective_start = 15;
+  optional google.protobuf.Timestamp effective_end = 16;
+  bool is_current = 17;
+  optional int32 created_by = 18;
+  optional int32 updated_by = 19;
+  google.protobuf.Timestamp created_at = 20;
+  optional google.protobuf.Timestamp updated_at = 21;
+}
+
+message CreatePartyRequest {
+  int32 party_code = 1;
+  string party_legacy_code = 2;
+  string name = 3;
+  int64 party_type_id = 4;
+  int64 status_id = 5;
+  int64 mobile_number = 6;
+  int64 telephone_number = 7;
+  string email_address = 8;
+  string address = 9;
+  int64 fax_number = 10;
+  optional int32 created_by = 11;
+}
+
+message UpdatePartyRequest {
+  int32 party_id = 1;
+  int32 party_code = 2;
+  string party_legacy_code = 3;
+  string name = 4;
+  int64 party_type_id = 5;
+  int64 status_id = 6;
+  int64 mobile_number = 7;
+  int64 telephone_number = 8;
+  string email_address = 9;
+  string address = 10;
+  int64 fax_number = 11;
+  optional int32 updated_by = 12;
+}
+
+message DeletePartyRequest {
+  int32 party_id = 1;
+}
+
+message GetCurrentPartyRequest {
+  int32 party_id = 1;
+}
+
+message GetPartyByVersionIdRequest {
+  int64 version_id = 1;
+}
+
+message GetPartyHistoryRequest {
+  int32 party_id = 1;
+}
+
+message PartyResponse {
+  PartyMessage party = 1;
+}
+
+message PartyListResponse {
+  repeated PartyMessage parties = 1;
+}
