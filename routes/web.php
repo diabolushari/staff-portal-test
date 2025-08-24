@@ -48,11 +48,12 @@ Route::get('consumer-test', function (SystemModuleService $service) {
     $response = $service->createSystemModule(
         new SystemModuleFormRequest('Test Module')
     );
+
     return response()->json($response);
 });
 Route::get('page-ui', function () {
     return Inertia::render('UItest');
 })->name('page-ui');
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

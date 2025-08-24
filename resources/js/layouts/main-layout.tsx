@@ -4,14 +4,13 @@ import TopNavBar from '@/components/Navbar/TopNavBar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { BreadcrumbItem } from '@/types'
 import { CustomBreadcrumb } from '@/ui/BreadCrumb'
-import { settingsOffices } from '@/components/Navbar/navitems'
 interface Props {
   children: React.ReactNode
   breadcrumb?: BreadcrumbItem[]
   navItems?: navItem[]
 }
 
-export default function MainLayout({ children, breadcrumb, navItems }: Props) {
+export default function MainLayout({ children, breadcrumb, navItems }: Readonly<Props>) {
   return (
     <SidebarProvider>
       <div className='flex h-screen w-full flex-col'>
@@ -20,7 +19,7 @@ export default function MainLayout({ children, breadcrumb, navItems }: Props) {
         </div>
 
         <div className='flex flex-1'>
-          <div className='w-60 border-r'>
+          <div className='hidden w-60 border-r lg:block'>
             <LeftNavBar
               title='Navigation'
               items={navItems}

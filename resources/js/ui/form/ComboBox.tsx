@@ -6,7 +6,8 @@ import { XIcon } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import useClick from '../../hooks/useClick'
 import { handleHttpErrors } from '../alerts'
-import { getFormStyle } from './Input'
+import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 
 interface Properties<
   K extends keyof T,
@@ -164,13 +165,18 @@ const ComboBox = <
                 {linkText}
               </a>
             </div>
-            <input
+            <Input
               type='text'
               value={textFieldValue}
               onKeyDown={handleKeydown}
               placeholder={placeholder}
               onChange={(event) => setTextFieldValue(event.target.value)}
-              className={getFormStyle('normal')}
+              className={cn(
+                'w-full bg-white px-3 py-2 rounded border border-gray-200 text-sm font-normal text-black',
+                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0078d4] focus-visible:border-[#0078d4]',
+                'disabled:bg-gray-50 disabled:text-black disabled:cursor-not-allowed disabled:opacity-100',
+                'placeholder:text-gray-400'
+              )}
               disabled={disabled}
               readOnly={disabled}
             />

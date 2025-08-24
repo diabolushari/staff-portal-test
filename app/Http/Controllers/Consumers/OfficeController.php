@@ -6,17 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Consumers\OfficeFormRequest;
 use App\Services\Consumers\OfficeService;
 use App\Services\Parameters\ParameterValueService;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class OfficeController extends Controller
 {
     public function __construct(
-        private OfficeService $officeService,
-        private ParameterValueService $parameterValueService,
+        private readonly OfficeService $officeService,
+        private readonly ParameterValueService $parameterValueService,
     ) {}
 
     public function index(Request $request): Response|RedirectResponse
@@ -24,7 +23,6 @@ class OfficeController extends Controller
         $officeType = $request->input('office_type') ?? null;
         $officeName = $request->input('search') ?? null;
         $search = $request->input('search') ?? null;
-
 
         $offices = $this->officeService->getOffices(
             page: 1,
@@ -71,10 +69,9 @@ class OfficeController extends Controller
 
     public function store(OfficeFormRequest $request)
     {
-
-        $office = $this->officeService->createOffice($request);
-        if ($office->hasError()) {
-            return $office->error;
+        $grpcResponse = $this->officeService->createOffice($request);
+        if ($grpcResponse->hasError()) {
+            return $grpcResponse->error;
         }
 
         return redirect()->route('offices.index');
@@ -82,13 +79,13 @@ class OfficeController extends Controller
 
     public function show(int $id)
     {
-        $office = $this->officeService->getOffice($id);
-        if ($office->hasError()) {
-            return $office->error;
+        $response = $this->officeService->getOffice($id);
+        if ($response->hasError()) {
+            return $response->error;
         }
 
         return Inertia::render('Offices/OfficeShow', [
-            'office' => $office->data,
+            'office' => $response->data,
         ]);
     }
 
@@ -114,9 +111,9 @@ class OfficeController extends Controller
 
     public function update(OfficeFormRequest $request, $id)
     {
-        $office = $this->officeService->updateOffice($request, $id);
-        if ($office->hasError()) {
-            return $office->error;
+        $response = $this->officeService->updateOffice($request, $id);
+        if ($response->hasError()) {
+            return $response->error;
         }
 
         return redirect()->route('offices.index');

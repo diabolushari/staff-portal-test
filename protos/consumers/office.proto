@@ -18,92 +18,87 @@ import "consumers/org_element_address.proto";
 // ------------ MESSAGE ------------
 
 message OfficeMessage {
-  int32 office_id = 1;
-  optional int32 office_code = 2;
-  string office_description = 3;
-  optional int32 parent_office_id = 5;
-  google.protobuf.Struct contact_folio = 8;
-  google.protobuf.Timestamp effective_start = 9;
-  google.protobuf.Timestamp effective_end = 10;
-  bool is_current = 11;
-  google.protobuf.Timestamp created_at = 12;
-  google.protobuf.Timestamp updated_at = 13;
-  int32 created_by = 14;
-  int32 updated_by = 15;
-  optional int64 office_type_id = 16;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto office_type = 17;
-  OfficeMessage parent_office = 18;
-  optional int32 location_id = 19;
-  com.kseb.consumerservice.grpc.consumers.OrgElementLocationMessage location = 20;
+    int32 office_id = 1;
+    optional int32 office_code = 2;
+    string office_description = 3;
+    optional int32 parent_office_id = 5;
+    google.protobuf.Struct contact_folio = 8;
+    google.protobuf.Timestamp effective_start = 9;
+    google.protobuf.Timestamp effective_end = 10;
+    bool is_current = 11;
+    google.protobuf.Timestamp created_at = 12;
+    google.protobuf.Timestamp updated_at = 13;
+    int32 created_by = 14;
+    int32 updated_by = 15;
+    optional int64 office_type_id = 16;
+    com.kseb.consumerservice.proto.parameters.ParameterValueProto office_type = 17;
+    OfficeMessage parent_office = 18;
+    optional int32 location_id = 19;
+    com.kseb.consumerservice.grpc.consumers.OrgElementLocationMessage location = 20;
 
-  optional int32 office_address_id = 21;
-  com.kseb.consumerservice.grpc.consumers.OrgElementAddressMessage office_address = 22;
-  string office_name = 23;
+    optional int32 office_address_id = 21;
+    com.kseb.consumerservice.grpc.consumers.OrgElementAddressMessage office_address = 22;
+    string office_name = 23;
 }
 
 // ------------ REQUESTS ------------
 
 message OfficeCreateRequest {
-  optional int32 office_code = 1;
-  string office_description = 2;
-  int64 office_type_id = 3;
-  optional int32 parent_office_id = 4;
-  optional int32 location_id = 5;
-  optional int32 office_address_id = 6;
-  google.protobuf.Struct contact_folio = 7;
-  google.protobuf.Timestamp effective_start = 8;
-  google.protobuf.Timestamp effective_end = 9;
-  bool is_current = 10;
-  int32 created_by = 11;
-  string office_name = 12;
+    optional int32 office_code = 1;
+    string office_description = 2;
+    int64 office_type_id = 3;
+    optional int32 parent_office_id = 4;
+    google.protobuf.Struct contact_folio = 7;
+    int32 created_by = 11;
+    string office_name = 12;
 }
 
 message OfficeUpdateRequest {
-  int32 office_id = 1;
-  optional int32 office_code = 2;
-  string office_description = 3;
-  int64 office_type_id = 4;
-  optional int32 parent_office_id = 5;
-  optional int32 location_id = 6;
-  optional int32 office_address_id = 7;
-  google.protobuf.Struct contact_folio = 8;
-  google.protobuf.Timestamp effective_start = 9;
-  google.protobuf.Timestamp effective_end = 10;
-  bool is_current = 11;
-  int32 updated_by = 12;
-  string office_name = 13;
+    int32 office_id = 1;
+    optional int32 office_code = 2;
+    string office_description = 3;
+    int64 office_type_id = 4;
+    optional int32 parent_office_id = 5;
+    optional int32 location_id = 6;
+    optional int32 office_address_id = 7;
+    google.protobuf.Struct contact_folio = 8;
+    google.protobuf.Timestamp effective_start = 9;
+    google.protobuf.Timestamp effective_end = 10;
+    bool is_current = 11;
+    int32 updated_by = 12;
+    string office_name = 13;
 }
 
 // ------------ RESPONSES ------------
 
 message OfficeResponse {
-  OfficeMessage office = 1;
+    OfficeMessage office = 1;
 }
 
 message OfficeListResponse {
-  repeated OfficeMessage offices = 1;
+    repeated OfficeMessage offices = 1;
 }
 
 // ------------ LIST REQUEST ------------
 
 message OfficeListRequest {
-  optional string office_type = 1;
-  optional string search = 2;        // searches office_code
-  optional string office_name = 3;
+    optional string office_type = 1;
+    optional string search = 2;        // searches office_code
+    optional string office_name = 3;
 }
 
 // ------------ BY ID ------------
 
 message OfficeIdRequest {
-  int32 office_id = 1;
+    int32 office_id = 1;
 }
 
 // ------------ SERVICE ------------
 
 service OfficeService {
-  rpc CreateOffice(OfficeCreateRequest) returns (OfficeResponse);
-  rpc GetOfficeById(OfficeIdRequest) returns (OfficeResponse);
-  rpc ListOffices(OfficeListRequest) returns (OfficeListResponse);
-  rpc UpdateOffice(OfficeUpdateRequest) returns (OfficeResponse);
-  rpc DeleteOffice(OfficeIdRequest) returns (google.protobuf.Empty);
+    rpc CreateOffice(OfficeCreateRequest) returns (OfficeResponse);
+    rpc GetOfficeById(OfficeIdRequest) returns (OfficeResponse);
+    rpc ListOffices(OfficeListRequest) returns (OfficeListResponse);
+    rpc UpdateOffice(OfficeUpdateRequest) returns (OfficeResponse);
+    rpc DeleteOffice(OfficeIdRequest) returns (google.protobuf.Empty);
 }

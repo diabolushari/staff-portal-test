@@ -1,48 +1,69 @@
-import Input from '@/ui/form/Input'
-import { Link, usePage } from '@inertiajs/react'
-import { BellIcon, ChevronDown, HelpCircle, Search, SettingsIcon, UserIcon } from 'lucide-react'
+import { usePage } from '@inertiajs/react'
+import { BellIcon, HelpCircle, Search as SearchIcon, SettingsIcon, UserIcon } from 'lucide-react'
 import { CustomNavbar } from './CustomNavbar'
+import { MobileNavSheet } from './MobileNavSheet'
 
 export default function TopNavBar() {
-  const { url } = usePage()
+  usePage() // consumed to trigger re-render on navigation (no direct usage)
 
   return (
-    <div className='border-opacity-25 flex w-full gap-4 border-b-[.5px] border-[#252C32] px-4 dark:bg-gray-800'>
-      <div className='w-52 flex-none p-4'>
+    <div className='flex h-16 w-full items-center border-b border-gray-200 bg-white px-6 dark:border-gray-700 dark:bg-gray-900'>
+      <div className='flex w-52 items-center'>
         <img
           src='/kseb_logo.svg'
           alt='KSEB Logo'
-          className='h-auto w-auto'
+          className='h-12 w-auto max-w-full object-contain'
         />
       </div>
-
-      <div className='mt-6 w-auto flex-1'>
+      {/* Desktop nav */}
+      <div className='hidden flex-1 items-stretch xl:flex'>
         <CustomNavbar />
       </div>
-      <div className='flex w-auto justify-center gap-2 p-2'>
-        <div className='flex items-center gap-2'>
-          <div className='flex items-center gap-2'>
-            <div className='rounded-sm border-[.5px] border-gray-200'>
-              <input
-                type='text'
-                className='p-2'
-                placeholder='Search'
-              />
-            </div>
-          </div>
+      <div className='ml-auto flex items-center gap-3'>
+        {/* Hamburger on < xl */}
+        <div className='flex items-center xl:hidden'>
+          <MobileNavSheet />
         </div>
-        <div className='flex gap-4 p-4'>
-          <div className='flex items-center gap-2 hover:cursor-pointer'>
-            <BellIcon className='h-5 w-5' />
+        {/* Desktop utilities only at xl+ */}
+        <div className='hidden items-center gap-4 xl:flex'>
+          <div className='relative hidden md:block'>
+            <SearchIcon className='pointer-events-none absolute top-1/2 left-2 h-4 w-4 -translate-y-1/2 text-gray-400' />
+            <input
+              type='text'
+              placeholder='Search'
+              className='h-9 w-48 rounded-md border border-gray-300 bg-gray-50 pr-3 pl-8 text-sm transition outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-blue-500'
+              aria-label='Global search'
+            />
           </div>
-          <div className='flex items-center gap-2 hover:cursor-pointer'>
-            <HelpCircle className='h-5 w-5' />
-          </div>
-          <div className='flex items-center gap-2 hover:cursor-pointer'>
-            <SettingsIcon className='h-5 w-5' />
-          </div>
-          <div className='flex items-center gap-2 hover:cursor-pointer'>
-            <UserIcon className='h-5 w-5' />
+          <div className='flex items-center gap-5'>
+            <button
+              type='button'
+              aria-label='Notifications'
+              className='rounded p-1 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200'
+            >
+              <BellIcon className='h-5 w-5' />
+            </button>
+            <button
+              type='button'
+              aria-label='Help & Support'
+              className='rounded p-1 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200'
+            >
+              <HelpCircle className='h-5 w-5' />
+            </button>
+            <button
+              type='button'
+              aria-label='Settings'
+              className='rounded p-1 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200'
+            >
+              <SettingsIcon className='h-5 w-5' />
+            </button>
+            <button
+              type='button'
+              aria-label='Account'
+              className='rounded p-1 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200'
+            >
+              <UserIcon className='h-5 w-5' />
+            </button>
           </div>
         </div>
       </div>

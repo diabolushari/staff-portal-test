@@ -1,12 +1,12 @@
 import { settingsOffices } from '@/components/Navbar/navitems'
 import OfficeForm from '@/components/Offices/OfficeForm'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Office } from '@/interfaces/consumers'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
-import { DetailPageTabGroup } from '@/ui/Tabs/DetailPageTabGroup'
+import { TabGroup } from '@/ui/Tabs/TabGroup'
+import { TabsContent } from '@/components/ui/tabs'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -18,26 +18,21 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/offices/create',
   },
 ]
+
 interface Props {
   parameterValues: ParameterValues[]
   office?: Office
 }
-export default function OfficeCreate({ parameterValues, office }: Props) {
+
+export default function OfficeCreate({ parameterValues, office }: Readonly<Props>) {
   const tabs = [
     {
       value: 'detail',
       label: 'Office Detail',
-      content: (
-        <OfficeForm
-          parameterValues={parameterValues}
-          office={office}
-        />
-      ),
     },
     {
-      value: 'Substations',
+      value: 'substations',
       label: 'Substations',
-      content: <div>Substations</div>,
     },
   ]
 
@@ -50,7 +45,17 @@ export default function OfficeCreate({ parameterValues, office }: Props) {
         <div className='flex items-center gap-2'>
           <StrongText className='text-2xl font-semibold'>Add Office</StrongText>
         </div>
-        <DetailPageTabGroup tabs={tabs} />
+        <TabGroup tabs={tabs}>
+          <TabsContent value='detail'>
+            <OfficeForm
+              parameterValues={parameterValues}
+              office={office}
+            />
+          </TabsContent>
+          <TabsContent value='substations'>
+            <div>Substations</div>
+          </TabsContent>
+        </TabGroup>
       </div>
     </MainLayout>
   )

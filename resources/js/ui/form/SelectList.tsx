@@ -65,40 +65,38 @@ export default function SelectList<
   }, [value, dataKey, list])
 
   return (
-    <>
-      <div>
-        {label != null && showLabel && (
-          <label className='font-inter text-left align-top text-sm leading-[1.4] tracking-[-0.006em] text-gray-800 dark:text-gray-200'>
-            {label}
-          </label>
+    <div>
+      {label != null && showLabel && (
+        <label className='font-inter text-left align-top text-sm leading-[1.4] tracking-[-0.006em] text-gray-800 dark:text-gray-200'>
+          {label}
+        </label>
+      )}
+      <select
+        name='type'
+        value={selectedOption}
+        onChange={(e) => setValue(e.target.value)}
+        className={getStyle(style)}
+        disabled={disabled}
+      >
+        {showAllOption && <option value=''>{allOptionText}</option>}
+        {!showAllOption && label != null && (
+          <option
+            value=''
+            disabled
+          >
+            Select {label}
+          </option>
         )}
-        <select
-          name='type'
-          value={selectedOption}
-          onChange={(e) => setValue(e.target.value)}
-          className={getStyle(style)}
-          disabled={disabled}
-        >
-          {showAllOption && <option value=''>{allOptionText}</option>}
-          {!showAllOption && label != null && (
-            <option
-              value=''
-              disabled
-            >
-              Select {label}
-            </option>
-          )}
-          {list.map((item: T) => (
-            <option
-              value={item[dataKey]}
-              key={item[dataKey]}
-            >
-              {item[displayKey]}
-            </option>
-          ))}
-        </select>
-        {error && <ErrorText>{error}</ErrorText>}
-      </div>
-    </>
+        {list.map((item: T) => (
+          <option
+            value={item[dataKey]}
+            key={item[dataKey]}
+          >
+            {item[displayKey]}
+          </option>
+        ))}
+      </select>
+      {error && <ErrorText>{error}</ErrorText>}
+    </div>
   )
 }

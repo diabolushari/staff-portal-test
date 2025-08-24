@@ -1,5 +1,4 @@
 import { settingsOffices } from '@/components/Navbar/navitems'
-import OfficeSearchForm from '@/components/Offices/OfficeSearchForm'
 import { Office } from '@/interfaces/consumers'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
@@ -17,7 +16,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ]
 interface Props {
-  offices: Office[]
+  offices?: Office[]
   office_types: ParameterValues[]
   filters: {
     office_type: string
@@ -25,18 +24,11 @@ interface Props {
   }
 }
 
-export default function OfficeIndex({ offices, office_types, filters }: Props) {
+export default function OfficeIndex({ offices, office_types, filters }: Readonly<Props>) {
   const [items, setItems] = useState(offices)
-  const columns = ['S.No', 'ID', 'Office Name', 'Office Code', 'Office Type', 'Actions']
-  const handleEditClick = (item: any) => {
-    router.get(route('offices.edit', item.office_id))
-  }
+
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [editRow, setEditRow] = useState<Office | null>(null)
-  const handleDeleteClick = (item: any) => {
-    setEditRow(item)
-    setShowDeleteModal(true)
-  }
 
   return (
     <MainLayout
@@ -52,7 +44,8 @@ export default function OfficeIndex({ offices, office_types, filters }: Props) {
           search={filters.office_name}
         />
 
-        <div>{items.length > 0 ? <OfficeList offices={items} /> : <div>No offices found</div>}</div>
+        <div>{items != null && <OfficeList offices={items} />}</div>
+        <div>{items == null && <p>No Office Found.</p>}</div>
       </div>
       {showDeleteModal && editRow && (
         <DeleteModal

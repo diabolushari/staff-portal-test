@@ -29,7 +29,7 @@ export interface FormFieldProp {
   isDate?: boolean
   isTime?: boolean
   preventFormSubmit?: boolean
-  style?: 'normal' | 'bottom-border' | 'dark' | 'disabled' | 'google'
+  style?: string
   required?: boolean
   formatter?: (value: string) => string
   showClearButton?: boolean
