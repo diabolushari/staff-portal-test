@@ -1,7 +1,7 @@
 import capitalSnakeCase from '@/formaters/capitalcase'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ParameterDomain, SystemModule } from '@/interfaces/paramater_types'
+import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import SubHeading from '@/typography/SubHeading'
 import Button from '@/ui/button/Button'
 import DynamicSelectList from '@/ui/form/DynamicSelectList'

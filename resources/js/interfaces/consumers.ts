@@ -11,8 +11,8 @@ export interface Office {
     phone: string
     email: string
     name: string
-    address: string
-  }
+    employee_id: string
+  }[]
   office_type: {
     office_type_id: number
     parameter_code: string
@@ -26,6 +26,7 @@ export interface Office {
     name: string
     address: string
   }
+  parent_office?: Office | null
   is_current: boolean
   created_at: string
   updated_at: string

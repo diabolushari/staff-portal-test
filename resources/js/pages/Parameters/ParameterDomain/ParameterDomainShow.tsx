@@ -1,5 +1,5 @@
 import ViewParameterDetails from '@/components/Parameter/ViewParameterDetails' // adjust path
-import { ParameterDomain } from '@/interfaces/paramater_types'
+import { ParameterDomain } from '@/interfaces/parameter_types'
 import AppLayout from '@/layouts/app-layout'
 import Card from '@/ui/Card/Card'
 import CardHeader from '@/ui/Card/CardHeader'

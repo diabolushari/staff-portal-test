@@ -1,8 +1,10 @@
+import { settingsReferenceData } from '@/components/Navbar/navitems'
 import ParameterDomainForm from '@/components/Parameter/ParameterDomain/ParameterDomainForm'
 import ParameterDomainSearchForm from '@/components/Parameter/ParameterDomain/ParameterDomainSearchForm'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { ParameterDomain, SystemModule } from '@/interfaces/paramater_types'
+import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import AppLayout from '@/layouts/app-layout'
+import MainLayout from '@/layouts/main-layout'
 import { type BreadcrumbItem } from '@/types'
 import DeleteButton from '@/ui/button/DeleteButton'
 import EditButton from '@/ui/button/EditButton'
@@ -69,7 +71,10 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
   }
 
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
+    <MainLayout
+      breadcrumb={breadcrumbs}
+      navItems={settingsReferenceData}
+    >
       <Head title='Parameter Domains' />
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <CardHeader
@@ -132,6 +137,6 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
           )}
         </AnimatePresence>
       </div>
-    </AppLayout>
+    </MainLayout>
   )
 }

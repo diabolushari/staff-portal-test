@@ -9,11 +9,13 @@ import { route } from 'ziggy-js'
 import SelectList from '@/ui/form/SelectList'
 import useCustomForm from '@/hooks/useCustomForm'
 import Button from '@/ui/button/Button'
-import { ParameterDefinition, ParameterDomain, ParameterValues } from '@/interfaces/paramater_types'
+import { ParameterDefinition, ParameterDomain, ParameterValues } from '@/interfaces/parameter_types'
 import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import ParameterValueSearchForm from '@/components/Parameter/ParameterValue/ParameterValueSearchForm'
+import MainLayout from '@/layouts/main-layout'
+import { settingsReferenceData } from '@/components/Navbar/navitems'
 
 const columns = [
   'S.No',
@@ -68,7 +70,10 @@ export default function ParameterValueIndex({
   }
   console.log(values)
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
+    <MainLayout
+      breadcrumb={breadcrumbs}
+      navItems={settingsReferenceData}
+    >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <CardHeader
           title='Parameter Values'
@@ -118,6 +123,6 @@ export default function ParameterValueIndex({
           />
         )}
       </div>
-    </AppLayout>
+    </MainLayout>
   )
 }

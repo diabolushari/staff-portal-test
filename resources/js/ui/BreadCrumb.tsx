@@ -1,31 +1,31 @@
-import NormalText from '@/typography/NormalText'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
+import { BreadcrumbItem as BreadcrumbItemType } from '@/types'
 import { Link } from '@inertiajs/react'
 
-export interface BreadcrumbItemLink {
-  item: string
-  link: string
-}
-
-const BreadCrumbs = ({ breadcrumbItems }: { breadcrumbItems?: BreadcrumbItemLink[] }) => {
+export function CustomBreadcrumb({ list }: { list: BreadcrumbItemType[] }) {
   return (
-    <div className='flex'>
-      {breadcrumbItems?.map((breadcrumb, index) => (
-        <div
-          key={index}
-          className='flex items-center'
-        >
-          <Link
-            href={breadcrumb.link}
-            className={` ${breadcrumb.link == '' ? 'cursor-text font-semibold' : 'hover:underline'}`}
-          >
-            <NormalText>{breadcrumb.item}</NormalText>
-          </Link>
+    <Breadcrumb>
+      <BreadcrumbList>
+        {list.map((item, index) => (
+          <BreadcrumbItem key={index}>
+            <BreadcrumbLink asChild>
+              <Link href={item.href}>{item.title}</Link>
+            </BreadcrumbLink>
+            <BreadcrumbSeparator />
+          </BreadcrumbItem>
+        ))}
 
-          {index < breadcrumbItems.length - 1 && <span className='mx-1'>{'>'}</span>}
-        </div>
-      ))}
-    </div>
+        <BreadcrumbItem>
+          <BreadcrumbPage>{list[list.length - 1]?.title}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
   )
 }
-
-export default BreadCrumbs

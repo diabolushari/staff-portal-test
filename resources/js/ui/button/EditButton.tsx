@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { router } from '@inertiajs/react'
-import { EditIcon } from 'lucide-react'
+import { Edit2Icon, EditIcon } from 'lucide-react'
 import React from 'react'
 
 interface Props {
@@ -22,11 +22,11 @@ export default function EditButton({ link, onClick }: Props) {
   return (
     <Button
       size='icon'
-      className='transition-transform hover:scale-105 dark:bg-blue-600 dark:hover:bg-blue-700'
+      className='text-base font-semibold text-[#0078D4] transition-transform hover:scale-105 hover:cursor-pointer dark:bg-blue-600 dark:hover:bg-blue-700'
       onClick={handleClick}
       variant='link'
     >
-      <EditIcon className='h-6 w-6 stroke-[2.5]' />
+      <Edit2Icon className='h-6 w-6 fill-[#0078D4]' /> Edit
     </Button>
   )
 }

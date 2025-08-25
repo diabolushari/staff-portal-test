@@ -11,13 +11,10 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class OfficeFormRequest extends Data
 {
     public function __construct(
-        public ?string $officeName,
-        public ?string $officeCode,
-        public ?string $officeDescription,
-        public ?int $officeTypeId,
+        public string $officeName,
+        public int $officeCode,
+        public string $officeDescription,
+        public int $officeTypeId,
         public ?int $parentOfficeId,
-        public ?string $effectiveStart,
-        public ?string $effectiveEnd,
-        public ?array $contactFolio,
     ) {}
 }

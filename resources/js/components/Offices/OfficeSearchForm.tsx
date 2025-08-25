@@ -1,5 +1,5 @@
 import useCustomForm from '@/hooks/useCustomForm'
-import { ParameterValues } from '@/interfaces/paramater_types'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
@@ -12,9 +12,10 @@ interface Props {
     office_name: string
     office_type: string
   }
+  placeholder?: string
 }
 
-export default function OfficeSearchForm({ office_types, filters }: Readonly<Props>) {
+export default function OfficeSearchForm({ office_types, filters, placeholder }: Readonly<Props>) {
   const { formData, setFormValue } = useCustomForm({
     office_type: filters.office_type?.toString() ?? '',
     office_name: filters.office_name?.toString() ?? '',
@@ -48,6 +49,7 @@ export default function OfficeSearchForm({ office_types, filters }: Readonly<Pro
               value={formData.office_name}
               setValue={setFormValue('office_name')}
               showClearButton={true}
+              placeholder={placeholder}
             />
           </div>
 

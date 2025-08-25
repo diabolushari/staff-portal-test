@@ -1,16 +1,17 @@
 import React, { useCallback, useState } from 'react'
 import AppLayout from '@/layouts/app-layout'
-import ParameterDefinitionActionModal from '@/components/Parameter/ParametrDefinition/ParameterDefinitionActionModal'
 import { BreadcrumbItem } from '@/types'
 import CardHeader from '@/ui/Card/CardHeader'
 import { TableCell, TableRow } from '@/components/ui/table'
 import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
-import { ParameterDefinition, ParameterDomain } from '@/interfaces/paramater_types'
+import { ParameterDefinition, ParameterDomain } from '@/interfaces/parameter_types'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import Table from '@/ui/Table/Table'
-import ParameterDefinitionForm from '@/components/Parameter/ParametrDefinition/ParameterDefinitionForm'
-import ParameterDefinitionSearchForm from '@/components/Parameter/ParametrDefinition/ParameterDefinitionSearchForm'
+import ParameterDefinitionForm from '@/components/Parameter/ParameterDefinition/ParameterDefinitionForm'
+import ParameterDefinitionSearchForm from '@/components/Parameter/ParameterDefinition/ParameterDefinitionSearchForm'
+import MainLayout from '@/layouts/main-layout'
+import { settingsReferenceData } from '@/components/Navbar/navitems'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -45,28 +46,31 @@ export default function ParameterDefinitionIndex({
 }) {
   const [parameterDefinitionToEdit, setParameterDefinitionToEdit] =
     useState<ParameterDefinition | null>(null)
-  const [ParametrDefinitionTODelete, setParametrDefinitionTODelete] =
+  const [parameterDefinitionToDelete, setParameterDefinitionToDelete] =
     useState<ParameterDefinition | null>(null)
-  const [paramterFormModal, setParamterFormModal] = useState(false)
-  const [paramterDeleteModal, setParamterDeleteModal] = useState(false)
+  const [parameterFormModal, setParameterFormModal] = useState(false)
+  const [parameterDeleteModal, setParameterDeleteModal] = useState(false)
 
   const handleEditClick = useCallback((item: ParameterDefinition) => {
     setParameterDefinitionToEdit(item)
-    setParamterFormModal(true)
+    setParameterFormModal(true)
   }, [])
 
   const handleDeleteClick = useCallback((item: ParameterDefinition) => {
-    setParametrDefinitionTODelete(item)
-    setParamterDeleteModal(true)
+    setParameterDefinitionToDelete(item)
+    setParameterDeleteModal(true)
   }, [])
 
   const handleCreateClick = useCallback(() => {
     setParameterDefinitionToEdit(null)
-    setParamterFormModal(true)
+    setParameterFormModal(true)
   }, [])
   console.log(parameter_definitions)
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
+    <MainLayout
+      breadcrumb={breadcrumbs}
+      navItems={settingsReferenceData}
+    >
       <div className='p-4'>
         <CardHeader
           breadCrumb={breadcrumbs}
@@ -105,24 +109,24 @@ export default function ParameterDefinitionIndex({
         </Table>
       </div>
 
-      {paramterFormModal && (
+      {parameterFormModal && (
         <ParameterDefinitionForm
           title={
             parameterDefinitionToEdit ? 'Edit Parameter Definition' : 'Add Parameter Definition'
           }
-          setShowModal={setParamterFormModal}
-          show={paramterFormModal}
+          setShowModal={setParameterFormModal}
+          show={parameterFormModal}
           parameterDefinition={parameterDefinitionToEdit ?? null}
           domains={domains}
         />
       )}
-      {paramterDeleteModal && (
+      {parameterDeleteModal && (
         <DeleteModal
           title='Delete Parameter Definition'
-          setShowModal={setParamterDeleteModal}
-          url={route('parameter-definition.destroy', ParametrDefinitionTODelete?.id)}
+          setShowModal={setParameterDeleteModal}
+          url={route('parameter-definition.destroy', parameterDefinitionToDelete?.id)}
         />
       )}
-    </AppLayout>
+    </MainLayout>
   )
 }

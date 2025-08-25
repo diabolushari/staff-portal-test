@@ -1,15 +1,11 @@
-import OfficeSearchForm from '@/components/Offices/OfficeSearchForm'
-import { TableCell, TableRow } from '@/components/ui/table'
+import { settingsOffices } from '@/components/Navbar/navitems'
 import { Office } from '@/interfaces/consumers'
-import { ParameterValues } from '@/interfaces/paramater_types'
-import AppLayout from '@/layouts/app-layout'
+import { ParameterValues } from '@/interfaces/parameter_types'
+import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
-import Button from '@/ui/button/Button'
-import DeleteButton from '@/ui/button/DeleteButton'
-import EditButton from '@/ui/button/EditButton'
-import CardHeader from '@/ui/Card/CardHeader'
+import OfficeList from '@/ui/List/OfficeList'
 import DeleteModal from '@/ui/Modal/DeleteModal'
-import CustomTable from '@/ui/Table/CustomTable'
+import ListSearch from '@/ui/Search/ListSearch'
 import { router } from '@inertiajs/react'
 import { useState } from 'react'
 
@@ -19,74 +15,37 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/offices',
   },
 ]
-
-export default function OfficeIndex({
-  offices,
-  office_types,
-  filters,
-}: {
-  offices: Office[]
+interface Props {
+  offices?: Office[]
   office_types: ParameterValues[]
   filters: {
     office_type: string
     office_name: string
   }
-}) {
-  const columns = ['S.No', 'ID', 'Office Name', 'Office Code', 'Office Type', 'Actions']
-  const handleEditClick = (item: any) => {
-    router.get(route('offices.edit', item.office_id))
-  }
+}
+
+export default function OfficeIndex({ offices, office_types, filters }: Readonly<Props>) {
+  const [items, setItems] = useState(offices)
+
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [editRow, setEditRow] = useState<Office | null>(null)
-  const handleDeleteClick = (item: any) => {
-    setEditRow(item)
-    setShowDeleteModal(true)
-  }
-  console.log('offices', offices)
+
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
+    <MainLayout
+      breadcrumb={breadcrumbs}
+      navItems={settingsOffices}
+    >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
-        <CardHeader
-          title='Offices'
-          subheading='Add a new office.'
-          addUrl={route('offices.create')}
+        <ListSearch
+          title='Office Search'
+          placeholder='Enter office name or code'
+          url={route('offices.index')}
+          setItems={setItems}
+          search={filters.office_name}
         />
-        <div>
-          {office_types && (
-            <OfficeSearchForm
-              office_types={office_types}
-              filters={filters}
-            />
-          )}
-          <CustomTable
-            columns={columns}
-            caption='List of Offices'
-          >
-            {offices && (
-              <>
-                {offices.map((item: any, index: number) => (
-                  <TableRow key={item.id}>
-                    <TableCell className='px-4 py-2'>{index + 1}</TableCell>
-                    <td className='px-4 py-2'>{item.office_id}</td>
-                    <td className='px-4 py-2'>{item.office_name}</td>
-                    <td className='px-4 py-2'>{item.office_code}</td>
-                    <td className='px-4 py-2'>{item.office_type?.parameter_value}</td>
-                    <td className='px-4 py-2'>
-                      <div className='flex space-x-2'>
-                        <EditButton onClick={() => handleEditClick(item)} />
-                        <DeleteButton onClick={() => handleDeleteClick(item)} />
-                        <Button
-                          onClick={() => router.get(route('offices.show', item.office_id))}
-                          label='View'
-                        />
-                      </div>
-                    </td>
-                  </TableRow>
-                ))}
-              </>
-            )}
-          </CustomTable>
-        </div>
+
+        <div>{items != null && <OfficeList offices={items} />}</div>
+        <div>{items == null && <p>No Office Found.</p>}</div>
       </div>
       {showDeleteModal && editRow && (
         <DeleteModal
@@ -95,6 +54,6 @@ export default function OfficeIndex({
           url={route('offices.destroy', editRow.office_id)}
         />
       )}
-    </AppLayout>
+    </MainLayout>
   )
 }

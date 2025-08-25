@@ -1,6 +1,15 @@
 import ViewParameterDetail from '@/components/Parameter/ViewParameterDetails'
-import { ParameterValues } from '@/interfaces/paramater_types'
-import AppLayout from '@/layouts/app-layout'
+import { ParameterValues } from '@/interfaces/parameter_types'
+import MainLayout from '@/layouts/main-layout'
+import { settingsReferenceData } from '@/components/Navbar/navitems'
+import { BreadcrumbItem } from '@/types'
+
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Parameter Values',
+    href: '/parameter-value',
+  },
+]
 
 export default function ParameterValueShow({
   parameter_value,
@@ -30,12 +39,15 @@ export default function ParameterValueShow({
     return true
   })
   return (
-    <AppLayout>
+    <MainLayout
+      breadcrumb={breadcrumbs}
+      navItems={settingsReferenceData}
+    >
       <ViewParameterDetail
         title='Parameter Value Details'
         data={parameter_value}
         fields={filteredFields}
       />
-    </AppLayout>
+    </MainLayout>
   )
 }
