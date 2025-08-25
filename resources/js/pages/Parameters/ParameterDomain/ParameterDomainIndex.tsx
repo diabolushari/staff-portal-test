@@ -1,7 +1,10 @@
+import { settingsReferenceData } from '@/components/Navbar/navitems'
 import ParameterDomainForm from '@/components/Parameter/ParameterDomain/ParameterDomainForm'
+import ParameterDomainSearchForm from '@/components/Parameter/ParameterDomain/ParameterDomainSearchForm'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { ParameterDomain } from '@/interfaces/paramater_types'
+import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import AppLayout from '@/layouts/app-layout'
+import MainLayout from '@/layouts/main-layout'
 import { type BreadcrumbItem } from '@/types'
 import DeleteButton from '@/ui/button/DeleteButton'
 import EditButton from '@/ui/button/EditButton'
@@ -25,9 +28,14 @@ const tableHeads = [
 
 interface Props {
   domains: ParameterDomain[]
+  modules: SystemModule[]
+  filters: {
+    search: string
+    module_id: number
+  }
 }
 
-export default function ParameterDomainIndex({ domains }: Readonly<Props>) {
+export default function ParameterDomainIndex({ domains, modules, filters }: Readonly<Props>) {
   const [parameterDomainToEdit, setParameterDomainToEdit] = useState<ParameterDomain | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -63,13 +71,21 @@ export default function ParameterDomainIndex({ domains }: Readonly<Props>) {
   }
 
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
+    <MainLayout
+      breadcrumb={breadcrumbs}
+      navItems={settingsReferenceData}
+    >
       <Head title='Parameter Domains' />
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <CardHeader
+          breadCrumb={breadcrumbs}
           title='Parameter Domains'
           subheading='Add and manage parameter domains.'
           onAddClick={handleCreateClick}
+        />
+        <ParameterDomainSearchForm
+          systemModules={modules}
+          filters={filters}
         />
 
         <Table heads={tableHeads}>
@@ -99,6 +115,7 @@ export default function ParameterDomainIndex({ domains }: Readonly<Props>) {
               setShowModal={setShowModal}
               show={showModal}
               parameterDomain={parameterDomainToEdit ?? undefined}
+              modules={modules}
             />
           )}
         </AnimatePresence>
@@ -120,6 +137,6 @@ export default function ParameterDomainIndex({ domains }: Readonly<Props>) {
           )}
         </AnimatePresence>
       </div>
-    </AppLayout>
+    </MainLayout>
   )
 }

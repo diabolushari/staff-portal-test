@@ -1,7 +1,7 @@
-import * as React from "react"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { cva } from "class-variance-authority"
 import { ChevronDownIcon } from "lucide-react"
+import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -58,8 +58,20 @@ function NavigationMenuItem({
   )
 }
 
+// Tab style: no filled background by default; bottom indicator handled with pseudo element.
+// Active / open: brand blue text (#0E73F6) and 2px underline.
 const navigationMenuTriggerStyle = cva(
-  "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[active=true]:bg-accent/50 data-[state=open]:bg-accent/50 data-[active=true]:text-accent-foreground ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50 transition-[color,box-shadow] focus-visible:ring-4 focus-visible:outline-1"
+  "group relative inline-flex h-11 items-center justify-center px-5 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 data-[state=open]:text-[#0E73F6] data-[active=true]:text-[#0E73F6] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 dark:text-gray-300 dark:hover:text-white dark:data-[state=open]:text-[#0E73F6] dark:data-[active=true]:text-[#0E73F6]",
+  {
+    variants: {
+      size: {
+        sm: "h-9 px-3 text-xs",
+        md: "h-11 px-5 text-sm",
+        lg: "h-12 px-6 text-base",
+      },
+    },
+    defaultVariants: { size: "md" },
+  }
 )
 
 function NavigationMenuTrigger({
@@ -70,12 +82,12 @@ function NavigationMenuTrigger({
   return (
     <NavigationMenuPrimitive.Trigger
       data-slot="navigation-menu-trigger"
-      className={cn(navigationMenuTriggerStyle(), "group", className)}
+      className={cn(navigationMenuTriggerStyle(), "group after:absolute after:-bottom-px after:left-0 after:h-[2px] after:w-full after:scale-x-0 after:bg-[#0E73F6] after:transition-transform after:duration-200 data-[state=open]:after:scale-x-100 data-[active=true]:after:scale-x-100", className)}
       {...props}
     >
-      {children}{" "}
+      {children}
       <ChevronDownIcon
-        className="relative top-[1px] ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180"
+        className="relative top-[1px] ml-1 size-3 transition-transform duration-300 group-data-[state=open]:rotate-180"
         aria-hidden="true"
       />
     </NavigationMenuPrimitive.Trigger>
@@ -90,7 +102,7 @@ function NavigationMenuContent({
     <NavigationMenuPrimitive.Content
       data-slot="navigation-menu-content"
       className={cn(
-        "data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 top-0 left-0 w-full p-2 pr-2.5 md:absolute md:w-auto",
+  "data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 top-full left-0 z-40 w-full p-2 pr-2.5 md:absolute md:w-auto",
         "group-data-[viewport=false]/navigation-menu:bg-popover group-data-[viewport=false]/navigation-menu:text-popover-foreground group-data-[viewport=false]/navigation-menu:data-[state=open]:animate-in group-data-[viewport=false]/navigation-menu:data-[state=closed]:animate-out group-data-[viewport=false]/navigation-menu:data-[state=closed]:zoom-out-95 group-data-[viewport=false]/navigation-menu:data-[state=open]:zoom-in-95 group-data-[viewport=false]/navigation-menu:data-[state=open]:fade-in-0 group-data-[viewport=false]/navigation-menu:data-[state=closed]:fade-out-0 group-data-[viewport=false]/navigation-menu:top-full group-data-[viewport=false]/navigation-menu:mt-1.5 group-data-[viewport=false]/navigation-menu:overflow-hidden group-data-[viewport=false]/navigation-menu:rounded-md group-data-[viewport=false]/navigation-menu:border group-data-[viewport=false]/navigation-menu:shadow group-data-[viewport=false]/navigation-menu:duration-200 **:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none",
         className
       )}
@@ -129,7 +141,7 @@ function NavigationMenuLink({
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
       className={cn(
-        "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50 [&_svg:not([class*='text-'])]:text-muted-foreground flex flex-col gap-1 rounded-sm p-2 text-sm transition-[color,box-shadow] focus-visible:ring-4 focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4",
+  "group relative inline-flex h-11 items-center px-5 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 data-[active=true]:text-[#0E73F6] after:absolute after:-bottom-px after:left-0 after:h-[2px] after:w-full after:origin-center after:scale-x-0 after:bg-[#0E73F6] after:transition-transform after:duration-200 data-[active=true]:after:scale-x-100 dark:text-gray-300 dark:hover:text-white dark:data-[active=true]:text-[#0E73F6] data-[variant=panel]:h-auto data-[variant=panel]:px-2 data-[variant=panel]:py-1.5 data-[variant=panel]:text-sm data-[variant=panel]:font-normal data-[variant=panel]:after:hidden data-[variant=panel]:hover:text-[#0E73F6]",
         className
       )}
       {...props}
@@ -156,13 +168,6 @@ function NavigationMenuIndicator({
 }
 
 export {
-  NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuContent,
-  NavigationMenuTrigger,
-  NavigationMenuLink,
-  NavigationMenuIndicator,
-  NavigationMenuViewport,
-  navigationMenuTriggerStyle,
+    NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle, NavigationMenuViewport
 }
+

@@ -13,6 +13,7 @@ interface Props<
   showAllOption?: boolean
   allOptionText?: string
   showLabel?: boolean
+  style?: 'normal' | 'bottom-border' | 'dark' // Added style prop to enable dark mode styling
 }
 
 export default function DynamicSelectList<
@@ -29,9 +30,9 @@ export default function DynamicSelectList<
   displayKey,
   showAllOption = false,
   allOptionText,
-  style,
+  style = 'normal',
   disabled,
-  showLabel,
+  showLabel = true,
 }: Props<K, G, T>) {
   const [list] = useFetchList<T>(url)
 
@@ -47,7 +48,7 @@ export default function DynamicSelectList<
       showAllOption={showAllOption}
       allOptionText={allOptionText}
       disabled={disabled}
-      style={style}
+      style={style} // Pass style for dark mode
       error={error}
     />
   )

@@ -11,7 +11,7 @@ class ParameterDomainFormRequest extends Data
 {
     public function __construct(
         public string $domainName,
-        public string $description,
+        public ?string $description,
         public string $domainCode,
         public int $managedByModule,
 

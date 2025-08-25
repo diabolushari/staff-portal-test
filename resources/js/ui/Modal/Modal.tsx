@@ -27,58 +27,41 @@ export default function Modal({
     >
       <div className='relative h-screen w-screen'>
         <div
-          className={styles.modalBackground}
+          className='fixed inset-0 z-40 bg-black/50 dark:bg-black/70'
           onClick={() => setShowModal(false)}
-        ></div>
-        <div className={styles.modalContent}>
+        />
+        <div className='fixed inset-0 z-50 flex items-start justify-center pt-20'>
           <div
-            role='alert'
             className={
-              'container mx-auto flex w-11/12 justify-center pt-20 md:w-2/3 ' +
+              'w-11/12 rounded-lg border border-gray-200 bg-white shadow-lg md:w-2/3 dark:border-gray-700 dark:bg-gray-900 ' +
               (large ? '' : 'max-w-lg')
             }
           >
-            <div className='relative w-full rounded-sm bg-white pb-8 shadow-lg'>
-              <div className='flex w-full items-start justify-between p-2'>
-                <span className='body-1stop text-lg'>{title}</span>
-                <div
+            <div className='flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-100'>{title}</h2>
+              {showClosButton && (
+                <button
                   onClick={() => setShowModal(false)}
-                  className='cursor-pointer transition ease-in-out hover:bg-gray-200'
+                  className='rounded p-1 text-gray-600 transition hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'
                 >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
-                    aria-label='Close'
-                    className='icon icon-tabler icon-tabler-x'
-                    width={20}
-                    height={20}
-                    viewBox='0 0 24 24'
-                    strokeWidth='2.5'
-                    stroke='currentColor'
+                    className='h-5 w-5'
                     fill='none'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
+                    strokeWidth={2}
                   >
                     <path
-                      stroke='none'
-                      d='M0 0h24v24H0z'
-                    />
-                    <line
-                      x1={18}
-                      y1={6}
-                      x2={6}
-                      y2={18}
-                    />
-                    <line
-                      x1={6}
-                      y1={6}
-                      x2={18}
-                      y2={18}
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      d='M6 18L18 6M6 6l12 12'
                     />
                   </svg>
-                </div>
-              </div>
-              {children}
+                </button>
+              )}
             </div>
+            <div className='p-4'>{children}</div>
           </div>
         </div>
       </div>

@@ -1,11 +1,12 @@
 import capitalSnakeCase from '@/formaters/capitalcase'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ParameterDomain } from '@/interfaces/paramater_types'
+import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import SubHeading from '@/typography/SubHeading'
 import Button from '@/ui/button/Button'
 import DynamicSelectList from '@/ui/form/DynamicSelectList'
 import Input from '@/ui/form/Input'
+import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
 import Modal from '@/ui/Modal/Modal'
 import { useCallback, useEffect } from 'react'
@@ -16,6 +17,7 @@ interface Props {
   show: boolean
   children?: React.ReactNode
   parameterDomain?: ParameterDomain
+  modules: SystemModule[]
 }
 
 export default function ParameterDomainForm({
@@ -23,6 +25,7 @@ export default function ParameterDomainForm({
   setShowModal,
   show,
   parameterDomain,
+  modules,
 }: Readonly<Props>) {
   const { formData, setFormValue } = useCustomForm({
     domain_name: parameterDomain?.domain_name,
@@ -65,7 +68,7 @@ export default function ParameterDomainForm({
 
   return (
     <div>
-      <SubHeading>Create Parameter Domain</SubHeading>
+      <SubHeading>Parameter Domain</SubHeading>
       <Modal
         title={title}
         setShowModal={setShowModal}
@@ -99,14 +102,13 @@ export default function ParameterDomainForm({
               />
             </div>
             <div className='flex flex-col'>
-              <DynamicSelectList
-                url={`api/system-modules`}
+              <SelectList
+                list={modules}
                 dataKey='id'
                 displayKey='name'
                 setValue={setFormValue('managed_by_module')}
                 value={formData.managed_by_module}
                 label='Managed By Module'
-                required
                 error={errors?.managed_by_module}
               />
             </div>

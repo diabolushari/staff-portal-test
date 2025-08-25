@@ -7,5 +7,5 @@ interface Props {
 }
 
 export default function Heading({ className = '', children }: Props) {
-  return <h1 className={cn('break-all text-lg uppercase', className)}>{children}</h1>
+  return <h1 className={cn('text-lg break-all', className)}>{children}</h1>
 }

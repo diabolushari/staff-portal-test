@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/usr/bin/php8.4",
+            "args": [
+                "/home/swaraj/Projects/kseb-mbc-staff-portal-1/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}

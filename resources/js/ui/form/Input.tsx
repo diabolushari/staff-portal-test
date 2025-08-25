@@ -1,28 +1,8 @@
 import ErrorText from '@/typography/ErrorText'
 import React from 'react'
 import { FormFieldProp } from '../ui_interfaces'
-
-export const getFormStyle = (style: 'normal' | 'bottom-border' | 'dark') => {
-  switch (style) {
-    case 'normal': {
-      return (
-        ' rounded-lg border border-gray-300 py-3 pl-3 text-sm text-gray-800\n' +
-        '            shadow-xs focus:border-indigo-700 focus:outline-hidden disabled:bg-gray-100'
-      )
-    }
-    case 'bottom-border': {
-      return `mt-0 block w-full border-0 border-b-2 border-gray-200
-        px-0.5 font-nav text-sm focus:border-black focus:ring-0`
-    }
-
-    case 'dark': {
-      return 'flex h-11 items-center rounded-sm border border-gray-300 bg-white pr-20 pl-10 text-sm body-1stop text-gray-600 shadow-sm focus:border focus:border-indigo-700 focus:outline-hidden dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 sm:pr-52'
-    }
-    default: {
-      return ''
-    }
-  }
-}
+import { Input as ShadcnInput } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 
 export default function Input({
   label,
@@ -33,10 +13,12 @@ export default function Input({
   disabled = false,
   readonly = false,
   preventFormSubmit = false,
-  style = 'normal',
+  style = 'default',
   required = false,
   type = 'text',
   formatter,
+  showClearButton = false,
+  className = '',
 }: FormFieldProp) {
   const handleKeydown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (preventFormSubmit && event.key === 'Enter') {
@@ -44,25 +26,50 @@ export default function Input({
     }
   }
 
+  // Figma-based styling as default - clean white background with subtle border
+  const figmaInputClasses = cn(
+    'w-full bg-white px-3 py-2 rounded border border-gray-200 text-sm font-normal text-black',
+    'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0078d4] focus-visible:border-[#0078d4]',
+    'disabled:bg-gray-50 disabled:text-black disabled:cursor-not-allowed disabled:opacity-100',
+    'placeholder:text-gray-400',
+    className
+  )
+
   return (
-    <>
+    <div className='space-y-1'>
       {label != null && (
-        <label className='small-1stop mb-1 tracking-normal text-gray-800'>{label}</label>
+        <label className='text-sm font-normal text-[#252c32] leading-6'>
+          {label}
+        </label>
       )}
-      <input
-        type={type}
-        value={value}
-        onKeyDown={handleKeydown}
-        onChange={(event) =>
-          formatter ? setValue(formatter(event.target.value)) : setValue(event.target.value)
-        }
-        placeholder={placeholder}
-        className={getFormStyle(style)}
-        disabled={disabled}
-        readOnly={readonly}
-        required={required}
-      />
+
+      <div className='relative'>
+        <ShadcnInput
+          type={type}
+          value={value}
+          onKeyDown={handleKeydown}
+          onChange={(event) =>
+            formatter ? setValue(formatter(event.target.value)) : setValue(event.target.value)
+          }
+          placeholder={placeholder}
+          className={figmaInputClasses}
+          disabled={disabled}
+          readOnly={readonly}
+          required={required}
+        />
+
+        {showClearButton && value && (
+          <button
+            type='button'
+            onClick={() => setValue('')}
+            className='absolute top-1/2 right-2 -translate-y-1/2 text-xl text-gray-500 hover:text-red-500'
+          >
+            ✕
+          </button>
+        )}
+      </div>
+
       {error && <ErrorText>{error}</ErrorText>}
-    </>
+    </div>
   )
 }

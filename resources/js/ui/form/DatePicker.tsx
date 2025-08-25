@@ -19,20 +19,25 @@ export default function DatePicker({
 }: DatePickerProp) {
   return (
     <>
-      <label className='small-1stop mb-1 leading-tight tracking-normal text-gray-800'>
-        {label}
-      </label>
-      <input
-        type='date'
-        value={value}
-        min={min}
-        max={max}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder={placeholder}
-        className='rounded-sm border border-gray-300 bg-transparent px-3 py-3 text-sm text-gray-800 shadow-xs focus:border-indigo-700 focus:outline-hidden disabled:bg-gray-100'
-        disabled={disabled}
-      />
-      {error && <ErrorText>{error}</ErrorText>}
+      <div className='flex flex-col'>
+        {label != null && (
+          <label className='font-inter text-left align-top text-sm leading-[1.4] tracking-[-0.006em] text-gray-800 dark:text-gray-200'>
+            {label}
+          </label>
+        )}
+
+        <input
+          type='date'
+          value={value}
+          min={min}
+          max={max}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder={placeholder}
+          className='rounded-sm border border-gray-300 bg-transparent p-2 text-sm text-gray-800 shadow-xs focus:border-indigo-700 focus:outline-hidden disabled:bg-gray-100'
+          disabled={disabled}
+        />
+        {error && <ErrorText>{error}</ErrorText>}
+      </div>
     </>
   )
 }
