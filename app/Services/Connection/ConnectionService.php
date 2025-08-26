@@ -11,6 +11,7 @@ use Grpc\ChannelCredentials;
 use Proto\Consumers\ConnectionServiceClient;
 // Alias the gRPC request message to avoid naming conflicts
 use Proto\Consumers\CreateConnectionWithConsumerRequest as GrpcCreateRequest;
+use Proto\Consumers\ListConnectionsRequest;
 
 class ConnectionService
 {
@@ -22,6 +23,19 @@ class ConnectionService
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
         );
+    }
+
+    public function listConnections(): GrpcServiceResponse
+    {
+
+
+
+        // Transform the response from protobuf messages to arrays
+        $result = collect($response->getConnections())
+            ->map(fn($item) => $this->transformConnectionToArray($item))
+            ->toArray();
+
+        return GrpcServiceResponse::success($result, $response, $status->code, $status->details);
     }
 
     /**

@@ -27,6 +27,8 @@ export const NAV_ITEMS = [
         href: '/parameter-value',
         description: 'Manage reference data',
       },
+      { title: 'Connections', href: '/connections', description: 'Manage connections' },
+      { title: 'Parties', href: '/parties', description: 'Manage parties' },
     ],
   },
 ]

@@ -1,26 +1,18 @@
-import { TableCell, TableRow } from '@/components/ui/table'
 import { SystemModule } from '@/interfaces/parameter_types'
-import AppLayout from '@/layouts/app-layout'
+import MainLayout from '@/layouts/main-layout'
 import { type BreadcrumbItem } from '@/types'
-import DeleteButton from '@/ui/button/DeleteButton'
-import EditButton from '@/ui/button/EditButton'
-import CardHeader from '@/ui/Card/CardHeader'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import Modal from '@/ui/Modal/Modal'
-import Table from '@/ui/Table/Table'
-import { Head } from '@inertiajs/react'
 import { AnimatePresence } from 'framer-motion'
 import { useCallback, useState } from 'react'
 import { route } from 'ziggy-js'
 import SystemModuleForm from './components/SystemModuleForm'
-import MainLayout from '@/layouts/main-layout'
 import { settingsReferenceData } from '@/components/Navbar/navitems'
+import { Pencil, Trash2 } from 'lucide-react'
 
 interface Props {
   systemModules: SystemModule[]
 }
-
-const tableHeads = ['S.No', 'ID', 'System Module Name', 'Actions']
 
 export default function SystemModuleIndex({ systemModules }: Readonly<Props>) {
   const [moduleToEdit, setModuleToEdit] = useState<SystemModule | null>(null)
@@ -65,31 +57,59 @@ export default function SystemModuleIndex({ systemModules }: Readonly<Props>) {
       breadcrumb={breadcrumbs}
       navItems={settingsReferenceData}
     >
-      <Head title='System Modules' />
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
-        <CardHeader
-          title='System Module'
-          subheading='Here you can create System module names. Only admin can create system module names.'
-          onAddClick={handleCreateClick}
-        />
+        <div className='mb-4 flex items-center justify-between'>
+          <h2 className='text-lg font-semibold text-[#252c32]'>System Modules</h2>
+          <button
+            onClick={handleCreateClick}
+            className='rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
+          >
+            + Add Module
+          </button>
+        </div>
 
-        <Table heads={tableHeads}>
-          {systemModules.map((module, index) => (
-            <TableRow key={module.id}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>{module.id}</TableCell>
-              <TableCell>{module.name}</TableCell>
-              <TableCell>
-                <div className='flex space-x-3'>
-                  <EditButton onClick={() => handleEditClick(module)} />
-                  <DeleteButton onClick={() => handleDeleteClick(module)} />
+        <div className='flex flex-col'>
+          {systemModules.map((module) => (
+            <div
+              key={module.id}
+              className='mb-4 rounded-lg border border-gray-200 bg-white px-4 py-3 transition-shadow hover:shadow-md'
+            >
+              <div className='flex items-start justify-between'>
+                {/* Left Section */}
+                <div className='flex flex-1 flex-col gap-1'>
+                  <div className='flex items-center gap-2'>
+                    <div className='font-inter text-base font-semibold text-black'>
+                      {module.name}
+                    </div>
+                    <div className='rounded-[50px] bg-blue-100 px-2.5 py-px'>
+                      <div className='font-inter text-xs text-blue-800'>ID: {module.id}</div>
+                    </div>
+                  </div>
                 </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </Table>
 
-        {/* Single Modal for Create/Edit */}
+                {/* Right Section: Actions */}
+                <div className='flex items-center gap-3'>
+                  <button
+                    onClick={() => handleEditClick(module)}
+                    className='flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800'
+                  >
+                    <Pencil className='h-4 w-4' />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteClick(module)}
+                    className='flex items-center gap-1 text-sm text-red-600 hover:text-red-800'
+                  >
+                    <Trash2 className='h-4 w-4' />
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Create/Edit Modal */}
         <AnimatePresence>
           {showModal && (
             <Modal

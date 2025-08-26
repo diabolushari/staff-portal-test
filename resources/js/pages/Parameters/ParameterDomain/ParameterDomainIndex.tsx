@@ -10,6 +10,7 @@ import DeleteButton from '@/ui/button/DeleteButton'
 import EditButton from '@/ui/button/EditButton'
 import CardHeader from '@/ui/Card/CardHeader'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import ListSearch from '@/ui/Search/ListSearch'
 import Table from '@/ui/Table/Table'
 import { Head } from '@inertiajs/react'
 import { AnimatePresence } from 'framer-motion'
@@ -77,11 +78,10 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
     >
       <Head title='Parameter Domains' />
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
-        <CardHeader
-          breadCrumb={breadcrumbs}
+        <ListSearch
           title='Parameter Domains'
-          subheading='Add and manage parameter domains.'
-          onAddClick={handleCreateClick}
+          url={route('parameter-domain.index')}
+          search={filters.search}
         />
         <ParameterDomainSearchForm
           systemModules={modules}

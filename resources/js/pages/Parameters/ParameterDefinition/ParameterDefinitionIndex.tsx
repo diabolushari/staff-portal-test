@@ -12,6 +12,7 @@ import ParameterDefinitionForm from '@/components/Parameter/ParameterDefinition/
 import ParameterDefinitionSearchForm from '@/components/Parameter/ParameterDefinition/ParameterDefinitionSearchForm'
 import MainLayout from '@/layouts/main-layout'
 import { settingsReferenceData } from '@/components/Navbar/navitems'
+import ListSearch from '@/ui/Search/ListSearch'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -72,11 +73,10 @@ export default function ParameterDefinitionIndex({
       navItems={settingsReferenceData}
     >
       <div className='p-4'>
-        <CardHeader
-          breadCrumb={breadcrumbs}
+        <ListSearch
           title='Parameter Definition'
-          subheading='Add and manage parameter definition.'
-          onAddClick={handleCreateClick}
+          url={route('parameter-definition.index')}
+          search={filters.search}
         />
         <ParameterDefinitionSearchForm
           parameterDomains={domains}

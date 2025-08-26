@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Connection;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Connections\CreateConnectionWithConsumerRequest;
 use App\Services\Connection\ConnectionService;
+use App\Services\Parameters\ParameterValueService;
 use Grpc\ChannelCredentials;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Proto\Parameters\ListParameterValuesRequest;
@@ -29,44 +31,86 @@ class ConnectionController extends Controller
         );
     }
 
-    /**
-     * Show the form for creating a new connection.
-     * This method fetches all necessary data for dropdowns.
-     */
-    public function create(): Response|RedirectResponse
+    public function index(Request $request): Response|RedirectResponse
+    {
+        return Inertia::render('Connections/ConnectionsIndex');
+    }
+
+    public function create(ParameterValueService $parameterValueService): Response|RedirectResponse
     {
         // Example: Fetching 'Connection Type' and 'Consumer Type' for dropdowns.
         // You would repeat this pattern for all other '_id' fields.
-        $connTypeRequest = new ListParameterValuesRequest([
-            'domain_name' => 'Connections',
-            'parameter_name' => 'Connection Type',
-        ]);
-        $consumerTypeRequest = new ListParameterValuesRequest([
-            'domain_name' => 'Connections',
-            'parameter_name' => 'Consumer Type',
-        ]);
 
-        [$connTypesResponse, $connStatus] = $this->parameterValueClient->ListParameterValues($connTypeRequest)->wait();
-        [$consumerTypesResponse, $consumerStatus] = $this->parameterValueClient->ListParameterValues($consumerTypeRequest)->wait();
+        $connectionTypes = $parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Connection Type'
+        );
 
-        if ($connStatus->code !== 0 || $consumerStatus->code !== 0) {
-            return redirect()->back()->withErrors([
-                'grpc_error' => $connStatus->details ?: $consumerStatus->details,
-            ]);
-        }
+        $connectionStatus = $parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Connection Status'
+        );
 
-        $connectionTypes = collect($connTypesResponse->getValues())
-            ->map(fn ($item) => ['id' => $item->getId(), 'parameterValue' => $item->getParameterValue()])
-            ->toArray();
+        $voltageTypes = $parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Voltage'
+        );
+        $tariffTypes = $parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Tariff'
+        );
+        $connectionCategory = $parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Connection Category'
+        );
+        $connectionSubCategory = $parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Connection Subcategory'
+        );
 
-        $consumerTypes = collect($consumerTypesResponse->getValues())
-            ->map(fn ($item) => ['id' => $item->getId(), 'parameterValue' => $item->getParameterValue()])
-            ->toArray();
+        $billingProcesses = $parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Billing Process'
+        );
+        $phaseTypes = $parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Phase Type'
+        );
 
-        return Inertia::render('Connections/ConnectionForm', [
-            'connectionTypes' => $connectionTypes,
-            'consumerTypes' => $consumerTypes,
-            // ...pass other dropdown data here
+
+        return Inertia::render('Connections/ConnectionsForm', [
+            'connectionTypes' => $connectionTypes->data,
+            'connectionStatus' => $connectionStatus->data,
+            'voltageTypes' => $voltageTypes->data,
+            'tariffTypes' => $tariffTypes->data,
+            'connectionCategory' => $connectionCategory->data,
+            'connectionSubCategory' => $connectionSubCategory->data,
+            'billingProcesses' => $billingProcesses->data,
+            'phaseTypes' => $phaseTypes->data,
         ]);
     }
 

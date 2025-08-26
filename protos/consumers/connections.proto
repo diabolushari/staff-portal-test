@@ -13,7 +13,7 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/empty.proto";
 
-// Connection table
+// -------------------- Connection table --------------------
 message ConnectionMessage {
   int32 version_id = 1;
   int32 connection_id = 2;
@@ -50,12 +50,12 @@ message ConnectionMessage {
   int32 updated_by = 33;
 }
 
-// ConsumerProfile table
+// -------------------- ConsumerProfile table --------------------
 message ConsumerProfileMessage {
   int32 version_id = 1;
   int32 connection_id = 2;
   int32 consumer_type_id = 3;
-  string organisation_name = 4;
+  string organization_name = 4; // ✅ updated spelling for Laravel/consistency
   string applicant_code = 5;
   string consumer_pan = 6;
   string consumer_tan = 7;
@@ -79,7 +79,7 @@ message ConsumerProfileMessage {
   google.protobuf.Timestamp updated_at = 25;
 }
 
-// ConsumerAddress table
+// -------------------- ConsumerAddress table --------------------
 message ConsumerAddressMessage {
   int32 address_id = 1;
   string address_line1 = 2;
@@ -96,7 +96,7 @@ message ConsumerAddressMessage {
   int32 updated_by = 13;
 }
 
-// ConsumerContactDetails table
+// -------------------- ConsumerContactDetails table --------------------
 message ConsumerContactDetailsMessage {
   int32 version_id = 1;
   int32 connection_id = 2;
@@ -115,7 +115,7 @@ message ConsumerContactDetailsMessage {
   google.protobuf.Timestamp updated_at = 15;
 }
 
-// Request for creating connection with consumer profile
+// -------------------- Create connection with consumer --------------------
 message CreateConnectionWithConsumerRequest {
   ConnectionMessage connection = 1;
   ConsumerProfileMessage consumer_profile = 2;
@@ -123,7 +123,6 @@ message CreateConnectionWithConsumerRequest {
   ConsumerContactDetailsMessage consumer_contact_details = 4;
 }
 
-// Response for combined creation
 message CreateConnectionWithConsumerResponse {
   ConnectionMessage connection = 1;
   ConsumerProfileMessage consumer_profile = 2;
@@ -131,13 +130,13 @@ message CreateConnectionWithConsumerResponse {
   ConsumerContactDetailsMessage consumer_contact_details = 4;
 }
 
-// Response message for delete operations
+// -------------------- Delete response --------------------
 message DeleteResponse {
   bool success = 1;
   string message = 2;
 }
 
-// Request messages
+// -------------------- Request messages --------------------
 message ConnectionRequest {
   int32 connection_id = 1;
   int32 version_id = 2;
@@ -157,8 +156,7 @@ message ConsumerContactDetailsRequest {
   int32 version_id = 2;
 }
 
-
-// Service definitions
+// -------------------- Service --------------------
 service ConnectionService {
   rpc CreateConnection(ConnectionMessage) returns (ConnectionMessage);
   rpc GetConnection(ConnectionRequest) returns (ConnectionMessage);
