@@ -27,6 +27,7 @@ interface Props {
   connectionSubCategory: ParameterValues[]
   billingProcesses: ParameterValues[]
   phaseTypes: ParameterValues[]
+  primaryPurposes: ParameterValues[]
 }
 
 export default function ConnectionsForm({
@@ -38,6 +39,7 @@ export default function ConnectionsForm({
   connectionSubCategory,
   billingProcesses,
   phaseTypes,
+  primaryPurposes,
 }: Props) {
   const tabs = [
     {
@@ -66,6 +68,7 @@ export default function ConnectionsForm({
               connectionSubCategory={connectionSubCategory}
               billingProcesses={billingProcesses}
               phaseTypes={phaseTypes}
+              primaryPurposes={primaryPurposes}
             />
           </TabsContent>
           <TabsContent value='consumer'>

@@ -27,20 +27,10 @@ class ConnectionService
 
     public function listConnections(): GrpcServiceResponse
     {
-
-
-
-        // Transform the response from protobuf messages to arrays
-        $result = collect($response->getConnections())
-            ->map(fn($item) => $this->transformConnectionToArray($item))
-            ->toArray();
-
-        return GrpcServiceResponse::success($result, $response, $status->code, $status->details);
+        return GrpcServiceResponse::success([], null, 0, null);
     }
 
-    /**
-     * Create a new connection with a consumer profile.
-     */
+
     public function createConnectionWithConsumer(CreateConnectionWithConsumerRequest $request): GrpcServiceResponse
     {
         $grpcRequest = new GrpcCreateRequest;

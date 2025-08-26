@@ -6,42 +6,27 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Connections\CreateConnectionWithConsumerRequest;
 use App\Services\Connection\ConnectionService;
 use App\Services\Parameters\ParameterValueService;
-use Grpc\ChannelCredentials;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Proto\Parameters\ListParameterValuesRequest;
-use Proto\Parameters\ParameterValueServiceClient;
 
 class ConnectionController extends Controller
 {
-    private ConnectionService $connectionService;
-
-    private ParameterValueServiceClient $parameterValueClient;
-
-    public function __construct(ConnectionService $connectionService)
-    {
-        $this->connectionService = $connectionService;
-
-        // Instantiate the client for fetching dropdown/parameter data
-        $this->parameterValueClient = new ParameterValueServiceClient(
-            config('app.consumer_service_grpc_host'),
-            ['credentials' => ChannelCredentials::createInsecure()]
-        );
-    }
+    public function __construct(
+        private readonly ConnectionService $connectionService,
+        private readonly ParameterValueService $parameterValueService
+    ) {}
 
     public function index(Request $request): Response|RedirectResponse
     {
+        $connections = $this->connectionService->listConnections();
         return Inertia::render('Connections/ConnectionsIndex');
     }
 
-    public function create(ParameterValueService $parameterValueService): Response|RedirectResponse
+    public function create(): Response|RedirectResponse
     {
-        // Example: Fetching 'Connection Type' and 'Consumer Type' for dropdowns.
-        // You would repeat this pattern for all other '_id' fields.
-
-        $connectionTypes = $parameterValueService->getParameterValues(
+        $connectionTypes = $this->parameterValueService->getParameterValues(
             1,
             10,
             null,
@@ -49,7 +34,7 @@ class ConnectionController extends Controller
             'Connection Type'
         );
 
-        $connectionStatus = $parameterValueService->getParameterValues(
+        $connectionStatus = $this->parameterValueService->getParameterValues(
             1,
             10,
             null,
@@ -57,28 +42,28 @@ class ConnectionController extends Controller
             'Connection Status'
         );
 
-        $voltageTypes = $parameterValueService->getParameterValues(
+        $voltageTypes = $this->parameterValueService->getParameterValues(
             1,
             10,
             null,
             'Connection',
             'Voltage'
         );
-        $tariffTypes = $parameterValueService->getParameterValues(
+        $tariffTypes = $this->parameterValueService->getParameterValues(
             1,
             10,
             null,
             'Connection',
             'Tariff'
         );
-        $connectionCategory = $parameterValueService->getParameterValues(
+        $connectionCategory = $this->parameterValueService->getParameterValues(
             1,
             10,
             null,
             'Connection',
             'Connection Category'
         );
-        $connectionSubCategory = $parameterValueService->getParameterValues(
+        $connectionSubCategory = $this->parameterValueService->getParameterValues(
             1,
             10,
             null,
@@ -86,19 +71,26 @@ class ConnectionController extends Controller
             'Connection Subcategory'
         );
 
-        $billingProcesses = $parameterValueService->getParameterValues(
+        $billingProcesses = $this->parameterValueService->getParameterValues(
             1,
             10,
             null,
             'Connection',
             'Billing Process'
         );
-        $phaseTypes = $parameterValueService->getParameterValues(
+        $phaseTypes = $this->parameterValueService->getParameterValues(
             1,
             10,
             null,
             'Connection',
             'Phase Type'
+        );
+        $primaryPurposes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Primary Purpose'
         );
 
 
@@ -111,6 +103,7 @@ class ConnectionController extends Controller
             'connectionSubCategory' => $connectionSubCategory->data,
             'billingProcesses' => $billingProcesses->data,
             'phaseTypes' => $phaseTypes->data,
+            'primaryPurposes' => $primaryPurposes->data,
         ]);
     }
 
@@ -119,18 +112,7 @@ class ConnectionController extends Controller
      */
     public function store(CreateConnectionWithConsumerRequest $request): RedirectResponse
     {
-        // Set the 'created_by' field from the authenticated user
-        $request->connection->createdBy = auth()->id();
-        $request->consumerProfile->createdBy = auth()->id();
 
-        $response = $this->connectionService->createConnectionWithConsumer($request);
-
-        if ($response->hasError()) {
-            // The GrpcServiceResponse should format the error as a RedirectResponse
-            return $response->error;
-        }
-
-        // Assuming you have an index route for connections
         return redirect()->route('connections.index')->with('success', 'Connection created successfully.');
     }
 }

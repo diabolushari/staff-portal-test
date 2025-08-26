@@ -78,6 +78,11 @@ export default function ParameterDefinitionIndex({
           url={route('parameter-definition.index')}
           search={filters.search}
         />
+        <CardHeader
+          title='Parameter Definition'
+          subheading='Add a new parameter definition.'
+          onAddClick={handleCreateClick}
+        />
         <ParameterDefinitionSearchForm
           parameterDomains={domains}
           filters={filters}
