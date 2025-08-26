@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ParameterDomainListApiController;
 use App\Http\Controllers\Api\SystemModuleApiController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
+use App\Http\Controllers\Connection\ConnectionController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
@@ -34,6 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('parameter-value', ParameterValueController::class);
     Route::resource('offices', OfficeController::class);
     Route::resource('parties', PartiesController::class);
+    Route::resource('connections', ConnectionController::class);
 });
 
 // API List
@@ -55,5 +57,5 @@ Route::get('page-ui', function () {
     return Inertia::render('UItest');
 })->name('page-ui');
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

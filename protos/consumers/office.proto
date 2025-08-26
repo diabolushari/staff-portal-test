@@ -83,7 +83,7 @@ message OfficeListResponse {
 
 message OfficeListRequest {
     optional string office_type = 1;
-    optional string search = 2;        // searches office_code
+    optional string search = 2;        
     optional string office_name = 3;
 }
 

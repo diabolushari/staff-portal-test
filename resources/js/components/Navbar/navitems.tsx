@@ -58,3 +58,30 @@ export const settingsReferenceData: navItem[] = [
     icon: <HomeIcon className='h-4 w-4' />,
   },
 ]
+
+export const connections: navItem[] = [
+  {
+    title: 'Search Connections',
+    href: '/connections',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+
+  {
+    title: 'Add Connection',
+    href: '/connections/create',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
+]
+export const partiesNavItems: navItem[] = [
+  {
+    title: 'Search Parties',
+    href: '/parties',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+
+  {
+    title: 'Add Party',
+    href: '/parties/create',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
+]

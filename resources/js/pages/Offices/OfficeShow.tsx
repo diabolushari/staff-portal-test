@@ -38,7 +38,7 @@ export default function OfficeShow({ office }: { office: Office }) {
   } = office
 
   const formatDate = (dateStr?: string) => (dateStr ? new Date(dateStr).toLocaleDateString() : '-')
-  
+
   // Placeholder data for missing fields based on Figma design
   const placeholderData = {
     district: 'Kozhikode',
@@ -54,7 +54,7 @@ export default function OfficeShow({ office }: { office: Office }) {
     parentStatus: 'Active',
     createdBy: 'RMO',
     updatedBy: 'Section Officer',
-    updatedAt: '18 July 2025'
+    updatedAt: '18 July 2025',
   }
   console.log(office)
   const tabs = [
@@ -75,6 +75,7 @@ export default function OfficeShow({ office }: { office: Office }) {
       label: 'Activity History',
     },
   ]
+
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -85,54 +86,57 @@ export default function OfficeShow({ office }: { office: Office }) {
         <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
           <div className='flex flex-col gap-2'>
             <div className='flex items-center gap-3'>
-              <StrongText className='text-2xl font-semibold text-[#252c32]'>{office_code} - {office_name}</StrongText>
+              <StrongText className='text-2xl font-semibold text-[#252c32]'>
+                {office_code} - {office_name}
+              </StrongText>
               <TinyContainer variant={is_current ? 'success' : 'danger'}>
                 {is_current ? 'Active' : 'Inactive'}
               </TinyContainer>
             </div>
           </div>
-          <button 
+          <button
             onClick={() => router.visit(route('offices.edit', office_id))}
-            className='bg-[#0078d4] text-white px-4 py-2.5 rounded-lg flex items-center gap-2 font-semibold text-sm hover:bg-[#106ebe] transition-colors'
+            className='flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
           >
             Edit Details
           </button>
         </div>
-
 
         {/* Main Content Tabs */}
         <TabGroup tabs={tabs}>
           <TabsContent value='details'>
             <div className='space-y-4'>
               {/* Basic Information */}
-              <Card className='p-7 rounded-lg'>
-                <div className='flex items-center justify-between mb-6'>
-                  <StrongText className='text-base font-semibold text-[#252c32]'>Basic Information</StrongText>
-                  <button 
+              <Card className='rounded-lg p-7'>
+                <div className='mb-6 flex items-center justify-between'>
+                  <StrongText className='text-base font-semibold text-[#252c32]'>
+                    Basic Information
+                  </StrongText>
+                  <button
                     onClick={() => router.visit(route('offices.edit', office_id))}
-                    className='bg-white border border-[#dde2e4] text-[#0078d4] px-3.5 py-2 rounded-lg flex items-center gap-2 font-semibold text-sm hover:bg-gray-50 transition-colors'
+                    className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
                   >
-                    <PencilIcon className='w-4 h-4' />
+                    <PencilIcon className='h-4 w-4' />
                     Edit
                   </button>
                 </div>
-                <hr className='border-[#e5e9eb] mb-6' />
+                <hr className='mb-6 border-[#e5e9eb]' />
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Office Code</label>
-                    <div className='bg-gray-50 px-2.5 py-2.5 rounded text-sm font-medium text-black'>
+                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
                       {office_code}
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Name</label>
-                    <div className='bg-gray-50 px-2.5 py-2.5 rounded text-sm font-medium text-black'>
+                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
                       {office_name}
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Office Type</label>
-                    <div className='bg-gray-50 px-2.5 py-2.5 rounded text-sm font-medium text-black'>
+                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
                       {office_type?.parameter_value || 'Subdivision'}
                     </div>
                   </div>
@@ -146,46 +150,48 @@ export default function OfficeShow({ office }: { office: Office }) {
               </Card>
 
               {/* Location Details */}
-              <Card className='p-7 rounded-lg'>
-                <div className='flex items-center justify-between mb-6'>
-                  <StrongText className='text-base font-semibold text-[#252c32]'>Location Details</StrongText>
-                  <button 
+              <Card className='rounded-lg p-7'>
+                <div className='mb-6 flex items-center justify-between'>
+                  <StrongText className='text-base font-semibold text-[#252c32]'>
+                    Location Details
+                  </StrongText>
+                  <button
                     onClick={() => router.visit(route('offices.edit', office_id))}
-                    className='bg-white border border-[#dde2e4] text-[#0078d4] px-3.5 py-2 rounded-lg flex items-center gap-2 font-semibold text-sm hover:bg-gray-50 transition-colors'
+                    className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
                   >
-                    <PencilIcon className='w-4 h-4' />
+                    <PencilIcon className='h-4 w-4' />
                     Edit
                   </button>
                 </div>
-                <hr className='border-[#e5e9eb] mb-6' />
+                <hr className='mb-6 border-[#e5e9eb]' />
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>District</label>
-                    <div className='bg-gray-50 px-2.5 py-2.5 rounded text-sm font-medium text-black'>
+                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
                       {placeholderData.district}
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Taluk</label>
-                    <div className='bg-gray-50 px-2.5 py-2.5 rounded text-sm font-medium text-black'>
+                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
                       {placeholderData.taluk}
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Latitude</label>
-                    <div className='bg-gray-50 px-2.5 py-2.5 rounded text-sm font-medium text-black'>
+                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
                       {placeholderData.latitude}
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Longitude</label>
-                    <div className='bg-gray-50 px-2.5 py-2.5 rounded text-sm font-medium text-black'>
+                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
                       {placeholderData.longitude}
                     </div>
                   </div>
                   <div className='space-y-1 md:col-span-2'>
                     <label className='text-sm font-normal text-[#252c32]'>Address</label>
-                    <div className='bg-gray-50 px-2.5 py-2.5 rounded text-sm font-normal text-[#252c32]'>
+                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-normal text-[#252c32]'>
                       {placeholderData.address}
                     </div>
                   </div>
@@ -193,43 +199,53 @@ export default function OfficeShow({ office }: { office: Office }) {
               </Card>
 
               {/* Parent Details */}
-              <Card className='p-7 rounded-lg'>
-                <div className='flex items-center justify-between mb-6'>
-                  <StrongText className='text-base font-semibold text-[#252c32]'>Parent Details</StrongText>
-                  <button 
+              <Card className='rounded-lg p-7'>
+                <div className='mb-6 flex items-center justify-between'>
+                  <StrongText className='text-base font-semibold text-[#252c32]'>
+                    Parent Details
+                  </StrongText>
+                  <button
                     onClick={() => router.visit(route('offices.edit', office_id))}
-                    className='bg-white border border-[#dde2e4] text-[#0078d4] px-3.5 py-2 rounded-lg flex items-center gap-2 font-semibold text-sm hover:bg-gray-50 transition-colors'
+                    className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
                   >
-                    <PencilIcon className='w-4 h-4' />
+                    <PencilIcon className='h-4 w-4' />
                     Edit
                   </button>
                 </div>
-                <hr className='border-[#e5e9eb] mb-6' />
-                <div className='border border-gray-200 rounded-lg p-2.5'>
-                  <div className='flex justify-between items-start p-2.5'>
-                    <div className='space-y-2.5 flex-1'>
+                <hr className='mb-6 border-[#e5e9eb]' />
+                <div className='rounded-lg border border-gray-200 p-2.5'>
+                  <div className='flex items-start justify-between p-2.5'>
+                    <div className='flex-1 space-y-2.5'>
                       <div className='space-y-1'>
                         <div className='flex items-center gap-3'>
-                          <div className='font-semibold text-black text-base'>{placeholderData.parentName}</div>
-                          <div className='bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full text-xs font-normal'>
+                          <div className='text-base font-semibold text-black'>
+                            {placeholderData.parentName}
+                          </div>
+                          <div className='rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-normal text-blue-800'>
                             {placeholderData.parentCode}
                           </div>
                         </div>
                         <div className='flex items-center gap-5'>
                           <div className='flex items-center gap-1'>
-                            <Building className='w-3.5 h-3.5 text-gray-400' />
-                            <span className='text-sm font-normal text-[#252c32]'>{placeholderData.parentType}</span>
+                            <Building className='h-3.5 w-3.5 text-gray-400' />
+                            <span className='text-sm font-normal text-[#252c32]'>
+                              {placeholderData.parentType}
+                            </span>
                           </div>
                           <div className='flex items-center gap-1'>
-                            <MapPin className='w-3.5 h-3.5 text-gray-400' />
-                            <span className='text-sm font-normal text-[#252c32]'>{placeholderData.parentLocation}</span>
+                            <MapPin className='h-3.5 w-3.5 text-gray-400' />
+                            <span className='text-sm font-normal text-[#252c32]'>
+                              {placeholderData.parentLocation}
+                            </span>
                           </div>
                         </div>
-                        <div className='text-sm font-normal text-[#252c32]'>{placeholderData.parentAddress}</div>
+                        <div className='text-sm font-normal text-[#252c32]'>
+                          {placeholderData.parentAddress}
+                        </div>
                       </div>
                     </div>
-                    <div className='flex flex-col items-end p-2.5 gap-2'>
-                      <div className='bg-green-100 text-[#1c6534] px-2.5 py-0.5 rounded-full text-xs font-normal'>
+                    <div className='flex flex-col items-end gap-2 p-2.5'>
+                      <div className='rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-normal text-[#1c6534]'>
                         {placeholderData.parentStatus}
                       </div>
                     </div>
@@ -238,46 +254,50 @@ export default function OfficeShow({ office }: { office: Office }) {
               </Card>
 
               {/* Other Info */}
-              <Card className='p-7 rounded-lg'>
-                <div className='flex items-center justify-between mb-6'>
-                  <StrongText className='text-base font-semibold text-[#252c32]'>Other info</StrongText>
-                  <button 
+              <Card className='rounded-lg p-7'>
+                <div className='mb-6 flex items-center justify-between'>
+                  <StrongText className='text-base font-semibold text-[#252c32]'>
+                    Other info
+                  </StrongText>
+                  <button
                     onClick={() => router.visit(route('offices.edit', office_id))}
-                    className='bg-white border border-[#dde2e4] text-[#0078d4] px-3.5 py-2 rounded-lg flex items-center gap-2 font-semibold text-sm hover:bg-gray-50 transition-colors'
+                    className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
                   >
-                    <PencilIcon className='w-4 h-4' />
+                    <PencilIcon className='h-4 w-4' />
                     Edit
                   </button>
                 </div>
-                <hr className='border-[#e5e9eb] mb-6' />
+                <hr className='mb-6 border-[#e5e9eb]' />
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                   <div className='space-y-1'>
-                    <label className='text-sm font-normal text-[#252c32]'>Effective Start Date</label>
-                    <div className='bg-gray-50 px-2.5 py-2.5 rounded text-sm font-medium text-black'>
+                    <label className='text-sm font-normal text-[#252c32]'>
+                      Effective Start Date
+                    </label>
+                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
                       {formatDate(effective_start) || '12 May 1990'}
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Effective End date</label>
-                    <div className='bg-gray-50 px-2.5 py-2.5 rounded text-sm font-medium text-black'>
+                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
                       {formatDate(effective_end) || 'Active'}
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Created by</label>
-                    <div className='bg-gray-50 px-2.5 py-2.5 rounded text-sm font-medium text-black'>
+                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
                       {placeholderData.createdBy}
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Updated by</label>
-                    <div className='bg-gray-50 px-2.5 py-2.5 rounded text-sm font-medium text-black'>
+                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
                       {placeholderData.updatedBy}
                     </div>
                   </div>
                   <div className='space-y-1 md:col-span-2'>
                     <label className='text-sm font-normal text-[#252c32]'>Updated at</label>
-                    <div className='bg-gray-50 px-2.5 py-2.5 rounded text-sm font-normal text-[#252c32]'>
+                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-normal text-[#252c32]'>
                       {placeholderData.updatedAt}
                     </div>
                   </div>
@@ -285,42 +305,44 @@ export default function OfficeShow({ office }: { office: Office }) {
               </Card>
             </div>
           </TabsContent>
-          
+
           <TabsContent value='substations'>
             <Card className='p-6'>
-              <div className='flex items-center justify-between mb-6'>
+              <div className='mb-6 flex items-center justify-between'>
                 <StrongText className='text-lg font-semibold text-gray-900'>Substations</StrongText>
               </div>
-              <div className='text-center py-12'>
-                <Zap className='h-12 w-12 text-gray-400 mx-auto mb-4' />
+              <div className='py-12 text-center'>
+                <Zap className='mx-auto mb-4 h-12 w-12 text-gray-400' />
                 <p className='text-gray-600'>Substation data will be displayed here</p>
-                <p className='text-sm text-gray-500 mt-2'>Feature coming soon</p>
+                <p className='mt-2 text-sm text-gray-500'>Feature coming soon</p>
               </div>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value='consumers'>
             <Card className='p-6'>
-              <div className='flex items-center justify-between mb-6'>
+              <div className='mb-6 flex items-center justify-between'>
                 <StrongText className='text-lg font-semibold text-gray-900'>Consumers</StrongText>
               </div>
-              <div className='text-center py-12'>
-                <Users className='h-12 w-12 text-gray-400 mx-auto mb-4' />
+              <div className='py-12 text-center'>
+                <Users className='mx-auto mb-4 h-12 w-12 text-gray-400' />
                 <p className='text-gray-600'>Consumer data will be displayed here</p>
-                <p className='text-sm text-gray-500 mt-2'>Feature coming soon</p>
+                <p className='mt-2 text-sm text-gray-500'>Feature coming soon</p>
               </div>
             </Card>
           </TabsContent>
 
           <TabsContent value='activity'>
             <Card className='p-6'>
-              <div className='flex items-center justify-between mb-6'>
-                <StrongText className='text-lg font-semibold text-gray-900'>Activity History</StrongText>
+              <div className='mb-6 flex items-center justify-between'>
+                <StrongText className='text-lg font-semibold text-gray-900'>
+                  Activity History
+                </StrongText>
               </div>
-              <div className='text-center py-12'>
-                <Calendar className='h-12 w-12 text-gray-400 mx-auto mb-4' />
+              <div className='py-12 text-center'>
+                <Calendar className='mx-auto mb-4 h-12 w-12 text-gray-400' />
                 <p className='text-gray-600'>Activity history will be displayed here</p>
-                <p className='text-sm text-gray-500 mt-2'>Feature coming soon</p>
+                <p className='mt-2 text-sm text-gray-500'>Feature coming soon</p>
               </div>
             </Card>
           </TabsContent>
