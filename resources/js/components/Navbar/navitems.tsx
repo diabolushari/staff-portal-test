@@ -19,6 +19,19 @@ export const settingsOffices: navItem[] = [
     icon: <HomeIcon className='h-4 w-4' />,
   },
 ]
+export const settingsParties: navItem[] = [
+  {
+    title: 'Search Parties',
+    href: '/parties',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+
+  {
+    title: 'Add Parties',
+    href: '/parties/create',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
+]
 
 export const settingsReferenceData: navItem[] = [
   {
