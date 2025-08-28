@@ -58,8 +58,6 @@ export default function MeterForm({
 }: MeterFormProps) {
 	const isEditing = Boolean(meter);
 
-	console.log(resetTypes);
-
 	const { formData, setFormValue } = useCustomForm({
 		meter_serial: meter?.meter_serial ?? "",
 		ownership_type_id: meter?.ownership_type_id ?? null,
@@ -252,22 +250,26 @@ export default function MeterForm({
 									error={errors.current_meter_ratio}
 								/>
 								<div className="flex items-center pt-6 space-x-4">
+									{/* --- FIX START --- */}
 									<CheckBox
 										label="Smart Meter"
-										checked={formData.smart_meter_ind}
-										onChange={(e) =>
-											setFormValue("smart_meter_ind")(e.target.checked)
+										value={formData.smart_meter_ind}
+										toggleValue={() =>
+											setFormValue("smart_meter_ind")(!formData.smart_meter_ind)
 										}
 										error={errors.smart_meter_ind}
 									/>
 									<CheckBox
 										label="Bidirectional"
-										checked={formData.bidirectional_ind}
-										onChange={(e) =>
-											setFormValue("bidirectional_ind")(e.target.checked)
+										value={formData.bidirectional_ind}
+										toggleValue={() =>
+											setFormValue("bidirectional_ind")(
+												!formData.bidirectional_ind,
+											)
 										}
 										error={errors.bidirectional_ind}
 									/>
+									{/* --- FIX END --- */}
 								</div>
 							</>,
 						)}

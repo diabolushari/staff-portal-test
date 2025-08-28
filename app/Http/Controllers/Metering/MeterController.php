@@ -140,7 +140,10 @@ class MeterController extends Controller
     public function show(int $id)
     {
         $response = $this->meterService->getMeter($id);
-        dd($response);
+
+        return Inertia::render('Meters/MeterShow', [
+            'meter' => $response->data,
+        ]);
 
     }
 

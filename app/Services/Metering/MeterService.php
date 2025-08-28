@@ -204,7 +204,7 @@ class MeterService
             'meter_type' => self::transformParameterValueToArray($meter->getMeterType()),
             'meter_category' => self::transformParameterValueToArray($meter->getMeterCategory()),
             'accuracy_class' => self::transformParameterValueToArray($meter->getAccuracyClass()),
-            'dialing_factor' => $meter->getDialingFactor(),
+            'dialing_factor' => self::transformParameterValueToArray($meter->getDialingFactor()),
             'company_seal_num' => $meter->getCompanySealNum(),
             'digit_count' => $meter->getDigitCount(),
             'voltage_meter_ratio' => $meter->getVoltageMeterRatio(),

@@ -40,7 +40,7 @@ message CreateMeterRequest {
   int32 meter_type_id = 5;              // CORRECT: Generates getMeterTypeId()
   int32 meter_category_id = 6;        // CORRECT: Generates getMeterCategoryId()
   int32 accuracy_class_id = 7;        // CORRECT: Generates getAccuracyClassId()
-  int32 dialing_factor = 8;
+  int32 dialing_factor_id = 8;
   string company_seal_num = 9;
   int32 digit_count = 10;
   float voltage_meter_ratio = 11;
@@ -62,7 +62,7 @@ message UpdateMeterRequest {
   int32 meter_type_id = 5;              // CORRECT: Generates getMeterTypeId()
   int32 meter_category_id = 6;        // CORRECT: Generates getMeterCategoryId()
   int32 accuracy_class_id = 7;        // CORRECT: Generates getAccuracyClassId()
-  int32 dialing_factor = 8;
+  int32 dialing_factor_id = 8;
   string company_seal_num = 9;
   int32 digit_count = 10;
   float voltage_meter_ratio = 11;
@@ -89,7 +89,7 @@ message MeterResponse {
   parameters.ParameterValueProto meter_type = 6;
   parameters.ParameterValueProto meter_category = 7;
   parameters.ParameterValueProto accuracy_class = 8;
-  int32 dialing_factor = 9;
+  parameters.ParameterValueProto dialing_factor = 9;
   optional string company_seal_num = 10;
   optional int32 digit_count = 11;
   optional float voltage_meter_ratio = 12;
