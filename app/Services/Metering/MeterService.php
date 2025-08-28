@@ -35,7 +35,7 @@ class MeterService
         $request->setMeterTypeId($data['meter_type_id']);
         $request->setMeterCategoryId($data['meter_category_id']);
         $request->setAccuracyClassId($data['accuracy_class_id']);
-        $request->setDialingFactor($data['dialing_factor']);
+        $request->setDialingFactorId($data['dialing_factor_id']);
         $request->setCompanySealNum($data['company_seal_num']);
         $request->setDigitCount($data['digit_count']);
         $request->setVoltageMeterRatio($data['voltage_meter_ratio']);
@@ -121,7 +121,7 @@ class MeterService
         $request->setMeterTypeId($data['meter_type_id']);
         $request->setMeterCategoryId($data['meter_category_id']);
         $request->setAccuracyClassId($data['accuracy_class_id']);
-        $request->setDialingFactor($data['dialing_factor']);
+        $request->setDialingFactorId($data['dialing_factor_id']);
         $request->setCompanySealNum($data['company_seal_num']);
         $request->setDigitCount($data['digit_count']);
         $request->setVoltageMeterRatio($data['voltage_meter_ratio']);

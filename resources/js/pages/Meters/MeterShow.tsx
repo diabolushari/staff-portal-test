@@ -13,7 +13,7 @@ interface Meter {
 	meter_type: { id: number; parameter_value: string };
 	meter_category: { id: number; parameter_value: string };
 	accuracy_class: { id: number; parameter_value: string };
-	dialing_factor: number;
+	dialing_factor: { id: number; parameter_value: string };
 	company_seal_num: string;
 	digit_count: number;
 	voltage_meter_ratio: number;
@@ -35,6 +35,7 @@ interface Props {
 }
 
 export default function MeterShow({ meter }: Readonly<Props>) {
+	console.log(meter);
 	const breadcrumbs: BreadcrumbItem[] = [
 		{ title: "Meters", href: "/meters" },
 		{ title: "Detail", href: `/meters/${meter.meter_id}` },
@@ -114,7 +115,7 @@ export default function MeterShow({ meter }: Readonly<Props>) {
 									/>
 									<InfoItem
 										label="Dialing Factor"
-										value={meter.dialing_factor}
+										value={meter.dialing_factor.parameter_value}
 									/>
 									<InfoItem label="Digit Count" value={meter.digit_count} />
 									<InfoItem

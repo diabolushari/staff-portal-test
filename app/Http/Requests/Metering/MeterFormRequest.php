@@ -20,7 +20,7 @@ class MeterFormRequest extends Data
         public int $meterTypeId,
         public int $meterCategoryId,
         public int $accuracyClassId,
-        public int $dialingFactor,
+        public int $dialingFactorId,
         public ?string $companySealNum,
         public ?int $digitCount,
         public ?float $voltageMeterRatio,

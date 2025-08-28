@@ -65,7 +65,7 @@ export default function MeterForm({
 		meter_type_id: meter?.meter_type_id ?? null,
 		meter_category_id: meter?.meter_category_id ?? null,
 		accuracy_class_id: meter?.accuracy_class_id ?? null,
-		dialing_factor: meter?.dialing_factor ?? null,
+		dialing_factor_id: meter?.dialing_factor_id ?? null,
 		company_seal_num: meter?.company_seal_num ?? "",
 		digit_count: meter?.digit_count ?? "",
 		voltage_meter_ratio: meter?.voltage_meter_ratio ?? "",
@@ -93,7 +93,7 @@ export default function MeterForm({
 			meter_type_id: toNumberOrUndef(formData.meter_type_id),
 			meter_category_id: toNumberOrUndef(formData.meter_category_id),
 			accuracy_class_id: toNumberOrUndef(formData.accuracy_class_id),
-			dialing_factor: toNumberOrUndef(formData.dialing_factor),
+			dialing_factor_id: toNumberOrUndef(formData.dialing_factor_id),
 			company_seal_num: formData.company_seal_num,
 			digit_count: toNumberOrUndef(formData.digit_count),
 			voltage_meter_ratio: toNumberOrUndef(formData.voltage_meter_ratio),
@@ -202,12 +202,12 @@ export default function MeterForm({
 								/>
 								<SelectList
 									label="Dialing Factor"
-									value={formData.dialing_factor}
-									setValue={setFormValue("dialing_factor")}
+									value={formData.dialing_factor_id}
+									setValue={setFormValue("dialing_factor_id")}
 									list={dialingFactors}
 									dataKey="id"
 									displayKey="parameterValue"
-									error={errors.dialing_factor}
+									error={errors.dialing_factor_id}
 								/>
 								<SelectList
 									label="Unit"
