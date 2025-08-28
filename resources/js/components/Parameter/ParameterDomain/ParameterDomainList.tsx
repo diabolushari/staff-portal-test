@@ -1,0 +1,110 @@
+import { ParameterDomain } from '@/interfaces/parameter_types'
+import { router } from '@inertiajs/react'
+import { Layers, FileText, Pencil, Trash2 } from 'lucide-react'
+
+interface Props {
+  domains: ParameterDomain[]
+  onEdit?: (domain: ParameterDomain) => void
+  onDelete?: (domain: ParameterDomain) => void
+  onView?: (domain: ParameterDomain) => void
+}
+
+export default function ParameterDomainList({ domains, onEdit, onDelete }: Readonly<Props>) {
+  const handleDomainClick = (domain: ParameterDomain) => {
+    if (!onEdit && !onDelete) {
+      router.get(route('parameter-domains.show', domain.id)) // fallback navigation
+    }
+  }
+
+  return (
+    <div className="relative w-full rounded-lg bg-white">
+      <div className="font-inter text-dark-gray px-7 pt-[21px] pb-3 text-[15px] leading-[23px] font-semibold tracking-[-0.0924px]">
+        Parameter Domains
+      </div>
+      <div className="flex flex-col px-7 pb-7">
+        {domains.map((domain) => (
+          <div
+            key={domain.id}
+            className="mb-4 rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md"
+          >
+            <div className="flex items-start justify-between">
+              {/* Main Info */}
+              <div
+                className="flex flex-1 flex-col gap-2.5 p-[10px] cursor-pointer"
+                onClick={() => handleDomainClick(domain)}
+              >
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <div className="font-inter text-base leading-normal font-semibold text-black">
+                      {domain.domain_name}
+                    </div>
+                    {domain.domain_code && (
+                      <div className="rounded-[50px] bg-blue-100 px-2.5 py-px">
+                        <div className="font-inter text-xs leading-6 font-normal tracking-[-0.072px] text-blue-800">
+                          {domain.domain_code}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {domain.description && (
+                    <div className="flex items-center gap-[3px]">
+                      <FileText className="text-dark-gray h-3.5 w-3.5" />
+                      <div className="font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]">
+                        {domain.description}
+                      </div>
+                    </div>
+                  )}
+
+                  {domain.managed_by_module_name && (
+                    <div className="flex items-center gap-[3px]">
+                      <Layers className="text-dark-gray h-3.5 w-3.5" />
+                      <div className="font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]">
+                        Managed by: {domain.managed_by_module_name}
+                      </div>
+                    </div>
+                  )}
+
+                  {domain.system_module?.name && (
+                    <div className="font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]">
+                      Module: {domain.system_module.name}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]">
+                <div className="rounded-[50px] bg-slate-100 px-2.5 py-px mb-2">
+                  <div className="font-inter text-xs leading-6 font-normal tracking-[-0.072px] text-slate-700">
+                    ID: {domain.id}
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  {onEdit && (
+                    <button
+                      onClick={() => onEdit(domain)}
+                      className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+                    >
+                      <Pencil className="h-4 w-4" />
+                      Edit
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button
+                      onClick={() => onDelete(domain)}
+                      className="flex items-center gap-1 text-sm text-red-600 hover:text-red-800"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Delete
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}

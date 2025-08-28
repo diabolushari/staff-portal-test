@@ -37,17 +37,21 @@ class PartyService
     {
         $request = new GPBEmpty;
         if ($search !== null) {
-            // Assuming the new proto definition has a search field in ListCurrentPartiesRequest
             $request = new SearchPartiesByNameRequest;
             $request->setName($search);
-                    [$response, $status] = $this->client->SearchPartiesByName($request)->wait();
-
+            [$response, $status] = $this->client->SearchPartiesByName($request)->wait();
     
         }
+
+        else {
+        
+        $request = new GPBEmpty;
+        [$response, $status] = $this->client->ListCurrentParties($request)->wait();
+    }
         
         
         // Updated gRPC method call
-        [$response, $status] = $this->client->ListCurrentParties($request)->wait();
+       // [$response, $status] = $this->client->ListCurrentParties($request)->wait();
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
