@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Connection;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Connections\CreateConnectionRequest;
 use App\Http\Requests\Connections\CreateConnectionWithConsumerRequest;
+use App\Http\Requests\Connections\Data\ConnectionData;
 use App\Services\Connection\ConnectionService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
@@ -21,7 +23,10 @@ class ConnectionController extends Controller
     public function index(Request $request): Response|RedirectResponse
     {
         $connections = $this->connectionService->listConnections();
-        return Inertia::render('Connections/ConnectionsIndex');
+
+        return Inertia::render('Connections/ConnectionsIndex', [
+            'connections' => $connections->data
+        ]);
     }
 
     public function create(): Response|RedirectResponse
@@ -92,6 +97,27 @@ class ConnectionController extends Controller
             'Connection',
             'Primary Purpose'
         );
+        $openAccessTypes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Open Access Type'
+        );
+        $meteringTypes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Metering Type'
+        );
+        $renewableTypes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Renewable Type'
+        );
 
 
         return Inertia::render('Connections/ConnectionsForm', [
@@ -104,15 +130,31 @@ class ConnectionController extends Controller
             'billingProcesses' => $billingProcesses->data,
             'phaseTypes' => $phaseTypes->data,
             'primaryPurposes' => $primaryPurposes->data,
+            'openAccessTypes' => $openAccessTypes->data,
+            'meteringTypes' => $meteringTypes->data,
+            'renewableTypes' => $renewableTypes->data,
         ]);
     }
 
     /**
      * Store a newly created connection and consumer profile in storage.
      */
-    public function store(CreateConnectionWithConsumerRequest $request): RedirectResponse
+    public function store(CreateConnectionRequest $request): RedirectResponse
     {
+        $response = $this->connectionService->createConnection($request);
+
+        if ($response->hasError()) {
+            return redirect()->back()->with('error', $response->getMessage());
+        }
 
         return redirect()->route('connections.index')->with('success', 'Connection created successfully.');
+    }
+    public function show(int $id)
+    {
+        $connection = $this->connectionService->getConnection($id);
+
+        return Inertia::render('Connections/ConnectionsShow', [
+            'connection' => $connection->data,
+        ]);
     }
 }

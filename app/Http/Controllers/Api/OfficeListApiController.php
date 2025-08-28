@@ -46,6 +46,7 @@ class OfficeListApiController extends Controller
                 $officeArray[] = [
                     'office_id' => $office['office_id'],
                     'office_name' => $office['office_name'],
+                    'office_code' => $office['office_code'],
                 ];
             }
         }

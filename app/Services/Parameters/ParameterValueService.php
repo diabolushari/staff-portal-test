@@ -35,6 +35,7 @@ class ParameterValueService
         $request->setDomainName($domainName ?? '');
         $request->setParameterName($parameterName ?? '');
 
+
         [$response, $status] = $this->client->listParameterValues($request)->wait();
 
         if ($status->code !== 0) {
@@ -241,5 +242,28 @@ class ParameterValueService
             );
         }
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
+    }
+
+    public function toArray(?ParameterValueProto $value): array
+    {
+        if ($value === null) {
+            return [];
+        }
+        return [
+            'id' => $value->getId(),
+            'parameter_value' => $value->getParameterValue(),
+            'parameter_code' => $value->getParameterCode(),
+            'attribute1_value' => $value->getAttribute1Value(),
+            'attribute2_value' => $value->getAttribute2Value(),
+            'attribute3_value' => $value->getAttribute3Value(),
+            'attribute4_value' => $value->getAttribute4Value(),
+            'attribute5_value' => $value->getAttribute5Value(),
+            'is_active' => $value->getIsActive(),
+            'sort_priority' => $value->getSortPriority(),
+            'notes' => $value->getNotes(),
+            'definition' => $value->getDefinition(),
+            'effective_start_date' => $value->getEffectiveStartDate(),
+            'effective_end_date' => $value->getEffectiveEndDate(),
+        ];
     }
 }

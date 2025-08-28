@@ -11,6 +11,8 @@ import StrongText from '@/typography/StrongText'
 import { route } from 'ziggy-js'
 import { useState } from 'react'
 import { Card } from '../ui/card'
+import DatePicker from '@/ui/form/DatePicker'
+import { toast } from 'react-toastify'
 
 interface Props {
   connection?: any
@@ -23,6 +25,9 @@ interface Props {
   billingProcesses: ParameterValues[]
   phaseTypes: ParameterValues[]
   primaryPurposes: ParameterValues[]
+  openAccessTypes: ParameterValues[]
+  meteringTypes: ParameterValues[]
+  renewableTypes: ParameterValues[]
 }
 
 export default function ConnectionForm({
@@ -36,44 +41,59 @@ export default function ConnectionForm({
   billingProcesses,
   phaseTypes,
   primaryPurposes,
+  openAccessTypes,
+  meteringTypes,
+  renewableTypes,
 }: Props) {
   const [adminOfficeData, setAdminOfficeData] = useState<Office | null>(null)
   const [serviceOfficeData, setServiceOfficeData] = useState<Office | null>(null)
 
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
-    connection_type_id: connection?.connection_type_id ?? '',
-    connection_status_id: connection?.connection_status_id ?? '',
-    consumer_number: connection?.consumer_number ?? '',
-    voltage_type_id: connection?.voltage_type_id ?? '',
-    tariff_type_id: connection?.tariff_type_id ?? '',
-    connection_category_id: connection?.connection_category_id ?? '',
-    connection_subcategory_id: connection?.connection_subcategory_id ?? '',
-    billing_process_id: connection?.billing_process_id ?? '',
-    phase_type_id: connection?.phase_type_id ?? '',
-    primary_purpose_id: connection?.primary_purpose_id ?? '',
-    admin_office_id: connection?.admin_office_id ?? '',
-    service_office_id: connection?.service_office_id ?? '',
-    contract_demand_kw_val: connection?.contract_demand_kw_val ?? '',
-    connected_load_kw_val: connection?.connected_load_kw_val ?? '',
+    connection_type_id: connection?.connection_type_id ?? 0,
+    connection_status_id: connection?.connection_status_id ?? 0,
+    consumer_number: connection?.consumer_number ?? 0,
+    voltage_type_id: connection?.voltage_type_id ?? 0,
+    tariff_type_id: connection?.tariff_type_id ?? 0,
+    connection_category_id: connection?.connection_category_id ?? 0,
+    connection_subcategory_id: connection?.connection_subcategory_id ?? 0,
+    billing_process_id: connection?.billing_process_id ?? 0,
+    phase_type_id: connection?.phase_type_id ?? 0,
+    primary_purpose_id: connection?.primary_purpose_id ?? 0,
+    admin_office_code: connection?.admin_office_code ?? 0,
+    service_office_code: connection?.service_office_code ?? 0,
+    contract_demand_kw_val: connection?.contract_demand_kw_val ?? 0.0,
+    connected_load_kw_val: connection?.connected_load_kw_val ?? 0.0,
     solar_indicator: connection?.solar_indicator ?? false,
     multi_source_indicator: connection?.multi_source_indicator ?? false,
     live_indicator: connection?.live_indicator ?? false,
+    open_access_type_id: connection?.open_access_type_id ?? null,
+    metering_type_id: connection?.metering_type_id ?? null,
+    renewable_type_id: connection?.renewable_type_id ?? null,
+    connected_date: connection?.connected_date ?? '',
+    consumer_legacy_code: connection?.consumer_legacy_code ?? '',
   })
 
-  const { post, errors, loading } = useInertiaPost<typeof formData>(route('connections.store'))
+  const { post, errors, loading } = useInertiaPost<typeof formData>(route('connections.store'), {
+    showErrorToast: true,
+
+    onComplete: () => {
+      console.log('Connection created successfully')
+    },
+  })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    console.log(formData)
     post(formData)
   }
 
-  const handleAdminOfficeChange = (item: Office | null) => {
-    setFormValue('admin_office_id')(item?.office_code ?? '')
+  const handleAdminOfficeChange = (item: Office) => {
+    setFormValue('admin_office_code')(item.office_code)
     setAdminOfficeData(item)
   }
 
-  const handleServiceOfficeChange = (item: Office | null) => {
-    setFormValue('service_office_id')(item?.office_code ?? '')
+  const handleServiceOfficeChange = (item: Office) => {
+    setFormValue('service_office_code')(item.office_code)
     setServiceOfficeData(item)
   }
 
@@ -137,6 +157,13 @@ export default function ConnectionForm({
             error={errors?.tariff_type_id}
             required
           />
+          <DatePicker
+            label='Connection Date'
+            setValue={setFormValue('connected_date')}
+            value={formData.connected_date}
+            error={errors?.connected_date}
+            required
+          />
         </div>
       </Card>
 
@@ -164,6 +191,36 @@ export default function ConnectionForm({
             setValue={setFormValue('connection_subcategory_id')}
             value={formData.connection_subcategory_id}
             error={errors?.connection_subcategory_id}
+            required
+          />
+          <SelectList
+            label='Open Access Type'
+            list={openAccessTypes}
+            dataKey='id'
+            displayKey='parameter_value'
+            setValue={setFormValue('open_access_type_id')}
+            value={formData.open_access_type_id}
+            error={errors?.open_access_type_id}
+            required
+          />
+          <SelectList
+            label='Metering Type'
+            list={meteringTypes}
+            dataKey='id'
+            displayKey='parameter_value'
+            setValue={setFormValue('metering_type_id')}
+            value={formData.metering_type_id}
+            error={errors?.metering_type_id}
+            required
+          />
+          <SelectList
+            label='Renewable Type'
+            list={renewableTypes}
+            dataKey='id'
+            displayKey='parameter_value'
+            setValue={setFormValue('renewable_type_id')}
+            value={formData.renewable_type_id}
+            error={errors?.renewable_type_id}
             required
           />
           <SelectList
@@ -211,7 +268,7 @@ export default function ConnectionForm({
             setValue={handleAdminOfficeChange}
             value={adminOfficeData}
             placeholder='Select Admin Office'
-            dataKey='office_id'
+            dataKey='office_code'
             displayKey='office_name'
             displayValue2='office_code'
             error={errors?.admin_office_id}
@@ -222,7 +279,7 @@ export default function ConnectionForm({
             setValue={handleServiceOfficeChange}
             value={serviceOfficeData}
             placeholder='Select Service Office'
-            dataKey='office_id'
+            dataKey='office_code'
             displayKey='office_name'
             displayValue2='office_code'
             error={errors?.service_office_id}

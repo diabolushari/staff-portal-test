@@ -13,13 +13,13 @@ class CreateConnectionRequest extends Data
         public int $connectionTypeId,
         public int $consumerNumber,
         public int $connectionStatusId,
-        public ?string $connectedDate,
+        public string $connectedDate,
         public int $serviceOfficeCode,
         public int $adminOfficeCode,
-        public int $voltageId,
+        public int $voltageTypeId,
         public float $contractDemandKwVal,
         public float $connectedLoadKwVal,
-        public int $tariffId,
+        public int $tariffTypeId,
         public int $primaryPurposeId,
         public int $connectionCategoryId,
         public int $connectionSubcategoryId,
@@ -30,10 +30,8 @@ class CreateConnectionRequest extends Data
         public ?int $renewableTypeId,
         public bool $multiSourceIndicator,
         public bool $liveIndicator,
-        // Structs can be accepted as arrays
-        public ?array $connectionAttribs,
-        public ?array $purposesInfo,
-        public ?array $connectedLoadInfo,
-        public ?array $multiSourceInfo,
+        public int $phaseTypeId,
+        public ?string $consumerLegacyCode,
+
     ) {}
 }
