@@ -6,14 +6,13 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
-use Proto\Consumers\MeterServiceClient;
 use Proto\Consumers\CreateMeterRequest;
+use Proto\Consumers\DeleteMeterRequest;
 use Proto\Consumers\GetMeterRequest;
 use Proto\Consumers\ListMetersRequest;
-use Proto\Consumers\UpdateMeterRequest;
-use Proto\Consumers\DeleteMeterRequest;
 use Proto\Consumers\MeterResponse;
-use Google\Protobuf\EmptyProto;
+use Proto\Consumers\MeterServiceClient;
+use Proto\Consumers\UpdateMeterRequest;
 
 class MeterService
 {
@@ -29,7 +28,7 @@ class MeterService
 
     public function createMeter(array $data): GrpcServiceResponse
     {
-        $request = new CreateMeterRequest();
+        $request = new CreateMeterRequest;
         $request->setMeterSerial($data['meter_serial']);
         $request->setOwnershipTypeId($data['ownership_type_id']);
         $request->setMeterMakeId($data['meter_make_id']);
@@ -42,11 +41,11 @@ class MeterService
         $request->setVoltageMeterRatio($data['voltage_meter_ratio']);
         $request->setCurrentMeterRatio($data['current_meter_ratio']);
 
-        $manufactureDate = new Timestamp();
+        $manufactureDate = new Timestamp;
         $manufactureDate->fromDateTime(new \DateTime($data['manufacture_date']));
         $request->setManufactureDate($manufactureDate);
 
-        $supplyDate = new Timestamp();
+        $supplyDate = new Timestamp;
         $supplyDate->fromDateTime(new \DateTime($data['supply_date']));
         $request->setSupplyDate($supplyDate);
 
@@ -72,7 +71,7 @@ class MeterService
 
     public function getMeter(int $meterId): GrpcServiceResponse
     {
-        $request = new GetMeterRequest();
+        $request = new GetMeterRequest;
         $request->setMeterId($meterId);
 
         [$response, $status] = $this->client->GetMeter($request)->wait();
@@ -91,7 +90,7 @@ class MeterService
 
     public function listMeters(): GrpcServiceResponse
     {
-        $request = new ListMetersRequest();
+        $request = new ListMetersRequest;
 
         [$response, $status] = $this->client->ListMeters($request)->wait();
 
@@ -114,7 +113,7 @@ class MeterService
 
     public function updateMeter(array $data): GrpcServiceResponse
     {
-        $request = new UpdateMeterRequest();
+        $request = new UpdateMeterRequest;
         $request->setMeterId($data['meter_id']);
         $request->setMeterSerial($data['meter_serial']);
         $request->setOwnershipTypeId($data['ownership_type_id']);
@@ -128,11 +127,11 @@ class MeterService
         $request->setVoltageMeterRatio($data['voltage_meter_ratio']);
         $request->setCurrentMeterRatio($data['current_meter_ratio']);
 
-        $manufactureDate = new Timestamp();
+        $manufactureDate = new Timestamp;
         $manufactureDate->fromDateTime(new \DateTime($data['manufacture_date']));
         $request->setManufactureDate($manufactureDate);
 
-        $supplyDate = new Timestamp();
+        $supplyDate = new Timestamp;
         $supplyDate->fromDateTime(new \DateTime($data['supply_date']));
         $request->setSupplyDate($supplyDate);
 
@@ -158,7 +157,7 @@ class MeterService
 
     public function deleteMeter(int $meterId): GrpcServiceResponse
     {
-        $request = new DeleteMeterRequest();
+        $request = new DeleteMeterRequest;
         $request->setMeterId($meterId);
 
         [$response, $status] = $this->client->DeleteMeter($request)->wait();
@@ -200,11 +199,11 @@ class MeterService
             'version_id' => $meter->getVersionId(),
             'meter_id' => $meter->getMeterId(),
             'meter_serial' => $meter->getMeterSerial(),
-            'ownership_type_id' => $meter->getOwnershipTypeId(),
-            'meter_make_id' => $meter->getMeterMakeId(),
-            'meter_type_id' => $meter->getMeterTypeId(),
-            'meter_category_id' => $meter->getMeterCategoryId(),
-            'accuracy_class_id' => $meter->getAccuracyClassId(),
+            'ownership_type' => self::transformParameterValueToArray($meter->getOwnershipType()),
+            'meter_make' => self::transformParameterValueToArray($meter->getMeterMake()),
+            'meter_type' => self::transformParameterValueToArray($meter->getMeterType()),
+            'meter_category' => self::transformParameterValueToArray($meter->getMeterCategory()),
+            'accuracy_class' => self::transformParameterValueToArray($meter->getAccuracyClass()),
             'dialing_factor' => $meter->getDialingFactor(),
             'company_seal_num' => $meter->getCompanySealNum(),
             'digit_count' => $meter->getDigitCount(),
@@ -212,14 +211,30 @@ class MeterService
             'current_meter_ratio' => $meter->getCurrentMeterRatio(),
             'manufacture_date' => $manufactureDate,
             'supply_date' => $supplyDate,
-            'meter_unit_id' => $meter->getMeterUnitId(),
-            'meter_reset_type_id' => $meter->getMeterResetTypeId(),
+            'meter_unit' => self::transformParameterValueToArray($meter->getMeterUnit()),
+            'meter_reset_type' => self::transformParameterValueToArray($meter->getMeterResetType()),
             'smart_meter_ind' => $meter->getSmartMeterInd(),
             'bidirectional_ind' => $meter->getBidirectionalInd(),
             'created_ts' => $createdTs,
             'updated_ts' => $updatedTs,
             'created_by' => $meter->getCreatedBy(),
             'updated_by' => $meter->getUpdatedBy(),
+        ];
+    }
+
+    /**
+     * Transform ParameterValueProto to PHP array
+     */
+    private static function transformParameterValueToArray($parameterValue): ?array
+    {
+        if ($parameterValue === null) {
+            return null;
+        }
+
+        // The structure is assumed based on usage in the provided controller context
+        return [
+            'id' => $parameterValue->getId(),
+            'parameter_value' => $parameterValue->getParameterValue(),
         ];
     }
 }
