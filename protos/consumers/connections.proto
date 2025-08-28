@@ -12,13 +12,14 @@ option php_metadata_namespace = "GPBMetadata";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/empty.proto";
+import "parameters/parameter-value.proto";
 
-// -------------------- Connection table --------------------
+// -------------------- Connection --------------------
 message ConnectionMessage {
   int32 version_id = 1;
   int32 connection_id = 2;
   int32 connection_type_id = 3;
-  int32 consumer_num = 4;
+  int64 consumer_num = 4;
   int32 connection_status_id = 5;
   string connected_date = 6;
   int32 service_office_code = 7;
@@ -48,130 +49,91 @@ message ConnectionMessage {
   google.protobuf.Timestamp updated_at = 31;
   int32 created_by = 32;
   int32 updated_by = 33;
+  optional string consumer_legacy_code = 34;
+  int32 phase_type_id = 35;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto consumer_type = 36;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_type = 37;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_status = 38;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto open_access_type = 39;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto metering_type = 40;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto renewable_type = 41;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto phase_type = 42;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto voltage = 43;
+}
+message GetConnectionRequest{
+  int32 connection_id = 1;
 }
 
-// -------------------- ConsumerProfile table --------------------
-message ConsumerProfileMessage {
+message GetConnectionResponse {
+  ConnectionMessage connection = 1;
+}
+// -------------------- Requests --------------------
+message CreateConnectionRequest {
   int32 version_id = 1;
   int32 connection_id = 2;
-  int32 consumer_type_id = 3;
-  string organization_name = 4; // ✅ updated spelling for Laravel/consistency
-  string applicant_code = 5;
-  string consumer_pan = 6;
-  string consumer_tan = 7;
-  string consumer_cin = 8;
-  string consumer_gstin = 9;
-  optional bool income_tax_withholding_ind = 10;
-  optional bool gst_withholding_ind = 11;
-  google.protobuf.Struct manufacturing_info = 12;
-  google.protobuf.Struct tax_info = 13;
-  google.protobuf.Struct identity_info = 14;
-  google.protobuf.Struct application_info = 15;
-  google.protobuf.Timestamp effective_start = 16;
-  google.protobuf.Timestamp effective_end = 17;
-  optional bool seasonal_ind = 18;
-  optional bool license_ind = 19;
-  optional bool open_access_ind = 20;
-  optional bool is_current = 21;
-  int32 created_by = 22;
-  int32 updated_by = 23;
-  google.protobuf.Timestamp created_at = 24;
-  google.protobuf.Timestamp updated_at = 25;
+  int32 connection_type_id = 3;
+  int64 consumer_num = 4;
+  int32 connection_status_id = 5;
+  string connected_date = 6;
+  int32 service_office_code = 7;
+  int32 admin_office_code = 8;
+  int32 voltage_id = 9;
+  double contract_demand_kva_val = 10;
+  double connected_load_kw_val = 11;
+  int32 tariff_id = 12;
+  int32 primary_purpose_id = 13;
+  int32 connection_category_id = 14;
+  int32 connection_subcategory_id = 15;
+  google.protobuf.Struct connection_attribs = 16;
+  google.protobuf.Struct purposes_info = 17;
+  int32 billing_process_id = 18;
+  optional bool solar_indicator = 19;
+  int32 open_access_type_id = 20;
+  int32 metering_type_id = 21;
+  int32 renewable_type_id = 22;
+  google.protobuf.Struct connected_load_info = 23;
+  optional bool multi_source_indicator = 24;
+  google.protobuf.Struct multi_source_info = 25;
+  optional bool live_indicator = 26;
+  google.protobuf.Timestamp effective_start = 27;
+  google.protobuf.Timestamp effective_end = 28;
+  optional bool is_current = 29;
+  google.protobuf.Timestamp created_at = 30;
+  google.protobuf.Timestamp updated_at = 31;
+  int32 created_by = 32;
+  int32 updated_by = 33;
+  optional string consumer_legacy_code = 34;
+  int32 phase_type_id = 35;
 }
 
-// -------------------- ConsumerAddress table --------------------
-message ConsumerAddressMessage {
-  int32 address_id = 1;
-  string address_line1 = 2;
-  string address_line2 = 3;
-  string city_town_village = 4;
-  int32 pincode = 5;
-  int32 district_id = 6;
-  int32 state_id = 7;
-  double latitude = 8;
-  double longitude = 9;
-  google.protobuf.Timestamp created_at = 10;
-  google.protobuf.Timestamp updated_at = 11;
-  int32 created_by = 12;
-  int32 updated_by = 13;
-}
-
-// -------------------- ConsumerContactDetails table --------------------
-message ConsumerContactDetailsMessage {
-  int32 version_id = 1;
-  int32 connection_id = 2;
-  int32 primary_address_id = 3;
-  int32 billing_address_id = 4;
-  int32 premises_address_id = 5;
-  string primary_email = 6;
-  int64 primary_phone = 7;
-  google.protobuf.Struct contact_folio = 8;
-  google.protobuf.Timestamp effective_start = 9;
-  google.protobuf.Timestamp effective_end = 10;
-  bool is_current = 11;
-  int32 created_by = 12;
-  google.protobuf.Timestamp created_at = 13;
-  int32 updated_by = 14;
-  google.protobuf.Timestamp updated_at = 15;
-}
-
-// -------------------- Create connection with consumer --------------------
-message CreateConnectionWithConsumerRequest {
+message CreateConnectionResponse {
   ConnectionMessage connection = 1;
-  ConsumerProfileMessage consumer_profile = 2;
-  ConsumerAddressMessage consumer_address = 3;
-  ConsumerContactDetailsMessage consumer_contact_details = 4;
 }
 
-message CreateConnectionWithConsumerResponse {
-  ConnectionMessage connection = 1;
-  ConsumerProfileMessage consumer_profile = 2;
-  ConsumerAddressMessage consumer_address = 3;
-  ConsumerContactDetailsMessage consumer_contact_details = 4;
-}
-
-// -------------------- Delete response --------------------
-message DeleteResponse {
-  bool success = 1;
-  string message = 2;
-}
-
-// -------------------- Request messages --------------------
 message ConnectionRequest {
   int32 connection_id = 1;
   int32 version_id = 2;
 }
 
-message ConsumerProfileRequest {
-  int32 connection_id = 1;
-  int32 version_id = 2;
+message DeleteResponse {
+  bool success = 1;
+  string message = 2;
 }
 
-message ConsumerAddressRequest {
-  int32 address_id = 1;
+message ListConnectionsRequest {
+  int32 page = 1;
+  int32 page_size = 2;
 }
 
-message ConsumerContactDetailsRequest {
-  int32 connection_id = 1;
-  int32 version_id = 2;
+message ListConnectionsResponse {
+  repeated ConnectionMessage items = 1;
 }
 
 // -------------------- Service --------------------
 service ConnectionService {
-  rpc CreateConnection(ConnectionMessage) returns (ConnectionMessage);
-  rpc GetConnection(ConnectionRequest) returns (ConnectionMessage);
+  rpc CreateConnection(CreateConnectionRequest) returns (CreateConnectionResponse);
+  rpc ListConnections(ListConnectionsRequest) returns (ListConnectionsResponse);
+  rpc GetConnection(GetConnectionRequest) returns (GetConnectionResponse);
   rpc UpdateConnection(ConnectionMessage) returns (ConnectionMessage);
   rpc DeleteConnection(ConnectionRequest) returns (DeleteResponse);
-
-  rpc CreateConsumerProfile(ConsumerProfileMessage) returns (ConsumerProfileMessage);
-  rpc GetConsumerProfile(ConsumerProfileRequest) returns (ConsumerProfileMessage);
-
-  rpc CreateConsumerAddress(ConsumerAddressMessage) returns (ConsumerAddressMessage);
-  rpc GetConsumerAddress(ConsumerAddressRequest) returns (ConsumerAddressMessage);
-
-  rpc CreateConsumerContactDetails(ConsumerContactDetailsMessage) returns (ConsumerContactDetailsMessage);
-  rpc GetConsumerContactDetails(ConsumerContactDetailsRequest) returns (ConsumerContactDetailsMessage);
-
-  rpc CreateConnectionWithConsumer(CreateConnectionWithConsumerRequest)
-        returns (CreateConnectionWithConsumerResponse);
 }

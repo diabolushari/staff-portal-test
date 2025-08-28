@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\SystemModuleApiController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Connection\ConnectionController;
+use App\Http\Controllers\Connection\ConsumerController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
@@ -36,6 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('offices', OfficeController::class);
     Route::resource('parties', PartiesController::class);
     Route::resource('connections', ConnectionController::class);
+    Route::resource('consumers', ConsumerController::class);
 });
 
 // API List

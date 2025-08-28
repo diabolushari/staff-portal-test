@@ -59,7 +59,7 @@ export const settingsReferenceData: navItem[] = [
   },
 ]
 
-export const connections: navItem[] = [
+export const connectionsNavItems: navItem[] = [
   {
     title: 'Search Connections',
     href: '/connections',

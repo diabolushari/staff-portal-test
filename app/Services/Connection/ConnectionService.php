@@ -2,15 +2,20 @@
 
 namespace App\Services\Connection;
 
+use App\Http\Requests\Connections\CreateConnectionRequest;
 use App\Http\Requests\Connections\CreateConnectionWithConsumerRequest;
 use App\Services\Grpc\GrpcErrorService;
+use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Carbon\Carbon;
+use Google\Protobuf\Struct;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
 use Proto\Consumers\ConnectionServiceClient;
+use Proto\Consumers\CreateConnectionRequest as ConsumersCreateConnectionRequest;
 // Alias the gRPC request message to avoid naming conflicts
 use Proto\Consumers\CreateConnectionWithConsumerRequest as GrpcCreateRequest;
+use Proto\Consumers\GetConnectionRequest;
 use Proto\Consumers\ListConnectionsRequest;
 
 class ConnectionService
@@ -27,20 +32,79 @@ class ConnectionService
 
     public function listConnections(): GrpcServiceResponse
     {
+        $request = new ListConnectionsRequest();
+
+        $request->setPage(1);
+        $request->setPageSize(10);
+
+        [$response, $status] = $this->client->ListConnections($request)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+        $connections = $response->getItems();
+        $connectionArray = [];
+        foreach ($connections as $connection) {
+            $connectionArray[] = $this->transformConnectionToArray($connection);
+        }
+        return GrpcServiceResponse::success($connectionArray, $response, $status->code, $status->details);
+    }
+
+    public function createConnection(CreateConnectionRequest $request): GrpcServiceResponse
+    {
+        $grpcRequest = new ConsumersCreateConnectionRequest();
+        $grpcRequest->setConnectionTypeId($request->connectionTypeId);
+        $grpcRequest->setConsumerNum($request->consumerNumber);
+        $grpcRequest->setConnectionStatusId($request->connectionStatusId);
+        $grpcRequest->setConnectedDate($request->connectedDate);
+        $grpcRequest->setServiceOfficeCode($request->serviceOfficeCode);
+        $grpcRequest->setAdminOfficeCode($request->adminOfficeCode);
+        $grpcRequest->setVoltageId($request->voltageTypeId);
+        $grpcRequest->setContractDemandKvaVal($request->contractDemandKwVal);
+        $grpcRequest->setConnectedLoadKwVal($request->connectedLoadKwVal);
+        $grpcRequest->setTariffId($request->tariffTypeId);
+        $grpcRequest->setPrimaryPurposeId($request->primaryPurposeId);
+        $grpcRequest->setConnectionCategoryId($request->connectionCategoryId);
+        $grpcRequest->setConnectionSubcategoryId($request->connectionSubcategoryId);
+        $connectionAttribs = new Struct();
+        $connectionAttribs->setFields($request->connectionAttribs ?? []);
+        $grpcRequest->setConnectionAttribs($connectionAttribs);
+        $purposesInfo = new Struct();
+        $purposesInfo->setFields($request->purposesInfo ?? []);
+        $grpcRequest->setPurposesInfo($purposesInfo);
+        $grpcRequest->setBillingProcessId($request->billingProcessId);
+        $grpcRequest->setSolarIndicator($request->solarIndicator);
+        $grpcRequest->setOpenAccessTypeId($request->openAccessTypeId ?? 0);
+        $grpcRequest->setMeteringTypeId($request->meteringTypeId ?? 0);
+        $grpcRequest->setRenewableTypeId($request->renewableTypeId ?? 0);
+        $grpcRequest->setMultiSourceIndicator($request->multiSourceIndicator);
+        $grpcRequest->setLiveIndicator($request->liveIndicator);
+        $grpcRequest->setPhaseTypeId($request->phaseTypeId);
+
+        [$response, $status] = $this->client->CreateConnection($grpcRequest)->wait();
 
 
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
 
-        // Transform the response from protobuf messages to arrays
-        $result = collect($response->getConnections())
-            ->map(fn($item) => $this->transformConnectionToArray($item))
-            ->toArray();
+        $result = [
+            'connection' => $this->transformConnectionToArray($response->getConnection()),
+        ];
 
         return GrpcServiceResponse::success($result, $response, $status->code, $status->details);
     }
 
-    /**
-     * Create a new connection with a consumer profile.
-     */
+
     public function createConnectionWithConsumer(CreateConnectionWithConsumerRequest $request): GrpcServiceResponse
     {
         $grpcRequest = new GrpcCreateRequest;
@@ -70,11 +134,32 @@ class ConnectionService
         return GrpcServiceResponse::success($result, $response, $status->code, $status->details);
     }
 
+    public function getConnection(int $id): GrpcServiceResponse
+    {
+        $request = new GetConnectionRequest();
+        $request->setConnectionId($id);
+        [$response, $status] = $this->client->GetConnection($request)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $connection = $response->getConnection();
+        $connectionArray = $this->transformConnectionToArray($connection);
+
+        return GrpcServiceResponse::success($connectionArray, $response, $status->code, $status->details);
+    }
+
     /**
      * Transform ConnectionMessage protobuf to PHP array.
      */
     private function transformConnectionToArray($connection): array
     {
+        $parameterValueService = app(ParameterValueService::class);
         return [
             'version_id' => $connection->getVersionId(),
             'connection_id' => $connection->getConnectionId(),
@@ -110,6 +195,14 @@ class ConnectionService
             'purposes_info' => json_decode($connection->getPurposesInfo()?->serializeToJsonString(), true),
             'connected_load_info' => json_decode($connection->getConnectedLoadInfo()?->serializeToJsonString(), true),
             'multi_source_info' => json_decode($connection->getMultiSourceInfo()?->serializeToJsonString(), true),
+            'consumer_type' => $parameterValueService->toArray($connection->getConsumerType()),
+            'connection_type' => $parameterValueService->toArray($connection->getConnectionType()),
+            'connection_status' => $parameterValueService->toArray($connection->getConnectionStatus()),
+            'open_access_type' => $parameterValueService->toArray($connection->getOpenAccessType()),
+            'metering_type' => $parameterValueService->toArray($connection->getMeteringType()),
+            'renewable_type' => $parameterValueService->toArray($connection->getRenewableType()),
+            'phase_type' => $parameterValueService->toArray($connection->getPhaseType()),
+            'voltage' => $parameterValueService->toArray($connection->getVoltage()),
         ];
     }
 

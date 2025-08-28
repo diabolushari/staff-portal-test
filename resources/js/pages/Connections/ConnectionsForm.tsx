@@ -1,5 +1,5 @@
 import MainLayout from '@/layouts/main-layout'
-import { connections } from '@/components/Navbar/navitems'
+import { connectionsNavItems } from '@/components/Navbar/navitems'
 import { BreadcrumbItem } from '@/types'
 import ConnectionForm from '@/components/Connections/ConnectionForm'
 import { ParameterValues } from '@/interfaces/parameter_types'
@@ -7,6 +7,7 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
 import { TabsContent } from '@/components/ui/tabs'
 import ConsumerForm from '@/components/Connections/ConsumerForm'
+import ConsumerFormComponent from '@/components/Consumer/ConsumerFormComponent'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -27,6 +28,10 @@ interface Props {
   connectionSubCategory: ParameterValues[]
   billingProcesses: ParameterValues[]
   phaseTypes: ParameterValues[]
+  primaryPurposes: ParameterValues[]
+  openAccessTypes: ParameterValues[]
+  meteringTypes: ParameterValues[]
+  renewableTypes: ParameterValues[]
 }
 
 export default function ConnectionsForm({
@@ -38,6 +43,10 @@ export default function ConnectionsForm({
   connectionSubCategory,
   billingProcesses,
   phaseTypes,
+  primaryPurposes,
+  openAccessTypes,
+  meteringTypes,
+  renewableTypes,
 }: Props) {
   const tabs = [
     {
@@ -52,7 +61,7 @@ export default function ConnectionsForm({
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={connections}
+      navItems={connectionsNavItems}
     >
       <div>
         <TabGroup tabs={tabs}>
@@ -66,10 +75,14 @@ export default function ConnectionsForm({
               connectionSubCategory={connectionSubCategory}
               billingProcesses={billingProcesses}
               phaseTypes={phaseTypes}
+              primaryPurposes={primaryPurposes}
+              openAccessTypes={openAccessTypes}
+              meteringTypes={meteringTypes}
+              renewableTypes={renewableTypes}
             />
           </TabsContent>
           <TabsContent value='consumer'>
-            <ConsumerForm />
+            <ConsumerFormComponent />
           </TabsContent>
         </TabGroup>
       </div>

@@ -99,7 +99,7 @@ export default function ParameterValueCreate({
                 <DynamicSelectList
                   url='/api/parameter-definitions'
                   dataKey='id'
-                  displayKey='parameterName'
+                  displayKey='parameter_name'
                   label='Definition'
                   setValue={setFormValue('definition_id')}
                   value={formData.definition_id}
