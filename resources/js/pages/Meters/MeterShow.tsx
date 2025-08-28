@@ -1,34 +1,11 @@
+import { router } from "@inertiajs/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Meter } from "@/interfaces/meter";
 import MainLayout from "@/layouts/main-layout";
 import type { BreadcrumbItem } from "@/types";
 import StrongText from "@/typography/StrongText";
+import Button from "@/ui/button/Button";
 import TinyContainer from "@/ui/Card/TinyContainer";
-
-// Define the structure of the meter object
-interface Meter {
-	meter_id: number;
-	meter_serial: string;
-	ownership_type: { id: number; parameter_value: string };
-	meter_make: { id: number; parameter_value: string };
-	meter_type: { id: number; parameter_value: string };
-	meter_category: { id: number; parameter_value: string };
-	accuracy_class: { id: number; parameter_value: string };
-	dialing_factor: { id: number; parameter_value: string };
-	company_seal_num: string;
-	digit_count: number;
-	voltage_meter_ratio: number;
-	current_meter_ratio: number;
-	manufacture_date: string;
-	supply_date: string;
-	meter_unit: { id: number; parameter_value: string };
-	meter_reset_type: { id: number; parameter_value: string };
-	smart_meter_ind: boolean;
-	bidirectional_ind: boolean;
-	created_ts: string;
-	updated_ts: string;
-	created_by: number;
-	updated_by: number;
-}
 
 interface Props {
 	meter: Meter;
@@ -51,15 +28,26 @@ export default function MeterShow({ meter }: Readonly<Props>) {
 		});
 	};
 
+	const handleDelete = () => {
+		if (confirm("Are you sure you want to delete this meter?")) {
+			router.delete(`/meters/${meter.meter_id}`);
+		}
+	};
+
 	return (
 		<MainLayout breadcrumb={breadcrumbs}>
 			<div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6">
 				{/* Header Section */}
 				<div className="flex flex-col gap-2">
-					<div className="flex items-center gap-3">
+					<div className="flex items-center justify-between">
 						<StrongText className="text-2xl font-semibold text-[#252c32]">
 							{meter.meter_serial}
 						</StrongText>
+						<Button
+							label="Delete Meter"
+							onClick={handleDelete}
+							variant="destructive"
+						/>
 					</div>
 				</div>
 

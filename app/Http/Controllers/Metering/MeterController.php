@@ -150,30 +150,30 @@ class MeterController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, int $id): JsonResponse
-    {
-        $data = $request->all();
-        $data['meter_id'] = $id; // Ensure meter_id is in the data for the service
-        $response = $this->meterService->updateMeter($data);
-
-        if ($response->isSuccessful()) {
-            return response()->json($response->getData());
-        } else {
-            return response()->json($response->getErrors(), $response->getStatusCode());
-        }
-    }
+    /* public function update(Request $request, int $id): JsonResponse */
+    /* { */
+    /*     $data = $request->all(); */
+    /*     $data['meter_id'] = $id; // Ensure meter_id is in the data for the service */
+    /*     $response = $this->meterService->updateMeter($data); */
+    /**/
+    /*     if ($response->isSuccessful()) { */
+    /*         return response()->json($response->getData()); */
+    /*     } else { */
+    /*         return response()->json($response->getErrors(), $response->getStatusCode()); */
+    /*     } */
+    /* } */
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $id): JsonResponse
+    public function destroy(int $id)
     {
         $response = $this->meterService->deleteMeter($id);
 
-        if ($response->isSuccessful()) {
-            return response()->json(null, 204);
-        } else {
-            return response()->json($response->getErrors(), $response->getStatusCode());
+        if ($response->hasError()) {
+            return $response->error;
         }
+
+        return redirect()->route('meters.index')->with('success', 'Meter deleted successfully.');
     }
 }
