@@ -32,6 +32,7 @@ interface Props {
   openAccessTypes: ParameterValues[]
   meteringTypes: ParameterValues[]
   renewableTypes: ParameterValues[]
+  connection?: any
 }
 
 export default function ConnectionsForm({
@@ -47,6 +48,7 @@ export default function ConnectionsForm({
   openAccessTypes,
   meteringTypes,
   renewableTypes,
+  connection,
 }: Props) {
   const tabs = [
     {
@@ -79,6 +81,7 @@ export default function ConnectionsForm({
               openAccessTypes={openAccessTypes}
               meteringTypes={meteringTypes}
               renewableTypes={renewableTypes}
+              connection={connection}
             />
           </TabsContent>
           <TabsContent value='consumer'>

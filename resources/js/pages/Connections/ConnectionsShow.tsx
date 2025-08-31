@@ -21,6 +21,7 @@ export default function ConnectionsShow({ connection }: Readonly<{ connection: a
     { value: 'details', label: 'Connection Details' },
     { value: 'activity', label: 'Activity History' },
   ]
+  console.log(connection)
 
   return (
     <MainLayout
@@ -34,7 +35,7 @@ export default function ConnectionsShow({ connection }: Readonly<{ connection: a
             <StrongText className='text-2xl font-semibold text-[#252c32]'>
               Connection #{connection.connection_id}
             </StrongText>
-            <span className='text-sm text-gray-600'>Consumer No: {connection.consumer_num}</span>
+            <span className='text-sm text-gray-600'>Consumer No: {connection.consumer_number}</span>
           </div>
           <button
             onClick={() => router.visit(route('connections.edit', connection.connection_id))}
@@ -72,7 +73,7 @@ export default function ConnectionsShow({ connection }: Readonly<{ connection: a
                   />
                   <Field
                     label='Consumer Number'
-                    value={connection.consumer_num}
+                    value={connection.consumer_number}
                   />
                   <Field
                     label='Connection Type'

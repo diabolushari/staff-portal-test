@@ -13,6 +13,7 @@ import { useState } from 'react'
 import { Card } from '../ui/card'
 import DatePicker from '@/ui/form/DatePicker'
 import { toast } from 'react-toastify'
+import { router } from '@inertiajs/react'
 
 interface Props {
   connection?: any
@@ -52,8 +53,8 @@ export default function ConnectionForm({
     connection_type_id: connection?.connection_type_id ?? 0,
     connection_status_id: connection?.connection_status_id ?? 0,
     consumer_number: connection?.consumer_number ?? 0,
-    voltage_type_id: connection?.voltage_type_id ?? 0,
-    tariff_type_id: connection?.tariff_type_id ?? 0,
+    voltage_type_id: connection?.voltage_id ?? 0,
+    tariff_type_id: connection?.tariff_id ?? 0,
     connection_category_id: connection?.connection_category_id ?? 0,
     connection_subcategory_id: connection?.connection_subcategory_id ?? 0,
     billing_process_id: connection?.billing_process_id ?? 0,
@@ -72,19 +73,26 @@ export default function ConnectionForm({
     connected_date: connection?.connected_date ?? '',
     consumer_legacy_code: connection?.consumer_legacy_code ?? '',
   })
+  console.log(connection)
 
-  const { post, errors, loading } = useInertiaPost<typeof formData>(route('connections.store'), {
-    showErrorToast: true,
+  const { post, errors, loading } = useInertiaPost<typeof formData>(
+    connection ? route('connections.update', connection.connection_id) : route('connections.store'),
+    {
+      showErrorToast: true,
 
-    onComplete: () => {
-      console.log('Connection created successfully')
-    },
-  })
+      onComplete: () => {
+        router.visit(route('consumer.create'))
+      },
+    }
+  )
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(formData)
-    post(formData)
+    if (connection) {
+      post({ ...formData, _method: 'PUT' })
+    } else {
+      post(formData)
+    }
   }
 
   const handleAdminOfficeChange = (item: Office) => {

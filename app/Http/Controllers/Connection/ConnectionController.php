@@ -157,4 +157,125 @@ class ConnectionController extends Controller
             'connection' => $connection->data,
         ]);
     }
+
+    public function edit(int $id)
+    {
+        $connectionTypes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Connection Type'
+        );
+
+        $connectionStatus = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Connection Status'
+        );
+
+        $voltageTypes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Voltage'
+        );
+        $tariffTypes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Tariff'
+        );
+        $connectionCategory = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Connection Category'
+        );
+        $connectionSubCategory = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Connection Subcategory'
+        );
+
+        $billingProcesses = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Billing Process'
+        );
+        $phaseTypes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Phase Type'
+        );
+        $primaryPurposes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Primary Purpose'
+        );
+        $openAccessTypes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Open Access Type'
+        );
+        $meteringTypes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Metering Type'
+        );
+        $renewableTypes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Renewable Type'
+        );
+
+        $connection = $this->connectionService->getConnection($id);
+
+
+        return Inertia::render('Connections/ConnectionsForm', [
+            'connection' => $connection->data,
+            'connectionTypes' => $connectionTypes->data,
+            'connectionStatus' => $connectionStatus->data,
+            'voltageTypes' => $voltageTypes->data,
+            'tariffTypes' => $tariffTypes->data,
+            'connectionCategory' => $connectionCategory->data,
+            'connectionSubCategory' => $connectionSubCategory->data,
+            'billingProcesses' => $billingProcesses->data,
+            'phaseTypes' => $phaseTypes->data,
+            'primaryPurposes' => $primaryPurposes->data,
+            'openAccessTypes' => $openAccessTypes->data,
+            'meteringTypes' => $meteringTypes->data,
+            'renewableTypes' => $renewableTypes->data,
+        ]);
+    }
+
+    public function update(CreateConnectionRequest $request, int $id)
+    {
+        $response = $this->connectionService->updateConnection($request, $id);
+
+        if ($response->hasError()) {
+            return redirect()->back()->with('error', $response->getMessage());
+        }
+
+        return redirect()->route('connections.index')->with('success', 'Connection updated successfully.');
+    }
 }

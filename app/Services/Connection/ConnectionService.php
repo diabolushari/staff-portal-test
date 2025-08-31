@@ -11,12 +11,15 @@ use Carbon\Carbon;
 use Google\Protobuf\Struct;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
+use Proto\Consumers\ConnectionMessage;
 use Proto\Consumers\ConnectionServiceClient;
+use Proto\Consumers\ConnectionUpdateRequest;
 use Proto\Consumers\CreateConnectionRequest as ConsumersCreateConnectionRequest;
 // Alias the gRPC request message to avoid naming conflicts
 use Proto\Consumers\CreateConnectionWithConsumerRequest as GrpcCreateRequest;
 use Proto\Consumers\GetConnectionRequest;
 use Proto\Consumers\ListConnectionsRequest;
+use Proto\Consumers\ConnectionUpdateRequest as GrpcUpdateRequest;
 
 class ConnectionService
 {
@@ -105,17 +108,11 @@ class ConnectionService
     }
 
 
-    public function createConnectionWithConsumer(CreateConnectionWithConsumerRequest $request): GrpcServiceResponse
+    public function getConnection(int $id): GrpcServiceResponse
     {
-        $grpcRequest = new GrpcCreateRequest;
-
-        // Populate the nested messages using the data from the DTOs.
-        // The spatie/laravel-data `toArray()` method simplifies this significantly.
-        $grpcRequest->setConnection($request->connection->toArray());
-        $grpcRequest->setConsumerProfile($request->consumerProfile->toArray());
-
-        [$response, $status] = $this->client->CreateConnectionWithConsumer($grpcRequest)->wait();
-
+        $request = new GetConnectionRequest();
+        $request->setConnectionId($id);
+        [$response, $status] = $this->client->GetConnection($request)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -125,20 +122,48 @@ class ConnectionService
             );
         }
 
-        // Transform the response from protobuf messages to arrays
-        $result = [
-            'connection' => $this->transformConnectionToArray($response->getConnection()),
-            'consumer_profile' => $this->transformConsumerProfileToArray($response->getConsumerProfile()),
-        ];
+        $connection = $response->getConnection();
+        $connectionArray = $this->transformConnectionToArray($connection);
 
-        return GrpcServiceResponse::success($result, $response, $status->code, $status->details);
+        return GrpcServiceResponse::success($connectionArray, $response, $status->code, $status->details);
     }
 
-    public function getConnection(int $id): GrpcServiceResponse
+    public function updateConnection(CreateConnectionRequest $request, int $connectionId): GrpcServiceResponse
     {
-        $request = new GetConnectionRequest();
-        $request->setConnectionId($id);
-        [$response, $status] = $this->client->GetConnection($request)->wait();
+
+
+        // Wrap into UpdateConnectionRequest
+        $grpcRequest = new GrpcUpdateRequest();
+        $grpcRequest->setConnectionId($connectionId);
+        $grpcRequest->setConnectionTypeId($request->connectionTypeId);
+        $grpcRequest->setConsumerNum($request->consumerNumber);
+        $grpcRequest->setConnectionStatusId($request->connectionStatusId);
+        $grpcRequest->setConnectedDate($request->connectedDate);
+        $grpcRequest->setServiceOfficeCode($request->serviceOfficeCode);
+        $grpcRequest->setAdminOfficeCode($request->adminOfficeCode);
+        $grpcRequest->setVoltageId($request->voltageTypeId);
+        $grpcRequest->setContractDemandKvaVal($request->contractDemandKwVal);
+        $grpcRequest->setConnectedLoadKwVal($request->connectedLoadKwVal);
+        $grpcRequest->setTariffId($request->tariffTypeId);
+        $grpcRequest->setPrimaryPurposeId($request->primaryPurposeId);
+        $grpcRequest->setConnectionCategoryId($request->connectionCategoryId);
+        $grpcRequest->setConnectionSubcategoryId($request->connectionSubcategoryId);
+        $connectionAttribs = new Struct();
+        $connectionAttribs->setFields($request->connectionAttribs ?? []);
+        $grpcRequest->setConnectionAttribs($connectionAttribs);
+        $purposesInfo = new Struct();
+        $purposesInfo->setFields($request->purposesInfo ?? []);
+        $grpcRequest->setPurposesInfo($purposesInfo);
+        $grpcRequest->setBillingProcessId($request->billingProcessId);
+        $grpcRequest->setSolarIndicator($request->solarIndicator);
+        $grpcRequest->setOpenAccessTypeId($request->openAccessTypeId ?? 0);
+        $grpcRequest->setMeteringTypeId($request->meteringTypeId ?? 0);
+        $grpcRequest->setRenewableTypeId($request->renewableTypeId ?? 0);
+        $grpcRequest->setMultiSourceIndicator($request->multiSourceIndicator);
+        $grpcRequest->setPhaseTypeId($request->phaseTypeId);
+        $grpcRequest->setLiveIndicator($request->liveIndicator);
+
+        [$response, $status] = $this->client->UpdateConnection($grpcRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -164,19 +189,20 @@ class ConnectionService
             'version_id' => $connection->getVersionId(),
             'connection_id' => $connection->getConnectionId(),
             'connection_type_id' => $connection->getConnectionTypeId(),
-            'consumer_num' => $connection->getConsumerNum(),
+            'consumer_number' => $connection->getConsumerNum(),
             'connection_status_id' => $connection->getConnectionStatusId(),
             'connected_date' => $connection->getConnectedDate(),
             'service_office_code' => $connection->getServiceOfficeCode(),
             'admin_office_code' => $connection->getAdminOfficeCode(),
             'voltage_id' => $connection->getVoltageId(),
-            'contract_demand_kva_val' => $connection->getContractDemandKvaVal(),
+            'contract_demand_kw_val' => $connection->getContractDemandKvaVal(),
             'connected_load_kw_val' => $connection->getConnectedLoadKwVal(),
             'tariff_id' => $connection->getTariffId(),
             'primary_purpose_id' => $connection->getPrimaryPurposeId(),
             'connection_category_id' => $connection->getConnectionCategoryId(),
             'connection_subcategory_id' => $connection->getConnectionSubcategoryId(),
             'billing_process_id' => $connection->getBillingProcessId(),
+            'phase_type_id' => $connection->getPhaseTypeId(),
             'solar_indicator' => $connection->getSolarIndicator(),
             'open_access_type_id' => $connection->getOpenAccessTypeId(),
             'metering_type_id' => $connection->getMeteringTypeId(),
@@ -203,6 +229,11 @@ class ConnectionService
             'renewable_type' => $parameterValueService->toArray($connection->getRenewableType()),
             'phase_type' => $parameterValueService->toArray($connection->getPhaseType()),
             'voltage' => $parameterValueService->toArray($connection->getVoltage()),
+            'connection_category' => $parameterValueService->toArray($connection->getConnectionCategory()),
+            'connection_subcategory' => $parameterValueService->toArray($connection->getConnectionSubcategory()),
+            'primary_purpose' => $parameterValueService->toArray($connection->getPrimaryPurpose()),
+            'billing_process' => $parameterValueService->toArray($connection->getBillingProcess()),
+            'tariff' => $parameterValueService->toArray($connection->getTariff()),
         ];
     }
 
