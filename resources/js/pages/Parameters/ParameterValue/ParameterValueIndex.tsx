@@ -16,6 +16,8 @@ import DeleteModal from '@/ui/Modal/DeleteModal'
 import ParameterValueSearchForm from '@/components/Parameter/ParameterValue/ParameterValueSearchForm'
 import MainLayout from '@/layouts/main-layout'
 import { settingsReferenceData } from '@/components/Navbar/navitems'
+import ParameterValuesList from '@/components/Parameter/ParameterValue/ParameterValueList'
+import ListSearch from '@/ui/Search/ListSearch'
 
 const columns = [
   'S.No',
@@ -81,13 +83,26 @@ export default function ParameterValueIndex({
           addUrl={route('parameter-value.create')}
         />
 
+       <ListSearch
+          title='Parameter Value'
+          url={route('parameter-value.index')}
+          search={filters.search}
+        />
         <ParameterValueSearchForm
           parameterDomains={domains}
           parameterDefinitions={definitions}
           filters={filters}
         />
 
-        <CustomTable
+        <ParameterValuesList
+          parameterValues={values}
+          onView={(item) => router.get(route('parameter-value.show', item.id))}
+          onEdit={(item) => router.get(route('parameter-value.edit', item.id))}
+          onDelete={handleDeleteClick}
+        />
+
+
+        {/* <CustomTable
           columns={columns}
           caption='List of Parameter Values'
         >
@@ -114,7 +129,7 @@ export default function ParameterValueIndex({
               </TableCell>
             </TableRow>
           ))}
-        </CustomTable>
+        </CustomTable> */}
         {showDeleteModal && editRow && (
           <DeleteModal
             setShowModal={setShowDeleteModal}

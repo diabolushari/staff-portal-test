@@ -12,6 +12,7 @@ import CustomTable from '@/ui/Table/CustomTable'
 import MainLayout from '@/layouts/main-layout'
 import { partiesNavItems } from '@/components/Navbar/navitems'
 import ListSearch from '@/ui/Search/ListSearch'
+import PartyList from '@/ui/List/PartiesList'
 
 function StatusBadge({
   text,
@@ -61,6 +62,7 @@ interface AugmentedParty extends Party {
 type SortKey = 'party_id' | 'party_code' | 'name' | 'status_text' | 'is_current' | 'effective_start'
 
 export default function PartiesIndex({ parties }: Props) {
+    const [items, setItems] = useState<Party[] | null>(parties?.data ?? null);
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [currentFilter, setCurrentFilter] = useState<string>('all')
@@ -199,11 +201,24 @@ export default function PartiesIndex({ parties }: Props) {
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4'>
         {/* Controls */}
-        <ListSearch
-          title='Parties search'
-          placeholder='Search by ID, Code, Name, Email, Phone...'
-          url={route('parties.index')}
+       <ListSearch
+          title="Parties Search"
+          placeholder="Enter party name"
+          url={route("parties.index")}
+          //setItems={setItems}
+          search={query}
         />
+
+        <div>
+          {items != null && items.length > 0 && <PartyList parties={items} />}
+          {items == null || items.length === 0 ? <p>No Parties Found.</p> : null}
+        </div>
+        
+
+        {/* Controls */}
+        {/* <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="flex-1">
+
         <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
           <div className='flex-1'>
             <input
@@ -235,9 +250,9 @@ export default function PartiesIndex({ parties }: Props) {
               <option value='archived'>Archived only</option>
             </select>
           </div>
-        </div>
+        </div> 
 
-        <Card>
+        {/* <Card>
           <CustomTable
             columns={[
               'S.No',
@@ -308,7 +323,7 @@ export default function PartiesIndex({ parties }: Props) {
               )
             })}
           </CustomTable>
-        </Card>
+        </Card> */}
       </div>
     </MainLayout>
   )

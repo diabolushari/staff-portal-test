@@ -34,7 +34,8 @@ class PartiesController extends Controller
      */
     public function index(Request $request): Response|RedirectResponse
     {
-        $partiesResponse = $this->partyService->getParties();
+        $search = $request->input('search') ?? null;
+        $partiesResponse = $this->partyService->getParties($search);
 
         if ($partiesResponse->hasError()) {
             return $partiesResponse->error;
