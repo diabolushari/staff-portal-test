@@ -12,6 +12,8 @@ import ParameterDefinitionForm from '@/components/Parameter/ParameterDefinition/
 import ParameterDefinitionSearchForm from '@/components/Parameter/ParameterDefinition/ParameterDefinitionSearchForm'
 import MainLayout from '@/layouts/main-layout'
 import { settingsReferenceData } from '@/components/Navbar/navitems'
+import ListSearch from '@/ui/Search/ListSearch'
+import ParameterDefinitionList from '@/components/Parameter/ParameterDefinition/ParameterDefinitionList'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -50,6 +52,8 @@ export default function ParameterDefinitionIndex({
     useState<ParameterDefinition | null>(null)
   const [parameterFormModal, setParameterFormModal] = useState(false)
   const [parameterDeleteModal, setParameterDeleteModal] = useState(false)
+    const [items, setItems] = useState<ParameterDefinition[]>(parameter_definitions)
+
 
   const handleEditClick = useCallback((item: ParameterDefinition) => {
     setParameterDefinitionToEdit(item)
@@ -71,18 +75,39 @@ export default function ParameterDefinitionIndex({
       breadcrumb={breadcrumbs}
       navItems={settingsReferenceData}
     >
+        <div className='mb-4 flex items-center justify-between'>
+          <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Definitions</h2>
+          <button
+            onClick={handleCreateClick}
+            className='rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
+          >
+            + Add Parameter Definition
+          </button>
+        </div>
       <div className='p-4'>
-        <CardHeader
-          breadCrumb={breadcrumbs}
+        
+        <ListSearch
           title='Parameter Definition'
-          subheading='Add and manage parameter definition.'
-          onAddClick={handleCreateClick}
+          url={route('parameter-definition.index')}
+          search={filters.search}
         />
         <ParameterDefinitionSearchForm
           parameterDomains={domains}
           filters={filters}
         />
-        <Table heads={tableHeads}>
+         <div>
+          {items != null && items.length > 0 ? (
+           <ParameterDefinitionList
+              parameterDefinitions={items}
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
+            />
+
+          ) : (
+            <p>No Parameter Definitions Found.</p>
+          )}
+        </div>
+        {/* <Table heads={tableHeads}>
           {parameter_definitions && (
             <>
               {parameter_definitions.map((item, index) => (
@@ -106,7 +131,7 @@ export default function ParameterDefinitionIndex({
               ))}
             </>
           )}
-        </Table>
+        </Table> */}
       </div>
 
       {parameterFormModal && (

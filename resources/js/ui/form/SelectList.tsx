@@ -17,6 +17,7 @@ export interface Properties<
   showLabel?: boolean
   style?: 'normal' | 'bottom-border' | 'dark' | 'disabled'
   disabled?: boolean
+  required?: boolean
 }
 
 const getStyle = (style: 'normal' | 'bottom-border' | 'dark' | 'disabled') => {
@@ -58,6 +59,7 @@ export default function SelectList<
   showLabel = true,
   style = 'normal',
   disabled = false,
+  required = false,
 }: Properties<K, G, U, V, T>) {
   const selectedOption = useMemo(() => {
     const index = list.findIndex((item) => item[dataKey] == value)
@@ -68,7 +70,7 @@ export default function SelectList<
     <div>
       {label != null && showLabel && (
         <label className='font-inter text-left align-top text-sm leading-[1.4] tracking-[-0.006em] text-gray-800 dark:text-gray-200'>
-          {label}
+          {required ? `${label} *` : label}
         </label>
       )}
       <select

@@ -12,6 +12,8 @@ import { BreadcrumbItem } from '@/types'
 import { useEffect, useState } from 'react'
 import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
 import DatePicker from '@/ui/form/DatePicker'
+import MainLayout from '@/layouts/main-layout'
+import { settingsReferenceData } from '@/components/Navbar/navitems'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -79,7 +81,8 @@ export default function ParameterValueCreate({
   }, [formData.definition_id, definitions])
 
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
+    <MainLayout breadcrumb={breadcrumbs}
+    navItems={settingsReferenceData}>
       <div className='flex min-h-screen items-center justify-center bg-white dark:bg-gray-900'>
         <div className='w-3/4 rounded-xl bg-white p-8 py-8 shadow-md dark:bg-gray-800'>
           <div className='mx-auto max-w-5xl py-8'>
@@ -238,6 +241,6 @@ export default function ParameterValueCreate({
           </div>
         </div>
       </div>
-    </AppLayout>
+    </MainLayout>
   )
 }

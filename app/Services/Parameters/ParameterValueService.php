@@ -34,6 +34,7 @@ class ParameterValueService
 
         $request->setDomainName($domainName ?? '');
         $request->setParameterName($parameterName ?? '');
+        $request->setParameterValue($search ?? '');
 
         [$response, $status] = $this->client->listParameterValues($request)->wait();
 
