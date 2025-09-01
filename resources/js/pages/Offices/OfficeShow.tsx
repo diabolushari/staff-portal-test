@@ -1,18 +1,59 @@
+import { settingsOffices } from '@/components/Navbar/navitems'
+import ContactFolioCard from '@/components/Offices/ContactFolioCard'
+import { Card } from '@/components/ui/card'
+import { TabsContent } from '@/components/ui/tabs'
 import { Office } from '@/interfaces/consumers'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 import TinyContainer from '@/ui/Card/TinyContainer'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
-import { settingsOffices } from '@/components/Navbar/navitems'
-import { TabsContent } from '@/components/ui/tabs'
-import { Card } from '@/components/ui/card'
-import Input from '@/ui/form/Input'
-import EditButton from '@/ui/button/EditButton'
 import { router } from '@inertiajs/react'
-import { MapPin, Phone, Mail, Calendar, Building, Users, Zap, PencilIcon } from 'lucide-react'
+import { Building, Calendar, MapPin, PencilIcon, Users, Zap } from 'lucide-react'
+import { useState } from 'react'
 
-export default function OfficeShow({ office }: { office: Office }) {
+interface Props {
+  office: Office
+}
+
+const placeholderData = {
+  district: 'Kozhikode',
+  taluk: 'Kozhikode',
+  latitude: '152.155',
+  longitude: '169.325',
+  address: 'SM Street Calicut',
+  parentName: 'Kochi Substation',
+  parentCode: 'KSEB002',
+  parentType: 'Substation',
+  parentLocation: 'Ernakulam, Kochi',
+  parentAddress: 'Marine Drive, Kochi',
+  parentStatus: 'Active',
+  createdBy: 'RMO',
+  updatedBy: 'Section Officer',
+  updatedAt: '18 July 2025',
+}
+
+const tabs = [
+  {
+    value: 'details',
+    label: 'Office Details',
+  },
+  {
+    value: 'substations',
+    label: 'Substations',
+  },
+  {
+    value: 'consumers',
+    label: 'Consumers',
+  },
+  {
+    value: 'activity',
+    label: 'Activity History',
+  },
+]
+
+export default function OfficeShow({ office }: Readonly<Props>) {
+  const [isEditing, setIsEditing] = useState(false)
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Offices',
@@ -23,19 +64,6 @@ export default function OfficeShow({ office }: { office: Office }) {
       href: `/offices/${office.office_id}`,
     },
   ]
-  const {
-    office_id,
-    office_name,
-    office_code,
-    office_description,
-    office_type_id,
-    parent_office_id,
-    effective_start,
-    effective_end,
-    contact_folio,
-    office_type,
-    is_current,
-  } = office
 
   const formatDate = (dateStr?: string) => (dateStr ? new Date(dateStr).toLocaleDateString() : '-')
 
@@ -98,7 +126,7 @@ export default function OfficeShow({ office }: { office: Office }) {
             onClick={() => router.visit(route('offices.edit', office_id))}
             className='flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
           >
-            Edit Details
+            {isEditing ? 'Cancel Edit' : 'Edit Details'}
           </button>
         </div>
 
@@ -143,7 +171,7 @@ export default function OfficeShow({ office }: { office: Office }) {
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Office Status</label>
                     <div className='px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {is_current ? 'Active' : 'Inactive'}
+                      {office.is_current ? 'Active' : 'Inactive'}
                     </div>
                   </div>
                 </div>
@@ -303,6 +331,14 @@ export default function OfficeShow({ office }: { office: Office }) {
                   </div>
                 </div>
               </Card>
+
+              {/* Contact Folio */}
+              <ContactFolioCard
+                contacts={office.contact_folio?.contacts || []}
+                officeId={office.office_id}
+                officeCode={office.office_code.toString()}
+                onContactsUpdate={() => {}}
+              />
             </div>
           </TabsContent>
 
@@ -318,7 +354,6 @@ export default function OfficeShow({ office }: { office: Office }) {
               </div>
             </Card>
           </TabsContent>
-
           <TabsContent value='consumers'>
             <Card className='p-6'>
               <div className='mb-6 flex items-center justify-between'>

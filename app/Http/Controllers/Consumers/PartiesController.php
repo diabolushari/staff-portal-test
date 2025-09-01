@@ -15,13 +15,10 @@ use Proto\Parameters\ParameterValueServiceClient;
 
 class PartiesController extends Controller
 {
-    private PartyService $partyService;
     private ParameterValueServiceClient $parameterValueClient;
 
-    public function __construct(PartyService $partyService)
+    public function __construct(private PartyService $partyService)
     {
-        $this->partyService = $partyService;
-
         // Manually instantiate the gRPC client for Parameter Values, as per the original code.
         $this->parameterValueClient = new ParameterValueServiceClient(
             config('app.consumer_service_grpc_host'),

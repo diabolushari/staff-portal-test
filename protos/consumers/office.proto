@@ -15,8 +15,6 @@ import "parameters/parameter-value.proto";
 import "consumers/org_element_location.proto";
 import "consumers/org_element_address.proto";
 
-// ------------ MESSAGE ------------
-
 message OfficeMessage {
     int32 office_id = 1;
     optional int32 office_code = 2;
@@ -40,8 +38,6 @@ message OfficeMessage {
     com.kseb.consumerservice.grpc.consumers.OrgElementAddressMessage office_address = 22;
     string office_name = 23;
 }
-
-// ------------ REQUESTS ------------
 
 message OfficeCreateRequest {
     optional int32 office_code = 1;
@@ -69,8 +65,6 @@ message OfficeUpdateRequest {
     string office_name = 13;
 }
 
-// ------------ RESPONSES ------------
-
 message OfficeResponse {
     OfficeMessage office = 1;
 }
@@ -79,21 +73,21 @@ message OfficeListResponse {
     repeated OfficeMessage offices = 1;
 }
 
-// ------------ LIST REQUEST ------------
-
 message OfficeListRequest {
     optional string office_type = 1;
     optional string search = 2;        
     optional string office_name = 3;
 }
 
-// ------------ BY ID ------------
-
 message OfficeIdRequest {
     int32 office_id = 1;
 }
 
-// ------------ SERVICE ------------
+message OfficeUpdateContactFolioRequest {
+    int32 office_code = 1;
+    google.protobuf.Struct contact_folio = 2;
+    optional int32 updated_by = 3;
+}
 
 service OfficeService {
     rpc CreateOffice(OfficeCreateRequest) returns (OfficeResponse);
@@ -101,4 +95,5 @@ service OfficeService {
     rpc ListOffices(OfficeListRequest) returns (OfficeListResponse);
     rpc UpdateOffice(OfficeUpdateRequest) returns (OfficeResponse);
     rpc DeleteOffice(OfficeIdRequest) returns (google.protobuf.Empty);
+    rpc UpdateOfficeContactFolio(OfficeUpdateContactFolioRequest) returns (OfficeResponse);
 }

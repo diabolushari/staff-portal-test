@@ -7,12 +7,7 @@ export interface Office {
   parent_office_id: number
   effective_start: string
   effective_end: string
-  contact_folio: {
-    phone: string
-    email: string
-    name: string
-    employee_id: string
-  }[]
+  contact_folio: OfficeContactFolio
   office_type: {
     office_type_id: number
     parameter_code: string
@@ -32,4 +27,16 @@ export interface Office {
   updated_at: string
   created_by: number
   updated_by: number
+}
+
+export interface OfficeContactFolio {
+  contacts: OfficeContact[]
+}
+
+export interface OfficeContact {
+  name: string | null
+  phone: string | null
+  email: string | null
+  designation: string | null
+  employee_id: string | null
 }
