@@ -7,25 +7,28 @@ use Grpc\ChannelCredentials;
 use Proto\Parameters\ListParameterDefinitionsRequest;
 use Proto\Parameters\ParameterDefinitionServiceClient;
 
+// TODO create service
+// TODO Fix Type Errors
 class ParameterDefinitionListApiController extends Controller
 {
     private $client;
 
     public function __construct()
     {
+        // TODO dont use env
         $this->client = new ParameterDefinitionServiceClient(env('GRPC_HOST'), [
-            'credentials' => ChannelCredentials::createInsecure()
+            'credentials' => ChannelCredentials::createInsecure(),
         ]);
     }
 
     public function __invoke()
     {
-        $request = new ListParameterDefinitionsRequest();
+        $request = new ListParameterDefinitionsRequest;
         // Optional: you can set pagination here if needed
         // $request->setPage(1);
         // $request->setPageSize(50);
 
-        list($response, $status) = $this->client->ListParameterDefinitions($request)->wait();
+        [$response, $status] = $this->client->ListParameterDefinitions($request)->wait();
 
         if ($status->code !== \Grpc\STATUS_OK) {
             return response()->json(['error' => $status->details], 500);

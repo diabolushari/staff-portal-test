@@ -1,16 +1,15 @@
-import { router } from '@inertiajs/react'
-import AppLayout from '@/layouts/app-layout'
-import Heading from '@/typography/Heading'
-import MainLayout from '@/layouts/main-layout'
 import { partiesNavItems } from '@/components/Navbar/navitems'
+import { Card } from '@/components/ui/card'
+import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
-import { Card } from '@/components/ui/card'
-import { TabsContent } from '@radix-ui/react-tabs'
-import { TabGroup } from '@/ui/Tabs/TabGroup'
 import TinyContainer from '@/ui/Card/TinyContainer'
+import { TabGroup } from '@/ui/Tabs/TabGroup'
+import { router } from '@inertiajs/react'
+import { TabsContent } from '@radix-ui/react-tabs'
 import { Calendar, PencilIcon } from 'lucide-react'
 
+//TODO should have a seperate types file
 interface Party {
   version_id: number
   party_id: number
@@ -73,6 +72,7 @@ const fmtDate = (iso?: string | null) => {
 const safe = (v: unknown, fallback = '-') =>
   v === null || v === undefined || v === '' ? fallback : String(v)
 
+//TODO seperate component file
 const StatusBadge = ({ text }: { text: string }) => {
   const s = text.toLowerCase()
   const tone = s.includes('active')
@@ -130,6 +130,8 @@ export default function PartiesShow({ party }: Props) {
 
   const onEdit = () => router.visit(route('parties.edit', party.version_id))
   const onBack = () => router.visit(route('parties.index'))
+
+  //TODO should be separate component
   const InfoBlock = ({ label, value }: { label: string; value?: string | number }) => (
     <div className='space-y-1'>
       <label className='text-sm font-normal text-[#252c32]'>{label}</label>

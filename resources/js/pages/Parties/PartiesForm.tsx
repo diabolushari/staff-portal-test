@@ -1,17 +1,15 @@
-import { router } from '@inertiajs/react'
+import { partiesNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import AppLayout from '@/layouts/app-layout'
 import { Party } from '@/interfaces/parties'
+import MainLayout from '@/layouts/main-layout'
 import Button from '@/ui/button/Button'
 import Card from '@/ui/Card/Card'
-import CardHeader from '@/ui/Card/CardHeader'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
-import MainLayout from '@/layouts/main-layout'
-import { parties, partiesNavItems } from '@/components/Navbar/navitems'
+import { router } from '@inertiajs/react'
 
 interface PartiesFormProps {
   partyTypes: Array<{ id: number; parameterValue: string }>
@@ -26,7 +24,7 @@ const breadcrumbs = [
   },
 ]
 
-// --- Helper Functions ---
+//TODO use library for date operation
 const toYMD = (iso?: string | null): string => {
   if (!iso) return ''
   const d = new Date(iso)
@@ -40,6 +38,7 @@ const toNumberOrUndef = (v: unknown) => {
   return Number.isFinite(n) ? n : undefined
 }
 
+//TODO name the component PartyCreate to match with rest of application
 export default function PartiesForm({ partyTypes, partyStatus, party }: PartiesFormProps) {
   const isEditing = Boolean(party)
 
@@ -94,6 +93,7 @@ export default function PartiesForm({ partyTypes, partyStatus, party }: PartiesF
     }
   }
 
+  //TODO separate component
   const renderSection = (title: string, children: React.ReactNode) => (
     <div className='rounded-md border border-slate-200 p-4'>
       <h3 className='mb-4 text-lg font-medium'>{title}</h3>

@@ -1,19 +1,13 @@
+import { partiesNavItems } from '@/components/Navbar/navitems'
+import { Party } from '@/interfaces/parties'
+import MainLayout from '@/layouts/main-layout'
+import PartyList from '@/ui/List/PartiesList'
+import ListSearch from '@/ui/Search/ListSearch'
 import { router } from '@inertiajs/react'
 import { useMemo, useState } from 'react'
 import { route } from 'ziggy-js'
-import { TableCell, TableRow } from '@/components/ui/table'
-import { Party } from '@/interfaces/parties'
-import AppLayout from '@/layouts/app-layout'
-import DeleteButton from '@/ui/button/DeleteButton'
-import EditButton from '@/ui/button/EditButton'
-import Card from '@/ui/Card/Card'
-import CardHeader from '@/ui/Card/CardHeader'
-import CustomTable from '@/ui/Table/CustomTable'
-import MainLayout from '@/layouts/main-layout'
-import { partiesNavItems } from '@/components/Navbar/navitems'
-import ListSearch from '@/ui/Search/ListSearch'
-import PartyList from '@/ui/List/PartiesList'
 
+//TODO seperate badge component
 function StatusBadge({
   text,
   tone = 'default',
@@ -61,8 +55,9 @@ interface AugmentedParty extends Party {
 
 type SortKey = 'party_id' | 'party_code' | 'name' | 'status_text' | 'is_current' | 'effective_start'
 
+//TODO  fix errors
 export default function PartiesIndex({ parties }: Props) {
-    const [items, setItems] = useState<Party[] | null>(parties?.data ?? null);
+  const [items, setItems] = useState<Party[] | null>(parties?.data ?? null)
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [currentFilter, setCurrentFilter] = useState<string>('all')
@@ -104,6 +99,7 @@ export default function PartiesIndex({ parties }: Props) {
     return 'default'
   }
 
+  //sort should be done on backend
   const rows = useMemo((): AugmentedParty[] => {
     const list: Party[] = Array.isArray(parties?.data) ? parties.data : []
 
@@ -174,6 +170,7 @@ export default function PartiesIndex({ parties }: Props) {
     }
   }
 
+  //TODO sepertate component
   const headerButton = (label: string, key: SortKey) => (
     <button
       type='button'
@@ -201,10 +198,10 @@ export default function PartiesIndex({ parties }: Props) {
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4'>
         {/* Controls */}
-       <ListSearch
-          title="Parties Search"
-          placeholder="Enter party name"
-          url={route("parties.index")}
+        <ListSearch
+          title='Parties Search'
+          placeholder='Enter party name'
+          url={route('parties.index')}
           //setItems={setItems}
           search={query}
         />
@@ -213,7 +210,6 @@ export default function PartiesIndex({ parties }: Props) {
           {items != null && items.length > 0 && <PartyList parties={items} />}
           {items == null || items.length === 0 ? <p>No Parties Found.</p> : null}
         </div>
-        
 
         {/* Controls */}
         {/* <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -250,7 +246,7 @@ export default function PartiesIndex({ parties }: Props) {
               <option value='archived'>Archived only</option>
             </select>
           </div>
-        </div> 
+        </div>
 
         {/* <Card>
           <CustomTable

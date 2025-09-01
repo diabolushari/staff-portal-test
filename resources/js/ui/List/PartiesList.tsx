@@ -1,6 +1,6 @@
 import { Party } from '@/interfaces/parties'
 import { router } from '@inertiajs/react'
-import { User, Phone, Mail, MapPin } from 'lucide-react'
+import { Mail, MapPin, Phone } from 'lucide-react'
 
 interface Props {
   parties: Party[]
