@@ -81,6 +81,12 @@ class MeterController extends Controller
             'resetTypes' => (new ListParameterValuesRequest)
                 ->setDomainName('Meter')
                 ->setParameterName('Reset Type'),
+            'internalPtRatios' => (new ListParameterValuesRequest)
+                ->setDomainName('Meter')
+                ->setParameterName('Internal PT Ratio'),
+            'internalCtRatios' => (new ListParameterValuesRequest)
+                ->setDomainName('Meter')
+                ->setParameterName('Internal CT Ratio'),
         ];
 
         // Execute all gRPC requests and store their responses.

@@ -28,6 +28,8 @@ export interface MeterFormProps {
 	dialingFactors: ParameterOption[];
 	units: ParameterOption[];
 	resetTypes: ParameterOption[];
+	internalPtRatios: ParameterOption[];
+	internalCtRatios: ParameterOption[];
 	meter?: any; // Add meter prop for edit mode later
 }
 
@@ -54,6 +56,8 @@ export default function MeterForm({
 	dialingFactors,
 	units,
 	resetTypes,
+	internalPtRatios,
+	internalCtRatios,
 	meter,
 }: MeterFormProps) {
 	const isEditing = Boolean(meter);
@@ -68,8 +72,8 @@ export default function MeterForm({
 		dialing_factor_id: meter?.dialing_factor_id ?? null,
 		company_seal_num: meter?.company_seal_num ?? "",
 		digit_count: meter?.digit_count ?? "",
-		voltage_meter_ratio: meter?.voltage_meter_ratio ?? "",
-		current_meter_ratio: meter?.current_meter_ratio ?? "",
+		internal_pt_ratio_id: meter?.internal_pt_ratio?.id ?? null,
+		internal_ct_ratio_id: meter?.internal_ct_ratio?.id ?? null,
 		manufacture_date: toYMD(meter?.manufacture_date),
 		supply_date: toYMD(meter?.supply_date),
 		meter_unit_id: meter?.meter_unit_id ?? null,
@@ -96,8 +100,8 @@ export default function MeterForm({
 			dialing_factor_id: toNumberOrUndef(formData.dialing_factor_id),
 			company_seal_num: formData.company_seal_num,
 			digit_count: toNumberOrUndef(formData.digit_count),
-			voltage_meter_ratio: toNumberOrUndef(formData.voltage_meter_ratio),
-			current_meter_ratio: toNumberOrUndef(formData.current_meter_ratio),
+			internal_pt_ratio_id: toNumberOrUndef(formData.internal_pt_ratio_id),
+			internal_ct_ratio_id: toNumberOrUndef(formData.internal_ct_ratio_id),
 			manufacture_date: toISOorNull(formData.manufacture_date),
 			supply_date: toISOorNull(formData.supply_date),
 			meter_unit_id: toNumberOrUndef(formData.meter_unit_id),
@@ -234,20 +238,23 @@ export default function MeterForm({
 									setValue={setFormValue("digit_count")}
 									error={errors.digit_count}
 								/>
-								<Input
-									label="Voltage Meter Ratio"
-									type="number"
-									step="0.01"
-									value={formData.voltage_meter_ratio}
-									setValue={setFormValue("voltage_meter_ratio")}
-									error={errors.voltage_meter_ratio}
+								<SelectList
+									label="Internal PT Ratio"
+									value={formData.internal_pt_ratio_id}
+									setValue={setFormValue("internal_pt_ratio_id")}
+									list={internalPtRatios}
+									dataKey="id"
+									displayKey="parameterValue"
+									error={errors.internal_pt_ratio_id}
 								/>
-								<Input
-									label="Current Meter Ratio"
-									type="number"
-									value={formData.current_meter_ratio}
-									setValue={setFormValue("current_meter_ratio")}
-									error={errors.current_meter_ratio}
+								<SelectList
+									label="Internal CT Ratio"
+									value={formData.internal_ct_ratio_id}
+									setValue={setFormValue("internal_ct_ratio_id")}
+									list={internalCtRatios}
+									dataKey="id"
+									displayKey="parameterValue"
+									error={errors.internal_ct_ratio_id}
 								/>
 								<div className="flex items-center pt-6 space-x-4">
 									{/* --- FIX START --- */}

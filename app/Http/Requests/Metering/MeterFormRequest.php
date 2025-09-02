@@ -23,8 +23,8 @@ class MeterFormRequest extends Data
         public int $dialingFactorId,
         public ?string $companySealNum,
         public ?int $digitCount,
-        public ?float $voltageMeterRatio,
-        public ?int $currentMeterRatio,
+        public ?int $internalPtRatioId,
+        public ?int $internalCtRatioId,
         public ?string $manufactureDate, // Dates are received as strings
         public ?string $supplyDate,
         public int $meterUnitId,

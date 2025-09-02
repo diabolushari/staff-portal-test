@@ -38,8 +38,8 @@ class MeterService
         $request->setDialingFactorId($data['dialing_factor_id']);
         $request->setCompanySealNum($data['company_seal_num']);
         $request->setDigitCount($data['digit_count']);
-        $request->setVoltageMeterRatio($data['voltage_meter_ratio']);
-        $request->setCurrentMeterRatio($data['current_meter_ratio']);
+        $request->setInternalPtRatioId($data['internal_pt_ratio_id']);
+        $request->setInternalCtRatioId($data['internal_ct_ratio_id']);
 
         $manufactureDate = new Timestamp;
         $manufactureDate->fromDateTime(new \DateTime($data['manufacture_date']));
@@ -66,7 +66,7 @@ class MeterService
             );
         }
 
-        return GrpcServiceResponse::success(self::meterProtoToArray($response), $response, $status->code, $status->details);
+        return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
     }
 
     public function getMeter(int $meterId): GrpcServiceResponse
@@ -124,8 +124,8 @@ class MeterService
         $request->setDialingFactorId($data['dialing_factor_id']);
         $request->setCompanySealNum($data['company_seal_num']);
         $request->setDigitCount($data['digit_count']);
-        $request->setVoltageMeterRatio($data['voltage_meter_ratio']);
-        $request->setCurrentMeterRatio($data['current_meter_ratio']);
+        $request->setInternalPtRatioId($data['internal_pt_ratio_id']);
+        $request->setInternalCtRatioId($data['internal_ct_ratio_id']);
 
         $manufactureDate = new Timestamp;
         $manufactureDate->fromDateTime(new \DateTime($data['manufacture_date']));
@@ -207,8 +207,8 @@ class MeterService
             'dialing_factor' => self::transformParameterValueToArray($meter->getDialingFactor()),
             'company_seal_num' => $meter->getCompanySealNum(),
             'digit_count' => $meter->getDigitCount(),
-            'voltage_meter_ratio' => $meter->getVoltageMeterRatio(),
-            'current_meter_ratio' => $meter->getCurrentMeterRatio(),
+            'internal_pt_ratio' => self::transformParameterValueToArray($meter->getInternalPtRatio()),
+            'internal_ct_ratio' => self::transformParameterValueToArray($meter->getInternalCtRatio()),
             'manufacture_date' => $manufactureDate,
             'supply_date' => $supplyDate,
             'meter_unit' => self::transformParameterValueToArray($meter->getMeterUnit()),

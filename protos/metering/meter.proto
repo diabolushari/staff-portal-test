@@ -15,7 +15,7 @@ option java_multiple_files = true;
 option java_outer_classname = "MeterProto";
 
 service MeterService {
-  rpc CreateMeter(CreateMeterRequest) returns (MeterResponse);
+  rpc CreateMeter(CreateMeterRequest) returns (google.protobuf.Empty);
   rpc GetMeter(GetMeterRequest) returns (MeterResponse);
   rpc ListMeters(ListMetersRequest) returns (ListMetersResponse);
   rpc UpdateMeter(UpdateMeterRequest) returns (MeterResponse);
@@ -43,8 +43,8 @@ message CreateMeterRequest {
   int32 dialing_factor_id = 8;
   string company_seal_num = 9;
   int32 digit_count = 10;
-  float voltage_meter_ratio = 11;
-  int32 current_meter_ratio = 12;
+  int32 internal_pt_ratio_id = 11;
+  int32 internal_ct_ratio_id = 12;
   google.protobuf.Timestamp manufacture_date = 13;
   google.protobuf.Timestamp supply_date = 14;
   int32 meter_unit_id = 15;             // CORRECT: Generates getMeterUnitId()
@@ -65,8 +65,8 @@ message UpdateMeterRequest {
   int32 dialing_factor_id = 8;
   string company_seal_num = 9;
   int32 digit_count = 10;
-  float voltage_meter_ratio = 11;
-  int32 current_meter_ratio = 12;
+  int32 internal_pt_ratio_id = 11;
+  int32 internal_ct_ratio_id = 12;
   google.protobuf.Timestamp manufacture_date = 13;
   google.protobuf.Timestamp supply_date = 14;
   int32 meter_unit_id = 15;             // CORRECT: Generates getMeterUnitId()
@@ -92,8 +92,8 @@ message MeterResponse {
   parameters.ParameterValueProto dialing_factor = 9;
   optional string company_seal_num = 10;
   optional int32 digit_count = 11;
-  optional float voltage_meter_ratio = 12;
-  optional int32 current_meter_ratio = 13;
+  optional parameters.ParameterValueProto internal_pt_ratio = 12;
+  optional parameters.ParameterValueProto internal_ct_ratio = 13;
   optional google.protobuf.Timestamp manufacture_date = 14;
   optional google.protobuf.Timestamp supply_date = 15;
   parameters.ParameterValueProto meter_unit = 16;
