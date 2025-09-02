@@ -1,18 +1,80 @@
 import { router } from "@inertiajs/react";
+import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import useInertiaPost from "@/hooks/useInertiaPost";
 import type { Meter } from "@/interfaces/meter";
 import MainLayout from "@/layouts/main-layout";
 import type { BreadcrumbItem } from "@/types";
 import StrongText from "@/typography/StrongText";
 import Button from "@/ui/button/Button";
-import TinyContainer from "@/ui/Card/TinyContainer";
 
+interface ParameterValue {
+	id: number;
+	parameterValue: string;
+}
 interface Props {
 	meter: Meter;
+	currentTimezone: any; // supports either { timezone_type_id } or { timezone_type: { id, parameter_value } }
+	timezoneTypes: ParameterValue[]; // "other" options
 }
 
-export default function MeterShow({ meter }: Readonly<Props>) {
-	console.log(meter);
+interface StoreForm {
+	meter_id: number;
+	timezone_type_id: string;
+}
+
+interface UpdateForm {
+	rel_id: number;
+	timezone_type_id: string;
+}
+
+export default function MeterShow({
+	meter,
+	currentTimezone,
+	timezoneTypes,
+}: Readonly<Props>) {
+	// Normalize current timezone id/label from either shape
+	const currentTzId = useMemo<string | undefined>(() => {
+		const id =
+			currentTimezone?.timezone_type_id ??
+			currentTimezone?.timezone_type?.id ??
+			undefined;
+		return id !== undefined && id !== null ? String(id) : undefined;
+	}, [currentTimezone]);
+
+	const currentTzLabel = useMemo<string | undefined>(() => {
+		return (
+			currentTimezone?.timezone_type?.parameter_value ?? undefined
+			// Note: timezoneTypes intentionally excludes current; do not try to derive label from it.
+		);
+	}, [currentTimezone]);
+
+	const [isEditing, setIsEditing] = useState(false);
+	const [selectedTimezone, setSelectedTimezone] = useState<string | undefined>(
+		currentTzId,
+	);
+
+	const isUpdate = !!(currentTimezone as any)?.rel_id;
+	const url = isUpdate
+		? route("meter-timezone-rel.update", {
+				meter_timezone_rel: (currentTimezone as any).rel_id,
+			})
+		: route("meter-timezone-rel.store");
+
+	const { post, loading } = useInertiaPost<StoreForm | UpdateForm>(url, {
+		onComplete: () => {
+			setIsEditing(false);
+		},
+	});
+
 	const breadcrumbs: BreadcrumbItem[] = [
 		{ title: "Meters", href: "/meters" },
 		{ title: "Detail", href: `/meters/${meter.meter_id}` },
@@ -20,7 +82,6 @@ export default function MeterShow({ meter }: Readonly<Props>) {
 
 	const formatDate = (dateStr?: string) => {
 		if (!dateStr) return "-";
-		// This will format the date to a more readable "Month Day, Year" format
 		return new Date(dateStr).toLocaleDateString("en-US", {
 			year: "numeric",
 			month: "long",
@@ -33,6 +94,45 @@ export default function MeterShow({ meter }: Readonly<Props>) {
 			router.delete(`/meters/${meter.meter_id}`);
 		}
 	};
+
+	const handleSave = () => {
+		if (!selectedTimezone) {
+			return;
+		}
+		if (isUpdate) {
+			post({
+				rel_id: currentTimezone.rel_id,
+				meter_id: meter.meter_id,
+				timezone_type_id: selectedTimezone,
+				_method: "PUT",
+			});
+		} else {
+			post({
+				meter_id: meter.meter_id,
+				timezone_type_id: selectedTimezone,
+			});
+		}
+	};
+
+	const handleCancel = () => {
+		setSelectedTimezone(currentTzId);
+		setIsEditing(false);
+	};
+
+	// Only show "other" options in the dropdown
+	const otherTimezoneOptions = useMemo(
+		() => timezoneTypes.filter((t) => String(t.id) !== (currentTzId ?? "")),
+		[timezoneTypes, currentTzId],
+	);
+
+	const displayTimezoneLabel =
+		(isEditing
+			? // In edit mode show the label of the selected value or fallback to current label
+				selectedTimezone === currentTzId
+				? currentTzLabel
+				: undefined
+			: // In view mode show current label
+				currentTzLabel) || "-";
 
 	return (
 		<MainLayout breadcrumb={breadcrumbs}>
@@ -47,6 +147,7 @@ export default function MeterShow({ meter }: Readonly<Props>) {
 							label="Delete Meter"
 							onClick={handleDelete}
 							variant="destructive"
+							disabled={loading}
 						/>
 					</div>
 				</div>
@@ -133,7 +234,87 @@ export default function MeterShow({ meter }: Readonly<Props>) {
 								</div>
 							</div>
 
-							{/* Section: Other Information */}
+							{/* Section: Timezone Information */}
+							<div>
+								<div className="flex justify-between items-center mb-4">
+									<StrongText className="block text-sm font-medium text-gray-500">
+										Timezone Information
+									</StrongText>
+									{!isEditing && (
+										<Button
+											label="Edit"
+											onClick={() => setIsEditing(true)}
+											variant="outline"
+											disabled={loading}
+										/>
+									)}
+								</div>
+
+								<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+									{isEditing ? (
+										<div className="space-y-1">
+											<Label>Timezone Type</Label>
+											<Select
+												value={selectedTimezone}
+												onValueChange={setSelectedTimezone}
+											>
+												<SelectTrigger>
+													{/* Placeholder falls back to current label when value isn't in items */}
+													<SelectValue
+														placeholder={
+															currentTzLabel || "Select a timezone type"
+														}
+													/>
+												</SelectTrigger>
+												<SelectContent>
+													{/* Hidden current option so SelectValue can resolve its label */}
+													{currentTzId && currentTzLabel && (
+														<SelectItem
+															value={currentTzId}
+															disabled
+															className="hidden"
+														>
+															{currentTzLabel}
+														</SelectItem>
+													)}
+													{/* Only show "other" options in the list */}
+													{otherTimezoneOptions.map((type) => (
+														<SelectItem
+															key={type.id}
+															value={type.id.toString()}
+														>
+															{type.parameterValue}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+										</div>
+									) : (
+										<InfoItem
+											label="Timezone Type"
+											value={displayTimezoneLabel}
+										/>
+									)}
+								</div>
+
+								{isEditing && (
+									<div className="flex justify-end gap-2 mt-4">
+										<Button
+											label="Cancel"
+											onClick={handleCancel}
+											variant="secondary"
+											disabled={loading}
+										/>
+										<Button
+											label="Save"
+											onClick={handleSave}
+											disabled={loading}
+										/>
+									</div>
+								)}
+							</div>
+
+							{/* Section: History */}
 							<div>
 								<StrongText className="mb-4 block text-sm font-medium text-gray-500">
 									History
@@ -165,7 +346,7 @@ export default function MeterShow({ meter }: Readonly<Props>) {
 	);
 }
 
-// Reusable helper component to display a labeled piece of information
+// Reusable helper component
 const InfoItem = ({
 	label,
 	value,
@@ -176,7 +357,7 @@ const InfoItem = ({
 	<div className="space-y-1">
 		<label className="text-sm font-normal text-[#252c32]">{label}</label>
 		<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-			{value}
+			{value ?? "-"}
 		</div>
 	</div>
 );

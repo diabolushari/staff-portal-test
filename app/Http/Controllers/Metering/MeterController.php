@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Metering;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Metering\MeterFormRequest;
 use App\Services\Metering\MeterService;
+use App\Services\Metering\MeterTimezoneTypeRelService;
 use Grpc\ChannelCredentials;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -18,11 +19,14 @@ class MeterController extends Controller
 {
     protected MeterService $meterService;
 
+    protected MeterTimezoneTypeRelService $meterTimezoneTypeRelService;
+
     private ParameterValueServiceClient $parameterValueClient;
 
-    public function __construct(MeterService $meterService)
+    public function __construct(MeterService $meterService, MeterTimezoneTypeRelService $meterTimezoneTypeRelService)
     {
         $this->meterService = $meterService;
+        $this->meterTimezoneTypeRelService = $meterTimezoneTypeRelService;
 
         // Manually instantiate the gRPC client for Parameter Values.
         $this->parameterValueClient = new ParameterValueServiceClient(
@@ -141,8 +145,41 @@ class MeterController extends Controller
     {
         $response = $this->meterService->getMeter($id);
 
+        $currentTimezone = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($id);
+
+        // Fetch Timezone Types
+        $timezoneTypesRequest = (new ListParameterValuesRequest)
+            ->setDomainName('Meter')
+            ->setParameterName('Timezone Type');
+
+        [$timezoneTypesData, $timezoneTypesStatus] = $this->parameterValueClient->ListParameterValues($timezoneTypesRequest)->wait();
+
+        if ($timezoneTypesStatus->code !== 0) {
+            return redirect()->back()->withErrors([
+                'grpc_error' => 'Error fetching Timezone Types: '.$timezoneTypesStatus->details,
+            ]);
+        }
+
+        $timezoneTypes = collect($timezoneTypesData->getValues())
+            ->map(fn ($item) => [
+                'id' => $item->getId(),
+                'parameterValue' => $item->getParameterValue(),
+            ])
+            ->toArray();
+
+        if ($currentTimezone->data == null) {
+            return Inertia::render('Meters/MeterShow', [
+                'meter' => $response->data,
+                'currentTimezone' => null,
+                'timezoneTypes' => $timezoneTypes,
+            ]);
+
+        }
+
         return Inertia::render('Meters/MeterShow', [
             'meter' => $response->data,
+            'currentTimezone' => $currentTimezone->data,
+            'timezoneTypes' => $timezoneTypes,
         ]);
 
     }
