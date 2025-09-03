@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Connection;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
-use App\Http\Requests\Connections\CreateConnectionWithConsumerRequest;
-use App\Http\Requests\Connections\Data\ConnectionData;
+
 use App\Services\Connection\ConnectionService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
