@@ -7,8 +7,9 @@ import { TabsContent } from '@/components/ui/tabs'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
 import { PencilIcon, Zap, Users, Calendar } from 'lucide-react'
 import { router } from '@inertiajs/react'
+import { Connection } from '@/interfaces/consumers'
 
-export default function ConnectionsShow({ connection }: Readonly<{ connection: any }>) {
+export default function ConnectionsShow({ connection }: Readonly<{ connection: Connection }>) {
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Connections', href: '/connections' },
     { title: 'Show', href: route('connection.consumer', connection.connection_id) },
@@ -29,7 +30,6 @@ export default function ConnectionsShow({ connection }: Readonly<{ connection: a
       href: route('connection.consumer', connection.connection_id),
     },
   ]
-  console.log(connection)
 
   return (
     <MainLayout
@@ -101,7 +101,7 @@ export default function ConnectionsShow({ connection }: Readonly<{ connection: a
                   />
                   <Field
                     label='Contract Demand (KVA)'
-                    value={connection.contract_demand_kva_val}
+                    value={connection.contract_demand_kw_val}
                   />
                 </div>
               </Card>

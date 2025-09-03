@@ -2,6 +2,7 @@
 
 namespace App\Services\Connection;
 
+use App\Http\Requests\Connections\CreateConnectionFormRequest;
 use App\Http\Requests\Connections\CreateConnectionRequest as ConnectionCreateConnectionFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
@@ -54,7 +55,7 @@ class ConnectionService
         return GrpcServiceResponse::success($connectionArray, $response, $status->code, $status->details);
     }
 
-    public function createConnection(ConnectionCreateConnectionFormRequest $request): GrpcServiceResponse
+    public function createConnection(CreateConnectionFormRequest $request): GrpcServiceResponse
     {
         $grpcRequest = new CreateConnectionRequest();
         $grpcRequest->setConnectionTypeId($request->connectionTypeId);
@@ -97,9 +98,7 @@ class ConnectionService
             );
         }
 
-        $result = [
-            'connection' => $this->transformConnectionToArray($response->getConnection()),
-        ];
+        $result = $this->transformConnectionToArray($response->getConnection());
 
         return GrpcServiceResponse::success($result, $response, $status->code, $status->details);
     }
@@ -125,7 +124,7 @@ class ConnectionService
         return GrpcServiceResponse::success($connectionArray, $response, $status->code, $status->details);
     }
 
-    public function updateConnection(CreateConnectionRequest $request, int $connectionId): GrpcServiceResponse
+    public function updateConnection(CreateConnectionFormRequest $request, int $connectionId): GrpcServiceResponse
     {
 
 

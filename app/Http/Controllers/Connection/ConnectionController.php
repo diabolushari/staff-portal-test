@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Connection;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Connections\CreateConnectionRequest;
+use App\Http\Requests\Connections\CreateConnectionFormRequest;
 use App\Http\Requests\Connections\CreateConnectionWithConsumerRequest;
 use App\Http\Requests\Connections\Data\ConnectionData;
 use App\Services\Connection\ConnectionService;
@@ -139,16 +139,16 @@ class ConnectionController extends Controller
     /**
      * Store a newly created connection and consumer profile in storage.
      */
-    public function store(CreateConnectionRequest $request): RedirectResponse
+    public function store(CreateConnectionFormRequest $request): RedirectResponse
     {
         $response = $this->connectionService->createConnection($request);
 
-        if ($response->hasError()) {
-            return redirect()->back()->with('error', $response->getMessage());
+        if ($response->data === null) {
+            return redirect()->back()->with('error', 'Failed to create connection');
         }
-        $connection = $response->data->getConnection();
+        $connection = $response->data;
 
-        return redirect()->route('connection.consumer.create', $connection->getConnectionId());
+        return redirect()->route('connection.consumer.create', $connection['connection_id']);
     }
     public function show(int $id)
     {
@@ -269,7 +269,7 @@ class ConnectionController extends Controller
         ]);
     }
 
-    public function update(CreateConnectionRequest $request, int $id)
+    public function update(CreateConnectionFormRequest $request, int $id)
     {
         $response = $this->connectionService->updateConnection($request, $id);
 

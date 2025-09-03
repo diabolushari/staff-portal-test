@@ -1,6 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { Office } from '@/interfaces/consumers'
+import { Connection, Office } from '@/interfaces/consumers'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
@@ -16,7 +16,7 @@ import { toast } from 'react-toastify'
 import { router } from '@inertiajs/react'
 
 interface Props {
-  connection?: any
+  connection?: Connection
   connectionTypes: ParameterValues[]
   connectionStatus: ParameterValues[]
   voltageTypes: ParameterValues[]
@@ -29,6 +29,14 @@ interface Props {
   openAccessTypes: ParameterValues[]
   meteringTypes: ParameterValues[]
   renewableTypes: ParameterValues[]
+}
+const formatDateForInput = (date?: string | Date) => {
+  if (!date) return ''
+  const d = new Date(date)
+  const month = `${d.getMonth() + 1}`.padStart(2, '0')
+  const day = `${d.getDate()}`.padStart(2, '0')
+  const year = d.getFullYear()
+  return `${year}-${month}-${day}`
 }
 
 export default function ConnectionForm({
@@ -70,10 +78,11 @@ export default function ConnectionForm({
     open_access_type_id: connection?.open_access_type_id ?? null,
     metering_type_id: connection?.metering_type_id ?? null,
     renewable_type_id: connection?.renewable_type_id ?? null,
-    connected_date: connection?.connected_date ?? '',
+    connected_date: connection?.connected_date
+      ? formatDateForInput(connection?.connected_date)
+      : '',
     consumer_legacy_code: connection?.consumer_legacy_code ?? '',
   })
-  console.log(connection)
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     connection ? route('connections.update', connection.connection_id) : route('connections.store'),
@@ -124,7 +133,6 @@ export default function ConnectionForm({
             setValue={setFormValue('connection_type_id')}
             value={formData.connection_type_id}
             error={errors?.connection_type_id}
-            required
           />
           <SelectList
             label='Connection Status'

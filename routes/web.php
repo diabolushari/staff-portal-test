@@ -9,7 +9,6 @@ use App\Http\Controllers\Api\SystemModuleApiController;
 use App\Http\Controllers\Connection\ConnectionController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
-use App\Http\Controllers\Connection\ConnectionController;
 use App\Http\Controllers\Connection\ConsumerController;
 use App\Http\Controllers\Connection\CreateConsumerController;
 use App\Http\Controllers\Connection\GetConsumerController;

@@ -7,7 +7,7 @@ use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 #[MapName(SnakeCaseMapper::class)]
-class CreateConnectionRequest extends Data
+class CreateConnectionFormRequest extends Data
 {
     public function __construct(
         public int $connectionTypeId,
