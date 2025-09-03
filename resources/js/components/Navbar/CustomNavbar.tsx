@@ -14,9 +14,13 @@ import { Children } from 'react'
 export const NAV_ITEMS = [
   { title: 'Dashboard', href: '/dashboard', description: 'Your main overview' },
   { title: 'Services', href: '/services', description: 'Manage your services' },
-  { title: 'Consumers', href: '/consumers', description: 'Customer data and tools' ,
+  {
+    title: 'Consumers',
+    href: '/consumers',
+    description: 'Customer data and tools',
     children: [
       { title: 'Parties', href: '/parties', description: 'Manage parties' },
+      { title: 'Connections', href: '/connections', description: 'Manage connections' },
     ],
   },
   { title: 'Billing', href: '/billing', description: 'Invoices and payments' },
@@ -32,8 +36,6 @@ export const NAV_ITEMS = [
         href: '/parameter-value',
         description: 'Manage reference data',
       },
-      { title: 'Connections', href: '/connections', description: 'Manage connections' },
-      // { title: 'Parties', href: '/parties', description: 'Manage parties' },
     ],
   },
 ]

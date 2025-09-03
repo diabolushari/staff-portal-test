@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.consumers;
+
+option java_multiple_files = true;
+option java_package = "com.kseb.consumerservice.proto.consumers";
+option java_outer_classname = "GeoRegionProto";
+
+option php_namespace = "Proto\\Consumers";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/empty.proto";
+
+// -------------------- Messages --------------------
+message GeoRegionMessage {
+  int32 region_id = 1;
+  string region_name = 2;
+  int32 region_classification = 3;
+  int32 region_type_id = 4;
+  google.protobuf.Struct region_attributes = 5;
+  optional int32 parent_region_id = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  int32 created_by = 9;
+  int32 updated_by = 10;
+}
+
+message GeoRegionListResponse {
+  repeated GeoRegionMessage regions = 1;
+}
+
+message GeoRegionIdRequest {
+  int32 region_id = 1;
+}
+
+// -------------------- Service --------------------
+service GeoRegionService {
+  rpc CreateGeoRegion(GeoRegionMessage) returns (GeoRegionMessage);
+  rpc GetGeoRegionById(GeoRegionIdRequest) returns (GeoRegionMessage);
+  rpc UpdateGeoRegion(GeoRegionMessage) returns (GeoRegionMessage);
+  rpc DeleteGeoRegion(GeoRegionIdRequest) returns (google.protobuf.Empty);
+  rpc ListGeoRegions(google.protobuf.Empty) returns (GeoRegionListResponse);
+}
