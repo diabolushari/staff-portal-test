@@ -58,6 +58,7 @@ export default function ConnectionsForm({
     {
       value: 'consumer',
       label: 'Consumer',
+      href: '/consumers/create',
     },
   ]
   return (
@@ -84,9 +85,7 @@ export default function ConnectionsForm({
               connection={connection}
             />
           </TabsContent>
-          <TabsContent value='consumer'>
-            <ConsumerFormComponent />
-          </TabsContent>
+          <TabsContent value='consumer'></TabsContent>
         </TabGroup>
       </div>
     </MainLayout>

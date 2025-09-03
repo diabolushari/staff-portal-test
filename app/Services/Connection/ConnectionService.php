@@ -2,35 +2,32 @@
 
 namespace App\Services\Connection;
 
-use App\Http\Requests\Connections\CreateConnectionRequest;
-use App\Http\Requests\Connections\CreateConnectionWithConsumerRequest;
+use App\Http\Requests\Connections\CreateConnectionRequest as ConnectionCreateConnectionFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Carbon\Carbon;
 use Google\Protobuf\Struct;
 use Google\Protobuf\Timestamp;
+use Proto\Connections\ConnectionServiceClient;
+use Proto\Connections\ConnectionUpdateRequest;
+use Proto\Connections\CreateConnectionRequest;
+use Proto\Connections\GetConnectionRequest;
+use Proto\Connections\ListConnectionsRequest;
 use Grpc\ChannelCredentials;
-use Proto\Consumers\ConnectionMessage;
-use Proto\Consumers\ConnectionServiceClient;
-use Proto\Consumers\ConnectionUpdateRequest;
-use Proto\Consumers\CreateConnectionRequest as ConsumersCreateConnectionRequest;
-// Alias the gRPC request message to avoid naming conflicts
-use Proto\Consumers\CreateConnectionWithConsumerRequest as GrpcCreateRequest;
-use Proto\Consumers\GetConnectionRequest;
-use Proto\Consumers\ListConnectionsRequest;
-use Proto\Consumers\ConnectionUpdateRequest as GrpcUpdateRequest;
 
 class ConnectionService
 {
     private ConnectionServiceClient $client;
+    private ParameterValueService $parameterValueService;
 
-    public function __construct()
+    public function __construct(ParameterValueService $parameterValueService)
     {
         $this->client = new ConnectionServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
         );
+        $this->parameterValueService = $parameterValueService;
     }
 
     public function listConnections(): GrpcServiceResponse
@@ -57,9 +54,9 @@ class ConnectionService
         return GrpcServiceResponse::success($connectionArray, $response, $status->code, $status->details);
     }
 
-    public function createConnection(CreateConnectionRequest $request): GrpcServiceResponse
+    public function createConnection(ConnectionCreateConnectionFormRequest $request): GrpcServiceResponse
     {
-        $grpcRequest = new ConsumersCreateConnectionRequest();
+        $grpcRequest = new CreateConnectionRequest();
         $grpcRequest->setConnectionTypeId($request->connectionTypeId);
         $grpcRequest->setConsumerNum($request->consumerNumber);
         $grpcRequest->setConnectionStatusId($request->connectionStatusId);
@@ -133,7 +130,7 @@ class ConnectionService
 
 
         // Wrap into UpdateConnectionRequest
-        $grpcRequest = new GrpcUpdateRequest();
+        $grpcRequest = new ConnectionUpdateRequest();
         $grpcRequest->setConnectionId($connectionId);
         $grpcRequest->setConnectionTypeId($request->connectionTypeId);
         $grpcRequest->setConsumerNum($request->consumerNumber);
@@ -184,7 +181,7 @@ class ConnectionService
      */
     private function transformConnectionToArray($connection): array
     {
-        $parameterValueService = app(ParameterValueService::class);
+
         return [
             'version_id' => $connection->getVersionId(),
             'connection_id' => $connection->getConnectionId(),
@@ -221,56 +218,24 @@ class ConnectionService
             'purposes_info' => json_decode($connection->getPurposesInfo()?->serializeToJsonString(), true),
             'connected_load_info' => json_decode($connection->getConnectedLoadInfo()?->serializeToJsonString(), true),
             'multi_source_info' => json_decode($connection->getMultiSourceInfo()?->serializeToJsonString(), true),
-            'consumer_type' => $parameterValueService->toArray($connection->getConsumerType()),
-            'connection_type' => $parameterValueService->toArray($connection->getConnectionType()),
-            'connection_status' => $parameterValueService->toArray($connection->getConnectionStatus()),
-            'open_access_type' => $parameterValueService->toArray($connection->getOpenAccessType()),
-            'metering_type' => $parameterValueService->toArray($connection->getMeteringType()),
-            'renewable_type' => $parameterValueService->toArray($connection->getRenewableType()),
-            'phase_type' => $parameterValueService->toArray($connection->getPhaseType()),
-            'voltage' => $parameterValueService->toArray($connection->getVoltage()),
-            'connection_category' => $parameterValueService->toArray($connection->getConnectionCategory()),
-            'connection_subcategory' => $parameterValueService->toArray($connection->getConnectionSubcategory()),
-            'primary_purpose' => $parameterValueService->toArray($connection->getPrimaryPurpose()),
-            'billing_process' => $parameterValueService->toArray($connection->getBillingProcess()),
-            'tariff' => $parameterValueService->toArray($connection->getTariff()),
+            'consumer_type' => $this->parameterValueService->toArray($connection->getConsumerType()),
+            'connection_type' => $this->parameterValueService->toArray($connection->getConnectionType()),
+            'connection_status' => $this->parameterValueService->toArray($connection->getConnectionStatus()),
+            'open_access_type' => $this->parameterValueService->toArray($connection->getOpenAccessType()),
+            'metering_type' => $this->parameterValueService->toArray($connection->getMeteringType()),
+            'renewable_type' => $this->parameterValueService->toArray($connection->getRenewableType()),
+            'phase_type' => $this->parameterValueService->toArray($connection->getPhaseType()),
+            'voltage' => $this->parameterValueService->toArray($connection->getVoltage()),
+            'connection_category' => $this->parameterValueService->toArray($connection->getConnectionCategory()),
+            'connection_subcategory' => $this->parameterValueService->toArray($connection->getConnectionSubcategory()),
+            'primary_purpose' => $this->parameterValueService->toArray($connection->getPrimaryPurpose()),
+            'billing_process' => $this->parameterValueService->toArray($connection->getBillingProcess()),
+            'tariff' => $this->parameterValueService->toArray($connection->getTariff()),
         ];
     }
 
-    /**
-     * Transform ConsumerProfileMessage protobuf to PHP array.
-     */
-    private function transformConsumerProfileToArray($profile): array
-    {
-        return [
-            'version_id' => $profile->getVersionId(),
-            'connection_id' => $profile->getConnectionId(),
-            'consumer_type_id' => $profile->getConsumerTypeId(),
-            'organisation_name' => $profile->getOrganisationName(),
-            'applicant_code' => $profile->getApplicantCode(),
-            'consumer_pan' => $profile->getConsumerPan(),
-            'consumer_tan' => $profile->getConsumerTan(),
-            'consumer_cin' => $profile->getConsumerCin(),
-            'consumer_gstin' => $profile->getConsumerGstin(),
-            'income_tax_withholding_ind' => $profile->getIncomeTaxWithholdingInd(),
-            'gst_withholding_ind' => $profile->getGstWithholdingInd(),
-            'seasonal_ind' => $profile->getSeasonalInd(),
-            'license_ind' => $profile->getLicenseInd(),
-            'open_access_ind' => $profile->getOpenAccessInd(),
-            'is_current' => $profile->getIsCurrent(),
-            'created_by' => $profile->getCreatedBy(),
-            'updated_by' => $profile->getUpdatedBy(),
-            'effective_start' => $this->convertFromTimestamp($profile->getEffectiveStart()),
-            'effective_end' => $this->convertFromTimestamp($profile->getEffectiveEnd()),
-            'created_at' => $this->convertFromTimestamp($profile->getCreatedAt()),
-            'updated_at' => $this->convertFromTimestamp($profile->getUpdatedAt()),
-            // Structs are converted from JSON string to array
-            'manufacturing_info' => json_decode($profile->getManufacturingInfo()?->serializeToJsonString(), true),
-            'tax_info' => json_decode($profile->getTaxInfo()?->serializeToJsonString(), true),
-            'identity_info' => json_decode($profile->getIdentityInfo()?->serializeToJsonString(), true),
-            'application_info' => json_decode($profile->getApplicationInfo()?->serializeToJsonString(), true),
-        ];
-    }
+
+
 
     /**
      * Convert protobuf Timestamp to a Carbon ISO string.

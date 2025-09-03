@@ -11,15 +11,23 @@ import { router } from '@inertiajs/react'
 export default function ConnectionsShow({ connection }: Readonly<{ connection: any }>) {
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Connections', href: '/connections' },
-    { title: 'Show', href: '/connections/' + connection.connection_id },
+    { title: 'Show', href: route('connection.consumer', connection.connection_id) },
   ]
 
   const formatDate = (dateStr?: string | null) =>
     dateStr ? new Date(dateStr).toLocaleDateString() : '-'
 
   const tabs = [
-    { value: 'details', label: 'Connection Details' },
-    { value: 'activity', label: 'Activity History' },
+    {
+      value: 'details',
+      label: 'Connection Details',
+      href: route('connections.show', connection.connection_id),
+    },
+    {
+      value: 'consumer',
+      label: 'Consumer',
+      href: route('connection.consumer', connection.connection_id),
+    },
   ]
   console.log(connection)
 

@@ -71,11 +71,6 @@ export const connectionsNavItems: navItem[] = [
     href: '/connections/create',
     icon: <HomeIcon className='h-4 w-4' />,
   },
-  {
-    title: 'Add consumer',
-    href: '/consumers/create',
-    icon: <HomeIcon className='h-4 w-4' />,
-  },
 ]
 export const partiesNavItems: navItem[] = [
   {

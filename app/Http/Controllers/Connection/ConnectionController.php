@@ -146,8 +146,9 @@ class ConnectionController extends Controller
         if ($response->hasError()) {
             return redirect()->back()->with('error', $response->getMessage());
         }
+        $connection = $response->data->getConnection();
 
-        return redirect()->route('connections.index')->with('success', 'Connection created successfully.');
+        return redirect()->route('connection.consumer.create', $connection->getConnectionId());
     }
     public function show(int $id)
     {
