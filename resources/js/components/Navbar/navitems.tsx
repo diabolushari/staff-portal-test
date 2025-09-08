@@ -85,3 +85,30 @@ export const partiesNavItems: navItem[] = [
     icon: <HomeIcon className='h-4 w-4' />,
   },
 ]
+export const transformerNavItems: navItem[] = [
+  {
+    title: 'Search Meter Transformers',
+    href: '/meter-transformers',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+
+  {
+    title: 'Add Meter Transformer',
+    href: '/meter-transformers/create',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
+]
+
+export const transformerrelNavItems: navItem[] = [
+  {
+    title: 'Search Meter Transformer Relations',
+    href: '/meter-rel',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+
+  {
+    title: 'Add Meter Transformer Relation',
+    href: '/meter-rel/create',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
+]

@@ -5,7 +5,6 @@ export function showSuccess(message?: string | null): void {
     return
   }
   toast.success(message, {
-    position: 'bottom-center',
     autoClose: 5000,
     hideProgressBar: false,
     closeOnClick: true,
@@ -21,7 +20,6 @@ export function showError(message?: string | null): void {
     return
   }
   toast.error(message, {
-    position: 'bottom-center',
     autoClose: 5000,
     hideProgressBar: false,
     closeOnClick: true,

@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.metering;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "parameters/parameter-value.proto";
+import "metering/meter.proto";
+import "metering/meter-transformer.proto";
+
+option php_namespace = "Proto\\Metering";
+option php_metadata_namespace = "GPBMetadata";
+
+option java_package = "com.kseb.consumerservice.proto.metering";
+option java_multiple_files = true;
+option java_outer_classname = "MeterTransformerRelProto";
+
+// =========================
+// Service definition
+// =========================
+service MeterTransformerRelService {
+  rpc CreateMeterTransformerRel(CreateMeterTransformerRelRequest) returns (MeterTransformerRelResponse);
+  rpc GetMeterTransformerRel(GetMeterTransformerRelRequest) returns (MeterTransformerRelResponse);
+  rpc ListMeterTransformerRels(ListMeterTransformerRelsRequest) returns (ListMeterTransformerRelsResponse);
+  rpc UpdateMeterTransformerRel(UpdateMeterTransformerRelRequest) returns (MeterTransformerRelResponse);
+  rpc DeleteMeterTransformerRel(DeleteMeterTransformerRelRequest) returns (google.protobuf.Empty);
+}
+
+// =========================
+// Requests
+// =========================
+message CreateMeterTransformerRelRequest {
+  int64 ctpt_id = 1;
+  int64 meter_id = 2;
+  google.protobuf.Timestamp faulty_date = 3;
+  google.protobuf.Timestamp ctpt_energise_date = 4;
+  google.protobuf.Timestamp ctpt_change_date = 5;
+  int64 status_id = 6;
+  int64 change_reason_id = 7;
+  google.protobuf.Timestamp effective_start_ts = 8;
+  int64 created_by = 9;
+  bool is_active = 10;
+}
+
+message UpdateMeterTransformerRelRequest {
+  int32 version_id = 1;
+  int64 ctpt_id = 2;
+  int64 meter_id = 3;
+  google.protobuf.Timestamp faulty_date = 4;
+  google.protobuf.Timestamp ctpt_energise_date = 5;
+  google.protobuf.Timestamp ctpt_change_date = 6;
+  int64 status_id = 7;
+  int64 change_reason_id = 8;
+  google.protobuf.Timestamp effective_start_ts = 9;
+  google.protobuf.Timestamp effective_end_ts = 10;
+  int64 updated_by = 11;
+  bool is_active = 12;
+}
+
+message GetMeterTransformerRelRequest {
+  int32 version_id = 1;
+}
+
+message DeleteMeterTransformerRelRequest {
+  int32 version_id = 1;
+}
+
+message ListMeterTransformerRelsRequest {}
+
+// =========================
+// Responses
+// =========================
+message MeterTransformerRelResponse {
+  MeterTransformerRelMessage rel = 1;
+}
+
+message ListMeterTransformerRelsResponse {
+  repeated MeterTransformerRelMessage rels = 1;
+}
+
+// =========================
+// Entity message
+// =========================
+message MeterTransformerRelMessage {
+  int32 version_id = 1;
+  int64 ctpt_id = 2;
+  MeterTransformerMessage ctpt = 3;
+
+  int64 meter_id = 4;
+  MeterResponse meter = 5;
+
+  google.protobuf.Timestamp faulty_date = 6;
+  google.protobuf.Timestamp ctpt_energise_date = 7;
+  google.protobuf.Timestamp ctpt_change_date = 8;
+
+  int64 status_id = 9;
+  parameters.ParameterValueProto status = 10;
+
+  int64 change_reason_id = 11;
+  parameters.ParameterValueProto change_reason = 12;
+
+  google.protobuf.Timestamp effective_start_ts = 13;
+  google.protobuf.Timestamp effective_end_ts = 14;
+
+  google.protobuf.Timestamp created_ts = 15;
+  google.protobuf.Timestamp updated_ts = 16;
+  int64 created_by = 17;
+  int64 updated_by = 18;
+  bool is_active = 19;
+}

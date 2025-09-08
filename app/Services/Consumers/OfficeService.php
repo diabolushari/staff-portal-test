@@ -3,14 +3,17 @@
 namespace App\Services\Consumers;
 
 use App\Http\Requests\Consumers\OfficeFormRequest;
+use App\Http\Requests\Offices\UpdateOfficeContactsData;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
+use Google\Protobuf\Struct;
 use Grpc\ChannelCredentials;
 use Proto\Consumers\OfficeCreateRequest;
 use Proto\Consumers\OfficeIdRequest;
 use Proto\Consumers\OfficeListRequest;
 use Proto\Consumers\OfficeMessage;
 use Proto\Consumers\OfficeServiceClient;
+use Proto\Consumers\OfficeUpdateContactFolioRequest;
 use Proto\Consumers\OfficeUpdateRequest;
 
 class OfficeService
@@ -148,6 +151,64 @@ class OfficeService
         }
 
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
+    }
+
+    public function updateOfficeContactFolio(UpdateOfficeContactsData $data): GrpcServiceResponse
+    {
+        $request = new OfficeUpdateContactFolioRequest;
+        $request->setOfficeCode($data->office_code);
+
+        if ($data->updated_by !== null) {
+            $request->setUpdatedBy($data->updated_by);
+        }
+
+        // Convert contacts data to Google\Protobuf\Struct.
+        $contactsArray = $data->contacts->toArray();
+        $contactFolioStruct = new Struct;
+        $contactsListValue = new \Google\Protobuf\ListValue;
+        foreach ($contactsArray as $contact) {
+            $contactStruct = new Struct;
+            $fields = [];
+            foreach ($contact as $k => $v) {
+                $value = new \Google\Protobuf\Value;
+                if ($v === null) {
+                    $value->setNullValue(\Google\Protobuf\NullValue::NULL_VALUE);
+                } elseif (is_string($v)) {
+                    $value->setStringValue($v);
+                } elseif (is_int($v) || is_float($v)) {
+                    $value->setNumberValue((float) $v);
+                } elseif (is_bool($v)) {
+                    $value->setBoolValue($v);
+                } else {
+                    $value->setStringValue((string) json_encode($v));
+                }
+                $fields[$k] = $value;
+            }
+            $contactStruct->setFields($fields);
+            $contactValue = new \Google\Protobuf\Value;
+            $contactValue->setStructValue($contactStruct);
+            $contactsListValue->getValues()[] = $contactValue; // push onto repeated field
+        }
+        $contactsValue = new \Google\Protobuf\Value;
+        $contactsValue->setListValue($contactsListValue);
+        $contactFolioStruct->setFields(var: ['contacts' => $contactsValue]);
+        $request->setContactFolio($contactFolioStruct);
+
+        [$response, $status] = $this->client->UpdateOfficeContactFolio($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $office = $response->getOffice();
+        $officeArray = self::officeProtoToArray($office);
+
+        return GrpcServiceResponse::success($officeArray, $response, $status->code, $status->details);
     }
 
     /**

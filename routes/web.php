@@ -8,8 +8,10 @@ use App\Http\Controllers\Api\ParameterDomainListApiController;
 use App\Http\Controllers\Api\SystemModuleApiController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
-use App\Http\Controllers\Connection\ConnectionController;
-use App\Http\Controllers\Connection\ConsumerController;
+use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
+use App\Http\Controllers\Metering\MeterController;
+use App\Http\Controllers\Metering\MeterTransformerController;
+use App\Http\Controllers\Metering\MeterTransformerRelController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
@@ -36,8 +38,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('parameter-value', ParameterValueController::class);
     Route::resource('offices', OfficeController::class);
     Route::resource('parties', PartiesController::class);
-    Route::resource('connections', ConnectionController::class);
-    Route::resource('consumers', ConsumerController::class);
+    Route::post('update-office-contacts', UpdateOfficeContactsController::class)
+        ->name('offices.update-contacts');
+    Route::resource('meters', MeterController::class);
+    Route::resource('meter-transformers', MeterTransformerController::class);
+    Route::resource('meter-rel', MeterTransformerRelController::class);
 });
 
 // API List
