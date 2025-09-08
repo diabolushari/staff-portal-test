@@ -10,10 +10,11 @@ interface Props {
     href?: string
   }[]
   children: React.ReactNode
+  defaultValue?: string
 }
 
-export function TabGroup({ tabs, children }: Readonly<Props>) {
-  const [activeTab, setActiveTab] = useState(tabs[0].value)
+export function TabGroup({ tabs, children, defaultValue }: Readonly<Props>) {
+  const [activeTab, setActiveTab] = useState(defaultValue || tabs[0].value)
 
   return (
     <div className='flex w-full flex-col gap-10 p-0'>
