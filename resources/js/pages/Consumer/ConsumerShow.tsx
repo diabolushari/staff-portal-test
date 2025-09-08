@@ -101,7 +101,7 @@ export default function ConsumerShow({ consumer }: Readonly<ConsumerShowProps>) 
             />
             <InfoBlock
               label='Consumer Type'
-              value={safe(consumer.consumer_type_id)}
+              value={consumer.consumer.consumer_type?.parameter_value}
             />
             <InfoBlock
               label='PAN'
@@ -162,11 +162,11 @@ export default function ConsumerShow({ consumer }: Readonly<ConsumerShowProps>) 
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                   <InfoBlock
                     label='Address Line 1'
-                    value={safe(addr.address_line_1)}
+                    value={safe(addr.address_line1)}
                   />
                   <InfoBlock
                     label='Address Line 2'
-                    value={safe(addr.address_line_2)}
+                    value={safe(addr.address_line2)}
                   />
                   <InfoBlock
                     label='City/Town/Village'

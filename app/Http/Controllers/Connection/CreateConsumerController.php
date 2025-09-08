@@ -31,7 +31,6 @@ class CreateConsumerController extends Controller
         $geoRegions = $this->geoRegionsService->getGeoRegions();
         $connection = $this->consumerService->getConsumer($connectionId);
         if ($connection->data != null) {
-            $data = $connection->data;
             return redirect()->route('connection.consumer', $connectionId);
         }
 

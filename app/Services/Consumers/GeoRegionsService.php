@@ -24,10 +24,6 @@ class GeoRegionsService
 
     public function getGeoRegions(): GrpcServiceResponse
     {
-        // Create an empty request for ListGeoRegions
-
-
-        // Call the gRPC service
         $request = new GPBEmpty();
         [$response, $status] = $this->client->ListGeoRegions($request)->wait();
 

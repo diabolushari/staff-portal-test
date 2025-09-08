@@ -12,6 +12,7 @@ export interface Properties<
   list: T[]
   dataKey: K
   displayKey: G
+  displayKey2?: G
   showAllOption?: boolean
   allOptionText?: string
   showLabel?: boolean
@@ -54,6 +55,7 @@ export default function SelectList<
   list,
   dataKey,
   displayKey,
+  displayKey2,
   showAllOption = false,
   allOptionText,
   showLabel = true,
@@ -94,7 +96,7 @@ export default function SelectList<
             value={item[dataKey]}
             key={item[dataKey]}
           >
-            {item[displayKey]}
+            {`${item[displayKey]} ${displayKey2 ? ` - ${item[displayKey2]}` : ''}`}
           </option>
         ))}
       </select>

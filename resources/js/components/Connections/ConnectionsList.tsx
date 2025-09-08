@@ -3,7 +3,7 @@ import { Zap, Cpu, Calendar, Hash } from 'lucide-react'
 
 interface Connection {
   connection_id: number
-  consumer_num: number
+  consumer_number: number
   admin_office_code: string
   service_office_code: string
   tariff_id: number
@@ -40,7 +40,7 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
                   <div className='flex flex-col gap-1'>
                     <div className='flex items-center gap-2'>
                       <div className='font-inter text-base leading-normal font-semibold text-black'>
-                        Consumer #{connection.consumer_num}
+                        Consumer Number: #{connection.consumer_number}
                       </div>
                       <div className='rounded-[50px] bg-blue-100 px-2.5 py-px'>
                         <div className='font-inter text-xs leading-6 font-normal tracking-[-0.072px] text-blue-800'>

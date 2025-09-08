@@ -31,6 +31,8 @@ export default function ConnectionsShow({ connection }: Readonly<{ connection: C
     },
   ]
 
+  console.log(connection)
+
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -75,10 +77,10 @@ export default function ConnectionsShow({ connection }: Readonly<{ connection: C
                 </div>
                 <hr className='mb-6 border-[#e5e9eb]' />
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                  <Field
+                  {/* <Field
                     label='Connection ID'
                     value={connection.connection_id}
-                  />
+                  /> */}
                   <Field
                     label='Consumer Number'
                     value={connection.consumer_number}

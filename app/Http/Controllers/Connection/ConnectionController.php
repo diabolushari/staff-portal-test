@@ -149,16 +149,23 @@ class ConnectionController extends Controller
 
         return redirect()->route('connection.consumer.create', $connection['connection_id']);
     }
-    public function show(int $id)
+    public function show(int $id): Response|RedirectResponse
     {
         $connection = $this->connectionService->getConnection($id);
+        if ($connection->hasError()) {
+            if ($connection->error) {
+                return $connection->error;
+            } else {
+                return redirect()->back()->with('error', 'Failed to get connection');
+            }
+        }
 
         return Inertia::render('Connections/ConnectionsShow', [
             'connection' => $connection->data,
         ]);
     }
 
-    public function edit(int $id)
+    public function edit(int $id): Response|RedirectResponse
     {
         $connectionTypes = $this->parameterValueService->getParameterValues(
             1,
@@ -268,12 +275,12 @@ class ConnectionController extends Controller
         ]);
     }
 
-    public function update(CreateConnectionFormRequest $request, int $id)
+    public function update(CreateConnectionFormRequest $request, int $id): RedirectResponse
     {
         $response = $this->connectionService->updateConnection($request, $id);
 
         if ($response->hasError()) {
-            return redirect()->back()->with('error', $response->getMessage());
+            return $response->error;
         }
 
         return redirect()->route('connections.index')->with('success', 'Connection updated successfully.');

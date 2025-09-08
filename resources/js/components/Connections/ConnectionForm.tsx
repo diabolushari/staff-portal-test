@@ -12,7 +12,6 @@ import { route } from 'ziggy-js'
 import { useState } from 'react'
 import { Card } from '../ui/card'
 import DatePicker from '@/ui/form/DatePicker'
-import { toast } from 'react-toastify'
 import { router } from '@inertiajs/react'
 
 interface Props {
@@ -58,37 +57,37 @@ export default function ConnectionForm({
   const [serviceOfficeData, setServiceOfficeData] = useState<Office | null>(null)
 
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
-    connection_type_id: connection?.connection_type_id ?? 0,
-    connection_status_id: connection?.connection_status_id ?? 0,
-    consumer_number: connection?.consumer_number ?? 0,
-    voltage_type_id: connection?.voltage_id ?? 0,
-    tariff_type_id: connection?.tariff_id ?? 0,
-    connection_category_id: connection?.connection_category_id ?? 0,
-    connection_subcategory_id: connection?.connection_subcategory_id ?? 0,
-    billing_process_id: connection?.billing_process_id ?? 0,
-    phase_type_id: connection?.phase_type_id ?? 0,
-    primary_purpose_id: connection?.primary_purpose_id ?? 0,
-    admin_office_code: connection?.admin_office_code ?? 0,
-    service_office_code: connection?.service_office_code ?? 0,
-    contract_demand_kw_val: connection?.contract_demand_kw_val ?? 0.0,
-    connected_load_kw_val: connection?.connected_load_kw_val ?? 0.0,
+    connection_type_id: connection?.connection_type_id ?? '',
+    connection_status_id: connection?.connection_status_id ?? '',
+    consumer_number: connection?.consumer_number ?? '',
+    voltage_type_id: connection?.voltage_id ?? '',
+    tariff_type_id: connection?.tariff_id ?? '',
+    connection_category_id: connection?.connection_category_id ?? '',
+    connection_subcategory_id: connection?.connection_subcategory_id ?? '',
+    billing_process_id: connection?.billing_process_id ?? '',
+    phase_type_id: connection?.phase_type_id ?? '',
+    primary_purpose_id: connection?.primary_purpose_id ?? '',
+    admin_office_code: connection?.admin_office_code ?? '',
+    service_office_code: connection?.service_office_code ?? '',
+    contract_demand_kw_val: connection?.contract_demand_kw_val ?? '',
+    connected_load_kw_val: connection?.connected_load_kw_val ?? '',
     solar_indicator: connection?.solar_indicator ?? false,
     multi_source_indicator: connection?.multi_source_indicator ?? false,
     live_indicator: connection?.live_indicator ?? false,
-    open_access_type_id: connection?.open_access_type_id ?? null,
-    metering_type_id: connection?.metering_type_id ?? null,
-    renewable_type_id: connection?.renewable_type_id ?? null,
+    open_access_type_id: connection?.open_access_type_id ?? '',
+    metering_type_id: connection?.metering_type_id ?? '',
+    renewable_type_id: connection?.renewable_type_id ?? '',
     connected_date: connection?.connected_date
       ? formatDateForInput(connection?.connected_date)
       : '',
     consumer_legacy_code: connection?.consumer_legacy_code ?? '',
+    open_access_selected: connection?.open_access_type_id ? true : false,
+    renewable_selected: connection?.renewable_type_id ? true : false,
   })
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     connection ? route('connections.update', connection.connection_id) : route('connections.store'),
     {
-      showErrorToast: true,
-
       onComplete: () => {
         router.visit(route('consumer.create'))
       },
@@ -113,13 +112,12 @@ export default function ConnectionForm({
     setFormValue('service_office_code')(item.office_code)
     setServiceOfficeData(item)
   }
-
+  console.log(errors)
   return (
     <form
       onSubmit={handleSubmit}
       className='flex flex-col gap-6'
     >
-      {/* Basic Information */}
       <Card>
         <div className='border-b-2 border-gray-200 py-3'>
           <StrongText className='text-base font-semibold'>Basic Information</StrongText>
@@ -142,7 +140,6 @@ export default function ConnectionForm({
             setValue={setFormValue('connection_status_id')}
             value={formData.connection_status_id}
             error={errors?.connection_status_id}
-            required
           />
           <Input
             label='Consumer Number'
@@ -150,7 +147,6 @@ export default function ConnectionForm({
             setValue={setFormValue('consumer_number')}
             placeholder='Enter 13 digit unique consumer number'
             error={errors?.consumer_number}
-            required
             type='number'
           />
           <SelectList
@@ -182,6 +178,35 @@ export default function ConnectionForm({
           />
         </div>
       </Card>
+      <Card>
+        <div className='border-b-2 border-gray-200 py-3'>
+          <StrongText className='text-base font-semibold'>Managed Offices</StrongText>
+        </div>
+        <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
+          <ComboBox
+            label='Admin Office'
+            url={`/api/offices?sortPriority=3&q=`}
+            setValue={handleAdminOfficeChange}
+            value={adminOfficeData}
+            placeholder='Select Admin Office'
+            dataKey='office_code'
+            displayKey='office_name'
+            displayValue2='office_code'
+            error={errors?.admin_office_id}
+          />
+          <ComboBox
+            label='Service Office'
+            url={`/api/offices?sortPriority=3&q=`}
+            setValue={handleServiceOfficeChange}
+            value={serviceOfficeData}
+            placeholder='Select Service Office'
+            dataKey='office_code'
+            displayKey='office_name'
+            displayValue2='office_code'
+            error={errors?.service_office_id}
+          />
+        </div>
+      </Card>
 
       {/* Categorization */}
       <Card>
@@ -209,16 +234,7 @@ export default function ConnectionForm({
             error={errors?.connection_subcategory_id}
             required
           />
-          <SelectList
-            label='Open Access Type'
-            list={openAccessTypes}
-            dataKey='id'
-            displayKey='parameter_value'
-            setValue={setFormValue('open_access_type_id')}
-            value={formData.open_access_type_id}
-            error={errors?.open_access_type_id}
-            required
-          />
+
           <SelectList
             label='Metering Type'
             list={meteringTypes}
@@ -229,16 +245,7 @@ export default function ConnectionForm({
             error={errors?.metering_type_id}
             required
           />
-          <SelectList
-            label='Renewable Type'
-            list={renewableTypes}
-            dataKey='id'
-            displayKey='parameter_value'
-            setValue={setFormValue('renewable_type_id')}
-            value={formData.renewable_type_id}
-            error={errors?.renewable_type_id}
-            required
-          />
+
           <SelectList
             label='Billing Process'
             list={billingProcesses}
@@ -272,38 +279,52 @@ export default function ConnectionForm({
         </div>
       </Card>
 
-      {/* Managed Offices */}
       <Card>
         <div className='border-b-2 border-gray-200 py-3'>
-          <StrongText className='text-base font-semibold'>Managed Offices</StrongText>
+          <StrongText className='text-base font-semibold'>Additional Information</StrongText>
         </div>
         <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
-          <ComboBox
-            label='Admin Office'
-            url={`/api/offices?sortPriority=3&q=`}
-            setValue={handleAdminOfficeChange}
-            value={adminOfficeData}
-            placeholder='Select Admin Office'
-            dataKey='office_code'
-            displayKey='office_name'
-            displayValue2='office_code'
-            error={errors?.admin_office_id}
-          />
-          <ComboBox
-            label='Service Office'
-            url={`/api/offices?sortPriority=3&q=`}
-            setValue={handleServiceOfficeChange}
-            value={serviceOfficeData}
-            placeholder='Select Service Office'
-            dataKey='office_code'
-            displayKey='office_name'
-            displayValue2='office_code'
-            error={errors?.service_office_id}
-          />
+          <div className='flex flex-col gap-4'>
+            <CheckBox
+              label='Open Access'
+              toggleValue={toggleBoolean('open_access_selected')}
+              value={formData.open_access_selected}
+            />
+            {formData.open_access_selected && (
+              <SelectList
+                label='Open Access Type'
+                list={openAccessTypes}
+                dataKey='id'
+                displayKey='parameter_value'
+                setValue={setFormValue('open_access_type_id')}
+                value={formData.open_access_type_id}
+                error={errors?.open_access_type_id}
+                required
+              />
+            )}
+          </div>
+          <div>
+            <CheckBox
+              label='Renewable'
+              toggleValue={toggleBoolean('renewable_selected')}
+              value={formData.renewable_selected}
+            />
+            {formData.renewable_selected && (
+              <SelectList
+                label='Renewable Type'
+                list={renewableTypes}
+                dataKey='id'
+                displayKey='parameter_value'
+                setValue={setFormValue('renewable_type_id')}
+                value={formData.renewable_type_id}
+                error={errors?.renewable_type_id}
+                required
+              />
+            )}
+          </div>
         </div>
       </Card>
 
-      {/* Load & Capacity */}
       <Card>
         <div className='border-b-2 border-gray-200 py-3'>
           <StrongText className='text-base font-semibold'>Load & Capacity</StrongText>
@@ -325,8 +346,6 @@ export default function ConnectionForm({
           />
         </div>
       </Card>
-
-      {/* Indicators */}
       <Card>
         <div className='border-b-2 border-gray-200 py-3'>
           <StrongText className='text-base font-semibold'>Indicators</StrongText>

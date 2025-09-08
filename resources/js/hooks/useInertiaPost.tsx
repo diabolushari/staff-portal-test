@@ -47,7 +47,6 @@ const useInertiaPost = <T,>(url: string, options?: PostOptions) => {
             if (options?.showErrorToast) {
               keys.forEach((key) => {
                 showError(errors[key])
-                console.log(errors[key])
               })
             }
             if (keys.length > 0) {

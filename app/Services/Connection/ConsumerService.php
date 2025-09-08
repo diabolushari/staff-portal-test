@@ -6,6 +6,7 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
 use App\Http\Requests\Connections\ConsumerFormRequest;
+use App\Services\Parameters\ParameterValueService;
 use Google\Protobuf\Struct;
 use Google\Protobuf\Value;
 use Proto\Connections\AddressMessage;
@@ -21,8 +22,9 @@ class ConsumerService
 {
     private ConsumerServiceClient $client;
 
-    public function __construct()
-    {
+    public function __construct(
+        private ParameterValueService $parameterValueService
+    ) {
         $this->client = new ConsumerServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
@@ -31,52 +33,54 @@ class ConsumerService
 
     public function createConsumer(ConsumerFormRequest $request): GrpcServiceResponse
     {
-        try {
-            $grpcRequest = new ConsumerCreateRequest();
-            $grpcRequest->setConsumer($this->toConsumerProfile($request));
-            $grpcRequest->setAddress($this->toConsumerAddress($request));
-            $grpcRequest->setContact($this->toContactInfo($request));
 
-            [$response, $status] = $this->client->createConsumer($grpcRequest)->wait();
+        $grpcRequest = new ConsumerCreateRequest();
+        $grpcRequest->setConsumer($this->toConsumerProfile($request));
+        $grpcRequest->setAddress($this->toConsumerAddress($request));
+        $grpcRequest->setContact($this->toContactInfo($request));
 
-            return GrpcServiceResponse::success([], $response, $status->code, $status->details);
-        } catch (\Exception $e) {
-            return GrpcErrorService::handleErrorResponse($e);
-        }
-    }
-
-    public function getConsumer(int $connectionId): GrpcServiceResponse
-    {
-        try {
-            $grpcRequest = new ConsumerIdRequest();
-            $grpcRequest->setConnectionId($connectionId);
-
-            [$response, $status] = $this->client->getConsumerById($grpcRequest)->wait();
-
-            if ($status->code !== 0) {
-                return GrpcServiceResponse::error(
-                    GrpcErrorService::handleErrorResponse($status),
-                    $response,
-                    $status->code,
-                    $status->details
-                );
-            }
-
-            $connection = $response->getConsumer();
-            $contact = $response->getContact();
-
-            return GrpcServiceResponse::success(
-                [
-                    'consumer' => $this->transformConsumerToArray($connection),
-                    'contact' => $this->transformContactToArray($contact),
-                ],
+        [$response, $status] = $this->client->createConsumer($grpcRequest)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
                 $response,
                 $status->code,
                 $status->details
             );
-        } catch (\Exception $e) {
-            return GrpcErrorService::handleErrorResponse($e);
         }
+
+        return GrpcServiceResponse::success([], $response, $status->code, $status->details);
+    }
+
+    public function getConsumer(int $connectionId): GrpcServiceResponse
+    {
+
+        $grpcRequest = new ConsumerIdRequest();
+        $grpcRequest->setConnectionId($connectionId);
+
+        [$response, $status] = $this->client->getConsumerById($grpcRequest)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $connection = $response->getConsumer();
+        $contact = $response->getContact();
+
+        return GrpcServiceResponse::success(
+            [
+                'consumer' => $this->transformConsumerToArray($connection),
+                'contact' => $this->transformContactToArray($contact),
+            ],
+            $response,
+            $status->code,
+            $status->details
+        );
     }
 
     public function updateConsumer(ConsumerFormRequest $request): GrpcServiceResponse
@@ -172,6 +176,7 @@ class ConsumerService
             'tax_info' => $consumer->getTaxInfo(),
             'identity_info' => $consumer->getIdentityInfo(),
             'application_info' => $consumer->getApplicationInfo(),
+            'consumer_type' => $this->parameterValueService->toArray($consumer->getConsumerType()),
         ];
     }
 

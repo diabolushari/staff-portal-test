@@ -103,6 +103,7 @@ export interface ConsumerData {
     consumer_pan: string
     consumer_tan?: string | null
     consumer_gstin?: string | null
+    consumer_type: ParameterValues[]
     [key: string]: any
   }
   contact: {

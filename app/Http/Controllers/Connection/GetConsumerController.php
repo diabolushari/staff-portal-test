@@ -19,11 +19,9 @@ class GetConsumerController extends Controller
 
 
         if ($response->data === null) {
-            return redirect()->route('connection.consumer.create', $connectionId)->with('error', $response->error);
+            return redirect()->route('connection.consumer.create', $connectionId);
         }
-        if ($response->hasError()) {
-            return redirect()->route('connection.consumer.create', $connectionId)->with('error', $response->error);
-        }
+
 
         return Inertia::render('Consumer/ConsumerShow', [
             'consumer' => $response->data,
