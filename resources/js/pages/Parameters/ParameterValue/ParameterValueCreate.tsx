@@ -25,12 +25,12 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ]
 
-//TODO missing prop interface
-export default function ParameterValueCreate({
-  parameter_value,
-}: {
+interface Props {
   parameter_value?: ParameterValues
-}) {
+}
+
+//TODO missing prop interface
+export default function ParameterValueCreate({ parameter_value }: Props) {
   // don't use loose type check values like 0 want be counted
   const attributeValuePresent =
     parameter_value?.attribute1_value ||
@@ -58,7 +58,7 @@ export default function ParameterValueCreate({
     notes: parameter_value?.notes ?? '',
   })
 
-  const { post, errors } = useInertiaPost(
+  const { post, errors } = useInertiaPost<typeof formData>(
     parameter_value
       ? route('parameter-value.update', parameter_value.id)
       : route('parameter-value.store'),

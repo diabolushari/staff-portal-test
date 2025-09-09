@@ -9,6 +9,7 @@ import SelectList from '@/ui/form/SelectList'
 import Modal from '@/ui/Modal/Modal'
 import { useState } from 'react'
 import AttributeInput from './AttributeInput'
+import { router } from '@inertiajs/react'
 
 interface Props {
   title: string
@@ -44,13 +45,15 @@ export default function ParameterDefinitionForm({
     is_effective_date_driven: parameterDefinition?.is_effective_date_driven ?? false,
   })
 
-  const { post, errors, loading } = useInertiaPost(
+  const { post, errors, loading } = useInertiaPost<typeof formData>(
     parameterDefinition
       ? route('parameter-definition.update', parameterDefinition.id)
       : route('parameter-definition.store'),
     {
-      showErrorToast: true,
-      onComplete: () => setShowModal(false),
+      onComplete: () => {
+        setShowModal(false)
+        router.get(route('parameter-definition.index'))
+      },
     }
   )
 
@@ -77,8 +80,6 @@ export default function ParameterDefinitionForm({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    // convert attributes back into attribute1_name ... attribute5_name
     const attributesPayload = attributes.reduce(
       (acc, attr, i) => {
         acc[`attribute${i + 1}_name`] = attr
@@ -86,12 +87,10 @@ export default function ParameterDefinitionForm({
       },
       {} as Record<string, string>
     )
-
     const payload = {
       ...formData,
       ...attributesPayload,
     }
-
     parameterDefinition ? post({ ...payload, _method: 'PUT' }) : post(payload)
   }
 

@@ -89,7 +89,7 @@ class ParameterDefinitionController extends Controller
             ]);
         }
 
-        return redirect()->back()->with([
+        return redirect()->route('parameter-definition.index')->with([
             'message' => 'Parameter definition created successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,
@@ -112,7 +112,7 @@ class ParameterDefinitionController extends Controller
             ]);
         }
 
-        return redirect()->back()->with([
+        return redirect()->route('parameter-definition.index')->with([
             'message' => 'Parameter definition updated successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,
@@ -135,7 +135,7 @@ class ParameterDefinitionController extends Controller
             ]);
         }
 
-        return redirect()->back()->with([
+        return redirect()->route('parameter-definition.index')->with([
             'message' => 'Parameter definition deleted successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,
