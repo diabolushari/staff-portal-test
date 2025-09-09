@@ -9,6 +9,7 @@ use App\Services\Parameters\ParameterDomainService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+// TODO: Fix Type Errors
 class ParameterDefinitionController extends Controller
 {
     public function __construct(

@@ -1,4 +1,4 @@
-import { settingsOffices } from '@/components/Navbar/navitems'
+import { parties, settingsOffices } from '@/components/Navbar/navitems'
 import { Office } from '@/interfaces/consumers'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
@@ -37,7 +37,7 @@ export default function OfficeIndex({ offices, office_types, filters }: Readonly
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <ListSearch
-          title='Office Search'
+          title='Parties search'
           placeholder='Enter office name or code'
           url={route('offices.index')}
           setItems={setItems}

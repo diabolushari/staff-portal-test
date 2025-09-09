@@ -1,5 +1,6 @@
 import { settingsReferenceData } from '@/components/Navbar/navitems'
 import ParameterDomainForm from '@/components/Parameter/ParameterDomain/ParameterDomainForm'
+import ParameterDomainList from '@/components/Parameter/ParameterDomain/ParameterDomainList'
 import ParameterDomainSearchForm from '@/components/Parameter/ParameterDomain/ParameterDomainSearchForm'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
@@ -10,8 +11,10 @@ import DeleteButton from '@/ui/button/DeleteButton'
 import EditButton from '@/ui/button/EditButton'
 import CardHeader from '@/ui/Card/CardHeader'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import ListSearch from '@/ui/Search/ListSearch'
 import Table from '@/ui/Table/Table'
 import { Head } from '@inertiajs/react'
+import { router } from '@inertiajs/react'
 import { AnimatePresence } from 'framer-motion'
 import { useCallback, useState } from 'react'
 import { route } from 'ziggy-js'
@@ -75,20 +78,52 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
       breadcrumb={breadcrumbs}
       navItems={settingsReferenceData}
     >
-      <Head title='Parameter Domains' />
+      {/* <Head title='Parameter Domains' /> */}
+        <div className='mb-4 flex items-center justify-between'>
+          <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Domains</h2>
+          <button
+            onClick={handleCreateClick}
+            className='rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
+          >
+            + Add Parameter Domain
+          </button>
+        </div>
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
-        <CardHeader
-          breadCrumb={breadcrumbs}
+        <div className='mb-4 flex items-center justify-between'>
+          <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Domains</h2>
+          <button
+            onClick={handleCreateClick}
+            className='rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
+          >
+            + Add Domain
+          </button>
+        </div>
+        <ListSearch
           title='Parameter Domains'
-          subheading='Add and manage parameter domains.'
-          onAddClick={handleCreateClick}
+          url={route('parameter-domain.index')}
+          search={filters.search}
         />
         <ParameterDomainSearchForm
           systemModules={modules}
           filters={filters}
         />
 
-        <Table heads={tableHeads}>
+       <div>
+          {domains != null && domains.length > 0 ? (
+            <ParameterDomainList
+              domains={domains}
+              onEdit={handleEditClick}       
+              onDelete={handleDeleteClick}   
+              onView={(domain) => router.get(route('parameter-domains.show', domain.id))}
+
+            />
+          ) : (
+            <p>No Parameter Domains Found.</p>
+          )}
+        </div>
+
+
+        {/* <Table heads={tableHeads}>
           {domains.map((item, index) => (
             <TableRow key={item.id}>
               <TableCell>{index + 1}</TableCell>
@@ -105,7 +140,7 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
               </TableCell>
             </TableRow>
           ))}
-        </Table>
+        </Table> */}
 
         {/* Create/Edit Modal */}
         <AnimatePresence>

@@ -13,16 +13,14 @@ use Inertia\Response;
 use Proto\Parameters\ListParameterValuesRequest;
 use Proto\Parameters\ParameterValueServiceClient;
 
+// TODO Fix Type Errors
 class PartiesController extends Controller
 {
-    private PartyService $partyService;
     private ParameterValueServiceClient $parameterValueClient;
 
-    public function __construct(PartyService $partyService)
+    public function __construct(private PartyService $partyService)
     {
-        $this->partyService = $partyService;
-
-        // Manually instantiate the gRPC client for Parameter Values, as per the original code.
+        // TODO use party service
         $this->parameterValueClient = new ParameterValueServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
@@ -34,7 +32,8 @@ class PartiesController extends Controller
      */
     public function index(Request $request): Response|RedirectResponse
     {
-        $partiesResponse = $this->partyService->getParties();
+        $search = $request->input('search') ?? null;
+        $partiesResponse = $this->partyService->getParties($search);
 
         if ($partiesResponse->hasError()) {
             return $partiesResponse->error;

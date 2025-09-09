@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.connections;
+
+option php_namespace = "Proto\\Connections";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+
+// -------------------- MESSAGES --------------------
+
+message ConsumerAddressMessage {
+    int32 address_id = 1;
+    string address_line_1 = 2;
+    string address_line_2 = 3;
+    string city_town_village = 4;
+    string state = 5;
+    int32 pincode = 6;
+    int32 district_id = 7;
+    int32 state_id = 8;
+}
+
+// Requests
+message AddressUpdateRequest {
+    int32 address_id = 1;
+    string address_line_1 = 2;
+    string address_line_2 = 3;
+    string city_town_village = 4;
+    string state = 5;
+    int32 pincode = 6;
+    int32 district_id = 7;
+    int32 state_id = 8;
+}
+
+message AddressIdRequest {
+    int32 address_id = 1;
+}
+
+message ConsumerAddressListRequest {
+    int32 page_number = 1;
+    int32 page_size = 2;
+    string search = 3;
+}
+
+// Responses
+message ConsumerAddressListResponse {
+    repeated ConsumerAddressMessage addresses = 1;
+}
+
+// -------------------- SERVICE --------------------
+
+service ConsumerAddressService {
+    rpc GetAllAddresses(ConsumerAddressListRequest) returns (ConsumerAddressListResponse);
+    rpc UpdateAddress(AddressUpdateRequest) returns (ConsumerAddressMessage);
+    rpc DeleteAddress(AddressIdRequest) returns (google.protobuf.Empty);
+    rpc GetAddressById(AddressIdRequest) returns (ConsumerAddressMessage);
+}

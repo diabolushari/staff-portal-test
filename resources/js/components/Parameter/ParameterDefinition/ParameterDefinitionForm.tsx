@@ -1,14 +1,14 @@
-import { useState } from 'react'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { ParameterDefinition, ParameterDomain } from '@/interfaces/parameter_types'
+import SubHeading from '@/typography/SubHeading'
+import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
 import Input from '@/ui/form/Input'
-import Modal from '@/ui/Modal/Modal'
-import AttributeInput from './AttributeInput'
-import Button from '@/ui/button/Button'
-import SubHeading from '@/typography/SubHeading'
 import SelectList from '@/ui/form/SelectList'
+import Modal from '@/ui/Modal/Modal'
+import { useState } from 'react'
+import AttributeInput from './AttributeInput'
 
 interface Props {
   title: string
@@ -19,6 +19,7 @@ interface Props {
   domains: ParameterDomain[]
 }
 
+//TODO Fix Type Errors
 export default function ParameterDefinitionForm({
   title,
   setShowModal,
@@ -26,6 +27,7 @@ export default function ParameterDefinitionForm({
   parameterDefinition,
   domains,
 }: Readonly<Props>) {
+  //TODO [{id: number; attributer: string}] so attributes from middle of list can be removed or show full list if using object
   const [visibleAttrs, setVisibleAttrs] = useState<boolean[]>(() => {
     const initialVisibility = [
       !!parameterDefinition?.attribute1_name,
@@ -39,6 +41,7 @@ export default function ParameterDefinitionForm({
     return defaults
   })
 
+  // use Array for storing attributes
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     parameter_name: parameterDefinition?.parameter_name ?? '',
     domain_id: parameterDefinition?.domain_id ?? '',
@@ -109,7 +112,6 @@ export default function ParameterDefinitionForm({
                 displayKey='domain_name'
               />
             </div>
-
             {Array.from({ length: 5 }).map((_, index) => (
               <div
                 key={index}

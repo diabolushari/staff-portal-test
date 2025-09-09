@@ -1,17 +1,18 @@
+import { settingsReferenceData } from '@/components/Navbar/navitems'
 import capitalSnakeCase from '@/formaters/capitalcase'
 import useCustomForm from '@/hooks/useCustomForm'
 import useFetchRecord from '@/hooks/useFetchRecord'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import AppLayout from '@/layouts/app-layout'
+import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
+import MainLayout from '@/layouts/main-layout'
+import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
+import DatePicker from '@/ui/form/DatePicker'
 import DynamicSelectList from '@/ui/form/DynamicSelectList'
 import Input from '@/ui/form/Input'
 import TextArea from '@/ui/form/TextArea'
-import { BreadcrumbItem } from '@/types'
 import { useEffect, useState } from 'react'
-import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
-import DatePicker from '@/ui/form/DatePicker'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -23,20 +24,25 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/parameter-value/create',
   },
 ]
+
+//TODO missing prop interface
 export default function ParameterValueCreate({
   parameter_value,
 }: {
   parameter_value?: ParameterValues
 }) {
+  // don't use loose type check values like 0 want be counted
   const attributeValuePresent =
     parameter_value?.attribute1_value ||
     parameter_value?.attribute2_value ||
     parameter_value?.attribute3_value ||
     parameter_value?.attribute4_value ||
     parameter_value?.attribute5_value
+
   const [selectedDefinition, setSelectedDefinition] = useState<ParameterDefinition | null>(
     attributeValuePresent ? parameter_value?.definition_id : null
   )
+
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     definition_id: parameter_value?.definition_id ?? '',
     parameter_code: parameter_value?.parameter_code ?? '',
@@ -79,7 +85,10 @@ export default function ParameterValueCreate({
   }, [formData.definition_id, definitions])
 
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
+    <MainLayout
+      breadcrumb={breadcrumbs}
+      navItems={settingsReferenceData}
+    >
       <div className='flex min-h-screen items-center justify-center bg-white dark:bg-gray-900'>
         <div className='w-3/4 rounded-xl bg-white p-8 py-8 shadow-md dark:bg-gray-800'>
           <div className='mx-auto max-w-5xl py-8'>
@@ -96,7 +105,7 @@ export default function ParameterValueCreate({
                 <DynamicSelectList
                   url='/api/parameter-definitions'
                   dataKey='id'
-                  displayKey='parameterName'
+                  displayKey='parameter_name'
                   label='Definition'
                   setValue={setFormValue('definition_id')}
                   value={formData.definition_id}
@@ -238,6 +247,6 @@ export default function ParameterValueCreate({
           </div>
         </div>
       </div>
-    </AppLayout>
+    </MainLayout>
   )
 }

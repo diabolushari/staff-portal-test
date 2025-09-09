@@ -16,6 +16,7 @@ use Proto\Consumers\GetPartyByVersionIdRequest;
 use Proto\Consumers\GetPartyHistoryRequest;
 use Proto\Consumers\PartyServiceClient;
 use Proto\Consumers\UpdatePartyRequest;
+use Proto\Consumers\SearchPartiesByNameRequest;
 
 class PartyService
 {
@@ -32,11 +33,25 @@ class PartyService
     /**
      * Get list of all current parties
      */
-    public function getParties(): GrpcServiceResponse
+    public function getParties(?string $search): GrpcServiceResponse
     {
         $request = new GPBEmpty;
-        // Updated gRPC method call
+        if ($search !== null) {
+            $request = new SearchPartiesByNameRequest;
+            $request->setName($search);
+            [$response, $status] = $this->client->SearchPartiesByName($request)->wait();
+    
+        }
+
+        else {
+        
+        $request = new GPBEmpty;
         [$response, $status] = $this->client->ListCurrentParties($request)->wait();
+    }
+        
+        
+        // Updated gRPC method call
+       // [$response, $status] = $this->client->ListCurrentParties($request)->wait();
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(

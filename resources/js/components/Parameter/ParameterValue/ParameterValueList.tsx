@@ -1,0 +1,94 @@
+import { ParameterValues } from '@/interfaces/parameter_types'
+import { Pencil, Trash2 } from 'lucide-react'
+
+interface Props {
+  parameterValues: ParameterValues[]
+  onView?: (item: ParameterValues) => void
+  onEdit?: (item: ParameterValues) => void
+  onDelete?: (item: ParameterValues) => void
+}
+
+export default function ParameterValuesList({
+  parameterValues,
+  onView,
+  onEdit,
+  onDelete,
+}: Readonly<Props>) {
+  return (
+    <div className='relative w-full rounded-lg bg-white'>
+      <div className='font-inter text-dark-gray px-7 pt-[21px] pb-3 text-[15px] leading-[23px] font-semibold tracking-[-0.0924px]'>
+        Parameter Values
+      </div>
+      <div className='flex flex-col px-7 pb-7'>
+        {parameterValues.map((param) => (
+          <div
+            key={param.id}
+            className='mb-4 rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
+          >
+            <div className='flex items-start justify-between'>
+              <div
+                className='flex flex-1 flex-col gap-2.5 p-[10px] cursor-pointer'
+                onClick={() => onView?.(param)}
+              >
+                <div className='flex flex-col gap-1'>
+                  <div className='flex items-center gap-2'>
+                    <div className='font-inter text-base leading-normal font-semibold text-black'>
+                      {param.parameter_value}
+                    </div>
+                    <div className='rounded-[50px] bg-blue-100 px-2.5 py-px'>
+                      <div className='font-inter text-xs leading-6 font-normal tracking-[-0.072px] text-blue-800'>
+                        {param.parameter_code}
+                      </div>
+                    </div>
+                  </div>
+
+                  {param.notes && (
+                    <div className='text-dark-gray text-sm'>Notes: {param.notes}</div>
+                  )}
+                </div>
+              </div>
+
+              <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
+                <div
+                  className={`rounded-[50px] px-2.5 py-px ${
+                    param.is_active ? 'bg-green-100' : 'bg-red-100'
+                  }`}
+                >
+                  <div
+                    className={`font-inter text-xs leading-6 font-normal tracking-[-0.072px] ${
+                      param.is_active ? 'text-deep-green' : 'text-red-800'
+                    }`}
+                  >
+                    {param.is_active ? 'Active' : 'Inactive'}
+                  </div>
+                </div>
+
+                {/* Inline Edit/Delete buttons */}
+                <div className='flex items-center gap-3 mt-2'>
+                  {onEdit && (
+                    <button
+                      onClick={() => onEdit(param)}
+                      className='flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800'
+                    >
+                      <Pencil className='h-4 w-4' />
+                      Edit
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button
+                      onClick={() => onDelete(param)}
+                      className='flex items-center gap-1 text-sm text-red-600 hover:text-red-800'
+                    >
+                      <Trash2 className='h-4 w-4' />
+                      Delete
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}

@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.connections;
+
+option php_namespace = "Proto\\Connections";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+import "connections/consumer_contact_detail.proto";
+import "parameters/parameter-value.proto";
+
+// -------------------- MESSAGES --------------------
+
+message ConsumerMessage {
+    optional int32 version_id = 1;
+    int32 connection_id = 2;
+    int32 consumer_type_id = 3;
+    string organization_name = 4;
+    string applicant_code = 5;
+    string consumer_pan = 6;
+    string consumer_tan = 7;
+    string consumer_gstin = 8;
+    bool income_tax_withholding_ind = 9;
+    bool gst_withholding_ind = 10;
+    optional google.protobuf.Struct manufacturing_info = 11;
+    optional google.protobuf.Struct tax_info = 12;
+    optional google.protobuf.Struct identity_info = 13;
+    optional google.protobuf.Struct application_info = 14;
+    optional bool is_current = 15;
+    optional google.protobuf.Struct addresses = 16;
+   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto consumer_type = 17;
+
+    
+}
+
+message AddressMessage {
+    optional int32 address_id = 1;
+    string address_line_1 = 2;
+    string address_line_2 = 3;
+    string city_town_village = 4;
+    string state = 5;
+    int32 pincode = 6;
+    int32 district_id = 7;
+    int32 state_id = 8;
+}
+
+message ContactMessage {
+    int32 connection_id = 1;
+    optional int32 version_id = 2;
+    string primary_email = 3;
+    int64 primary_phone = 4;
+    google.protobuf.Struct contact_folio = 5;
+    optional bool is_current = 6;
+}
+
+// Requests
+message ConsumerCreateRequest {
+    ConsumerMessage consumer = 1;
+    AddressMessage address = 2;
+    ContactMessage contact = 3;
+}
+
+message ConsumerUpdateRequest {
+    ConsumerMessage consumer = 1;
+    AddressMessage address = 2;
+    ContactMessage contact = 3;
+}
+
+message ConsumerIdRequest {
+    int32 connection_id = 1;
+}
+
+message ConsumerListResponse {
+    repeated ConsumerMessage consumers = 1;
+}
+
+message GetConsumerResponse {
+  ConsumerMessage consumer = 1;
+  ConsumerContactDetailMessage contact = 2;
+}
+
+// -------------------- SERVICE --------------------
+
+service ConsumerService {
+    rpc CreateConsumer(ConsumerCreateRequest) returns (ConsumerMessage);
+    rpc GetConsumerById(ConsumerIdRequest) returns (GetConsumerResponse );
+    rpc GetAllConsumers(google.protobuf.Empty) returns (ConsumerListResponse);
+    rpc UpdateConsumer(ConsumerUpdateRequest) returns (ConsumerMessage);
+    rpc DeleteConsumer(ConsumerIdRequest) returns (google.protobuf.Empty);
+}

@@ -1,35 +1,19 @@
-import React, { useCallback, useState } from 'react'
-import AppLayout from '@/layouts/app-layout'
-import { BreadcrumbItem } from '@/types'
-import CardHeader from '@/ui/Card/CardHeader'
-import { TableCell, TableRow } from '@/components/ui/table'
-import EditButton from '@/ui/button/EditButton'
-import DeleteButton from '@/ui/button/DeleteButton'
-import { ParameterDefinition, ParameterDomain } from '@/interfaces/parameter_types'
-import DeleteModal from '@/ui/Modal/DeleteModal'
-import Table from '@/ui/Table/Table'
-import ParameterDefinitionForm from '@/components/Parameter/ParameterDefinition/ParameterDefinitionForm'
-import ParameterDefinitionSearchForm from '@/components/Parameter/ParameterDefinition/ParameterDefinitionSearchForm'
-import MainLayout from '@/layouts/main-layout'
 import { settingsReferenceData } from '@/components/Navbar/navitems'
+import ParameterDefinitionForm from '@/components/Parameter/ParameterDefinition/ParameterDefinitionForm'
+import ParameterDefinitionList from '@/components/Parameter/ParameterDefinition/ParameterDefinitionList'
+import ParameterDefinitionSearchForm from '@/components/Parameter/ParameterDefinition/ParameterDefinitionSearchForm'
+import { ParameterDefinition, ParameterDomain } from '@/interfaces/parameter_types'
+import MainLayout from '@/layouts/main-layout'
+import { BreadcrumbItem } from '@/types'
+import DeleteModal from '@/ui/Modal/DeleteModal'
+import ListSearch from '@/ui/Search/ListSearch'
+import { useCallback, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
     title: 'Parameter Definition',
     href: '/parameter-definition',
   },
-]
-const tableHeads = [
-  'S.No',
-  'ID',
-  'Parameter Name',
-  'Domain Name',
-  'Attribute 1',
-  'Attribute 2',
-  'Attribute 3',
-  'Attribute 4',
-  'Attribute 5',
-  'Actions',
 ]
 
 export default function ParameterDefinitionIndex({
@@ -50,6 +34,7 @@ export default function ParameterDefinitionIndex({
     useState<ParameterDefinition | null>(null)
   const [parameterFormModal, setParameterFormModal] = useState(false)
   const [parameterDeleteModal, setParameterDeleteModal] = useState(false)
+  const [items, setItems] = useState<ParameterDefinition[]>(parameter_definitions)
 
   const handleEditClick = useCallback((item: ParameterDefinition) => {
     setParameterDefinitionToEdit(item)
@@ -71,44 +56,38 @@ export default function ParameterDefinitionIndex({
       breadcrumb={breadcrumbs}
       navItems={settingsReferenceData}
     >
+      <div className='mb-4 flex items-center justify-between'>
+        <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Definitions</h2>
+        <button
+          onClick={handleCreateClick}
+          className='rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
+        >
+          + Add Parameter Definition
+        </button>
+      </div>
       <div className='p-4'>
-        <CardHeader
-          breadCrumb={breadcrumbs}
+        <ListSearch
           title='Parameter Definition'
-          subheading='Add and manage parameter definition.'
-          onAddClick={handleCreateClick}
+          url={route('parameter-definition.index')}
+          search={filters.search}
         />
+
         <ParameterDefinitionSearchForm
           parameterDomains={domains}
           filters={filters}
         />
-        <Table heads={tableHeads}>
-          {parameter_definitions && (
-            <>
-              {parameter_definitions.map((item, index) => (
-                <TableRow key={item.id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{item.id}</TableCell>
-                  <TableCell>{item.parameter_name}</TableCell>
-                  <TableCell>{item.domain?.domain_name}</TableCell>
-                  <TableCell>{item.attribute1_name}</TableCell>
-                  <TableCell>{item.attribute2_name}</TableCell>
-                  <TableCell>{item.attribute3_name}</TableCell>
-                  <TableCell>{item.attribute4_name}</TableCell>
-                  <TableCell>{item.attribute5_name}</TableCell>
-                  <TableCell>
-                    <div className='flex space-x-3'>
-                      <EditButton onClick={() => handleEditClick(item)} />
-                      <DeleteButton onClick={() => handleDeleteClick(item)} />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </>
+        <div>
+          {items != null && items.length > 0 ? (
+            <ParameterDefinitionList
+              parameterDefinitions={items}
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
+            />
+          ) : (
+            <p>No Parameter Definitions Found.</p>
           )}
-        </Table>
+        </div>
       </div>
-
       {parameterFormModal && (
         <ParameterDefinitionForm
           title={

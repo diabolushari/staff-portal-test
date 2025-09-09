@@ -8,12 +8,21 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
 import { Link, usePage } from '@inertiajs/react'
+import { Children } from 'react'
 // Using local wrapped NavigationMenu (supports viewport prop)
 
 export const NAV_ITEMS = [
   { title: 'Dashboard', href: '/dashboard', description: 'Your main overview' },
   { title: 'Services', href: '/services', description: 'Manage your services' },
-  { title: 'Consumers', href: '/consumers', description: 'Customer data and tools' },
+  {
+    title: 'Consumers',
+    href: '/consumers',
+    description: 'Customer data and tools',
+    children: [
+      { title: 'Parties', href: '/parties', description: 'Manage parties' },
+      { title: 'Connections', href: '/connections', description: 'Manage connections' },
+    ],
+  },
   { title: 'Billing', href: '/billing', description: 'Invoices and payments' },
   { title: 'Accounts', href: '/accounts', description: 'User accounts and permissions' },
   {

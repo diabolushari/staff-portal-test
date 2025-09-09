@@ -50,6 +50,7 @@ message ListParameterValuesRequest {
   int32 page_size = 2;
   string domain_name = 3;
   string parameter_name = 4;
+  string parameter_value = 5;
 }
 
 message ListParameterValuesResponse {

@@ -6,23 +6,24 @@ use App\Http\Requests\Parameters\ParameterDefinitionFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
-use Proto\Parameters\ParameterDefinitionServiceClient;
-use Proto\Parameters\ParameterDefinitionProto;
 use Proto\Parameters\CreateParameterDefinitionRequest;
-use Proto\Parameters\UpdateParameterDefinitionRequest;
 use Proto\Parameters\DeleteParameterDefinitionRequest;
 use Proto\Parameters\GetParameterDefinitionRequest;
 use Proto\Parameters\ListParameterDefinitionsRequest;
+use Proto\Parameters\ParameterDefinitionProto;
+use Proto\Parameters\ParameterDefinitionServiceClient;
 use Proto\Parameters\ParameterDomainProto;
+use Proto\Parameters\UpdateParameterDefinitionRequest;
 
 class ParameterDefinitionService
 {
     private ParameterDefinitionServiceClient $client;
+
     private ParameterDomainService $parameterDomainService;
 
     public function __construct()
     {
-        $this->parameterDomainService = new ParameterDomainService();
+        $this->parameterDomainService = new ParameterDomainService;
 
         $this->client = new ParameterDefinitionServiceClient(
             config('app.consumer_service_grpc_host'),
@@ -32,7 +33,7 @@ class ParameterDefinitionService
 
     public function getParameterDefinitions(int $page = 1, int $pageSize = 10, ?string $domainName = null, ?string $search = null): GrpcServiceResponse
     {
-        $request = new ListParameterDefinitionsRequest();
+        $request = new ListParameterDefinitionsRequest;
         $request->setPage($page);
         $request->setPageSize($pageSize);
 
@@ -79,7 +80,7 @@ class ParameterDefinitionService
 
     public function getParameterDefinition(string|int $id): GrpcServiceResponse
     {
-        $request = new GetParameterDefinitionRequest();
+        $request = new GetParameterDefinitionRequest;
         $request->setId($id);
 
         [$response, $status] = $this->client->GetParameterDefinition($request)->wait();
@@ -111,7 +112,8 @@ class ParameterDefinitionService
 
     public function createParameterDefinition(ParameterDefinitionFormRequest $request): GrpcServiceResponse
     {
-        $proto = new ParameterDefinitionProto();
+        $proto = new ParameterDefinitionProto;
+        // TODO pass default values
         $proto->setParameterName($request->parameterName);
         $proto->setAttribute1Name($request->attribute1Name);
         $proto->setAttribute2Name($request->attribute2Name);
@@ -121,7 +123,7 @@ class ParameterDefinitionService
         $proto->setIsEffectiveDateDriven($request->isEffectiveDateDriven);
         $proto->setDomainId($request->domainId);
 
-        $grpcRequest = new CreateParameterDefinitionRequest();
+        $grpcRequest = new CreateParameterDefinitionRequest;
         $grpcRequest->setDefinition($proto);
 
         [$response, $status] = $this->client->CreateParameterDefinition($grpcRequest)->wait();
@@ -154,8 +156,8 @@ class ParameterDefinitionService
         ParameterDefinitionFormRequest $request,
         string|int $id,
     ): GrpcServiceResponse {
-        $proto = new ParameterDefinitionProto();
-        $domainProto = new ParameterDomainProto();
+        $proto = new ParameterDefinitionProto;
+        $domainProto = new ParameterDomainProto;
         $parameterDomain = $this->parameterDomainService->getParameterDomain($request->domainId);
         $proto->setId($id);
         $proto->setParameterName($request->parameterName);
@@ -167,7 +169,7 @@ class ParameterDefinitionService
         $proto->setIsEffectiveDateDriven($request->isEffectiveDateDriven);
         $proto->setDomainId($request->domainId);
 
-        $grpcRequest = new UpdateParameterDefinitionRequest();
+        $grpcRequest = new UpdateParameterDefinitionRequest;
         $grpcRequest->setDefinition($proto);
 
         [$response, $status] = $this->client->UpdateParameterDefinition($grpcRequest)->wait();
@@ -197,7 +199,7 @@ class ParameterDefinitionService
 
     public function deleteParameterDefinition(string|int $id): GrpcServiceResponse
     {
-        $grpcRequest = new DeleteParameterDefinitionRequest();
+        $grpcRequest = new DeleteParameterDefinitionRequest;
         $grpcRequest->setId($id);
 
         [$response, $status] = $this->client->DeleteParameterDefinition($grpcRequest)->wait();

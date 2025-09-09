@@ -38,8 +38,8 @@ export default function Input({
   return (
     <div className='space-y-1'>
       {label != null && (
-        <label className='text-sm font-normal text-[#252c32] leading-6'>
-          {label}
+        <label className='text-sm leading-6 font-normal text-[#252c32]'>
+          {required ? `${label} *` : label}
         </label>
       )}
 

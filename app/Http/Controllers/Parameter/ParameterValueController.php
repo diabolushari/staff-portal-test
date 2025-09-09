@@ -4,27 +4,13 @@ namespace App\Http\Controllers\Parameter;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Parameters\ParameterValueFormRequest;
-use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterDefinitionService;
 use App\Services\Parameters\ParameterDomainService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-use Proto\Parameters\ParameterValueProto;
-use Proto\Parameters\ParameterValueServiceClient;
-use Proto\Parameters\CreateParameterValueRequest;
-use Proto\Parameters\UpdateParameterValueRequest;
-use Proto\Parameters\GetParameterValueRequest;
-use Proto\Parameters\DeleteParameterValueRequest;
-use Proto\Parameters\ListParameterValuesRequest;
-
-use Grpc\ChannelCredentials;
-use Proto\Parameters\ListParameterDefinitionsRequest;
-use Proto\Parameters\ListParameterDomainsRequest;
-use Proto\Parameters\ParameterDefinitionServiceClient;
-use Proto\Parameters\ParameterDomainServiceClient;
-
+// TODO FIX Type errors
 class ParameterValueController extends Controller
 {
     private $client;
@@ -35,17 +21,15 @@ class ParameterValueController extends Controller
         private ParameterDefinitionService $parameterDefinitionService
     ) {}
 
-
-    public function edit($id)
+    public function edit($id): Response
     {
 
         $value = $this->parameterValueService->getParameterValue($id);
 
         return Inertia::render('Parameters/ParameterValue/ParameterValueCreate', [
-            'parameter_value' => $value->data
+            'parameter_value' => $value->data,
         ]);
     }
-
 
     public function index(Request $request)
     {
@@ -77,7 +61,6 @@ class ParameterValueController extends Controller
 
     public function create()
     {
-
         return Inertia::render('Parameters/ParameterValue/ParameterValueCreate');
     }
 
@@ -87,8 +70,9 @@ class ParameterValueController extends Controller
         if ($value->hasError()) {
             return $value->error;
         }
+
         return Inertia::render('Parameters/ParameterValue/ParameterValueShow', [
-            'parameter_value' => $value->data
+            'parameter_value' => $value->data,
         ]);
     }
 
@@ -118,7 +102,6 @@ class ParameterValueController extends Controller
         if ($response->hasError()) {
             return $response->error;
         }
-
 
         return redirect()->back()->with([
             'message' => 'Parameter value updated successfully.',

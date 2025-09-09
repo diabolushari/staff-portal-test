@@ -6,8 +6,12 @@ use App\Http\Controllers\Api\ParameterDefinitionItemApiController;
 use App\Http\Controllers\Api\ParameterDefinitionListApiController;
 use App\Http\Controllers\Api\ParameterDomainListApiController;
 use App\Http\Controllers\Api\SystemModuleApiController;
+use App\Http\Controllers\Connection\ConnectionController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
+use App\Http\Controllers\Connection\ConsumerController;
+use App\Http\Controllers\Connection\CreateConsumerController;
+use App\Http\Controllers\Connection\GetConsumerController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
 use App\Http\Controllers\Metering\MeterController;
 use App\Http\Controllers\Metering\MeterTimezoneTypeRelController;
@@ -37,6 +41,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('parameter-value', ParameterValueController::class);
     Route::resource('offices', OfficeController::class);
     Route::resource('parties', PartiesController::class);
+    Route::resource('connections', ConnectionController::class);
+    Route::resource('consumers', ConsumerController::class);
+    Route::get('connection/{id}/consumer', GetConsumerController::class)->name('connection.consumer');
+    Route::get('connection/{id}/consumer/create', CreateConsumerController::class)->name('connection.consumer.create');
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)
         ->name('offices.update-contacts');
     Route::resource('meters', MeterController::class);
@@ -62,5 +70,5 @@ Route::get('page-ui', function () {
     return Inertia::render('UItest');
 })->name('page-ui');
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

@@ -19,6 +19,19 @@ export const settingsOffices: navItem[] = [
     icon: <HomeIcon className='h-4 w-4' />,
   },
 ]
+export const settingsParties: navItem[] = [
+  {
+    title: 'Search Parties',
+    href: '/parties',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+
+  {
+    title: 'Add Parties',
+    href: '/parties/create',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
+]
 
 export const settingsReferenceData: navItem[] = [
   {
@@ -42,6 +55,33 @@ export const settingsReferenceData: navItem[] = [
   {
     title: 'Parameter Values',
     href: '/parameter-value',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
+]
+
+export const connectionsNavItems: navItem[] = [
+  {
+    title: 'Search Connections',
+    href: '/connections',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+
+  {
+    title: 'Add Connection',
+    href: '/connections/create',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
+]
+export const partiesNavItems: navItem[] = [
+  {
+    title: 'Search Parties',
+    href: '/parties',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+
+  {
+    title: 'Add Party',
+    href: '/parties/create',
     icon: <HomeIcon className='h-4 w-4' />,
   },
 ]
