@@ -10,7 +10,8 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 
 interface Props {
   consumer_types: ParameterValues[]
-  geo_regions: any[]
+  districts: any[]
+  states: any[]
   connection_id: number
   data?: any
 }
@@ -22,7 +23,8 @@ const isSameAddress = (primary?: any, other?: any) => {
 
 export default function ConsumerFormComponent({
   consumer_types,
-  geo_regions,
+  districts,
+  states,
   connection_id,
   data,
 }: Props) {
@@ -76,12 +78,6 @@ export default function ConsumerFormComponent({
     { showErrorToast: true }
   )
 
-  // Flatten geo regions
-  const flatGeoRegions = geo_regions?.flat()
-  const districts = flatGeoRegions?.filter((region) => region.region_classification === 2)
-  const states = flatGeoRegions?.filter((region) => region.region_classification === 1)
-
-  // Helpers for nested addresses
   const setOtherAddress = (type: 'billing' | 'premises', value: any) => {
     setAll({
       other_addresses: {
@@ -112,7 +108,7 @@ export default function ConsumerFormComponent({
     }
     console.log(formData)
   }
-
+  console.log(states, districts)
   return (
     <form
       className='flex flex-col gap-6'

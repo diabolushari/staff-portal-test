@@ -6,9 +6,10 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 
 interface Props {
   consumer_types: ParameterValues[]
-  geo_regions: any[]
   connection_id: number
   consumer?: any
+  districts: any[]
+  states: any[]
 }
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -23,7 +24,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function ConsumerForm({
   consumer_types,
-  geo_regions,
+  districts,
+  states,
   connection_id,
   consumer,
 }: Props) {
@@ -34,7 +36,8 @@ export default function ConsumerForm({
     >
       <ConsumerFormComponent
         consumer_types={consumer_types}
-        geo_regions={geo_regions}
+        districts={districts}
+        states={states}
         connection_id={connection_id}
         data={consumer}
       />

@@ -28,7 +28,14 @@ class CreateConsumerController extends Controller
             'Connection',
             'Consumer Type'
         );
-        $geoRegions = $this->geoRegionsService->getGeoRegions();
+        $districts = $this->geoRegionsService->getGeoRegions(
+            'Administrative',
+            'District'
+        );
+        $states = $this->geoRegionsService->getGeoRegions(
+            'Administrative',
+            'State'
+        );
         $connection = $this->consumerService->getConsumer($connectionId);
         if ($connection->data != null) {
             return redirect()->route('connection.consumer', $connectionId);
@@ -37,7 +44,8 @@ class CreateConsumerController extends Controller
 
         return Inertia::render('Consumer/ConsumerForm', [
             'consumer_types' => $consumerTypes->data,
-            'geo_regions' => $geoRegions->data,
+            'districts' => $districts->data,
+            'states' => $states->data,
             'connection_id' => $connectionId,
         ]);
     }

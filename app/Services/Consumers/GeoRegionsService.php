@@ -6,8 +6,7 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
 use Proto\Consumers\GeoRegionServiceClient;
-use Google\Protobuf\GPBEmpty;
-use Proto\Consumers\GeoRegionListResponse;
+use Proto\Consumers\GeoRegionListRequest;
 use Proto\Consumers\GeoRegionMessage;
 
 class GeoRegionsService
@@ -22,9 +21,15 @@ class GeoRegionsService
         );
     }
 
-    public function getGeoRegions(): GrpcServiceResponse
+    public function getGeoRegions(?string $regionClassification = null, ?string $regionType = null): GrpcServiceResponse
     {
-        $request = new GPBEmpty();
+        $request = new GeoRegionListRequest();
+        if ($regionClassification !== null) {
+            $request->setRegionClassification($regionClassification);
+        }
+        if ($regionType !== null) {
+            $request->setRegionType($regionType);
+        }
         [$response, $status] = $this->client->ListGeoRegions($request)->wait();
 
         if ($status->code !== 0) {
@@ -36,7 +41,6 @@ class GeoRegionsService
             );
         }
 
-        // Convert repeated GeoRegionMessage objects to array
         $geoRegionsArray = [];
         foreach ($response->getRegions() as $region) {
             $geoRegionsArray[] = self::geoRegionProtoToArray($region);
@@ -47,15 +51,13 @@ class GeoRegionsService
 
     private static function geoRegionProtoToArray(GeoRegionMessage $region): array
     {
-        $geoRegionsArray[] = [
+        return [
             'region_id' => $region->getRegionId(),
             'region_name' => $region->getRegionName(),
             'region_classification' => $region->getRegionClassification(),
             'region_type_id' => $region->getRegionTypeId(),
             'parent_region_id' => $region->getParentRegionId(),
             'region_attributes' => $region->getRegionAttributes()?->getFields() ?? [],
-
         ];
-        return $geoRegionsArray;
     }
 }

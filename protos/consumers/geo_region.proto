@@ -34,12 +34,18 @@ message GeoRegionListResponse {
 message GeoRegionIdRequest {
   int32 region_id = 1;
 }
-
+message GeoRegionListRequest {
+  optional string region_name = 1;
+  optional string region_type = 2;
+  optional string region_classification = 3;
+  optional int32 region_type_id = 4;
+  optional int32 parent_region_id = 5;
+}
 // -------------------- Service --------------------
 service GeoRegionService {
   rpc CreateGeoRegion(GeoRegionMessage) returns (GeoRegionMessage);
   rpc GetGeoRegionById(GeoRegionIdRequest) returns (GeoRegionMessage);
   rpc UpdateGeoRegion(GeoRegionMessage) returns (GeoRegionMessage);
   rpc DeleteGeoRegion(GeoRegionIdRequest) returns (google.protobuf.Empty);
-  rpc ListGeoRegions(google.protobuf.Empty) returns (GeoRegionListResponse);
+  rpc ListGeoRegions(GeoRegionListRequest) returns (GeoRegionListResponse);
 }
