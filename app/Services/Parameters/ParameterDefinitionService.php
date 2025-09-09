@@ -114,12 +114,12 @@ class ParameterDefinitionService
     {
         $proto = new ParameterDefinitionProto;
         // TODO pass default values
-        $proto->setParameterName($request->parameterName);
-        $proto->setAttribute1Name($request->attribute1Name);
-        $proto->setAttribute2Name($request->attribute2Name);
-        $proto->setAttribute3Name($request->attribute3Name);
-        $proto->setAttribute4Name($request->attribute4Name);
-        $proto->setAttribute5Name($request->attribute5Name);
+        $proto->setParameterName($request->parameterName ?? '');
+        $proto->setAttribute1Name($request->attribute1Name ?? '');
+        $proto->setAttribute2Name($request->attribute2Name ?? '');
+        $proto->setAttribute3Name($request->attribute3Name ?? '');
+        $proto->setAttribute4Name($request->attribute4Name ?? '');
+        $proto->setAttribute5Name($request->attribute5Name ?? '');
         $proto->setIsEffectiveDateDriven($request->isEffectiveDateDriven);
         $proto->setDomainId($request->domainId);
 
@@ -161,11 +161,11 @@ class ParameterDefinitionService
         $parameterDomain = $this->parameterDomainService->getParameterDomain($request->domainId);
         $proto->setId($id);
         $proto->setParameterName($request->parameterName);
-        $proto->setAttribute1Name($request->attribute1Name);
-        $proto->setAttribute2Name($request->attribute2Name);
-        $proto->setAttribute3Name($request->attribute3Name);
-        $proto->setAttribute4Name($request->attribute4Name);
-        $proto->setAttribute5Name($request->attribute5Name);
+        $proto->setAttribute1Name($request->attribute1Name ?? '');
+        $proto->setAttribute2Name($request->attribute2Name ?? '');
+        $proto->setAttribute3Name($request->attribute3Name ?? '');
+        $proto->setAttribute4Name($request->attribute4Name ?? '');
+        $proto->setAttribute5Name($request->attribute5Name ?? '');
         $proto->setIsEffectiveDateDriven($request->isEffectiveDateDriven);
         $proto->setDomainId($request->domainId);
 

@@ -10,6 +10,7 @@ use Google\Protobuf\Struct;
 use Google\Protobuf\Value;
 use Grpc\ChannelCredentials;
 use Proto\Connections\AddressMessage;
+use Proto\Connections\ConsumerAddressMessage;
 use Proto\Connections\ConsumerContactDetailMessage;
 use Proto\Connections\ConsumerCreateRequest;
 use Proto\Connections\ConsumerIdRequest;
@@ -162,6 +163,9 @@ class ConsumerService
         return $contact;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function transformConsumerToArray(ConsumerMessage $consumer): array
     {
         return [
@@ -183,7 +187,7 @@ class ConsumerService
     }
 
     /**
-     * Transform ConsumerContactDetailMessage to array
+     * @return array<string, mixed>
      */
     public function transformContactToArray(ConsumerContactDetailMessage $contact): array
     {
@@ -195,13 +199,16 @@ class ConsumerService
             'premises_address_id' => $contact->getPremisesAddressId(),
             'primary_email' => $contact->getPrimaryEmail(),
             'primary_phone' => $contact->getPrimaryPhone(),
-            'contact_folio' => $contact->getContactFolio()->serializeToJsonString(),
+            'contact_folio' => $contact->getContactFolio()?->serializeToJsonString(),
             'primary_address' => $this->addressToArray($contact->getPrimaryAddress()),
             'billing_address' => $this->addressToArray($contact->getBillingAddress()),
             'premises_address' => $this->addressToArray($contact->getPremisesAddress()),
         ];
     }
 
+    /**
+     * @param  array<string, mixed>  $arr
+     */
     public function arrayToStruct(array $arr): Struct
     {
         $struct = new Struct;
@@ -213,7 +220,13 @@ class ConsumerService
             } elseif (is_bool($value)) {
                 $val->setBoolValue($value);
             } elseif (is_numeric($value)) {
-                $val->setNumberValue($value);
+                if (is_int($value)) {
+                    $val->setNumberValue((float) $value);
+                } elseif (is_float($value)) {
+                    $val->setNumberValue($value);
+                } elseif (is_string($value)) {
+                    $val->setNumberValue((float) $value);
+                }
             } else {
                 $val->setStringValue((string) $value);
             }
@@ -224,9 +237,12 @@ class ConsumerService
         return $struct;
     }
 
-    private function addressToArray($address): ?array
+    /**
+     * @return array<string, mixed>
+     */
+    private function addressToArray(?ConsumerAddressMessage $address): ?array
     {
-        if (! $address) {
+        if ($address === null) {
             return null;
         }
 

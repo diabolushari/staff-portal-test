@@ -16,7 +16,7 @@ use Proto\Parameters\UpdateParameterValueRequest;
 
 class ParameterValueService
 {
-    private $client;
+    private ParameterValueServiceClient $client;
 
     public function __construct()
     {
@@ -251,6 +251,9 @@ class ParameterValueService
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(?ParameterValueProto $value): array
     {
         if ($value === null) {

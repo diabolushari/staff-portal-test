@@ -18,7 +18,7 @@ use Proto\Consumers\OfficeUpdateRequest;
 
 class OfficeService
 {
-    private $client;
+    private OfficeServiceClient $client;
 
     public function __construct()
     {

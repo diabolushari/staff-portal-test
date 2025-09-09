@@ -29,7 +29,7 @@ class ParameterDomainService
     /**
      * Get paginated list of parameter domains
      */
-    public function getParameterDomains(int $page, int $pageSize, ?string $search, ?int $moduleId): GrpcServiceResponse
+    public function getParameterDomains(?int $page, ?int $pageSize, ?string $search, ?int $moduleId): GrpcServiceResponse
     {
         $request = new ListParameterDomainsRequest;
         $request->setPage($page ?? 1);

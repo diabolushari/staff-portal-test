@@ -28,6 +28,7 @@ class ConsumerFormRequest extends Data
         public int $stateId,
         public string $primaryEmail,
         public string $primaryPhone,
+        /** @var string[]|null */
         public ?array $otherAddresses,
     ) {}
 }
