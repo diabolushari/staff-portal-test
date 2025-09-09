@@ -55,7 +55,9 @@ class ConsumerController extends Controller
 
         $response = $this->consumerService->createConsumer($request);
         if ($response->hasError()) {
-            return $response->error;
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
         }
 
         return redirect()->route('connection.index');
@@ -85,7 +87,9 @@ class ConsumerController extends Controller
         $response = $this->consumerService->updateConsumer($request, $connectionId);
 
         if ($response->hasError()) {
-            return $response->error;
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
         }
 
         return redirect()->route('connection.index');

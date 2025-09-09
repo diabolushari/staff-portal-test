@@ -82,7 +82,9 @@ class ConnectionController extends Controller
         $response = $this->connectionService->updateConnection($request, $id);
 
         if ($response->hasError()) {
-            return $response->error;
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
         }
 
         return redirect()->route('connections.index')->with('success', 'Connection updated successfully.');

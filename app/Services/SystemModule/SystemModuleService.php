@@ -15,7 +15,7 @@ use Proto\Modules\UpdateSystemModuleRequest;
 
 class SystemModuleService
 {
-    private $client;
+    private SystemModuleServiceClient $client;
 
     public function __construct()
     {

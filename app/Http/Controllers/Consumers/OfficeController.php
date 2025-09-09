@@ -32,7 +32,9 @@ class OfficeController extends Controller
             officeName: $search
         );
         if ($offices->hasError()) {
-            return $offices->error;
+            return $offices->error ?? redirect()->back()->withErrors([
+                'message' => $offices->statusDetails ?? 'Unknown error',
+            ]);
         }
 
         $parameterValueService = new ParameterValueService;
@@ -48,7 +50,7 @@ class OfficeController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(): Response|RedirectResponse
     {
         $parameterValues = $this->parameterValueService->getParameterValues(
             1,
@@ -59,7 +61,9 @@ class OfficeController extends Controller
         );
 
         if ($parameterValues->hasError()) {
-            return $parameterValues->error;
+            return $parameterValues->error ?? redirect()->back()->withErrors([
+                'message' => $parameterValues->statusDetails ?? 'Unknown error',
+            ]);
         }
 
         return Inertia::render('Offices/OfficeCreate', [
@@ -67,21 +71,25 @@ class OfficeController extends Controller
         ]);
     }
 
-    public function store(OfficeFormRequest $request)
+    public function store(OfficeFormRequest $request): Response|RedirectResponse
     {
         $grpcResponse = $this->officeService->createOffice($request);
         if ($grpcResponse->hasError()) {
-            return $grpcResponse->error;
+            return $grpcResponse->error ?? redirect()->back()->withErrors([
+                'message' => $grpcResponse->statusDetails ?? 'Unknown error',
+            ]);
         }
 
         return redirect()->route('offices.index');
     }
 
-    public function show(int $id)
+    public function show(int $id): Response|RedirectResponse
     {
         $response = $this->officeService->getOffice($id);
         if ($response->hasError()) {
-            return $response->error;
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
         }
 
         return Inertia::render('Offices/OfficeShow', [
@@ -89,11 +97,13 @@ class OfficeController extends Controller
         ]);
     }
 
-    public function edit(int $id)
+    public function edit(int $id): Response|RedirectResponse
     {
         $office = $this->officeService->getOffice($id);
         if ($office->hasError()) {
-            return $office->error;
+            return $office->error ?? redirect()->back()->withErrors([
+                'message' => $office->statusDetails ?? 'Unknown error',
+            ]);
         }
         $parameterValues = $this->parameterValueService->getParameterValues(
             1,
@@ -109,21 +119,25 @@ class OfficeController extends Controller
         ]);
     }
 
-    public function update(OfficeFormRequest $request, $id)
+    public function update(OfficeFormRequest $request, int $id): RedirectResponse
     {
         $response = $this->officeService->updateOffice($request, $id);
         if ($response->hasError()) {
-            return $response->error;
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
         }
 
         return redirect()->route('offices.index');
     }
 
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
         $response = $this->officeService->deleteOffice($id);
         if ($response->hasError()) {
-            return $response->error;
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
         }
 
         return redirect()->back()->with([
