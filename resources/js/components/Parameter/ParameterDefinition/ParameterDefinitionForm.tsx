@@ -19,7 +19,6 @@ interface Props {
   domains: ParameterDomain[]
 }
 
-//TODO Fix Type Errors
 export default function ParameterDefinitionForm({
   title,
   setShowModal,
@@ -27,29 +26,21 @@ export default function ParameterDefinitionForm({
   parameterDefinition,
   domains,
 }: Readonly<Props>) {
-  //TODO [{id: number; attributer: string}] so attributes from middle of list can be removed or show full list if using object
-  const [visibleAttrs, setVisibleAttrs] = useState<boolean[]>(() => {
-    const initialVisibility = [
-      !!parameterDefinition?.attribute1_name,
-      !!parameterDefinition?.attribute2_name,
-      !!parameterDefinition?.attribute3_name,
-      !!parameterDefinition?.attribute4_name,
-      !!parameterDefinition?.attribute5_name,
-    ]
-    const defaults = [...initialVisibility]
-    while (defaults.length < 5) defaults.push(false)
-    return defaults
+  // store attributes as dynamic array instead of fixed slots
+  const [attributes, setAttributes] = useState<string[]>(() => {
+    const initial = [
+      parameterDefinition?.attribute1_name ?? '',
+      parameterDefinition?.attribute2_name ?? '',
+      parameterDefinition?.attribute3_name ?? '',
+      parameterDefinition?.attribute4_name ?? '',
+      parameterDefinition?.attribute5_name ?? '',
+    ].filter((a) => a) // remove empty
+    return initial
   })
 
-  // use Array for storing attributes
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     parameter_name: parameterDefinition?.parameter_name ?? '',
     domain_id: parameterDefinition?.domain_id ?? '',
-    attribute1_name: parameterDefinition?.attribute1_name ?? '',
-    attribute2_name: parameterDefinition?.attribute2_name ?? '',
-    attribute3_name: parameterDefinition?.attribute3_name ?? '',
-    attribute4_name: parameterDefinition?.attribute4_name ?? '',
-    attribute5_name: parameterDefinition?.attribute5_name ?? '',
     is_effective_date_driven: parameterDefinition?.is_effective_date_driven ?? false,
   })
 
@@ -63,25 +54,47 @@ export default function ParameterDefinitionForm({
     }
   )
 
+  // add new attribute
+  const addAttribute = () => {
+    if (attributes.length < 5) {
+      setAttributes([...attributes, ''])
+    }
+  }
+
+  // remove and shift attributes
   const removeAttribute = (index: number) => {
-    const updated = [...visibleAttrs]
-    updated[index] = false
-    setFormValue(`attribute${index + 1}_name`)('')
-    setVisibleAttrs(updated)
+    const updated = [...attributes]
+    updated.splice(index, 1)
+    setAttributes(updated)
+  }
+
+  // update attribute value
+  const setAttributeValue = (index: number, value: string) => {
+    const updated = [...attributes]
+    updated[index] = value
+    setAttributes(updated)
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    parameterDefinition ? post({ ...formData, _method: 'PUT' }) : post(formData)
+
+    // convert attributes back into attribute1_name ... attribute5_name
+    const attributesPayload = attributes.reduce(
+      (acc, attr, i) => {
+        acc[`attribute${i + 1}_name`] = attr
+        return acc
+      },
+      {} as Record<string, string>
+    )
+
+    const payload = {
+      ...formData,
+      ...attributesPayload,
+    }
+
+    parameterDefinition ? post({ ...payload, _method: 'PUT' }) : post(payload)
   }
 
-  // Find the first hidden attribute index
-  const firstHiddenIndex = visibleAttrs.findIndex((v) => !v)
-  const addAttribute = () => {
-    const updated = [...visibleAttrs]
-    updated[firstHiddenIndex] = true
-    setVisibleAttrs(updated)
-  }
   return (
     <div>
       <SubHeading>Parameter Definition</SubHeading>
@@ -91,6 +104,7 @@ export default function ParameterDefinitionForm({
       >
         <form onSubmit={handleSubmit}>
           <div className='md:grid md:grid-cols-2 md:gap-4'>
+            {/* Parameter Name */}
             <div className='flex flex-col'>
               <Input
                 label='Parameter Name'
@@ -100,45 +114,49 @@ export default function ParameterDefinitionForm({
                 error={errors?.parameter_name}
               />
             </div>
+
+            {/* Domain */}
             <div className='flex flex-col'>
               <SelectList
                 label='Domain'
                 setValue={setFormValue('domain_id')}
                 value={formData.domain_id}
-                placeholder='Type your Domain'
+                placeholder='Select Domain'
                 error={errors?.domain_id}
                 list={domains}
                 dataKey='id'
                 displayKey='domain_name'
               />
             </div>
-            {Array.from({ length: 5 }).map((_, index) => (
+
+            {/* Attributes */}
+            {attributes.map((attr, index) => (
               <div
                 key={index}
                 className='flex flex-col'
               >
-                {visibleAttrs[index] ? (
-                  <AttributeInput
-                    index={index}
-                    visibleAttrs={visibleAttrs}
-                    formData={formData}
-                    setFormValue={setFormValue}
-                    errors={errors}
-                    removeAttribute={removeAttribute}
-                  />
-                ) : firstHiddenIndex === index ? (
-                  <div className='mt-6 flex flex-col'>
-                    <Button
-                      type='button'
-                      onClick={addAttribute}
-                      variant='outline'
-                      label='+ Add Attribute'
-                    />
-                  </div>
-                ) : null}
+                <AttributeInput
+                  index={index}
+                  value={attr}
+                  setValue={(val) => setAttributeValue(index, val)}
+                  errors={errors}
+                  removeAttribute={() => removeAttribute(index)}
+                  isEditMode={!!parameterDefinition}
+                />
               </div>
             ))}
+            {attributes.length < 5 && (
+              <div className='mt-6 flex flex-col'>
+                <Button
+                  type='button'
+                  onClick={addAttribute}
+                  variant='outline'
+                  label='+ Add Attribute'
+                />
+              </div>
+            )}
 
+            {/* Effective Date Checkbox */}
             <div className='flex flex-col'>
               <CheckBox
                 label='Effective date'
