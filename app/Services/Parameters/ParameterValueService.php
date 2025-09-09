@@ -117,7 +117,7 @@ class ParameterValueService
         if ($errorResponse !== null) {
             return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
         }
-        $defenition = [
+        $definition = [
             'id' => $response->getDefinition()->getId(),
             'parameter_name' => $response->getDefinition()->getParameterName(),
         ];
@@ -133,7 +133,7 @@ class ParameterValueService
             'is_active' => $response->getIsActive(),
             'sort_priority' => $response->getSortPriority(),
             'notes' => $response->getNotes(),
-            'definition' => $defenition,
+            'definition' => $definition,
         ];
 
         return GrpcServiceResponse::success($parameterValueArray, $response, $status->code, $status->details);
@@ -204,7 +204,7 @@ class ParameterValueService
                 $status->details
             );
         }
-        $defenition = [
+        $definition = [
             'id' => $response->getDefinition()->getId(),
             'domain_name' => $response->getDefinition()->getParameterName(),
             'domain_id' => $response->getDefinition()->getDomainId(),
@@ -223,7 +223,7 @@ class ParameterValueService
             'is_active' => $response->getIsActive(),
             'sort_priority' => $response->getSortPriority(),
             'notes' => $response->getNotes(),
-            'definition' => $defenition,
+            'definition' => $definition,
             'effective_start_date' => $response->getEffectiveStartDate(),
             'effective_end_date' => $response->getEffectiveEndDate(),
 

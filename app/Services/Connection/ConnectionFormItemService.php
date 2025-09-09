@@ -8,7 +8,10 @@ class ConnectionFormItemService
 {
     public function __construct(private ParameterValueService $parameterValueService) {}
 
-    public function __invoke()
+    /**
+     * @return array<string, mixed>
+     */
+    public function __invoke(): array
     {
         $connectionTypes = $this->parameterValueService->getParameterValues(
             1,

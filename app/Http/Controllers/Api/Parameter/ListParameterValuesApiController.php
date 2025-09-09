@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Parameter;
 
 use App\Http\Controllers\Controller;
 use App\Services\Parameters\ParameterValueService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ListParameterValuesApiController extends Controller
@@ -12,7 +13,7 @@ class ListParameterValuesApiController extends Controller
         private ParameterValueService $client
     ) {}
 
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): JsonResponse
     {
 
         $domainName = $request->query('domain_name');
