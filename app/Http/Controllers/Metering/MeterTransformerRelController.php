@@ -13,6 +13,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Proto\Parameters\ListParameterValuesRequest;
 use Proto\Parameters\ParameterValueServiceClient;
+use Illuminate\Support\Facades\Log;
 
 class MeterTransformerRelController extends Controller
 {
@@ -110,11 +111,22 @@ class MeterTransformerRelController extends Controller
         $data = $request->toArray();
         $data['created_by'] = auth()->id();
 
+        if (empty($data['effective_start_ts'])) {
+        $data['effective_start_ts'] = now()->toISOString();
+        }
+        //$request->setEffectiveStartTs($this->toProtoTimestamp($data['effective_start_ts']));
+
+
         $response = $this->relService->createRelation($data);
 
         if ($response->hasError()) {
-            return redirect()->back()->withErrors($response->error);
+            return $response->error;
         }
+
+         Log::info('Successfully created MeterTransformerRel:', [
+        'data' => $data,
+        'grpcResponse' => $response,
+    ]);
 
         return redirect()->route('meter-rel.index')->with('success', 'Relation created successfully.');
     }
@@ -126,10 +138,57 @@ class MeterTransformerRelController extends Controller
     {
         $response = $this->relService->getRelation($id);
 
+        \Log::info('Show relation data:', ['data' => $response->data]);
+
         return Inertia::render('MeterTransformerRel/MeterTransformerRelShow', [
             'relation' => $response->data,
         ]);
     }
+
+   public function edit(int $id): Response
+        {
+            $response = $this->relService->getRelation($id);
+            $ctpts = $this->meterTransformerService->listTransformers();
+            $meters = $this->meterService->listMeters();
+
+            // Fetch statuses + change reasons (same as create)
+            $parameterRequests = [
+                'statuses' => (new ListParameterValuesRequest)
+                    ->setDomainName('MeterTransformerRel')
+                    ->setParameterName('Status'),
+                'changeReasons' => (new ListParameterValuesRequest)
+                    ->setDomainName('MeterTransformerRel')
+                    ->setParameterName('Change Reason'),
+            ];
+
+            $responses = [];
+            foreach ($parameterRequests as $key => $request) {
+                [$data, $status] = $this->parameterValueClient->ListParameterValues($request)->wait();
+                $responses[$key] = ['data' => $data, 'status' => $status];
+            }
+
+            $viewData = [];
+            foreach ($responses as $key => $res) {
+                $viewData[$key] = collect($res['data']->getValues())
+                    ->map(fn($item) => [
+                        'id' => $item->getId(),
+                        'parameterValue' => $item->getParameterValue(),
+                    ])
+                    ->toArray();
+            }
+
+            return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [
+                'relation'      => $response->data,      
+                'ctpts'         => $ctpts->data,         
+                'meters'        => $meters->data,        
+                'statuses'      => $viewData['statuses'],
+                'changeReasons' => $viewData['changeReasons'],
+            ]);
+        }
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

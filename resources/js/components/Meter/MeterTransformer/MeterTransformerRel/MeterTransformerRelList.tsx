@@ -1,5 +1,5 @@
 import { router } from "@inertiajs/react";
-import { Activity, Calendar, Link2 } from "lucide-react";
+import { Activity, Calendar, Pencil, Trash2, Link2 } from "lucide-react";
 
 interface Relation {
   version_id: number;
@@ -13,17 +13,20 @@ interface Relation {
   effective_start_ts: string;
   effective_end_ts?: string | null;
   is_active: boolean;
+  
 }
 
 interface Props {
   relations: Relation[];
   onShow: (id: number) => void;
+  onEdit?: (rel: Relation) => void;
   onDelete?: (rel: Relation) => void;
 }
 
 export default function MeterTransformerRelList({
   relations,
   onShow,
+  onEdit,
   onDelete,
 }: Readonly<Props>) {
   const formatDate = (dateStr?: string | null) => {
@@ -110,17 +113,32 @@ export default function MeterTransformerRelList({
                   </div>
                 </div>
 
-                {onDelete && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDelete(rel);
-                    }}
-                    className="text-xs text-red-600 hover:underline"
-                  >
-                    Delete
-                  </button>
-                )}
+                <div className="flex items-center gap-3 mt-2">
+                  {onEdit && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(rel);
+                      }}
+                      className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+                    >
+                      <Pencil className="h-4 w-4" />
+                      Edit
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(rel);
+                      }}
+                      className="flex items-center gap-1 text-sm text-red-600 hover:text-red-800"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Delete
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>

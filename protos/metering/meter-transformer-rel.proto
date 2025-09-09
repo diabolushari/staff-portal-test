@@ -20,7 +20,7 @@ option java_outer_classname = "MeterTransformerRelProto";
 // =========================
 service MeterTransformerRelService {
   rpc CreateMeterTransformerRel(CreateMeterTransformerRelRequest) returns (MeterTransformerRelResponse);
-  rpc GetMeterTransformerRel(GetMeterTransformerRelRequest) returns (MeterTransformerRelResponse);
+  rpc GetMeterTransformerRelById(GetMeterTransformerRelRequest) returns (MeterTransformerRelResponse);
   rpc ListMeterTransformerRels(ListMeterTransformerRelsRequest) returns (ListMeterTransformerRelsResponse);
   rpc UpdateMeterTransformerRel(UpdateMeterTransformerRelRequest) returns (MeterTransformerRelResponse);
   rpc DeleteMeterTransformerRel(DeleteMeterTransformerRelRequest) returns (google.protobuf.Empty);

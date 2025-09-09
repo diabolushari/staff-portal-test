@@ -11,6 +11,7 @@ import DatePicker from "@/ui/form/DatePicker";
 import CheckBox from "@/ui/form/CheckBox";
 import { transformerrelNavItems } from "@/components/Navbar/navitems";
 import { useEffect } from "react";
+import { c } from "node_modules/framer-motion/dist/types.d-Bq-Qm38R";
 
 // --- Type Definitions ---
 export interface Option {
@@ -52,7 +53,9 @@ export default function MeterTransformerRelForm({
 }: MeterTransformerRelFormProps) {
   const isEditing = Boolean(relation);
 
-  const { formData, setFormValue } = useCustomForm({
+  console.log("Editing Relation:", relation,statuses,changeReasons); // Debugging line
+
+  const { formData, setFormValue, setAll} = useCustomForm({
     ctpt_id: relation?.ctpt_id ?? null,
     meter_id: relation?.meter_id ?? null,
     status_id: relation?.status_id ?? null,
@@ -60,15 +63,23 @@ export default function MeterTransformerRelForm({
     faulty_date: toYMD(relation?.faulty_date) ?? "",
     ctpt_energise_date: toYMD(relation?.ctpt_energise_date) ?? "",
     ctpt_change_date: toYMD(relation?.ctpt_change_date) ?? "",
-    effective_start_ts: relation?.effective_start_ts ?? "",
-    effective_end_ts: relation?.effective_end_ts ?? "",
-    is_active: relation?.is_active ?? true,
   });
+
+  
 
   const { post, loading, errors } = useInertiaPost(
     isEditing ? `/meter-rel/${relation.version_id}` : "/meter-rel",
   );
 
+  const mergedctpts = ctpts.map(ctpt => ({
+  ...ctpt,
+  mergedValue: `#${ctpt.meter_ctpt_id} - ${ctpt?.type?.parameter_value ?? ''} - ${
+    ctpt.ct_ratio ? ctpt.ct_ratio : ctpt.pt_ratio
+  }`, 
+}));
+
+
+console.log('Merged CT/PTs:', mergedctpts); // Debugging line
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -80,9 +91,9 @@ export default function MeterTransformerRelForm({
       faulty_date: toISOorNull(formData.faulty_date),
       ctpt_energise_date: toISOorNull(formData.ctpt_energise_date),
       ctpt_change_date: toISOorNull(formData.ctpt_change_date),
-      effective_start_ts: formData.effective_start_ts,
-      effective_end_ts: formData.effective_end_ts || null,
-      is_active: formData.is_active,
+      // effective_start_ts: formData.effective_start_ts,
+      // effective_end_ts: formData.effective_end_ts || null,
+      //is_active: formData.is_active,
     };
 
     if (isEditing) {
@@ -121,9 +132,9 @@ export default function MeterTransformerRelForm({
                   label="CT/PT"
                   value={formData.ctpt_id}
                   setValue={setFormValue("ctpt_id")}
-                  list={ctpts}
-                  dataKey="id"
-                  displayKey="parameterValue"
+                  list={mergedctpts}
+                  dataKey="meter_ctpt_id"
+                  displayKey="mergedValue"
                   error={errors.ctpt_id}
                 />
                 <SelectList
@@ -131,10 +142,11 @@ export default function MeterTransformerRelForm({
                   value={formData.meter_id}
                   setValue={setFormValue("meter_id")}
                   list={meters}
-                  dataKey="id"
-                  displayKey="parameterValue"
+                  dataKey="meter_id"
+                  displayKey="meter_serial"
                   error={errors.meter_id}
                 />
+
                 <SelectList
                   label="Status"
                   value={formData.status_id}
@@ -177,26 +189,24 @@ export default function MeterTransformerRelForm({
                   setValue={setFormValue("ctpt_change_date")}
                   error={errors.ctpt_change_date}
                 />
-                <Input
+                {/* <DatePicker
                   label="Effective Start Timestamp"
-                  type="datetime-local"
                   value={formData.effective_start_ts}
                   setValue={setFormValue("effective_start_ts")}
                   error={errors.effective_start_ts}
                 />
-                <Input
+                <DatePicker
                   label="Effective End Timestamp"
-                  type="datetime-local"
                   value={formData.effective_end_ts}
                   setValue={setFormValue("effective_end_ts")}
                   error={errors.effective_end_ts}
-                />
-                <CheckBox
+                /> */}
+                {/* <CheckBox
                   label="Is Active"
                   checked={formData.is_active}
                   setChecked={setFormValue("is_active")}
                   error={errors.is_active}
-                />
+                /> */}
               </>,
             )}
 

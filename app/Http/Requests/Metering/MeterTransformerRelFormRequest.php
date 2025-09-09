@@ -18,8 +18,6 @@ class MeterTransformerRelFormRequest extends Data
         public ?string $ctpt_change_date,
         public ?int $status_id,
         public ?int $change_reason_id,
-        public ?string $effective_start_ts,
-        public ?string $effective_end_ts,
         public ?string $created_ts,
         public ?string $updated_ts,
         public ?int $created_by,

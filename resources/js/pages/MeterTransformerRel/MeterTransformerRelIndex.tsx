@@ -57,6 +57,7 @@ export default function MeterTransformerRelIndex({ relations }: Props) {
         {items && items.length > 0 ? (
           <MeterTransformerRelList
             relations={items}
+            onEdit={(rel) => router.get(`/meter-rel/${rel.version_id}/edit`)}
             onDelete={handleDeleteClick}
             onShow={handleShow}
           />
