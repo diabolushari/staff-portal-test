@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.connections;
+
+option php_namespace = "Proto\\Connections";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+import "connections/consumer_address.proto";
+
+// -------------------- MESSAGES --------------------
+
+message ConsumerContactDetailMessage {
+    int32 connection_id = 1;
+    optional int32 version_id = 2;
+    int32 primary_address_id = 3;
+    int32 billing_address_id = 4;
+    int32 premises_address_id = 5;
+    string primary_email = 6;
+    int64 primary_phone = 7;
+    google.protobuf.Struct contact_folio = 8;
+    optional ConsumerAddressMessage primary_address = 9;
+    optional ConsumerAddressMessage billing_address = 10;
+    optional ConsumerAddressMessage premises_address = 11;
+}
+
+message ConsumerContactDetailUpdateRequest {
+    int32 connection_id = 1;
+    optional int32 version_id = 2;
+    int32 primary_address_id = 3;
+    int32 billing_address_id = 4;
+    int32 premises_address_id = 5;
+    string primary_email = 6;
+    int64 primary_phone = 7;
+    google.protobuf.Struct contact_folio = 8;
+}
+
+message ConsumerContactDetailListRequest {
+    optional int32 page = 1;
+    optional int32 size = 2;
+    optional string search = 3;
+}
+
+message ConsumerContactDetailListResponse {
+    repeated ConsumerContactDetailMessage consumer_contact_details = 1;
+}
+
+message ConsumerContactDetailIdRequest {
+    int32 connection_id = 1;
+}
+
+// -------------------- SERVICE --------------------
+
+service ConsumerContactDetailService {
+    rpc UpdateConsumerContactDetail(ConsumerContactDetailUpdateRequest) returns (ConsumerContactDetailMessage);
+    rpc ListConsumerContactDetails(ConsumerContactDetailListRequest) returns (ConsumerContactDetailListResponse);
+    rpc DeleteConsumerContactDetail(ConsumerContactDetailIdRequest) returns (google.protobuf.Empty);
+    rpc GetConsumerContactDetail(ConsumerContactDetailIdRequest) returns (ConsumerContactDetailMessage);
+}
+

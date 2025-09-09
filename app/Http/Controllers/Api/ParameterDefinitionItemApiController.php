@@ -4,22 +4,15 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Proto\Parameters\ParameterDefinitionServiceClient;
-use Grpc\ChannelCredentials;
 use Illuminate\Http\JsonResponse;
 use Proto\Parameters\GetParameterDefinitionRequest;
 
 
 class ParameterDefinitionItemApiController extends Controller
 {
-    /** @var \Proto\Parameters\ParameterDefinitionServiceClient */
-    private $client;
-
-    public function __construct()
-    {
-        $this->client = new ParameterDefinitionServiceClient(config('app.parameter_service_grpc_host'), [
-            'credentials' => ChannelCredentials::createInsecure()
-        ]);
-    }
+    public function __construct(
+        private readonly ParameterDefinitionServiceClient $client
+    ) {}
 
     public function __invoke(int $id): JsonResponse
     {

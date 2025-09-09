@@ -17,6 +17,7 @@ export default function ParameterValueShow({
   parameter_value: ParameterValues
 }) {
   const allFields = [
+    { label: 'Id', key: 'id' },
     { label: 'Parameter Code', key: 'parameter_code' },
     { label: 'Parameter Value', key: 'parameter_value' },
     { label: 'Attribute 1 Value', key: 'attribute_1_value' },

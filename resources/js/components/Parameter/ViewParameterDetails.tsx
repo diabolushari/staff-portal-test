@@ -23,6 +23,7 @@ const ViewParameterDetail: React.FC<ViewParameterDetailProps> = ({ title, data, 
               className='flex justify-between border-b pb-3'
             >
               <span className='text-base font-semibold text-gray-700'>{field.label}</span>
+
               <span className='max-w-[60%] text-right text-base break-words text-gray-900'>
                 {data[field.key] !== undefined && data[field.key] !== null ? (
                   data[field.key]
