@@ -5,6 +5,7 @@ interface Relation {
   version_id: number;
   ctpt_id: number;
   meter_id: number;
+  meter_serial?: string;
   faulty_date?: string | null;
   ctpt_energise_date?: string | null;
   ctpt_change_date?: string | null;
@@ -65,7 +66,7 @@ export default function MeterTransformerRelList({
                     </div>
                     <div className="rounded-[50px] bg-indigo-100 px-2.5 py-px">
                       <div className="font-inter text-xs font-normal leading-6 tracking-[-0.072px] text-indigo-800">
-                        Meter {rel.meter_id}
+                        Meter {rel.meter_serial ?? rel.meter_id}
                       </div>
                     </div>
                   </div>

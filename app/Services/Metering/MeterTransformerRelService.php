@@ -194,36 +194,23 @@ class MeterTransformerRelService
      */
     public static function relProtoToArray(MeterTransformerRelMessage $rel): array
     {
+        $ctpt = $rel->getCtpt();
         return [
             'version_id' => $rel->getVersionId(),
             'ctpt_id' => $rel->getCtptId(),
+            'ctpt_serial' => ($ctpt && method_exists($ctpt, 'getCtptSerial')) ? $ctpt->getCtptSerial() : null,
+            'ctpt_type' => ($ctpt && method_exists($ctpt, 'getType') && $ctpt->getType() && method_exists($ctpt->getType(), 'getParameterValue')) ? $ctpt->getType()->getParameterValue() : null,
+            'ctpt_ratio' => ($ctpt && method_exists($ctpt, 'getCtRatio')) ? $ctpt->getCtRatio() : null,
             'meter_id' => $rel->getMeterId(),
+            'meter_serial' => ($rel->getMeter() && method_exists($rel->getMeter(), 'getMeterSerial')) ? $rel->getMeter()->getMeterSerial() : null,
             'faulty_date' => $rel->hasFaultyDate() ? $rel->getFaultyDate()->toDateTime()->format('Y-m-d') : null,
             'ctpt_energise_date' => $rel->hasCtptEnergiseDate() ? $rel->getCtptEnergiseDate()->toDateTime()->format('Y-m-d') : null,
             'ctpt_change_date' => $rel->hasCtptChangeDate() ? $rel->getCtptChangeDate()->toDateTime()->format('Y-m-d') : null,
             'status_id' => $rel->getStatusId(),
+            // 'change_reason_id' => $rel->getChangeReasonId(),
+            // 'status_label' => $rel->getStatus() ? $rel->getStatus()->getParameterValue() : null, // Add this
             'change_reason_id' => $rel->getChangeReasonId(),
-        //     'ctpt' => [
-        //     'id' => $rel->getCtpt()?->getMeterCtptId(),
-        //     'mergedValue' => sprintf(
-        //         '#%s - %s - %s',
-        //         $rel->getCtpt()?->getMeterCtptId(),
-        //         $rel->getCtpt()?->getType()->getParameterValue(),
-        //         $rel->getCtpt()?->getCtRatio() ?: $rel->getCtpt()?->getPtRatio()
-        //     ),
-        // ],
-        // 'meter' => [
-        //     'id' => $rel->getMeter()?->getMeterId(),
-        //     'serial' => $rel->getMeter()?->getMeterSerial(),
-        // ],
-        // 'status' => [
-        //     'id' => $rel->getStatusId(),
-        //     'label' => $rel->getStatus()?->getParameterValue(),
-        // ],
-        // 'change_reason' => [
-        //     'id' => $rel->getChangeReasonId(),
-        //     'label' => $rel->getChangeReason()?->getParameterValue(),
-        // ],
+            // 'change_reason_label' => $rel->getChangeReason() ? $rel->getChangeReason()->getParameterValue() : null,
             'effective_start_ts' => $rel->getEffectiveStartTs()->toDateTime()->format('Y-m-d'),
             'effective_end_ts' => $rel->hasEffectiveEndTs() ? $rel->getEffectiveEndTs()->toDateTime()->format('Y-m-d') : null,
             'created_ts' => $rel->hasCreatedTs() ? $rel->getCreatedTs()->toDateTime()->format('Y-m-d') : null,

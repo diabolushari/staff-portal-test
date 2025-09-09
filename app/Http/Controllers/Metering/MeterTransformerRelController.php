@@ -145,47 +145,72 @@ class MeterTransformerRelController extends Controller
         ]);
     }
 
-   public function edit(int $id): Response
-        {
-            $response = $this->relService->getRelation($id);
-            $ctpts = $this->meterTransformerService->listTransformers();
-            $meters = $this->meterService->listMeters();
+  public function edit(int $id): Response
+{
+    $response = $this->relService->getRelation($id);
+    $ctpts = $this->meterTransformerService->listTransformers();
+    $meters = $this->meterService->listMeters();
 
-            // Fetch statuses + change reasons (same as create)
-            $parameterRequests = [
-                'statuses' => (new ListParameterValuesRequest)
-                    ->setDomainName('MeterTransformerRel')
-                    ->setParameterName('Status'),
-                'changeReasons' => (new ListParameterValuesRequest)
-                    ->setDomainName('MeterTransformerRel')
-                    ->setParameterName('Change Reason'),
-            ];
+    // Fetch statuses + change reasons
+    $parameterRequests = [
+        'statuses' => (new ListParameterValuesRequest)
+            ->setDomainName('MeterTransformerRel')
+            ->setParameterName('Status'),
+        'changeReasons' => (new ListParameterValuesRequest)
+            ->setDomainName('MeterTransformerRel')
+            ->setParameterName('Change Reason'),
+    ];
 
-            $responses = [];
-            foreach ($parameterRequests as $key => $request) {
-                [$data, $status] = $this->parameterValueClient->ListParameterValues($request)->wait();
-                $responses[$key] = ['data' => $data, 'status' => $status];
-            }
+    $responses = [];
+    foreach ($parameterRequests as $key => $request) {
+        [$data, $status] = $this->parameterValueClient->ListParameterValues($request)->wait();
+        $responses[$key] = ['data' => $data, 'status' => $status];
+    }
 
-            $viewData = [];
-            foreach ($responses as $key => $res) {
-                $viewData[$key] = collect($res['data']->getValues())
-                    ->map(fn($item) => [
-                        'id' => $item->getId(),
-                        'parameterValue' => $item->getParameterValue(),
-                    ])
-                    ->toArray();
-            }
+    $viewData = [];
+    foreach ($responses as $key => $res) {
+        $viewData[$key] = collect($res['data']->getValues())
+            ->map(fn($item) => [
+                'id' => $item->getId(),
+                'parameterValue' => $item->getParameterValue(),
+            ])
+            ->toArray();
+    }
 
-            return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [
-                'relation'      => $response->data,      
-                'ctpts'         => $ctpts->data,         
-                'meters'        => $meters->data,        
-                'statuses'      => $viewData['statuses'],
-                'changeReasons' => $viewData['changeReasons'],
-            ]);
-        }
+    return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [
+        'relation'      => $response->data,      
+        'ctpts'         => $ctpts->data,         
+        'meters'        => $meters->data,        
+        'statuses'      => $viewData['statuses'],
+        'changeReasons' => $viewData['changeReasons'],
+    ]);
+}
 
+// public function update(MeterTransformerRelFormRequest $request, int $id): RedirectResponse
+// {
+//     $data = $request->toArray();
+//     $data['id'] = $id;
+//     $data['updated_by'] = auth()->id();
+
+//     // If no effective_start_ts is provided, keep existing or set default
+//     if (empty($data['effective_start_ts'])) {
+//         $data['effective_start_ts'] = now()->toISOString();
+//     }
+
+//     $response = $this->relService->updateRelation($data);
+
+//     if ($response->hasError()) {
+//         return $response->error;
+//     }
+
+//     \Log::info('Successfully updated MeterTransformerRel:', [
+//         'id' => $id,
+//         'data' => $data,
+//         'grpcResponse' => $response,
+//     ]);
+
+//     return redirect()->route('meter-rel.index')->with('success', 'Relation updated successfully.');
+// }
 
 
 
