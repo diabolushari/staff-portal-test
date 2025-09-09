@@ -47,11 +47,11 @@ export default function ParameterValueCreate({
     definition_id: parameter_value?.definition_id ?? '',
     parameter_code: parameter_value?.parameter_code ?? '',
     parameter_value: parameter_value?.parameter_value ?? '',
-    attribute_1_value: parameter_value?.attribute1_value ?? '',
-    attribute_2_value: parameter_value?.attribute2_value ?? '',
-    attribute_3_value: parameter_value?.attribute3_value ?? '',
-    attribute_4_value: parameter_value?.attribute4_value ?? '',
-    attribute_5_value: parameter_value?.attribute5_value ?? '',
+    attribute1_value: parameter_value?.attribute1_value ?? '',
+    attribute2_value: parameter_value?.attribute2_value ?? '',
+    attribute3_value: parameter_value?.attribute3_value ?? '',
+    attribute4_value: parameter_value?.attribute4_value ?? '',
+    attribute5_value: parameter_value?.attribute5_value ?? '',
     effective_start_date: parameter_value?.effective_start_date ?? '',
     effective_end_date: parameter_value?.effective_end_date ?? '',
     sort_priority: parameter_value?.sort_priority ?? '',
@@ -142,9 +142,9 @@ export default function ParameterValueCreate({
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute1_name}
-                        value={formData.attribute_1_value}
-                        setValue={setFormValue('attribute_1_value')}
-                        error={errors?.attribute_1_value}
+                        value={formData.attribute1_value}
+                        setValue={setFormValue('attribute1_value')}
+                        error={errors?.attribute1_value}
                       />
                     </div>
                   )}
@@ -152,9 +152,9 @@ export default function ParameterValueCreate({
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute2_name}
-                        value={formData.attribute_2_value}
-                        setValue={setFormValue('attribute_2_value')}
-                        error={errors?.attribute_2_value}
+                        value={formData.attribute2_value}
+                        setValue={setFormValue('attribute2_value')}
+                        error={errors?.attribute2_value}
                       />
                     </div>
                   )}
@@ -162,9 +162,9 @@ export default function ParameterValueCreate({
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute3_name}
-                        value={formData.attribute_3_value}
-                        setValue={setFormValue('attribute_3_value')}
-                        error={errors?.attribute_3_value}
+                        value={formData.attribute3_value}
+                        setValue={setFormValue('attribute3_value')}
+                        error={errors?.attribute3_value}
                       />
                     </div>
                   )}
@@ -172,9 +172,9 @@ export default function ParameterValueCreate({
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute4_name}
-                        value={formData.attribute_4_value}
-                        setValue={setFormValue('attribute_4_value')}
-                        error={errors?.attribute_4_value}
+                        value={formData.attribute4_value}
+                        setValue={setFormValue('attribute4_value')}
+                        error={errors?.attribute4_value}
                       />
                     </div>
                   )}
@@ -182,9 +182,9 @@ export default function ParameterValueCreate({
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute5_name}
-                        value={formData.attribute_5_value}
-                        setValue={setFormValue('attribute_5_value')}
-                        error={errors?.attribute_5_value}
+                        value={formData.attribute5_value}
+                        setValue={setFormValue('attribute5_value')}
+                        error={errors?.attribute5_value}
                       />
                     </div>
                   )}

@@ -21,10 +21,13 @@ class ParameterValueController extends Controller
         private ParameterDefinitionService $parameterDefinitionService
     ) {}
 
-    public function edit($id): Response
+    public function edit($id)
     {
 
         $value = $this->parameterValueService->getParameterValue($id);
+        if ($value->hasError()) {
+            return $value->error;
+        }
 
         return Inertia::render('Parameters/ParameterValue/ParameterValueCreate', [
             'parameter_value' => $value->data,
