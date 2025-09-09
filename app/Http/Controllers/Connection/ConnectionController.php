@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Connection;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
-
+use App\Services\Connection\ConnectionFormItemService;
 use App\Services\Connection\ConnectionService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
@@ -24,115 +24,15 @@ class ConnectionController extends Controller
         $connections = $this->connectionService->listConnections();
 
         return Inertia::render('Connections/ConnectionsIndex', [
-            'connections' => $connections->data
+            'connections' => $connections->data,
         ]);
     }
 
     public function create(): Response|RedirectResponse
     {
-        $connectionTypes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Connection Type'
-        );
+        $formItems = (new ConnectionFormItemService($this->parameterValueService))();
 
-        $connectionStatus = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Connection Status'
-        );
-
-        $voltageTypes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Voltage'
-        );
-        $tariffTypes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Tariff'
-        );
-        $connectionCategory = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Connection Category'
-        );
-        $connectionSubCategory = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Connection Subcategory'
-        );
-
-        $billingProcesses = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Billing Process'
-        );
-        $phaseTypes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Phase Type'
-        );
-        $primaryPurposes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Primary Purpose'
-        );
-        $openAccessTypes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Open Access Type'
-        );
-        $meteringTypes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Metering Type'
-        );
-        $renewableTypes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Renewable Type'
-        );
-
-
-        return Inertia::render('Connections/ConnectionsForm', [
-            'connectionTypes' => $connectionTypes->data,
-            'connectionStatus' => $connectionStatus->data,
-            'voltageTypes' => $voltageTypes->data,
-            'tariffTypes' => $tariffTypes->data,
-            'connectionCategory' => $connectionCategory->data,
-            'connectionSubCategory' => $connectionSubCategory->data,
-            'billingProcesses' => $billingProcesses->data,
-            'phaseTypes' => $phaseTypes->data,
-            'primaryPurposes' => $primaryPurposes->data,
-            'openAccessTypes' => $openAccessTypes->data,
-            'meteringTypes' => $meteringTypes->data,
-            'renewableTypes' => $renewableTypes->data,
-        ]);
+        return Inertia::render('Connections/ConnectionsForm', $formItems);
     }
 
     /**
@@ -149,6 +49,7 @@ class ConnectionController extends Controller
 
         return redirect()->route('connection.consumer.create', $connection['connection_id']);
     }
+
     public function show(int $id): Response|RedirectResponse
     {
         $connection = $this->connectionService->getConnection($id);
@@ -167,111 +68,12 @@ class ConnectionController extends Controller
 
     public function edit(int $id): Response|RedirectResponse
     {
-        $connectionTypes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Connection Type'
-        );
-
-        $connectionStatus = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Connection Status'
-        );
-
-        $voltageTypes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Voltage'
-        );
-        $tariffTypes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Tariff'
-        );
-        $connectionCategory = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Connection Category'
-        );
-        $connectionSubCategory = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Connection Subcategory'
-        );
-
-        $billingProcesses = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Billing Process'
-        );
-        $phaseTypes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Phase Type'
-        );
-        $primaryPurposes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Primary Purpose'
-        );
-        $openAccessTypes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Open Access Type'
-        );
-        $meteringTypes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Metering Type'
-        );
-        $renewableTypes = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Renewable Type'
-        );
 
         $connection = $this->connectionService->getConnection($id);
 
-
         return Inertia::render('Connections/ConnectionsForm', [
             'connection' => $connection->data,
-            'connectionTypes' => $connectionTypes->data,
-            'connectionStatus' => $connectionStatus->data,
-            'voltageTypes' => $voltageTypes->data,
-            'tariffTypes' => $tariffTypes->data,
-            'connectionCategory' => $connectionCategory->data,
-            'connectionSubCategory' => $connectionSubCategory->data,
-            'billingProcesses' => $billingProcesses->data,
-            'phaseTypes' => $phaseTypes->data,
-            'primaryPurposes' => $primaryPurposes->data,
-            'openAccessTypes' => $openAccessTypes->data,
-            'meteringTypes' => $meteringTypes->data,
-            'renewableTypes' => $renewableTypes->data,
+            ...(new ConnectionFormItemService($this->parameterValueService))(),
         ]);
     }
 
