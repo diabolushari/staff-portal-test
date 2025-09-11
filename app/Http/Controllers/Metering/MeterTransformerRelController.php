@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Metering;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Metering\MeterTransformerRelFormRequest;
 use App\Services\Metering\MeterTransformerRelService;
+use App\Services\Parameters\ParameterValueService;
 use App\Services\Metering\MeterTransformerService;
 use App\Services\Metering\MeterService;
 use Grpc\ChannelCredentials;
@@ -19,23 +20,18 @@ class MeterTransformerRelController extends Controller
 {
     protected MeterTransformerRelService $relService;
     protected MeterService $meterService;
-      protected MeterTransformerService $meterTransformerService; 
-    private ParameterValueServiceClient $parameterValueClient;
+    protected MeterTransformerService $meterTransformerService; 
 
     public function __construct(
         MeterTransformerRelService $relService,
         MeterService $meterService,
-        MeterTransformerService $meterTransformerService
+        MeterTransformerService $meterTransformerService,
+        ParameterValueService $parameterValueService
     ) {
         $this->relService = $relService;
         $this->meterService = $meterService;
         $this->meterTransformerService = $meterTransformerService;
-
-        // gRPC client for parameter values
-        $this->parameterValueClient = new ParameterValueServiceClient(
-            config('app.consumer_service_grpc_host'),
-            ['credentials' => ChannelCredentials::createInsecure()]
-        );
+        $this->parameterValueService = $parameterValueService;
     }
 
     /**
@@ -56,50 +52,18 @@ class MeterTransformerRelController extends Controller
     public function create(): Response|RedirectResponse
     {
         // Fetch dropdowns
-        $ctpts = $this->meterTransformerService->listTransformers(); // gRPC call for CT/PT list
+        $ctpts = $this->meterTransformerService->listTransformers(); 
         $meters = $this->meterService->listMeters(); // gRPC call for meters
 
         $parameterRequests = [
-            'statuses' => (new ListParameterValuesRequest)
-                ->setDomainName('MeterTransformerRel')
-                ->setParameterName('Status'),
-            'changeReasons' => (new ListParameterValuesRequest)
-                ->setDomainName('MeterTransformerRel')
-                ->setParameterName('Change Reason'),
+            'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'MeterTransformerRel', 'Status')->data,
+            'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'MeterTransformerRel', 'Change Reason')->data,
         ];
-
-        $responses = [];
-        foreach ($parameterRequests as $key => $request) {
-            [$data, $status] = $this->parameterValueClient->ListParameterValues($request)->wait();
-            $responses[$key] = ['data' => $data, 'status' => $status];
-        }
-
-        $errorMessages = [];
-        foreach ($responses as $key => $response) {
-            if ($response['status']->code !== 0) {
-                $errorMessages[] = "Error fetching {$key}: ".$response['status']->details;
-            }
-        }
-        if (!empty($errorMessages)) {
-            return redirect()->back()->withErrors([
-                'grpc_error' => implode('; ', $errorMessages),
-            ]);
-        }
-
-        $viewData = [];
-        foreach ($responses as $key => $response) {
-            $viewData[$key] = collect($response['data']->getValues())
-                ->map(fn($item) => [
-                    'id' => $item->getId(),
-                    'parameterValue' => $item->getParameterValue(),
-                ])
-                ->toArray();
-        }
 
         return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [
             'ctpts' => $ctpts->data,
             'meters' => $meters->data,
-            ...$viewData,
+            ...$parameterRequests,
         ]);
     }
 
@@ -110,12 +74,6 @@ class MeterTransformerRelController extends Controller
     {
         $data = $request->toArray();
         $data['created_by'] = auth()->id();
-
-        if (empty($data['effective_start_ts'])) {
-        $data['effective_start_ts'] = now()->toISOString();
-        }
-        //$request->setEffectiveStartTs($this->toProtoTimestamp($data['effective_start_ts']));
-
 
         $response = $this->relService->createRelation($data);
 
@@ -153,64 +111,41 @@ class MeterTransformerRelController extends Controller
 
     // Fetch statuses + change reasons
     $parameterRequests = [
-        'statuses' => (new ListParameterValuesRequest)
-            ->setDomainName('MeterTransformerRel')
-            ->setParameterName('Status'),
-        'changeReasons' => (new ListParameterValuesRequest)
-            ->setDomainName('MeterTransformerRel')
-            ->setParameterName('Change Reason'),
-    ];
+            'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'MeterTransformerRel', 'Status')->data,
+            'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'MeterTransformerRel', 'Change Reason')->data,
+        ];
 
-    $responses = [];
-    foreach ($parameterRequests as $key => $request) {
-        [$data, $status] = $this->parameterValueClient->ListParameterValues($request)->wait();
-        $responses[$key] = ['data' => $data, 'status' => $status];
-    }
-
-    $viewData = [];
-    foreach ($responses as $key => $res) {
-        $viewData[$key] = collect($res['data']->getValues())
-            ->map(fn($item) => [
-                'id' => $item->getId(),
-                'parameterValue' => $item->getParameterValue(),
-            ])
-            ->toArray();
-    }
+   
 
     return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [
         'relation'      => $response->data,      
         'ctpts'         => $ctpts->data,         
         'meters'        => $meters->data,        
-        'statuses'      => $viewData['statuses'],
-        'changeReasons' => $viewData['changeReasons'],
+        ...$parameterRequests,
     ]);
 }
 
-// public function update(MeterTransformerRelFormRequest $request, int $id): RedirectResponse
-// {
-//     $data = $request->toArray();
-//     $data['id'] = $id;
-//     $data['updated_by'] = auth()->id();
+public function update(MeterTransformerRelFormRequest $request, int $id): RedirectResponse
+{
+    $data = $request->toArray();
+    $data['updated_by'] = auth()->id(); // Use updated_by, not created_by
+    \Log::debug('Update request data:', $data); // Add this line
 
-//     // If no effective_start_ts is provided, keep existing or set default
-//     if (empty($data['effective_start_ts'])) {
-//         $data['effective_start_ts'] = now()->toISOString();
-//     }
+    // Call updateRelation instead of createRelation
+    $response = $this->relService->updateRelation($data, $id);
 
-//     $response = $this->relService->updateRelation($data);
+    if ($response->hasError()) {
+        return $response->error;
+    }
 
-//     if ($response->hasError()) {
-//         return $response->error;
-//     }
+    \Log::info('Successfully updated MeterTransformerRel:', [
+        'id' => $id,
+        'data' => $data,
+        'grpcResponse' => $response,
+    ]);
 
-//     \Log::info('Successfully updated MeterTransformerRel:', [
-//         'id' => $id,
-//         'data' => $data,
-//         'grpcResponse' => $response,
-//     ]);
-
-//     return redirect()->route('meter-rel.index')->with('success', 'Relation updated successfully.');
-// }
+    return redirect()->route('meter-rel.index')->with('success', 'Relation updated successfully.');
+}
 
 
 

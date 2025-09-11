@@ -10,11 +10,12 @@ use Grpc\ChannelCredentials;
 use Proto\Metering\MeterTransformerRelServiceClient;
 use Proto\Metering\CreateMeterTransformerRelRequest;
 use Proto\Metering\UpdateMeterTransformerRelRequest;
-use Proto\Metering\GetMeterTransformerRelRequest;
-use Proto\Metering\DeleteMeterTransformerRelRequest;
-use Proto\Metering\ListMeterTransformerRelsRequest;
 use Proto\Metering\MeterTransformerRelMessage;
+use Proto\Metering\MeterTransformerRelIdRequest;
+use Proto\Metering\MeterTransformerRelUpdateRequest;
+use Proto\Metering\MeterTransformerRelCreateRequest;
 use Google\Protobuf\Timestamp;
+use Google\Protobuf\GPBEmpty;
 
 
 class MeterTransformerRelService
@@ -43,7 +44,7 @@ class MeterTransformerRelService
 
     public function listRelations(): GrpcServiceResponse
     {
-        $request = new ListMeterTransformerRelsRequest();
+        $request = new GPBEmpty();
         [$response, $status] = $this->client->ListMeterTransformerRels($request)->wait();
 
         if ($status->code !== 0) {
@@ -66,7 +67,7 @@ class MeterTransformerRelService
 
     public function createRelation(array $data): GrpcServiceResponse
     {
-        $request = new CreateMeterTransformerRelRequest();
+        $request = new MeterTransformerRelCreateRequest();
         $request->setCtptId($data['ctpt_id']);
         $request->setMeterId($data['meter_id']);
        if (!empty($data['faulty_date'])) {
@@ -83,8 +84,6 @@ class MeterTransformerRelService
         $request->setChangeReasonId($data['change_reason_id']);
         //$request->setEffectiveStartTs(Carbon::parse($data['effective_start_ts'])->toProto());
         $request->setCreatedBy($data['created_by']);
-        $request->setIsActive($data['is_active'] ?? true);
-
         [$response, $status] = $this->client->CreateMeterTransformerRel($request)->wait();
 
         if ($status->code !== 0) {
@@ -108,7 +107,7 @@ class MeterTransformerRelService
 
     public function getRelation(int $id): GrpcServiceResponse
     {
-        $request = new GetMeterTransformerRelRequest();
+        $request = new MeterTransformerRelIdRequest();
         $request->setVersionId($id);
 
         [$response, $status] = $this->client->GetMeterTransformerRelById($request)->wait();
@@ -130,29 +129,29 @@ class MeterTransformerRelService
         );
     }
 
-    public function updateRelation(array $data): GrpcServiceResponse
+    public function updateRelation(array $data, $id): GrpcServiceResponse
     {
-        $request = new UpdateMeterTransformerRelRequest();
-        $request->setVersionId($data['version_id']);
+        $request = new MeterTransformerRelUpdateRequest();
+        $request->setVersionId($id);
+        
         $request->setCtptId($data['ctpt_id']);
         $request->setMeterId($data['meter_id']);
+       
         if (!empty($data['faulty_date'])) {
-            $request->setFaultyDate(Carbon::parse($data['faulty_date'])->toProto());
+            $request->setFaultyDate($this->toProtoTimestamp($data['faulty_date']));
         }
         if (!empty($data['ctpt_energise_date'])) {
-            $request->setCtptEnergiseDate(Carbon::parse($data['ctpt_energise_date'])->toProto());
+            $request->setCtptEnergiseDate($this->toProtoTimestamp($data['ctpt_energise_date']));
         }
         if (!empty($data['ctpt_change_date'])) {
-            $request->setCtptChangeDate(Carbon::parse($data['ctpt_change_date'])->toProto());
+            $request->setCtptChangeDate($this->toProtoTimestamp($data['ctpt_change_date']));
         }
         $request->setStatusId($data['status_id']);
         $request->setChangeReasonId($data['change_reason_id']);
-       // $request->setEffectiveStartTs(Carbon::parse($data['effective_start_ts'])->toProto());
-        $request->setUpdatedBy($data['updated_by']);
-        $request->setIsActive($data['is_active'] ?? true);
-
+        $request->setUpdatedBy($data['updated_by'] ?? auth()->id());
+      
         [$response, $status] = $this->client->UpdateMeterTransformerRel($request)->wait();
-
+    
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -161,7 +160,7 @@ class MeterTransformerRelService
                 $status->details
             );
         }
-
+    
         return GrpcServiceResponse::success(
             self::relProtoToArray($response->getRel()),
             $response,
@@ -169,11 +168,10 @@ class MeterTransformerRelService
             $status->details
         );
     }
-    
 
     public function deleteRelation(int $id): GrpcServiceResponse
     {
-        $request = new DeleteMeterTransformerRelRequest();
+        $request = new MeterTransformerRelIdRequest();
         $request->setVersionId($id);
 
         [$response, $status] = $this->client->DeleteMeterTransformerRel($request)->wait();
@@ -195,29 +193,34 @@ class MeterTransformerRelService
     public static function relProtoToArray(MeterTransformerRelMessage $rel): array
     {
         $ctpt = $rel->getCtpt();
+        $ctptType = null;
+        if ($ctpt && method_exists($ctpt, 'getType') && $ctpt->getType()) {
+            $ctptType = $ctpt->getType()->getParameterValue();
+        }
+        
+        $ctRatio = ($ctpt && method_exists($ctpt, 'getCtRatio')) ? $ctpt->getCtRatio() : null;
+        $ptRatio = ($ctpt && method_exists($ctpt, 'getPtRatio')) ? $ctpt->getPtRatio() : null;
+        $ratio = $ctRatio ?: $ptRatio;
         return [
             'version_id' => $rel->getVersionId(),
             'ctpt_id' => $rel->getCtptId(),
-            'ctpt_serial' => ($ctpt && method_exists($ctpt, 'getCtptSerial')) ? $ctpt->getCtptSerial() : null,
-            'ctpt_type' => ($ctpt && method_exists($ctpt, 'getType') && $ctpt->getType() && method_exists($ctpt->getType(), 'getParameterValue')) ? $ctpt->getType()->getParameterValue() : null,
-            'ctpt_ratio' => ($ctpt && method_exists($ctpt, 'getCtRatio')) ? $ctpt->getCtRatio() : null,
             'meter_id' => $rel->getMeterId(),
-            'meter_serial' => ($rel->getMeter() && method_exists($rel->getMeter(), 'getMeterSerial')) ? $rel->getMeter()->getMeterSerial() : null,
+            'meter_serial' => ($rel->getMeter() && method_exists($rel->getMeter(), 'getMeterSerial')) 
+            ? $rel->getMeter()->getMeterSerial() 
+            : null,
             'faulty_date' => $rel->hasFaultyDate() ? $rel->getFaultyDate()->toDateTime()->format('Y-m-d') : null,
             'ctpt_energise_date' => $rel->hasCtptEnergiseDate() ? $rel->getCtptEnergiseDate()->toDateTime()->format('Y-m-d') : null,
             'ctpt_change_date' => $rel->hasCtptChangeDate() ? $rel->getCtptChangeDate()->toDateTime()->format('Y-m-d') : null,
             'status_id' => $rel->getStatusId(),
-            // 'change_reason_id' => $rel->getChangeReasonId(),
-            // 'status_label' => $rel->getStatus() ? $rel->getStatus()->getParameterValue() : null, // Add this
+            'status_label' => $rel->getStatus() ? $rel->getStatus()->getParameterValue() : null,
             'change_reason_id' => $rel->getChangeReasonId(),
-            // 'change_reason_label' => $rel->getChangeReason() ? $rel->getChangeReason()->getParameterValue() : null,
-            'effective_start_ts' => $rel->getEffectiveStartTs()->toDateTime()->format('Y-m-d'),
-            'effective_end_ts' => $rel->hasEffectiveEndTs() ? $rel->getEffectiveEndTs()->toDateTime()->format('Y-m-d') : null,
+            'change_reason_label' => $rel->getChangeReason() ? $rel->getChangeReason()->getParameterValue() : null,
             'created_ts' => $rel->hasCreatedTs() ? $rel->getCreatedTs()->toDateTime()->format('Y-m-d') : null,
             'updated_ts' => $rel->hasUpdatedTs() ? $rel->getUpdatedTs()->toDateTime()->format('Y-m-d') : null,
             'created_by' => $rel->getCreatedBy(),
-            'updated_by' => $rel->getUpdatedBy(),
-            'is_active' => $rel->getIsActive(),
+            'updated_by' => $rel->getUpdatedBy(),            
+            'ctpt_type' => $ctptType,
+            'ratio' => $ratio,
         ];
     }
 }

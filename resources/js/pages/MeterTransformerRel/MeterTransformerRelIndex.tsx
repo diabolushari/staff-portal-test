@@ -26,7 +26,7 @@ interface Props {
 }
 
 const breadcrumbs = [
-  { title: "Meter Transformer Relations", href: "/meter-rel" },
+  { title: "Meter CTPT Relations", href: "/meter-rel" },
 ];
 
 export default function MeterTransformerRelIndex({ relations }: Props) {
@@ -37,6 +37,7 @@ export default function MeterTransformerRelIndex({ relations }: Props) {
   function handleShow(id: number) {
     router.get(`/meter-rel/${id}`);
   }
+  
 
   function handleDeleteClick(item: Relation) {
     setSelectedRel(item);
@@ -46,7 +47,7 @@ export default function MeterTransformerRelIndex({ relations }: Props) {
   return (
     <MainLayout breadcrumb={breadcrumbs} navItems={transformerrelNavItems}>
       <div className="flex h-full flex-1 flex-col gap-6 p-6">
-        <CardHeader title="Meter Transformer Relations" />
+        <CardHeader title="Meter CTPT Relations" />
 
         <ListSearch
           title="Relations Search"

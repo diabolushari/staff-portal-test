@@ -28,7 +28,7 @@ interface MeterTransformerRelFormProps {
 }
 
 const breadcrumbs = [
-  { title: "Meter Transformer Relations", href: "/meter-rel" },
+  { title: "Meter CTPT Relations", href: "/meter-rel" },
   {
     title: "Add Relation",
     href: "/meter-rel/create",
@@ -53,9 +53,10 @@ export default function MeterTransformerRelForm({
 }: MeterTransformerRelFormProps) {
   const isEditing = Boolean(relation);
 
-  console.log("Editing Relation:", relation,statuses,changeReasons); // Debugging line
+  console.log(statuses,changeReasons); // Debugging line
 
   const { formData, setFormValue, setAll} = useCustomForm({
+    version_id: relation?.version_id ?? null,
     ctpt_id: relation?.ctpt_id ?? null,
     meter_id: relation?.meter_id ?? null,
     status_id: relation?.status_id ?? null,
@@ -84,6 +85,7 @@ console.log('Merged CT/PTs:', mergedctpts); // Debugging line
     e.preventDefault();
 
     const payload = {
+      version_id: formData.version_id,
       ctpt_id: formData.ctpt_id,
       meter_id: formData.meter_id,
       status_id: formData.status_id,
@@ -137,15 +139,17 @@ console.log('Merged CT/PTs:', mergedctpts); // Debugging line
                   displayKey="mergedValue"
                   error={errors.ctpt_id}
                 />
-                <SelectList
-                  label="Meter"
-                  value={formData.meter_id}
-                  setValue={setFormValue("meter_id")}
-                  list={meters}
-                  dataKey="meter_id"
-                  displayKey="meter_serial"
-                  error={errors.meter_id}
-                />
+                {!isEditing && (
+                  <SelectList
+                    label="Meter"
+                    value={formData.meter_id}
+                    setValue={setFormValue("meter_id")}
+                    list={meters}
+                    dataKey="meter_id"
+                    displayKey="meter_serial"
+                    error={errors.meter_id}
+                  />
+                )}
 
                 <SelectList
                   label="Status"
@@ -153,7 +157,7 @@ console.log('Merged CT/PTs:', mergedctpts); // Debugging line
                   setValue={setFormValue("status_id")}
                   list={statuses}
                   dataKey="id"
-                  displayKey="parameterValue"
+                  displayKey="parameter_value"
                   error={errors.status_id}
                 />
                 <SelectList
@@ -162,7 +166,7 @@ console.log('Merged CT/PTs:', mergedctpts); // Debugging line
                   setValue={setFormValue("change_reason_id")}
                   list={changeReasons}
                   dataKey="id"
-                  displayKey="parameterValue"
+                  displayKey="parameter_value"
                   error={errors.change_reason_id}
                 />
               </>,

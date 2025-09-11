@@ -10,23 +10,19 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 use Proto\Parameters\ListParameterValuesRequest;
-use Proto\Parameters\ParameterValueServiceClient;
+use App\Services\Parameters\ParameterValueService;
+
 
 class MeterTransformerController extends Controller
 {
     protected MeterTransformerService $transformerService;
+    protected ParameterValueService $parameterValueService;
 
-    private ParameterValueServiceClient $parameterValueClient;
-
-    public function __construct(MeterTransformerService $transformerService)
+    public function __construct(MeterTransformerService $transformerService,
+                 ParameterValueService $parameterValueService)
     {
         $this->transformerService = $transformerService;
-
-        // gRPC client for parameter values
-        $this->parameterValueClient = new ParameterValueServiceClient(
-            config('app.consumer_service_grpc_host'),
-            ['credentials' => ChannelCredentials::createInsecure()]
-        );
+       $this->parameterValueService = $parameterValueService;
     }
 
     /**
@@ -47,56 +43,15 @@ class MeterTransformerController extends Controller
     public function create(): Response|RedirectResponse
     {
         $parameterRequests = [
-            'ownershipTypes' => (new ListParameterValuesRequest)
-                ->setDomainName('Meter Transformer')
-                ->setParameterName('Ownership Type'),
-            'accuracyClasses' => (new ListParameterValuesRequest)
-                ->setDomainName('Meter Transformer')
-                ->setParameterName('Accuracy Class'),
-            'burdens' => (new ListParameterValuesRequest)
-                ->setDomainName('Meter Transformer')
-                ->setParameterName('Burden'),
-            'makes' => (new ListParameterValuesRequest)
-                ->setDomainName('Meter Transformer')
-                ->setParameterName('Make'),
-            'types' => (new ListParameterValuesRequest)
-                ->setDomainName('Meter Transformer')
-                ->setParameterName('Type'),
+            'ownershipTypes' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Ownership Type')->data,
+            'accuracyClasses' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Accuracy Class')->data,
+            'burdens' =>    $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Burden')->data,
+            'makes' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Make')->data,
+            'types' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Type')->data
         ];
 
-        $responses = [];
-        foreach ($parameterRequests as $key => $request) {
-            [$data, $status] = $this->parameterValueClient->ListParameterValues($request)->wait();
-            $responses[$key] = ['data' => $data, 'status' => $status];
-        }
 
-        // Handle errors
-        $errorMessages = [];
-        foreach ($responses as $key => $response) {
-            if ($response['status']->code !== 0) {
-                $errorMessages[] = "Error fetching {$key}: ".$response['status']->details;
-            }
-        }
-
-        if (! empty($errorMessages)) {
-            return redirect()->back()->withErrors([
-                'grpc_error' => implode('; ', $errorMessages),
-            ]);
-        }
-
-        // Format for dropdowns
-        $viewData = [];
-        foreach ($responses as $key => $response) {
-            $viewData[$key] = collect($response['data']->getValues())
-                ->map(fn ($item) => [
-                    'id' => $item->getId(),
-                    'parameterValue' => $item->getParameterValue(),
-                ])
-            
-                ->toArray();
-        }
-
-        return Inertia::render('MeterTransformers/MeterTransformerForm', $viewData);
+        return Inertia::render('MeterTransformers/MeterTransformerForm', $parameterRequests);
     }
 
     /**

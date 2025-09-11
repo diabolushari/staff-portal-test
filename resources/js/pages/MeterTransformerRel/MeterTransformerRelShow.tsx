@@ -8,7 +8,12 @@ import { transformerrelNavItems } from "@/components/Navbar/navitems";
 interface Relation {
   version_id: number;
   ctpt_id: number;
+  ctpt_type?: string;
+  ratio?: number;
   meter_id: number;
+  meter_serial: string;
+  status_label: string;
+  change_reason_label: string;
   faulty_date?: string | null;
   ctpt_energise_date?: string | null;
   ctpt_change_date?: string | null;
@@ -16,7 +21,7 @@ interface Relation {
   change_reason_id: number;
   effective_start_ts: string;
   effective_end_ts?: string | null;
-  is_active: boolean;
+ // is_active: boolean;
 }
 
 interface Props {
@@ -37,6 +42,8 @@ export default function MeterTransformerRelShow({ relation }: Readonly<Props>) {
       day: "numeric",
     });
   };
+
+  const ctptDetails = `${relation.ctpt_id} - ${relation.ctpt_type} - ${relation.ratio}`;
 
   return (
     <MainLayout breadcrumb={breadcrumbs} navItems={transformerrelNavItems}>
@@ -64,11 +71,11 @@ export default function MeterTransformerRelShow({ relation }: Readonly<Props>) {
                   General Information
                 </StrongText>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  <InfoItem label="CTPT ID" value={relation.ctpt_id} />
-                  <InfoItem label="Meter ID" value={relation.meter_id} />
-                  <InfoItem label="Status ID" value={relation.status_id} />
-                  <InfoItem label="Change Reason" value={relation.change_reason_id} />
-                  <InfoItem label="Is Active" value={relation.is_active ? "Yes" : "No"} />
+                  {/* <InfoItem label="CTPT ID" value={relation.ctpt_id} /> */}
+                  <InfoItem label="CTPT Type" value={ctptDetails} />
+                  <InfoItem label="Meter Serial" value={relation.meter_serial} />
+                  <InfoItem label="Status Label" value={relation.status_label} />
+                  <InfoItem label="Change Reason Label" value={relation.change_reason_label} />
                 </div>
               </div>
 
@@ -78,8 +85,8 @@ export default function MeterTransformerRelShow({ relation }: Readonly<Props>) {
                   Timeline
                 </StrongText>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  <InfoItem label="Effective Start" value={formatDate(relation.effective_start_ts)} />
-                  <InfoItem label="Effective End" value={relation.effective_end_ts ? formatDate(relation.effective_end_ts) : "Ongoing"} />
+                  {/* <InfoItem label="Effective Start" value={formatDate(relation.effective_start_ts)} />
+                  <InfoItem label="Effective End" value={relation.effective_end_ts ? formatDate(relation.effective_end_ts) : "Ongoing"} /> */}
                   <InfoItem label="Faulty Date" value={formatDate(relation.faulty_date)} />
                   <InfoItem label="CTPT Energise Date" value={formatDate(relation.ctpt_energise_date)} />
                   <InfoItem label="CTPT Change Date" value={formatDate(relation.ctpt_change_date)} />

@@ -16,7 +16,7 @@ import { c } from "node_modules/framer-motion/dist/types.d-Bq-Qm38R";
 // --- Type Definitions ---
 interface ParameterOption {
   id: number;
-  parameterValue: string;
+  parameter_value: string;
 }
 
 export interface MeterTransformerFormProps {
@@ -29,9 +29,9 @@ export interface MeterTransformerFormProps {
 }
 
 const breadcrumbs = [
-  { title: "Meter Transformers", href: "/meter-transformers" },
+  { title: "Meter CTPT", href: "/meter-transformers" },
   {
-    title: "Add Meter Transformer",
+    title: "Add Meter CTPT",
     href: "/meter-transformers/create",
   },
 ];
@@ -80,7 +80,7 @@ export default function MeterTransformerForm({
       : "/meter-transformers",
   );
 // get the selected type name (CT or PT)
-const selectedType = types.find(t => t.id === formData.type_id)?.parameterValue;
+const selectedType = types.find(t => t.id === formData.type_id)?.parameter_value;
 
 useEffect(() => {
   if (selectedType === "CT") {
@@ -94,7 +94,7 @@ useEffect(() => {
 
 const handletypeChange = (id: string | number) => {
   const numericId = Number(id);
-  const selected = types.find(t => t.id == numericId)?.parameterValue || '';
+  const selected = types.find(t => t.id == numericId)?.parameter_value || '';
   setTransformerType(selected);
   setFormValue("type_id")(numericId);
   console.log("Selected Type:", selected, "id:", numericId, types);
@@ -143,11 +143,11 @@ const handletypeChange = (id: string | number) => {
         >
       <div className="p-6">
         <CardHeader
-          title={isEditing ? "Edit Transformer" : "Create Transformer"}
+          title={isEditing ? "Edit CTPT" : "Create CTPT"}
           subheading={
             isEditing
-              ? "Update transformer details"
-              : "Add a new transformer to the system"
+              ? "Update CTPT details"
+              : "Add a new CTPT to the system"
           }
         />
         <Card>
@@ -168,7 +168,7 @@ const handletypeChange = (id: string | number) => {
                   setValue={setFormValue("ownership_type_id")}
                   list={ownershipTypes}
                   dataKey="id"
-                  displayKey="parameterValue"
+                  displayKey="parameter_value"
                   error={errors.ownership_type_id}
                 />
                 <SelectList
@@ -177,7 +177,7 @@ const handletypeChange = (id: string | number) => {
                   setValue={setFormValue("make_id")}
                   list={makes}
                   dataKey="id"
-                  displayKey="parameterValue"
+                  displayKey="parameter_value"
                   error={errors.make_id}
                 />
                 <SelectList
@@ -186,7 +186,7 @@ const handletypeChange = (id: string | number) => {
                   setValue={handletypeChange}
                   list={types}
                   dataKey="id"
-                  displayKey="parameterValue"
+                  displayKey="parameter_value"
                   error={errors.type_id}
                 />
               </>,
@@ -201,7 +201,7 @@ const handletypeChange = (id: string | number) => {
                   setValue={setFormValue("accuracy_class_id")}
                   list={accuracyClasses}
                   dataKey="id"
-                  displayKey="parameterValue"
+                  displayKey="parameter_value"
                   error={errors.accuracy_class_id}
                 />
                 <SelectList
@@ -210,7 +210,7 @@ const handletypeChange = (id: string | number) => {
                   setValue={setFormValue("burden_id")}
                   list={burdens}
                   dataKey="id"
-                  displayKey="parameterValue"
+                  displayKey="parameter_value"
                   error={errors.burden_id}
                 />
                 {transformerType == "CT" && <Input

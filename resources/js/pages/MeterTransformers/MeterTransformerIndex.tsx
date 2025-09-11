@@ -23,7 +23,7 @@ interface Props {
 
 }
 const breadcrumbs = [
-	{ title: "Meter Transformers", href: "/meter-transformers" },
+	{ title: "Meter CTPT", href: "/meter-transformers" },
 ];
 
 export default function MeterTransformerIndex({ transformers }: Props) {
@@ -50,9 +50,9 @@ console.log("Meter Transformers:", items);
 			  navItems={transformerNavItems}
 		>
 			<div className="flex h-full flex-1 flex-col gap-6 p-6">
-				<CardHeader title="Meter Transformers" />
+				<CardHeader title="Meter CTPT" />
 				<ListSearch
-						  title="Meter Transformer Search"
+						  title="Meter CTPT Search"
 						  url={route("meter-transformers.index")}
 						  //setItems={setItems}
 						  //search={query}
@@ -73,7 +73,7 @@ console.log("Meter Transformers:", items);
 				{showDeleteModal && selectedTransformer && (
           <DeleteModal
             setShowModal={setShowDeleteModal}
-            title={`Delete Transformer ${selectedTransformer.ctpt_serial}`}
+            title={`Delete CTPT ${selectedTransformer.ctpt_serial}`}
             url={`/meter-transformers/${selectedTransformer.meter_ctpt_id}`}
           />
         )}

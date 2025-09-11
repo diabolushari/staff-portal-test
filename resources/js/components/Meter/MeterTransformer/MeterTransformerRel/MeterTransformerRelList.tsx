@@ -6,14 +6,16 @@ interface Relation {
   ctpt_id: number;
   meter_id: number;
   meter_serial?: string;
+  ctpt_type?: string;
+  ratio?: number;
   faulty_date?: string | null;
   ctpt_energise_date?: string | null;
   ctpt_change_date?: string | null;
   status_id: number;
   change_reason_id: number;
-  effective_start_ts: string;
-  effective_end_ts?: string | null;
-  is_active: boolean;
+  // effective_start_ts: string;
+  // effective_end_ts?: string | null;
+  //is_active: boolean;
   
 }
 
@@ -61,7 +63,7 @@ export default function MeterTransformerRelList({
                     </div> */}
                     <div className="rounded-[50px] bg-blue-100 px-2.5 py-px">
                       <div className="font-inter text-xs font-normal leading-6 tracking-[-0.072px] text-blue-800">
-                        CTPT {rel.ctpt_id}
+                        CTPT: {rel.ctpt_id} - {rel.ctpt_type} - {rel.ratio}
                       </div>
                     </div>
                     <div className="rounded-[50px] bg-indigo-100 px-2.5 py-px">
@@ -72,7 +74,7 @@ export default function MeterTransformerRelList({
                   </div>
 
                   {/* Dates */}
-                  <div className="flex w-full flex-wrap items-center gap-5">
+                  {/* <div className="flex w-full flex-wrap items-center gap-5">
                     <div className="flex items-center gap-[3px]">
                       <Calendar className="h-3.5 w-3.5 text-dark-gray" />
                       <div className="font-inter text-sm font-normal leading-6 tracking-[-0.084px] text-dark-gray">
@@ -87,20 +89,20 @@ export default function MeterTransformerRelList({
                         </div>
                       </div>
                     )}
-                  </div>
+                  </div> */}
 
                   {/* Faulty / Energise / Change */}
                   <div className="flex flex-wrap gap-3 text-sm text-dark-gray">
-                    <span>Faulty: {formatDate(rel.faulty_date)}</span>
-                    <span>Energise: {formatDate(rel.ctpt_energise_date)}</span>
-                    <span>Change: {formatDate(rel.ctpt_change_date)}</span>
+                    <span>Faulty Date: {formatDate(rel.faulty_date)}</span>
+                    <span>Energise Date: {formatDate(rel.ctpt_energise_date)}</span>
+                    <span>Change Date: {formatDate(rel.ctpt_change_date)}</span>
                   </div>
                 </div>
               </div>
 
               {/* Right content (status + delete) */}
               <div className="flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]">
-                <div
+                {/* <div
                   className={`rounded-[50px] px-2.5 py-px ${
                     rel.is_active ? "bg-green-100" : "bg-red-100"
                   }`}
@@ -112,7 +114,7 @@ export default function MeterTransformerRelList({
                   >
                     {rel.is_active ? "Active" : "Inactive"}
                   </div>
-                </div>
+                </div> */}
 
                 <div className="flex items-center gap-3 mt-2">
                   {onEdit && (
