@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.metering;
+
+option php_namespace = "Proto\\Metering";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/empty.proto";
+import "parameters/parameter-value.proto";
+
+// ----------- MESSAGE ------------
+message MeterTransformerMessage {
+  int64 meter_ctpt_id = 1;
+
+  // Foreign keys with IDs
+  int64 ownership_type_id = 2;
+  int64 accuracy_class_id = 3;
+  int64 burden_id = 4;
+  int64 make_id = 5;
+  int64 type_id = 6;
+
+  // Foreign key objects
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto ownership_type = 7;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto accuracy_class = 8;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto burden = 9;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto make = 10;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto type = 11;
+
+  // Other fields
+  string ctpt_serial = 12;
+  string ct_ratio = 13;
+  string pt_ratio = 14;
+  string created_ts = 15;         
+  string updated_ts = 16;         
+  int64 created_by = 17;
+  int64 updated_by = 18;
+  bool is_active = 19;
+}
+
+// ----------- REQUEST/RESPONSE ------------
+message CreateMeterTransformerMessage {
+  int64 ownership_type_id = 1;
+  int64 accuracy_class_id = 2;
+  int64 burden_id = 3;
+  int64 make_id = 4;
+  int64 type_id = 5;
+
+  string ctpt_serial = 6;
+  string ct_ratio = 7;
+  string pt_ratio = 8;
+  bool is_active = 9;
+  int64 created_by = 10;
+}
+
+message CreateMeterTransformerRequest {
+  CreateMeterTransformerMessage transformer = 1;
+}
+
+message GetMeterTransformerRequest {
+  int64 meter_ctpt_id = 1;
+}
+
+message DeleteMeterTransformerRequest {
+  int64 meter_ctpt_id = 1;
+}
+
+message ListMeterTransformersRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  string ctpt_serial = 3;
+  bool is_active = 4;
+}
+
+message ListMeterTransformersResponse {
+  repeated MeterTransformerMessage transformers = 1;
+}
+
+// ----------- SERVICE ------------
+service MeterTransformerService {
+  rpc CreateMeterTransformer(CreateMeterTransformerRequest) returns (MeterTransformerMessage);
+  rpc GetMeterTransformer(GetMeterTransformerRequest) returns (MeterTransformerMessage);
+  rpc DeleteMeterTransformer(DeleteMeterTransformerRequest) returns (google.protobuf.Empty);
+  rpc ListMeterTransformers(ListMeterTransformersRequest) returns (ListMeterTransformersResponse);
+}

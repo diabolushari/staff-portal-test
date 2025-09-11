@@ -67,6 +67,7 @@ export default function OfficeShow({ office }: Readonly<Props>) {
 
   const formatDate = (dateStr?: string) => (dateStr ? new Date(dateStr).toLocaleDateString() : '-')
 
+<<<<<<< HEAD
   // Placeholder data for missing fields based on Figma design
   const placeholderData = {
     district: 'Kozhikode',
@@ -104,6 +105,8 @@ export default function OfficeShow({ office }: Readonly<Props>) {
     },
   ]
 
+=======
+>>>>>>> 798bbc81eead458a7b6b5e63cb4cc247b9603daf
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -115,15 +118,26 @@ export default function OfficeShow({ office }: Readonly<Props>) {
           <div className='flex flex-col gap-2'>
             <div className='flex items-center gap-3'>
               <StrongText className='text-2xl font-semibold text-[#252c32]'>
+<<<<<<< HEAD
                 {office_code} - {office_name}
               </StrongText>
               <TinyContainer variant={is_current ? 'success' : 'danger'}>
                 {is_current ? 'Active' : 'Inactive'}
+=======
+                {office.office_code} - {office.office_name}
+              </StrongText>
+              <TinyContainer variant={office.is_current ? 'success' : 'danger'}>
+                {office.is_current ? 'Active' : 'Inactive'}
+>>>>>>> 798bbc81eead458a7b6b5e63cb4cc247b9603daf
               </TinyContainer>
             </div>
           </div>
           <button
+<<<<<<< HEAD
             onClick={() => router.visit(route('offices.edit', office_id))}
+=======
+            onClick={() => setIsEditing(!isEditing)}
+>>>>>>> 798bbc81eead458a7b6b5e63cb4cc247b9603daf
             className='flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
           >
             {isEditing ? 'Cancel Edit' : 'Edit Details'}
@@ -141,7 +155,11 @@ export default function OfficeShow({ office }: Readonly<Props>) {
                     Basic Information
                   </StrongText>
                   <button
+<<<<<<< HEAD
                     onClick={() => router.visit(route('offices.edit', office_id))}
+=======
+                    onClick={() => router.visit(route('offices.edit', office.office_id))}
+>>>>>>> 798bbc81eead458a7b6b5e63cb4cc247b9603daf
                     className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
                   >
                     <PencilIcon className='h-4 w-4' />
@@ -153,19 +171,31 @@ export default function OfficeShow({ office }: Readonly<Props>) {
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Office Code</label>
                     <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+<<<<<<< HEAD
                       {office_code}
+=======
+                      {office.office_code}
+>>>>>>> 798bbc81eead458a7b6b5e63cb4cc247b9603daf
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Name</label>
                     <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+<<<<<<< HEAD
                       {office_name}
+=======
+                      {office.office_name}
+>>>>>>> 798bbc81eead458a7b6b5e63cb4cc247b9603daf
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Office Type</label>
                     <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+<<<<<<< HEAD
                       {office_type?.parameter_value || 'Subdivision'}
+=======
+                      {office.office_type?.parameter_value || 'Subdivision'}
+>>>>>>> 798bbc81eead458a7b6b5e63cb4cc247b9603daf
                     </div>
                   </div>
                   <div className='space-y-1'>
@@ -184,7 +214,11 @@ export default function OfficeShow({ office }: Readonly<Props>) {
                     Location Details
                   </StrongText>
                   <button
+<<<<<<< HEAD
                     onClick={() => router.visit(route('offices.edit', office_id))}
+=======
+                    onClick={() => router.visit(route('offices.edit', office.office_id))}
+>>>>>>> 798bbc81eead458a7b6b5e63cb4cc247b9603daf
                     className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
                   >
                     <PencilIcon className='h-4 w-4' />
@@ -233,7 +267,11 @@ export default function OfficeShow({ office }: Readonly<Props>) {
                     Parent Details
                   </StrongText>
                   <button
+<<<<<<< HEAD
                     onClick={() => router.visit(route('offices.edit', office_id))}
+=======
+                    onClick={() => router.visit(route('offices.edit', office.office_id))}
+>>>>>>> 798bbc81eead458a7b6b5e63cb4cc247b9603daf
                     className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
                   >
                     <PencilIcon className='h-4 w-4' />
@@ -288,7 +326,11 @@ export default function OfficeShow({ office }: Readonly<Props>) {
                     Other info
                   </StrongText>
                   <button
+<<<<<<< HEAD
                     onClick={() => router.visit(route('offices.edit', office_id))}
+=======
+                    onClick={() => router.visit(route('offices.edit', office.office_id))}
+>>>>>>> 798bbc81eead458a7b6b5e63cb4cc247b9603daf
                     className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
                   >
                     <PencilIcon className='h-4 w-4' />
@@ -302,13 +344,21 @@ export default function OfficeShow({ office }: Readonly<Props>) {
                       Effective Start Date
                     </label>
                     <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+<<<<<<< HEAD
                       {formatDate(effective_start) || '12 May 1990'}
+=======
+                      {formatDate(office.effective_start) || '12 May 1990'}
+>>>>>>> 798bbc81eead458a7b6b5e63cb4cc247b9603daf
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Effective End date</label>
                     <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+<<<<<<< HEAD
                       {formatDate(effective_end) || 'Active'}
+=======
+                      {formatDate(office.effective_end) || 'Active'}
+>>>>>>> 798bbc81eead458a7b6b5e63cb4cc247b9603daf
                     </div>
                   </div>
                   <div className='space-y-1'>
