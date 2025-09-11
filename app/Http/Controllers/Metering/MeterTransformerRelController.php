@@ -86,7 +86,7 @@ class MeterTransformerRelController extends Controller
         'grpcResponse' => $response,
     ]);
 
-        return redirect()->route('meter-rel.index')->with('success', 'Relation created successfully.');
+        return redirect()->route('meter-ctpt-rel.index')->with('success', 'Relation created successfully.');
     }
 
     /**
@@ -144,7 +144,7 @@ public function update(MeterTransformerRelFormRequest $request, int $id): Redire
         'grpcResponse' => $response,
     ]);
 
-    return redirect()->route('meter-rel.index')->with('success', 'Relation updated successfully.');
+    return redirect()->route('meter-ctpt-rel.index')->with('success', 'Relation updated successfully.');
 }
 
 
@@ -161,6 +161,6 @@ public function update(MeterTransformerRelFormRequest $request, int $id): Redire
             return redirect()->back()->withErrors($response->error);
         }
 
-        return redirect()->route('meter-rel.index')->with('success', 'Relation deleted successfully.');
+        return redirect()->route('meter-ctpt-rel.index')->with('success', 'Relation deleted successfully.');
     }
 }

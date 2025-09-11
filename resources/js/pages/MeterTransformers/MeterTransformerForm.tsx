@@ -239,7 +239,7 @@ const handletypeChange = (id: string | number) => {
                 type="button"
                 label="Cancel"
                 variant="secondary"
-                onClick={() => router.get("/meter-transformers")}
+                onClick={() => router.get("/meter-ctpt")}
                 disabled={loading}
               />
               <Button

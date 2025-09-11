@@ -219,7 +219,7 @@ console.log('Merged CT/PTs:', mergedctpts); // Debugging line
                 type="button"
                 label="Cancel"
                 variant="secondary"
-                onClick={() => router.get("/meter-rel")}
+                onClick={() => router.get("/meter-ctpt-rel")}
                 disabled={loading}
               />
               <Button

@@ -68,7 +68,7 @@ class MeterTransformerController extends Controller
             return redirect()->back()->withErrors($response->error);
         }
 
-        return redirect()->route('meter-transformers.index')
+        return redirect()->route('meter-ctpt.index')
             ->with('success', 'Meter Transformer created successfully.');
     }
 
@@ -95,7 +95,7 @@ class MeterTransformerController extends Controller
             return redirect()->back()->withErrors($response->error);
         }
 
-        return redirect()->route('meter-transformers.index')
+        return redirect()->route('meter-ctpt.index')
             ->with('success', 'Meter Transformer deleted successfully.');
     }
 }
