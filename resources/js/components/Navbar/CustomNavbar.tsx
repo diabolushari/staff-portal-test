@@ -21,6 +21,7 @@ export const NAV_ITEMS = [
     children: [
       { title: 'Parties', href: '/parties', description: 'Manage parties' },
       { title: 'Connections', href: '/connections', description: 'Manage connections' },
+      { title: 'Meters', href: '/meters', description: 'Manage meters' },
     ],
   },
   { title: 'Billing', href: '/billing', description: 'Invoices and payments' },
