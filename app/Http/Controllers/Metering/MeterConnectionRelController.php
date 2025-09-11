@@ -3,33 +3,28 @@
 namespace App\Http\Controllers\Metering;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Metering\MeterConnectionRelFormRequest;
 use App\Services\Metering\MeterConnectionRelService;
-use App\Services\Metering\MeterService;
-use App\Services\Parameters\ParameterValueService;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class MeterConnectionRelController extends Controller
 {
-    public function __construct(
-        private readonly MeterService $meterService,
-        private readonly MeterConnectionRelService $meterConnectionRelService,
-        private readonly ParameterValueService $parameterValueService
-    ) {}
+    public function __construct(protected MeterConnectionRelService $meterConnectionRelService) {}
 
-    public function __invoke(int $Id): Response
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(MeterConnectionRelFormRequest $request)
     {
-        $meters = $this->meterService->listMeters();
-        $useCategory = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Use Category');
-        $meterStatus = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Status');
-        $changeReason = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Change Reason');
+        $meterConnectionRelData = $request->toArray();
+        $meterConnectionRelData['created_by'] = auth()->id();
 
-        return Inertia::render('Connections/ConnectMeter', [
-            'connection_id' => $Id,
-            'meters' => $meters->data,
-            'useCategory' => $useCategory->data,
-            'meterStatus' => $meterStatus->data,
-            'changeReason' => $changeReason->data,
-        ]);
+        $response = $this->meterConnectionRelService->createMeterConnectionRel($meterConnectionRelData);
+
+        if ($response->hasError()) {
+            return back()->withErrors(['grpc_error' => $response->error])->withInput();
+        }
+
+        return redirect()->route('connections.show', ['connection' => $meterConnectionRelData['connection_id']])->with('success', 'Meter assigned to connection successfully.');
     }
 }
+

@@ -52,14 +52,11 @@ export default function ConnectMeter({
 		faulty_date: "",
 		rectification_date: "",
 		change_reason: null,
-		effective_start_ts: "",
-		effective_end_ts: "",
 	});
 
-	const { post, loading, errors } =
-		useInertiaPost(
-			// route("meter-connection-rel.store"),
-		);
+	const { post, loading, errors } = useInertiaPost(
+		route("meter-connection-rel.store"),
+	);
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -74,9 +71,6 @@ export default function ConnectMeter({
 			faulty_date: toISOorNull(formData.faulty_date),
 			rectification_date: toISOorNull(formData.rectification_date),
 			change_reason: toNumberOrUndef(formData.change_reason),
-			effective_start_ts: toISOorNull(formData.effective_start_ts),
-			effective_end_ts: toISOorNull(formData.effective_end_ts),
-			is_active: formData.is_active,
 		};
 		post(payload);
 	};
@@ -166,21 +160,6 @@ export default function ConnectMeter({
 								/>
 
 								<DatePicker
-									label="Effective Start Date"
-									value={formData.effective_start_ts}
-									setValue={setFormValue("effective_start_ts")}
-									error={errors.effective_start_ts}
-									required
-								/>
-
-								<DatePicker
-									label="Effective End Date"
-									value={formData.effective_end_ts}
-									setValue={setFormValue("effective_end_ts")}
-									error={errors.effective_end_ts}
-								/>
-
-								<DatePicker
 									label="Faulty Date"
 									value={formData.faulty_date}
 									setValue={setFormValue("faulty_date")}
@@ -204,14 +183,6 @@ export default function ConnectMeter({
 											)
 										}
 										error={errors.bidirectional_ind}
-									/>
-									<CheckBox
-										label="Is Active"
-										value={formData.is_active}
-										toggleValue={() =>
-											setFormValue("is_active")(!formData.is_active)
-										}
-										error={errors.is_active}
 									/>
 								</div>
 							</>,
