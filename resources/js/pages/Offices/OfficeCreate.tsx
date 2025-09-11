@@ -1,6 +1,6 @@
 import { settingsOffices } from '@/components/Navbar/navitems'
 import OfficeForm from '@/components/Offices/OfficeForm'
-import { Office } from '@/interfaces/consumers'
+import { Office, OfficeHierarchy } from '@/interfaces/consumers'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
@@ -22,9 +22,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface Props {
   parameterValues: ParameterValues[]
   office?: Office
+  officeHierarchies: OfficeHierarchy[]
 }
 
-export default function OfficeCreate({ parameterValues, office }: Readonly<Props>) {
+export default function OfficeCreate({
+  parameterValues,
+  office,
+  officeHierarchies,
+}: Readonly<Props>) {
   const tabs = [
     {
       value: 'detail',
@@ -50,6 +55,7 @@ export default function OfficeCreate({ parameterValues, office }: Readonly<Props
             <OfficeForm
               parameterValues={parameterValues}
               office={office}
+              officeHierarchies={officeHierarchies}
             />
           </TabsContent>
           <TabsContent value='substations'>

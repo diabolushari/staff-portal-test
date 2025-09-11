@@ -56,6 +56,7 @@ export default function ParameterValueCreate({ parameter_value }: Props) {
     effective_end_date: parameter_value?.effective_end_date ?? '',
     sort_priority: parameter_value?.sort_priority ?? '',
     notes: parameter_value?.notes ?? '',
+    _method: parameter_value != null ? 'PUT' : undefined,
   })
 
   const { post, errors } = useInertiaPost<typeof formData>(
@@ -72,7 +73,7 @@ export default function ParameterValueCreate({ parameter_value }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    post(parameter_value ? { ...formData, _method: 'PUT' } : formData)
+    post(formData)
   }
 
   useEffect(() => {

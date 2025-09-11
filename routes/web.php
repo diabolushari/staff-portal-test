@@ -14,6 +14,7 @@ use App\Http\Controllers\Connection\GetConsumerController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
+use App\Http\Controllers\Offices\OfficeHierarchyRelController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
@@ -42,6 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('parties', PartiesController::class);
     Route::resource('connections', ConnectionController::class);
     Route::resource('consumers', ConsumerController::class);
+    Route::resource('office-hierarchy-rel', OfficeHierarchyRelController::class);
     Route::get('connection/{id}/consumer', GetConsumerController::class)->name('connection.consumer');
     Route::get('connection/{id}/consumer/create', CreateConsumerController::class)->name('connection.consumer.create');
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)

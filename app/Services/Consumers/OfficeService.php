@@ -8,6 +8,7 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Google\Protobuf\Struct;
 use Grpc\ChannelCredentials;
+use Proto\Consumers\ChildOfficeMessage;
 use Proto\Consumers\OfficeCreateRequest;
 use Proto\Consumers\OfficeIdRequest;
 use Proto\Consumers\OfficeListRequest;
@@ -15,6 +16,8 @@ use Proto\Consumers\OfficeMessage;
 use Proto\Consumers\OfficeServiceClient;
 use Proto\Consumers\OfficeUpdateContactFolioRequest;
 use Proto\Consumers\OfficeUpdateRequest;
+use Proto\Consumers\ParentOfficeMessage;
+use Proto\Offices\OfficeHierarchyMessage;
 
 class OfficeService
 {
@@ -65,14 +68,24 @@ class OfficeService
 
     public function createOffice(OfficeFormRequest $request): GrpcServiceResponse
     {
+
         $proto = new OfficeCreateRequest;
         $proto->setOfficeName($request->officeName);
         $proto->setOfficeCode($request->officeCode);
         $proto->setOfficeDescription($request->officeDescription);
         $proto->setOfficeTypeId($request->officeTypeId);
-        if ($request->parentOfficeId !== null) {
-            $proto->setParentOfficeId($request->parentOfficeId);
+        if ($request->parentOffices !== null) {
+            $parentProtos = [];
+            foreach ($request->parentOffices as $parentOffice) {
+                $parentProto = new ParentOfficeMessage;
+                $parentProto->setHierarchyCode($parentOffice->hierarchyCode);
+                $parentProto->setOfficeCode($parentOffice->officeCode);
+
+                $parentProtos[] = $parentProto;
+            }
+            $proto->setParentOffice($parentProtos);
         }
+
         [$response, $status] = $this->client->CreateOffice($proto)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -102,10 +115,21 @@ class OfficeService
             );
         }
 
+        $childOffices = $response->getChildOffices();
+        $childOfficesArray = [];
+        foreach ($childOffices as $childOffice) {
+            $childOfficesArray[] = self::childOfficeProtoToArray($childOffice);
+        }
+
         $office = $response->getOffice();
         $officeArray = self::officeProtoToArray($office);
 
-        return GrpcServiceResponse::success($officeArray, $response, $status->code, $status->details);
+        $officesWithRelation = [
+            'office' => $officeArray,
+            'parent_offices' => $childOfficesArray,
+        ];
+
+        return GrpcServiceResponse::success($officesWithRelation, $response, $status->code, $status->details);
     }
 
     public function updateOffice(OfficeFormRequest $request, int $id): GrpcServiceResponse
@@ -117,8 +141,8 @@ class OfficeService
         $proto->setOfficeDescription($request->officeDescription);
         $proto->setOfficeTypeId($request->officeTypeId);
 
-        if ($request->parentOfficeId !== null) {
-            $proto->setParentOfficeId($request->parentOfficeId);
+        if ($request->parentOffices !== null) {
+            $proto->setParentOffices($request->parentOffices);
         }
 
         [$response, $status] = $this->client->UpdateOffice($proto)->wait();
@@ -212,8 +236,7 @@ class OfficeService
     }
 
     /**
-     * Static utility function to convert OfficeMessage proto to associative array
-     * Includes parent office, location, and office address data
+     * @return array<string, mixed>
      */
     public static function officeProtoToArray(OfficeMessage $office): array
     {
@@ -279,6 +302,28 @@ class OfficeService
             'contact_folio' => $contactFolio,
             'office_type' => $officeTypeArray,
             'parent_office' => $parentOfficeArray,
+        ];
+    }
+
+    public static function officeHierarchyProtoToArray(OfficeHierarchyMessage $officeHierarchy): array
+    {
+        return [
+            'hierarchy_code' => $officeHierarchy->getHierarchyCode(),
+            'hierarchy_name' => $officeHierarchy->getHierarchyName(),
+            'hierarchy_description' => $officeHierarchy->getHierarchyDescription(),
+        ];
+    }
+
+    public static function childOfficeProtoToArray(ChildOfficeMessage $childOffice): array
+    {
+        return [
+            'hierarchy_rel_hist_id' => $childOffice->getHierarchyRelHistId(),
+            'hierarchy_code' => $childOffice->getHierarchyCode(),
+            'parent_office_code' => $childOffice->getParentOfficeCode(),
+            'child_office_code' => $childOffice->getChildOfficeCode(),
+            'child_office' => self::officeProtoToArray($childOffice->getChildOffice()),
+            'parent_office' => self::officeProtoToArray($childOffice->getParentOffice()),
+            'office_hierarchy' => self::officeHierarchyProtoToArray($childOffice->getOfficeHierarchy()),
         ];
     }
 }
