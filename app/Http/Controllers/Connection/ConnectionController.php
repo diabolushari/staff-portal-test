@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
 use App\Services\Connection\ConnectionFormItemService;
 use App\Services\Connection\ConnectionService;
+use App\Services\Metering\MeterConnectionRelService;
+use App\Services\Metering\MeterService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +18,9 @@ class ConnectionController extends Controller
 {
     public function __construct(
         private readonly ConnectionService $connectionService,
-        private readonly ParameterValueService $parameterValueService
+        private readonly ParameterValueService $parameterValueService,
+        private readonly MeterConnectionRelService $meterConnectionRelService,
+        private readonly MeterService $meterService
     ) {}
 
     public function index(Request $request): Response|RedirectResponse
@@ -61,8 +65,22 @@ class ConnectionController extends Controller
             }
         }
 
+        $meterConnectionRelResponse = $this->meterConnectionRelService->getMeterConnectionRelByConnectionId($id);
+
+        $meterConnectionRel = $meterConnectionRelResponse->data;
+        $meter = null;
+
+        if ($meterConnectionRel && isset($meterConnectionRel['meter_id'])) {
+            $meterResponse = $this->meterService->getMeter($meterConnectionRel['meter_id']);
+            if (!$meterResponse->hasError()) {
+                $meter = $meterResponse->data;
+            }
+        }
+
         return Inertia::render('Connections/ConnectionsShow', [
             'connection' => $connection->data,
+            'meterConnectionRel' => $meterConnectionRel,
+            'meter' => $meter,
         ]);
     }
 

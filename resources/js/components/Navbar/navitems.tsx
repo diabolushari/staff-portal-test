@@ -85,3 +85,30 @@ export const partiesNavItems: navItem[] = [
     icon: <HomeIcon className='h-4 w-4' />,
   },
 ]
+export const transformerNavItems: navItem[] = [
+  {
+    title: 'Search Meter CTPT',
+    href: '/meter-ctpt',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+
+  {
+    title: 'Add Meter CTPT',
+    href: '/meter-ctpt/create',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
+]
+
+export const transformerrelNavItems: navItem[] = [
+  {
+    title: 'Search Meter CTPT Relations',
+    href: '/meter-ctpt-rel',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+
+  {
+    title: 'Add Meter CTPT Relation',
+    href: '/meter-ctpt-rel/create',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
+]

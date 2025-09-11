@@ -13,6 +13,8 @@ use App\Http\Controllers\Connection\CreateConsumerController;
 use App\Http\Controllers\Connection\GetConsumerController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
+use App\Http\Controllers\Consumers\OfficeController;
+use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
 use App\Http\Controllers\Offices\OfficeHierarchyRelController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
@@ -48,6 +50,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('connection/{id}/consumer/create', CreateConsumerController::class)->name('connection.consumer.create');
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)
         ->name('offices.update-contacts');
+    Route::resource('meters', MeterController::class);
+    Route::resource('meter-ctpt', MeterTransformerController::class);
+    Route::resource('meter-ctpt-rel', MeterTransformerRelController::class);
 });
 
 // API List
@@ -70,5 +75,7 @@ Route::get('page-ui', function () {
     return Inertia::render('UItest');
 })->name('page-ui');
 
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

@@ -36,6 +36,16 @@ export const NAV_ITEMS = [
         href: '/parameter-value',
         description: 'Manage reference data',
       },
+      {
+        title: 'Meter CTPT',
+        href: '/meter-ctpt',
+        description: 'Manage meter CTPT',
+      },
+      {
+        title: 'Meter CTPT Relations',
+        href: '/meter-ctpt-rel',
+        description: 'Manage meter CTPT relations',
+      },
     ],
   },
 ]
