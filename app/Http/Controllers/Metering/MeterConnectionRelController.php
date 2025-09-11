@@ -26,5 +26,18 @@ class MeterConnectionRelController extends Controller
 
         return redirect()->route('connections.show', ['connection' => $meterConnectionRelData['connection_id']])->with('success', 'Meter assigned to connection successfully.');
     }
-}
 
+    public function update(MeterConnectionRelFormRequest $request)
+    {
+        $meterConnectionRelData = $request->toArray();
+        $meterConnectionRelData['updated_by'] = auth()->id();
+
+        $response = $this->meterConnectionRelService->updateMeterConnectionRel($meterConnectionRelData);
+
+        if ($response->hasError()) {
+            return back()->withErrors(['grpc_error' => $response->error])->withInput();
+        }
+
+        return redirect()->route('connections.show', ['connection' => $meterConnectionRelData['connection_id']])->with('success', 'Meter connection details updated successfully.');
+    }
+}

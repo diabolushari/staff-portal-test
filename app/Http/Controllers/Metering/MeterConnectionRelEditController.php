@@ -17,20 +17,16 @@ class MeterConnectionRelEditController extends Controller
         private readonly ParameterValueService $parameterValueService
     ) {}
 
-    public function __invoke(int $relId): Response
+    public function __invoke(int $Id): Response
     {
-        $relation = $this->meterConnectionRelService->getMeterConnectionRel($relId);
-
-        if ($relation->hasError()) {
-            return redirect()->back()->withErrors(['grpc_error' => 'Could not fetch meter connection relation details.']);
-        }
+        $relation = $this->meterConnectionRelService->getMeterConnectionRelByConnectionId($Id);
 
         $meters = $this->meterService->listMeters();
         $useCategory = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Use Category');
         $meterStatus = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Status');
         $changeReason = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Change Reason');
 
-        return Inertia::render('Connections/EditConnectMeter', [
+        return Inertia::render('Connections/ConnectMeter', [
             'relation' => $relation->data,
             'meters' => $meters->data,
             'useCategory' => $useCategory->data,

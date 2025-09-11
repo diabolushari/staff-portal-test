@@ -15,6 +15,7 @@ use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
 use App\Http\Controllers\Metering\MeterConnectionRelController;
 use App\Http\Controllers\Metering\MeterConnectionRelCreateController;
+use App\Http\Controllers\Metering\MeterConnectionRelEditController;
 use App\Http\Controllers\Metering\MeterController;
 use App\Http\Controllers\Metering\MeterTimezoneTypeRelController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
@@ -53,6 +54,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('meter-timezone-rel', MeterTimezoneTypeRelController::class);
     Route::get('connection/{id}/meter/create', MeterConnectionRelCreateController::class)->name('connection.meter.create');
     Route::resource('meter-connection-rel', MeterConnectionRelController::class);
+    Route::post('meter-connection-rel/{id}', [MeterConnectionRelController::class, 'update'])->name('meter-connection-rel.update');
+    Route::get('connection/{id}/meter/edit', MeterConnectionRelEditController::class)->name('connection.meter.edit');
 });
 
 // API List
