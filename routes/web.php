@@ -46,8 +46,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)
         ->name('offices.update-contacts');
     Route::resource('meters', MeterController::class);
-    Route::resource('meter-transformers', MeterTransformerController::class);
-    Route::resource('meter-rel', MeterTransformerRelController::class);
+    Route::resource('meter-ctpt', MeterTransformerController::class);
+    Route::resource('meter-ctpt-rel', MeterTransformerRelController::class);
 });
 
 // API List

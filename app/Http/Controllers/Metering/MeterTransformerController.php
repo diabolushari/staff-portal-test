@@ -43,11 +43,11 @@ class MeterTransformerController extends Controller
     public function create(): Response|RedirectResponse
     {
         $parameterRequests = [
-            'ownershipTypes' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Ownership Type')->data,
-            'accuracyClasses' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Accuracy Class')->data,
-            'burdens' =>    $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Burden')->data,
-            'makes' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Make')->data,
-            'types' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Type')->data
+            'ownershipTypes' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter CTPT', 'Ownership Type')->data,
+            'accuracyClasses' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter CTPT', 'Accuracy Class')->data,
+            'burdens' =>    $this->parameterValueService->getParameterValues(1,100,null, 'Meter CTPT', 'Burden')->data,
+            'makes' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter CTPT', 'Make')->data,
+            'types' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter CTPT', 'Type')->data
         ];
 
 
@@ -68,7 +68,7 @@ class MeterTransformerController extends Controller
             return redirect()->back()->withErrors($response->error);
         }
 
-        return redirect()->route('meter-transformers.index')
+        return redirect()->route('meter-ctpt.index')
             ->with('success', 'Meter Transformer created successfully.');
     }
 
@@ -95,7 +95,7 @@ class MeterTransformerController extends Controller
             return redirect()->back()->withErrors($response->error);
         }
 
-        return redirect()->route('meter-transformers.index')
+        return redirect()->route('meter-ctpt.index')
             ->with('success', 'Meter Transformer deleted successfully.');
     }
 }

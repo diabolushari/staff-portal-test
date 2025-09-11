@@ -23,7 +23,7 @@ interface Props {
 
 }
 const breadcrumbs = [
-	{ title: "Meter CTPT", href: "/meter-transformers" },
+	{ title: "Meter CTPT", href: "/meter-ctpt" },
 ];
 
 export default function MeterTransformerIndex({ transformers }: Props) {
@@ -32,11 +32,11 @@ export default function MeterTransformerIndex({ transformers }: Props) {
   const [selectedTransformer, setSelectedTransformer] = useState<MeterTransformer | null>(null)
 console.log("Meter Transformers:", items);
 	function handleShow(id: number) {
-		router.get(`/meter-transformers/${id}`);
+		router.get(`/meter-ctpt/${id}`);
 	}
 
 	function handleCreate() {
-		router.get(route("meter-transformers.create"));
+		router.get(route("meter-ctpt.create"));
 	}
 
 	 function handleDeleteClick(item: MeterTransformer) {
@@ -53,7 +53,7 @@ console.log("Meter Transformers:", items);
 				<CardHeader title="Meter CTPT" />
 				<ListSearch
 						  title="Meter CTPT Search"
-						  url={route("meter-transformers.index")}
+						  url={route("meter-ctpt.index")}
 						  //setItems={setItems}
 						  //search={query}
 						/>
@@ -74,7 +74,7 @@ console.log("Meter Transformers:", items);
           <DeleteModal
             setShowModal={setShowDeleteModal}
             title={`Delete CTPT ${selectedTransformer.ctpt_serial}`}
-            url={`/meter-transformers/${selectedTransformer.meter_ctpt_id}`}
+            url={`/meter-ctpt/${selectedTransformer.meter_ctpt_id}`}
           />
         )}
 				{/* <div className="overflow-x-auto rounded-lg border border-slate-200">

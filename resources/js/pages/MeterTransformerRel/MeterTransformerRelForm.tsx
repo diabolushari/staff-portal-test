@@ -28,10 +28,10 @@ interface MeterTransformerRelFormProps {
 }
 
 const breadcrumbs = [
-  { title: "Meter CTPT Relations", href: "/meter-rel" },
+  { title: "Meter CTPT Relations", href: "/meter-ctpt-rel" },
   {
     title: "Add Relation",
-    href: "/meter-rel/create",
+    href: "/meter-ctpt-rel/create",
   },
 ];
 
@@ -69,7 +69,7 @@ export default function MeterTransformerRelForm({
   
 
   const { post, loading, errors } = useInertiaPost(
-    isEditing ? `/meter-rel/${relation.version_id}` : "/meter-rel",
+    isEditing ? `/meter-ctpt-rel/${relation.version_id}` : "/meter-ctpt-rel",
   );
 
   const mergedctpts = ctpts.map(ctpt => ({
@@ -219,7 +219,7 @@ console.log('Merged CT/PTs:', mergedctpts); // Debugging line
                 type="button"
                 label="Cancel"
                 variant="secondary"
-                onClick={() => router.get("/meter-rel")}
+                onClick={() => router.get("/meter-ctpt-rel")}
                 disabled={loading}
               />
               <Button

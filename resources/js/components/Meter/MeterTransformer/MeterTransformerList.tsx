@@ -11,7 +11,7 @@ interface Props {
 
 export default function MeterTransformerList({ transformers,onDelete,}: Readonly<Props>) {
   const handleTransformerClick = (transformer: MeterTransformer) => {
-    router.get(`/meter-transformers/${transformer.meter_ctpt_id}`)
+    router.get(`/meter-ctpt/${transformer.meter_ctpt_id}`)
   }
 
   return (

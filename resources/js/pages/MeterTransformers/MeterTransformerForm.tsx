@@ -29,10 +29,10 @@ export interface MeterTransformerFormProps {
 }
 
 const breadcrumbs = [
-  { title: "Meter CTPT", href: "/meter-transformers" },
+  { title: "Meter CTPT", href: "/meter-ctpt" },
   {
     title: "Add Meter CTPT",
-    href: "/meter-transformers/create",
+    href: "/meter-ctpt/create",
   },
 ];
 
@@ -76,8 +76,8 @@ export default function MeterTransformerForm({
 
   const { post, loading, errors } = useInertiaPost(
     isEditing
-      ? `/meter-transformers/${transformer.meter_ctpt_id}`
-      : "/meter-transformers",
+      ? `/meter-ctpt/${transformer.meter_ctpt_id}`
+      : "/meter-ctpt",
   );
 // get the selected type name (CT or PT)
 const selectedType = types.find(t => t.id === formData.type_id)?.parameter_value;
@@ -239,7 +239,7 @@ const handletypeChange = (id: string | number) => {
                 type="button"
                 label="Cancel"
                 variant="secondary"
-                onClick={() => router.get("/meter-transformers")}
+                onClick={() => router.get("/meter-ctpt")}
                 disabled={loading}
               />
               <Button

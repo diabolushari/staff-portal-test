@@ -33,15 +33,15 @@ interface Props {
 	transformer: MeterTransformer;
 }
 const breadcrumbs = [
-	{ title: "Meter Transformers", href: "/meter-transformers" },
+	{ title: "Meter CTPT", href: "/meter-ctpt" },
 ];
 
 export default function MeterTransformerShow({
 	transformer,
 }: Readonly<Props>) {
 	const breadcrumbs: BreadcrumbItem[] = [
-		{ title: "Meter Transformers", href: "/meter-transformers" },
-		{ title: "Detail", href: `/meter-transformers/${transformer.meter_ctpt_id}` },
+		{ title: "Meter CTPT", href: "/meter-ctpt" },
+		{ title: "Detail", href: `/meter-ctpt/${transformer.meter_ctpt_id}` },
 	];
 
 	const formatDate = (dateStr?: string | null) => {
@@ -55,7 +55,7 @@ export default function MeterTransformerShow({
 
 	const handleDelete = () => {
 		if (confirm("Are you sure you want to delete this transformer?")) {
-			router.delete(`/meter-transformers/${transformer.meter_ctpt_id}`);
+			router.delete(`/meter-ctpt/${transformer.meter_ctpt_id}`);
 		}
 	};
 

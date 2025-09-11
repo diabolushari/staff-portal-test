@@ -30,8 +30,8 @@ interface Props {
 
 export default function MeterTransformerRelShow({ relation }: Readonly<Props>) {
   const breadcrumbs: BreadcrumbItem[] = [
-    { title: "Meter Transformer Relations", href: "/meter-rel" },
-    { title: "Detail", href: `/meter-rel/${relation.version_id}` },
+    { title: "Meter CTPT Relations", href: "/meter-ctpt-rel" },
+    { title: "Detail", href: `/meter-ctpt-rel/${relation.version_id}` },
   ];
 
   const formatDate = (dateStr?: string | null) => {
@@ -59,7 +59,7 @@ export default function MeterTransformerRelShow({ relation }: Readonly<Props>) {
         <Card className="rounded-lg p-7">
           <CardHeader className="p-0 mb-6">
             <CardTitle className="text-base font-semibold text-[#252c32]">
-              Meter Transformer Relation Details
+              Meter CTPT Relation Details
             </CardTitle>
           </CardHeader>
           <hr className="mb-6 border-[#e5e9eb]" />
