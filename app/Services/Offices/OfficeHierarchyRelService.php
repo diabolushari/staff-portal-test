@@ -64,13 +64,4 @@ class OfficeHierarchyRelService
 
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
     }
-
-    public function toArray($response): array
-    {
-        return [
-            'parentOfficeCode' => $response->getParentOfficeCode(),
-            'childOfficeCode' => $response->getChildOfficeCode(),
-            'hierarchyCode' => $response->getHierarchyCode(),
-        ];
-    }
 }
