@@ -14,7 +14,24 @@ import "google/protobuf/struct.proto";
 import "parameters/parameter-value.proto";
 import "consumers/org_element_location.proto";
 import "consumers/org_element_address.proto";
+import "offices/office_hierarchy.proto";
 
+// ------------ MESSAGE ------------
+
+message ParentOfficeMessage {
+  string hierarchy_code = 1;
+  int32 office_code = 2;
+}
+
+message ChildOfficeMessage{
+    int32 hierarchy_rel_hist_id = 1;
+    string hierarchy_code = 2;
+    int32 parent_office_code = 3;
+    int32 child_office_code = 4;
+    com.kseb.consumerservice.grpc.consumers.OfficeMessage child_office = 5;
+    com.kseb.consumerservice.grpc.consumers.OfficeMessage parent_office = 6;
+    com.kseb.consumerservice.grpc.offices.OfficeHierarchyMessage office_hierarchy = 7;
+}
 message OfficeMessage {
     int32 office_id = 1;
     optional int32 office_code = 2;
@@ -40,13 +57,14 @@ message OfficeMessage {
 }
 
 message OfficeCreateRequest {
-    optional int32 office_code = 1;
-    string office_description = 2;
-    int64 office_type_id = 3;
-    optional int32 parent_office_id = 4;
-    google.protobuf.Struct contact_folio = 7;
-    int32 created_by = 11;
-    string office_name = 12;
+  optional int32 office_code = 1;
+  string office_description = 2;
+  int64 office_type_id = 3;
+  optional int32 parent_office_id = 4;
+  repeated ParentOfficeMessage parent_office = 5;
+  google.protobuf.Struct contact_folio = 6;
+  int32 created_by = 7;
+  string office_name = 8;   
 }
 
 message OfficeUpdateRequest {
@@ -67,6 +85,7 @@ message OfficeUpdateRequest {
 
 message OfficeResponse {
     OfficeMessage office = 1;
+    repeated ChildOfficeMessage child_offices = 2;
 }
 
 message OfficeListResponse {

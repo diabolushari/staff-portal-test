@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Parameters\ParameterDomainFormRequest;
 use App\Services\Parameters\ParameterDomainService;
 use App\Services\SystemModule\SystemModuleService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class ParameterDomainController extends Controller
 {
@@ -16,7 +18,7 @@ class ParameterDomainController extends Controller
         private SystemModuleService $systemModuleService
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): InertiaResponse|RedirectResponse
     {
         $page = $request->input('page', 1);
         $pageSize = $request->input('page_size', 10);
@@ -32,14 +34,16 @@ class ParameterDomainController extends Controller
         );
 
         if ($response->hasError()) {
-            return $response->error;
+            return $response->error ?? redirect()->back()->with([
+                'message' => 'Failed to fetch parameter domains.',
+                'grpcStatus' => [
+                    'code' => $response->statusCode,
+                    'details' => $response->statusDetails,
+                ],
+            ]);
         }
 
         $modulesResponse = $this->systemModuleService->getSystemModules();
-
-        if ($modulesResponse->hasError()) {
-            return $modulesResponse->error;
-        }
 
         return Inertia::render('Parameters/ParameterDomain/ParameterDomainIndex', [
             'domains' => $response->data,
@@ -55,12 +59,18 @@ class ParameterDomainController extends Controller
         ]);
     }
 
-    public function show($id)
+    public function show(int $id): InertiaResponse|RedirectResponse
     {
         $response = $this->parameterDomainService->getParameterDomain($id);
 
         if ($response->hasError()) {
-            return $response->error;
+            return $response->error ?? redirect()->back()->with([
+                'message' => 'Failed to fetch parameter domain.',
+                'grpcStatus' => [
+                    'code' => $response->statusCode,
+                    'details' => $response->statusDetails,
+                ],
+            ]);
         }
 
         return Inertia::render('Parameters/ParameterDomain/ParameterDomainShow', [
@@ -72,12 +82,18 @@ class ParameterDomainController extends Controller
         ]);
     }
 
-    public function store(ParameterDomainFormRequest $request)
+    public function store(ParameterDomainFormRequest $request): RedirectResponse
     {
         $response = $this->parameterDomainService->createParameterDomain($request);
 
         if ($response->hasError()) {
-            return $response->error;
+            return $response->error ?? redirect()->back()->with([
+                'message' => 'Failed to create parameter domain.',
+                'grpcStatus' => [
+                    'code' => $response->statusCode,
+                    'details' => $response->statusDetails,
+                ],
+            ]);
         }
 
         return redirect()->back()->with([
@@ -89,12 +105,18 @@ class ParameterDomainController extends Controller
         ]);
     }
 
-    public function update(ParameterDomainFormRequest $request, $id)
+    public function update(ParameterDomainFormRequest $request, int $id): RedirectResponse
     {
         $response = $this->parameterDomainService->updateParameterDomain($request, $id);
 
         if ($response->hasError()) {
-            return $response->error;
+            return $response->error ?? redirect()->back()->with([
+                'message' => 'Failed to update parameter domain.',
+                'grpcStatus' => [
+                    'code' => $response->statusCode,
+                    'details' => $response->statusDetails,
+                ],
+            ]);
         }
 
         return redirect()->back()->with([
@@ -106,12 +128,18 @@ class ParameterDomainController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
         $response = $this->parameterDomainService->deleteParameterDomain($id);
 
         if ($response->hasError()) {
-            return $response->error;
+            return $response->error ?? redirect()->back()->with([
+                'message' => 'Failed to delete parameter domain.',
+                'grpcStatus' => [
+                    'code' => $response->statusCode,
+                    'details' => $response->statusDetails,
+                ],
+            ]);
         }
 
         return redirect()->back()->with([

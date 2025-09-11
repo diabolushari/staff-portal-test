@@ -5,9 +5,9 @@ namespace App\Services\Consumers;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
-use Proto\Consumers\GeoRegionServiceClient;
 use Proto\Consumers\GeoRegionListRequest;
 use Proto\Consumers\GeoRegionMessage;
+use Proto\Consumers\GeoRegionServiceClient;
 
 class GeoRegionsService
 {
@@ -23,7 +23,7 @@ class GeoRegionsService
 
     public function getGeoRegions(?string $regionClassification = null, ?string $regionType = null): GrpcServiceResponse
     {
-        $request = new GeoRegionListRequest();
+        $request = new GeoRegionListRequest;
         if ($regionClassification !== null) {
             $request->setRegionClassification($regionClassification);
         }
@@ -49,6 +49,9 @@ class GeoRegionsService
         return GrpcServiceResponse::success($geoRegionsArray, $response, $status->code, $status->details);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private static function geoRegionProtoToArray(GeoRegionMessage $region): array
     {
         return [

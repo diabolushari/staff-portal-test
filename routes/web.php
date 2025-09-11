@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\GetOfficeByIdApiController;
 use App\Http\Controllers\Api\OfficeListApiController;
+use App\Http\Controllers\Api\Parameter\ListParameterValuesApiController;
 use App\Http\Controllers\Api\ParameterDefinitionItemApiController;
 use App\Http\Controllers\Api\ParameterDefinitionListApiController;
 use App\Http\Controllers\Api\ParameterDomainListApiController;
@@ -13,10 +14,10 @@ use App\Http\Controllers\Connection\GetConsumerController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
-use App\Http\Controllers\Metering\MeterConnectionRelController;
 use App\Http\Controllers\Metering\MeterController;
 use App\Http\Controllers\Metering\MeterTransformerController;
 use App\Http\Controllers\Metering\MeterTransformerRelController;
+use App\Http\Controllers\Offices\OfficeHierarchyRelController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
@@ -43,6 +44,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('parameter-value', ParameterValueController::class);
     Route::resource('offices', OfficeController::class);
     Route::resource('parties', PartiesController::class);
+    Route::resource('connections', ConnectionController::class);
+    Route::resource('consumers', ConsumerController::class);
+    Route::resource('office-hierarchy-rel', OfficeHierarchyRelController::class);
+    Route::get('connection/{id}/consumer', GetConsumerController::class)->name('connection.consumer');
+    Route::get('connection/{id}/consumer/create', CreateConsumerController::class)->name('connection.consumer.create');
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)
         ->name('offices.update-contacts');
     Route::resource('meters', MeterController::class);
@@ -57,6 +63,7 @@ Route::get('api/parameter-definitions', ParameterDefinitionListApiController::cl
 Route::get('api/parameter-definitions/{id}', ParameterDefinitionItemApiController::class);
 Route::get('api/offices', OfficeListApiController::class);
 Route::get('api/office/{id}', GetOfficeByIdApiController::class);
+Route::get('api/parameter-values', ListParameterValuesApiController::class);
 
 Route::get('consumer-test', function (SystemModuleService $service) {
     $response = $service->createSystemModule(
@@ -69,5 +76,7 @@ Route::get('page-ui', function () {
     return Inertia::render('UItest');
 })->name('page-ui');
 
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

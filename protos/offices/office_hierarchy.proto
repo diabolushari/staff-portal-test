@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.offices;
+
+option php_namespace = "Proto\\Offices";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+
+// Message to represent organisation hierarchy data
+message OfficeHierarchyMessage {
+    int32 hierarchy_id = 1;
+    string hierarchy_code = 2;
+    string hierarchy_name = 3;
+    string hierarchy_description = 4;
+    optional bool is_current = 5;
+    
+}
+
+message OfficeHierarchyListRequest {
+    optional int32 page = 1;
+    optional int32 size = 2;
+    optional string hierarchy_code = 3;
+    optional string hierarchy_name = 4;
+    
+}
+
+message OfficeHierarchyListResponse {
+    repeated OfficeHierarchyMessage office_hierarchies = 1;
+}
+
+message OfficeHierarchyCreateRequest {
+    string hierarchy_code = 1;
+    string hierarchy_name = 2;
+    string hierarchy_description = 3;
+}
+message OfficeHierarchyGetRequest {
+    int32 hierarchy_id = 1;
+}
+message OfficeHierarchyGetResponse {
+    OfficeHierarchyMessage office_hierarchy = 1;
+}
+message OfficeHierarchyDeleteRequest {
+    int32 hierarchy_id = 1;
+}
+
+// OfficeHierarchy service
+service OfficeHierarchyService {
+    rpc ListOfficeHierarchies (OfficeHierarchyListRequest) returns (OfficeHierarchyListResponse);
+    rpc GetOfficeHierarchy (OfficeHierarchyGetRequest) returns (OfficeHierarchyGetResponse);
+    rpc CreateOfficeHierarchy (OfficeHierarchyCreateRequest) returns (OfficeHierarchyMessage);
+    rpc DeleteOfficeHierarchy (OfficeHierarchyDeleteRequest) returns (google.protobuf.Empty);
+}
+

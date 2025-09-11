@@ -2,15 +2,15 @@
 
 namespace App\Http\Requests\Parameters;
 
-use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Attributes\MapName;
+use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 #[MapName(SnakeCaseMapper::class)]
 class ParameterValueFormRequest extends Data
 {
     public function __construct(
-        public ?string $parameterCode,
+        public string $parameterCode,
         public string $parameterValue,
         public int $definitionId,
         public ?int $parentParameterValue,

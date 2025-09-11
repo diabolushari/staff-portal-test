@@ -37,7 +37,7 @@ export default function OfficeIndex({ offices, office_types, filters }: Readonly
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <ListSearch
-          title='Parties search'
+          title='Offices search'
           placeholder='Enter office name or code'
           url={route('offices.index')}
           setItems={setItems}

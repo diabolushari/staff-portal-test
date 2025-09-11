@@ -31,12 +31,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 //TODO missing props interface
 //TODO what happens when you delete attribute from definition
 
-export default function ParameterValueIndex({
-  values,
-  domains,
-  definitions,
-  filters,
-}: {
+interface Props {
   values: ParameterValues[]
   domains: ParameterDomain[]
   definitions: ParameterDefinition[]
@@ -45,7 +40,9 @@ export default function ParameterValueIndex({
     parameter_name: string
     search: string
   }
-}) {
+}
+
+export default function ParameterValueIndex({ values, domains, definitions, filters }: Props) {
   const { formData, setFormValue } = useCustomForm({
     domain_name: filters.domain_name ?? '',
     parameter_name: filters.parameter_name ?? '',

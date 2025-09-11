@@ -9,6 +9,12 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 #[MapName(SnakeCaseMapper::class)]
 class ConnectionData extends Data
 {
+    /**
+     * @param  string[]|null  $connectionAttribs
+     * @param  string[]|null  $purposesInfo
+     * @param  string[]|null  $connectedLoadInfo
+     * @param  string[]|null  $multiSourceInfo
+     */
     public function __construct(
         // Required fields for creating a connection
         public int $connectionTypeId,

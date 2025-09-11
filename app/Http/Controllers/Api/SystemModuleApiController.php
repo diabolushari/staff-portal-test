@@ -3,30 +3,30 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use Proto\Modules\SystemModuleServiceClient;
 use Grpc\ChannelCredentials;
+use Illuminate\Http\JsonResponse;
 use Proto\Modules\ListSystemModulesRequest;
+use Proto\Modules\SystemModuleServiceClient;
 
 class SystemModuleApiController extends Controller
 {
+    /** @var SystemModuleServiceClient */
     private $client;
+
     public function __construct()
     {
-        $this->client = new SystemModuleServiceClient(env('GRPC_HOST'), [
-            'credentials' => ChannelCredentials::createInsecure()
+        $this->client = new SystemModuleServiceClient(config('app.consumer_service_grpc_host'), [
+            'credentials' => ChannelCredentials::createInsecure(),
         ]);
     }
 
-    public function __invoke()
+    public function __invoke(): JsonResponse
     {
-        $req = new ListSystemModulesRequest();
+        $req = new ListSystemModulesRequest;
 
+        [$res, $status] = $this->client->ListSystemModules($req)->wait();
 
-        list($res, $status) = $this->client->ListSystemModules($req)->wait();
-
-        if ($status->code !== \Grpc\STATUS_OK) {
+        if ($status->code !== 0) {
             return response()->json(['error' => $status->details], 500);
         }
 

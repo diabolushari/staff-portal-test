@@ -9,10 +9,11 @@ import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import StrongText from '@/typography/StrongText'
 import { route } from 'ziggy-js'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Card } from '../ui/card'
 import DatePicker from '@/ui/form/DatePicker'
 import { router } from '@inertiajs/react'
+import useFetchRecord from '@/hooks/useFetchRecord'
 
 interface Props {
   connection?: Connection
@@ -55,6 +56,8 @@ export default function ConnectionForm({
 }: Props) {
   const [adminOfficeData, setAdminOfficeData] = useState<Office | null>(null)
   const [serviceOfficeData, setServiceOfficeData] = useState<Office | null>(null)
+  const [subCategories, setSubCategories] = useState<ParameterValues[]>([])
+  const [category, setCategory] = useState<string>('')
 
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     connection_type_id: connection?.connection_type_id ?? '',
@@ -112,7 +115,20 @@ export default function ConnectionForm({
     setFormValue('service_office_code')(item.office_code)
     setServiceOfficeData(item)
   }
-  console.log(errors)
+  const handleConnectionCategoryChange = (parameterValueId: string) => {
+    setFormValue('connection_category_id')(parameterValueId)
+    const category = connectionCategory.find((item) => item.id === Number(parameterValueId))
+    setCategory(category?.parameter_value ?? '')
+  }
+
+  const [subCategoryData] = useFetchRecord<ParameterValues[]>(
+    '/api/parameter-values?attribute_name=attribute1Value&attribute_value=' + category
+  )
+  useEffect(() => {
+    if (subCategoryData) {
+      setSubCategories(subCategoryData)
+    }
+  }, [subCategoryData])
   return (
     <form
       onSubmit={handleSubmit}
@@ -219,22 +235,23 @@ export default function ConnectionForm({
             list={connectionCategory}
             dataKey='id'
             displayKey='parameter_value'
-            setValue={setFormValue('connection_category_id')}
+            setValue={handleConnectionCategoryChange}
             value={formData.connection_category_id}
             error={errors?.connection_category_id}
             required
           />
-          <SelectList
-            label='Connection Subcategory'
-            list={connectionSubCategory}
-            dataKey='id'
-            displayKey='parameter_value'
-            setValue={setFormValue('connection_subcategory_id')}
-            value={formData.connection_subcategory_id}
-            error={errors?.connection_subcategory_id}
-            required
-          />
-
+          {subCategories && formData.connection_category_id && (
+            <SelectList
+              label='Connection Subcategory'
+              list={subCategories}
+              dataKey='id'
+              displayKey='parameter_value'
+              setValue={setFormValue('connection_subcategory_id')}
+              value={formData.connection_subcategory_id}
+              error={errors?.connection_subcategory_id}
+              required
+            />
+          )}
           <SelectList
             label='Metering Type'
             list={meteringTypes}
