@@ -26,7 +26,7 @@ interface Props {
 }
 
 const breadcrumbs = [
-  { title: "Meter CTPT Relations", href: "/meter-rel" },
+  { title: "Meter CTPT Relations", href: "/meter-ctpt-rel" },
 ];
 
 export default function MeterTransformerRelIndex({ relations }: Props) {
@@ -35,7 +35,7 @@ export default function MeterTransformerRelIndex({ relations }: Props) {
   const [selectedRel, setSelectedRel] = useState<Relation | null>(null);
 
   function handleShow(id: number) {
-    router.get(`/meter-rel/${id}`);
+    router.get(`/meter-ctpt-rel/${id}`);
   }
   
 
@@ -51,14 +51,14 @@ export default function MeterTransformerRelIndex({ relations }: Props) {
 
         <ListSearch
           title="Relations Search"
-          url={route("meter-rel.index")}
+          url={route("meter-ctpt-rel.index")}
           // setItems={setItems} ← implement later if you want filtering like MeterTransformerIndex
         />
 
         {items && items.length > 0 ? (
           <MeterTransformerRelList
             relations={items}
-            onEdit={(rel) => router.get(`/meter-rel/${rel.version_id}/edit`)}
+            onEdit={(rel) => router.get(`/meter-ctpt-rel/${rel.version_id}/edit`)}
             onDelete={handleDeleteClick}
             onShow={handleShow}
           />
@@ -72,7 +72,7 @@ export default function MeterTransformerRelIndex({ relations }: Props) {
           <DeleteModal
             setShowModal={setShowDeleteModal}
             title={`Delete Relation ${selectedRel.version_id}`}
-            url={`/meter-rel/${selectedRel.version_id}`}
+            url={`/meter-ctpt-rel/${selectedRel.version_id}`}
           />
         )}
       </div>
