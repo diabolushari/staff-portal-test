@@ -126,16 +126,28 @@ export function MeterTab({
 						<StrongText className="text-base font-semibold text-[#252c32]">
 							Meter Connection
 						</StrongText>
-						<button
-							onClick={() =>
-								router.visit(
-									route("connection.meter.edit", { id: connectionId }),
-								)
-							}
-							className="flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]"
-						>
-							Edit
-						</button>
+						<div className="flex items-center gap-2">
+							<button
+								onClick={() =>
+									router.visit(
+										route("connection.meter.edit", { id: connectionId }),
+									)
+								}
+								className="flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]"
+							>
+								Edit
+							</button>
+							<button
+								onClick={() => {
+									if (window.confirm("Are you sure you want to delete this meter connection?")) {
+										router.delete(route("meter-connection-rel.destroy", { rel_id: meterConnectionRel.rel_id }))
+									}
+								}}
+								className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+							>
+								Delete
+							</button>
+						</div>
 					</div>
 					<hr className="mb-6 border-[#e5e9eb]" />
 					<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -206,7 +218,7 @@ export function MeterTab({
 						<button
 							onClick={() =>
 								router.visit(
-									route("meter-connection-rel.create", { connectionId }),
+									route("connection.meter.create", { id: connectionId }),
 								)
 							}
 							className="flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]"

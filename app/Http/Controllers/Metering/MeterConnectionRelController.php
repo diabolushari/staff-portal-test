@@ -40,4 +40,15 @@ class MeterConnectionRelController extends Controller
 
         return redirect()->route('connections.show', ['connection' => $meterConnectionRelData['connection_id']])->with('success', 'Meter connection details updated successfully.');
     }
+
+    public function destroy(int $relId)
+    {
+        $response = $this->meterConnectionRelService->deleteMeterConnectionRel($relId);
+
+        if ($response->hasError()) {
+            return back()->withErrors(['grpc_error' => $response->error]);
+        }
+
+        return redirect()->back()->with('success', 'Meter connection deleted successfully.');
+    }
 }
