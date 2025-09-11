@@ -1,0 +1,101 @@
+<?php
+
+namespace App\Http\Controllers\Metering;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Metering\MeterTransformerFormRequest;
+use App\Services\Metering\MeterTransformerService;
+use Grpc\ChannelCredentials;
+use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
+use Inertia\Response;
+use Proto\Parameters\ListParameterValuesRequest;
+use App\Services\Parameters\ParameterValueService;
+
+
+class MeterTransformerController extends Controller
+{
+    protected MeterTransformerService $transformerService;
+    protected ParameterValueService $parameterValueService;
+
+    public function __construct(MeterTransformerService $transformerService,
+                 ParameterValueService $parameterValueService)
+    {
+        $this->transformerService = $transformerService;
+       $this->parameterValueService = $parameterValueService;
+    }
+
+    /**
+     * Display a listing of transformers.
+     */
+    public function index(): Response
+    {
+        $response = $this->transformerService->listTransformers();
+
+        return Inertia::render('MeterTransformers/MeterTransformerIndex', [
+            'transformers' => $response->data,
+        ]);
+    }
+
+    /**
+     * Show the form for creating a transformer (with dropdowns).
+     */
+    public function create(): Response|RedirectResponse
+    {
+        $parameterRequests = [
+            'ownershipTypes' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Ownership Type')->data,
+            'accuracyClasses' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Accuracy Class')->data,
+            'burdens' =>    $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Burden')->data,
+            'makes' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Make')->data,
+            'types' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter Transformer', 'Type')->data
+        ];
+
+
+        return Inertia::render('MeterTransformers/MeterTransformerForm', $parameterRequests);
+    }
+
+    /**
+     * Store a new transformer.
+     */
+    public function store(MeterTransformerFormRequest $request): RedirectResponse
+    {
+        $data = $request->toArray();
+        $data['created_by'] = auth()->id();
+
+        $response = $this->transformerService->createTransformer($data);
+
+        if ($response->hasError()) {
+            return redirect()->back()->withErrors($response->error);
+        }
+
+        return redirect()->route('meter-transformers.index')
+            ->with('success', 'Meter Transformer created successfully.');
+    }
+
+    /**
+     * Show a transformer.
+     */
+    public function show(int $id): Response
+    {
+        $response = $this->transformerService->getTransformer($id);
+
+        return Inertia::render('MeterTransformers/MeterTransformerShow', [
+            'transformer' => $response->data,
+        ]);
+    }
+
+    /**
+     * Delete a transformer.
+     */
+    public function destroy(int $id): RedirectResponse
+    {
+        $response = $this->transformerService->deleteTransformer($id);
+
+        if ($response->hasError()) {
+            return redirect()->back()->withErrors($response->error);
+        }
+
+        return redirect()->route('meter-transformers.index')
+            ->with('success', 'Meter Transformer deleted successfully.');
+    }
+}
