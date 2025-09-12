@@ -155,6 +155,7 @@ message ConnectionRequest {
 message ListConnectionsRequest {
     int32 page = 1;
     int32 page_size = 2;
+    optional string consumer_number = 3;
 }
 
 message ConsumerProfileRequest {

@@ -32,12 +32,15 @@ class ConnectionService
         $this->parameterValueService = $parameterValueService;
     }
 
-    public function listConnections(): GrpcServiceResponse
+    public function listConnections(?string $consumerNumber): GrpcServiceResponse
     {
         $request = new ListConnectionsRequest;
 
         $request->setPage(1);
         $request->setPageSize(10);
+        if ($consumerNumber) {
+            $request->setConsumerNumber($consumerNumber);
+        }
 
         [$response, $status] = $this->client->ListConnections($request)->wait();
         if ($status->code !== 0) {
