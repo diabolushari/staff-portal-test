@@ -25,6 +25,13 @@ message CreateOfficeHierarchyRelRequest {
     int32 parent_office_code = 3;
 }
 
+message UpdateOfficeHierarchyRelRequest {
+    int32 hierarchy_rel_hist_id = 1;
+    string hierarchy_code = 2;
+    int32 child_office_code = 3;
+    int32 parent_office_code = 4;
+}
+
 message DeleteOfficeHierarchyRelRequest {
     int32 hierarchy_rel_hist_id = 1;
 }
@@ -33,4 +40,5 @@ message DeleteOfficeHierarchyRelRequest {
 service OfficeHierarchyRelService {
     rpc CreateOfficeHierarchyRel(CreateOfficeHierarchyRelRequest) returns (google.protobuf.Empty);
     rpc DeleteOfficeHierarchyRel(DeleteOfficeHierarchyRelRequest) returns (google.protobuf.Empty);
+    rpc UpdateOfficeHierarchyRel(UpdateOfficeHierarchyRelRequest) returns (google.protobuf.Empty);
 }
