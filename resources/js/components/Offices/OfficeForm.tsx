@@ -31,10 +31,10 @@ export default function OfficeForm({
 
   const { formData, setFormValue } = useCustomForm({
     office_name: office?.office_name ?? '',
-    office_code: office?.office_code.toString() ?? '',
+    office_code: office?.office_code ?? '',
     office_description: office?.office_description ?? '',
     office_type_id: office?.office_type_id ?? '',
-    parent_offices: office?.parent_offices ?? [], // 👈 array
+    parent_offices: office?.parent_offices ?? [],
     _method: office != null ? 'PUT' : undefined,
   })
 
@@ -136,74 +136,76 @@ export default function OfficeForm({
       </Card>
 
       {/* Parent Offices Section */}
-      <Card>
-        <div className='flex justify-between border-b-2 border-gray-200 py-4'>
-          <StrongText className='text-base font-semibold'>Parent Offices</StrongText>
+      {officeHierarchies && (
+        <Card>
+          <div className='flex justify-between border-b-2 border-gray-200 py-4'>
+            <StrongText className='text-base font-semibold'>Parent Offices</StrongText>
 
-          {/* Only show Add button if not all hierarchies used */}
-          {formData?.parent_offices?.length < officeHierarchies?.length && (
-            <Button
-              type='button'
-              label='➕ Add'
-              variant='primary'
-              onClick={() => setIsModalOpen(true)}
-            />
-          )}
-        </div>
-        <Card className='rounded-lg p-7'>
-          <div className='space-y-2 p-4'>
-            {formData.parent_offices.length === 0 && (
-              <p className='text-sm text-gray-500'>No parent offices added.</p>
+            {/* Only show Add button if not all hierarchies used */}
+            {formData?.parent_offices?.length < officeHierarchies?.length && (
+              <Button
+                type='button'
+                label='Add'
+                variant='primary'
+                onClick={() => setIsModalOpen(true)}
+              />
             )}
+          </div>
+          <Card className='rounded-lg p-7'>
+            <div className='space-y-2 p-4'>
+              {formData.parent_offices.length === 0 && (
+                <p className='text-sm text-gray-500'>No parent offices added.</p>
+              )}
 
-            {formData.parent_offices.map((po: any) => (
-              <>
-                <div className=''>
-                  <div className='rounded-lg border border-gray-200 p-2.5'>
-                    <div className='flex items-start justify-between p-2.5'>
-                      <div className='flex-1 space-y-2.5'>
-                        <div className='space-y-1'>
-                          <div className='flex items-center gap-3'>
-                            <div className='text-base font-semibold text-black'>
-                              {po.office_name}
+              {formData.parent_offices.map((po: any) => (
+                <>
+                  <div className=''>
+                    <div className='rounded-lg border border-gray-200 p-2.5'>
+                      <div className='flex items-start justify-between p-2.5'>
+                        <div className='flex-1 space-y-2.5'>
+                          <div className='space-y-1'>
+                            <div className='flex items-center gap-3'>
+                              <div className='text-base font-semibold text-black'>
+                                {po.office_name}
+                              </div>
+                              <div className='rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-normal text-blue-800'>
+                                {po.office_code}
+                              </div>
                             </div>
-                            <div className='rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-normal text-blue-800'>
-                              {po.office_code}
+                            <div className='flex items-center gap-5'>
+                              <div className='flex items-center gap-1'>
+                                <Building className='h-3.5 w-3.5 text-gray-400' />
+                                <span className='text-sm font-normal text-[#252c32]'>
+                                  {po.hierarchy_code}
+                                </span>
+                              </div>
+                              <div className='flex items-center gap-1'>
+                                <MapPin className='h-3.5 w-3.5 text-gray-400' />
+                                <span className='text-sm font-normal text-[#252c32]'>
+                                  {po.hierarchy_code}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                          <div className='flex items-center gap-5'>
-                            <div className='flex items-center gap-1'>
-                              <Building className='h-3.5 w-3.5 text-gray-400' />
-                              <span className='text-sm font-normal text-[#252c32]'>
-                                {po.hierarchy_code}
-                              </span>
+                            <div className='text-sm font-normal text-[#252c32]'>
+                              {po.hierarchy_code}
                             </div>
-                            <div className='flex items-center gap-1'>
-                              <MapPin className='h-3.5 w-3.5 text-gray-400' />
-                              <span className='text-sm font-normal text-[#252c32]'>
-                                {po.hierarchy_code}
-                              </span>
-                            </div>
-                          </div>
-                          <div className='text-sm font-normal text-[#252c32]'>
-                            {po.hierarchy_code}
                           </div>
                         </div>
-                      </div>
-                      <div className='flex flex-col items-end gap-2 p-2.5'>
-                        <div className='rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-normal text-[#1c6534]'>
-                          {po.is_current ? 'Active' : 'Inactive'}
+                        <div className='flex flex-col items-end gap-2 p-2.5'>
+                          <div className='rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-normal text-[#1c6534]'>
+                            {po.is_current ? 'Active' : 'Inactive'}
+                          </div>
                         </div>
+                        <DeleteButton onClick={() => handleRemoveParentOffice(po.hierarchy_id)} />
                       </div>
-                      <DeleteButton onClick={() => handleRemoveParentOffice(po.hierarchy_id)} />
                     </div>
                   </div>
-                </div>
-              </>
-            ))}
-          </div>
+                </>
+              ))}
+            </div>
+          </Card>
         </Card>
-      </Card>
+      )}
       <div className='flex justify-end'>
         <Button
           type='submit'

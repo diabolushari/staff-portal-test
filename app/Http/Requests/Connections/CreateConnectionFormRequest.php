@@ -26,7 +26,7 @@ class CreateConnectionFormRequest extends Data
         public int $billingProcessId,
         public bool $solarIndicator,
         public ?int $openAccessTypeId,
-        public ?int $meteringTypeId,
+        public int $meteringTypeId,
         public ?int $renewableTypeId,
         public bool $multiSourceIndicator,
         public bool $liveIndicator,

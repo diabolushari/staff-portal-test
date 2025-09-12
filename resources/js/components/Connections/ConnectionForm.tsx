@@ -86,6 +86,7 @@ export default function ConnectionForm({
     consumer_legacy_code: connection?.consumer_legacy_code ?? '',
     open_access_selected: connection?.open_access_type_id ? true : false,
     renewable_selected: connection?.renewable_type_id ? true : false,
+    _method: connection ? 'PUT' : undefined,
   })
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
@@ -99,11 +100,7 @@ export default function ConnectionForm({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (connection) {
-      post({ ...formData, _method: 'PUT' })
-    } else {
-      post(formData)
-    }
+    post(formData)
   }
 
   const handleAdminOfficeChange = (item: Office) => {
@@ -208,7 +205,7 @@ export default function ConnectionForm({
             dataKey='office_code'
             displayKey='office_name'
             displayValue2='office_code'
-            error={errors?.admin_office_id}
+            error={errors?.admin_office_code}
           />
           <ComboBox
             label='Service Office'
@@ -219,7 +216,7 @@ export default function ConnectionForm({
             dataKey='office_code'
             displayKey='office_name'
             displayValue2='office_code'
-            error={errors?.service_office_id}
+            error={errors?.service_office_code}
           />
         </div>
       </Card>
