@@ -19,27 +19,33 @@ class OfficesCreateWithCsvController extends Controller
 
     public function __invoke()
     {
-        $delimiter = ';'; // adjust if CSV is comma-separated
+        $delimiter = ';'; // Change if CSV is comma-separated
 
         /**
-         * Step 1: Load Region CSV and build lookup (id → office_code)
+         * Utility: Load CSV into associative array
          */
-        $regionPath = base_path('app/seed/region.csv');
-        if (($handle = fopen($regionPath, 'r')) === false) {
-            throw new \RuntimeException("Cannot open file: $regionPath");
-        }
-        $regionHeaders = fgetcsv($handle, 0, $delimiter);
+        $loadCsv = function (string $path, string $delimiter) {
+            if (($handle = fopen($path, 'r')) === false) {
+                throw new \RuntimeException("Cannot open file: $path");
+            }
+            $headers = fgetcsv($handle, 0, $delimiter);
+            $rows = [];
+            while (($row = fgetcsv($handle, 0, $delimiter)) !== false) {
+                $rows[] = array_combine($headers, $row);
+            }
+            fclose($handle);
 
-        $regions = [];
-        while (($row = fgetcsv($handle, 0, $delimiter)) !== false) {
-            $record = array_combine($regionHeaders, $row);
-            $regions[$record['id']] = $record['code']; // map id → office_code
-        }
-        fclose($handle);
+            return [$headers, $rows];
+        };
 
-        /**
-         * Step 2: Get office_type_ids
-         */
+        // Step 1: Load all CSVs
+        [$regionHeaders, $regionRows] = $loadCsv(base_path('app/seed/region.csv'), $delimiter);
+        [$circleHeaders, $circleRows] = $loadCsv(base_path('app/seed/circle.csv'), $delimiter);
+        [$divisionHeaders, $divisionRows] = $loadCsv(base_path('app/seed/division.csv'), $delimiter);
+        [$subDivisionHeaders, $subDivRows] = $loadCsv(base_path('app/seed/subdivision.csv'), $delimiter);
+        [$sectionHeaders, $sectionRows] = $loadCsv(base_path('app/seed/section.csv'), $delimiter);
+
+        // Step 2: Get office_type_ids
         $officeTypeResponse = $this->parameterValueService->getParameterValues(
             1,
             10,
@@ -48,81 +54,131 @@ class OfficesCreateWithCsvController extends Controller
             'Office Type'
         );
 
-        $regionOfficeTypeId = 0;
-        $circleOfficeTypeId = 0;
+        $officeTypeMap = [];
         foreach ($officeTypeResponse->data as $officeType) {
-            if ($officeType['parameter_value'] === 'Region') {
-                $regionOfficeTypeId = $officeType['id'];
-            }
-            if ($officeType['parameter_value'] === 'Circle') {
-                $circleOfficeTypeId = $officeType['id'];
-            }
+            $officeTypeMap[$officeType['parameter_value']] = $officeType['id'];
         }
 
-        /**
-         * Step 3: Create Region Offices
-         */
-        $handle = fopen($regionPath, 'r');
-        fgetcsv($handle, 0, $delimiter); // skip header
-        while (($row = fgetcsv($handle, 0, $delimiter)) !== false) {
-            $record = array_combine($regionHeaders, $row);
+        $regionOfficeTypeId = $officeTypeMap['Region'] ?? 0;
+        $circleOfficeTypeId = $officeTypeMap['Circle'] ?? 0;
+        $divisionOfficeTypeId = $officeTypeMap['Division'] ?? 0;
+        $subDivisionOfficeTypeId = $officeTypeMap['Sub Division'] ?? 0;
+        $sectionOfficeTypeId = $officeTypeMap['Section'] ?? 0;
 
-            $officeRequest = OfficeFormRequest::from([
+        // Lookup maps (id → code)
+        $regions = collect($regionRows)->mapWithKeys(fn ($r) => [$r['id'] => $r['code']])->all();
+        $circles = collect($circleRows)->mapWithKeys(fn ($r) => [$r['id'] => $r['code']])->all();
+        $divisions = collect($divisionRows)->mapWithKeys(fn ($r) => [$r['id'] => $r['code']])->all();
+        $subDivisions = collect($subDivRows)->mapWithKeys(fn ($r) => [$r['id'] => $r['code']])->all();
+
+        /**
+         * Step 3: Create Regions
+         */
+        foreach ($regionRows as $record) {
+            $this->officeService->createOffice(OfficeFormRequest::from([
                 'office_name' => $record['office_name'],
                 'office_code' => (int) $record['code'],
                 'office_description' => $record['office_name'],
                 'office_type_id' => $regionOfficeTypeId,
                 'parent_offices' => null,
-            ]);
-
-            $response = $this->officeService->createOffice($officeRequest);
-
+            ]));
         }
-        fclose($handle);
 
         /**
-         * Step 4: Create Circle Offices + Hierarchies
+         * Step 4: Create Circles → Regions
          */
-        $circlePath = base_path('app/seed/circle.csv');
-        if (($handle = fopen($circlePath, 'r')) === false) {
-            throw new \RuntimeException("Cannot open file: $circlePath");
-        }
-        $circleHeaders = fgetcsv($handle, 0, $delimiter);
-
-        while (($row = fgetcsv($handle, 0, $delimiter)) !== false) {
-            $record = array_combine($circleHeaders, $row);
-
-            $officeRequest = OfficeFormRequest::from([
+        foreach ($circleRows as $record) {
+            $this->officeService->createOffice(OfficeFormRequest::from([
                 'office_name' => $record['office_name'],
                 'office_code' => (int) $record['code'],
                 'office_description' => $record['office_name'],
                 'office_type_id' => $circleOfficeTypeId,
                 'parent_offices' => null,
-            ]);
+            ]));
 
-            $response = $this->officeService->createOffice($officeRequest);
-            if ($response->hasError()) {
-                return $response->error;
-            }
-
-            // Lookup parent office_code using region_id → code
-            $regionId = $record['region_id'];
-            $parentOfficeCode = $regions[$regionId] ?? null;
-
+            $parentOfficeCode = $regions[$record['region_id']] ?? null;
             if ($parentOfficeCode) {
-                $officeHierarchyRequest = OfficeHierarchyForm::from([
-                    'office_code' => (int) $record['code'],
-                    'hierarchy_code' => 'ORGANISATION_DISTRIBUTION',
-                    'parent_office_code' => (int) $parentOfficeCode,
-                ]);
-
-                $response = $this->officeHierarchyRelService->createOfficeHierarchyRel($officeHierarchyRequest);
-                if ($response->hasError()) {
-                    return $response->error;
-                }
+                $this->officeHierarchyRelService->createOfficeHierarchyRel(
+                    OfficeHierarchyForm::from([
+                        'office_code' => (int) $record['code'],
+                        'hierarchy_code' => 'ORGANISATION_DISTRIBUTION',
+                        'parent_office_code' => (int) $parentOfficeCode,
+                    ])
+                );
             }
         }
-        fclose($handle);
+
+        /**
+         * Step 5: Create Divisions → Circles
+         */
+        foreach ($divisionRows as $record) {
+            $this->officeService->createOffice(OfficeFormRequest::from([
+                'office_name' => $record['office_name'],
+                'office_code' => (int) $record['code'],
+                'office_description' => $record['office_name'],
+                'office_type_id' => $divisionOfficeTypeId,
+                'parent_offices' => null,
+            ]));
+
+            $parentOfficeCode = $circles[$record['circle_id']] ?? null;
+            if ($parentOfficeCode) {
+                $this->officeHierarchyRelService->createOfficeHierarchyRel(
+                    OfficeHierarchyForm::from([
+                        'office_code' => (int) $record['code'],
+                        'hierarchy_code' => 'ORGANISATION_DISTRIBUTION',
+                        'parent_office_code' => (int) $parentOfficeCode,
+                    ])
+                );
+            }
+        }
+
+        /**
+         * Step 6: Create Sub Divisions → Divisions
+         */
+        foreach ($subDivRows as $record) {
+            $this->officeService->createOffice(OfficeFormRequest::from([
+                'office_name' => $record['office_name'],
+                'office_code' => (int) $record['code'],
+                'office_description' => $record['office_name'],
+                'office_type_id' => $subDivisionOfficeTypeId,
+                'parent_offices' => null,
+            ]));
+
+            $parentOfficeCode = $divisions[$record['division_id']] ?? null;
+            if ($parentOfficeCode) {
+                $this->officeHierarchyRelService->createOfficeHierarchyRel(
+                    OfficeHierarchyForm::from([
+                        'office_code' => (int) $record['code'],
+                        'hierarchy_code' => 'ORGANISATION_DISTRIBUTION',
+                        'parent_office_code' => (int) $parentOfficeCode,
+                    ])
+                );
+            }
+        }
+
+        /**
+         * Step 7: Create Sections → Sub Divisions
+         */
+        foreach ($sectionRows as $record) {
+            $this->officeService->createOffice(OfficeFormRequest::from([
+                'office_name' => $record['office_name'],
+                'office_code' => (int) $record['code'],
+                'office_description' => $record['office_name'],
+                'office_type_id' => $sectionOfficeTypeId,
+                'parent_offices' => null,
+            ]));
+
+            $parentOfficeCode = $subDivisions[$record['subdivision_id']] ?? null;
+            if ($parentOfficeCode) {
+                $this->officeHierarchyRelService->createOfficeHierarchyRel(
+                    OfficeHierarchyForm::from([
+                        'office_code' => (int) $record['code'],
+                        'hierarchy_code' => 'ORGANISATION_DISTRIBUTION',
+                        'parent_office_code' => (int) $parentOfficeCode,
+                    ])
+                );
+            }
+        }
 
         return response()->json(['message' => 'Offices created successfully']);
     }
