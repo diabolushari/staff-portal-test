@@ -25,15 +25,20 @@ class ConnectionController extends Controller
 
     public function index(Request $request): Response|RedirectResponse
     {
-        $connections = $this->connectionService->listConnections();
+        $consumerNumber = $request->input('search') ?? null;
+        $connections = $this->connectionService->listConnections($consumerNumber);
 
         return Inertia::render('Connections/ConnectionsIndex', [
             'connections' => $connections->data,
+            'filter' => [
+                'consumerNumber' => $consumerNumber,
+            ],
         ]);
     }
 
     public function create(): Response|RedirectResponse
     {
+
         $formItems = (new ConnectionFormItemService($this->parameterValueService))();
 
         return Inertia::render('Connections/ConnectionsForm', $formItems);
@@ -72,7 +77,7 @@ class ConnectionController extends Controller
 
         if ($meterConnectionRel && isset($meterConnectionRel['meter_id'])) {
             $meterResponse = $this->meterService->getMeter($meterConnectionRel['meter_id']);
-            if (!$meterResponse->hasError()) {
+            if (! $meterResponse->hasError()) {
                 $meter = $meterResponse->data;
             }
         }

@@ -55,6 +55,7 @@ export default function ConsumerShow({ consumer }: Readonly<ConsumerShowProps>) 
       href: route('connection.consumer', consumer.consumer.connection_id),
     },
   ]
+
   return (
     <MainLayout
       breadcrumb={breadcrumbs}

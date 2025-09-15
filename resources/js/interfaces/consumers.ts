@@ -123,3 +123,10 @@ export interface ConsumerData {
   }
   connection?: Connection
 }
+
+export interface OfficeHierarchyRel {
+  child_office_code: number
+  hierarchy_code: string
+  hierarchy_rel_hist_id: number
+  parent_office_code: number
+}
