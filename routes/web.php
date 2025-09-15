@@ -19,6 +19,7 @@ use App\Http\Controllers\Metering\MeterController;
 use App\Http\Controllers\Metering\MeterTransformerController;
 use App\Http\Controllers\Metering\MeterTransformerRelController;
 use App\Http\Controllers\Offices\OfficeHierarchyRelController;
+use App\Http\Controllers\Offices\OfficesCreateWithCsvController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
@@ -76,6 +77,7 @@ Route::get('consumer-test', function (SystemModuleService $service) {
 
     return response()->json($response);
 });
+Route::get('offices-create-with-csv', OfficesCreateWithCsvController::class)->name('offices.create-with-csv');
 Route::get('page-ui', function () {
     return Inertia::render('UItest');
 })->name('page-ui');
