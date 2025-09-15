@@ -133,8 +133,10 @@ class OfficeController extends Controller
             'Office Type'
         );
 
+        $office = $office->data['office'];
+
         return Inertia::render('Offices/OfficeCreate', [
-            'office' => $office->data,
+            'office' => $office,
             'parameterValues' => $parameterValues->data,
         ]);
     }

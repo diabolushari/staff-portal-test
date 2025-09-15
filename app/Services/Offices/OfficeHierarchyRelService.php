@@ -9,6 +9,7 @@ use Grpc\ChannelCredentials;
 use Proto\Offices\CreateOfficeHierarchyRelRequest;
 use Proto\Offices\DeleteOfficeHierarchyRelRequest;
 use Proto\Offices\OfficeHierarchyRelServiceClient;
+use Proto\Offices\UpdateOfficeHierarchyRelRequest;
 
 class OfficeHierarchyRelService
 {
@@ -32,6 +33,29 @@ class OfficeHierarchyRelService
         $grpcRequest->setHierarchyCode($request->hierarchyCode);
 
         [$response, $status] = $this->client->createOfficeHierarchyRel($grpcRequest)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+        $relation = [];
+
+        return GrpcServiceResponse::success($relation, $response, $status->code, $status->details);
+    }
+
+    public function updateOfficeHierarchyRel(OfficeHierarchyForm $request, int $hierarchyRelHistId): GrpcServiceResponse
+    {
+        $grpcRequest = new UpdateOfficeHierarchyRelRequest;
+        $grpcRequest->setHierarchyRelHistId($hierarchyRelHistId);
+        $grpcRequest->setParentOfficeCode($request->parentOfficeCode);
+        $grpcRequest->setChildOfficeCode($request->officeCode);
+        $grpcRequest->setHierarchyCode($request->hierarchyCode);
+
+        [$response, $status] = $this->client->updateOfficeHierarchyRel($grpcRequest)->wait();
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(

@@ -14,7 +14,7 @@ class GrpcErrorService
      *
      * @param  \stdClass  $status  The gRPC status object
      */
-    public static function handleErrorResponse($status, ?RedirectResponse $redirectResponse = null): ?RedirectResponse
+    public static function handleErrorResponse($status, ?RedirectResponse $redirectResponse = null, bool $flashError = true): ?RedirectResponse
     {
         // Status code 0 means success, no error handling needed
         if ($status->code === 0) {
@@ -32,7 +32,9 @@ class GrpcErrorService
         // For non-validation errors, flash error message to session
         $errorMessage = self::getErrorMessage($status);
 
-        session()->flash('error', $errorMessage);
+        if ($flashError) {
+            session()->flash('error', $errorMessage);
+        }
 
         return $redirectResponse;
     }

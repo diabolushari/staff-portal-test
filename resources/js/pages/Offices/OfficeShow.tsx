@@ -3,12 +3,13 @@ import AddRelationModal from '@/components/Offices/AddRelationModal'
 import ContactFolioCard from '@/components/Offices/ContactFolioCard'
 import { Card } from '@/components/ui/card'
 import { TabsContent } from '@/components/ui/tabs'
-import { Office } from '@/interfaces/consumers'
+import { Office, OfficeHierarchyRel } from '@/interfaces/consumers'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 import AddButton from '@/ui/button/AddButton'
 import DeleteButton from '@/ui/button/DeleteButton'
+import EditButton from '@/ui/button/EditButton'
 import TinyContainer from '@/ui/Card/TinyContainer'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
@@ -67,6 +68,7 @@ export default function OfficeShow({
   const [isDeleting, setIsDeleting] = useState(false)
   const [officeHierarchyRelId, setOfficeHierarchyRelId] = useState(0)
   const [createRelationModalOpen, setCreateRelationModalOpen] = useState(false)
+  const [hierarchyData, setHierarchyData] = useState<OfficeHierarchyRel | undefined>(undefined)
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Offices',
@@ -97,7 +99,7 @@ export default function OfficeShow({
     updatedBy: 'Section Officer',
     updatedAt: '18 July 2025',
   }
-  console.log(office)
+
   const tabs = [
     {
       value: 'details',
@@ -300,6 +302,12 @@ export default function OfficeShow({
                             setIsDeleting(true)
                           }}
                         />
+                        <EditButton
+                          onClick={() => {
+                            setHierarchyData(parentRel)
+                            setCreateRelationModalOpen(true)
+                          }}
+                        />
                         <div className='rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-normal text-[#1c6534]'>
                           {parentRel.parent_office?.is_current ? 'Active' : 'Inactive'}
                         </div>
@@ -418,6 +426,7 @@ export default function OfficeShow({
           onClose={() => setCreateRelationModalOpen(false)}
           officeHierarchies={officeHierarchiesWithoutSelected}
           office_code={office.office_code}
+          hierarchyData={hierarchyData}
         />
       )}
       {isDeleting && officeHierarchyRelId && (

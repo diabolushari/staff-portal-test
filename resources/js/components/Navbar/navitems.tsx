@@ -19,6 +19,20 @@ export const settingsOffices: navItem[] = [
     icon: <HomeIcon className='h-4 w-4' />,
   },
 ]
+
+export const meterNavItems: navItem[] = [
+  {
+    title: 'Search Meters',
+    href: '/meters',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+
+  {
+    title: 'Add Meter',
+    href: '/meters/create',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
+]
 export const settingsParties: navItem[] = [
   {
     title: 'Search Parties',

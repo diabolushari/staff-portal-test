@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { Office, OfficeHierarchy } from '@/interfaces/consumers'
+import { Office, OfficeHierarchy, OfficeHierarchyRel } from '@/interfaces/consumers'
 import SelectList from '@/ui/form/SelectList'
 import ComboBox from '@/ui/form/ComboBox'
 import Button from '@/ui/button/Button'
@@ -11,24 +11,32 @@ interface ParentOfficeModalProps {
   onClose: () => void
   officeHierarchies: OfficeHierarchy[]
   office_code: string
+  hierarchyData?: OfficeHierarchyRel
 }
 
 export default function AddRelationModal({
   onClose,
   officeHierarchies,
   office_code,
+  hierarchyData,
 }: ParentOfficeModalProps) {
   const { formData, setFormValue } = useCustomForm({
     office_code: office_code,
-    parent_office_code: '',
-    hierarchy_code: '',
+    parent_office_code: hierarchyData?.parent_office_code ?? '',
+    hierarchy_code: hierarchyData?.hierarchy_code ?? '',
+    _method: hierarchyData ? 'PUT' : undefined,
   })
-  const { post, errors, loading } = useInertiaPost(route('office-hierarchy-rel.store'), {
-    showErrorToast: true,
-    onComplete: () => {
-      onClose()
-    },
-  })
+  const { post, errors, loading } = useInertiaPost(
+    hierarchyData
+      ? route('office-hierarchy-rel.update', hierarchyData.hierarchy_rel_hist_id)
+      : route('office-hierarchy-rel.store'),
+    {
+      showErrorToast: true,
+      onComplete: () => {
+        onClose()
+      },
+    }
+  )
   const [parentOffice, setParentOffice] = useState<Office | null>(null)
   const handleComboBoxChange = (value: Office) => {
     setParentOffice(value)
@@ -38,7 +46,7 @@ export default function AddRelationModal({
   const handleConfirm = () => {
     post(formData)
   }
-  console.log(formData)
+
   return (
     <Modal
       setShowModal={onClose}

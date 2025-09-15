@@ -32,12 +32,15 @@ class ConnectionService
         $this->parameterValueService = $parameterValueService;
     }
 
-    public function listConnections(): GrpcServiceResponse
+    public function listConnections(?string $consumerNumber): GrpcServiceResponse
     {
         $request = new ListConnectionsRequest;
 
         $request->setPage(1);
         $request->setPageSize(10);
+        if ($consumerNumber) {
+            $request->setConsumerNumber($consumerNumber);
+        }
 
         [$response, $status] = $this->client->ListConnections($request)->wait();
         if ($status->code !== 0) {
@@ -61,7 +64,6 @@ class ConnectionService
     {
         $grpcRequest = new CreateConnectionRequest;
         $grpcRequest->setConnectionTypeId($request->connectionTypeId);
-        $grpcRequest->setConsumerNum($request->consumerNumber);
         $grpcRequest->setConnectionStatusId($request->connectionStatusId);
         $grpcRequest->setConnectedDate($request->connectedDate);
         $grpcRequest->setServiceOfficeCode($request->serviceOfficeCode);
@@ -130,11 +132,8 @@ class ConnectionService
         // Wrap into UpdateConnectionRequest
         $grpcRequest = new ConnectionUpdateRequest;
         $grpcRequest->setConnectionId($connectionId);
-        $grpcRequest->setConnectionTypeId($request->connectionTypeId);
-        $grpcRequest->setConsumerNum($request->consumerNumber);
         $grpcRequest->setConnectionStatusId($request->connectionStatusId);
         $grpcRequest->setConnectedDate($request->connectedDate);
-        $grpcRequest->setServiceOfficeCode($request->serviceOfficeCode);
         $grpcRequest->setAdminOfficeCode($request->adminOfficeCode);
         $grpcRequest->setVoltageId($request->voltageTypeId);
         $grpcRequest->setContractDemandKvaVal($request->contractDemandKwVal);

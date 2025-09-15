@@ -48,7 +48,9 @@ export default function OfficeCreate({
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
         <div className='flex items-center gap-2'>
-          <StrongText className='text-2xl font-semibold'>Add Office</StrongText>
+          <StrongText className='text-2xl font-semibold'>
+            {office ? 'Edit Office' : 'Add Office'}
+          </StrongText>
         </div>
         <TabGroup tabs={tabs}>
           <TabsContent value='detail'>
