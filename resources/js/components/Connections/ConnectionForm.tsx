@@ -144,6 +144,7 @@ export default function ConnectionForm({
             setValue={setFormValue('connection_type_id')}
             value={formData.connection_type_id}
             error={errors?.connection_type_id}
+            disabled={connection?.connection_id ? true : false}
           />
           <SelectList
             label='Connection Status'
@@ -153,14 +154,6 @@ export default function ConnectionForm({
             setValue={setFormValue('connection_status_id')}
             value={formData.connection_status_id}
             error={errors?.connection_status_id}
-          />
-          <Input
-            label='Consumer Number'
-            value={formData.consumer_number}
-            setValue={setFormValue('consumer_number')}
-            placeholder='Enter 13 digit unique consumer number'
-            error={errors?.consumer_number}
-            type='number'
           />
           <SelectList
             label='Voltage Type'
@@ -217,6 +210,7 @@ export default function ConnectionForm({
             displayKey='office_name'
             displayValue2='office_code'
             error={errors?.service_office_code}
+            disabled={connection?.service_office_code ? true : false}
           />
         </div>
       </Card>

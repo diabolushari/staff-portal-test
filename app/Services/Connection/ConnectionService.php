@@ -64,7 +64,6 @@ class ConnectionService
     {
         $grpcRequest = new CreateConnectionRequest;
         $grpcRequest->setConnectionTypeId($request->connectionTypeId);
-        $grpcRequest->setConsumerNum($request->consumerNumber);
         $grpcRequest->setConnectionStatusId($request->connectionStatusId);
         $grpcRequest->setConnectedDate($request->connectedDate);
         $grpcRequest->setServiceOfficeCode($request->serviceOfficeCode);
@@ -133,11 +132,8 @@ class ConnectionService
         // Wrap into UpdateConnectionRequest
         $grpcRequest = new ConnectionUpdateRequest;
         $grpcRequest->setConnectionId($connectionId);
-        $grpcRequest->setConnectionTypeId($request->connectionTypeId);
-        $grpcRequest->setConsumerNum($request->consumerNumber);
         $grpcRequest->setConnectionStatusId($request->connectionStatusId);
         $grpcRequest->setConnectedDate($request->connectedDate);
-        $grpcRequest->setServiceOfficeCode($request->serviceOfficeCode);
         $grpcRequest->setAdminOfficeCode($request->adminOfficeCode);
         $grpcRequest->setVoltageId($request->voltageTypeId);
         $grpcRequest->setContractDemandKvaVal($request->contractDemandKwVal);

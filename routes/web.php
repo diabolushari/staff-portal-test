@@ -14,6 +14,7 @@ use App\Http\Controllers\Connection\GetConsumerController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
+use App\Http\Controllers\Metering\MeterConnectionRelController;
 use App\Http\Controllers\Metering\MeterController;
 use App\Http\Controllers\Metering\MeterTransformerController;
 use App\Http\Controllers\Metering\MeterTransformerRelController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
 use App\Http\Requests\SystemModule\SystemModuleFormRequest;
 use App\Services\SystemModule\SystemModuleService;
+use GPBMetadata\MeterTimezoneTypeRel;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -54,6 +56,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('meters', MeterController::class);
     Route::resource('meter-ctpt', MeterTransformerController::class);
     Route::resource('meter-ctpt-rel', MeterTransformerRelController::class);
+    Route::resource('meter-conn-rel', MeterConnectionRelController::class);
+    Route::resource('meter-timezone-rel', MeterTimezoneTypeRel::class);
 });
 
 // API List

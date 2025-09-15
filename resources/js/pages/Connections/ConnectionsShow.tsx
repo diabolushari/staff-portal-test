@@ -52,7 +52,7 @@ export default function ConnectionsShow({
       label: 'Meter',
     },
   ]
-
+  console.log(connection)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}

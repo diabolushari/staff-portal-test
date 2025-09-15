@@ -40,20 +40,12 @@ export default function OfficeIndex({ offices, office_types, filters }: Readonly
           title='Offices search'
           placeholder='Enter office name or code'
           url={route('offices.index')}
-          setItems={setItems}
           search={filters.office_name}
         />
 
         <div>{items != null && <OfficeList offices={items} />}</div>
         <div>{items == null && <p>No Office Found.</p>}</div>
       </div>
-      {showDeleteModal && editRow && (
-        <DeleteModal
-          setShowModal={setShowDeleteModal}
-          title='Delete Office'
-          url={route('offices.destroy', editRow.office_id)}
-        />
-      )}
     </MainLayout>
   )
 }

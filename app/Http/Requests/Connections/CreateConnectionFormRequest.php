@@ -11,7 +11,6 @@ class CreateConnectionFormRequest extends Data
 {
     public function __construct(
         public int $connectionTypeId,
-        public int $consumerNumber,
         public int $connectionStatusId,
         public string $connectedDate,
         public int $serviceOfficeCode,
