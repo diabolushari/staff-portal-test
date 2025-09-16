@@ -32,48 +32,74 @@ message GetMeterRequest {
 
 message ListMetersRequest {}
 
-
 message CreateMeterRequest {
-  string meter_serial = 2;
-  int32 ownership_type_id = 3;        // CORRECT: Generates getOwnershipTypeId()
-  int32 meter_make_id = 4;              // CORRECT: Generates getMeterMakeId()
-  int32 meter_type_id = 5;              // CORRECT: Generates getMeterTypeId()
-  int32 meter_category_id = 6;        // CORRECT: Generates getMeterCategoryId()
-  int32 accuracy_class_id = 7;        // CORRECT: Generates getAccuracyClassId()
-  int32 dialing_factor_id = 8;
-  string company_seal_num = 9;
-  int32 digit_count = 10;
-  int32 internal_pt_ratio_id = 11;
-  int32 internal_ct_ratio_id = 12;
-  google.protobuf.Timestamp manufacture_date = 13;
-  google.protobuf.Timestamp supply_date = 14;
-  int32 meter_unit_id = 15;             // CORRECT: Generates getMeterUnitId()
-  int32 meter_reset_type_id = 16;       // CORRECT: Generates getMeterResetTypeId()
-  bool smart_meter_ind = 17;
-  bool bidirectional_ind = 18;
-  int32 created_by = 19;
+  string meter_serial = 1;
+  int32 ownership_type_id = 2;
+  int32 meter_make_id = 3;
+  int32 meter_type_id = 4;
+  int32 meter_category_id = 5;
+  int32 accuracy_class_id = 6;
+  int32 dialing_factor_id = 7;
+  string company_seal_num = 8;
+  int32 digit_count = 9;
+  google.protobuf.Timestamp manufacture_date = 10;
+  google.protobuf.Timestamp supply_date = 11;
+  int32 meter_unit_id = 12;
+  int32 meter_reset_type_id = 13;
+  bool smart_meter_ind = 14;
+  bool bidirectional_ind = 15;
+  int32 created_by = 16;
+  int32 meter_phase_id = 17;
+  int32 decimal_digit_count = 18;
+  float programmable_pt_ratio = 19;
+  int32 programmable_ct_ratio = 20;
+  float meter_mf = 21;
+  int32 warranty_period = 22;
+  int32 meter_constant = 23;
+  string batch_code = 24;
+
+  // New nullable internal CT/PT ratios (use optional for presence)
+  optional int32 internal_ct_primary = 25;
+  optional int32 internal_ct_secondary = 26;
+  optional int32 internal_pt_primary = 27;
+  optional int32 internal_pt_secondary = 28;
 }
 
 message UpdateMeterRequest {
   int32 meter_id = 1;
   string meter_serial = 2;
-  int32 ownership_type_id = 3;        // CORRECT: Generates getOwnershipTypeId()
-  int32 meter_make_id = 4;              // CORRECT: Generates getMeterMakeId()
-  int32 meter_type_id = 5;              // CORRECT: Generates getMeterTypeId()
-  int32 meter_category_id = 6;        // CORRECT: Generates getMeterCategoryId()
-  int32 accuracy_class_id = 7;        // CORRECT: Generates getAccuracyClassId()
+  int32 ownership_type_id = 3;
+  int32 meter_make_id = 4;
+  int32 meter_type_id = 5;
+  int32 meter_category_id = 6;
+  int32 accuracy_class_id = 7;
   int32 dialing_factor_id = 8;
   string company_seal_num = 9;
   int32 digit_count = 10;
-  int32 internal_pt_ratio_id = 11;
-  int32 internal_ct_ratio_id = 12;
-  google.protobuf.Timestamp manufacture_date = 13;
-  google.protobuf.Timestamp supply_date = 14;
-  int32 meter_unit_id = 15;             // CORRECT: Generates getMeterUnitId()
-  int32 meter_reset_type_id = 16;       // CORRECT: Generates getMeterResetTypeId()
-  bool smart_meter_ind = 17;
-  bool bidirectional_ind = 18;
-  int32 updated_by = 19;
+  google.protobuf.Timestamp manufacture_date = 11;
+  google.protobuf.Timestamp supply_date = 12;
+  int32 meter_unit_id = 13;
+  int32 meter_reset_type_id = 14;
+  bool smart_meter_ind = 15;
+  bool bidirectional_ind = 16;
+  int32 updated_by = 17;
+  int32 meter_phase_id = 18;
+  int32 decimal_digit_count = 19;
+  float programmable_pt_ratio = 20;
+  int32 programmable_ct_ratio = 21;
+  float meter_mf = 22;
+  int32 warranty_period = 23;
+  int32 meter_constant = 24;
+  string batch_code = 25;
+
+  // New nullable internal CT/PT ratios (use optional for presence)
+  optional int32 internal_ct_primary = 26;
+  optional int32 internal_ct_secondary = 27;
+  optional int32 internal_pt_primary = 28;
+  optional int32 internal_pt_secondary = 29;
+
+  // Allow client to set updated_ts if needed; otherwise server sets it
+  optional google.protobuf.Timestamp updated_ts = 30;
 }
 
 message DeleteMeterRequest {
@@ -92,16 +118,28 @@ message MeterResponse {
   parameters.ParameterValueProto dialing_factor = 9;
   optional string company_seal_num = 10;
   optional int32 digit_count = 11;
-  optional parameters.ParameterValueProto internal_pt_ratio = 12;
-  optional parameters.ParameterValueProto internal_ct_ratio = 13;
-  optional google.protobuf.Timestamp manufacture_date = 14;
-  optional google.protobuf.Timestamp supply_date = 15;
-  parameters.ParameterValueProto meter_unit = 16;
-  parameters.ParameterValueProto meter_reset_type = 17;
-  bool smart_meter_ind = 18;
-  bool bidirectional_ind = 19;
-  google.protobuf.Timestamp created_ts = 20;
-  google.protobuf.Timestamp updated_ts = 21;
-  int32 created_by = 22;
-  optional int32 updated_by = 23;
+  optional google.protobuf.Timestamp manufacture_date = 12;
+  optional google.protobuf.Timestamp supply_date = 13;
+  parameters.ParameterValueProto meter_unit = 14;
+  parameters.ParameterValueProto meter_reset_type = 15;
+  bool smart_meter_ind = 16;
+  bool bidirectional_ind = 17;
+  google.protobuf.Timestamp created_ts = 18;
+  google.protobuf.Timestamp updated_ts = 19;
+  int32 created_by = 20;
+  optional int32 updated_by = 21;
+  parameters.ParameterValueProto meter_phase = 22;
+  optional int32 decimal_digit_count = 23;
+  optional float programmable_pt_ratio = 24;
+  optional int32 programmable_ct_ratio = 25;
+  optional float meter_mf = 26;
+  optional int32 warranty_period = 27;
+  optional int32 meter_constant = 28;
+  optional string batch_code = 29;
+
+  // New: expose internal CT/PT ratios
+  optional int32 internal_ct_primary = 30;
+  optional int32 internal_ct_secondary = 31;
+  optional int32 internal_pt_primary = 32;
+  optional int32 internal_pt_secondary = 33;
 }
