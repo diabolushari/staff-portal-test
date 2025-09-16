@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Offices;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Consumers\OfficeFormRequest;
+use App\Http\Requests\Offices\HierarchyOfficeForm;
 use App\Http\Requests\Offices\OfficeHierarchyForm;
 use App\Services\Consumers\OfficeService;
 use App\Services\Offices\OfficeHierarchyRelService;
+use App\Services\Offices\OfficeHierarchyService;
 use App\Services\Parameters\ParameterValueService;
 
 class OfficesCreateWithCsvController extends Controller
@@ -15,6 +17,7 @@ class OfficesCreateWithCsvController extends Controller
         private OfficeService $officeService,
         private ParameterValueService $parameterValueService,
         private OfficeHierarchyRelService $officeHierarchyRelService,
+        private OfficeHierarchyService $officeHierarchyService,
     ) {}
 
     public function __invoke()
@@ -37,8 +40,21 @@ class OfficesCreateWithCsvController extends Controller
 
             return [$headers, $rows];
         };
+        $officeHierarchyResponse = $this->officeHierarchyService->createOfficeHierarchy(
+            HierarchyOfficeForm::from([
+                'hierarchy_code' => 'ORGANISATION_DISTRIBUTION',
+                'hierarchy_name' => 'Organization-Distribution',
+                'hierarchy_description' => 'Organization-Distribution',
+            ])
+        );
 
-        // Step 1: Load all CSVs
+        if (! $officeHierarchyResponse->data) {
+            // Handle error or return a default value
+            throw new \Exception('Failed to create office hierarchy: response data is null');
+        }
+
+        $officeHierarchyCode = $officeHierarchyResponse->data['hierarchy_code'];
+
         [$regionHeaders, $regionRows] = $loadCsv(base_path('app/seed/region.csv'), $delimiter);
         [$circleHeaders, $circleRows] = $loadCsv(base_path('app/seed/circle.csv'), $delimiter);
         [$divisionHeaders, $divisionRows] = $loadCsv(base_path('app/seed/division.csv'), $delimiter);
@@ -101,7 +117,7 @@ class OfficesCreateWithCsvController extends Controller
                 $this->officeHierarchyRelService->createOfficeHierarchyRel(
                     OfficeHierarchyForm::from([
                         'office_code' => (int) $record['code'],
-                        'hierarchy_code' => 'ORGANISATION_DISTRIBUTION',
+                        'hierarchy_code' => $officeHierarchyCode,
                         'parent_office_code' => (int) $parentOfficeCode,
                     ])
                 );
@@ -125,7 +141,7 @@ class OfficesCreateWithCsvController extends Controller
                 $this->officeHierarchyRelService->createOfficeHierarchyRel(
                     OfficeHierarchyForm::from([
                         'office_code' => (int) $record['code'],
-                        'hierarchy_code' => 'ORGANISATION_DISTRIBUTION',
+                        'hierarchy_code' => $officeHierarchyCode,
                         'parent_office_code' => (int) $parentOfficeCode,
                     ])
                 );
@@ -149,7 +165,7 @@ class OfficesCreateWithCsvController extends Controller
                 $this->officeHierarchyRelService->createOfficeHierarchyRel(
                     OfficeHierarchyForm::from([
                         'office_code' => (int) $record['code'],
-                        'hierarchy_code' => 'ORGANISATION_DISTRIBUTION',
+                        'hierarchy_code' => $officeHierarchyCode,
                         'parent_office_code' => (int) $parentOfficeCode,
                     ])
                 );
@@ -173,7 +189,7 @@ class OfficesCreateWithCsvController extends Controller
                 $this->officeHierarchyRelService->createOfficeHierarchyRel(
                     OfficeHierarchyForm::from([
                         'office_code' => (int) $record['code'],
-                        'hierarchy_code' => 'ORGANISATION_DISTRIBUTION',
+                        'hierarchy_code' => $officeHierarchyCode,
                         'parent_office_code' => (int) $parentOfficeCode,
                     ])
                 );

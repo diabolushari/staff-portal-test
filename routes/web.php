@@ -11,6 +11,7 @@ use App\Http\Controllers\Connection\ConnectionController;
 use App\Http\Controllers\Connection\ConsumerController;
 use App\Http\Controllers\Connection\CreateConsumerController;
 use App\Http\Controllers\Connection\GetConsumerController;
+use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
@@ -78,6 +79,7 @@ Route::get('consumer-test', function (SystemModuleService $service) {
     return response()->json($response);
 });
 Route::get('offices-create-with-csv', OfficesCreateWithCsvController::class)->name('offices.create-with-csv');
+Route::get('create-georegion-seed', CreateGeoregionSeedController::class)->name('create-georegion-seed');
 Route::get('page-ui', function () {
     return Inertia::render('UItest');
 })->name('page-ui');
