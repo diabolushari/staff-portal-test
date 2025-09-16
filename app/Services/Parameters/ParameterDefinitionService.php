@@ -31,7 +31,7 @@ class ParameterDefinitionService
         );
     }
 
-    public function getParameterDefinitions(int $page = 1, int $pageSize = 10, ?string $domainName = null, ?string $search = null): GrpcServiceResponse
+    public function getParameterDefinitions(int $page = 1, int $pageSize = 10, ?string $domainName = null, ?string $moduleName = null, ?string $search = null): GrpcServiceResponse
     {
         $request = new ListParameterDefinitionsRequest;
         $request->setPage($page);
@@ -39,6 +39,9 @@ class ParameterDefinitionService
 
         if ($domainName !== null) {
             $request->setDomainName($domainName);
+        }
+        if ($moduleName !== null) {
+            $request->setModuleName($moduleName);
         }
         if ($search !== null && $search !== '') {
             $request->setSearch($search);

@@ -158,7 +158,7 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
   )
 
   const tabs = MeterTabs
-
+  console.log(meter)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}

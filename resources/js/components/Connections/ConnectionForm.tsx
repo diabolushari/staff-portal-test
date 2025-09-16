@@ -146,6 +146,12 @@ export default function ConnectionForm({
             error={errors?.connection_type_id}
             disabled={connection?.connection_id ? true : false}
           />
+          <Input
+            label='Consumer Legacy Code'
+            setValue={setFormValue('consumer_legacy_code')}
+            value={formData.consumer_legacy_code}
+            error={errors?.consumer_legacy_code}
+          />
           <SelectList
             label='Connection Status'
             list={connectionStatus}
@@ -286,6 +292,25 @@ export default function ConnectionForm({
           />
         </div>
       </Card>
+      <Card>
+        <div className='border-b-2 border-gray-200 py-3'>
+          <StrongText className='text-base font-semibold'>Load & Capacity</StrongText>
+        </div>
+        <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
+          <Input
+            label='Contract Demand (kW)'
+            setValue={setFormValue('contract_demand_kw_val')}
+            value={formData.contract_demand_kw_val}
+            error={errors?.contract_demand_kw_val}
+          />
+          <Input
+            label='Connected Load (kW)'
+            setValue={setFormValue('connected_load_kw_val')}
+            value={formData.connected_load_kw_val}
+            error={errors?.connected_load_kw_val}
+          />
+        </div>
+      </Card>
 
       <Card>
         <div className='border-b-2 border-gray-200 py-3'>
@@ -333,27 +358,6 @@ export default function ConnectionForm({
         </div>
       </Card>
 
-      <Card>
-        <div className='border-b-2 border-gray-200 py-3'>
-          <StrongText className='text-base font-semibold'>Load & Capacity</StrongText>
-        </div>
-        <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
-          <Input
-            label='Contract Demand (kW)'
-            setValue={setFormValue('contract_demand_kw_val')}
-            value={formData.contract_demand_kw_val}
-            error={errors?.contract_demand_kw_val}
-            required
-          />
-          <Input
-            label='Connected Load (kW)'
-            setValue={setFormValue('connected_load_kw_val')}
-            value={formData.connected_load_kw_val}
-            error={errors?.connected_load_kw_val}
-            required
-          />
-        </div>
-      </Card>
       <Card>
         <div className='border-b-2 border-gray-200 py-3'>
           <StrongText className='text-base font-semibold'>Indicators</StrongText>

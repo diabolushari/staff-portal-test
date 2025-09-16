@@ -43,6 +43,7 @@ class ParameterValueService
         $request->setParameterName($parameterName ?? '');
         $request->setAttributeName($attributeName ?? '');
         $request->setAttributeValue($attributeValue ?? '');
+        $request->setSearch($search ?? '');
 
         [$response, $status] = $this->client->listParameterValues($request)->wait();
 
