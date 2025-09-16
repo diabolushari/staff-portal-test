@@ -3,7 +3,7 @@ import capitalSnakeCase from '@/formaters/capitalcase'
 import useCustomForm from '@/hooks/useCustomForm'
 import useFetchRecord from '@/hooks/useFetchRecord'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
+import { ParameterDefinition, ParameterDomain, ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
@@ -11,6 +11,7 @@ import Button from '@/ui/button/Button'
 import DatePicker from '@/ui/form/DatePicker'
 import DynamicSelectList from '@/ui/form/DynamicSelectList'
 import Input from '@/ui/form/Input'
+import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
 import { useEffect, useState } from 'react'
 
@@ -27,10 +28,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface Props {
   parameter_value?: ParameterValues
+  definitions: ParameterDefinition[]
+  domains: ParameterDomain[]
 }
 
 //TODO missing prop interface
-export default function ParameterValueCreate({ parameter_value }: Props) {
+export default function ParameterValueCreate({ parameter_value, definitions, domains }: Props) {
   // don't use loose type check values like 0 want be counted
   const attributeValuePresent =
     parameter_value?.attribute1_value ||
@@ -56,6 +59,7 @@ export default function ParameterValueCreate({ parameter_value }: Props) {
     effective_end_date: parameter_value?.effective_end_date ?? '',
     sort_priority: parameter_value?.sort_priority ?? '',
     notes: parameter_value?.notes ?? '',
+    domain_name: '',
     _method: parameter_value != null ? 'PUT' : undefined,
   })
 
@@ -69,7 +73,6 @@ export default function ParameterValueCreate({ parameter_value }: Props) {
       },
     }
   )
-  const [definitions] = useFetchRecord<ParameterDefinition[]>(`/api/parameter-definitions`)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -102,16 +105,27 @@ export default function ParameterValueCreate({ parameter_value }: Props) {
               onSubmit={handleSubmit}
               className='grid grid-cols-1 gap-6 md:grid-cols-2'
             >
-              <div className='col-span-2 flex flex-col'>
-                <DynamicSelectList
-                  url='/api/parameter-definitions'
-                  dataKey='id'
-                  displayKey='parameter_name'
-                  label='Definition'
-                  setValue={setFormValue('definition_id')}
-                  value={formData.definition_id}
-                  error={errors?.definition_id}
+              <div className='col-span-2 flex flex-col gap-6'>
+                <SelectList
+                  label='Domain'
+                  setValue={setFormValue('domain_name')}
+                  value={formData.domain_name}
+                  error={errors?.domain_name}
+                  list={domains}
+                  dataKey='domain_name'
+                  displayKey='domain_name'
                 />
+                {formData.domain_name && (
+                  <DynamicSelectList
+                    label='Definition'
+                    url={`/api/parameter-definitions/?domain_name=${formData.domain_name}`}
+                    setValue={setFormValue('definition_id')}
+                    value={formData.definition_id}
+                    error={errors?.definition_id}
+                    dataKey='id'
+                    displayKey='parameter_name'
+                  />
+                )}
               </div>
 
               <div className='flex flex-col'>
