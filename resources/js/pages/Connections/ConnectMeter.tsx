@@ -30,53 +30,55 @@ const toNumberOrUndef = (v: unknown) => {
 
 export default function ConnectMeter({
 	connection_id,
+	relation,
 	meters,
 	useCategory,
 	meterStatus,
 	changeReason,
 }: {
 	connection_id: number;
+	relation?: any;
 	meters: any[];
 	useCategory: ParameterOption[];
 	meterStatus: ParameterOption[];
 	changeReason: ParameterOption[];
 }) {
-	console.log(useCategory);
+	console.log(meters);
+	const isEditMode = !!relation;
+
 	const { formData, setFormValue } = useCustomForm({
-		connection_id: connection_id,
-		meter_id: "",
-		meter_use_category: null,
-		bidirectional_ind: false,
-		meter_billing_mode: "",
-		meter_status_id: null,
-		faulty_date: "",
-		rectification_date: "",
-		change_reason: null,
-		effective_start_ts: "",
-		effective_end_ts: "",
+		rel_id: isEditMode ? relation.rel_id : undefined,
+		connection_id: isEditMode ? relation.connection_id : connection_id,
+		meter_id: isEditMode ? relation.meter_id : "",
+		meter_use_category: isEditMode
+			? (relation.meter_use_category?.id ?? null)
+			: null,
+		bidirectional_ind: isEditMode ? relation.bidirectional_ind : false,
+		meter_billing_mode: isEditMode ? (relation.meter_billing_mode ?? "") : "",
+		meter_status_id: isEditMode ? (relation.meter_status?.id ?? null) : null,
+		faulty_date: isEditMode ? toYMD(relation.faulty_date) : "",
+		rectification_date: isEditMode ? toYMD(relation.rectification_date) : "",
+		change_reason: isEditMode ? (relation.change_reason?.id ?? null) : null,
 	});
 
-	const { post, loading, errors } =
-		useInertiaPost(
-			// route("meter-connection-rel.store"),
-		);
+	console.log(relation);
+	const { post, loading, errors } = useInertiaPost(
+		isEditMode
+			? route("meter-connection-rel.update", { id: relation.connection_id })
+			: route("meter-connection-rel.store"),
+	);
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
 		const payload = {
-			connection_id: formData.connection_id,
+			...formData,
 			meter_id: toNumberOrUndef(formData.meter_id),
 			meter_use_category: toNumberOrUndef(formData.meter_use_category),
-			bidirectional_ind: formData.bidirectional_ind,
-			meter_billing_mode: formData.meter_billing_mode,
 			meter_status_id: toNumberOrUndef(formData.meter_status_id),
 			faulty_date: toISOorNull(formData.faulty_date),
 			rectification_date: toISOorNull(formData.rectification_date),
 			change_reason: toNumberOrUndef(formData.change_reason),
-			effective_start_ts: toISOorNull(formData.effective_start_ts),
-			effective_end_ts: toISOorNull(formData.effective_end_ts),
-			is_active: formData.is_active,
 		};
 		post(payload);
 	};
@@ -94,8 +96,12 @@ export default function ConnectMeter({
 		<MainLayout>
 			<div className="p-6">
 				<CardHeader
-					title="Connect Meter"
-					subheading="Connect a meter to the selected connection"
+					title={isEditMode ? "Edit Connected Meter" : "Connect Meter"}
+					subheading={
+						isEditMode
+							? "Edit the details of the meter connected to this connection"
+							: "Connect a meter to the selected connection"
+					}
 				/>
 				<Card>
 					<form onSubmit={handleSubmit} className="space-y-8">
@@ -166,21 +172,6 @@ export default function ConnectMeter({
 								/>
 
 								<DatePicker
-									label="Effective Start Date"
-									value={formData.effective_start_ts}
-									setValue={setFormValue("effective_start_ts")}
-									error={errors.effective_start_ts}
-									required
-								/>
-
-								<DatePicker
-									label="Effective End Date"
-									value={formData.effective_end_ts}
-									setValue={setFormValue("effective_end_ts")}
-									error={errors.effective_end_ts}
-								/>
-
-								<DatePicker
 									label="Faulty Date"
 									value={formData.faulty_date}
 									setValue={setFormValue("faulty_date")}
@@ -205,14 +196,6 @@ export default function ConnectMeter({
 										}
 										error={errors.bidirectional_ind}
 									/>
-									<CheckBox
-										label="Is Active"
-										value={formData.is_active}
-										toggleValue={() =>
-											setFormValue("is_active")(!formData.is_active)
-										}
-										error={errors.is_active}
-									/>
 								</div>
 							</>,
 						)}
@@ -223,11 +206,15 @@ export default function ConnectMeter({
 								label="Cancel"
 								variant="secondary"
 								onClick={() =>
-									router.get(route("connections.show", connection_id))
+									router.get(route("connections.show", formData.connection_id))
 								}
 								disabled={loading}
 							/>
-							<Button type="submit" label="Connect Meter" disabled={loading} />
+							<Button
+								type="submit"
+								label={isEditMode ? "Save Changes" : "Connect Meter"}
+								disabled={loading}
+							/>
 						</div>
 					</form>
 				</Card>

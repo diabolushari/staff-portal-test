@@ -17,6 +17,8 @@ use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
 use App\Http\Controllers\Metering\MeterConnectionRelController;
+use App\Http\Controllers\Metering\MeterConnectionRelCreateController;
+use App\Http\Controllers\Metering\MeterConnectionRelEditController;
 use App\Http\Controllers\Metering\MeterController;
 use App\Http\Controllers\Metering\MeterTransformerController;
 use App\Http\Controllers\Metering\MeterTransformerRelController;
@@ -57,6 +59,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)
         ->name('offices.update-contacts');
     Route::resource('meters', MeterController::class);
+    Route::resource('meter-timezone-rel', MeterTimezoneTypeRelController::class);
+    Route::get('connection/{id}/meter/create', MeterConnectionRelCreateController::class)->name('connection.meter.create');
+    Route::resource('meter-connection-rel', MeterConnectionRelController::class);
+    Route::post('meter-connection-rel/{id}', [MeterConnectionRelController::class, 'update'])->name('meter-connection-rel.update');
+    Route::get('connection/{id}/meter/edit', MeterConnectionRelEditController::class)->name('connection.meter.edit');
+    Route::delete('meter-connection-rel/{rel_id}', [MeterConnectionRelController::class, 'destroy'])->name('meter-connection-rel.destroy');
     // Extra routes for navigating from a Meter to its CTPTs and Relations
     // Route::get('meters/{id}/ctpts', [MeterTransformerController::class, 'showByMeter'])
     // ->name('meter.ctpts.byMeter');

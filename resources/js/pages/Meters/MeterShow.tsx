@@ -25,6 +25,7 @@ interface ParameterValue {
   id: number
   parameterValue: string
 }
+
 export const MeterTabs = (meterId: number, ctptId?: number, relId?: number) => [
   {
     value: 'details',
@@ -45,7 +46,7 @@ export const MeterTabs = (meterId: number, ctptId?: number, relId?: number) => [
 
 interface Props {
   meter: Meter
-  rel?: any 
+  rel?: any
   currentTimezone: any
   timezoneTypes: ParameterValue[]
 }
@@ -79,29 +80,28 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 
 // --- MAIN COMPONENT: MeterShow ---
 export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }: Readonly<Props>) {
+  console.log(meter)
+
   // --- STATE AND DATA NORMALIZATION ---
   const [isEditing, setIsEditing] = useState(false)
-
   const currentTzId = useMemo<string | undefined>(
     () =>
       String(currentTimezone?.timezone_type_id ?? currentTimezone?.timezone_type?.id ?? '') ||
       undefined,
     [currentTimezone]
   )
-
   const currentTzLabel = useMemo<string | undefined>(
     () => currentTimezone?.timezone_type?.parameter_value ?? undefined,
     [currentTimezone]
   )
-
   const [selectedTimezone, setSelectedTimezone] = useState<string | undefined>(currentTzId)
-  
+
   // --- FORM AND API HANDLING ---
   const isUpdate = !!(currentTimezone as any)?.rel_id
   const url = isUpdate
     ? route('meter-timezone-rel.update', {
-        meter_timezone_rel: (currentTimezone as any).rel_id,
-      })
+      meter_timezone_rel: (currentTimezone as any).rel_id,
+    })
     : route('meter-timezone-rel.store')
 
   const { post, loading } = useInertiaPost<StoreForm | UpdateForm>(url, {
@@ -132,12 +132,10 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
 
   const handleSave = () => {
     if (!selectedTimezone) return
-
     const commonData = {
       meter_id: meter.meter_id,
       timezone_type_id: selectedTimezone,
     }
-
     if (isUpdate) {
       post({
         ...commonData,
@@ -160,7 +158,7 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
     [timezoneTypes, currentTzId]
   )
 
-  const tabs = MeterTabs (meter.meter_id, rel?.ctpt_id, rel?.version_id)
+  const tabs = MeterTabs(meter.meter_id, rel?.ctpt_id, rel?.version_id)
 
   return (
     <MainLayout
@@ -191,6 +189,14 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
                 {/* --- General Information --- */}
                 <Section title='General Information'>
                   <InfoItem
+                    label='Version ID'
+                    value={meter.version_id}
+                  />
+                  <InfoItem
+                    label='Meter ID'
+                    value={meter.meter_id}
+                  />
+                  <InfoItem
                     label='Meter Serial'
                     value={meter.meter_serial}
                   />
@@ -214,6 +220,14 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
                     label='Unit'
                     value={meter.meter_unit.parameter_value}
                   />
+                  <InfoItem
+                    label='Phase'
+                    value={meter.meter_phase?.parameter_value}
+                  />
+                  <InfoItem
+                    label='Batch Code'
+                    value={meter.batch_code}
+                  />
                 </Section>
 
                 <Separator className='my-6' />
@@ -233,12 +247,16 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
                     value={meter.digit_count}
                   />
                   <InfoItem
-                    label='Internal PT Ratio'
-                    value={meter.internal_pt_ratio?.parameter_value}
+                    label='Decimal Digit Count'
+                    value={meter.decimal_digit_count}
                   />
                   <InfoItem
-                    label='Internal CT Ratio'
-                    value={meter.internal_ct_ratio?.parameter_value}
+                    label='Meter Constant'
+                    value={meter.meter_constant}
+                  />
+                  <InfoItem
+                    label='Meter MF'
+                    value={meter.meter_mf}
                   />
                   <InfoItem
                     label='Company Seal No.'
@@ -255,6 +273,40 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
                   <InfoItem
                     label='Bidirectional'
                     value={meter.bidirectional_ind ? 'Yes' : 'No'}
+                  />
+                  <InfoItem
+                    label='Warranty Period (Months)'
+                    value={meter.warranty_period}
+                  />
+                </Section>
+
+                <Separator className='my-6' />
+
+                {/* --- CT/PT Specifications --- */}
+                <Section title='CT/PT Specifications'>
+                  <InfoItem
+                    label='Programmable PT Ratio'
+                    value={meter.programmable_pt_ratio}
+                  />
+                  <InfoItem
+                    label='Programmable CT Ratio'
+                    value={meter.programmable_ct_ratio}
+                  />
+                  <InfoItem
+                    label='Internal CT Primary'
+                    value={meter.internal_ct_primary}
+                  />
+                  <InfoItem
+                    label='Internal CT Secondary'
+                    value={meter.internal_ct_secondary}
+                  />
+                  <InfoItem
+                    label='Internal PT Primary'
+                    value={meter.internal_pt_primary}
+                  />
+                  <InfoItem
+                    label='Internal PT Secondary'
+                    value={meter.internal_pt_secondary}
                   />
                 </Section>
 
@@ -274,7 +326,6 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
                       />
                     )}
                   </div>
-
                   {isEditing ? (
                     <div className='rounded-lg border bg-gray-50 p-6'>
                       <div className='max-w-sm space-y-2'>
@@ -344,6 +395,14 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
                   <InfoItem
                     label='Last Updated At'
                     value={formatDate(meter.updated_ts)}
+                  />
+                  <InfoItem
+                    label='Created By'
+                    value={meter.created_by}
+                  />
+                  <InfoItem
+                    label='Updated By'
+                    value={meter.updated_by || '-'}
                   />
                 </Section>
               </CardContent>
