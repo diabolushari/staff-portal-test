@@ -14,6 +14,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Proto\Parameters\ListParameterValuesRequest;
 use Proto\Parameters\ParameterValueServiceClient;
+use App\Services\Metering\MeterTransformerRelService;
+
 
 class MeterController extends Controller
 {
@@ -21,12 +23,15 @@ class MeterController extends Controller
 
     protected MeterTimezoneTypeRelService $meterTimezoneTypeRelService;
 
+    protected MeterTransformerRelService $meterTransformerRelService;
+
     private ParameterValueServiceClient $parameterValueClient;
 
-    public function __construct(MeterService $meterService, MeterTimezoneTypeRelService $meterTimezoneTypeRelService)
+    public function __construct(MeterService $meterService, MeterTimezoneTypeRelService $meterTimezoneTypeRelService, MeterTransformerRelService $meterTransformerRelService)
     {
         $this->meterService = $meterService;
         $this->meterTimezoneTypeRelService = $meterTimezoneTypeRelService;
+        $this->meterTransformerRelService = $meterTransformerRelService;
 
         // Manually instantiate the gRPC client for Parameter Values.
         $this->parameterValueClient = new ParameterValueServiceClient(
@@ -150,6 +155,7 @@ class MeterController extends Controller
     public function show(int $id)
     {
         $response = $this->meterService->getMeter($id);
+        $relResponse = $this->meterTransformerRelService->getRelByMeterId($id);
 
         $currentTimezone = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($id);
 
@@ -173,22 +179,18 @@ class MeterController extends Controller
             ])
             ->toArray();
 
-        if ($currentTimezone->data == null) {
-            return Inertia::render('Meters/MeterShow', [
-                'meter' => $response->data,
-                'currentTimezone' => null,
-                'timezoneTypes' => $timezoneTypes,
-            ]);
-
-        }
 
         return Inertia::render('Meters/MeterShow', [
             'meter' => $response->data,
+            'rel' => $relResponse->data,
             'currentTimezone' => $currentTimezone->data,
             'timezoneTypes' => $timezoneTypes,
         ]);
 
     }
+
+   
+
 
     /**
      * Update the specified resource in storage.

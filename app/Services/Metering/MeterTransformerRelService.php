@@ -14,6 +14,7 @@ use Proto\Metering\MeterTransformerRelMessage;
 use Proto\Metering\MeterTransformerRelIdRequest;
 use Proto\Metering\MeterTransformerRelUpdateRequest;
 use Proto\Metering\MeterTransformerRelCreateRequest;
+use Proto\Metering\GetMeterTransformerRelByMeterIdRequest;
 use Google\Protobuf\Timestamp;
 use Google\Protobuf\GPBEmpty;
 
@@ -112,6 +113,30 @@ class MeterTransformerRelService
 
         [$response, $status] = $this->client->GetMeterTransformerRelById($request)->wait();
         //dd($response, $status);
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success(
+            self::relProtoToArray($response->getRel()),
+            $response,
+            $status->code,
+            $status->details
+        );
+    }
+
+    public function getRelByMeterId(int $meterId): GrpcServiceResponse
+    {
+        $request = new GetMeterTransformerRelByMeterIdRequest();
+        $request->setMeterId($meterId);
+
+        [$response, $status] = $this->client->GetMeterTransformerRelByMeterId($request)->wait();
+
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),

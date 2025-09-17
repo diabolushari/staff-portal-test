@@ -92,6 +92,10 @@ message MeterTransformerRelIdRequest {
   int32 version_id = 1;
 }
 
+message GetMeterTransformerRelByMeterIdRequest {
+  int64 meter_id = 1;
+}
+
 // =========================
 // Service definition
 // =========================
@@ -101,4 +105,5 @@ service MeterTransformerRelService {
   rpc ListMeterTransformerRels(google.protobuf.Empty) returns (MeterTransformerRelListResponse);
   rpc UpdateMeterTransformerRel(MeterTransformerRelUpdateRequest) returns (MeterTransformerRelResponse);
   rpc DeleteMeterTransformerRel(MeterTransformerRelIdRequest) returns (google.protobuf.Empty);
+  rpc GetMeterTransformerRelByMeterId(GetMeterTransformerRelByMeterIdRequest) returns (MeterTransformerRelResponse);
 }

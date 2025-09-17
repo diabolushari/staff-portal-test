@@ -57,6 +57,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)
         ->name('offices.update-contacts');
     Route::resource('meters', MeterController::class);
+    // Extra routes for navigating from a Meter to its CTPTs and Relations
+    // Route::get('meters/{id}/ctpts', [MeterTransformerController::class, 'showByMeter'])
+    // ->name('meter.ctpts.byMeter');
+
+    // Route::get('meters/{id}/ctpt-rel', [MeterTransformerRelController::class, 'showByMeter'])
+    // ->name('meter.ctpt-rel.byMeter');
+
     Route::resource('meter-ctpt', MeterTransformerController::class);
     Route::resource('meter-ctpt-rel', MeterTransformerRelController::class);
     Route::resource('meter-conn-rel', MeterConnectionRelController::class);

@@ -37,8 +37,15 @@ class MeterTransformerService
     $transformer->setMakeId($data['make_id']);
     $transformer->setTypeId($data['type_id']);
     $transformer->setCtptSerial($data['ctpt_serial']);
-    $transformer->setCtRatio(isset($data['ct_ratio']) ? (string) $data['ct_ratio'] : '');
-    $transformer->setPtRatio(isset($data['pt_ratio']) ? (string) $data['pt_ratio'] : '');
+    $transformer->setRatioPrimaryValue($data['ratio_primary_value'] ?? '');
+    $transformer->setRatioSecondaryValue($data['ratio_secondary_value'] ?? '');
+    
+    if (!empty($data['manufacture_date'])) {
+        $timestamp = new Timestamp();
+        $timestamp->fromDateTime(new \DateTime($data['manufacture_date']));
+        $transformer->setManufactureDate($timestamp);
+    }
+
     $transformer->setCreatedBy($data['created_by']);
 
 
@@ -48,12 +55,11 @@ class MeterTransformerService
 
 
         [$response, $status] = $this->client->CreateMeterTransformer($request)->wait();
-       
-        // \Log::info('Create transformer response:', [
-        //     'status_code' => $status->code,
-        //     'status_details' => $status->details,
-        //     'response_id' => $response ? $response->getMeterCtptId() : null
-        // ]);
+        \Log::info('Create transformer response:', [
+            'status_code' => $status->code,
+            'status_details' => $status->details,
+            'response_id' => $response ? $response->getMeterCtptId() : null
+        ]);
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -165,8 +171,10 @@ class MeterTransformerService
                 'make' => self::transformParameterValueToArray($t->getMake()),
                 'type' => self::transformParameterValueToArray($t->getType()),
                 'ctpt_serial' => $t->getCtptSerial(),
-                'ct_ratio' => $t->getCtRatio(),
-                'pt_ratio' => $t->getPtRatio(),
+                'ratio_primary_value'   => $t->getRatioPrimaryValue(),
+                'ratio_secondary_value' => $t->getRatioSecondaryValue(),
+                'manufacture_date'      => $t->hasManufactureDate() ? $t->getManufactureDate()->toDateTime()->format('Y-m-d') : null,
+
                 'created_ts' => $t->getCreatedTs() ?: null,
                 'updated_ts' => $t->getUpdatedTs() ?: null,
                 'created_by' => $t->getCreatedBy(),

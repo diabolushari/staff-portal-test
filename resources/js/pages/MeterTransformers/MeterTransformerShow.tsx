@@ -10,11 +10,13 @@ interface ParameterValue {
 	parameter_value: string;
 }
 
+
 export interface MeterTransformer {
 	meter_ctpt_id: number;
 	ctpt_serial: string;
-	ct_ratio: number;
-	pt_ratio: number;
+	ratio_primary_value: string;
+	ratio_secondary_value: string;
+	manufacture_date: string | null;
 	ownership_type: ParameterValue;
 	accuracy_class: ParameterValue;
 	burden: ParameterValue;
@@ -58,6 +60,7 @@ export default function MeterTransformerShow({
 			router.delete(`/meter-ctpt/${transformer.meter_ctpt_id}`);
 		}
 	};
+	
 
 	return (
 		<MainLayout breadcrumb={breadcrumbs}
@@ -126,14 +129,9 @@ export default function MeterTransformerShow({
 									Technical Specifications
 								</StrongText>
 								<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-									<InfoItem
-										label="CT Ratio"
-										value={transformer.ct_ratio}
-									/>
-									<InfoItem
-										label="PT Ratio"
-										value={transformer.pt_ratio}
-									/>
+								<InfoItem label="Primary Ratio" value={transformer.ratio_primary_value} />
+								<InfoItem label="Secondary Ratio" value={transformer.ratio_secondary_value} />
+
 									<InfoItem
 										label="Accuracy Class"
 										value={transformer.accuracy_class?.parameter_value}
@@ -142,6 +140,8 @@ export default function MeterTransformerShow({
 										label="Burden"
 										value={transformer.burden?.parameter_value}
 									/>
+									<InfoItem label="Manufacture Date" value={formatDate(transformer.manufacture_date)} />
+
 								</div>
 							</div>
 
