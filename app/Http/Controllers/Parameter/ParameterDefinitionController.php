@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Parameters\ParameterDefinitionFormRequest;
 use App\Services\Parameters\ParameterDefinitionService;
 use App\Services\Parameters\ParameterDomainService;
+use App\Services\SystemModule\SystemModuleService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,7 +17,8 @@ class ParameterDefinitionController extends Controller
 {
     public function __construct(
         private ParameterDefinitionService $parameterDefinitionService,
-        private ParameterDomainService $parameterDomainService
+        private ParameterDomainService $parameterDomainService,
+        private SystemModuleService $systemModuleService
     ) {}
 
     public function index(Request $request): InertiaResponse|RedirectResponse
@@ -27,6 +29,7 @@ class ParameterDefinitionController extends Controller
         $moduleName = $request->input('module_name');
         $search = $request->input('search');
         $domainsResponse = $this->parameterDomainService->getParameterDomains($page, $pageSize, null, null);
+        $systemModulesResponse = $this->systemModuleService->getSystemModules($page, $pageSize);
         $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, $domainName, $moduleName, $search);
 
         if ($response->hasError()) {
@@ -42,11 +45,13 @@ class ParameterDefinitionController extends Controller
         return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionIndex', [
             'parameter_definitions' => $response->data,
             'domains' => $domainsResponse->data,
+            'system_modules' => $systemModulesResponse->data,
             'grpcStatus' => [
                 'code' => $response->statusCode,
                 'details' => $response->statusDetails,
             ],
             'filters' => [
+                'module_name' => $request->input('module_name'),
                 'domain_name' => $request->input('domain_name'),
                 'search' => $request->input('search'),
             ],

@@ -33,9 +33,13 @@ class ParameterValueController extends Controller
                 ],
             ]);
         }
+        $domains = $this->parameterDomainService->getParameterDomains(1, 10, null, null);
+        $definitions = $this->parameterDefinitionService->getParameterDefinitions(1, 10, null, null);
 
         return Inertia::render('Parameters/ParameterValue/ParameterValueCreate', [
             'parameter_value' => $value->data,
+            'domains' => $domains->data,
+            'definitions' => $definitions->data,
         ]);
     }
 
