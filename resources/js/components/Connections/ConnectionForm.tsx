@@ -1,6 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { Connection, Office } from '@/interfaces/consumers'
+import { Connection, Office, OfficeWithHierarchy } from '@/interfaces/consumers'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
@@ -103,15 +103,21 @@ export default function ConnectionForm({
     post(formData)
   }
 
-  const handleAdminOfficeChange = (item: Office) => {
-    setFormValue('admin_office_code')(item.office_code)
-    setAdminOfficeData(item)
-  }
+  const [adminOfficeApiData] = useFetchRecord(
+    formData.admin_office_code ? '/api/office/code/' + formData.admin_office_code : ''
+  )
+  const [serviceOfficeApiData] = useFetchRecord(
+    formData.service_office_code ? '/api/office/code/' + formData.service_office_code : ''
+  )
+  useEffect(() => {
+    if (adminOfficeApiData?.office) {
+      setAdminOfficeData(adminOfficeApiData.office)
+    }
+    if (serviceOfficeApiData?.office) {
+      setServiceOfficeData(serviceOfficeApiData.office)
+    }
+  }, [adminOfficeApiData, serviceOfficeApiData])
 
-  const handleServiceOfficeChange = (item: Office) => {
-    setFormValue('service_office_code')(item.office_code)
-    setServiceOfficeData(item)
-  }
   const handleConnectionCategoryChange = (parameterValueId: string) => {
     setFormValue('connection_category_id')(parameterValueId)
     const category = connectionCategory.find((item) => item.id === Number(parameterValueId))
@@ -145,6 +151,12 @@ export default function ConnectionForm({
             value={formData.connection_type_id}
             error={errors?.connection_type_id}
             disabled={connection?.connection_id ? true : false}
+          />
+          <Input
+            label='Consumer Legacy Code'
+            setValue={setFormValue('consumer_legacy_code')}
+            value={formData.consumer_legacy_code}
+            error={errors?.consumer_legacy_code}
           />
           <SelectList
             label='Connection Status'
@@ -192,19 +204,20 @@ export default function ConnectionForm({
           <ComboBox
             label='Admin Office'
             url={`/api/offices?sortPriority=3&q=`}
-            setValue={handleAdminOfficeChange}
-            value={adminOfficeData}
+            setValue={(office) => setFormValue('admin_office_code')(office?.office_code ?? '')}
+            value={adminOfficeApiData?.office ?? null} // always derive from API/formData
             placeholder='Select Admin Office'
             dataKey='office_code'
             displayKey='office_name'
             displayValue2='office_code'
             error={errors?.admin_office_code}
           />
+
           <ComboBox
             label='Service Office'
             url={`/api/offices?sortPriority=3&q=`}
-            setValue={handleServiceOfficeChange}
-            value={serviceOfficeData}
+            setValue={(office) => setFormValue('service_office_code')(office?.office_code ?? '')}
+            value={serviceOfficeApiData?.office ?? null}
             placeholder='Select Service Office'
             dataKey='office_code'
             displayKey='office_name'
@@ -286,6 +299,25 @@ export default function ConnectionForm({
           />
         </div>
       </Card>
+      <Card>
+        <div className='border-b-2 border-gray-200 py-3'>
+          <StrongText className='text-base font-semibold'>Load & Capacity</StrongText>
+        </div>
+        <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
+          <Input
+            label='Contract Demand (kW)'
+            setValue={setFormValue('contract_demand_kw_val')}
+            value={formData.contract_demand_kw_val}
+            error={errors?.contract_demand_kw_val}
+          />
+          <Input
+            label='Connected Load (kW)'
+            setValue={setFormValue('connected_load_kw_val')}
+            value={formData.connected_load_kw_val}
+            error={errors?.connected_load_kw_val}
+          />
+        </div>
+      </Card>
 
       <Card>
         <div className='border-b-2 border-gray-200 py-3'>
@@ -333,27 +365,6 @@ export default function ConnectionForm({
         </div>
       </Card>
 
-      <Card>
-        <div className='border-b-2 border-gray-200 py-3'>
-          <StrongText className='text-base font-semibold'>Load & Capacity</StrongText>
-        </div>
-        <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
-          <Input
-            label='Contract Demand (kW)'
-            setValue={setFormValue('contract_demand_kw_val')}
-            value={formData.contract_demand_kw_val}
-            error={errors?.contract_demand_kw_val}
-            required
-          />
-          <Input
-            label='Connected Load (kW)'
-            setValue={setFormValue('connected_load_kw_val')}
-            value={formData.connected_load_kw_val}
-            error={errors?.connected_load_kw_val}
-            required
-          />
-        </div>
-      </Card>
       <Card>
         <div className='border-b-2 border-gray-200 py-3'>
           <StrongText className='text-base font-semibold'>Indicators</StrongText>

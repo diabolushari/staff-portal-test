@@ -115,14 +115,6 @@ export default function ParameterDefinitionActionModal({
       <div className='p-4'>
         <form onSubmit={handleSubmit}>
           <div className='flex gap-6 md:grid md:grid-cols-2'>
-            <div className='flex flex-col'>
-              <Input
-                label='Parameter Name'
-                value={formData.name}
-                setValue={setFormValue('name')}
-                error={errors?.name}
-              />
-            </div>
             <div className='flex flex-col gap-1'>
               <DynamicSelectList
                 url='/api/parameter-domains'
@@ -132,6 +124,14 @@ export default function ParameterDefinitionActionModal({
                 value={formData.domainId}
                 label='Parameter Domain'
                 error={errors?.domain_id}
+              />
+            </div>
+            <div className='flex flex-col'>
+              <Input
+                label='Parameter Name'
+                value={formData.name}
+                setValue={setFormValue('name')}
+                error={errors?.name}
               />
             </div>
 

@@ -37,8 +37,9 @@ message DeleteParameterDefinitionRequest { int64 id = 1; }
 message ListParameterDefinitionsRequest {
   int32 page = 1;
   int32 page_size = 2;
-  optional string search = 3;     // optional: case-insensitive match on code/name/description
-  optional string domain_name = 4;  // optional: filter by managed_by_module
+  string domain_name = 3;
+  string module_name = 4;
+  string search = 5;
 }
 
 message ListParameterDefinitionsResponse {

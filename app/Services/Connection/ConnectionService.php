@@ -89,6 +89,7 @@ class ConnectionService
         $grpcRequest->setMultiSourceIndicator($request->multiSourceIndicator);
         $grpcRequest->setLiveIndicator($request->liveIndicator);
         $grpcRequest->setPhaseTypeId($request->phaseTypeId);
+        $grpcRequest->setConsumerLegacyCode($request->consumerLegacyCode ?? '');
 
         [$response, $status] = $this->client->CreateConnection($grpcRequest)->wait();
 
@@ -156,6 +157,7 @@ class ConnectionService
         $grpcRequest->setMultiSourceIndicator($request->multiSourceIndicator);
         $grpcRequest->setPhaseTypeId($request->phaseTypeId);
         $grpcRequest->setLiveIndicator($request->liveIndicator);
+        $grpcRequest->setConsumerLegacyCode($request->consumerLegacyCode ?? '');
 
         [$response, $status] = $this->client->UpdateConnection($grpcRequest)->wait();
         if ($status->code !== 0) {

@@ -1,9 +1,10 @@
 import useCustomForm from '@/hooks/useCustomForm'
+import useFetchRecord from '@/hooks/useFetchRecord'
 import { ParameterDefinition, ParameterDomain } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
-import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
+import { useEffect, useState } from 'react'
 import { route } from 'ziggy-js'
 
 interface Props {
@@ -26,7 +27,17 @@ export default function ParameterValueSearchForm({
     parameter_name: filters.parameter_name ?? '',
     search: filters.search ?? '',
   })
+  const [parameterDefinitionData, setParameterDefinitionData] = useState<ParameterDefinition[]>([])
 
+  const [parameterDefinitionsApiData] = useFetchRecord<ParameterDefinition[]>(
+    formData.domain_name ? 'api/parameter-definitions?domain_name=' + formData.domain_name : ''
+  )
+  console.log(parameterDefinitionsApiData)
+  useEffect(() => {
+    if (formData.domain_name) {
+      setParameterDefinitionData(parameterDefinitionsApiData ?? parameterDefinitions)
+    }
+  }, [parameterDefinitionsApiData])
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     router.get(route('parameter-value.index', formData))
@@ -52,9 +63,9 @@ export default function ParameterValueSearchForm({
           </div>
 
           <div className='flex flex-col'>
-            {parameterDefinitions && (
+            {parameterDefinitionData && (
               <SelectList
-                list={parameterDefinitions}
+                list={parameterDefinitionData}
                 dataKey='parameter_name'
                 displayKey='parameter_name'
                 setValue={setFormValue('parameter_name')}
@@ -64,15 +75,6 @@ export default function ParameterValueSearchForm({
                 allOptionText='All Definitions'
               />
             )}
-          </div>
-
-          <div className='flex flex-col'>
-            <Input
-              label='Search'
-              value={formData.search}
-              setValue={setFormValue('search')}
-              showClearButton={true}
-            />
           </div>
 
           <div className='flex flex-col'>

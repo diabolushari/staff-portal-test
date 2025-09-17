@@ -101,10 +101,15 @@ class OfficeService
         return GrpcServiceResponse::success($officeArray, $response, $status->code, $status->details);
     }
 
-    public function getOffice(int $id): GrpcServiceResponse
+    public function getOffice(?int $id, ?int $officeCode): GrpcServiceResponse
     {
         $request = new OfficeIdRequest;
-        $request->setOfficeId((int) $id);
+        if ($id !== null) {
+            $request->setOfficeId($id);
+        }
+        if ($officeCode !== null) {
+            $request->setOfficeCode($officeCode);
+        }
         [$response, $status] = $this->client->GetOfficeById($request)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(

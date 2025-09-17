@@ -79,15 +79,7 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
       navItems={settingsReferenceData}
     >
       {/* <Head title='Parameter Domains' /> */}
-        <div className='mb-4 flex items-center justify-between'>
-          <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Domains</h2>
-          <button
-            onClick={handleCreateClick}
-            className='rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
-          >
-            + Add Parameter Domain
-          </button>
-        </div>
+
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <div className='mb-4 flex items-center justify-between'>
           <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Domains</h2>
@@ -108,20 +100,18 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
           filters={filters}
         />
 
-       <div>
+        <div>
           {domains != null && domains.length > 0 ? (
             <ParameterDomainList
               domains={domains}
-              onEdit={handleEditClick}       
-              onDelete={handleDeleteClick}   
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
               onView={(domain) => router.get(route('parameter-domains.show', domain.id))}
-
             />
           ) : (
             <p>No Parameter Domains Found.</p>
           )}
         </div>
-
 
         {/* <Table heads={tableHeads}>
           {domains.map((item, index) => (

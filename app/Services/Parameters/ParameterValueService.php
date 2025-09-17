@@ -43,6 +43,7 @@ class ParameterValueService
         $request->setParameterName($parameterName ?? '');
         $request->setAttributeName($attributeName ?? '');
         $request->setAttributeValue($attributeValue ?? '');
+        $request->setSearch($search ?? '');
 
         [$response, $status] = $this->client->listParameterValues($request)->wait();
 
@@ -206,9 +207,9 @@ class ParameterValueService
         }
         $definition = [
             'id' => $response->getDefinition()->getId(),
-            'domain_name' => $response->getDefinition()->getParameterName(),
+            'parameter_name' => $response->getDefinition()->getParameterName(),
             'domain_id' => $response->getDefinition()->getDomainId(),
-            'parameter_domain' => $response->getDefinition()->getDomain(),
+            'parameter_domain' => $response->getDefinition()->getDomain()->getDomainName(),
         ];
         $parameterValueArray = [
             'id' => $response->getId(),

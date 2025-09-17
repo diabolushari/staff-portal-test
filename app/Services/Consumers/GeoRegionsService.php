@@ -2,8 +2,10 @@
 
 namespace App\Services\Consumers;
 
+use App\Http\Requests\Consumers\GeoRegionFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
+use Google\Protobuf\Struct;
 use Grpc\ChannelCredentials;
 use Proto\Consumers\GeoRegionListRequest;
 use Proto\Consumers\GeoRegionMessage;
@@ -19,6 +21,30 @@ class GeoRegionsService
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
         );
+    }
+
+    public function createGeoRegion(GeoRegionFormRequest $request): GrpcServiceResponse
+    {
+        $proto = new GeoRegionMessage;
+        $proto->setRegionId($request->regionId);
+        $proto->setRegionName($request->regionName);
+        $proto->setRegionClassification($request->regionClassificationId);
+        $proto->setRegionTypeId($request->regionTypeId);
+        $proto->setParentRegionId($request->parentRegionId ?? 0);
+        $proto->setRegionAttributes(new Struct);
+
+        [$response, $status] = $this->client->CreateGeoRegion($proto)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success(self::geoRegionProtoToArray($response->getRegion()), $response, $status->code, $status->details);
     }
 
     public function getGeoRegions(?string $regionClassification = null, ?string $regionType = null): GrpcServiceResponse
