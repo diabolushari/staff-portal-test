@@ -21,6 +21,7 @@ export const NAV_ITEMS = [
     children: [
       { title: 'Parties', href: '/parties', description: 'Manage parties' },
       { title: 'Connections', href: '/connections', description: 'Manage connections' },
+      { title: 'Meters', href: '/meters', description: 'Manage meters' },
     ],
   },
   { title: 'Billing', href: '/billing', description: 'Invoices and payments' },
@@ -35,6 +36,16 @@ export const NAV_ITEMS = [
         title: 'Reference Data Management',
         href: '/parameter-value',
         description: 'Manage reference data',
+      },
+      {
+        title: 'Meter CTPT',
+        href: '/meter-ctpt',
+        description: 'Manage meter CTPT',
+      },
+      {
+        title: 'Meter CTPT Relations',
+        href: '/meter-ctpt-rel',
+        description: 'Manage meter CTPT relations',
       },
     ],
   },

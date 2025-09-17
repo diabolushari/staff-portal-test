@@ -10,13 +10,14 @@ use Proto\Parameters\CreateParameterValueRequest;
 use Proto\Parameters\DeleteParameterValueRequest;
 use Proto\Parameters\GetParameterValueRequest;
 use Proto\Parameters\ListParameterValuesRequest;
-use Proto\Parameters\ParameterValueServiceClient;
 use Proto\Parameters\ParameterValueProto;
+use Proto\Parameters\ParameterValueServiceClient;
 use Proto\Parameters\UpdateParameterValueRequest;
 
 class ParameterValueService
 {
-    private $client;
+    private ParameterValueServiceClient $client;
+
     public function __construct()
     {
         $this->client = new ParameterValueServiceClient(
@@ -25,17 +26,24 @@ class ParameterValueService
         );
     }
 
-    public function getParameterValues(int $page, int $pageSize, ?string $search, ?string $domainName, ?string $parameterName): GrpcServiceResponse
-    {
+    public function getParameterValues(
+        ?int $page,
+        ?int $pageSize,
+        ?string $search,
+        ?string $domainName,
+        ?string $parameterName,
+        ?string $attributeName = null,
+        ?string $attributeValue = null
+    ): GrpcServiceResponse {
         $request = new ListParameterValuesRequest;
         $request->setPage($page ?? 1);
         $request->setPageSize($pageSize ?? 10);
 
-
         $request->setDomainName($domainName ?? '');
         $request->setParameterName($parameterName ?? '');
-        $request->setParameterValue($search ?? '');
-
+        $request->setAttributeName($attributeName ?? '');
+        $request->setAttributeValue($attributeValue ?? '');
+        $request->setSearch($search ?? '');
 
         [$response, $status] = $this->client->listParameterValues($request)->wait();
 
@@ -53,7 +61,6 @@ class ParameterValueService
 
         $parameterValues = $response?->getValues();
         $parameterValuesArray = [];
-
 
         if ($parameterValues) {
             foreach ($parameterValues as $parameterValue) {
@@ -86,7 +93,7 @@ class ParameterValueService
 
     public function createParameterValue(ParameterValueFormRequest $request): GrpcServiceResponse
     {
-        $proto = new ParameterValueProto();
+        $proto = new ParameterValueProto;
         $proto->setParameterCode($request->parameterCode);
         $proto->setParameterValue($request->parameterValue);
         $proto->setDefinitionId($request->definitionId);
@@ -102,7 +109,7 @@ class ParameterValueService
         $proto->setSortPriority($request->sortPriority ?? 0);
         $proto->setNotes($request->notes ?? '');
 
-        $grpcRequest = new CreateParameterValueRequest();
+        $grpcRequest = new CreateParameterValueRequest;
         $grpcRequest->setValue($proto);
 
         [$response, $status] = $this->client->CreateParameterValue($grpcRequest)->wait();
@@ -111,7 +118,7 @@ class ParameterValueService
         if ($errorResponse !== null) {
             return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
         }
-        $defenition = [
+        $definition = [
             'id' => $response->getDefinition()->getId(),
             'parameter_name' => $response->getDefinition()->getParameterName(),
         ];
@@ -127,14 +134,15 @@ class ParameterValueService
             'is_active' => $response->getIsActive(),
             'sort_priority' => $response->getSortPriority(),
             'notes' => $response->getNotes(),
-            'definition' => $defenition,
+            'definition' => $definition,
         ];
+
         return GrpcServiceResponse::success($parameterValueArray, $response, $status->code, $status->details);
     }
 
     public function updateParameterValue(ParameterValueFormRequest $formRequest, int $id): GrpcServiceResponse
     {
-        $proto = new ParameterValueProto();
+        $proto = new ParameterValueProto;
         $proto->setId($id);
         $proto->setParameterCode($formRequest->parameterCode);
         $proto->setParameterValue($formRequest->parameterValue);
@@ -151,7 +159,7 @@ class ParameterValueService
         $proto->setSortPriority($formRequest->sortPriority ?? 0);
         $proto->setNotes($formRequest->notes ?? '');
 
-        $grpcRequest = new UpdateParameterValueRequest();
+        $grpcRequest = new UpdateParameterValueRequest;
         $grpcRequest->setValue($proto);
 
         [$response, $status] = $this->client->updateParameterValue($grpcRequest)->wait();
@@ -182,12 +190,10 @@ class ParameterValueService
         return GrpcServiceResponse::success($parameterValueArray, $response, $status->code, $status->details);
     }
 
-
-
     public function getParameterValue(int|string $id): GrpcServiceResponse
     {
-        $request = new GetParameterValueRequest();
-        $request->setId((int)$id);
+        $request = new GetParameterValueRequest;
+        $request->setId((int) $id);
 
         [$response, $status] = $this->client->getParameterValue($request)->wait();
 
@@ -199,7 +205,7 @@ class ParameterValueService
                 $status->details
             );
         }
-        $defenition = [
+        $definition = [
             'id' => $response->getDefinition()->getId(),
             'domain_name' => $response->getDefinition()->getParameterName(),
             'domain_id' => $response->getDefinition()->getDomainId(),
@@ -218,19 +224,19 @@ class ParameterValueService
             'is_active' => $response->getIsActive(),
             'sort_priority' => $response->getSortPriority(),
             'notes' => $response->getNotes(),
-            'definition' => $defenition,
+            'definition' => $definition,
             'effective_start_date' => $response->getEffectiveStartDate(),
             'effective_end_date' => $response->getEffectiveEndDate(),
 
         ];
+
         return GrpcServiceResponse::success($parameterValueArray, $response, $status->code, $status->details);
     }
 
-
     public function deleteParameterValue(int|string $id): GrpcServiceResponse
     {
-        $request = new DeleteParameterValueRequest();
-        $request->setId((int)$id);
+        $request = new DeleteParameterValueRequest;
+        $request->setId((int) $id);
 
         [$response, $status] = $this->client->deleteParameterValue($request)->wait();
 
@@ -242,14 +248,19 @@ class ParameterValueService
                 $status->details
             );
         }
+
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(?ParameterValueProto $value): array
     {
         if ($value === null) {
             return [];
         }
+
         return [
             'id' => $value->getId(),
             'parameter_value' => $value->getParameterValue(),

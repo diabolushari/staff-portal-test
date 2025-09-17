@@ -37,23 +37,15 @@ export default function OfficeIndex({ offices, office_types, filters }: Readonly
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <ListSearch
-          title='Parties search'
+          title='Offices search'
           placeholder='Enter office name or code'
           url={route('offices.index')}
-          setItems={setItems}
           search={filters.office_name}
         />
 
         <div>{items != null && <OfficeList offices={items} />}</div>
         <div>{items == null && <p>No Office Found.</p>}</div>
       </div>
-      {showDeleteModal && editRow && (
-        <DeleteModal
-          setShowModal={setShowDeleteModal}
-          title='Delete Office'
-          url={route('offices.destroy', editRow.office_id)}
-        />
-      )}
     </MainLayout>
   )
 }

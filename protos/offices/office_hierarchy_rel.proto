@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+
+package com.kseb.consumerservice.grpc.offices;
+
+option php_namespace = "Proto\\Offices";
+option php_metadata_namespace = "GPBMetadata";
+
+// Imports
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+
+import "parameters/parameter-value.proto";
+import "consumers/org_element_location.proto";
+import "consumers/org_element_address.proto";
+import "offices/office_hierarchy.proto";
+
+// ------------ MESSAGE ------------
+
+
+message CreateOfficeHierarchyRelRequest {
+    string hierarchy_code = 1;
+    int32 child_office_code = 2;
+    int32 parent_office_code = 3;
+}
+
+message UpdateOfficeHierarchyRelRequest {
+    int32 hierarchy_rel_hist_id = 1;
+    string hierarchy_code = 2;
+    int32 child_office_code = 3;
+    int32 parent_office_code = 4;
+}
+
+message DeleteOfficeHierarchyRelRequest {
+    int32 hierarchy_rel_hist_id = 1;
+}
+
+
+service OfficeHierarchyRelService {
+    rpc CreateOfficeHierarchyRel(CreateOfficeHierarchyRelRequest) returns (google.protobuf.Empty);
+    rpc DeleteOfficeHierarchyRel(DeleteOfficeHierarchyRelRequest) returns (google.protobuf.Empty);
+    rpc UpdateOfficeHierarchyRel(UpdateOfficeHierarchyRelRequest) returns (google.protobuf.Empty);
+}

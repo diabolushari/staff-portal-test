@@ -15,6 +15,7 @@ export interface Office {
     parameter_code: string
     parameter_value: string
   }
+  parent_offices?: Office[]
   location: {
     name: string
     address: string
@@ -94,6 +95,12 @@ export interface Connection {
   version_id: number
 }
 
+export interface OfficeHierarchy {
+  hierarchy_id: number
+  hierarchy_code: string
+  hierarchy_name: string
+}
+
 export interface ConsumerData {
   consumer: {
     connection_id: number | string
@@ -115,4 +122,11 @@ export interface ConsumerData {
     [key: string]: any
   }
   connection?: Connection
+}
+
+export interface OfficeHierarchyRel {
+  child_office_code: number
+  hierarchy_code: string
+  hierarchy_rel_hist_id: number
+  parent_office_code: number
 }

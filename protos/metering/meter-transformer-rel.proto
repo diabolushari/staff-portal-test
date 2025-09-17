@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.metering;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "parameters/parameter-value.proto";
+import "metering/meter.proto";
+import "metering/meter-transformer.proto";
+
+option php_namespace = "Proto\\Metering";
+option php_metadata_namespace = "GPBMetadata";
+
+option java_package = "com.kseb.consumerservice.proto.metering";
+option java_multiple_files = true;
+option java_outer_classname = "MeterTransformerRelProto";
+
+// =========================
+// MeterTransformerRel message
+// =========================
+message MeterTransformerRelMessage {
+  int32 version_id = 1;
+  int64 ctpt_id = 2;
+  com.kseb.consumerservice.proto.metering.MeterTransformerMessage ctpt = 3;
+
+  int64 meter_id = 4;
+  com.kseb.consumerservice.proto.metering.MeterResponse meter = 5;
+
+  google.protobuf.Timestamp faulty_date = 6;
+  google.protobuf.Timestamp ctpt_energise_date = 7;
+  google.protobuf.Timestamp ctpt_change_date = 8;
+
+  int64 status_id = 9;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto status = 10;
+
+  int64 change_reason_id = 11;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto change_reason = 12;
+  google.protobuf.Timestamp created_ts = 15;
+  google.protobuf.Timestamp updated_ts = 16;
+  int64 created_by = 17;
+  int64 updated_by = 18;
+  
+}
+
+// =========================
+// Create request
+// =========================
+message MeterTransformerRelCreateRequest { 
+  int64 ctpt_id = 1;
+  int64 meter_id = 2;
+  google.protobuf.Timestamp faulty_date = 3;
+  google.protobuf.Timestamp ctpt_energise_date = 4;
+  google.protobuf.Timestamp ctpt_change_date = 5;
+  int64 status_id = 6;
+  int64 change_reason_id = 7;
+  int64 created_by = 9;
+  
+}
+
+
+// =========================
+// Update request
+// =========================
+message MeterTransformerRelUpdateRequest {
+  int32 version_id = 1; 
+  int64 ctpt_id = 2;
+  int64 meter_id = 3;
+  google.protobuf.Timestamp faulty_date = 4;
+  google.protobuf.Timestamp ctpt_energise_date = 5;
+  google.protobuf.Timestamp ctpt_change_date = 6;
+  int64 status_id = 7;
+  int64 change_reason_id = 9;
+  int64 updated_by = 12;
+}
+
+
+// =========================
+// Single + List responses
+// =========================
+message MeterTransformerRelResponse {
+  MeterTransformerRelMessage rel = 1;
+}
+
+message MeterTransformerRelListResponse {
+  repeated MeterTransformerRelMessage rels = 1;
+}
+
+// =========================
+// Request by ID
+// =========================
+message MeterTransformerRelIdRequest {
+  int32 version_id = 1;
+}
+
+// =========================
+// Service definition
+// =========================
+service MeterTransformerRelService {
+  rpc CreateMeterTransformerRel(MeterTransformerRelCreateRequest) returns (MeterTransformerRelResponse);
+  rpc GetMeterTransformerRelById(MeterTransformerRelIdRequest) returns (MeterTransformerRelResponse);
+  rpc ListMeterTransformerRels(google.protobuf.Empty) returns (MeterTransformerRelListResponse);
+  rpc UpdateMeterTransformerRel(MeterTransformerRelUpdateRequest) returns (MeterTransformerRelResponse);
+  rpc DeleteMeterTransformerRel(MeterTransformerRelIdRequest) returns (google.protobuf.Empty);
+}

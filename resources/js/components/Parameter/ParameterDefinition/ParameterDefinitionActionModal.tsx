@@ -1,6 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ParameterDefinition } from '@/interfaces/paramater_service'
+import { ParameterDefinition } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
 import DynamicSelectList from '@/ui/form/DynamicSelectList'
@@ -26,23 +26,23 @@ export default function ParameterDefinitionActionModal({
   editRow: ParameterDefinition | null
 }) {
   const { formData, setFormValue, toggleBoolean } = useCustomForm<ParameterDefinitionFormRequest>({
-    name: editRow?.name ?? '',
-    attribute1: editRow?.attribute1 ?? '',
-    attribute2: editRow?.attribute2 ?? '',
-    attribute3: editRow?.attribute3 ?? '',
-    attribute4: editRow?.attribute4 ?? '',
-    attribute5: editRow?.attribute5 ?? '',
-    isEffectiveDateDriven: editRow?.isEffectiveDateDriven ?? false,
-    domainId: editRow?.domainId ?? 0,
+    name: editRow?.parameter_name ?? '',
+    attribute1: editRow?.attribute1_name ?? '',
+    attribute2: editRow?.attribute2_name ?? '',
+    attribute3: editRow?.attribute3_name ?? '',
+    attribute4: editRow?.attribute4_name ?? '',
+    attribute5: editRow?.attribute5_name ?? '',
+    isEffectiveDateDriven: editRow?.is_effective_date_driven ?? false,
+    domainId: editRow?.domain_id ?? 0,
   })
 
   // Track which attributes are visible
   const initialVisibility = [
-    !!editRow?.attribute1,
-    !!editRow?.attribute2,
-    !!editRow?.attribute3,
-    !!editRow?.attribute4,
-    !!editRow?.attribute5,
+    !!editRow?.attribute1_name,
+    !!editRow?.attribute2_name,
+    !!editRow?.attribute3_name,
+    !!editRow?.attribute4_name,
+    !!editRow?.attribute5_name,
   ]
   const [visibleAttrs, setVisibleAttrs] = useState<boolean[]>(() => {
     const defaults = [...initialVisibility]

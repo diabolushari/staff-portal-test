@@ -74,8 +74,7 @@ export default function ConsumerFormComponent({
   })
 
   const { post, loading, errors } = useInertiaPost(
-    consumer ? route('consumers.update', consumer.connection_id) : route('consumers.store'),
-    { showErrorToast: true }
+    consumer ? route('consumers.update', consumer.connection_id) : route('consumers.store')
   )
 
   const setOtherAddress = (type: 'billing' | 'premises', value: any) => {
@@ -119,14 +118,6 @@ export default function ConsumerFormComponent({
         <div className='border-b-2 border-gray-200 py-3'>
           <StrongText className='text-base font-semibold'>Basic Information</StrongText>
           <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
-            <Input
-              label='Connection id'
-              setValue={() => {}}
-              value={formData.connection_id}
-              disabled
-              style='disabled'
-              error={errors?.connection_id}
-            />
             <SelectList
               label='Consumer Type'
               list={consumer_types}
@@ -199,7 +190,6 @@ export default function ConsumerFormComponent({
               type='text'
               setValue={setFormValue('address_line1')}
               value={formData.address_line1}
-              required
               error={errors?.address_line1}
             />
             <Input
@@ -214,7 +204,6 @@ export default function ConsumerFormComponent({
               type='text'
               setValue={setFormValue('city_town_village')}
               value={formData.city_town_village}
-              required
               error={errors?.city_town_village}
             />
             <Input
@@ -222,7 +211,6 @@ export default function ConsumerFormComponent({
               type='number'
               setValue={setFormValue('pincode')}
               value={formData.pincode}
-              required
               error={errors?.pincode}
             />
             {districts && (

@@ -1,4 +1,4 @@
-import { Button } from '@/Components/ui/button'
+import { Button } from '@/components/ui/button'
 import { router } from '@inertiajs/react'
 import { PlusIcon } from 'lucide-react'
 import React from 'react'

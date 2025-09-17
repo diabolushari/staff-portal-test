@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Connection;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Connections\ConsumerFormRequest;
-use App\Services\Connection\ConnectionService;
 use App\Services\Connection\ConsumerService;
 use App\Services\Consumers\GeoRegionsService;
 use App\Services\Parameters\ParameterValueService;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class ConsumerController extends Controller
 {
@@ -18,12 +19,13 @@ class ConsumerController extends Controller
         private readonly GeoRegionsService $geoRegionsService,
     ) {}
 
-    public function index()
+    public function index(): InertiaResponse
     {
 
         return Inertia::render('Consumer/ConsumerIndex');
     }
-    public function create()
+
+    public function create(): InertiaResponse
     {
         $consumerTypes = $this->parameterValueService->getParameterValues(
             1,
@@ -41,7 +43,6 @@ class ConsumerController extends Controller
             'State'
         );
 
-
         return Inertia::render('Consumer/ConsumerForm', [
             'consumer_types' => $consumerTypes->data,
             'districts' => $districts->data,
@@ -49,13 +50,20 @@ class ConsumerController extends Controller
         ]);
     }
 
-    public function store(ConsumerFormRequest $request)
+    public function store(ConsumerFormRequest $request): RedirectResponse
     {
 
-        $this->consumerService->createConsumer($request);
+        $response = $this->consumerService->createConsumer($request);
+        if ($response->hasError()) {
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
+        }
+
+        return redirect()->route('connection.index');
     }
 
-    public function edit(int $connectionId)
+    public function edit(int $connectionId): InertiaResponse
     {
         $consumer = $this->consumerService->getConsumer($connectionId);
         $consumerTypes = $this->parameterValueService->getParameterValues(
@@ -67,7 +75,6 @@ class ConsumerController extends Controller
         );
         $geoRegions = $this->geoRegionsService->getGeoRegions();
 
-
         return Inertia::render('Consumer/ConsumerForm', [
             'consumer_types' => $consumerTypes->data,
             'geo_regions' => $geoRegions->data,
@@ -75,12 +82,16 @@ class ConsumerController extends Controller
         ]);
     }
 
-    public function update(ConsumerFormRequest $request, int $connectionId)
+    public function update(ConsumerFormRequest $request, int $connectionId): RedirectResponse
     {
-        $this->consumerService->updateConsumer($request);
-        return json([
-            'status' => 'success',
-            'message' => 'Consumer updated successfully',
-        ]);
+        $response = $this->consumerService->updateConsumer($request, $connectionId);
+
+        if ($response->hasError()) {
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
+        }
+
+        return redirect()->route('connection.index');
     }
 }

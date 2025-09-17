@@ -1,42 +1,41 @@
-import { ParameterDefinition } from '@/interfaces/parameter_types'
 import Input from '@/ui/form/Input'
 
 export default function AttributeInput({
   index,
-  visibleAttrs,
-  formData,
-  setFormValue,
+  value,
+  setValue,
   errors,
   removeAttribute,
+  isEditMode = false,
 }: {
   index: number
-  visibleAttrs: boolean[]
-  formData: ParameterDefinition
-  setFormValue: (key: keyof ParameterDefinition) => (value: string) => void
+  value: string
+  setValue: (value: string) => void
   errors: Record<string, string> | undefined
   removeAttribute: (index: number) => void
+  isEditMode?: boolean
 }) {
   const attrKey = `attribute${index + 1}_name`
-  if (!visibleAttrs[index]) return null
 
   return (
-    <div
-      key={attrKey}
-      className='relative flex flex-col'
-    >
+    <div className='relative flex flex-col'>
       <Input
         label={`Attribute ${index + 1} Name`}
-        value={formData[attrKey as keyof ParameterDefinition]}
-        setValue={setFormValue(attrKey as keyof ParameterDefinition)}
+        value={value}
+        setValue={setValue}
         error={errors?.[attrKey]}
       />
-      <button
-        type='button'
-        onClick={() => removeAttribute(index)}
-        className='absolute top-2 right-2 font-bold text-red-500'
-      >
-        ×
-      </button>
+
+      {/* Show delete only in create mode */}
+      {!isEditMode && (
+        <button
+          type='button'
+          onClick={() => removeAttribute(index)}
+          className='absolute top-2 right-2 font-bold text-red-500'
+        >
+          ×
+        </button>
+      )}
     </div>
   )
 }

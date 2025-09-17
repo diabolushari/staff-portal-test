@@ -6,17 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Services\Parameters\ParameterDefinitionService;
 use Illuminate\Http\JsonResponse;
 
-// TODO create service
-// TODO Fix Type Errors
 class ParameterDefinitionListApiController extends Controller
 {
     public function __construct(
         private readonly ParameterDefinitionService $parameterDefinitionService
     ) {}
 
-    public function __invoke(): JsonResponse | null
+    public function __invoke(): ?JsonResponse
     {
-        $response = $this->parameterDefinitionService->getParameterDefinitions();
+        $domainName = request('domain_name');
+        $moduleName = request('module_name');
+        $search = request('search');
+        $response = $this->parameterDefinitionService->getParameterDefinitions(1, 100, $domainName, $moduleName, $search);
 
         if ($response->hasError()) {
             return response()->json(['error' => $response->error], 500);

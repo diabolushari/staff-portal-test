@@ -3,7 +3,7 @@ import capitalSnakeCase from '@/formaters/capitalcase'
 import useCustomForm from '@/hooks/useCustomForm'
 import useFetchRecord from '@/hooks/useFetchRecord'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
+import { ParameterDefinition, ParameterDomain, ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
@@ -11,6 +11,7 @@ import Button from '@/ui/button/Button'
 import DatePicker from '@/ui/form/DatePicker'
 import DynamicSelectList from '@/ui/form/DynamicSelectList'
 import Input from '@/ui/form/Input'
+import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
 import { useEffect, useState } from 'react'
 
@@ -25,12 +26,14 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ]
 
-//TODO missing prop interface
-export default function ParameterValueCreate({
-  parameter_value,
-}: {
+interface Props {
   parameter_value?: ParameterValues
-}) {
+  definitions: ParameterDefinition[]
+  domains: ParameterDomain[]
+}
+
+//TODO missing prop interface
+export default function ParameterValueCreate({ parameter_value, definitions, domains }: Props) {
   // don't use loose type check values like 0 want be counted
   const attributeValuePresent =
     parameter_value?.attribute1_value ||
@@ -47,18 +50,20 @@ export default function ParameterValueCreate({
     definition_id: parameter_value?.definition_id ?? '',
     parameter_code: parameter_value?.parameter_code ?? '',
     parameter_value: parameter_value?.parameter_value ?? '',
-    attribute_1_value: parameter_value?.attribute1_value ?? '',
-    attribute_2_value: parameter_value?.attribute2_value ?? '',
-    attribute_3_value: parameter_value?.attribute3_value ?? '',
-    attribute_4_value: parameter_value?.attribute4_value ?? '',
-    attribute_5_value: parameter_value?.attribute5_value ?? '',
+    attribute1_value: parameter_value?.attribute1_value ?? '',
+    attribute2_value: parameter_value?.attribute2_value ?? '',
+    attribute3_value: parameter_value?.attribute3_value ?? '',
+    attribute4_value: parameter_value?.attribute4_value ?? '',
+    attribute5_value: parameter_value?.attribute5_value ?? '',
     effective_start_date: parameter_value?.effective_start_date ?? '',
     effective_end_date: parameter_value?.effective_end_date ?? '',
     sort_priority: parameter_value?.sort_priority ?? '',
     notes: parameter_value?.notes ?? '',
+    domain_name: '',
+    _method: parameter_value != null ? 'PUT' : undefined,
   })
 
-  const { post, errors } = useInertiaPost(
+  const { post, errors } = useInertiaPost<typeof formData>(
     parameter_value
       ? route('parameter-value.update', parameter_value.id)
       : route('parameter-value.store'),
@@ -68,11 +73,10 @@ export default function ParameterValueCreate({
       },
     }
   )
-  const [definitions] = useFetchRecord<ParameterDefinition[]>(`/api/parameter-definitions`)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    post(parameter_value ? { ...formData, _method: 'PUT' } : formData)
+    post(formData)
   }
 
   useEffect(() => {
@@ -101,16 +105,27 @@ export default function ParameterValueCreate({
               onSubmit={handleSubmit}
               className='grid grid-cols-1 gap-6 md:grid-cols-2'
             >
-              <div className='col-span-2 flex flex-col'>
-                <DynamicSelectList
-                  url='/api/parameter-definitions'
-                  dataKey='id'
-                  displayKey='parameter_name'
-                  label='Definition'
-                  setValue={setFormValue('definition_id')}
-                  value={formData.definition_id}
-                  error={errors?.definition_id}
+              <div className='col-span-2 flex flex-col gap-6'>
+                <SelectList
+                  label='Domain'
+                  setValue={setFormValue('domain_name')}
+                  value={formData.domain_name}
+                  error={errors?.domain_name}
+                  list={domains}
+                  dataKey='domain_name'
+                  displayKey='domain_name'
                 />
+                {formData.domain_name && (
+                  <DynamicSelectList
+                    label='Definition'
+                    url={`/api/parameter-definitions/?domain_name=${formData.domain_name}`}
+                    setValue={setFormValue('definition_id')}
+                    value={formData.definition_id}
+                    error={errors?.definition_id}
+                    dataKey='id'
+                    displayKey='parameter_name'
+                  />
+                )}
               </div>
 
               <div className='flex flex-col'>
@@ -142,9 +157,9 @@ export default function ParameterValueCreate({
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute1_name}
-                        value={formData.attribute_1_value}
-                        setValue={setFormValue('attribute_1_value')}
-                        error={errors?.attribute_1_value}
+                        value={formData.attribute1_value}
+                        setValue={setFormValue('attribute1_value')}
+                        error={errors?.attribute1_value}
                       />
                     </div>
                   )}
@@ -152,9 +167,9 @@ export default function ParameterValueCreate({
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute2_name}
-                        value={formData.attribute_2_value}
-                        setValue={setFormValue('attribute_2_value')}
-                        error={errors?.attribute_2_value}
+                        value={formData.attribute2_value}
+                        setValue={setFormValue('attribute2_value')}
+                        error={errors?.attribute2_value}
                       />
                     </div>
                   )}
@@ -162,9 +177,9 @@ export default function ParameterValueCreate({
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute3_name}
-                        value={formData.attribute_3_value}
-                        setValue={setFormValue('attribute_3_value')}
-                        error={errors?.attribute_3_value}
+                        value={formData.attribute3_value}
+                        setValue={setFormValue('attribute3_value')}
+                        error={errors?.attribute3_value}
                       />
                     </div>
                   )}
@@ -172,9 +187,9 @@ export default function ParameterValueCreate({
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute4_name}
-                        value={formData.attribute_4_value}
-                        setValue={setFormValue('attribute_4_value')}
-                        error={errors?.attribute_4_value}
+                        value={formData.attribute4_value}
+                        setValue={setFormValue('attribute4_value')}
+                        error={errors?.attribute4_value}
                       />
                     </div>
                   )}
@@ -182,9 +197,9 @@ export default function ParameterValueCreate({
                     <div className='flex flex-col'>
                       <Input
                         label={selectedDefinition.attribute5_name}
-                        value={formData.attribute_5_value}
-                        setValue={setFormValue('attribute_5_value')}
-                        error={errors?.attribute_5_value}
+                        value={formData.attribute5_value}
+                        setValue={setFormValue('attribute5_value')}
+                        error={errors?.attribute5_value}
                       />
                     </div>
                   )}

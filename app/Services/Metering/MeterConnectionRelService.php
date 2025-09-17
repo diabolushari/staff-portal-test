@@ -4,7 +4,6 @@ namespace App\Services\Metering;
 
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
-use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
 use Proto\Metering\CreateMeterConnectionRelRequest;
 use Proto\Metering\DeleteMeterConnectionRelRequest;
@@ -82,7 +81,7 @@ class MeterConnectionRelService
 
     public function getMeterConnectionRel(int $relId): GrpcServiceResponse
     {
-        $request = new GetMeterConnectionRelRequest();
+        $request = new GetMeterConnectionRelRequest;
         $request->setRelId($relId);
 
         [$response, $status] = $this->client->GetMeterConnectionRel($request)->wait();
@@ -101,17 +100,18 @@ class MeterConnectionRelService
 
     public function getMeterConnectionRelByConnectionId(int $connectionId): GrpcServiceResponse
     {
-        $request = new GetMeterConnectionRelByConnectionIdRequest();
+        $request = new GetMeterConnectionRelByConnectionIdRequest;
         $request->setConnectionId($connectionId);
 
         [$response, $status] = $this->client->GetMeterConnectionRelByConnectionId($request)->wait();
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
-                GrpcErrorService::handleErrorResponse($status),
+                GrpcErrorService::handleErrorResponse($status, null, false),
                 $response,
                 $status->code,
-                $status->details
+                $status->details,
+
             );
         }
 
@@ -197,7 +197,7 @@ class MeterConnectionRelService
 
     public function deleteMeterConnectionRel(int $relId): GrpcServiceResponse
     {
-        $request = new DeleteMeterConnectionRelRequest();
+        $request = new DeleteMeterConnectionRelRequest;
         $request->setRelId($relId);
 
         [$response, $status] = $this->client->DeleteMeterConnectionRel($request)->wait();

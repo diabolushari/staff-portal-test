@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\GetOfficeByIdApiController;
 use App\Http\Controllers\Api\OfficeListApiController;
+use App\Http\Controllers\Api\Parameter\ListParameterValuesApiController;
 use App\Http\Controllers\Api\ParameterDefinitionItemApiController;
 use App\Http\Controllers\Api\ParameterDefinitionListApiController;
 use App\Http\Controllers\Api\ParameterDomainListApiController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Connection\ConnectionController;
 use App\Http\Controllers\Connection\ConsumerController;
 use App\Http\Controllers\Connection\CreateConsumerController;
 use App\Http\Controllers\Connection\GetConsumerController;
+use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
@@ -17,13 +19,17 @@ use App\Http\Controllers\Metering\MeterConnectionRelController;
 use App\Http\Controllers\Metering\MeterConnectionRelCreateController;
 use App\Http\Controllers\Metering\MeterConnectionRelEditController;
 use App\Http\Controllers\Metering\MeterController;
-use App\Http\Controllers\Metering\MeterTimezoneTypeRelController;
+use App\Http\Controllers\Metering\MeterTransformerController;
+use App\Http\Controllers\Metering\MeterTransformerRelController;
+use App\Http\Controllers\Offices\OfficeHierarchyRelController;
+use App\Http\Controllers\Offices\OfficesCreateWithCsvController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
 use App\Http\Requests\SystemModule\SystemModuleFormRequest;
 use App\Services\SystemModule\SystemModuleService;
+use GPBMetadata\MeterTimezoneTypeRel;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -46,6 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('parties', PartiesController::class);
     Route::resource('connections', ConnectionController::class);
     Route::resource('consumers', ConsumerController::class);
+    Route::resource('office-hierarchy-rel', OfficeHierarchyRelController::class);
     Route::get('connection/{id}/consumer', GetConsumerController::class)->name('connection.consumer');
     Route::get('connection/{id}/consumer/create', CreateConsumerController::class)->name('connection.consumer.create');
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)
@@ -57,6 +64,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('meter-connection-rel/{id}', [MeterConnectionRelController::class, 'update'])->name('meter-connection-rel.update');
     Route::get('connection/{id}/meter/edit', MeterConnectionRelEditController::class)->name('connection.meter.edit');
     Route::delete('meter-connection-rel/{rel_id}', [MeterConnectionRelController::class, 'destroy'])->name('meter-connection-rel.destroy');
+    Route::resource('meter-ctpt', MeterTransformerController::class);
+    Route::resource('meter-ctpt-rel', MeterTransformerRelController::class);
+    Route::resource('meter-conn-rel', MeterConnectionRelController::class);
+    Route::resource('meter-timezone-rel', MeterTimezoneTypeRel::class);
 });
 
 // API List
@@ -66,6 +77,7 @@ Route::get('api/parameter-definitions', ParameterDefinitionListApiController::cl
 Route::get('api/parameter-definitions/{id}', ParameterDefinitionItemApiController::class);
 Route::get('api/offices', OfficeListApiController::class);
 Route::get('api/office/{id}', GetOfficeByIdApiController::class);
+Route::get('api/parameter-values', ListParameterValuesApiController::class);
 
 Route::get('consumer-test', function (SystemModuleService $service) {
     $response = $service->createSystemModule(
@@ -74,9 +86,13 @@ Route::get('consumer-test', function (SystemModuleService $service) {
 
     return response()->json($response);
 });
+Route::get('offices-create-with-csv', OfficesCreateWithCsvController::class)->name('offices.create-with-csv');
+Route::get('create-georegion-seed', CreateGeoregionSeedController::class)->name('create-georegion-seed');
 Route::get('page-ui', function () {
     return Inertia::render('UItest');
 })->name('page-ui');
 
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

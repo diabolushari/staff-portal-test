@@ -31,7 +31,7 @@ class ParameterDefinitionService
         );
     }
 
-    public function getParameterDefinitions(int $page = 1, int $pageSize = 10, ?string $domainName = null, ?string $search = null): GrpcServiceResponse
+    public function getParameterDefinitions(int $page = 1, int $pageSize = 10, ?string $domainName = null, ?string $moduleName = null, ?string $search = null): GrpcServiceResponse
     {
         $request = new ListParameterDefinitionsRequest;
         $request->setPage($page);
@@ -39,6 +39,9 @@ class ParameterDefinitionService
 
         if ($domainName !== null) {
             $request->setDomainName($domainName);
+        }
+        if ($moduleName !== null) {
+            $request->setModuleName($moduleName);
         }
         if ($search !== null && $search !== '') {
             $request->setSearch($search);
@@ -114,12 +117,12 @@ class ParameterDefinitionService
     {
         $proto = new ParameterDefinitionProto;
         // TODO pass default values
-        $proto->setParameterName($request->parameterName);
-        $proto->setAttribute1Name($request->attribute1Name);
-        $proto->setAttribute2Name($request->attribute2Name);
-        $proto->setAttribute3Name($request->attribute3Name);
-        $proto->setAttribute4Name($request->attribute4Name);
-        $proto->setAttribute5Name($request->attribute5Name);
+        $proto->setParameterName($request->parameterName ?? '');
+        $proto->setAttribute1Name($request->attribute1Name ?? '');
+        $proto->setAttribute2Name($request->attribute2Name ?? '');
+        $proto->setAttribute3Name($request->attribute3Name ?? '');
+        $proto->setAttribute4Name($request->attribute4Name ?? '');
+        $proto->setAttribute5Name($request->attribute5Name ?? '');
         $proto->setIsEffectiveDateDriven($request->isEffectiveDateDriven);
         $proto->setDomainId($request->domainId);
 
@@ -161,11 +164,11 @@ class ParameterDefinitionService
         $parameterDomain = $this->parameterDomainService->getParameterDomain($request->domainId);
         $proto->setId($id);
         $proto->setParameterName($request->parameterName);
-        $proto->setAttribute1Name($request->attribute1Name);
-        $proto->setAttribute2Name($request->attribute2Name);
-        $proto->setAttribute3Name($request->attribute3Name);
-        $proto->setAttribute4Name($request->attribute4Name);
-        $proto->setAttribute5Name($request->attribute5Name);
+        $proto->setAttribute1Name($request->attribute1Name ?? '');
+        $proto->setAttribute2Name($request->attribute2Name ?? '');
+        $proto->setAttribute3Name($request->attribute3Name ?? '');
+        $proto->setAttribute4Name($request->attribute4Name ?? '');
+        $proto->setAttribute5Name($request->attribute5Name ?? '');
         $proto->setIsEffectiveDateDriven($request->isEffectiveDateDriven);
         $proto->setDomainId($request->domainId);
 

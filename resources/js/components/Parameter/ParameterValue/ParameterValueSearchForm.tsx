@@ -67,15 +67,6 @@ export default function ParameterValueSearchForm({
           </div>
 
           <div className='flex flex-col'>
-            <Input
-              label='Search'
-              value={formData.search}
-              setValue={setFormValue('search')}
-              showClearButton={true}
-            />
-          </div>
-
-          <div className='flex flex-col'>
             <Button
               label='Search'
               type='submit'

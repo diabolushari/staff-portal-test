@@ -1,12 +1,17 @@
 import { settingsOffices } from '@/components/Navbar/navitems'
+import AddRelationModal from '@/components/Offices/AddRelationModal'
 import ContactFolioCard from '@/components/Offices/ContactFolioCard'
 import { Card } from '@/components/ui/card'
 import { TabsContent } from '@/components/ui/tabs'
-import { Office } from '@/interfaces/consumers'
+import { Office, OfficeHierarchyRel } from '@/interfaces/consumers'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
+import AddButton from '@/ui/button/AddButton'
+import DeleteButton from '@/ui/button/DeleteButton'
+import EditButton from '@/ui/button/EditButton'
 import TinyContainer from '@/ui/Card/TinyContainer'
+import DeleteModal from '@/ui/Modal/DeleteModal'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
 import { router } from '@inertiajs/react'
 import { Building, Calendar, MapPin, PencilIcon, Users, Zap } from 'lucide-react'
@@ -14,6 +19,8 @@ import { useState } from 'react'
 
 interface Props {
   office: Office
+  parentOffices: any[]
+  officeHierarchiesWithoutSelected: any[]
 }
 
 const placeholderData = {
@@ -52,8 +59,16 @@ const tabs = [
   },
 ]
 
-export default function OfficeShow({ office }: Readonly<Props>) {
+export default function OfficeShow({
+  office,
+  parentOffices,
+  officeHierarchiesWithoutSelected,
+}: Readonly<Props>) {
   const [isEditing, setIsEditing] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [officeHierarchyRelId, setOfficeHierarchyRelId] = useState(0)
+  const [createRelationModalOpen, setCreateRelationModalOpen] = useState(false)
+  const [hierarchyData, setHierarchyData] = useState<OfficeHierarchyRel | undefined>(undefined)
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Offices',
@@ -84,7 +99,7 @@ export default function OfficeShow({ office }: Readonly<Props>) {
     updatedBy: 'Section Officer',
     updatedAt: '18 July 2025',
   }
-  console.log(office)
+
   const tabs = [
     {
       value: 'details',
@@ -115,15 +130,15 @@ export default function OfficeShow({ office }: Readonly<Props>) {
           <div className='flex flex-col gap-2'>
             <div className='flex items-center gap-3'>
               <StrongText className='text-2xl font-semibold text-[#252c32]'>
-                {office_code} - {office_name}
+                {office.office_code} - {office.office_name}
               </StrongText>
-              <TinyContainer variant={is_current ? 'success' : 'danger'}>
-                {is_current ? 'Active' : 'Inactive'}
+              <TinyContainer variant={office.is_current ? 'success' : 'danger'}>
+                {office.is_current ? 'Active' : 'Inactive'}
               </TinyContainer>
             </div>
           </div>
           <button
-            onClick={() => router.visit(route('offices.edit', office_id))}
+            onClick={() => router.visit(route('offices.edit', office.office_id))}
             className='flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
           >
             {isEditing ? 'Cancel Edit' : 'Edit Details'}
@@ -141,7 +156,7 @@ export default function OfficeShow({ office }: Readonly<Props>) {
                     Basic Information
                   </StrongText>
                   <button
-                    onClick={() => router.visit(route('offices.edit', office_id))}
+                    onClick={() => router.visit(route('offices.edit', office.office_id))}
                     className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
                   >
                     <PencilIcon className='h-4 w-4' />
@@ -153,19 +168,19 @@ export default function OfficeShow({ office }: Readonly<Props>) {
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Office Code</label>
                     <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {office_code}
+                      {office.office_code}
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Name</label>
                     <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {office_name}
+                      {office.office_name}
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Office Type</label>
                     <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {office_type?.parameter_value || 'Subdivision'}
+                      {office.office_type?.parameter_value || 'Subdivision'}
                     </div>
                   </div>
                   <div className='space-y-1'>
@@ -184,7 +199,7 @@ export default function OfficeShow({ office }: Readonly<Props>) {
                     Location Details
                   </StrongText>
                   <button
-                    onClick={() => router.visit(route('offices.edit', office_id))}
+                    onClick={() => router.visit(route('offices.edit', office.office_id))}
                     className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
                   >
                     <PencilIcon className='h-4 w-4' />
@@ -232,53 +247,76 @@ export default function OfficeShow({ office }: Readonly<Props>) {
                   <StrongText className='text-base font-semibold text-[#252c32]'>
                     Parent Details
                   </StrongText>
-                  <button
-                    onClick={() => router.visit(route('offices.edit', office_id))}
-                    className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
-                  >
-                    <PencilIcon className='h-4 w-4' />
-                    Edit
-                  </button>
+                  <AddButton
+                    onClick={() => setCreateRelationModalOpen(true)}
+                    buttonText='Add Parent Office'
+                  />
                 </div>
+
                 <hr className='mb-6 border-[#e5e9eb]' />
-                <div className='rounded-lg border border-gray-200 p-2.5'>
-                  <div className='flex items-start justify-between p-2.5'>
-                    <div className='flex-1 space-y-2.5'>
-                      <div className='space-y-1'>
-                        <div className='flex items-center gap-3'>
-                          <div className='text-base font-semibold text-black'>
-                            {placeholderData.parentName}
+
+                {parentOffices.map((parentRel, index) => (
+                  <div
+                    key={index}
+                    className='relative mb-4 rounded-lg border border-gray-200 p-2.5'
+                  >
+                    {/* Parent info */}
+                    <div className='flex items-start justify-between p-2.5'>
+                      <div className='flex-1 space-y-2.5'>
+                        <div className='space-y-1'>
+                          <div className='flex items-center gap-3'>
+                            <div className='text-base font-semibold text-black'>
+                              {parentRel.parent_office?.office_name || 'N/A'}
+                            </div>
+                            <div className='rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-normal text-blue-800'>
+                              {parentRel.parent_office?.office_code || 'N/A'}
+                            </div>
                           </div>
-                          <div className='rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-normal text-blue-800'>
-                            {placeholderData.parentCode}
+                          <div className='flex items-center gap-5'>
+                            <div className='flex items-center gap-1'>
+                              <Building className='h-3.5 w-3.5 text-gray-400' />
+                              <span className='text-sm font-normal text-[#252c32]'>
+                                {parentRel.parent_office?.office_type?.parameter_value || 'N/A'}
+                              </span>
+                            </div>
+                            <div className='flex items-center gap-1'>
+                              <MapPin className='h-3.5 w-3.5 text-gray-400' />
+                              <span className='text-sm font-normal text-[#252c32]'>
+                                {parentRel.parent_office?.location_id || 'N/A'}
+                              </span>
+                            </div>
+                          </div>
+                          <div className='text-sm font-normal text-[#252c32]'>
+                            {parentRel.parent_office?.office_description || 'N/A'}
+                          </div>
+                          <div className='text-sm font-normal text-[#252c32]'>
+                            Hierarchy: {parentRel.office_hierarchy?.hierarchy_name || 'N/A'}
                           </div>
                         </div>
-                        <div className='flex items-center gap-5'>
-                          <div className='flex items-center gap-1'>
-                            <Building className='h-3.5 w-3.5 text-gray-400' />
-                            <span className='text-sm font-normal text-[#252c32]'>
-                              {placeholderData.parentType}
-                            </span>
-                          </div>
-                          <div className='flex items-center gap-1'>
-                            <MapPin className='h-3.5 w-3.5 text-gray-400' />
-                            <span className='text-sm font-normal text-[#252c32]'>
-                              {placeholderData.parentLocation}
-                            </span>
-                          </div>
-                        </div>
-                        <div className='text-sm font-normal text-[#252c32]'>
-                          {placeholderData.parentAddress}
+                      </div>
+
+                      <div className='flex flex-col items-end gap-2 p-2.5'>
+                        <DeleteButton
+                          onClick={() => {
+                            setOfficeHierarchyRelId(parentRel.hierarchy_rel_hist_id)
+                            setIsDeleting(true)
+                          }}
+                        />
+                        <EditButton
+                          onClick={() => {
+                            setHierarchyData(parentRel)
+                            setCreateRelationModalOpen(true)
+                          }}
+                        />
+                        <div className='rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-normal text-[#1c6534]'>
+                          {parentRel.parent_office?.is_current ? 'Active' : 'Inactive'}
                         </div>
                       </div>
                     </div>
-                    <div className='flex flex-col items-end gap-2 p-2.5'>
-                      <div className='rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-normal text-[#1c6534]'>
-                        {placeholderData.parentStatus}
-                      </div>
-                    </div>
+
+                    {/* Delete button at bottom right */}
                   </div>
-                </div>
+                ))}
               </Card>
 
               {/* Other Info */}
@@ -288,7 +326,7 @@ export default function OfficeShow({ office }: Readonly<Props>) {
                     Other info
                   </StrongText>
                   <button
-                    onClick={() => router.visit(route('offices.edit', office_id))}
+                    onClick={() => router.visit(route('offices.edit', office.office_id))}
                     className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
                   >
                     <PencilIcon className='h-4 w-4' />
@@ -302,13 +340,13 @@ export default function OfficeShow({ office }: Readonly<Props>) {
                       Effective Start Date
                     </label>
                     <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {formatDate(effective_start) || '12 May 1990'}
+                      {formatDate(office.effective_start) || '12 May 1990'}
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-sm font-normal text-[#252c32]'>Effective End date</label>
                     <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {formatDate(effective_end) || 'Active'}
+                      {formatDate(office.effective_end) || 'Active'}
                     </div>
                   </div>
                   <div className='space-y-1'>
@@ -336,7 +374,7 @@ export default function OfficeShow({ office }: Readonly<Props>) {
               <ContactFolioCard
                 contacts={office.contact_folio?.contacts || []}
                 officeId={office.office_id}
-                officeCode={office.office_code.toString()}
+                officeCode={office?.office_code?.toString()}
                 onContactsUpdate={() => {}}
               />
             </div>
@@ -383,6 +421,21 @@ export default function OfficeShow({ office }: Readonly<Props>) {
           </TabsContent>
         </TabGroup>
       </div>
+      {createRelationModalOpen && (
+        <AddRelationModal
+          onClose={() => setCreateRelationModalOpen(false)}
+          officeHierarchies={officeHierarchiesWithoutSelected}
+          office_code={office.office_code}
+          hierarchyData={hierarchyData}
+        />
+      )}
+      {isDeleting && officeHierarchyRelId && (
+        <DeleteModal
+          setShowModal={setIsDeleting}
+          title='Delete Office'
+          url={`/office-hierarchy-rel/${officeHierarchyRelId}`}
+        />
+      )}
     </MainLayout>
   )
 }

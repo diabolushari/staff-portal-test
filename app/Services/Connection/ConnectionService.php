@@ -3,23 +3,24 @@
 namespace App\Services\Connection;
 
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
-use App\Http\Requests\Connections\CreateConnectionRequest as ConnectionCreateConnectionFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Carbon\Carbon;
 use Google\Protobuf\Struct;
 use Google\Protobuf\Timestamp;
+use Grpc\ChannelCredentials;
+use Proto\Connections\ConnectionMessage;
 use Proto\Connections\ConnectionServiceClient;
 use Proto\Connections\ConnectionUpdateRequest;
 use Proto\Connections\CreateConnectionRequest;
 use Proto\Connections\GetConnectionRequest;
 use Proto\Connections\ListConnectionsRequest;
-use Grpc\ChannelCredentials;
 
 class ConnectionService
 {
     private ConnectionServiceClient $client;
+
     private ParameterValueService $parameterValueService;
 
     public function __construct(ParameterValueService $parameterValueService)
@@ -31,12 +32,15 @@ class ConnectionService
         $this->parameterValueService = $parameterValueService;
     }
 
-    public function listConnections(): GrpcServiceResponse
+    public function listConnections(?string $consumerNumber): GrpcServiceResponse
     {
-        $request = new ListConnectionsRequest();
+        $request = new ListConnectionsRequest;
 
         $request->setPage(1);
         $request->setPageSize(10);
+        if ($consumerNumber) {
+            $request->setConsumerNumber($consumerNumber);
+        }
 
         [$response, $status] = $this->client->ListConnections($request)->wait();
         if ($status->code !== 0) {
@@ -52,14 +56,14 @@ class ConnectionService
         foreach ($connections as $connection) {
             $connectionArray[] = $this->transformConnectionToArray($connection);
         }
+
         return GrpcServiceResponse::success($connectionArray, $response, $status->code, $status->details);
     }
 
     public function createConnection(CreateConnectionFormRequest $request): GrpcServiceResponse
     {
-        $grpcRequest = new CreateConnectionRequest();
+        $grpcRequest = new CreateConnectionRequest;
         $grpcRequest->setConnectionTypeId($request->connectionTypeId);
-        $grpcRequest->setConsumerNum($request->consumerNumber);
         $grpcRequest->setConnectionStatusId($request->connectionStatusId);
         $grpcRequest->setConnectedDate($request->connectedDate);
         $grpcRequest->setServiceOfficeCode($request->serviceOfficeCode);
@@ -71,10 +75,10 @@ class ConnectionService
         $grpcRequest->setPrimaryPurposeId($request->primaryPurposeId);
         $grpcRequest->setConnectionCategoryId($request->connectionCategoryId);
         $grpcRequest->setConnectionSubcategoryId($request->connectionSubcategoryId);
-        $connectionAttribs = new Struct();
+        $connectionAttribs = new Struct;
         $connectionAttribs->setFields($request->connectionAttribs ?? []);
         $grpcRequest->setConnectionAttribs($connectionAttribs);
-        $purposesInfo = new Struct();
+        $purposesInfo = new Struct;
         $purposesInfo->setFields($request->purposesInfo ?? []);
         $grpcRequest->setPurposesInfo($purposesInfo);
         $grpcRequest->setBillingProcessId($request->billingProcessId);
@@ -85,9 +89,9 @@ class ConnectionService
         $grpcRequest->setMultiSourceIndicator($request->multiSourceIndicator);
         $grpcRequest->setLiveIndicator($request->liveIndicator);
         $grpcRequest->setPhaseTypeId($request->phaseTypeId);
+        $grpcRequest->setConsumerLegacyCode($request->consumerLegacyCode ?? '');
 
         [$response, $status] = $this->client->CreateConnection($grpcRequest)->wait();
-
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -103,10 +107,9 @@ class ConnectionService
         return GrpcServiceResponse::success($result, $response, $status->code, $status->details);
     }
 
-
     public function getConnection(int $id): GrpcServiceResponse
     {
-        $request = new GetConnectionRequest();
+        $request = new GetConnectionRequest;
         $request->setConnectionId($id);
         [$response, $status] = $this->client->GetConnection($request)->wait();
         if ($status->code !== 0) {
@@ -127,15 +130,11 @@ class ConnectionService
     public function updateConnection(CreateConnectionFormRequest $request, int $connectionId): GrpcServiceResponse
     {
 
-
         // Wrap into UpdateConnectionRequest
-        $grpcRequest = new ConnectionUpdateRequest();
+        $grpcRequest = new ConnectionUpdateRequest;
         $grpcRequest->setConnectionId($connectionId);
-        $grpcRequest->setConnectionTypeId($request->connectionTypeId);
-        $grpcRequest->setConsumerNum($request->consumerNumber);
         $grpcRequest->setConnectionStatusId($request->connectionStatusId);
         $grpcRequest->setConnectedDate($request->connectedDate);
-        $grpcRequest->setServiceOfficeCode($request->serviceOfficeCode);
         $grpcRequest->setAdminOfficeCode($request->adminOfficeCode);
         $grpcRequest->setVoltageId($request->voltageTypeId);
         $grpcRequest->setContractDemandKvaVal($request->contractDemandKwVal);
@@ -144,10 +143,10 @@ class ConnectionService
         $grpcRequest->setPrimaryPurposeId($request->primaryPurposeId);
         $grpcRequest->setConnectionCategoryId($request->connectionCategoryId);
         $grpcRequest->setConnectionSubcategoryId($request->connectionSubcategoryId);
-        $connectionAttribs = new Struct();
+        $connectionAttribs = new Struct;
         $connectionAttribs->setFields($request->connectionAttribs ?? []);
         $grpcRequest->setConnectionAttribs($connectionAttribs);
-        $purposesInfo = new Struct();
+        $purposesInfo = new Struct;
         $purposesInfo->setFields($request->purposesInfo ?? []);
         $grpcRequest->setPurposesInfo($purposesInfo);
         $grpcRequest->setBillingProcessId($request->billingProcessId);
@@ -158,6 +157,7 @@ class ConnectionService
         $grpcRequest->setMultiSourceIndicator($request->multiSourceIndicator);
         $grpcRequest->setPhaseTypeId($request->phaseTypeId);
         $grpcRequest->setLiveIndicator($request->liveIndicator);
+        $grpcRequest->setConsumerLegacyCode($request->consumerLegacyCode ?? '');
 
         [$response, $status] = $this->client->UpdateConnection($grpcRequest)->wait();
         if ($status->code !== 0) {
@@ -176,9 +176,9 @@ class ConnectionService
     }
 
     /**
-     * Transform ConnectionMessage protobuf to PHP array.
+     * @return array<string, mixed>
      */
-    private function transformConnectionToArray($connection): array
+    private function transformConnectionToArray(ConnectionMessage $connection): array
     {
 
         return [
@@ -213,10 +213,10 @@ class ConnectionService
             'created_at' => $this->convertFromTimestamp($connection->getCreatedAt()),
             'updated_at' => $this->convertFromTimestamp($connection->getUpdatedAt()),
             // Structs are converted from JSON string to array
-            'connection_attribs' => json_decode($connection->getConnectionAttribs()?->serializeToJsonString(), true),
-            'purposes_info' => json_decode($connection->getPurposesInfo()?->serializeToJsonString(), true),
-            'connected_load_info' => json_decode($connection->getConnectedLoadInfo()?->serializeToJsonString(), true),
-            'multi_source_info' => json_decode($connection->getMultiSourceInfo()?->serializeToJsonString(), true),
+            'connection_attribs' => $connection->getConnectionAttribs() ? json_decode($connection->getConnectionAttribs()->serializeToJsonString(), true) : null,
+            'purposes_info' => $connection->getPurposesInfo() ? json_decode($connection->getPurposesInfo()->serializeToJsonString(), true) : null,
+            'connected_load_info' => $connection->getConnectedLoadInfo() ? json_decode($connection->getConnectedLoadInfo()->serializeToJsonString(), true) : null,
+            'multi_source_info' => $connection->getMultiSourceInfo() ? json_decode($connection->getMultiSourceInfo()->serializeToJsonString(), true) : null,
             'consumer_type' => $this->parameterValueService->toArray($connection->getConsumerType()),
             'connection_type' => $this->parameterValueService->toArray($connection->getConnectionType()),
             'connection_status' => $this->parameterValueService->toArray($connection->getConnectionStatus()),
@@ -232,9 +232,6 @@ class ConnectionService
             'tariff' => $this->parameterValueService->toArray($connection->getTariff()),
         ];
     }
-
-
-
 
     /**
      * Convert protobuf Timestamp to a Carbon ISO string.

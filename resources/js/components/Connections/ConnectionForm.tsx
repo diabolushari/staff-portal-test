@@ -9,10 +9,11 @@ import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import StrongText from '@/typography/StrongText'
 import { route } from 'ziggy-js'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Card } from '../ui/card'
 import DatePicker from '@/ui/form/DatePicker'
 import { router } from '@inertiajs/react'
+import useFetchRecord from '@/hooks/useFetchRecord'
 
 interface Props {
   connection?: Connection
@@ -55,6 +56,8 @@ export default function ConnectionForm({
 }: Props) {
   const [adminOfficeData, setAdminOfficeData] = useState<Office | null>(null)
   const [serviceOfficeData, setServiceOfficeData] = useState<Office | null>(null)
+  const [subCategories, setSubCategories] = useState<ParameterValues[]>([])
+  const [category, setCategory] = useState<string>('')
 
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     connection_type_id: connection?.connection_type_id ?? '',
@@ -83,6 +86,7 @@ export default function ConnectionForm({
     consumer_legacy_code: connection?.consumer_legacy_code ?? '',
     open_access_selected: connection?.open_access_type_id ? true : false,
     renewable_selected: connection?.renewable_type_id ? true : false,
+    _method: connection ? 'PUT' : undefined,
   })
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
@@ -96,11 +100,7 @@ export default function ConnectionForm({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (connection) {
-      post({ ...formData, _method: 'PUT' })
-    } else {
-      post(formData)
-    }
+    post(formData)
   }
 
   const handleAdminOfficeChange = (item: Office) => {
@@ -112,7 +112,20 @@ export default function ConnectionForm({
     setFormValue('service_office_code')(item.office_code)
     setServiceOfficeData(item)
   }
-  console.log(errors)
+  const handleConnectionCategoryChange = (parameterValueId: string) => {
+    setFormValue('connection_category_id')(parameterValueId)
+    const category = connectionCategory.find((item) => item.id === Number(parameterValueId))
+    setCategory(category?.parameter_value ?? '')
+  }
+
+  const [subCategoryData] = useFetchRecord<ParameterValues[]>(
+    '/api/parameter-values?attribute_name=attribute1Value&attribute_value=' + category
+  )
+  useEffect(() => {
+    if (subCategoryData) {
+      setSubCategories(subCategoryData)
+    }
+  }, [subCategoryData])
   return (
     <form
       onSubmit={handleSubmit}
@@ -131,6 +144,13 @@ export default function ConnectionForm({
             setValue={setFormValue('connection_type_id')}
             value={formData.connection_type_id}
             error={errors?.connection_type_id}
+            disabled={connection?.connection_id ? true : false}
+          />
+          <Input
+            label='Consumer Legacy Code'
+            setValue={setFormValue('consumer_legacy_code')}
+            value={formData.consumer_legacy_code}
+            error={errors?.consumer_legacy_code}
           />
           <SelectList
             label='Connection Status'
@@ -140,14 +160,6 @@ export default function ConnectionForm({
             setValue={setFormValue('connection_status_id')}
             value={formData.connection_status_id}
             error={errors?.connection_status_id}
-          />
-          <Input
-            label='Consumer Number'
-            value={formData.consumer_number}
-            setValue={setFormValue('consumer_number')}
-            placeholder='Enter 13 digit unique consumer number'
-            error={errors?.consumer_number}
-            type='number'
           />
           <SelectList
             label='Voltage Type'
@@ -192,7 +204,7 @@ export default function ConnectionForm({
             dataKey='office_code'
             displayKey='office_name'
             displayValue2='office_code'
-            error={errors?.admin_office_id}
+            error={errors?.admin_office_code}
           />
           <ComboBox
             label='Service Office'
@@ -203,7 +215,8 @@ export default function ConnectionForm({
             dataKey='office_code'
             displayKey='office_name'
             displayValue2='office_code'
-            error={errors?.service_office_id}
+            error={errors?.service_office_code}
+            disabled={connection?.service_office_code ? true : false}
           />
         </div>
       </Card>
@@ -219,22 +232,23 @@ export default function ConnectionForm({
             list={connectionCategory}
             dataKey='id'
             displayKey='parameter_value'
-            setValue={setFormValue('connection_category_id')}
+            setValue={handleConnectionCategoryChange}
             value={formData.connection_category_id}
             error={errors?.connection_category_id}
             required
           />
-          <SelectList
-            label='Connection Subcategory'
-            list={connectionSubCategory}
-            dataKey='id'
-            displayKey='parameter_value'
-            setValue={setFormValue('connection_subcategory_id')}
-            value={formData.connection_subcategory_id}
-            error={errors?.connection_subcategory_id}
-            required
-          />
-
+          {subCategories && formData.connection_category_id && (
+            <SelectList
+              label='Connection Subcategory'
+              list={subCategories}
+              dataKey='id'
+              displayKey='parameter_value'
+              setValue={setFormValue('connection_subcategory_id')}
+              value={formData.connection_subcategory_id}
+              error={errors?.connection_subcategory_id}
+              required
+            />
+          )}
           <SelectList
             label='Metering Type'
             list={meteringTypes}
@@ -275,6 +289,25 @@ export default function ConnectionForm({
             value={formData.primary_purpose_id}
             error={errors?.primary_purpose_id}
             required
+          />
+        </div>
+      </Card>
+      <Card>
+        <div className='border-b-2 border-gray-200 py-3'>
+          <StrongText className='text-base font-semibold'>Load & Capacity</StrongText>
+        </div>
+        <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
+          <Input
+            label='Contract Demand (kW)'
+            setValue={setFormValue('contract_demand_kw_val')}
+            value={formData.contract_demand_kw_val}
+            error={errors?.contract_demand_kw_val}
+          />
+          <Input
+            label='Connected Load (kW)'
+            setValue={setFormValue('connected_load_kw_val')}
+            value={formData.connected_load_kw_val}
+            error={errors?.connected_load_kw_val}
           />
         </div>
       </Card>
@@ -325,27 +358,6 @@ export default function ConnectionForm({
         </div>
       </Card>
 
-      <Card>
-        <div className='border-b-2 border-gray-200 py-3'>
-          <StrongText className='text-base font-semibold'>Load & Capacity</StrongText>
-        </div>
-        <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
-          <Input
-            label='Contract Demand (kW)'
-            setValue={setFormValue('contract_demand_kw_val')}
-            value={formData.contract_demand_kw_val}
-            error={errors?.contract_demand_kw_val}
-            required
-          />
-          <Input
-            label='Connected Load (kW)'
-            setValue={setFormValue('connected_load_kw_val')}
-            value={formData.connected_load_kw_val}
-            error={errors?.connected_load_kw_val}
-            required
-          />
-        </div>
-      </Card>
       <Card>
         <div className='border-b-2 border-gray-200 py-3'>
           <StrongText className='text-base font-semibold'>Indicators</StrongText>

@@ -3,29 +3,30 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-
 use Grpc\ChannelCredentials;
+use Illuminate\Http\JsonResponse;
 use Proto\Parameters\ListParameterDomainsRequest;
 use Proto\Parameters\ParameterDomainServiceClient;
 
 class ParameterDomainListApiController extends Controller
 {
+    /** @var ParameterDomainServiceClient */
     private $client;
 
     public function __construct()
     {
-        $this->client = new ParameterDomainServiceClient(env('GRPC_HOST'), [
-            'credentials' => ChannelCredentials::createInsecure()
+        $this->client = new ParameterDomainServiceClient(config('app.consumer_service_grpc_host'), [
+            'credentials' => ChannelCredentials::createInsecure(),
         ]);
     }
 
-    public function __invoke()
+    public function __invoke(): JsonResponse
     {
-        $request = new ListParameterDomainsRequest();
+        $request = new ListParameterDomainsRequest;
 
-        list($response, $status) = $this->client->ListParameterDomains($request)->wait();
+        [$response, $status] = $this->client->ListParameterDomains($request)->wait();
 
-        if ($status->code !== \Grpc\STATUS_OK) {
+        if ($status->code !== 0) {
             return response()->json(['error' => $status->details], 500);
         }
 
@@ -37,7 +38,7 @@ class ParameterDomainListApiController extends Controller
                 'id' => $domain->getId(),
                 'name' => $domain->getDomainName(),
                 'description' => $domain->getDescription(),
-                'code' => $domain->getDomainCode()
+                'code' => $domain->getDomainCode(),
             ];
         }
 
