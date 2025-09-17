@@ -7,6 +7,7 @@ option php_metadata_namespace = "GPBMetadata";
 
 import "google/protobuf/empty.proto";
 import "parameters/parameter-value.proto";
+import "google/protobuf/timestamp.proto";
 
 // ----------- MESSAGE ------------
 message MeterTransformerMessage {
@@ -28,13 +29,15 @@ message MeterTransformerMessage {
 
   // Other fields
   string ctpt_serial = 12;
-  string ct_ratio = 13;
-  string pt_ratio = 14;
+  string ratio_primary_value = 13;
+  string ratio_secondary_value = 14;
   string created_ts = 15;         
   string updated_ts = 16;         
   int64 created_by = 17;
   int64 updated_by = 18;
   bool is_active = 19;
+  google.protobuf.Timestamp manufacture_date = 20;
+
 }
 
 // ----------- REQUEST/RESPONSE ------------
@@ -46,10 +49,12 @@ message CreateMeterTransformerMessage {
   int64 type_id = 5;
 
   string ctpt_serial = 6;
-  string ct_ratio = 7;
-  string pt_ratio = 8;
+  string ratio_primary_value = 7;
+  string ratio_secondary_value = 8;
   bool is_active = 9;
   int64 created_by = 10;
+  google.protobuf.Timestamp manufacture_date = 11;
+
 }
 
 message CreateMeterTransformerRequest {

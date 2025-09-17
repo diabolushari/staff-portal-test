@@ -46,16 +46,16 @@ export default function MeterTransformerList({ transformers,onDelete,}: Readonly
                     <div className="flex items-center gap-[3px]">
                       <Cpu className="text-dark-gray h-3.5 w-3.5" />
                       <div className="font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]">
-                        CT Ratio: {mt.ct_ratio}
+                        Primary Ratio: {mt.ratio_primary_value}
                       </div>
                     </div>
                     <div className="flex items-center gap-[3px]">
                       <Zap className="text-dark-gray h-3.5 w-3.5" />
                       <div className="font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]">
-                        PT Ratio: {mt.pt_ratio}
+                        Secondary Ratio: {mt.ratio_secondary_value}
                       </div>
                     </div>
-                  </div>
+                    </div>
 
                   {/* Faulty / Rectification Dates */}
                   {/* <div className="font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]">

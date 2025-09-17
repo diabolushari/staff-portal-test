@@ -25,24 +25,27 @@ interface ParameterValue {
   id: number
   parameterValue: string
 }
-export const MeterTabs = [
+export const MeterTabs = (meterId: number, ctptId?: number, relId?: number) => [
   {
     value: 'details',
     label: 'Meter Details',
+    href: route('meters.show', meterId),
   },
   {
     value: 'meter-ctpt',
     label: 'Meter CTPT',
-    href: route('meter-ctpt.index'),
+    href: ctptId ? route('meter-ctpt.show', ctptId) : undefined,
   },
   {
     value: 'meter-ctpt-rel',
     label: 'Meter CTPT Relations',
-    href: route('meter-ctpt-rel.index'),
+    href: relId ? route('meter-ctpt-rel.show', relId) : undefined,
   },
 ]
+
 interface Props {
   meter: Meter
+  rel?: any 
   currentTimezone: any
   timezoneTypes: ParameterValue[]
 }
@@ -75,7 +78,7 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 )
 
 // --- MAIN COMPONENT: MeterShow ---
-export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Readonly<Props>) {
+export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }: Readonly<Props>) {
   // --- STATE AND DATA NORMALIZATION ---
   const [isEditing, setIsEditing] = useState(false)
 
@@ -92,7 +95,7 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
   )
 
   const [selectedTimezone, setSelectedTimezone] = useState<string | undefined>(currentTzId)
-
+  
   // --- FORM AND API HANDLING ---
   const isUpdate = !!(currentTimezone as any)?.rel_id
   const url = isUpdate
@@ -157,7 +160,7 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
     [timezoneTypes, currentTzId]
   )
 
-  const tabs = MeterTabs
+  const tabs = MeterTabs (meter.meter_id, rel?.ctpt_id, rel?.version_id)
 
   return (
     <MainLayout
