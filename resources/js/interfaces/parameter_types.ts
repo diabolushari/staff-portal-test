@@ -23,6 +23,7 @@ export interface ParameterDefinition {
   attribute4_name?: string
   attribute5_name?: string
   domain?: {id: number, domain_name: string}
+  system_module?: {id: number, module_name: string}
 
 }
 

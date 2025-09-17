@@ -24,7 +24,6 @@ export default function ParameterDefinitionSearchForm({
   const { formData, setFormValue } = useCustomForm({
     domain_name: filters.domain_name ?? '',
     module_name: filters.module_name ?? '',
-    search: filters.search ?? '',
   })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,49 +34,55 @@ export default function ParameterDefinitionSearchForm({
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <div className='grid w-2/3 items-end gap-2 md:grid-cols-3'>
-          <div>
-            {systemModules && (
-              <SelectList
-                list={systemModules}
-                dataKey='name'
-                displayKey='name'
-                setValue={setFormValue('module_name')}
-                value={formData.module_name}
-                label='System Module'
-                showAllOption
-                allOptionText='All Modules'
-              />
-            )}
-          </div>
-          <div className='flex flex-col'>
-            {parameterDomains && (
-              <SelectList
-                list={parameterDomains}
-                dataKey='domain_name'
-                displayKey='domain_name'
-                setValue={setFormValue('domain_name')}
-                value={formData.domain_name}
-                label='Parameter Domain'
-                showAllOption
-                allOptionText='All Domains'
-              />
-            )}
-          </div>
+        <div className='flex justify-between'>
+          <div className='grid w-2/3 items-end gap-2 md:grid-cols-3'>
+            <div>
+              {systemModules && (
+                <SelectList
+                  list={systemModules}
+                  dataKey='name'
+                  displayKey='name'
+                  setValue={setFormValue('module_name')}
+                  value={formData.module_name}
+                  label='System Module'
+                  showAllOption
+                  allOptionText='All Modules'
+                />
+              )}
+            </div>
+            <div className='flex flex-col'>
+              {parameterDomains && (
+                <SelectList
+                  list={parameterDomains}
+                  dataKey='domain_name'
+                  displayKey='domain_name'
+                  setValue={setFormValue('domain_name')}
+                  value={formData.domain_name}
+                  label='Parameter Domain'
+                  showAllOption
+                  allOptionText='All Domains'
+                />
+              )}
+            </div>
 
-          <div className='flex flex-col'>
-            <Input
-              label='Search'
-              value={formData.search}
-              setValue={setFormValue('search')}
-              showClearButton={true}
-            />
+            <div className='flex flex-col'>
+              <Button
+                label='Apply'
+                type='submit'
+              />
+            </div>
           </div>
-
-          <div className='flex flex-col'>
+          <div className='mt-6 flex flex-col items-center justify-center'>
             <Button
-              label='Search'
-              type='submit'
+              label='Clear filters'
+              type='button'
+              onClick={() =>
+                router.get(route('parameter-definition.index'), {
+                  search: '',
+                  domain_name: '',
+                  module_name: '',
+                })
+              }
             />
           </div>
         </div>

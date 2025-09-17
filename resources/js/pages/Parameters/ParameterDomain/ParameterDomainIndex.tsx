@@ -7,6 +7,7 @@ import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import AppLayout from '@/layouts/app-layout'
 import MainLayout from '@/layouts/main-layout'
 import { type BreadcrumbItem } from '@/types'
+import Button from '@/ui/button/Button'
 import DeleteButton from '@/ui/button/DeleteButton'
 import EditButton from '@/ui/button/EditButton'
 import CardHeader from '@/ui/Card/CardHeader'
@@ -90,15 +91,25 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
             + Add Domain
           </button>
         </div>
+
         <ListSearch
           title='Parameter Domains'
           url={route('parameter-domain.index')}
           search={filters.search}
-        />
-        <ParameterDomainSearchForm
-          systemModules={modules}
           filters={filters}
         />
+        <div className='flex items-center justify-between'>
+          <ParameterDomainSearchForm
+            systemModules={modules}
+            filters={filters}
+          />
+          <Button
+            onClick={() =>
+              router.get(route('parameter-domain.index'), { search: '', module_id: '' })
+            }
+            label='Clear Filters'
+          />
+        </div>
 
         <div>
           {domains != null && domains.length > 0 ? (

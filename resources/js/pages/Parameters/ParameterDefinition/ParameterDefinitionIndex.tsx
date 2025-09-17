@@ -73,6 +73,7 @@ export default function ParameterDefinitionIndex({
           title='Parameter Definition'
           url={route('parameter-definition.index')}
           search={filters.search}
+          filters={filters}
         />
 
         <ParameterDefinitionSearchForm

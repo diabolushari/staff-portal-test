@@ -64,6 +64,11 @@ class ParameterDefinitionService
                 'id' => $domain->getId(),
                 'domain_name' => $domain->getDomainName(),
             ];
+            $systemModule = $domain->getSystemModule();
+            $systemModuleArray = [
+                'id' => $systemModule->getId(),
+                'module_name' => $systemModule->getName(),
+            ];
             $definitionsArray[] = [
                 'id' => $def->getId(),
                 'parameter_name' => $def->getParameterName(),
@@ -75,6 +80,7 @@ class ParameterDefinitionService
                 'is_effective_date_driven' => $def->getIsEffectiveDateDriven(),
                 'domain' => $domainArray,
                 'domain_id' => $def->getDomainId(),
+                'system_module' => $systemModuleArray,
             ];
         }
 

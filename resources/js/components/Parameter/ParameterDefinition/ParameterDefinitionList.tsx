@@ -1,5 +1,6 @@
 import { ParameterDefinition } from '@/interfaces/parameter_types'
-import { Pencil, Trash2 } from 'lucide-react'
+import StrongText from '@/typography/StrongText'
+import { Layers, Package, Pencil, Trash2 } from 'lucide-react'
 
 interface Props {
   parameterDefinitions: ParameterDefinition[]
@@ -26,11 +27,13 @@ export default function ParameterDefinitionList({
             className='mb-4 rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
           >
             <div className='flex items-start justify-between'>
+              {/* Left section - main info */}
               <div
-                className='flex flex-1 flex-col gap-2.5 p-[10px] cursor-pointer'
+                className='flex flex-1 cursor-pointer flex-col gap-2.5 p-[10px]'
                 onClick={() => onView?.(def)}
               >
                 <div className='flex flex-col gap-1'>
+                  {/* Parameter name + domain pill */}
                   <div className='flex items-center gap-2'>
                     <div className='font-inter text-base leading-normal font-semibold text-black'>
                       {def.parameter_name}
@@ -44,27 +47,55 @@ export default function ParameterDefinitionList({
                     )}
                   </div>
 
-                  <div className='text-dark-gray text-sm'>
-                    {def.is_effective_date_driven ? 'Date Driven' : 'Static'}
+                  {/* Domain + Module row */}
+                  <div className='flex w-full items-center gap-5'>
+                    {def.domain?.domain_name && (
+                      <div className='flex items-center gap-[3px]'>
+                        <Layers className='text-dark-gray h-3.5 w-3.5' />
+                        <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                          <StrongText>Domain:</StrongText> {def.domain.domain_name}
+                        </div>
+                      </div>
+                    )}
+                    {def.system_module?.module_name && (
+                      <div className='flex items-center gap-[3px]'>
+                        <Package className='text-dark-gray h-3.5 w-3.5' />
+                        <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                          <StrongText>Module:</StrongText> {def.system_module.module_name}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Show attributes if available */}
-                  <div className='flex flex-wrap gap-2 text-dark-gray text-sm'>
-                    {def.attribute1_name && <span>{def.attribute1_name}</span>}
-                    {def.attribute2_name && <span>{def.attribute2_name}</span>}
-                    {def.attribute3_name && <span>{def.attribute3_name}</span>}
-                    {def.attribute4_name && <span>{def.attribute4_name}</span>}
-                    {def.attribute5_name && <span>{def.attribute5_name}</span>}
-                  </div>
+                  {/* Attributes */}
+                  {(def.attribute1_name ||
+                    def.attribute2_name ||
+                    def.attribute3_name ||
+                    def.attribute4_name ||
+                    def.attribute5_name) && (
+                    <div className='mt-2'>
+                      <StrongText>Attributes</StrongText>
+                      <div className='text-dark-gray flex flex-wrap gap-2 text-sm'>
+                        {def.attribute1_name && <span>{def.attribute1_name}</span>}
+                        {def.attribute2_name && <span>{def.attribute2_name}</span>}
+                        {def.attribute3_name && <span>{def.attribute3_name}</span>}
+                        {def.attribute4_name && <span>{def.attribute4_name}</span>}
+                        {def.attribute5_name && <span>{def.attribute5_name}</span>}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Inline Edit/Delete buttons */}
+              {/* Right section - actions */}
               <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
-                <div className='flex items-center gap-3 mt-2'>
+                <div className='mt-2 flex items-center gap-3'>
                   {onEdit && (
                     <button
-                      onClick={() => onEdit(def)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onEdit(def)
+                      }}
                       className='flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800'
                     >
                       <Pencil className='h-4 w-4' />
@@ -73,7 +104,10 @@ export default function ParameterDefinitionList({
                   )}
                   {onDelete && (
                     <button
-                      onClick={() => onDelete(def)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onDelete(def)
+                      }}
                       className='flex items-center gap-1 text-sm text-red-600 hover:text-red-800'
                     >
                       <Trash2 className='h-4 w-4' />
