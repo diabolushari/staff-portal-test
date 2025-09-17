@@ -32,6 +32,11 @@ export interface Office {
   updated_by: number
 }
 
+export interface OfficeWithHierarchy extends Office {
+  office_hierarchy: OfficeHierarchyRel[]
+  office: Office
+}
+
 export interface OfficeContactFolio {
   contacts: OfficeContact[]
 }

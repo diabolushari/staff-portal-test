@@ -8,6 +8,7 @@ use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
 use Proto\Modules\CreateSystemModuleRequest;
 use Proto\Modules\DeleteSystemModuleRequest;
+use Proto\Modules\GetSystemModuleRequest;
 use Proto\Modules\ListSystemModulesRequest;
 use Proto\Modules\SystemModule;
 use Proto\Modules\SystemModuleServiceClient;
@@ -61,6 +62,34 @@ class SystemModuleService
         }
 
         return GrpcServiceResponse::success($systemModulesArray, $response, $status->code, $status->details);
+    }
+
+    public function getSystemModule(string $id): GrpcServiceResponse
+    {
+        $request = new GetSystemModuleRequest;
+        $request->setId($id);
+
+        [$response, $status] = $this->client->GetSystemModule($request)->wait();
+
+        if ($status->code !== 0) {
+            $errorResponse = GrpcErrorService::handleErrorResponse($status);
+
+            return GrpcServiceResponse::error(
+                $errorResponse,
+                $response,
+                $status->code,
+                $status->details,
+                []
+            );
+        }
+
+        $systemModule = $response?->getModule();
+        $systemModuleArray = [
+            'id' => $systemModule->getId(),
+            'name' => $systemModule->getName(),
+        ];
+
+        return GrpcServiceResponse::success($systemModuleArray, $response, $status->code, $status->details);
     }
 
     /**
