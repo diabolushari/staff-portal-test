@@ -11,7 +11,6 @@ interface ParameterValue {
 }
 
 
-
 export interface MeterTransformer {
 	meter_ctpt_id: number;
 	ctpt_serial: string;
