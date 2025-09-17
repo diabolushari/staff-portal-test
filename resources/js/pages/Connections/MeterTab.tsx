@@ -1,233 +1,320 @@
 import { router } from "@inertiajs/react";
+import {
+	Barcode,
+	Calendar,
+	Cpu,
+	Factory,
+	Hash,
+	Plus,
+	Settings,
+	Shield,
+	Wrench,
+	Zap,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import StrongText from "@/typography/StrongText";
 
+export interface MeterData {
+	relationship: {
+		version_id: number;
+		rel_id: number;
+		meter_id: number;
+		connection_id: number;
+		meter_use_category?: { id: number; parameter_value: string };
+		bidirectional_ind: boolean;
+		meter_billing_mode: string;
+		meter_status?: { id: number; parameter_value: string };
+		faulty_date?: string;
+		rectification_date?: string;
+		change_reason?: { id: number; parameter_value: string };
+		effective_start_ts: string;
+		effective_end_ts?: string;
+		is_active: boolean;
+		created_ts: string;
+		updated_ts?: string;
+		created_by: number;
+		updated_by: number;
+	};
+	meter: {
+		version_id: number;
+		meter_id: number;
+		meter_serial: string;
+		ownership_type?: { id: number; parameter_value: string };
+		meter_make?: { id: number; parameter_value: string };
+		meter_type?: { id: number; parameter_value: string };
+		meter_category?: { id: number; parameter_value: string };
+		accuracy_class?: { id: number; parameter_value: string };
+		dialing_factor?: { id: number; parameter_value: string };
+		company_seal_num?: string;
+		digit_count: number;
+		manufacture_date?: string;
+		supply_date?: string;
+		meter_unit?: { id: number; parameter_value: string };
+		meter_reset_type?: { id: number; parameter_value: string };
+		smart_meter_ind: boolean;
+		bidirectional_ind: boolean;
+		created_ts: string;
+		updated_ts?: string;
+		created_by: number;
+		updated_by: number;
+		meter_phase?: { id: number; parameter_value: string };
+		decimal_digit_count: number;
+		programmable_pt_ratio: number;
+		programmable_ct_ratio: number;
+		meter_mf: number;
+		warranty_period: number;
+		meter_constant: number;
+		batch_code?: string;
+		internal_ct_primary?: number;
+		internal_ct_secondary?: number;
+		internal_pt_primary?: number;
+		internal_pt_secondary?: number;
+	};
+}
+
 export function MeterTab({
-	meterConnectionRel,
-	meter,
+	meters,
 	connectionId,
 }: {
-	meterConnectionRel: any;
-	meter: any;
+	meters: MeterData[] | null;
 	connectionId: number;
 }) {
+	console.log(meters);
+
+	function handleMeterClick(meterId: number) {
+		router.get(`/meters/${meterId}`);
+	}
+
+	function handleAddMeter() {
+		router.visit(route("connection.meter.create", { id: connectionId }));
+	}
+
 	return (
-		<div className="space-y-6">
-			<Card className="rounded-lg p-7">
-				<div className="mb-6 flex items-center justify-between">
-					<StrongText className="text-base font-semibold text-[#252c32]">
-						Meter Details
-					</StrongText>
-				</div>
-				<hr className="mb-6 border-[#e5e9eb]" />
-				{meter ? (
-					<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Meter Serial
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meter.meter_serial}
+		<Card className="relative w-full rounded-lg bg-white">
+			<div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+				<StrongText className="text-lg font-semibold text-gray-900">
+					Meter Information
+				</StrongText>
+				<button
+					onClick={handleAddMeter}
+					className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+				>
+					<Plus className="h-4 w-4" />
+					Add Meter
+				</button>
+			</div>
+			<div className="flex flex-col px-6 pb-6">
+				{meters && meters.length > 0 ? (
+					meters.map((meterData) => {
+						const { meter, relationship } = meterData;
+						return (
+							<div
+								key={meter.meter_id}
+								onClick={() => handleMeterClick(meter.meter_id)}
+								className="mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-3 py-4 transition-shadow last:mb-0 hover:shadow-md"
+							>
+								<div className="flex items-start justify-between">
+									{/* Left side info */}
+									<div className="flex flex-1 flex-col gap-3 p-2">
+										<div className="flex flex-col gap-2">
+											{/* Serial + Seal + Status */}
+											<div className="flex items-center gap-3 flex-wrap">
+												<div className="font-inter text-lg font-semibold text-black">
+													{meter.meter_serial}
+												</div>
+												{meter.company_seal_num && (
+													<div className="rounded-full bg-blue-100 px-3 py-1">
+														<div className="font-inter text-xs text-blue-800">
+															Seal: {meter.company_seal_num}
+														</div>
+													</div>
+												)}
+												{relationship.meter_status && (
+													<div
+														className={`rounded-full px-3 py-1 ${
+															relationship.meter_status.parameter_value ===
+															"Working"
+																? "bg-green-100 text-green-800"
+																: "bg-red-100 text-red-800"
+														}`}
+													>
+														<div className="font-inter text-xs">
+															{relationship.meter_status.parameter_value}
+														</div>
+													</div>
+												)}
+											</div>
+
+											{/* Meter Type + Make + Category */}
+											<div className="flex w-full flex-wrap items-center gap-5 text-sm text-slate-600">
+												{meter.meter_type && (
+													<div className="flex items-center gap-1">
+														<Cpu className="h-4 w-4 text-slate-500" />
+														Type: {meter.meter_type.parameter_value}
+													</div>
+												)}
+												{meter.meter_make && (
+													<div className="flex items-center gap-1">
+														<Factory className="h-4 w-4 text-slate-500" />
+														Make: {meter.meter_make.parameter_value}
+													</div>
+												)}
+												{relationship.meter_use_category && (
+													<div className="flex items-center gap-1">
+														<Settings className="h-4 w-4 text-slate-500" />
+														{relationship.meter_use_category.parameter_value}
+													</div>
+												)}
+											</div>
+
+											{/* Accuracy class + ownership + Phase */}
+											<div className="flex w-full flex-wrap items-center gap-5 text-sm text-slate-600">
+												{meter.accuracy_class && (
+													<div className="flex items-center gap-1">
+														<Shield className="h-4 w-4 text-slate-500" />
+														Accuracy: {meter.accuracy_class.parameter_value}
+													</div>
+												)}
+												{meter.ownership_type && (
+													<div className="flex items-center gap-1">
+														<Barcode className="h-4 w-4 text-slate-500" />
+														Owner: {meter.ownership_type.parameter_value}
+													</div>
+												)}
+												{meter.meter_phase && (
+													<div className="flex items-center gap-1">
+														<Zap className="h-4 w-4 text-slate-500" />
+														Phase: {meter.meter_phase.parameter_value}
+													</div>
+												)}
+											</div>
+
+											{/* Technical specs */}
+											<div className="flex w-full flex-wrap items-center gap-5 text-sm text-slate-600">
+												<div className="flex items-center gap-1">
+													<Hash className="h-4 w-4 text-slate-500" />
+													Constant: {meter.meter_constant}
+												</div>
+												<div className="flex items-center gap-1">
+													<Wrench className="h-4 w-4 text-slate-500" />
+													MF: {meter.meter_mf}
+												</div>
+												<div className="flex items-center gap-1">
+													<Settings className="h-4 w-4 text-slate-500" />
+													Digits: {meter.digit_count}
+												</div>
+												<div className="flex items-center gap-1">
+													<Calendar className="h-4 w-4 text-slate-500" />
+													Warranty: {meter.warranty_period}m
+												</div>
+											</div>
+
+											{/* Dates */}
+											<div className="flex w-full flex-wrap items-center gap-5 text-sm text-slate-600">
+												{meter.manufacture_date && (
+													<div className="flex items-center gap-1">
+														<Calendar className="h-4 w-4 text-slate-500" />
+														Mfg:{" "}
+														{new Date(
+															meter.manufacture_date,
+														).toLocaleDateString()}
+													</div>
+												)}
+												{meter.supply_date && (
+													<div className="flex items-center gap-1">
+														<Calendar className="h-4 w-4 text-slate-500" />
+														Supply:{" "}
+														{new Date(meter.supply_date).toLocaleDateString()}
+													</div>
+												)}
+												{relationship.faulty_date && (
+													<div className="flex items-center gap-1 text-red-600">
+														<Calendar className="h-4 w-4 text-red-500" />
+														Faulty:{" "}
+														{new Date(
+															relationship.faulty_date,
+														).toLocaleDateString()}
+													</div>
+												)}
+											</div>
+
+											{/* Batch code and billing mode */}
+											{(meter.batch_code ||
+												relationship.meter_billing_mode) && (
+												<div className="flex w-full flex-wrap items-center gap-5 text-sm text-slate-600">
+													{meter.batch_code && (
+														<div className="flex items-center gap-1">
+															<Barcode className="h-4 w-4 text-slate-500" />
+															Batch: {meter.batch_code}
+														</div>
+													)}
+													<div className="flex items-center gap-1">
+														<Settings className="h-4 w-4 text-slate-500" />
+														Billing: {relationship.meter_billing_mode}
+													</div>
+												</div>
+											)}
+										</div>
+									</div>
+
+									{/* Right side status indicators */}
+									<div className="flex flex-col items-end gap-2 py-2 pr-2 pl-4">
+										<div
+											className={`rounded-full px-3 py-1 ${
+												meter.smart_meter_ind ? "bg-green-100" : "bg-gray-100"
+											}`}
+										>
+											<div
+												className={`font-inter text-xs font-medium ${
+													meter.smart_meter_ind
+														? "text-green-700"
+														: "text-gray-700"
+												}`}
+											>
+												{meter.smart_meter_ind ? "Smart" : "Standard"}
+											</div>
+										</div>
+
+										{relationship.bidirectional_ind && (
+											<div className="rounded-full bg-purple-100 px-3 py-1">
+												<div className="font-inter text-xs font-medium text-purple-700">
+													Bidirectional
+												</div>
+											</div>
+										)}
+
+										<div
+											className={`rounded-full px-3 py-1 ${
+												relationship.is_active ? "bg-green-100" : "bg-red-100"
+											}`}
+										>
+											<div
+												className={`font-inter text-xs font-medium ${
+													relationship.is_active
+														? "text-green-700"
+														: "text-red-700"
+												}`}
+											>
+												{relationship.is_active ? "Active" : "Inactive"}
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Ownership
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meter.ownership_type?.parameter_value}
-							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Meter Make
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meter.meter_make?.parameter_value}
-							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Meter Type
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meter.meter_type?.parameter_value}
-							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Meter Category
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meter.meter_category?.parameter_value}
-							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Accuracy Class
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meter.accuracy_class?.parameter_value}
-							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Company Seal Number
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meter.company_seal_num}
-							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Manufacture Date
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meter.manufacture_date}
-							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Supply Date
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meter.supply_date}
-							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Smart Meter
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meter.smart_meter_ind ? "Yes" : "No"}
-							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Bidirectional
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meter.bidirectional_ind ? "Yes" : "No"}
-							</div>
-						</div>
-					</div>
+						);
+					})
 				) : (
-					<div className="text-center">
-						<p className="text-gray-500">
-							No meter connected to this connection.
-						</p>
+					<div className="p-8 text-center text-slate-500">
+						<div className="flex flex-col items-center gap-2">
+							<Cpu className="h-12 w-12 text-slate-300" />
+							<p className="text-lg font-medium">No meters found</p>
+							<p className="text-sm">
+								No meters are associated with this connection.
+							</p>
+						</div>
 					</div>
 				)}
-			</Card>
-
-			{meterConnectionRel && (
-				<Card className="rounded-lg p-7">
-					<div className="mb-6 flex items-center justify-between">
-						<StrongText className="text-base font-semibold text-[#252c32]">
-							Meter Connection
-						</StrongText>
-						<div className="flex items-center gap-2">
-							<button
-								onClick={() =>
-									router.visit(
-										route("connection.meter.edit", { id: connectionId }),
-									)
-								}
-								className="flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]"
-							>
-								Edit
-							</button>
-							<button
-								onClick={() => {
-									if (window.confirm("Are you sure you want to delete this meter connection?")) {
-										router.delete(route("meter-connection-rel.destroy", { rel_id: meterConnectionRel.rel_id }))
-									}
-								}}
-								className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700"
-							>
-								Delete
-							</button>
-						</div>
-					</div>
-					<hr className="mb-6 border-[#e5e9eb]" />
-					<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Use Category
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meterConnectionRel.meter_use_category?.parameter_value}
-							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Bidirectional
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meterConnectionRel.bidirectional_ind ? "Yes" : "No"}
-							</div>
-						</div>
-
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Billing Mode
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meterConnectionRel.meter_billing_mode}
-							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Meter Status
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meterConnectionRel.meter_status?.parameter_value}
-							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Faulty Date
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meterConnectionRel.faulty_date}
-							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Rectification Date
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meterConnectionRel.rectification_date}
-							</div>
-						</div>
-						<div>
-							<label className="text-sm font-normal text-[#252c32]">
-								Change Reason
-							</label>
-							<div className="rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black">
-								{meterConnectionRel.change_reason?.parameter_value}
-							</div>
-						</div>
-					</div>
-				</Card>
-			)}
-
-			{!meter && (
-				<Card className="rounded-lg p-7">
-					<div className="flex items-center justify-center">
-						<button
-							onClick={() =>
-								router.visit(
-									route("connection.meter.create", { id: connectionId }),
-								)
-							}
-							className="flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]"
-						>
-							Add Meter
-						</button>
-					</div>
-				</Card>
-			)}
-		</div>
+			</div>
+		</Card>
 	);
 }

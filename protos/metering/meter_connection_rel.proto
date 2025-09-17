@@ -16,7 +16,8 @@ option java_outer_classname = "MeterConnectionRelProto";
 service MeterConnectionRelService {
   rpc CreateMeterConnectionRel(CreateMeterConnectionRelRequest) returns (MeterConnectionRelResponse);
   rpc GetMeterConnectionRel(GetMeterConnectionRelRequest) returns (MeterConnectionRelResponse);
-  rpc GetMeterConnectionRelByConnectionId(GetMeterConnectionRelByConnectionIdRequest) returns (MeterConnectionRelResponse);
+  // Changed return type to list response
+  rpc GetMeterConnectionRelByConnectionId(GetMeterConnectionRelByConnectionIdRequest) returns (ListMeterConnectionRelsResponse);
   rpc ListMeterConnectionRels(ListMeterConnectionRelsRequest) returns (ListMeterConnectionRelsResponse);
   rpc UpdateMeterConnectionRel(UpdateMeterConnectionRelRequest) returns (MeterConnectionRelResponse);
   rpc DeleteMeterConnectionRel(DeleteMeterConnectionRelRequest) returns (google.protobuf.Empty);

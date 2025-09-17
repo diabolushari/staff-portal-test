@@ -43,6 +43,7 @@ export default function ConnectMeter({
 	meterStatus: ParameterOption[];
 	changeReason: ParameterOption[];
 }) {
+	console.log(meters);
 	const isEditMode = !!relation;
 
 	const { formData, setFormValue } = useCustomForm({

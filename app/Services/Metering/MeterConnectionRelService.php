@@ -4,6 +4,7 @@ namespace App\Services\Metering;
 
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
+use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
 use Proto\Metering\CreateMeterConnectionRelRequest;
 use Proto\Metering\DeleteMeterConnectionRelRequest;
@@ -28,7 +29,7 @@ class MeterConnectionRelService
 
     public function createMeterConnectionRel(array $data): GrpcServiceResponse
     {
-        $request = new CreateMeterConnectionRelRequest();
+        $request = new CreateMeterConnectionRelRequest;
         $request->setMeterId($data['meter_id']);
         $request->setConnectionId($data['connection_id']);
         $request->setMeterUseCategory($data['meter_use_category']);
@@ -36,7 +37,7 @@ class MeterConnectionRelService
         $request->setMeterStatusId($data['meter_status_id']);
         $request->setChangeReason($data['change_reason']);
 
-        $effectiveStartTs = new Timestamp();
+        $effectiveStartTs = new Timestamp;
         $effectiveStartTs->fromDateTime(new \DateTime($data['effective_start_ts']));
         $request->setEffectiveStartTs($effectiveStartTs);
 
@@ -44,17 +45,17 @@ class MeterConnectionRelService
             $request->setMeterBillingMode($data['meter_billing_mode']);
         }
         if (isset($data['faulty_date'])) {
-            $faultyDate = new Timestamp();
+            $faultyDate = new Timestamp;
             $faultyDate->fromDateTime(new \DateTime($data['faulty_date']));
             $request->setFaultyDate($faultyDate);
         }
         if (isset($data['rectification_date'])) {
-            $rectificationDate = new Timestamp();
+            $rectificationDate = new Timestamp;
             $rectificationDate->fromDateTime(new \DateTime($data['rectification_date']));
             $request->setRectificationDate($rectificationDate);
         }
         if (isset($data['effective_end_ts'])) {
-            $effectiveEndTs = new Timestamp();
+            $effectiveEndTs = new Timestamp;
             $effectiveEndTs->fromDateTime(new \DateTime($data['effective_end_ts']));
             $request->setEffectiveEndTs($effectiveEndTs);
         }
@@ -111,16 +112,21 @@ class MeterConnectionRelService
                 $response,
                 $status->code,
                 $status->details,
-
             );
         }
 
-        return GrpcServiceResponse::success(self::meterConnectionRelProtoToArray($response), $response, $status->code, $status->details);
+        // Expecting a repeated field: meter_connection_rels
+        $items = [];
+        foreach ($response->getMeterConnectionRels() as $rel) {
+            $items[] = self::meterConnectionRelProtoToArray($rel);
+        }
+
+        return GrpcServiceResponse::success($items, $response, $status->code, $status->details);
     }
 
     public function listMeterConnectionRels(): GrpcServiceResponse
     {
-        $request = new ListMeterConnectionRelsRequest();
+        $request = new ListMeterConnectionRelsRequest;
 
         [$response, $status] = $this->client->ListMeterConnectionRels($request)->wait();
 
@@ -143,7 +149,7 @@ class MeterConnectionRelService
 
     public function updateMeterConnectionRel(array $data): GrpcServiceResponse
     {
-        $request = new UpdateMeterConnectionRelRequest();
+        $request = new UpdateMeterConnectionRelRequest;
         $request->setRelId($data['rel_id']);
         $request->setMeterId($data['meter_id']);
         $request->setConnectionId($data['connection_id']);
@@ -152,7 +158,7 @@ class MeterConnectionRelService
         $request->setMeterStatusId($data['meter_status_id']);
         $request->setChangeReason($data['change_reason']);
 
-        $effectiveStartTs = new Timestamp();
+        $effectiveStartTs = new Timestamp;
         $effectiveStartTs->fromDateTime(new \DateTime($data['effective_start_ts']));
         $request->setEffectiveStartTs($effectiveStartTs);
 
@@ -160,17 +166,17 @@ class MeterConnectionRelService
             $request->setMeterBillingMode($data['meter_billing_mode']);
         }
         if (isset($data['faulty_date'])) {
-            $faultyDate = new Timestamp();
+            $faultyDate = new Timestamp;
             $faultyDate->fromDateTime(new \DateTime($data['faulty_date']));
             $request->setFaultyDate($faultyDate);
         }
         if (isset($data['rectification_date'])) {
-            $rectificationDate = new Timestamp();
+            $rectificationDate = new Timestamp;
             $rectificationDate->fromDateTime(new \DateTime($data['rectification_date']));
             $request->setRectificationDate($rectificationDate);
         }
         if (isset($data['effective_end_ts'])) {
-            $effectiveEndTs = new Timestamp();
+            $effectiveEndTs = new Timestamp;
             $effectiveEndTs->fromDateTime(new \DateTime($data['effective_end_ts']));
             $request->setEffectiveEndTs($effectiveEndTs);
         }

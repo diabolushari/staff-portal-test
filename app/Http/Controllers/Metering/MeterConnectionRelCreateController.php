@@ -18,19 +18,13 @@ class MeterConnectionRelCreateController extends Controller
 
     public function __invoke(int $Id)
     {
-        $existingRelResponse = $this->meterConnectionRelService->getMeterConnectionRelByConnectionId($Id);
-
-        if ($existingRelResponse->data !== null) {
-            return redirect()->route('connections.show', ['connection' => $Id])->withErrors(['grpc_error' => 'Connection already has a meter assigned.']);
-        }
-
         $meters = $this->meterService->listMeters();
         $meterRelations = $this->meterConnectionRelService->listMeterConnectionRels();
         $meterRelationIds = array_column($meterRelations->data, 'meter_id');
         $unrelatedMeters = array_filter($meters->data, function ($meter) use ($meterRelationIds) {
             return ! in_array($meter['meter_id'], $meterRelationIds);
         });
-
+        $unrelatedMeters = array_values($unrelatedMeters);
         $useCategory = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Use Category');
         $meterStatus = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Status');
         $changeReason = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Change Reason');
