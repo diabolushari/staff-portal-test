@@ -63,7 +63,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('meter-timezone-rel', MeterTimezoneTypeRel::class);
 });
 
-// API List
 Route::get('api/system-modules', SystemModuleApiController::class);
 Route::get('api/parameter-domains', ParameterDomainListApiController::class);
 Route::get('api/parameter-definitions', ParameterDefinitionListApiController::class);
