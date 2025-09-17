@@ -1,11 +1,17 @@
-import React, { useState, useMemo } from 'react'
-import { Office, OfficeHierarchy, OfficeHierarchyRel } from '@/interfaces/consumers'
+import React, { useState, useMemo, useEffect } from 'react'
+import {
+  Office,
+  OfficeHierarchy,
+  OfficeHierarchyRel,
+  OfficeWithHierarchy,
+} from '@/interfaces/consumers'
 import SelectList from '@/ui/form/SelectList'
 import ComboBox from '@/ui/form/ComboBox'
 import Button from '@/ui/button/Button'
 import Modal from '@/ui/Modal/Modal'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
+import useFetchRecord from '@/hooks/useFetchRecord'
 
 interface ParentOfficeModalProps {
   onClose: () => void
@@ -38,10 +44,15 @@ export default function AddRelationModal({
     }
   )
   const [parentOffice, setParentOffice] = useState<Office | null>(null)
-  const handleComboBoxChange = (value: Office) => {
-    setParentOffice(value)
-    setFormValue('parent_office_code')(value.office_code)
-  }
+
+  const [parentOfficeData] = useFetchRecord<OfficeWithHierarchy>(
+    formData.parent_office_code ? '/api/office/code/' + formData.parent_office_code : ''
+  )
+  useEffect(() => {
+    if (parentOfficeData?.office) {
+      setParentOffice(parentOfficeData.office)
+    }
+  }, [parentOfficeData])
 
   const handleConfirm = () => {
     post(formData)
@@ -66,7 +77,7 @@ export default function AddRelationModal({
           <ComboBox
             label='Office'
             url={`/api/offices?q=`}
-            setValue={handleComboBoxChange}
+            setValue={(office) => setFormValue('parent_office_code')(office?.office_code ?? '')}
             value={parentOffice}
             dataKey='office_code'
             displayKey='office_name'
