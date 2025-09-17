@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Metering;
 
+use Carbon\CarbonInterface;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
@@ -10,10 +11,10 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class MeterFormRequest extends Data
 {
     public function __construct(
-        // Identifiers for updates, added by the controller/route
+        // Identifiers for updates
         public ?int $meterId,
 
-        // Fields from the form, matching the protobuf request
+        // Common fields (create + update)
         public string $meterSerial,
         public int $ownershipTypeId,
         public int $meterMakeId,
@@ -23,17 +24,33 @@ class MeterFormRequest extends Data
         public int $dialingFactorId,
         public ?string $companySealNum,
         public ?int $digitCount,
-        public ?int $internalPtRatioId,
-        public ?int $internalCtRatioId,
-        public ?string $manufactureDate, // Dates are received as strings
-        public ?string $supplyDate,
+
+        // Timestamps coming as strings or Carbon — Spatie will cast strings to Carbon if typed as CarbonInterface
+        public string $manufactureDate,
+        public string $supplyDate,
+
+        public ?int $internalCtPrimary,
+        public ?int $internalCtSecondary,
+        public ?int $internalPtPrimary,
+        public ?int $internalPtSecondary,
+
         public int $meterUnitId,
         public int $meterResetTypeId,
         public bool $smartMeterInd,
         public bool $bidirectionalInd,
 
-        // Fields to be set by the system (e.g., from auth user)
+        // Audit
         public ?int $createdBy,
         public ?int $updatedBy,
+
+        // Additional fields from proto
+        public int $meterPhaseId,
+        public ?int $decimalDigitCount,
+        public ?float $programmablePtRatio,
+        public ?int $programmableCtRatio,
+        public ?float $meterMf,
+        public ?int $warrantyPeriod,
+        public ?int $meterConstant,
+        public ?string $batchCode,
     ) {}
 }
