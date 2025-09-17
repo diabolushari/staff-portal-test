@@ -99,7 +99,8 @@ message OfficeListRequest {
 }
 
 message OfficeIdRequest {
-    int32 office_id = 1;
+    optional int32 office_id = 1;
+    optional int32 office_code = 2;
 }
 
 message OfficeUpdateContactFolioRequest {

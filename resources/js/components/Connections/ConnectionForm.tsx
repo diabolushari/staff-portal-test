@@ -1,6 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { Connection, Office } from '@/interfaces/consumers'
+import { Connection, Office, OfficeWithHierarchy } from '@/interfaces/consumers'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
@@ -103,15 +103,21 @@ export default function ConnectionForm({
     post(formData)
   }
 
-  const handleAdminOfficeChange = (item: Office) => {
-    setFormValue('admin_office_code')(item.office_code)
-    setAdminOfficeData(item)
-  }
+  const [adminOfficeApiData] = useFetchRecord(
+    formData.admin_office_code ? '/api/office/code/' + formData.admin_office_code : ''
+  )
+  const [serviceOfficeApiData] = useFetchRecord(
+    formData.service_office_code ? '/api/office/code/' + formData.service_office_code : ''
+  )
+  useEffect(() => {
+    if (adminOfficeApiData?.office) {
+      setAdminOfficeData(adminOfficeApiData.office)
+    }
+    if (serviceOfficeApiData?.office) {
+      setServiceOfficeData(serviceOfficeApiData.office)
+    }
+  }, [adminOfficeApiData, serviceOfficeApiData])
 
-  const handleServiceOfficeChange = (item: Office) => {
-    setFormValue('service_office_code')(item.office_code)
-    setServiceOfficeData(item)
-  }
   const handleConnectionCategoryChange = (parameterValueId: string) => {
     setFormValue('connection_category_id')(parameterValueId)
     const category = connectionCategory.find((item) => item.id === Number(parameterValueId))
@@ -198,19 +204,20 @@ export default function ConnectionForm({
           <ComboBox
             label='Admin Office'
             url={`/api/offices?sortPriority=3&q=`}
-            setValue={handleAdminOfficeChange}
-            value={adminOfficeData}
+            setValue={(office) => setFormValue('admin_office_code')(office?.office_code ?? '')}
+            value={adminOfficeApiData?.office ?? null} // always derive from API/formData
             placeholder='Select Admin Office'
             dataKey='office_code'
             displayKey='office_name'
             displayValue2='office_code'
             error={errors?.admin_office_code}
           />
+
           <ComboBox
             label='Service Office'
             url={`/api/offices?sortPriority=3&q=`}
-            setValue={handleServiceOfficeChange}
-            value={serviceOfficeData}
+            setValue={(office) => setFormValue('service_office_code')(office?.office_code ?? '')}
+            value={serviceOfficeApiData?.office ?? null}
             placeholder='Select Service Office'
             dataKey='office_code'
             displayKey='office_name'

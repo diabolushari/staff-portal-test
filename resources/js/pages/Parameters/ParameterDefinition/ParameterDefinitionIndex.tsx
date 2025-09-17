@@ -2,7 +2,7 @@ import { settingsReferenceData } from '@/components/Navbar/navitems'
 import ParameterDefinitionForm from '@/components/Parameter/ParameterDefinition/ParameterDefinitionForm'
 import ParameterDefinitionList from '@/components/Parameter/ParameterDefinition/ParameterDefinitionList'
 import ParameterDefinitionSearchForm from '@/components/Parameter/ParameterDefinition/ParameterDefinitionSearchForm'
-import { ParameterDefinition, ParameterDomain } from '@/interfaces/parameter_types'
+import { ParameterDefinition, ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import DeleteModal from '@/ui/Modal/DeleteModal'
@@ -19,13 +19,16 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function ParameterDefinitionIndex({
   parameter_definitions,
   domains,
+  system_modules,
   filters,
 }: {
   parameter_definitions: ParameterDefinition[]
   domains: ParameterDomain[]
+  system_modules: SystemModule[]
   filters: {
     search: string
     domain_name: string
+    module_name: string
   }
 }) {
   const [parameterDefinitionToEdit, setParameterDefinitionToEdit] =
@@ -74,6 +77,7 @@ export default function ParameterDefinitionIndex({
 
         <ParameterDefinitionSearchForm
           parameterDomains={domains}
+          systemModules={system_modules}
           filters={filters}
         />
         <div>

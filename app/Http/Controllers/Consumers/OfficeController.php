@@ -89,7 +89,7 @@ class OfficeController extends Controller
     {
         $officeHierarchies = $this->officeHierarchyService->getOfficeHierarchies();
 
-        $response = $this->officeService->getOffice($id);
+        $response = $this->officeService->getOffice($id, null);
         if ($response->hasError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',

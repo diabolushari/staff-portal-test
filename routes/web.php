@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\GetOfficeByCodeApiController;
 use App\Http\Controllers\Api\GetOfficeByIdApiController;
 use App\Http\Controllers\Api\OfficeListApiController;
 use App\Http\Controllers\Api\Parameter\ListParameterValuesApiController;
@@ -70,7 +71,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('meter-timezone-rel', MeterTimezoneTypeRel::class);
 });
 
-// API List
 Route::get('api/system-modules', SystemModuleApiController::class);
 Route::get('api/parameter-domains', ParameterDomainListApiController::class);
 Route::get('api/parameter-definitions', ParameterDefinitionListApiController::class);
@@ -78,6 +78,7 @@ Route::get('api/parameter-definitions/{id}', ParameterDefinitionItemApiControlle
 Route::get('api/offices', OfficeListApiController::class);
 Route::get('api/office/{id}', GetOfficeByIdApiController::class);
 Route::get('api/parameter-values', ListParameterValuesApiController::class);
+Route::get('api/office/code/{office_code}', GetOfficeByCodeApiController::class);
 
 Route::get('consumer-test', function (SystemModuleService $service) {
     $response = $service->createSystemModule(
