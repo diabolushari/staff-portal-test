@@ -65,6 +65,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('meter-connection-rel/{id}', [MeterConnectionRelController::class, 'update'])->name('meter-connection-rel.update');
     Route::get('connection/{id}/meter/edit', MeterConnectionRelEditController::class)->name('connection.meter.edit');
     Route::delete('meter-connection-rel/{rel_id}', [MeterConnectionRelController::class, 'destroy'])->name('meter-connection-rel.destroy');
+    // Extra routes for navigating from a Meter to its CTPTs and Relations
+    // Route::get('meters/{id}/ctpts', [MeterTransformerController::class, 'showByMeter'])
+    // ->name('meter.ctpts.byMeter');
+
+    // Route::get('meters/{id}/ctpt-rel', [MeterTransformerRelController::class, 'showByMeter'])
+    // ->name('meter.ctpt-rel.byMeter');
+
     Route::resource('meter-ctpt', MeterTransformerController::class);
     Route::resource('meter-ctpt-rel', MeterTransformerRelController::class);
     Route::resource('meter-conn-rel', MeterConnectionRelController::class);

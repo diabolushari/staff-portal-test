@@ -20,232 +20,134 @@ import type { BreadcrumbItem } from "@/types";
 import Button from "@/ui/button/Button";
 import { TabGroup } from "@/ui/Tabs/TabGroup";
 
-// --- Types reflecting proto presence and app data ---
+// --- PROPS AND INTERFACES ---
 interface ParameterValue {
-	id: number;
-	parameter_value?: string; // backend variant
-	parameterValue?: string; // UI variant used elsewhere
+  id: number
+  parameterValue: string
 }
+export const MeterTabs = (meterId: number, ctptId?: number, relId?: number) => [
+  {
+    value: 'details',
+    label: 'Meter Details',
+    href: route('meters.show', meterId),
+  },
+  {
+    value: 'meter-ctpt',
+    label: 'Meter CTPT',
+    href: ctptId ? route('meter-ctpt.show', ctptId) : undefined,
+  },
+  {
+    value: 'meter-ctpt-rel',
+    label: 'Meter CTPT Relations',
+    href: relId ? route('meter-ctpt-rel.show', relId) : undefined,
+  },
+]
 
-interface MeterTimezoneRel {
-	rel_id?: number;
-	timezone_type_id?: number | string;
-	timezone_type?: ParameterValue | null;
-}
-
-interface Meter {
-	version_id: number;
-	meter_id: number;
-	meter_serial: string;
-
-	ownership_type?: ParameterValue | null;
-	meter_make?: ParameterValue | null;
-	meter_type?: ParameterValue | null;
-	meter_category?: ParameterValue | null;
-	accuracy_class?: ParameterValue | null;
-	dialing_factor?: ParameterValue | null;
-
-	company_seal_num?: string | null;
-	digit_count?: number | null;
-
-	manufacture_date?: string | null; // "YYYY-MM-DD"
-	supply_date?: string | null; // "YYYY-MM-DD"
-
-	meter_unit?: ParameterValue | null;
-	meter_reset_type?: ParameterValue | null;
-
-	smart_meter_ind: boolean;
-	bidirectional_ind: boolean;
-
-	created_ts: string; // "YYYY-MM-DD HH:mm:ss"
-	updated_ts: string;
-
-	created_by: number;
-	updated_by?: number | null;
-
-	meter_phase?: ParameterValue | null;
-
-	decimal_digit_count?: number | null;
-	programmable_pt_ratio?: number | null;
-	programmable_ct_ratio?: number | null;
-	meter_mf?: number | null;
-	warranty_period?: number | null;
-	meter_constant?: number | null;
-	batch_code?: string | null;
-
-	// Proto optional internal CT/PT (numbers)
-	internal_ct_primary?: number | null;
-	internal_ct_secondary?: number | null;
-	internal_pt_primary?: number | null;
-	internal_pt_secondary?: number | null;
-}
-
-// --- Tabs config ---
-export const MeterTabs = [
-	{ value: "details", label: "Meter Details" },
-	{ value: "meter-ctpt", label: "Meter CTPT", href: route("meter-ctpt.index") },
-	{
-		value: "meter-ctpt-rel",
-		label: "Meter CTPT Relations",
-		href: route("meter-ctpt-rel.index"),
-	},
-];
-
-// --- Reusable formatting ---
-const formatDate = (dateStr?: string | null, locale = "en-US") => {
-	if (!dateStr) return "-";
-	const date = new Date(dateStr);
-	if (Number.isNaN(date.getTime())) return "-";
-	return new Intl.DateTimeFormat(locale, {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	}).format(date);
-};
-
-// Prefer a small helper to resolve parameter_value vs parameterValue
-const pv = (p?: ParameterValue | null) =>
-	p?.parameter_value ?? p?.parameterValue ?? "-";
-
-// --- Helper UI components ---
-const InfoItem = ({
-	label,
-	value,
-}: {
-	label: string;
-	value: string | number | boolean | undefined | null;
-}) => (
-	<div className="flex flex-col gap-1">
-		<Label className="text-sm font-medium text-gray-500">{label}</Label>
-		<p className="text-base text-gray-800">
-			{typeof value === "boolean" ? (value ? "Yes" : "No") : (value ?? "-")}
-		</p>
-	</div>
-);
-
-const Section = ({
-	title,
-	children,
-}: {
-	title: string;
-	children: React.ReactNode;
-}) => (
-	<div className="py-6">
-		<h3 className="mb-6 text-lg font-semibold text-gray-700">{title}</h3>
-		<div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-3">
-			{children}
-		</div>
-	</div>
-);
-
-// --- Props & forms ---
 interface Props {
-	meter: Meter;
-	currentTimezone: MeterTimezoneRel | null;
-	timezoneTypes: ParameterValue[];
+  meter: Meter
+  rel?: any
+  currentTimezone: any
+  timezoneTypes: ParameterValue[]
 }
 
 interface StoreForm {
-	meter_id: number;
-	timezone_type_id: string;
+  meter_id: number
+  timezone_type_id: string
 }
 
-interface UpdateForm extends StoreForm {
-	rel_id: number;
-	_method: "PUT";
+interface UpdateForm {
+  rel_id: number
+  timezone_type_id: string
+  _method: 'PUT'
 }
 
-// --- Main component ---
-export default function MeterShow({
-	meter,
-	currentTimezone,
-	timezoneTypes,
-}: Readonly<Props>) {
-	// Timezone state
-	const [isEditing, setIsEditing] = useState(false);
-	const currentTzId = useMemo<string | undefined>(() => {
-		const id =
-			currentTimezone?.timezone_type_id ??
-			currentTimezone?.timezone_type?.id ??
-			undefined;
-		return typeof id === "number" ? String(id) : id;
-	}, [currentTimezone]);
+// --- HELPER COMPONENT: InfoItem ---
+const InfoItem = ({ label, value }: { label: string; value: string | number | undefined }) => (
+  <div className='flex flex-col gap-1'>
+    <Label className='text-sm font-medium text-gray-500'>{label}</Label>
+    <p className='text-base text-gray-800'>{value ?? '-'}</p>
+  </div>
+)
 
-	const currentTzLabel = useMemo<string | undefined>(
-		() =>
-			currentTimezone?.timezone_type
-				? pv(currentTimezone.timezone_type)
-				: undefined,
-		[currentTimezone],
-	);
+// --- HELPER COMPONENT: Section ---
+const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <div className='py-6'>
+    <h3 className='mb-6 text-lg font-semibold text-gray-700'>{title}</h3>
+    <div className='grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-3'>{children}</div>
+  </div>
+)
 
-	const [selectedTimezone, setSelectedTimezone] = useState<string | undefined>(
-		currentTzId,
-	);
+// --- MAIN COMPONENT: MeterShow ---
+export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }: Readonly<Props>) {
+  // --- STATE AND DATA NORMALIZATION ---
+  const [isEditing, setIsEditing] = useState(false)
 
-	// Create vs Update route
-	const isUpdate = Boolean(currentTimezone?.rel_id);
-	const url = isUpdate
-		? route("meter-timezone-rel.update", {
-				meter_timezone_rel: currentTimezone?.rel_id,
-			})
-		: route("meter-timezone-rel.store");
+  const currentTzId = useMemo<string | undefined>(
+    () =>
+      String(currentTimezone?.timezone_type_id ?? currentTimezone?.timezone_type?.id ?? '') ||
+      undefined,
+    [currentTimezone]
+  )
 
-	const { post, loading } = useInertiaPost<StoreForm | UpdateForm>(url, {
-		onSuccess: () => setIsEditing(false),
-	});
+  const currentTzLabel = useMemo<string | undefined>(
+    () => currentTimezone?.timezone_type?.parameter_value ?? undefined,
+    [currentTimezone]
+  )
 
-	// Breadcrumbs
-	const breadcrumbs: BreadcrumbItem[] = useMemo(
-		() => [
-			{ title: "Meters", href: route("meters.index") },
-			{ title: meter.meter_serial, href: route("meters.show", meter.meter_id) },
-		],
-		[meter.meter_id, meter.meter_serial],
-	);
+  const [selectedTimezone, setSelectedTimezone] = useState<string | undefined>(currentTzId)
 
-	// Memoized dates
-	const manufDate = useMemo(
-		() => formatDate(meter.manufacture_date),
-		[meter.manufacture_date],
-	);
-	const suppDate = useMemo(
-		() => formatDate(meter.supply_date),
-		[meter.supply_date],
-	);
-	const createdAt = useMemo(
-		() => formatDate(meter.created_ts),
-		[meter.created_ts],
-	);
-	const updatedAt = useMemo(
-		() => formatDate(meter.updated_ts),
-		[meter.updated_ts],
-	);
+  // --- FORM AND API HANDLING ---
+  const isUpdate = !!(currentTimezone as any)?.rel_id
+  const url = isUpdate
+    ? route('meter-timezone-rel.update', {
+        meter_timezone_rel: (currentTimezone as any).rel_id,
+      })
+    : route('meter-timezone-rel.store')
 
-	// Delete with Inertia visit options
-	const handleDelete = () => {
-		if (confirm("Are you sure you want to delete this meter?")) {
-			router.delete(route("meters.destroy", meter.meter_id), {
-				preserveScroll: true,
-				onSuccess: () =>
-					router.visit(route("meters.index"), { preserveScroll: true }),
-			});
-		}
-	};
+  const { post, loading } = useInertiaPost<StoreForm | UpdateForm>(url, {
+    onSuccess: () => setIsEditing(false),
+  })
 
-	// Save timezone
-	const handleSave = () => {
-		if (!selectedTimezone) return;
-		const commonData = {
-			meter_id: meter.meter_id,
-			timezone_type_id: selectedTimezone,
-		};
-		if (isUpdate && currentTimezone?.rel_id) {
-			post({ ...commonData, rel_id: currentTimezone.rel_id, _method: "PUT" });
-		} else {
-			post(commonData);
-		}
-	};
+  // --- BREADCRUMBS AND FORMATTERS ---
+  const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Meters', href: route('meters.index') },
+    { title: meter.meter_serial, href: route('meters.show', meter.meter_id) },
+  ]
+
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return '-'
+    return new Date(dateStr).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  }
+
+  // --- EVENT HANDLERS ---
+  const handleDelete = () => {
+    if (confirm('Are you sure you want to delete this meter?')) {
+      router.delete(route('meters.destroy', meter.meter_id))
+    }
+  }
+
+  const handleSave = () => {
+    if (!selectedTimezone) return
+
+    const commonData = {
+      meter_id: meter.meter_id,
+      timezone_type_id: selectedTimezone,
+    }
+
+    if (isUpdate) {
+      post({
+        ...commonData,
+        rel_id: currentTimezone.rel_id,
+        _method: 'PUT',
+      })
+    } else {
+      post(commonData)
+    }
+  }
 
   const handleCancel = () => {
     setSelectedTimezone(currentTzId)
@@ -258,8 +160,8 @@ export default function MeterShow({
     [timezoneTypes, currentTzId]
   )
 
-  const tabs = MeterTabs
-  console.log(meter)
+  const tabs = MeterTabs (meter.meter_id, rel?.ctpt_id, rel?.version_id)
+
   return (
     <MainLayout
       breadcrumb={breadcrumbs}

@@ -70,27 +70,31 @@ export default function MeterTransformerForm({
     burden_id: transformer?.burden_id ?? null,
     make_id: transformer?.make_id ?? null,
     type_id: transformer?.type_id ?? null,
-    ct_ratio: transformer?.ct_ratio ?? "",
-    pt_ratio: transformer?.pt_ratio ?? "",
+    ratio_primary_value: transformer?.ratio_primary_value ?? "",
+    ratio_secondary_value: transformer?.ratio_secondary_value ?? "",
+    manufacture_date: toYMD(transformer?.manufacture_date) ?? "",
   });
 
   const { post, loading, errors } = useInertiaPost(
     isEditing
       ? `/meter-ctpt/${transformer.meter_ctpt_id}`
       : "/meter-ctpt",
+      {
+        showErrorToast: true        },
   );
+  
 // get the selected type name (CT or PT)
-const selectedType = types.find(t => t.id === formData.type_id)?.parameter_value;
+// const selectedType = types.find(t => t.id === formData.type_id)?.parameter_value;
 
-useEffect(() => {
-  if (selectedType === "CT") {
-    // clear PT ratio if CT is selected
-    setFormValue("pt_ratio")("");
-  } else if (selectedType === "PT") {
-    // clear CT ratio if PT is selected
-    setFormValue("ct_ratio")("");
-  }
-}, [formData.type_id]);
+// useEffect(() => {
+//   if (selectedType === "CT") {
+//     // clear PT ratio if CT is selected
+//     setFormValue("pt_ratio")("");
+//   } else if (selectedType === "PT") {
+//     // clear CT ratio if PT is selected
+//     setFormValue("ct_ratio")("");
+//   }
+// }, [formData.type_id]);
 
 const handletypeChange = (id: string | number) => {
   const numericId = Number(id);
@@ -114,8 +118,9 @@ const handletypeChange = (id: string | number) => {
       burden_id: toNumberOrUndef(formData.burden_id),
       make_id: toNumberOrUndef(formData.make_id),
       type_id: toNumberOrUndef(formData.type_id),
-      ct_ratio: formData.ct_ratio || '',  // CHANGE: Send empty string instead of null
-      pt_ratio: formData.pt_ratio || '', 
+      ratio_primary_value: formData.ratio_primary_value || "",
+      ratio_secondary_value: formData.ratio_secondary_value || "",
+      manufacture_date: toISOorNull(formData.manufacture_date),
     };
 
      console.log("Payload:", payload); 
@@ -213,22 +218,29 @@ const handletypeChange = (id: string | number) => {
                   displayKey="parameter_value"
                   error={errors.burden_id}
                 />
-                {transformerType == "CT" && <Input
-                  label="CT Ratio"
+                 <Input
+                  label="Primary Ratio"
                   type="text"
-                  value={formData.ct_ratio}
-                  setValue={setFormValue("ct_ratio")}
-                  error={errors.ct_ratio}
-                   disabled={selectedType === "PT"}
-                />}
-                {transformerType == "PT" && <Input
-                  label="PT Ratio"
+                  value={formData.ratio_primary_value}
+                  setValue={setFormValue("ratio_primary_value")}
+                  error={errors.ratio_primary_value}
+                />
+
+                <Input
+                  label="Secondary Ratio"
                   type="text"
-                  value={formData.pt_ratio}
-                  setValue={setFormValue("pt_ratio")}
-                  error={errors.pt_ratio}
-                   disabled={selectedType === "CT"}
-                />}
+                  value={formData.ratio_secondary_value}
+                  setValue={setFormValue("ratio_secondary_value")}
+                  error={errors.ratio_secondary_value}
+                />
+
+                <DatePicker
+                  label="Manufacture Date"
+                  value={formData.manufacture_date}
+                  setValue={setFormValue("manufacture_date")}
+                  error={errors.manufacture_date}
+                />
+
                 
                
               </>,

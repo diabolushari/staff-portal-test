@@ -14,8 +14,9 @@ export interface MeterTransformer {
 	meter_ctpt_id: number;
 	ctpt_serial: string;
 	type_name: string; 
-	ct_ratio: string;
-	pt_ratio: string;
+	ratio_primary_value: string;
+	ratio_secondary_value: string;
+	manufacture_date: string | null;
 }
 
 interface Props {
