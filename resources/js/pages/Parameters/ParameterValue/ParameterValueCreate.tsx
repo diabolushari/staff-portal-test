@@ -59,10 +59,10 @@ export default function ParameterValueCreate({ parameter_value, definitions, dom
     effective_end_date: parameter_value?.effective_end_date ?? '',
     sort_priority: parameter_value?.sort_priority ?? '',
     notes: parameter_value?.notes ?? '',
-    domain_name: '',
+    domain_name: parameter_value?.definition?.parameter_domain ?? '',
     _method: parameter_value != null ? 'PUT' : undefined,
   })
-
+  console.log(parameter_value)
   const { post, errors } = useInertiaPost<typeof formData>(
     parameter_value
       ? route('parameter-value.update', parameter_value.id)
