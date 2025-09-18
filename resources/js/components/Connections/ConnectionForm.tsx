@@ -117,7 +117,7 @@ export default function ConnectionForm({
       setServiceOfficeData(serviceOfficeApiData.office)
     }
   }, [adminOfficeApiData, serviceOfficeApiData])
-
+  console.log(adminOfficeApiData, serviceOfficeApiData, formData)
   const handleConnectionCategoryChange = (parameterValueId: string) => {
     setFormValue('connection_category_id')(parameterValueId)
     const category = connectionCategory.find((item) => item.id === Number(parameterValueId))

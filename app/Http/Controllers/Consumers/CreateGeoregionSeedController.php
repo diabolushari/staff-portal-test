@@ -24,15 +24,16 @@ class CreateGeoregionSeedController extends Controller
                 ->getParameterValues(1, 50, null, 'Regions', 'Region Type')
                 ->data
         );
+
         if ($geoRegionTypes->isEmpty()) {
             return response()->json([
-                'message' => 'GeoRegion Types not found, Please create a Regions Domain and Region Type Parameter',
+                'message' => 'GeoRegion Types not found, Please create a Regions Domain and Region Type Parameter (values: District,State)',
             ]);
         }
 
         $geoRegionClassifications = collect(
             $this->parameterValueService
-                ->getParameterValues(1, 50, null, 'Regions', 'Region Classification')
+                ->getParameterValues(1, 50, null, 'Regions', 'Region Classification: parameteralue "Administrative"')
                 ->data
         );
         if ($geoRegionClassifications->isEmpty()) {
