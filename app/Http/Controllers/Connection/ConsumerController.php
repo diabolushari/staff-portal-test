@@ -100,6 +100,6 @@ class ConsumerController extends Controller
             ]);
         }
 
-        return redirect()->route('connection.index');
+        return redirect()->route('connections.index');
     }
 }

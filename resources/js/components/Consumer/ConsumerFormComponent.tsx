@@ -71,7 +71,7 @@ export default function ConsumerFormComponent({
     },
 
     primary_email: contact?.primary_email ?? '',
-    primary_phone: contact?.primary_phone ?? '',
+    primary_phone: contact?.primary_phone.toString() ?? '',
     _method: consumer ? 'PUT' : undefined,
   })
 
@@ -300,6 +300,7 @@ export default function ConsumerFormComponent({
               type='text'
               value={formData.other_addresses.billing.address_line2}
               setValue={(val) => updateOtherAddressField('billing', 'address_line2', val)}
+              required
             />
             <Input
               label='City / Town / Village'
@@ -323,6 +324,7 @@ export default function ConsumerFormComponent({
                 displayKey='region_name'
                 setValue={(val) => updateOtherAddressField('billing', 'district_id', val)}
                 value={formData.other_addresses.billing.district_id}
+                required
               />
             )}
             {states && (
@@ -333,6 +335,7 @@ export default function ConsumerFormComponent({
                 displayKey='region_name'
                 setValue={(val) => updateOtherAddressField('billing', 'state_id', val)}
                 value={formData.other_addresses.billing.state_id}
+                required
               />
             )}
           </div>
@@ -365,6 +368,7 @@ export default function ConsumerFormComponent({
               type='text'
               value={formData.other_addresses.premises.address_line2}
               setValue={(val) => updateOtherAddressField('premises', 'address_line2', val)}
+              required
             />
             <Input
               label='City / Town / Village'
@@ -388,6 +392,7 @@ export default function ConsumerFormComponent({
                 displayKey='region_name'
                 setValue={(val) => updateOtherAddressField('premises', 'district_id', val)}
                 value={formData.other_addresses.premises.district_id}
+                required
               />
             )}
             {states && (
@@ -398,6 +403,7 @@ export default function ConsumerFormComponent({
                 displayKey='region_name'
                 setValue={(val) => updateOtherAddressField('premises', 'state_id', val)}
                 value={formData.other_addresses.premises.state_id}
+                required
               />
             )}
           </div>
