@@ -29,7 +29,9 @@ class OfficesCreateWithCsvController extends Controller
          */
         $loadCsv = function (string $path, string $delimiter) {
             if (($handle = fopen($path, 'r')) === false) {
-                throw new \RuntimeException("Cannot open file: $path");
+                return response()->json([
+                    'message' => 'Failed to open file: '.$path,
+                ], 500);
             }
             $headers = fgetcsv($handle, 0, $delimiter);
             $rows = [];
@@ -50,6 +52,7 @@ class OfficesCreateWithCsvController extends Controller
 
         if (! $officeHierarchyResponse->data) {
             // Handle error or return a default value
+
             return response()->json([
                 'message' => 'Failed to create office hierarchy: response data is null',
             ], 500);
@@ -72,6 +75,7 @@ class OfficesCreateWithCsvController extends Controller
             'Office Type'
         );
         if (! $officeTypeResponse->data) {
+
             return response()->json([
                 'message' => 'Failed to get office type',
             ], 500);
