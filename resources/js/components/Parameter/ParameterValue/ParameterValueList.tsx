@@ -15,7 +15,6 @@ export default function ParameterValuesList({
   onEdit,
   onDelete,
 }: Readonly<Props>) {
-  console.log(parameterValues)
   return (
     <div className='relative w-full rounded-lg bg-white'>
       <div className='font-inter text-dark-gray px-7 pt-[21px] pb-3 text-[15px] leading-[23px] font-semibold tracking-[-0.0924px]'>
@@ -64,7 +63,7 @@ export default function ParameterValuesList({
                       <div className='flex items-center gap-[3px]'>
                         <Package className='text-dark-gray h-3.5 w-3.5' />
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          <StrongText>Module:</StrongText> {param.system_module.name}
+                          <StrongText>Module:</StrongText> {param.system_module?.name}
                         </div>
                       </div>
                     )}

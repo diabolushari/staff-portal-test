@@ -71,7 +71,7 @@ export default function ConsumerFormComponent({
     },
 
     primary_email: contact?.primary_email ?? '',
-    primary_phone: contact?.primary_phone.toString() ?? '',
+    primary_phone: contact?.primary_phone?.toString() ?? '',
     _method: consumer ? 'PUT' : undefined,
   })
 

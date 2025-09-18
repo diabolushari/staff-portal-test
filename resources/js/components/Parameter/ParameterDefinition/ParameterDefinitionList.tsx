@@ -57,11 +57,11 @@ export default function ParameterDefinitionList({
                         </div>
                       </div>
                     )}
-                    {def.system_module?.module_name && (
+                    {def.system_module?.name && (
                       <div className='flex items-center gap-[3px]'>
                         <Package className='text-dark-gray h-3.5 w-3.5' />
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          <StrongText>Module:</StrongText> {def.system_module.module_name}
+                          <StrongText>Module:</StrongText> {def.system_module.name}
                         </div>
                       </div>
                     )}

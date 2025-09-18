@@ -88,7 +88,9 @@ export default function ParameterValueSearchForm({
       <Button
         label='Reset'
         onClick={() => {
-          filters = { search: '', domain_name: '', parameter_name: '' }
+          setFormValue('search')('')
+          setFormValue('domain_name')('')
+          setFormValue('parameter_name')('')
           router.get(route('parameter-value.index'))
         }}
       />

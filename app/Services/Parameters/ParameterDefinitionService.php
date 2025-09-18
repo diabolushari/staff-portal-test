@@ -67,7 +67,7 @@ class ParameterDefinitionService
             $systemModule = $domain->getSystemModule();
             $systemModuleArray = [
                 'id' => $systemModule->getId(),
-                'module_name' => $systemModule->getName(),
+                'name' => $systemModule->getName(),
             ];
             $definitionsArray[] = [
                 'id' => $def->getId(),
