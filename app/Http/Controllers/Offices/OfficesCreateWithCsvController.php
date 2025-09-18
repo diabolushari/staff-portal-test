@@ -50,7 +50,9 @@ class OfficesCreateWithCsvController extends Controller
 
         if (! $officeHierarchyResponse->data) {
             // Handle error or return a default value
-            throw new \Exception('Failed to create office hierarchy: response data is null');
+            return response()->json([
+                'message' => 'Failed to create office hierarchy: response data is null',
+            ], 500);
         }
 
         $officeHierarchyCode = $officeHierarchyResponse->data['hierarchy_code'];
@@ -69,6 +71,11 @@ class OfficesCreateWithCsvController extends Controller
             'Organization-Distribution',
             'Office Type'
         );
+        if (! $officeTypeResponse->data) {
+            return response()->json([
+                'message' => 'Failed to get office type',
+            ], 500);
+        }
 
         $officeTypeMap = [];
         foreach ($officeTypeResponse->data as $officeType) {
