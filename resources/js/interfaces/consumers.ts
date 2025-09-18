@@ -105,19 +105,20 @@ export interface OfficeHierarchy {
   hierarchy_code: string
   hierarchy_name: string
 }
+export interface Consumer{
 
-export interface ConsumerData {
-  consumer: {
-    connection_id: number | string
+  connection_id: number | string
     consumer_type_id: number | string
     organization_name: string
     applicant_code: string
     consumer_pan: string
     consumer_tan?: string | null
     consumer_gstin?: string | null
-    consumer_type: ParameterValues[]
+    consumer_type: ParameterValues
     [key: string]: any
-  }
+}
+export interface ConsumerData {
+  consumer: Consumer
   contact: {
     connection_id: number | string
     version_id: number | null

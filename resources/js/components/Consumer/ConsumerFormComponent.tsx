@@ -7,13 +7,14 @@ import SelectList from '@/ui/form/SelectList'
 import CheckBox from '@/ui/form/CheckBox'
 import Button from '@/ui/button/Button'
 import useInertiaPost from '@/hooks/useInertiaPost'
+import { ConsumerData } from '@/interfaces/consumers'
 
 interface Props {
   consumer_types: ParameterValues[]
   districts: any[]
   states: any[]
   connection_id: number
-  data?: any
+  data?: ConsumerData
 }
 
 // 🔹 Helper to compare two addresses
@@ -71,9 +72,10 @@ export default function ConsumerFormComponent({
 
     primary_email: contact?.primary_email ?? '',
     primary_phone: contact?.primary_phone ?? '',
+    _method: consumer ? 'PUT' : undefined,
   })
 
-  const { post, loading, errors } = useInertiaPost(
+  const { post, loading, errors } = useInertiaPost<typeof formData>(
     consumer ? route('consumers.update', consumer.connection_id) : route('consumers.store')
   )
 
@@ -100,14 +102,9 @@ export default function ConsumerFormComponent({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (consumer) {
-      post({ ...formData, _method: 'PUT' })
-    } else {
-      post(formData)
-    }
-    console.log(formData)
+    post(formData)
   }
-  console.log(states, districts)
+
   return (
     <form
       className='flex flex-col gap-6'
@@ -318,22 +315,26 @@ export default function ConsumerFormComponent({
               setValue={(val) => updateOtherAddressField('billing', 'pincode', val)}
               required
             />
-            <SelectList
-              label='District'
-              list={districts}
-              dataKey='region_id'
-              displayKey='region_name'
-              setValue={(val) => updateOtherAddressField('billing', 'district_id', val)}
-              value={formData.other_addresses.billing.district_id}
-            />
-            <SelectList
-              label='State'
-              list={states}
-              dataKey='region_id'
-              displayKey='region_name'
-              setValue={(val) => updateOtherAddressField('billing', 'state_id', val)}
-              value={formData.other_addresses.billing.state_id}
-            />
+            {districts && (
+              <SelectList
+                label='District'
+                list={districts}
+                dataKey='region_id'
+                displayKey='region_name'
+                setValue={(val) => updateOtherAddressField('billing', 'district_id', val)}
+                value={formData.other_addresses.billing.district_id}
+              />
+            )}
+            {states && (
+              <SelectList
+                label='State'
+                list={states}
+                dataKey='region_id'
+                displayKey='region_name'
+                setValue={(val) => updateOtherAddressField('billing', 'state_id', val)}
+                value={formData.other_addresses.billing.state_id}
+              />
+            )}
           </div>
         </Card>
       )}
@@ -379,22 +380,26 @@ export default function ConsumerFormComponent({
               setValue={(val) => updateOtherAddressField('premises', 'pincode', val)}
               required
             />
-            <SelectList
-              label='District'
-              list={districts}
-              dataKey='region_id'
-              displayKey='region_name'
-              setValue={(val) => updateOtherAddressField('premises', 'district_id', val)}
-              value={formData.other_addresses.premises.district_id}
-            />
-            <SelectList
-              label='State'
-              list={states}
-              dataKey='region_id'
-              displayKey='region_name'
-              setValue={(val) => updateOtherAddressField('premises', 'state_id', val)}
-              value={formData.other_addresses.premises.state_id}
-            />
+            {districts && (
+              <SelectList
+                label='District'
+                list={districts}
+                dataKey='region_id'
+                displayKey='region_name'
+                setValue={(val) => updateOtherAddressField('premises', 'district_id', val)}
+                value={formData.other_addresses.premises.district_id}
+              />
+            )}
+            {states && (
+              <SelectList
+                label='State'
+                list={states}
+                dataKey='region_id'
+                displayKey='region_name'
+                setValue={(val) => updateOtherAddressField('premises', 'state_id', val)}
+                value={formData.other_addresses.premises.state_id}
+              />
+            )}
           </div>
         </Card>
       )}
