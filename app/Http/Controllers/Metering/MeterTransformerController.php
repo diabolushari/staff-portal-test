@@ -5,24 +5,22 @@ namespace App\Http\Controllers\Metering;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Metering\MeterTransformerFormRequest;
 use App\Services\Metering\MeterTransformerService;
-use Grpc\ChannelCredentials;
+use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
-use Proto\Parameters\ListParameterValuesRequest;
-use App\Services\Parameters\ParameterValueService;
-
 
 class MeterTransformerController extends Controller
 {
     protected MeterTransformerService $transformerService;
+
     protected ParameterValueService $parameterValueService;
 
     public function __construct(MeterTransformerService $transformerService,
-                 ParameterValueService $parameterValueService)
+        ParameterValueService $parameterValueService)
     {
         $this->transformerService = $transformerService;
-       $this->parameterValueService = $parameterValueService;
+        $this->parameterValueService = $parameterValueService;
     }
 
     /**
@@ -43,13 +41,12 @@ class MeterTransformerController extends Controller
     public function create(): Response|RedirectResponse
     {
         $parameterRequests = [
-            'ownershipTypes' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter CTPT', 'Ownership Type')->data,
-            'accuracyClasses' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter CTPT', 'Accuracy Class')->data,
-            'burdens' =>    $this->parameterValueService->getParameterValues(1,100,null, 'Meter CTPT', 'Burden')->data,
-            'makes' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter CTPT', 'Make')->data,
-            'types' => $this->parameterValueService->getParameterValues(1,100,null, 'Meter CTPT', 'Type')->data
+            'ownershipTypes' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Ownership Type')->data,
+            'accuracyClasses' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Accuracy Class')->data,
+            'burdens' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Burden')->data,
+            'makes' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Make')->data,
+            'types' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Type')->data,
         ];
-
 
         return Inertia::render('MeterTransformers/MeterTransformerForm', $parameterRequests);
     }
