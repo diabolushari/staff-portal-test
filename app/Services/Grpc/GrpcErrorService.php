@@ -33,7 +33,7 @@ class GrpcErrorService
         $errorMessage = self::getErrorMessage($status);
 
         if ($flashError) {
-            session()->flash('error', $errorMessage);
+            session()->flash('error', "$status->code: $errorMessage");
         }
 
         return $redirectResponse;
@@ -43,7 +43,7 @@ class GrpcErrorService
      * Convert extracted gRPC errors to validation error format
      *
      * @param  object  $status  The gRPC status object
-     * @return array Associative array of field => error message
+     * @return array<string, string> Associative array of field => error message
      */
     public static function convertToValidationError($status): array
     {
@@ -65,6 +65,11 @@ class GrpcErrorService
 
     /**
      * Process ErrorInfo type errors based on status code
+     *
+     * @param  array{
+     *   metadata: array{field?: string, message?: string, conflict_field?: string, conflict_value?: string}
+     * }  $error
+     * @return array<string, string>
      */
     private static function processErrorInfo(array $error, int $statusCode): array
     {
@@ -107,7 +112,10 @@ class GrpcErrorService
     /**
      * Get user-friendly error message for non-validation errors
      *
-     * @param  object  $status
+     * @param  object{
+     *   code: int,
+     *   details?: string,
+     * }  $status
      */
     private static function getErrorMessage($status): string
     {
@@ -123,7 +131,7 @@ class GrpcErrorService
             14 => 'Service temporarily unavailable.',
             15 => 'Data corruption detected.',
             16 => 'Authentication required.',
-            default => $status->details ?: 'An error occurred while processing your request.',
+            default => $status->details ?? 'An error occurred while processing your request.',
         };
     }
 }
