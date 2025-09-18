@@ -74,22 +74,20 @@ class ConnectionController extends Controller
         $meterConnectionRels = $meterConnectionRelResponse->data;
         $meters = [];
 
-        if ($meterConnectionRels === null) {
-            return Inertia::render('Connections/ConnectionsShow', [
-                'connection' => $connection->data,
-                'meters' => $meters,
-            ]);
-        }
-        foreach ($meterConnectionRels as $meterConnectionRel) {
-            if (isset($meterConnectionRel['meter_id'])) {
-                $meterResponse = $this->meterService->getMeter($meterConnectionRel['meter_id']);
-                if (! $meterResponse->hasError()) {
-                    $meters[] = [
-                        'relationship' => $meterConnectionRel,
-                        'meter' => $meterResponse->data,
-                    ];
+        if ($meterConnectionRels !== null) {
+            foreach ($meterConnectionRels as $meterConnectionRel) {
+                if (isset($meterConnectionRel['meter_id'])) {
+                    $meterResponse = $this->meterService->getMeter($meterConnectionRel['meter_id']);
+                    if (! $meterResponse->hasError()) {
+                        $meters[] = [
+                            'relationship' => $meterConnectionRel,
+                            'meter' => $meterResponse->data,
+                        ];
+                    }
                 }
             }
+        } else {
+            $meters = [];
         }
 
         return Inertia::render('Connections/ConnectionsShow', [
