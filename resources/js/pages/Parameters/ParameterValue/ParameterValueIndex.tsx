@@ -28,8 +28,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/parameter-value',
   },
 ]
-//TODO missing props interface
-//TODO what happens when you delete attribute from definition
 
 interface Props {
   values: ParameterValues[]
@@ -63,21 +61,30 @@ export default function ParameterValueIndex({ values, domains, definitions, filt
     router.get(route('parameter-value.edit', item.id))
   }
 
+  const handleCreateClick = () => {
+    router.get(route('parameter-value.create'))
+  }
+
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={settingsReferenceData}
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
-        <CardHeader
-          title='Parameter Values'
-          subheading='Add a new parameter value.'
-          addUrl={route('parameter-value.create')}
-        />
+        <div className='mb-4 flex items-center justify-between'>
+          <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Values</h2>
+          <button
+            onClick={handleCreateClick}
+            className='rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
+          >
+            + Add Value
+          </button>
+        </div>
         <ListSearch
           title='Parameter Value'
           url={route('parameter-value.index')}
           search={filters.search}
+          filters={filters}
         />
         <ParameterValueSearchForm
           parameterDomains={domains}

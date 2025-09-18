@@ -44,5 +44,7 @@ export interface ParameterValues {
   sort_priority: number
   notes: string
   definition: Partial<ParameterDefinition> | null
+  domain: Partial<ParameterDomain> | null
+  system_module: Partial<SystemModule> | null
 }
   
