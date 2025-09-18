@@ -10,6 +10,7 @@ import {
 	Shield,
 	Wrench,
 	Zap,
+  Trash2
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import StrongText from "@/typography/StrongText";
@@ -89,6 +90,10 @@ export function MeterTab({
 		router.visit(route("connection.meter.create", { id: connectionId }));
 	}
 
+  function handleDeleteMeter(rel_id:number){
+    router.delete(route('meter-connection-rel.destroy', { id: rel_id }));
+  }
+
 	return (
 		<Card className="relative w-full rounded-lg bg-white">
 			<div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
@@ -110,10 +115,11 @@ export function MeterTab({
 						return (
 							<div
 								key={meter.meter_id}
-								onClick={() => handleMeterClick(meter.meter_id)}
 								className="mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-3 py-4 transition-shadow last:mb-0 hover:shadow-md"
 							>
-								<div className="flex items-start justify-between">
+								<div className="flex items-start justify-between"
+                     onClick={() => handleMeterClick(meter.meter_id)}
+                >
 									{/* Left side info */}
 									<div className="flex flex-1 flex-col gap-3 p-2">
 										<div className="flex flex-col gap-2">
@@ -300,7 +306,16 @@ export function MeterTab({
 										</div>
 									</div>
 								</div>
-							</div>
+                <button
+                  onClick={() => {
+                    handleDeleteMeter(relationship.rel_id);
+                  }}
+                  className="inline-flex items-center justify-center rounded-md border border-red-200 bg-white px-2 py-1 text-red-600 shadow-sm hover:bg-red-50 hover:border-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 transition-colors"
+                  title="Delete meter"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
 						);
 					})
 				) : (
