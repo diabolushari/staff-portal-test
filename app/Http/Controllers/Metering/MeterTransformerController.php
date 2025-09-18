@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Metering;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Metering\MeterTransformerFormRequest;
 use App\Services\Metering\MeterTransformerService;
+use App\Services\Metering\MeterTransformerRelService;
 use Grpc\ChannelCredentials;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -16,12 +17,15 @@ use App\Services\Parameters\ParameterValueService;
 class MeterTransformerController extends Controller
 {
     protected MeterTransformerService $transformerService;
+    protected MeterTransformerRelService $transformerRelService;
     protected ParameterValueService $parameterValueService;
 
     public function __construct(MeterTransformerService $transformerService,
+                 MeterTransformerRelService $transformerRelService,
                  ParameterValueService $parameterValueService)
     {
         $this->transformerService = $transformerService;
+       $this->transformerRelService = $transformerRelService;
        $this->parameterValueService = $parameterValueService;
     }
 
@@ -78,9 +82,11 @@ class MeterTransformerController extends Controller
     public function show(int $id): Response
     {
         $response = $this->transformerService->getTransformer($id);
+        $relation = $this->transformerRelService->getRelByCtptId($id);
 
         return Inertia::render('MeterTransformers/MeterTransformerShow', [
-            'transformer' => $response->data,
+            'transformer' => $response->data ?? null,
+            'relation' => $relation->data,
         ]);
     }
 

@@ -5,6 +5,8 @@ import type { BreadcrumbItem } from "@/types";
 import StrongText from "@/typography/StrongText";
 import Button from "@/ui/button/Button";
 import { transformerNavItems } from "@/components/Navbar/navitems";
+import { TabGroup } from '@/ui/Tabs/TabGroup'
+import { TabsContent } from '@radix-ui/react-tabs'
 
 interface ParameterValue {
 	parameter_value: string;
@@ -31,20 +33,47 @@ export interface MeterTransformer {
 	is_active: boolean;
 }
 
+interface Relation {
+	meter_id: number;
+	version_id: number;
+  }
+
 interface Props {
 	transformer: MeterTransformer;
+	relation: Relation;
 }
 const breadcrumbs = [
 	{ title: "Meter CTPT", href: "/meter-ctpt" },
 ];
 
+
 export default function MeterTransformerShow({
 	transformer,
+	relation,
 }: Readonly<Props>) {
 	const breadcrumbs: BreadcrumbItem[] = [
 		{ title: "Meter CTPT", href: "/meter-ctpt" },
 		{ title: "Detail", href: `/meter-ctpt/${transformer.meter_ctpt_id}` },
 	];
+
+	const tabs = [
+		{
+		  value: "details",
+		  label: "Meter Details",
+		  href: relation ? route("meters.show", relation.meter_id) : "#",
+		},
+		{
+		  value: "meter-ctpt",
+		  label: "Meter CTPT",
+		  href: route("meter-ctpt.show", transformer.meter_ctpt_id),
+		},
+		{
+		  value: "meter-ctpt-rel",
+		  label: "Meter CTPT Relations",
+		  href: relation ? route("meter-ctpt-rel.show", relation.version_id) : "#",
+		},
+	  ];
+
 
 	const formatDate = (dateStr?: string | null) => {
 		if (!dateStr) return "-";
@@ -60,17 +89,18 @@ export default function MeterTransformerShow({
 			router.delete(`/meter-ctpt/${transformer.meter_ctpt_id}`);
 		}
 	};
-	
 
 	return (
 		<MainLayout breadcrumb={breadcrumbs}
 					  navItems={transformerNavItems}>
-			<div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6">
-				{/* Header Section */}
-				<div className="flex flex-col gap-2">
-					<div className="flex items-center justify-between">
-						<StrongText className="text-2xl font-semibold text-[#252c32]">
-							{transformer.ctpt_serial}
+			<TabGroup tabs={tabs} defaultValue="meter-ctpt">
+				<TabsContent value='meter-ctpt'>
+				<div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6">
+					{/* Header Section */}
+					<div className="flex flex-col gap-2">
+						<div className="flex items-center justify-between">
+							<StrongText className="text-2xl font-semibold text-[#252c32]">
+								{transformer.ctpt_serial}
 						</StrongText>
 						{/* <Button
 							label="Delete Transformer"
@@ -177,6 +207,8 @@ export default function MeterTransformerShow({
 					</CardContent>
 				</Card>
 			</div>
+			</TabsContent>
+			</TabGroup>
 		</MainLayout>
 	);
 }

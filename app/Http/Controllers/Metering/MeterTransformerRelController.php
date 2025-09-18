@@ -56,8 +56,8 @@ class MeterTransformerRelController extends Controller
         $meters = $this->meterService->listMeters(); // gRPC call for meters
 
         $parameterRequests = [
-            'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'MeterTransformerRel', 'Status')->data,
-            'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'MeterTransformerRel', 'Change Reason')->data,
+            'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Status')->data,
+            'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Change Reason')->data,
         ];
 
         return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [

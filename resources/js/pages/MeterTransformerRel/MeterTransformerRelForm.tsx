@@ -74,9 +74,7 @@ export default function MeterTransformerRelForm({
 
   const mergedctpts = ctpts.map(ctpt => ({
   ...ctpt,
-  mergedValue: `#${ctpt.meter_ctpt_id} - ${ctpt?.type?.parameter_value ?? ''} - ${
-    ctpt.ct_ratio ? ctpt.ct_ratio : ctpt.pt_ratio
-  }`, 
+  mergedValue: `#${ctpt.meter_ctpt_id} - ${ctpt?.type?.parameter_value ?? ''}`,
 }));
 
 

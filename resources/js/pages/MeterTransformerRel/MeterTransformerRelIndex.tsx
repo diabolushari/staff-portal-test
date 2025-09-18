@@ -50,8 +50,7 @@ export default function MeterTransformerRelIndex({ relations }: Props) {
       breadcrumb={breadcrumbs}
       navItems={transformerrelNavItems}
     >
-      <TabGroup tabs={MeterTabs}>
-        <TabsContent value='meter-ctpt-rel'>
+     
           <div className='flex h-full flex-1 flex-col gap-6 p-6'>
             <CardHeader title='Meter CTPT Relations' />
 
@@ -82,8 +81,7 @@ export default function MeterTransformerRelIndex({ relations }: Props) {
               />
             )}
           </div>
-        </TabsContent>
-      </TabGroup>
+        
     </MainLayout>
   )
 }
