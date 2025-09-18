@@ -32,7 +32,7 @@ export default function ParameterValueSearchForm({
   const [parameterDefinitionsApiData] = useFetchRecord<ParameterDefinition[]>(
     formData.domain_name ? 'api/parameter-definitions?domain_name=' + formData.domain_name : ''
   )
-  console.log(parameterDefinitionsApiData)
+
   useEffect(() => {
     if (formData.domain_name) {
       setParameterDefinitionData(parameterDefinitionsApiData ?? parameterDefinitions)
@@ -44,7 +44,7 @@ export default function ParameterValueSearchForm({
   }
 
   return (
-    <div>
+    <div className='flex items-center justify-between gap-2'>
       <form onSubmit={handleSubmit}>
         <div className='grid w-2/3 items-end gap-2 md:grid-cols-3'>
           <div className='flex flex-col'>
@@ -79,12 +79,21 @@ export default function ParameterValueSearchForm({
 
           <div className='flex flex-col'>
             <Button
-              label='Search'
+              label='Apply'
               type='submit'
             />
           </div>
         </div>
       </form>
+      <Button
+        label='Reset'
+        onClick={() => {
+          setFormValue('search')('')
+          setFormValue('domain_name')('')
+          setFormValue('parameter_name')('')
+          router.get(route('parameter-value.index'))
+        }}
+      />
     </div>
   )
 }

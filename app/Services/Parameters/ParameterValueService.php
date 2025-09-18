@@ -70,6 +70,16 @@ class ParameterValueService
                     'id' => $definition->getId(),
                     'parameter_name' => $definition->getParameterName(),
                 ];
+                $domain = $definition->getDomain();
+                $domainArray = [
+                    'id' => $domain->getId(),
+                    'domain_name' => $domain->getDomainName(),
+                ];
+                $system = $domain->getSystemModule();
+                $systemArray = [
+                    'id' => $system->getId(),
+                    'name' => $system->getName(),
+                ];
 
                 $parameterValuesArray[] = [
                     'id' => $parameterValue->getId(),
@@ -84,6 +94,8 @@ class ParameterValueService
                     'sort_priority' => $parameterValue->getSortPriority(),
                     'notes' => $parameterValue->getNotes(),
                     'definition' => $definitionArray,
+                    'domain' => $domainArray,
+                    'system_module' => $systemArray,
                 ];
             }
         }

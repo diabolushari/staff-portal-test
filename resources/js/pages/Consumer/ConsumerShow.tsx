@@ -78,12 +78,6 @@ export default function ConsumerShow({ consumer }: Readonly<ConsumerShowProps>) 
           </div>
           <div className='flex items-center gap-2'>
             <button
-              onClick={onBack}
-              className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#252c32] transition-colors hover:bg-gray-50'
-            >
-              Back
-            </button>
-            <button
               onClick={onEdit}
               className='flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
             >

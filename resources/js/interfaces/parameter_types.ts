@@ -23,6 +23,7 @@ export interface ParameterDefinition {
   attribute4_name?: string
   attribute5_name?: string
   domain?: {id: number, domain_name: string}
+  system_module?: Partial<SystemModule> | null
 
 }
 
@@ -43,5 +44,7 @@ export interface ParameterValues {
   sort_priority: number
   notes: string
   definition: Partial<ParameterDefinition> | null
+  domain: Partial<ParameterDomain> | null
+  system_module: Partial<SystemModule> | null
 }
   

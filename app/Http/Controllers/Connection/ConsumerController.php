@@ -73,11 +73,19 @@ class ConsumerController extends Controller
             'Connection',
             'Consumer Type'
         );
-        $geoRegions = $this->geoRegionsService->getGeoRegions();
+        $districts = $this->geoRegionsService->getGeoRegions(
+            'Administrative',
+            'District'
+        );
+        $states = $this->geoRegionsService->getGeoRegions(
+            'Administrative',
+            'State'
+        );
 
         return Inertia::render('Consumer/ConsumerForm', [
             'consumer_types' => $consumerTypes->data,
-            'geo_regions' => $geoRegions->data,
+            'districts' => $districts->data,
+            'states' => $states->data,
             'consumer' => $consumer->data,
         ]);
     }
@@ -92,6 +100,6 @@ class ConsumerController extends Controller
             ]);
         }
 
-        return redirect()->route('connection.index');
+        return redirect()->route('connections.index');
     }
 }

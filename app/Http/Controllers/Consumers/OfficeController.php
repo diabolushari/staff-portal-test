@@ -35,7 +35,7 @@ class OfficeController extends Controller
         );
         if ($offices->hasError()) {
             return $offices->error ?? redirect()->back()->withErrors([
-                'message' => $offices->statusDetails ?? 'Unknown error',
+                'message' => $offices->statusDetails ?? 'Error',
             ]);
         }
         $officeTypes = $this->parameterValueService->getParameterValues(1, 100, null, null, 'Distribution Office Type');
@@ -119,7 +119,7 @@ class OfficeController extends Controller
 
     public function edit(int $id): Response|RedirectResponse
     {
-        $office = $this->officeService->getOffice($id);
+        $office = $this->officeService->getOffice($id, null);
         if ($office->hasError()) {
             return $office->error ?? redirect()->back()->withErrors([
                 'message' => $office->statusDetails ?? 'Unknown error',
@@ -133,7 +133,7 @@ class OfficeController extends Controller
             'Office Type'
         );
 
-        $office = $office->data['office'];
+        $office = $office->data['office'] ?? [];
 
         return Inertia::render('Offices/OfficeCreate', [
             'office' => $office,

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Consumers\GeoRegionFormRequest;
 use App\Services\Consumers\GeoRegionsService;
 use App\Services\Parameters\ParameterValueService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class CreateGeoregionSeedController extends Controller
 {
@@ -14,7 +16,7 @@ class CreateGeoregionSeedController extends Controller
         private readonly ParameterValueService $parameterValueService,
     ) {}
 
-    public function __invoke()
+    public function __invoke(): Response|JsonResponse
     {
         // Fetch parameter values
         $geoRegionTypes = collect(
@@ -38,11 +40,18 @@ class CreateGeoregionSeedController extends Controller
                 'message' => 'GeoRegion Classifications not found, Please create a Regions Domain and Region Classification Parameter',
             ]);
         }
-
-        // Load CSV
         $path = base_path('app/seed/kerala_regions.csv');
-        $csvData = array_map('str_getcsv', file($path));
-        $header = array_shift($csvData); // first row is header
+        $fileLines = file($path);
+
+        if ($fileLines === false) {
+            return response()->json([
+                'message' => 'Unable to read file at '.$path,
+            ]);
+        }
+
+        $csvData = array_map('str_getcsv', $fileLines);
+        /** @var string[] $header */
+        $header = array_shift($csvData);
 
         foreach ($csvData as $row) {
             $rowData = array_combine($header, $row);

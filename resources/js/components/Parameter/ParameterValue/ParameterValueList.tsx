@@ -1,5 +1,6 @@
 import { ParameterValues } from '@/interfaces/parameter_types'
-import { Pencil, Trash2 } from 'lucide-react'
+import StrongText from '@/typography/StrongText'
+import { Layers, Package, Pencil, Trash2 } from 'lucide-react'
 
 interface Props {
   parameterValues: ParameterValues[]
@@ -27,7 +28,7 @@ export default function ParameterValuesList({
           >
             <div className='flex items-start justify-between'>
               <div
-                className='flex flex-1 flex-col gap-2.5 p-[10px] cursor-pointer'
+                className='flex flex-1 cursor-pointer flex-col gap-2.5 p-[10px]'
                 onClick={() => onView?.(param)}
               >
                 <div className='flex flex-col gap-1'>
@@ -40,6 +41,32 @@ export default function ParameterValuesList({
                         {param.parameter_code}
                       </div>
                     </div>
+                  </div>
+                  {param.definition?.parameter_name && (
+                    <div className='flex items-center gap-[3px]'>
+                      <Layers className='text-dark-gray h-3.5 w-3.5' />
+                      <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                        <StrongText>Parameter Name:</StrongText> {param.definition?.parameter_name}
+                      </div>
+                    </div>
+                  )}
+                  <div className='flex w-full items-center gap-5'>
+                    {param.domain?.domain_name && (
+                      <div className='flex items-center gap-[3px]'>
+                        <Layers className='text-dark-gray h-3.5 w-3.5' />
+                        <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                          <StrongText>Domain:</StrongText> {param.domain.domain_name}
+                        </div>
+                      </div>
+                    )}
+                    {param.system_module?.name && (
+                      <div className='flex items-center gap-[3px]'>
+                        <Package className='text-dark-gray h-3.5 w-3.5' />
+                        <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                          <StrongText>Module:</StrongText> {param.system_module?.name}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {param.notes && (
@@ -64,7 +91,7 @@ export default function ParameterValuesList({
                 </div>
 
                 {/* Inline Edit/Delete buttons */}
-                <div className='flex items-center gap-3 mt-2'>
+                <div className='mt-2 flex items-center gap-3'>
                   {onEdit && (
                     <button
                       onClick={() => onEdit(param)}

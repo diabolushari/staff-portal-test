@@ -103,17 +103,6 @@ export default function ParameterDefinitionForm({
       >
         <form onSubmit={handleSubmit}>
           <div className='md:grid md:grid-cols-2 md:gap-4'>
-            {/* Parameter Name */}
-            <div className='flex flex-col'>
-              <Input
-                label='Parameter Name'
-                setValue={setFormValue('parameter_name')}
-                value={formData.parameter_name}
-                placeholder='Type your Parameter Name'
-                error={errors?.parameter_name}
-              />
-            </div>
-
             {/* Domain */}
             <div className='flex flex-col'>
               <SelectList
@@ -127,7 +116,16 @@ export default function ParameterDefinitionForm({
                 displayKey='domain_name'
               />
             </div>
-
+            {/* Parameter Name */}
+            <div className='flex flex-col'>
+              <Input
+                label='Parameter Name'
+                setValue={setFormValue('parameter_name')}
+                value={formData.parameter_name}
+                placeholder='Type your Parameter Name'
+                error={errors?.parameter_name}
+              />
+            </div>
             {/* Attributes */}
             {attributes.map((attr, index) => (
               <div
@@ -154,7 +152,6 @@ export default function ParameterDefinitionForm({
                 />
               </div>
             )}
-
             {/* Effective Date Checkbox */}
             <div className='flex flex-col'>
               <CheckBox

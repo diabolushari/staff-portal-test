@@ -39,6 +39,7 @@ class OfficeService
         ?string $officeName = null
     ): GrpcServiceResponse {
         $request = new OfficeListRequest;
+
         if ($search !== null) {
             $request->setSearch($search);
         }

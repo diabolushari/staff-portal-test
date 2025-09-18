@@ -3,11 +3,12 @@ import { connectionsNavItems } from '@/components/Navbar/navitems'
 import { BreadcrumbItem } from '@/types'
 import ConsumerFormComponent from '@/components/Consumer/ConsumerFormComponent'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import { ConsumerData } from '@/interfaces/consumers'
 
 interface Props {
   consumer_types: ParameterValues[]
   connection_id: number
-  consumer?: any
+  consumer?: ConsumerData
   districts: any[]
   states: any[]
 }
