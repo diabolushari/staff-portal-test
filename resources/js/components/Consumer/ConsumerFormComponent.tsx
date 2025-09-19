@@ -432,11 +432,12 @@ export default function ConsumerFormComponent({
           </div>
         </div>
       </Card>
-
-      <Button
-        type='submit'
-        label='Submit'
-      />
+      <div className='flex justify-end'>
+        <Button
+          type='submit'
+          label='Submit'
+        />
+      </div>
     </form>
   )
 }

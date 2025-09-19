@@ -9,10 +9,13 @@ import { TabGroup } from '@/ui/Tabs/TabGroup'
 import TinyContainer from '@/ui/Card/TinyContainer'
 import { Calendar, PencilIcon } from 'lucide-react'
 import { Connection, ConsumerData } from '@/interfaces/consumers'
+import { MeterData, MeterTab } from '../Connections/MeterTab'
+import { Meter } from '../Meters/MeterIndex'
 
 interface ConsumerShowProps {
   consumer: ConsumerData
   connection: Connection
+  meters: MeterData[]
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -41,7 +44,11 @@ const InfoBlock = ({ label, value }: { label: string; value?: string | number })
   </div>
 )
 
-export default function ConsumerShow({ consumer, connection }: Readonly<ConsumerShowProps>) {
+export default function ConsumerShow({
+  consumer,
+  connection,
+  meters,
+}: Readonly<ConsumerShowProps>) {
   const onEdit = () => router.visit(`/consumers/${Number(consumer?.consumer?.connection_id)}/edit`)
   const tabs = [
     {
@@ -53,6 +60,10 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
       value: 'consumer',
       label: 'Consumer',
       href: route('connection.consumer', consumer.consumer.connection_id),
+    },
+    {
+      value: 'meter',
+      label: 'Meter',
     },
   ]
 
@@ -212,6 +223,12 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
                 </div>
               </Card>
             </div>
+          </TabsContent>
+          <TabsContent value='meter'>
+            <MeterTab
+              meters={meters}
+              connectionId={connection?.connection_id}
+            />
           </TabsContent>
         </TabGroup>
       </div>
