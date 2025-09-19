@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Google\Protobuf\GPBEmpty;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
+use Proto\Metering\GetMeterTransformerRelByCtptIdRequest;
 use Proto\Metering\GetMeterTransformerRelByMeterIdRequest;
 use Proto\Metering\MeterTransformerRelCreateRequest;
 use Proto\Metering\MeterTransformerRelIdRequest;
@@ -136,6 +137,30 @@ class MeterTransformerRelService
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status, $response, false),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success(
+            self::relProtoToArray($response->getRel()),
+            $response,
+            $status->code,
+            $status->details
+        );
+    }
+
+    public function getRelByCtptId(int $ctptId): GrpcServiceResponse
+    {
+        $request = new GetMeterTransformerRelByCtptIdRequest;
+        $request->setCtptId($ctptId);
+
+        [$response, $status] = $this->client->GetMeterTransformerRelByCtptId($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
                 $response,
                 $status->code,
                 $status->details
