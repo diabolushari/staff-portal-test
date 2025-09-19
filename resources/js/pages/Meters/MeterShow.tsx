@@ -304,21 +304,25 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
                     label='Programmable CT Ratio'
                     value={meter.programmable_ct_ratio}
                   />
+
+                  {/* Internal CT as ratio */}
                   <InfoItem
-                    label='Internal CT Primary'
-                    value={meter.internal_ct_primary}
+                    label='Internal CT Ratio'
+                    value={
+                      meter.internal_ct_primary && meter.internal_ct_secondary
+                        ? `${meter.internal_ct_primary} / ${meter.internal_ct_secondary}`
+                        : '-'
+                    }
                   />
+
+                  {/* Internal PT as ratio */}
                   <InfoItem
-                    label='Internal CT Secondary'
-                    value={meter.internal_ct_secondary}
-                  />
-                  <InfoItem
-                    label='Internal PT Primary'
-                    value={meter.internal_pt_primary}
-                  />
-                  <InfoItem
-                    label='Internal PT Secondary'
-                    value={meter.internal_pt_secondary}
+                    label='Internal PT Ratio'
+                    value={
+                      meter.internal_pt_primary && meter.internal_pt_secondary
+                        ? `${meter.internal_pt_primary} / ${meter.internal_pt_secondary}`
+                        : '-'
+                    }
                   />
                 </Section>
 
