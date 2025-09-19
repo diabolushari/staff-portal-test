@@ -51,8 +51,9 @@ class MeterTransformerRelController extends Controller
     public function create(): Response|RedirectResponse
     {
         // Fetch dropdowns
-        $ctpts = $this->meterTransformerService->listTransformers();
-        $meters = $this->meterService->listMeters(); // gRPC call for meters
+        $ctpts = $this->meterTransformerService->listTransformersWithNoRelation();
+        $meters = $this->meterService->listMeters();
+        $relations = $this->relService->listRelations();
 
         $parameterRequests = [
             'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Status')->data,
