@@ -22,6 +22,7 @@ export const NAV_ITEMS = [
       { title: 'Parties', href: '/parties', description: 'Manage parties' },
       { title: 'Connections', href: '/connections', description: 'Manage connections' },
       { title: 'Meters', href: '/meters', description: 'Manage meters' },
+      { title: 'Meter CTPT', href: '/meter-ctpt', description: 'Manage meter CTPT' },
     ],
   },
   { title: 'Billing', href: '/billing', description: 'Invoices and payments' },

@@ -27,7 +27,7 @@ class MeterTimezoneTypeRelService
 
     public function createMeterTimezoneTypeRel(array $data): GrpcServiceResponse
     {
-        $request = new CreateMeterTimezoneTypeRelRequest();
+        $request = new CreateMeterTimezoneTypeRelRequest;
         if (isset($data['rel_id'])) {
             $request->setRelId($data['rel_id']);
         }
@@ -58,7 +58,7 @@ class MeterTimezoneTypeRelService
 
     public function updateMeterTimezoneTypeRel(array $data): GrpcServiceResponse
     {
-        $request = new UpdateMeterTimezoneTypeRelRequest();
+        $request = new UpdateMeterTimezoneTypeRelRequest;
         $request->setRelId($data['rel_id']);
         $request->setMeterId($data['meter_id']);
         $request->setTimezoneTypeId($data['timezone_type_id']);
@@ -87,7 +87,7 @@ class MeterTimezoneTypeRelService
 
     public function getMeterTimezoneTypeRelByVersionId(int $versionId): GrpcServiceResponse
     {
-        $request = new GetMeterTimezoneTypeRelByVersionIdRequest();
+        $request = new GetMeterTimezoneTypeRelByVersionIdRequest;
         $request->setVersionId($versionId);
 
         [$response, $status] = $this->client->GetMeterTimezoneTypeRelByVersionId($request)->wait();
@@ -111,7 +111,7 @@ class MeterTimezoneTypeRelService
 
     public function getActiveMeterTimezoneTypeRel(int $relId): GrpcServiceResponse
     {
-        $request = new GetActiveMeterTimezoneTypeRelRequest();
+        $request = new GetActiveMeterTimezoneTypeRelRequest;
         $request->setRelId($relId);
 
         [$response, $status] = $this->client->GetActiveMeterTimezoneTypeRel($request)->wait();
@@ -135,14 +135,14 @@ class MeterTimezoneTypeRelService
 
     public function getActiveMeterTimezoneTypeRelByMeterId(int $meterId): GrpcServiceResponse
     {
-        $request = new GetActiveMeterTimezoneTypeRelByMeterIdRequest();
+        $request = new GetActiveMeterTimezoneTypeRelByMeterIdRequest;
         $request->setMeterId($meterId);
 
         [$response, $status] = $this->client->GetActiveMeterTimezoneTypeRelByMeterId($request)->wait();
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
-                GrpcErrorService::handleErrorResponse($status),
+                GrpcErrorService::handleErrorResponse($status, null, false),
                 $response,
                 $status->code,
                 $status->details
