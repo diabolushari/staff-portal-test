@@ -49,7 +49,6 @@ export default function ConnectionsShow({
       label: 'Meter',
     },
   ]
-  console.log(connection)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -217,20 +216,6 @@ export default function ConnectionsShow({
             </div>
           </TabsContent>
 
-          <TabsContent value='activity'>
-            <Card className='p-6'>
-              <div className='mb-6 flex items-center justify-between'>
-                <StrongText className='text-lg font-semibold text-gray-900'>
-                  Activity History
-                </StrongText>
-              </div>
-              <div className='py-12 text-center'>
-                <Calendar className='mx-auto mb-4 h-12 w-12 text-gray-400' />
-                <p className='text-gray-600'>Activity history will be displayed here</p>
-                <p className='mt-2 text-sm text-gray-500'>Feature coming soon</p>
-              </div>
-            </Card>
-          </TabsContent>
           <TabsContent value='meter'>
             <MeterTab
               meters={meters}
