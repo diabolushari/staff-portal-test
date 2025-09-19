@@ -95,10 +95,11 @@ class ConsumerService
         [$response, $status] = $this->client->updateConsumer($grpcRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
-                GrpcErrorService::handleErrorResponse($status),
+                GrpcErrorService::handleErrorResponse($status, null, false),
                 $response,
                 $status->code,
                 $status->details
+
             );
         }
 
