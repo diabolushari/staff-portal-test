@@ -1,17 +1,6 @@
+import { Connection } from '@/interfaces/consumers'
 import { router } from '@inertiajs/react'
 import { Zap, Cpu, Calendar, Hash } from 'lucide-react'
-
-interface Connection {
-  connection_id: number
-  consumer_number: number
-  admin_office_code: string
-  service_office_code: string
-  tariff_id: number
-  contract_demand_kva_val: number
-  connected_date: string
-  effective_start: string
-  is_current: boolean
-}
 
 interface Props {
   connections: Connection[]
@@ -53,9 +42,16 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
                       <div className='flex items-center gap-[3px]'>
                         <Hash className='text-dark-gray h-3.5 w-3.5' />
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                          Connection Type: {connection?.connection_type?.parameter_value}
+                        </div>
+                      </div>
+                      <div className='flex items-center gap-[3px]'>
+                        <Hash className='text-dark-gray h-3.5 w-3.5' />
+                        <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
                           Admin Office: {connection.admin_office_code}
                         </div>
                       </div>
+
                       <div className='flex items-center gap-[3px]'>
                         <Cpu className='text-dark-gray h-3.5 w-3.5' />
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
@@ -68,13 +64,13 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
                       <div className='flex items-center gap-[3px]'>
                         <Zap className='text-dark-gray h-3.5 w-3.5' />
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          Tariff: {connection.tariff_id}
+                          Tariff: {connection?.tariff?.parameter_value}
                         </div>
                       </div>
                       <div className='flex items-center gap-[3px]'>
                         <Zap className='text-dark-gray h-3.5 w-3.5' />
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          Demand: {connection.contract_demand_kva_val} kVA
+                          Demand: {connection?.contract_demand_kw_val} kVA
                         </div>
                       </div>
                     </div>

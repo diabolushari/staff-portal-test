@@ -27,7 +27,9 @@ export default function ParameterValueSearchForm({
     parameter_name: filters.parameter_name ?? '',
     search: filters.search ?? '',
   })
-  const [parameterDefinitionData, setParameterDefinitionData] = useState<ParameterDefinition[]>([])
+  const [parameterDefinitionData, setParameterDefinitionData] = useState<
+    ParameterDefinition[] | null
+  >(null)
 
   const [parameterDefinitionsApiData] = useFetchRecord<ParameterDefinition[]>(
     formData.domain_name ? 'api/parameter-definitions?domain_name=' + formData.domain_name : ''
@@ -35,7 +37,9 @@ export default function ParameterValueSearchForm({
 
   useEffect(() => {
     if (formData.domain_name) {
-      setParameterDefinitionData(parameterDefinitionsApiData ?? parameterDefinitions)
+      setParameterDefinitionData(parameterDefinitionsApiData)
+    } else {
+      setParameterDefinitionData(parameterDefinitions)
     }
   }, [parameterDefinitionsApiData])
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

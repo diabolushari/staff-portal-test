@@ -32,16 +32,28 @@ export const MeterTabs = (meterId: number, ctptId?: number, relId?: number) => [
     label: 'Meter Details',
     href: route('meters.show', meterId),
   },
-  {
-    value: 'meter-ctpt',
-    label: 'Meter CTPT',
-    href: ctptId ? route('meter-ctpt.show', ctptId) : undefined,
-  },
-  {
-    value: 'meter-ctpt-rel',
-    label: 'Meter CTPT Relations',
-    href: relId ? route('meter-ctpt-rel.show', relId) : undefined,
-  },
+  ctptId
+    ? {
+        value: 'meter-ctpt',
+        label: 'Meter CTPT',
+        href: ctptId ? route('meter-ctpt.show', ctptId) : undefined,
+      }
+    : {
+        value: 'create-ctpt-rel',
+        label: 'Add CTPT',
+        href: route('meter-ctpt-rel.create'),
+      },
+  relId
+    ? {
+        value: 'meter-ctpt-rel',
+        label: 'Meter CTPT Relations',
+        href: relId ? route('meter-ctpt-rel.show', relId) : undefined,
+      }
+    : {
+        value: 'create-ctpt-rel',
+        label: '',
+        href: route('meter-ctpt-rel.create'),
+      },
 ]
 
 interface Props {
@@ -100,8 +112,8 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
   const isUpdate = !!(currentTimezone as any)?.rel_id
   const url = isUpdate
     ? route('meter-timezone-rel.update', {
-      meter_timezone_rel: (currentTimezone as any).rel_id,
-    })
+        meter_timezone_rel: (currentTimezone as any).rel_id,
+      })
     : route('meter-timezone-rel.store')
 
   const { post, loading } = useInertiaPost<StoreForm | UpdateForm>(url, {

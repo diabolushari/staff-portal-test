@@ -119,10 +119,4 @@ export const transformerrelNavItems: navItem[] = [
     href: '/meter-ctpt-rel',
     icon: <ListIcon className='h-4 w-4' />,
   },
-
-  {
-    title: 'Add Meter CTPT Relation',
-    href: '/meter-ctpt-rel/create',
-    icon: <HomeIcon className='h-4 w-4' />,
-  },
 ]

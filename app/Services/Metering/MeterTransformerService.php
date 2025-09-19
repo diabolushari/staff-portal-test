@@ -6,15 +6,14 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
-use Proto\Metering\MeterTransformerMessage;
+use Proto\Metering\CreateMeterTransformerMessage;
 use Proto\Metering\CreateMeterTransformerRequest;
 use Proto\Metering\DeleteMeterTransformerRequest;
 use Proto\Metering\GetMeterTransformerRequest;
 use Proto\Metering\ListMeterTransformersRequest;
-use Proto\Metering\MeterTransformerResponse;
+use Proto\Metering\ListMeterTransformerWithNoRelationRequest;
+use Proto\Metering\MeterTransformerMessage;
 use Proto\Metering\MeterTransformerServiceClient;
-use Proto\Metering\UpdateMeterTransformerRequest;
-use Proto\Metering\CreateMeterTransformerMessage;
 
 class MeterTransformerService
 {
@@ -30,35 +29,33 @@ class MeterTransformerService
 
     public function createTransformer(array $data): GrpcServiceResponse
     {
-    $transformer = new CreateMeterTransformerMessage();
-    $transformer->setOwnershipTypeId($data['ownership_type_id']);
-    $transformer->setAccuracyClassId($data['accuracy_class_id']);
-    $transformer->setBurdenId($data['burden_id']);
-    $transformer->setMakeId($data['make_id']);
-    $transformer->setTypeId($data['type_id']);
-    $transformer->setCtptSerial($data['ctpt_serial']);
-    $transformer->setRatioPrimaryValue($data['ratio_primary_value'] ?? '');
-    $transformer->setRatioSecondaryValue($data['ratio_secondary_value'] ?? '');
-    
-    if (!empty($data['manufacture_date'])) {
-        $timestamp = new Timestamp();
-        $timestamp->fromDateTime(new \DateTime($data['manufacture_date']));
-        $transformer->setManufactureDate($timestamp);
-    }
+        $transformer = new CreateMeterTransformerMessage;
+        $transformer->setOwnershipTypeId($data['ownership_type_id']);
+        $transformer->setAccuracyClassId($data['accuracy_class_id']);
+        $transformer->setBurdenId($data['burden_id']);
+        $transformer->setMakeId($data['make_id']);
+        $transformer->setTypeId($data['type_id']);
+        $transformer->setCtptSerial($data['ctpt_serial']);
+        $transformer->setRatioPrimaryValue($data['ratio_primary_value'] ?? '');
+        $transformer->setRatioSecondaryValue($data['ratio_secondary_value'] ?? '');
 
-    $transformer->setCreatedBy($data['created_by']);
+        if (! empty($data['manufacture_date'])) {
+            $timestamp = new Timestamp;
+            $timestamp->fromDateTime(new \DateTime($data['manufacture_date']));
+            $transformer->setManufactureDate($timestamp);
+        }
 
+        $transformer->setCreatedBy($data['created_by']);
 
-    // Wrap in Create request
-    $request = new CreateMeterTransformerRequest();
-    $request->setTransformer($transformer);
-
+        // Wrap in Create request
+        $request = new CreateMeterTransformerRequest;
+        $request->setTransformer($transformer);
 
         [$response, $status] = $this->client->CreateMeterTransformer($request)->wait();
         \Log::info('Create transformer response:', [
             'status_code' => $status->code,
             'status_details' => $status->details,
-            'response_id' => $response ? $response->getMeterCtptId() : null
+            'response_id' => $response ? $response->getMeterCtptId() : null,
         ]);
 
         if ($status->code !== 0) {
@@ -107,7 +104,6 @@ class MeterTransformerService
         $request = new ListMeterTransformersRequest;
 
         [$response, $status] = $this->client->ListMeterTransformers($request)->wait();
-          
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -122,13 +118,37 @@ class MeterTransformerService
         foreach ($response->getTransformers() as $transformer) {
             $transformersArray[] = self::transformerProtoToArray($transformer);
         }
-            logger()->info('Fetched transformers from gRPC', $transformersArray);
-
+        logger()->info('Fetched transformers from gRPC', $transformersArray);
 
         return GrpcServiceResponse::success($transformersArray, $response, $status->code, $status->details);
     }
 
-   
+    public function listTransformersWithNoRelation(): GrpcServiceResponse
+    {
+        $request = new ListMeterTransformerWithNoRelationRequest;
+        $request->setPage(1);
+        $request->setPageSize(100);
+
+        [$response, $status] = $this->client->ListMeterTransformersWithNoRelation($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $transformersArray = [];
+        foreach ($response->getTransformers() as $transformer) {
+            $transformersArray[] = self::transformerProtoToArray($transformer);
+        }
+        logger()->info('Fetched transformers from gRPC', $transformersArray);
+
+        return GrpcServiceResponse::success($transformersArray, $response, $status->code, $status->details);
+    }
+
     public function deleteTransformer(int $id): GrpcServiceResponse
     {
         $request = new DeleteMeterTransformerRequest;
@@ -151,33 +171,32 @@ class MeterTransformerService
     /**
      * Convert proto to array
      */
-    public static function transformerProtoToArray(MeterTransformerMessage  $t): array
+    public static function transformerProtoToArray(MeterTransformerMessage $t): array
     {
-       
-        $createdTs  = $t->getCreatedTs() ?: null;
-        $updatedTs  = $t->getUpdatedTs() ?: null;
 
+        $createdTs = $t->getCreatedTs() ?: null;
+        $updatedTs = $t->getUpdatedTs() ?: null;
 
         return [
-                'meter_ctpt_id' => $t->getMeterCtptId(),
-                'ownership_type_id' => $t->getOwnershipTypeId(),
-                'accuracy_class_id' => $t->getAccuracyClassId(),
-                'burden_id' => $t->getBurdenId(),
-                'make_id' => $t->getMakeId(),
-                'type_id' => $t->getTypeId(),
-                'ownership_type' => self::transformParameterValueToArray($t->getOwnershipType()),
-                'accuracy_class' => self::transformParameterValueToArray($t->getAccuracyClass()),
-                'burden' => self::transformParameterValueToArray($t->getBurden()),
-                'make' => self::transformParameterValueToArray($t->getMake()),
-                'type' => self::transformParameterValueToArray($t->getType()),
-                'ctpt_serial' => $t->getCtptSerial(),
-                'ratio_primary_value'   => $t->getRatioPrimaryValue(),
-                'ratio_secondary_value' => $t->getRatioSecondaryValue(),
-                'manufacture_date'      => $t->hasManufactureDate() ? $t->getManufactureDate()->toDateTime()->format('Y-m-d') : null,
+            'meter_ctpt_id' => $t->getMeterCtptId(),
+            'ownership_type_id' => $t->getOwnershipTypeId(),
+            'accuracy_class_id' => $t->getAccuracyClassId(),
+            'burden_id' => $t->getBurdenId(),
+            'make_id' => $t->getMakeId(),
+            'type_id' => $t->getTypeId(),
+            'ownership_type' => self::transformParameterValueToArray($t->getOwnershipType()),
+            'accuracy_class' => self::transformParameterValueToArray($t->getAccuracyClass()),
+            'burden' => self::transformParameterValueToArray($t->getBurden()),
+            'make' => self::transformParameterValueToArray($t->getMake()),
+            'type' => self::transformParameterValueToArray($t->getType()),
+            'ctpt_serial' => $t->getCtptSerial(),
+            'ratio_primary_value' => $t->getRatioPrimaryValue(),
+            'ratio_secondary_value' => $t->getRatioSecondaryValue(),
+            'manufacture_date' => $t->hasManufactureDate() ? $t->getManufactureDate()->toDateTime()->format('Y-m-d') : null,
 
-                'created_ts' => $t->getCreatedTs() ?: null,
-                'updated_ts' => $t->getUpdatedTs() ?: null,
-                'created_by' => $t->getCreatedBy(),
+            'created_ts' => $t->getCreatedTs() ?: null,
+            'updated_ts' => $t->getUpdatedTs() ?: null,
+            'created_by' => $t->getCreatedBy(),
         ];
     }
 

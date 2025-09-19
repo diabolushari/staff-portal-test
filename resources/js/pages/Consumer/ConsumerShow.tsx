@@ -8,10 +8,14 @@ import { TabsContent } from '@radix-ui/react-tabs'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
 import TinyContainer from '@/ui/Card/TinyContainer'
 import { Calendar, PencilIcon } from 'lucide-react'
-import { ConsumerData } from '@/interfaces/consumers'
+import { Connection, ConsumerData } from '@/interfaces/consumers'
+import { MeterData, MeterTab } from '../Connections/MeterTab'
+import { Meter } from '../Meters/MeterIndex'
 
 interface ConsumerShowProps {
   consumer: ConsumerData
+  connection: Connection
+  meters: MeterData[]
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -40,9 +44,12 @@ const InfoBlock = ({ label, value }: { label: string; value?: string | number })
   </div>
 )
 
-export default function ConsumerShow({ consumer }: Readonly<ConsumerShowProps>) {
+export default function ConsumerShow({
+  consumer,
+  connection,
+  meters,
+}: Readonly<ConsumerShowProps>) {
   const onEdit = () => router.visit(`/consumers/${Number(consumer?.consumer?.connection_id)}/edit`)
-  const onBack = () => router.visit('/consumers')
   const tabs = [
     {
       value: 'details',
@@ -53,6 +60,10 @@ export default function ConsumerShow({ consumer }: Readonly<ConsumerShowProps>) 
       value: 'consumer',
       label: 'Consumer',
       href: route('connection.consumer', consumer.consumer.connection_id),
+    },
+    {
+      value: 'meter',
+      label: 'Meter',
     },
   ]
 
@@ -72,8 +83,7 @@ export default function ConsumerShow({ consumer }: Readonly<ConsumerShowProps>) 
               <TinyContainer variant='success'>Consumer</TinyContainer>
             </div>
             <div className='text-sm text-slate-600'>
-              Connection ID:{' '}
-              <span className='font-medium'>{consumer?.consumer?.connection_id}</span>
+              Consumer Number: <span className='font-medium'>{connection?.consumer_number}</span>
             </div>
           </div>
           <div className='flex items-center gap-2'>
@@ -213,6 +223,12 @@ export default function ConsumerShow({ consumer }: Readonly<ConsumerShowProps>) 
                 </div>
               </Card>
             </div>
+          </TabsContent>
+          <TabsContent value='meter'>
+            <MeterTab
+              meters={meters}
+              connectionId={connection?.connection_id}
+            />
           </TabsContent>
         </TabGroup>
       </div>

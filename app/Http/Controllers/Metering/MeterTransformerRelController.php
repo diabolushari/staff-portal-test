@@ -4,23 +4,22 @@ namespace App\Http\Controllers\Metering;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Metering\MeterTransformerRelFormRequest;
-use App\Services\Metering\MeterTransformerRelService;
-use App\Services\Parameters\ParameterValueService;
-use App\Services\Metering\MeterTransformerService;
 use App\Services\Metering\MeterService;
-use Grpc\ChannelCredentials;
+use App\Services\Metering\MeterTransformerRelService;
+use App\Services\Metering\MeterTransformerService;
+use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
-use Proto\Parameters\ListParameterValuesRequest;
-use Proto\Parameters\ParameterValueServiceClient;
-use Illuminate\Support\Facades\Log;
 
 class MeterTransformerRelController extends Controller
 {
     protected MeterTransformerRelService $relService;
+
     protected MeterService $meterService;
-    protected MeterTransformerService $meterTransformerService; 
+
+    protected MeterTransformerService $meterTransformerService;
 
     public function __construct(
         MeterTransformerRelService $relService,
@@ -52,12 +51,13 @@ class MeterTransformerRelController extends Controller
     public function create(): Response|RedirectResponse
     {
         // Fetch dropdowns
-        $ctpts = $this->meterTransformerService->listTransformers(); 
-        $meters = $this->meterService->listMeters(); // gRPC call for meters
+        $ctpts = $this->meterTransformerService->listTransformersWithNoRelation();
+        $meters = $this->meterService->listMeters();
+        $relations = $this->relService->listRelations();
 
         $parameterRequests = [
-            'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'MeterTransformerRel', 'Status')->data,
-            'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'MeterTransformerRel', 'Change Reason')->data,
+            'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Status')->data,
+            'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Change Reason')->data,
         ];
 
         return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [
@@ -81,12 +81,12 @@ class MeterTransformerRelController extends Controller
             return $response->error;
         }
 
-         Log::info('Successfully created MeterTransformerRel:', [
-        'data' => $data,
-        'grpcResponse' => $response,
-    ]);
+        Log::info('Successfully created MeterTransformerRel:', [
+            'data' => $data,
+            'grpcResponse' => $response,
+        ]);
 
-        return redirect()->route('meter-ctpt-rel.index')->with('success', 'Relation created successfully.');
+        return redirect()->route('meters.show', $response->data['meter_id'])->with('success', 'Relation created successfully.');
     }
 
     /**
@@ -103,52 +103,47 @@ class MeterTransformerRelController extends Controller
         ]);
     }
 
-  public function edit(int $id): Response
-{
-    $response = $this->relService->getRelation($id);
-    $ctpts = $this->meterTransformerService->listTransformers();
-    $meters = $this->meterService->listMeters();
+    public function edit(int $id): Response
+    {
+        $response = $this->relService->getRelation($id);
+        $ctpts = $this->meterTransformerService->listTransformers();
+        $meters = $this->meterService->listMeters();
 
-    // Fetch statuses + change reasons
-    $parameterRequests = [
+        // Fetch statuses + change reasons
+        $parameterRequests = [
             'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'MeterTransformerRel', 'Status')->data,
             'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'MeterTransformerRel', 'Change Reason')->data,
         ];
 
-   
-
-    return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [
-        'relation'      => $response->data,      
-        'ctpts'         => $ctpts->data,         
-        'meters'        => $meters->data,        
-        ...$parameterRequests,
-    ]);
-}
-
-public function update(MeterTransformerRelFormRequest $request, int $id): RedirectResponse
-{
-    $data = $request->toArray();
-    $data['updated_by'] = auth()->id(); // Use updated_by, not created_by
-    \Log::debug('Update request data:', $data); // Add this line
-
-    // Call updateRelation instead of createRelation
-    $response = $this->relService->updateRelation($data, $id);
-
-    if ($response->hasError()) {
-        return $response->error;
+        return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [
+            'relation' => $response->data,
+            'ctpts' => $ctpts->data,
+            'meters' => $meters->data,
+            ...$parameterRequests,
+        ]);
     }
 
-    \Log::info('Successfully updated MeterTransformerRel:', [
-        'id' => $id,
-        'data' => $data,
-        'grpcResponse' => $response,
-    ]);
+    public function update(MeterTransformerRelFormRequest $request, int $id): RedirectResponse
+    {
+        $data = $request->toArray();
+        $data['updated_by'] = auth()->id(); // Use updated_by, not created_by
+        \Log::debug('Update request data:', $data); // Add this line
 
-    return redirect()->route('meter-ctpt-rel.index')->with('success', 'Relation updated successfully.');
-}
+        // Call updateRelation instead of createRelation
+        $response = $this->relService->updateRelation($data, $id);
 
+        if ($response->hasError()) {
+            return $response->error;
+        }
 
+        \Log::info('Successfully updated MeterTransformerRel:', [
+            'id' => $id,
+            'data' => $data,
+            'grpcResponse' => $response,
+        ]);
 
+        return redirect()->route('meter-ctpt-rel.index')->with('success', 'Relation updated successfully.');
+    }
 
     /**
      * Remove the specified resource from storage.

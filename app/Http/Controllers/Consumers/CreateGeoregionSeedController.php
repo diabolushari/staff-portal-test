@@ -33,12 +33,12 @@ class CreateGeoregionSeedController extends Controller
 
         $geoRegionClassifications = collect(
             $this->parameterValueService
-                ->getParameterValues(1, 50, null, 'Regions', 'Region Classification: parameteralue "Administrative"')
+                ->getParameterValues(1, 50, null, 'Regions', 'Region Classification')
                 ->data
         );
         if ($geoRegionClassifications->isEmpty()) {
             return response()->json([
-                'message' => 'GeoRegion Classifications not found, Please create a Regions Domain and Region Classification Parameter',
+                'message' => 'GeoRegion Classifications not found, Please create a Regions Domain and Region Classification Parameter (values: Administrative)',
             ]);
         }
         $path = base_path('app/seed/kerala_regions.csv');

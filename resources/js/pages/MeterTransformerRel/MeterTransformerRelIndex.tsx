@@ -50,40 +50,36 @@ export default function MeterTransformerRelIndex({ relations }: Props) {
       breadcrumb={breadcrumbs}
       navItems={transformerrelNavItems}
     >
-      <TabGroup tabs={MeterTabs}>
-        <TabsContent value='meter-ctpt-rel'>
-          <div className='flex h-full flex-1 flex-col gap-6 p-6'>
-            <CardHeader title='Meter CTPT Relations' />
+      <div className='flex h-full flex-1 flex-col gap-6 p-6'>
+        <CardHeader title='Meter CTPT Relations' />
 
-            <ListSearch
-              title='Relations Search'
-              url={route('meter-ctpt-rel.index')}
-              // setItems={setItems} ← implement later if you want filtering like MeterTransformerIndex
-            />
+        <ListSearch
+          title='Relations Search'
+          url={route('meter-ctpt-rel.index')}
+          // setItems={setItems} ← implement later if you want filtering like MeterTransformerIndex
+        />
 
-            {items && items.length > 0 ? (
-              <MeterTransformerRelList
-                relations={items}
-                onEdit={(rel) => router.get(`/meter-ctpt-rel/${rel.version_id}/edit`)}
-                onDelete={handleDeleteClick}
-                onShow={handleShow}
-              />
-            ) : (
-              <div className='p-6 text-center text-slate-500'>
-                <p>No meter transformer relations found.</p>
-              </div>
-            )}
-
-            {showDeleteModal && selectedRel && (
-              <DeleteModal
-                setShowModal={setShowDeleteModal}
-                title={`Delete Relation ${selectedRel.version_id}`}
-                url={`/meter-ctpt-rel/${selectedRel.version_id}`}
-              />
-            )}
+        {items && items.length > 0 ? (
+          <MeterTransformerRelList
+            relations={items}
+            onEdit={(rel) => router.get(`/meter-ctpt-rel/${rel.version_id}/edit`)}
+            onDelete={handleDeleteClick}
+            onShow={handleShow}
+          />
+        ) : (
+          <div className='p-6 text-center text-slate-500'>
+            <p>No meter transformer relations found.</p>
           </div>
-        </TabsContent>
-      </TabGroup>
+        )}
+
+        {showDeleteModal && selectedRel && (
+          <DeleteModal
+            setShowModal={setShowDeleteModal}
+            title={`Delete Relation ${selectedRel.version_id}`}
+            url={`/meter-ctpt-rel/${selectedRel.version_id}`}
+          />
+        )}
+      </div>
     </MainLayout>
   )
 }
