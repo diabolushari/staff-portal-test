@@ -4,38 +4,22 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 import MainLayout from '@/layouts/main-layout'
 import Button from '@/ui/button/Button'
 import Card from '@/ui/Card/Card'
-import CardHeader from '@/ui/Card/CardHeader'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import DatePicker from '@/ui/form/DatePicker'
-import CheckBox from '@/ui/form/CheckBox'
-import { transformerrelNavItems } from '@/components/Navbar/navitems'
-import { useEffect } from 'react'
-import { c } from 'node_modules/framer-motion/dist/types.d-Bq-Qm38R'
-
-// --- Type Definitions ---
-export interface Option {
-  id: number
-  parameterValue: string
-}
+import { meterNavItems } from '@/components/Navbar/navitems'
+import { Meter } from '../Meters/MeterIndex'
+import StrongText from '@/typography/StrongText'
+import { ParameterValues } from '@/interfaces/parameter_types'
 
 interface MeterTransformerRelFormProps {
-  ctpts: Option[]
-  meters: Option[]
-  statuses: Option[]
-  changeReasons: Option[]
-  relation?: any // for edit mode
+  ctpts: any[]
+  meter: Meter
+  statuses: ParameterValues[]
+  changeReasons: ParameterValues[]
+  relation?: any
 }
 
-const breadcrumbs = [
-  { title: 'Meter CTPT Relations', href: '/meter-ctpt-rel' },
-  {
-    title: 'Add Relation',
-    href: '/meter-ctpt-rel/create',
-  },
-]
-
-// --- Helper Functions ---
 const toYMD = (iso?: string | null): string => {
   if (!iso) return ''
   const d = new Date(iso)
@@ -46,27 +30,34 @@ const toISOorNull = (ymd: string) => (ymd ? new Date(ymd).toISOString() : null)
 
 export default function MeterTransformerRelForm({
   ctpts,
-  meters,
+  meter,
   statuses,
   changeReasons,
   relation,
 }: MeterTransformerRelFormProps) {
-  const isEditing = Boolean(relation)
+  const breadcrumbs = [
+    { title: 'Meter', href: '/meters/' + meter.meter_id },
+    {
+      title: 'Add CTPT',
+      href: '/meter-ctpt-rel/create',
+    },
+  ]
 
-  console.log(statuses, changeReasons) // Debugging line
+  const isEditing = Boolean(relation)
 
   const { formData, setFormValue, setAll } = useCustomForm({
     version_id: relation?.version_id ?? null,
     ctpt_id: relation?.ctpt_id ?? null,
-    meter_id: relation?.meter_id ?? null,
+    meter_id: meter?.meter_id ?? null,
     status_id: relation?.status_id ?? null,
     change_reason_id: relation?.change_reason_id ?? null,
     faulty_date: toYMD(relation?.faulty_date) ?? '',
     ctpt_energise_date: toYMD(relation?.ctpt_energise_date) ?? '',
     ctpt_change_date: toYMD(relation?.ctpt_change_date) ?? '',
+    _method: isEditing ? 'PUT' : undefined,
   })
 
-  const { post, loading, errors } = useInertiaPost(
+  const { post, loading, errors } = useInertiaPost<typeof formData>(
     isEditing ? `/meter-ctpt-rel/${relation.version_id}` : '/meter-ctpt-rel'
   )
 
@@ -75,60 +66,33 @@ export default function MeterTransformerRelForm({
     mergedValue: `#${ctpt?.meter_ctpt_id} - ${ctpt?.type?.parameter_value ?? ''}`,
   }))
 
-  console.log('Merged CT/PTs:', mergedctpts) // Debugging line
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    const payload = {
-      version_id: formData.version_id,
-      ctpt_id: formData.ctpt_id,
-      meter_id: formData.meter_id,
-      status_id: formData.status_id,
-      change_reason_id: formData.change_reason_id,
-      faulty_date: toISOorNull(formData.faulty_date),
-      ctpt_energise_date: toISOorNull(formData.ctpt_energise_date),
-      ctpt_change_date: toISOorNull(formData.ctpt_change_date),
-      // effective_start_ts: formData.effective_start_ts,
-      // effective_end_ts: formData.effective_end_ts || null,
-      //is_active: formData.is_active,
-    }
-
-    if (isEditing) {
-      post({ ...payload, _method: 'PUT' })
-    } else {
-      post(payload)
-    }
+    post(formData)
   }
-
-  const renderSection = (title: string, children: React.ReactNode) => (
-    <div className='rounded-md border border-slate-200 p-4'>
-      <h3 className='mb-4 text-lg font-medium'>{title}</h3>
-      <div className='grid grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-3'>
-        {children}
-      </div>
-    </div>
-  )
 
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={transformerrelNavItems}
+      navItems={meterNavItems}
     >
-      <div className='p-6'>
-        <CardHeader
-          title={isEditing ? 'Edit Relation' : 'Create Relation'}
-          subheading={
-            isEditing ? 'Update relation details' : 'Add a new meter-transformer relation'
-          }
-        />
-        <Card>
-          <form
-            onSubmit={handleSubmit}
-            className='space-y-8'
-          >
-            {renderSection(
-              'Relation Details',
-              <>
+      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
+        <div className='flex items-center gap-2'>
+          <StrongText className='text-2xl font-semibold'>
+            {isEditing ? 'Edit CTPT' : 'Connect CTPT'}
+          </StrongText>
+        </div>
+
+        <form
+          onSubmit={handleSubmit}
+          className='space-y-8'
+        >
+          <Card>
+            <div className='border-b-2 border-gray-200 py-3'>
+              <StrongText className='text-base font-semibold'>CTPT Information</StrongText>
+            </div>
+            <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
+              {ctpts && (
                 <SelectList
                   label='CT/PT'
                   value={formData.ctpt_id}
@@ -138,18 +102,15 @@ export default function MeterTransformerRelForm({
                   displayKey='mergedValue'
                   error={errors.ctpt_id}
                 />
-                {!isEditing && (
-                  <SelectList
-                    label='Meter'
-                    value={formData.meter_id}
-                    setValue={setFormValue('meter_id')}
-                    list={meters}
-                    dataKey='meter_id'
-                    displayKey='meter_serial'
-                    error={errors.meter_id}
-                  />
-                )}
-
+              )}
+              <Input
+                label='Meter'
+                value={meter.meter_serial}
+                setValue={setFormValue('meter_id')}
+                error={errors.meter_id}
+                disabled
+              />
+              {statuses && (
                 <SelectList
                   label='Status'
                   value={formData.status_id}
@@ -159,6 +120,8 @@ export default function MeterTransformerRelForm({
                   displayKey='parameter_value'
                   error={errors.status_id}
                 />
+              )}
+              {changeReasons && (
                 <SelectList
                   label='Change Reason'
                   value={formData.change_reason_id}
@@ -168,67 +131,49 @@ export default function MeterTransformerRelForm({
                   displayKey='parameter_value'
                   error={errors.change_reason_id}
                 />
-              </>
-            )}
-
-            {renderSection(
-              'Dates & Status',
-              <>
-                <DatePicker
-                  label='Faulty Date'
-                  value={formData.faulty_date}
-                  setValue={setFormValue('faulty_date')}
-                  error={errors.faulty_date}
-                />
-                <DatePicker
-                  label='CT/PT Energise Date'
-                  value={formData.ctpt_energise_date}
-                  setValue={setFormValue('ctpt_energise_date')}
-                  error={errors.ctpt_energise_date}
-                />
-                <DatePicker
-                  label='CT/PT Change Date'
-                  value={formData.ctpt_change_date}
-                  setValue={setFormValue('ctpt_change_date')}
-                  error={errors.ctpt_change_date}
-                />
-                {/* <DatePicker
-                  label="Effective Start Timestamp"
-                  value={formData.effective_start_ts}
-                  setValue={setFormValue("effective_start_ts")}
-                  error={errors.effective_start_ts}
-                />
-                <DatePicker
-                  label="Effective End Timestamp"
-                  value={formData.effective_end_ts}
-                  setValue={setFormValue("effective_end_ts")}
-                  error={errors.effective_end_ts}
-                /> */}
-                {/* <CheckBox
-                  label="Is Active"
-                  checked={formData.is_active}
-                  setChecked={setFormValue("is_active")}
-                  error={errors.is_active}
-                /> */}
-              </>
-            )}
-
-            <div className='flex justify-end gap-3 border-t pt-6'>
-              <Button
-                type='button'
-                label='Cancel'
-                variant='secondary'
-                onClick={() => router.get('/meter-ctpt-rel')}
-                disabled={loading}
+              )}
+            </div>
+          </Card>
+          <Card>
+            <div className='border-b-2 border-gray-200 py-3'>
+              <StrongText className='text-base font-semibold'>Dates</StrongText>
+            </div>
+            <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
+              <DatePicker
+                label='Faulty Date'
+                value={formData.faulty_date}
+                setValue={setFormValue('faulty_date')}
+                error={errors.faulty_date}
               />
-              <Button
-                type='submit'
-                label={isEditing ? 'Update Relation' : 'Create Relation'}
-                disabled={loading}
+              <DatePicker
+                label='CT/PT Energise Date'
+                value={formData.ctpt_energise_date}
+                setValue={setFormValue('ctpt_energise_date')}
+                error={errors.ctpt_energise_date}
+              />
+              <DatePicker
+                label='CT/PT Change Date'
+                value={formData.ctpt_change_date}
+                setValue={setFormValue('ctpt_change_date')}
+                error={errors.ctpt_change_date}
               />
             </div>
-          </form>
-        </Card>
+          </Card>
+          <div className='flex justify-end gap-3 border-t pt-6'>
+            <Button
+              type='button'
+              label='Cancel'
+              variant='secondary'
+              onClick={() => router.get('/meter-ctpt-rel')}
+              disabled={loading}
+            />
+            <Button
+              type='submit'
+              label={isEditing ? 'Update Relation' : 'Create Relation'}
+              disabled={loading}
+            />
+          </div>
+        </form>
       </div>
     </MainLayout>
   )

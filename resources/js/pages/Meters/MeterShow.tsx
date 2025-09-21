@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react'
-import { Edit, Trash2 } from 'lucide-react'
+import { Delete, Edit, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
@@ -19,6 +19,8 @@ import { Meter } from './MeterIndex'
 import { meterNavItems } from '@/components/Navbar/navitems'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
 import { TabsContent } from '@radix-ui/react-tabs'
+import MeterTransformerTab from '@/components/Meter/MeterTransformer/MeterTransfomerTab'
+import DeleteButton from '@/ui/button/DeleteButton'
 
 // --- PROPS AND INTERFACES ---
 interface ParameterValue {
@@ -32,35 +34,18 @@ export const MeterTabs = (meterId: number, ctptId?: number, relId?: number) => [
     label: 'Meter Details',
     href: route('meters.show', meterId),
   },
-  ctptId
-    ? {
-        value: 'meter-ctpt',
-        label: 'Meter CTPT',
-        href: ctptId ? route('meter-ctpt.show', ctptId) : undefined,
-      }
-    : {
-        value: 'create-ctpt-rel',
-        label: 'Add CTPT',
-        href: route('meter-ctpt-rel.create'),
-      },
-  relId
-    ? {
-        value: 'meter-ctpt-rel',
-        label: 'Meter CTPT Relations',
-        href: relId ? route('meter-ctpt-rel.show', relId) : undefined,
-      }
-    : {
-        value: 'create-ctpt-rel',
-        label: '',
-        href: route('meter-ctpt-rel.create'),
-      },
+  {
+    value: 'meter-ctpt',
+    label: 'Meter CTPT',
+  },
 ]
 
 interface Props {
   meter: Meter
-  rel?: any
+  ctpt: any
   currentTimezone: any
   timezoneTypes: ParameterValue[]
+  relation: any
 }
 
 interface StoreForm {
@@ -91,9 +76,13 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 )
 
 // --- MAIN COMPONENT: MeterShow ---
-export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }: Readonly<Props>) {
-  console.log(meter)
-
+export default function MeterShow({
+  meter,
+  currentTimezone,
+  timezoneTypes,
+  ctpt,
+  relation,
+}: Readonly<Props>) {
   // --- STATE AND DATA NORMALIZATION ---
   const [isEditing, setIsEditing] = useState(false)
   const currentTzId = useMemo<string | undefined>(
@@ -117,7 +106,7 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
     : route('meter-timezone-rel.store')
 
   const { post, loading } = useInertiaPost<StoreForm | UpdateForm>(url, {
-    onSuccess: () => setIsEditing(false),
+    onComplete: () => setIsEditing(false),
   })
 
   // --- BREADCRUMBS AND FORMATTERS ---
@@ -170,7 +159,7 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
     [timezoneTypes, currentTzId]
   )
 
-  const tabs = MeterTabs(meter.meter_id, rel?.ctpt_id, rel?.version_id)
+  const tabs = MeterTabs(meter.meter_id, ctpt?.ctpt_id, ctpt?.version_id)
 
   return (
     <MainLayout
@@ -186,13 +175,7 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
                 <h1 className='text-3xl font-bold text-gray-800'>{meter.meter_serial}</h1>
                 <p className='text-gray-500'>Meter Details</p>
               </div>
-              <Button
-                label='Delete Meter'
-                onClick={handleDelete}
-                variant='destructive'
-                disabled={loading}
-                icon={<Trash2 className='mr-2 h-4 w-4' />}
-              />
+              <DeleteButton onClick={handleDelete} />
             </div>
 
             {/* Main Content Card */}
@@ -214,23 +197,23 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
                   />
                   <InfoItem
                     label='Ownership'
-                    value={meter.ownership_type.parameter_value}
+                    value={meter?.ownership_type?.parameter_value}
                   />
                   <InfoItem
                     label='Make'
-                    value={meter.meter_make.parameter_value}
+                    value={meter?.meter_make?.parameter_value}
                   />
                   <InfoItem
                     label='Type'
-                    value={meter.meter_type.parameter_value}
+                    value={meter?.meter_type?.parameter_value}
                   />
                   <InfoItem
                     label='Category'
-                    value={meter.meter_category.parameter_value}
+                    value={meter?.meter_category?.parameter_value}
                   />
                   <InfoItem
                     label='Unit'
-                    value={meter.meter_unit.parameter_value}
+                    value={meter?.meter_unit?.parameter_value}
                   />
                   <InfoItem
                     label='Phase'
@@ -248,35 +231,35 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
                 <Section title='Technical Specifications'>
                   <InfoItem
                     label='Accuracy Class'
-                    value={meter.accuracy_class.parameter_value}
+                    value={meter?.accuracy_class?.parameter_value}
                   />
                   <InfoItem
                     label='Dialing Factor'
-                    value={meter.dialing_factor.parameter_value}
+                    value={meter?.dialing_factor?.parameter_value}
                   />
                   <InfoItem
                     label='Digit Count'
-                    value={meter.digit_count}
+                    value={meter?.digit_count}
                   />
                   <InfoItem
                     label='Decimal Digit Count'
-                    value={meter.decimal_digit_count}
+                    value={meter?.decimal_digit_count}
                   />
                   <InfoItem
                     label='Meter Constant'
-                    value={meter.meter_constant}
+                    value={meter?.meter_constant}
                   />
                   <InfoItem
                     label='Meter MF'
-                    value={meter.meter_mf}
+                    value={meter?.meter_mf}
                   />
                   <InfoItem
                     label='Company Seal No.'
-                    value={meter.company_seal_num}
+                    value={meter?.company_seal_num}
                   />
                   <InfoItem
                     label='Reset Type'
-                    value={meter.meter_reset_type.parameter_value}
+                    value={meter?.meter_reset_type?.parameter_value}
                   />
                   <InfoItem
                     label='Smart Meter'
@@ -288,7 +271,7 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
                   />
                   <InfoItem
                     label='Warranty Period (Months)'
-                    value={meter.warranty_period}
+                    value={meter?.warranty_period}
                   />
                 </Section>
 
@@ -298,19 +281,19 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
                 <Section title='CT/PT Specifications'>
                   <InfoItem
                     label='Programmable PT Ratio'
-                    value={meter.programmable_pt_ratio}
+                    value={meter?.programmable_pt_ratio}
                   />
                   <InfoItem
                     label='Programmable CT Ratio'
-                    value={meter.programmable_ct_ratio}
+                    value={meter?.programmable_ct_ratio}
                   />
 
                   {/* Internal CT as ratio */}
                   <InfoItem
                     label='Internal CT Ratio'
                     value={
-                      meter.internal_ct_primary && meter.internal_ct_secondary
-                        ? `${meter.internal_ct_primary} / ${meter.internal_ct_secondary}`
+                      meter?.internal_ct_primary && meter?.internal_ct_secondary
+                        ? `${meter?.internal_ct_primary} / ${meter?.internal_ct_secondary}`
                         : '-'
                     }
                   />
@@ -319,8 +302,8 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
                   <InfoItem
                     label='Internal PT Ratio'
                     value={
-                      meter.internal_pt_primary && meter.internal_pt_secondary
-                        ? `${meter.internal_pt_primary} / ${meter.internal_pt_secondary}`
+                      meter?.internal_pt_primary && meter?.internal_pt_secondary
+                        ? `${meter?.internal_pt_primary} / ${meter?.internal_pt_secondary}`
                         : '-'
                     }
                   />
@@ -424,6 +407,13 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes, rel }
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+        <TabsContent value='meter-ctpt'>
+          <MeterTransformerTab
+            meterId={meter.meter_id}
+            ctpt={ctpt}
+            version_id={relation?.version_id}
+          />
         </TabsContent>
       </TabGroup>
     </MainLayout>

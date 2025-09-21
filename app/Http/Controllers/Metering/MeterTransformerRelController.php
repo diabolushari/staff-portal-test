@@ -53,7 +53,6 @@ class MeterTransformerRelController extends Controller
         // Fetch dropdowns
         $ctpts = $this->meterTransformerService->listTransformersWithNoRelation();
         $meters = $this->meterService->listMeters();
-        $relations = $this->relService->listRelations();
 
         $parameterRequests = [
             'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Status')->data,
@@ -106,19 +105,25 @@ class MeterTransformerRelController extends Controller
     public function edit(int $id): Response
     {
         $response = $this->relService->getRelation($id);
-        $ctpts = $this->meterTransformerService->listTransformers();
-        $meters = $this->meterService->listMeters();
+        $ctpts = $this->meterTransformerService->listTransformersWithNoRelation();
+        $meter = $this->meterService->getMeter($response->data['meter_id']);
+        $currentCtpt = $this->meterTransformerService->getTransformer($response->data['ctpt_id']);
+        $ctptsData = $ctpts->data;
 
+        if ($currentCtpt && ! collect($ctptsData)->contains('meter_ctpt_id', $currentCtpt->data['meter_ctpt_id'])) {
+            $ctptsData[] = $currentCtpt->data;
+        }
         // Fetch statuses + change reasons
+
         $parameterRequests = [
-            'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'MeterTransformerRel', 'Status')->data,
-            'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'MeterTransformerRel', 'Change Reason')->data,
+            'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Status')->data,
+            'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Change Reason')->data,
         ];
 
         return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [
             'relation' => $response->data,
-            'ctpts' => $ctpts->data,
-            'meters' => $meters->data,
+            'ctpts' => $ctptsData,
+            'meter' => $meter->data,
             ...$parameterRequests,
         ]);
     }
