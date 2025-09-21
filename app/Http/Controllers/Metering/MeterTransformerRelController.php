@@ -147,7 +147,7 @@ class MeterTransformerRelController extends Controller
             'grpcResponse' => $response,
         ]);
 
-        return redirect()->route('meter-ctpt-rel.index')->with('success', 'Relation updated successfully.');
+        return redirect()->route('meters.show', $response->data['meter_id'])->with('success', 'Relation updated successfully.');
     }
 
     /**
@@ -161,6 +161,6 @@ class MeterTransformerRelController extends Controller
             return redirect()->back()->withErrors($response->error);
         }
 
-        return redirect()->route('meter-ctpt-rel.index')->with('success', 'Relation deleted successfully.');
+        return redirect()->route('meters.index')->with('success', 'Relation deleted successfully.');
     }
 }

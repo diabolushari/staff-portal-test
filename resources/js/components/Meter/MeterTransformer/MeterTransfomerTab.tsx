@@ -3,6 +3,8 @@ import { PencilIcon, Plus, Trash2 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import StrongText from '@/typography/StrongText'
 import MeterTransformerSection from './MeterTranformerSection'
+import DeleteModal from '@/ui/Modal/DeleteModal'
+import { useState } from 'react'
 
 export default function MeterTransformerTab({
   meterId,
@@ -16,10 +18,13 @@ export default function MeterTransformerTab({
   function handleAddCtpt() {
     router.visit(route('meters.ctpt.create', meterId))
   }
-  function handleDeleteCtpt(ctptId: number) {
-    if (confirm('Are you sure you want to delete this CT/PT?')) {
-      router.delete(route('meter-ctpt.destroy', { id: ctptId }))
-    }
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [selectedTransformer, setSelectedTransformer] = useState(null)
+
+  function handleDeleteClick(item: any) {
+    setShowDeleteModal(true)
+    setSelectedTransformer(item)
   }
 
   return (
@@ -39,12 +44,7 @@ export default function MeterTransformerTab({
           </button>
         )}
       </div>
-
-      <div className='flex flex-col px-6 pb-6'>
-        {ctpt ? (
-          <div className='relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm'>
-            <MeterTransformerSection ctpt={ctpt} />
-
+      <div className="absolute top-4 right-4">
             {version_id && (
               <button
                 onClick={() => router.visit(`/meter-ctpt-rel/${version_id}/edit`)}
@@ -54,8 +54,15 @@ export default function MeterTransformerTab({
                 Edit
               </button>
             )}
+      </div>
+      <div className='flex flex-col px-6 pb-6'>
+        {ctpt ? (
+          <div className='relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm'>
+            <MeterTransformerSection ctpt={ctpt} />
+
+            
             <button
-              onClick={() => handleDeleteCtpt(ctpt.id)}
+              onClick={() => handleDeleteClick(ctpt)}
               className='absolute top-4 right-4 inline-flex items-center justify-center rounded-md border border-red-200 bg-white px-2 py-1 text-red-600 shadow-sm transition-colors hover:border-red-300 hover:bg-red-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600'
               title='Delete CT/PT'
             >
@@ -68,6 +75,13 @@ export default function MeterTransformerTab({
           </div>
         )}
       </div>
+              {showDeleteModal && selectedTransformer && (
+                <DeleteModal
+                  setShowModal={setShowDeleteModal}
+                  title={`Delete CTPT ${ctpt.ctpt_serial}`}
+                  url={route('meter-ctpt-rel.destroy', version_id)}
+                />
+              )}
     </Card>
   )
 }
