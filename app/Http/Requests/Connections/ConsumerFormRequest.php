@@ -30,5 +30,9 @@ class ConsumerFormRequest extends Data
         public string $primaryPhone,
         /** @var string[]|null */
         public ?array $otherAddresses,
+        public string $consumerCin,
+        public bool $seasonalInd,
+        public bool $licenseInd,
+        public bool $openAccessInd,
     ) {}
 }

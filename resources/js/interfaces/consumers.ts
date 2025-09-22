@@ -119,6 +119,10 @@ export interface Consumer{
     consumer_tan?: string | null
     consumer_gstin?: string | null
     consumer_type: ParameterValues
+    consumer_cin: string
+    seasonal_ind: boolean
+    license_ind: boolean
+    open_access_ind: boolean
     [key: string]: any
 }
 export interface ConsumerData {

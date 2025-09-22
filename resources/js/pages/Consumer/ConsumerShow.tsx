@@ -126,6 +126,10 @@ export default function ConsumerShow({
                     value={consumer.consumer.consumer_type?.parameter_value}
                   />
                   <InfoBlock
+                    label='Consumer CIN'
+                    value={safe(consumer.consumer.consumer_cin)}
+                  />
+                  <InfoBlock
                     label='PAN'
                     value={safe(consumer.consumer.consumer_pan)}
                   />
@@ -145,6 +149,18 @@ export default function ConsumerShow({
                     label='GST Withholding'
                     value={consumer.consumer.gst_withholding_ind ? 'Yes' : 'No'}
                   />
+                  <InfoBlock
+                    label='Seasonal'
+                    value={consumer.consumer.seasonal_ind ? 'Yes' : 'No'}
+                  />
+                  <InfoBlock
+                    label='License'
+                    value={consumer.consumer.license_ind ? 'Yes' : 'No'}
+                  />
+                  <InfoBlock
+                    label='Open Access'
+                    value={consumer.consumer.open_access_ind ? 'Yes' : 'No'}
+                  />
                 </div>
               </Card>
 
@@ -160,10 +176,6 @@ export default function ConsumerShow({
                   <InfoBlock
                     label='Phone'
                     value={safe(consumer.contact?.primary_phone)}
-                  />
-                  <InfoBlock
-                    label='Contact Folio'
-                    value={safe(consumer.contact?.contact_folio)}
                   />
                 </div>
               </Card>
@@ -213,15 +225,6 @@ export default function ConsumerShow({
                   </Card>
                 )
               })}
-
-              {/* --- Activity --- */}
-              <Card className='p-6'>
-                <div className='py-12 text-center'>
-                  <Calendar className='mx-auto mb-4 h-12 w-12 text-gray-400' />
-                  <p className='text-gray-600'>Activity history will be displayed here</p>
-                  <p className='mt-2 text-sm text-gray-500'>Feature coming soon</p>
-                </div>
-              </Card>
             </div>
           </TabsContent>
           <TabsContent value='meter'>

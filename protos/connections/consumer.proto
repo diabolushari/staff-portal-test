@@ -30,8 +30,11 @@ message ConsumerMessage {
     optional google.protobuf.Struct application_info = 14;
     optional bool is_current = 15;
     optional google.protobuf.Struct addresses = 16;
-   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto consumer_type = 17;
-
+    optional com.kseb.consumerservice.proto.parameters.ParameterValueProto consumer_type = 17;
+    string consumer_cin = 18;
+    bool seasonal_ind = 19;
+    bool license_ind = 20;
+    bool open_access_ind = 21;
     
 }
 
