@@ -95,6 +95,10 @@ message CreateConnectionRequest {
   int32 updated_by = 25;
   optional string consumer_legacy_code = 26;
   int32 phase_type_id = 27;
+  double power_load_kw_val = 28;
+  double light_load_kw_val = 29;
+  bool othercons_flag = 30;
+  bool cpp_flag = 31;
 }
 message GetConnectionRequest {
     int32 connection_id = 1;
@@ -127,6 +131,10 @@ message ConnectionUpdateRequest {
   int32 updated_by = 24;
   optional string consumer_legacy_code = 25;
   int32 phase_type_id = 26;
+  double power_load_kw_val = 27;
+  double light_load_kw_val = 28;
+  bool othercons_flag = 29;
+  bool cpp_flag = 30;
 }
 
 message ConnectionRequest {

@@ -59,6 +59,8 @@ export interface Connection {
   connected_date: string
   connected_load_info: string | null
   connected_load_kw_val: number
+  power_load_kw_val: number
+  light_load_kw_val: number
   connection_attribs: string | null
   connection_category_id: number | string
   connection_category: ParameterValues
@@ -98,6 +100,8 @@ export interface Connection {
   updated_at: string
   updated_by: number
   version_id: number
+  othercons_flag: boolean
+  cpp_flag: boolean
 }
 
 export interface OfficeHierarchy {
