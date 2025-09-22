@@ -42,7 +42,7 @@ class CreateMeterCtptRelController extends Controller
         ];
 
         $meter = $this->meterService->getMeterById($meterId);
-dd($meter);
+
         return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [
             'ctpts' => $ctpts->data,
             'meters' => $meters->data,

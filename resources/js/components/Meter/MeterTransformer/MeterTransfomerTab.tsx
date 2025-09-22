@@ -20,7 +20,7 @@ export default function MeterTransformerTab({
   }
 
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [selectedTransformer, setSelectedTransformer] = useState(null)
+  const [selectedTransformer, setSelectedTransformer] = useState<any | null>(null)
 
   function handleDeleteClick(item: any) {
     setShowDeleteModal(true)
@@ -43,9 +43,8 @@ export default function MeterTransformerTab({
             Add CT/PT
           </button>
         )}
-      </div>
-      <div className="absolute top-4 right-4">
-            {version_id && (
+
+        {version_id && (
               <button
                 onClick={() => router.visit(`/meter-ctpt-rel/${version_id}/edit`)}
                 className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] hover:bg-gray-50'
@@ -55,6 +54,7 @@ export default function MeterTransformerTab({
               </button>
             )}
       </div>
+    
       <div className='flex flex-col px-6 pb-6'>
         {ctpt ? (
           <div className='relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm'>

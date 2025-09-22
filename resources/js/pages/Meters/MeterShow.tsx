@@ -106,6 +106,7 @@ export default function MeterShow({
     : route('meter-timezone-rel.store')
 
   const { post, loading } = useInertiaPost<StoreForm | UpdateForm>(url, {
+    //onSuccess: () => setIsEditing(false),
     onComplete: () => setIsEditing(false),
   })
 
