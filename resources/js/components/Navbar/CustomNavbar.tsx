@@ -25,7 +25,19 @@ export const NAV_ITEMS = [
       { title: 'Meter CTPT', href: '/meter-ctpt', description: 'Manage meter CTPT' },
     ],
   },
-  { title: 'Billing', href: '/billing', description: 'Invoices and payments' },
+  {
+    title: 'Billing',
+    href: '/billing',
+    description: 'Invoices and payments',
+  },
+  {
+    title: 'Metering',
+    href: '/metering',
+    description: 'Metering tools',
+    children: [
+      { title: 'Meter Reading', href: '/meter-entry', description: 'Manage meter reading' },
+    ],
+  },
   { title: 'Accounts', href: '/accounts', description: 'User accounts and permissions' },
   {
     title: 'Settings',

@@ -120,3 +120,11 @@ export const transformerrelNavItems: navItem[] = [
     icon: <ListIcon className='h-4 w-4' />,
   },
 ]
+
+export const meterEntryNavItems: navItem[] = [
+  {
+    title: 'Search Connections',
+    href: '/billing',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+]

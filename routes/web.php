@@ -16,10 +16,12 @@ use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
+use App\Http\Controllers\Metering\GetMeterEntryController;
 use App\Http\Controllers\Metering\MeterConnectionRelController;
 use App\Http\Controllers\Metering\MeterConnectionRelCreateController;
 use App\Http\Controllers\Metering\MeterConnectionRelEditController;
 use App\Http\Controllers\Metering\MeterController;
+use App\Http\Controllers\Metering\MeterEntryController;
 use App\Http\Controllers\Metering\MeterTimezoneTypeRelController;
 use App\Http\Controllers\Metering\MeterTransfomerCreateController;
 use App\Http\Controllers\Metering\MeterTransformerController;
@@ -73,6 +75,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('meter-ctpt-rel', MeterTransformerRelController::class);
     Route::resource('meter-conn-rel', MeterConnectionRelController::class);
     Route::resource('meter-timezone-rel', MeterTimezoneTypeRel::class);
+
+    Route::resource('meter-entry', MeterEntryController::class);
+    Route::get('meter-entry/{connection_id}/create', GetMeterEntryController::class)->name('meter-entry.create');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
