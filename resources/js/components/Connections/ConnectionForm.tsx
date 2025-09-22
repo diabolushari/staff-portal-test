@@ -117,7 +117,6 @@ export default function ConnectionForm({
       setServiceOfficeData(serviceOfficeApiData.office)
     }
   }, [adminOfficeApiData, serviceOfficeApiData])
-  console.log(adminOfficeApiData, serviceOfficeApiData, formData)
   const handleConnectionCategoryChange = (parameterValueId: string) => {
     setFormValue('connection_category_id')(parameterValueId)
     const category = connectionCategory.find((item) => item.id === Number(parameterValueId))
@@ -127,6 +126,7 @@ export default function ConnectionForm({
   const [subCategoryData] = useFetchRecord<ParameterValues[]>(
     '/api/parameter-values?attribute_name=attribute1Value&attribute_value=' + category
   )
+  console.log(subCategoryData)
   useEffect(() => {
     if (subCategoryData) {
       setSubCategories(subCategoryData)
