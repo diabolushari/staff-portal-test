@@ -3,15 +3,25 @@ import MeterEntryForm from '@/components/Meter/MeterReading/MeterReadingForm'
 import { meterReadingNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
+import { Connection } from '@/interfaces/consumers'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 
 interface Props {
-  connection: any
+  connection: Connection
+  meterHealthTypes: ParameterValues[]
+  ctptHealthTypes: ParameterValues[]
+  anomalyTypes: ParameterValues[]
 }
 
-export default function MeterReadingCreatePage({ connection }: Readonly<Props>) {
+export default function MeterReadingCreatePage({
+  connection,
+  meterHealthTypes,
+  ctptHealthTypes,
+  anomalyTypes,
+}: Readonly<Props>) {
   const breadcrumb: BreadcrumbItem[] = [
     {
       title: 'Meter Reading',
@@ -78,7 +88,12 @@ export default function MeterReadingCreatePage({ connection }: Readonly<Props>) 
             />
           </div>
         </Card>
-        <MeterReadingForm />
+        <MeterReadingForm
+          connection_id={connection?.connection_id}
+          meterHealthTypes={meterHealthTypes}
+          ctptHealthTypes={ctptHealthTypes}
+          anomalyTypes={anomalyTypes}
+        />
       </div>
     </MainLayout>
   )
