@@ -90,6 +90,10 @@ class ConnectionService
         $grpcRequest->setLiveIndicator($request->liveIndicator);
         $grpcRequest->setPhaseTypeId($request->phaseTypeId);
         $grpcRequest->setConsumerLegacyCode($request->consumerLegacyCode ?? '');
+        $grpcRequest->setPowerLoadKwVal($request->powerLoadKwVal);
+        $grpcRequest->setLightLoadKwVal($request->lightLoadKwVal);
+        $grpcRequest->setOtherconsFlag($request->otherconsFlag);
+        $grpcRequest->setCppFlag($request->cppFlag);
 
         [$response, $status] = $this->client->CreateConnection($grpcRequest)->wait();
 
@@ -158,6 +162,10 @@ class ConnectionService
         $grpcRequest->setPhaseTypeId($request->phaseTypeId);
         $grpcRequest->setLiveIndicator($request->liveIndicator);
         $grpcRequest->setConsumerLegacyCode($request->consumerLegacyCode ?? '');
+        $grpcRequest->setPowerLoadKwVal($request->powerLoadKwVal);
+        $grpcRequest->setLightLoadKwVal($request->lightLoadKwVal);
+        $grpcRequest->setOtherconsFlag($request->otherconsFlag);
+        $grpcRequest->setCppFlag($request->cppFlag);
 
         [$response, $status] = $this->client->UpdateConnection($grpcRequest)->wait();
         if ($status->code !== 0) {

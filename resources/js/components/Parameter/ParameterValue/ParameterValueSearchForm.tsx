@@ -41,7 +41,7 @@ export default function ParameterValueSearchForm({
     } else {
       setParameterDefinitionData(parameterDefinitions)
     }
-  }, [formData.domain_name, parameterDefinitionsApiData, parameterDefinitions])
+  }, [parameterDefinitionsApiData, parameterDefinitions])
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     router.get(route('parameter-value.index', formData))

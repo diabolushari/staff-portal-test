@@ -124,6 +124,10 @@ class ConsumerService
         $consumer->setTaxInfo(new Struct);
         $consumer->setIdentityInfo(new Struct);
         $consumer->setApplicationInfo(new Struct);
+        $consumer->setConsumerCin($request->consumerCin);
+        $consumer->setSeasonalInd($request->seasonalInd);
+        $consumer->setLicenseInd($request->licenseInd);
+        $consumer->setOpenAccessInd($request->openAccessInd);
 
         // Convert billing & premises addresses to Struct
         $pendingAddresses = $request->otherAddresses ?? [];
@@ -184,6 +188,10 @@ class ConsumerService
             'identity_info' => $consumer->getIdentityInfo(),
             'application_info' => $consumer->getApplicationInfo(),
             'consumer_type' => $this->parameterValueService->toArray($consumer->getConsumerType()),
+            'consumer_cin' => $consumer->getConsumerCin(),
+            'seasonal_ind' => $consumer->getSeasonalInd(),
+            'license_ind' => $consumer->getLicenseInd(),
+            'open_access_ind' => $consumer->getOpenAccessInd(),
         ];
     }
 
