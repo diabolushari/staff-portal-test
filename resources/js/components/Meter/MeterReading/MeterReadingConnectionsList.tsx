@@ -6,9 +6,9 @@ interface Props {
   connections: Connection[]
 }
 
-export default function BillingConnectionsList({ connections }: Readonly<Props>) {
+export default function MeterReadingConnectionsList({ connections }: Readonly<Props>) {
   const handleConnectionClick = (connection: Connection) => {
-    router.get(route('meter-entry.create', connection.connection_id))
+    router.get(route('meter-reading.create', connection.connection_id))
   }
 
   return (

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class MeterEntryController extends Controller
+class MeterReadingController extends Controller
 {
     public function __construct(private ConnectionService $connectionService) {}
 
@@ -17,7 +17,7 @@ class MeterEntryController extends Controller
         $consumerNumber = $request->input('search') ?? null;
         $connections = $this->connectionService->listConnections($consumerNumber)->data;
 
-        return Inertia::render('MeterEntry/MeterEntryIndexPage', [
+        return Inertia::render('MeterReading/MeterReadingIndexPage', [
             'connections' => $connections,
             'filter' => [
                 'consumerNumber' => $consumerNumber,

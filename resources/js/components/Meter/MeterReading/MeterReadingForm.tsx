@@ -8,10 +8,9 @@ import CheckBox from '@/ui/form/CheckBox'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import RadioGroup from '@/ui/form/RadioGroup'
-import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
 
-export default function MeterEntryForm() {
+export default function MeterReadingForm() {
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     normal_pf: '',
     peak_pf: '',
@@ -36,7 +35,7 @@ export default function MeterEntryForm() {
     <Card className='rounded-lg p-7'>
       <div className='mb-6 flex items-center justify-between'>
         <StrongText className='text-base font-semibold text-[#252c32]'>
-          Connection Details
+          Meter Reading Details
         </StrongText>
       </div>
       <hr className='mb-6 border-[#e5e9eb]' />

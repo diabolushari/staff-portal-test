@@ -1,5 +1,6 @@
-import MeterEntryForm from '@/components/Meter/MeterEntry/MeterEntryForm'
-import { meterEntryNavItems } from '@/components/Navbar/navitems'
+import MeterReadingForm from '@/components/Meter/MeterReading/MeterReadingForm'
+import MeterEntryForm from '@/components/Meter/MeterReading/MeterReadingForm'
+import { meterReadingNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
 import MainLayout from '@/layouts/main-layout'
@@ -10,17 +11,17 @@ interface Props {
   connection: any
 }
 
-export default function MeterEntryCreatePage({ connection }: Readonly<Props>) {
+export default function MeterReadingCreatePage({ connection }: Readonly<Props>) {
   const breadcrumb: BreadcrumbItem[] = [
     {
-      title: 'Meter Entry',
-      href: `/meter-entry/${connection?.connection_id}/create`,
+      title: 'Meter Reading',
+      href: `/meter-reading/${connection?.connection_id}/create`,
     },
   ]
   return (
     <MainLayout
       breadcrumb={breadcrumb}
-      navItems={meterEntryNavItems}
+      navItems={meterReadingNavItems}
     >
       <div className='flex flex-col gap-6'>
         <Card className='rounded-lg p-7'>
@@ -77,7 +78,7 @@ export default function MeterEntryCreatePage({ connection }: Readonly<Props>) {
             />
           </div>
         </Card>
-        <MeterEntryForm />
+        <MeterReadingForm />
       </div>
     </MainLayout>
   )

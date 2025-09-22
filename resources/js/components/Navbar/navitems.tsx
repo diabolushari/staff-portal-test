@@ -121,7 +121,7 @@ export const transformerrelNavItems: navItem[] = [
   },
 ]
 
-export const meterEntryNavItems: navItem[] = [
+export const meterReadingNavItems: navItem[] = [
   {
     title: 'Search Connections',
     href: '/billing',

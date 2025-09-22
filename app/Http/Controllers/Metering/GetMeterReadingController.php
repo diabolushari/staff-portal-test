@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class GetMeterEntryController extends Controller
+class GetMeterReadingController extends Controller
 {
     public function __construct(private ConnectionService $connectionService) {}
 
@@ -16,7 +16,7 @@ class GetMeterEntryController extends Controller
     {
         $connection = $this->connectionService->getConnection($connectionId);
 
-        return Inertia::render('MeterEntry/MeterEntryCreatePage', [
+        return Inertia::render('MeterReading/MeterReadingCreatePage', [
             'connection' => $connection->data,
         ]);
     }
