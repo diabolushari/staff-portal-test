@@ -26,6 +26,7 @@ use App\Http\Controllers\Metering\MeterTimezoneTypeRelController;
 use App\Http\Controllers\Metering\MeterTransfomerCreateController;
 use App\Http\Controllers\Metering\MeterTransformerController;
 use App\Http\Controllers\Metering\MeterTransformerRelController;
+use App\Http\Controllers\MeteringTimezone\MeteringTimezoneController;
 use App\Http\Controllers\Offices\OfficeHierarchyRelController;
 use App\Http\Controllers\Offices\OfficesCreateWithCsvController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
@@ -75,6 +76,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('meter-ctpt-rel', MeterTransformerRelController::class);
     Route::resource('meter-conn-rel', MeterConnectionRelController::class);
     Route::resource('meter-timezone-rel', MeterTimezoneTypeRel::class);
+
+    Route::resource('metering-timezone', MeteringTimezoneController::class);
 
     Route::resource('meter-reading', MeterReadingController::class);
     Route::get('meter-reading/{connection_id}/create', GetMeterReadingController::class)->name('meter-reading.create');
