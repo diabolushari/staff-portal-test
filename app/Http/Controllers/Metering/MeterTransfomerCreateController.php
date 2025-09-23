@@ -22,7 +22,7 @@ class MeterTransfomerCreateController extends Controller
     public function __invoke(int $meterId): Response
     {
         // Fetch dropdowns
-        $ctpts = $this->meterTransformerService->listTransformersWithNoRelation();
+        $ctpts = $this->meterTransformerService->listUnassignedTransformers();
         $meter = $this->meterService->getMeter($meterId);
 
         $parameterRequests = [
