@@ -1,13 +1,16 @@
 import MeterReadingForm from '@/components/Meter/MeterReading/MeterReadingForm'
 import MeterEntryForm from '@/components/Meter/MeterReading/MeterReadingForm'
-import { meterReadingNavItems } from '@/components/Navbar/navitems'
+import { connectionsNavItems, meterReadingNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
 import { Connection } from '@/interfaces/consumers'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import { connectionTabs } from '@/layouts/connection/ConnectionsLayout'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
+import { TabGroup } from '@/ui/Tabs/TabGroup'
+import { TabsContent } from '@radix-ui/react-tabs'
 
 interface Props {
   connection: Connection
@@ -28,12 +31,35 @@ export default function MeterReadingCreatePage({
       href: `/meter-reading/${connection?.connection_id}/create`,
     },
   ]
+  const tabs = [
+    {
+      value: 'details',
+      label: 'Connection Details',
+      href: connection?.connection_id ? route('connections.show', connection?.connection_id) : '#',
+    },
+    {
+      value: 'consumer',
+      label: 'Consumer',
+      href: connection?.connection_id
+        ? route('connection.consumer', connection?.connection_id)
+        : '#',
+    },
+    {
+      value: 'meter',
+      label: 'Meter',
+    },
+    {
+      value: 'metering',
+      label: 'Metering',
+      href: route('meter-reading.create', connection?.connection_id),
+    },
+  ]
   return (
     <MainLayout
       breadcrumb={breadcrumb}
-      navItems={meterReadingNavItems}
+      navItems={connectionsNavItems}
     >
-      <div className='flex flex-col gap-6'>
+      <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         <Card className='rounded-lg p-7'>
           <div className='mb-6 flex items-center justify-between'>
             <StrongText className='text-base font-semibold text-[#252c32]'>
