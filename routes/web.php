@@ -80,6 +80,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('metering-timezone', MeteringTimezoneController::class);
 
     Route::resource('meter-reading', MeterReadingController::class);
+    Route::get('connection/{connection_id}/meter-reading', GetMeterReadingController::class)->name('connection.meter-reading');
     Route::get('meter-reading/{connection_id}/create', GetMeterReadingController::class)->name('meter-reading.create');
 });
 

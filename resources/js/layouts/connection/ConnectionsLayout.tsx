@@ -37,6 +37,9 @@ const connectionTabs = (connection: Connection) => [
   {
     value: 'meter-reading',
     label: 'Meter Reading',
+    href: connection?.connection_id
+      ? route('connection.meter-reading', connection?.connection_id)
+      : '#',
   },
 ]
 export default function ConnectionsLayout({
