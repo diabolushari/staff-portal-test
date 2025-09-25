@@ -1,4 +1,4 @@
-import { ParameterValues } from "./parameter_types"
+import { ParameterValues } from './parameter_types'
 
 export interface Office {
   office_id: number
@@ -109,22 +109,21 @@ export interface OfficeHierarchy {
   hierarchy_code: string
   hierarchy_name: string
 }
-export interface Consumer{
-
+export interface Consumer {
   connection_id: number | string
-    consumer_type_id: number | string
-    organization_name: string
-    applicant_code: string
-    consumer_pan: string
-    consumer_tan?: string | null
-    consumer_gstin?: string | null
-    consumer_type: ParameterValues
-    consumer_cin: string
-    seasonal_ind: boolean
-    license_ind: boolean
-    open_access_ind: boolean
-    [key: string]: any
+  consumer_type_id: number | string
+  organization_name: string
+  applicant_code: string
+  consumer_pan: string
+  consumer_tan?: string | null
+  consumer_gstin?: string | null
+  consumer_type: ParameterValues
+  consumer_cin: string
+  seasonal_ind: boolean
+  license_ind: boolean
+  open_access_ind: boolean
 }
+
 export interface ConsumerData {
   consumer: Consumer
   contact: {
@@ -133,7 +132,6 @@ export interface ConsumerData {
     primary_address_id: number | null
     billing_address_id: number | null
     premises_address_id: number | null
-    [key: string]: any
   }
   connection?: Connection
 }
@@ -143,4 +141,61 @@ export interface OfficeHierarchyRel {
   hierarchy_code: string
   hierarchy_rel_hist_id: number
   parent_office_code: number
+}
+
+export interface ConnectionMeterAssignment {
+  version_id: number
+  rel_id: number
+  meter_id: number
+  connection_id: number
+  meter_use_category?: Partial<ParameterValues> | null
+  bidirectional_ind: boolean
+  meter_billing_mode: string
+  meter_status?: Partial<ParameterValues> | null
+  faulty_date?: string
+  rectification_date?: string
+  change_reason?: Partial<ParameterValues> | null
+  effective_start_ts: string
+  effective_end_ts?: string
+  is_active: boolean
+  created_ts: string
+  updated_ts?: string
+  created_by: number
+  updated_by: number
+}
+
+export interface Meter {
+  version_id: number
+  meter_id: number
+  meter_serial: string
+  ownership_type?: Partial<ParameterValues> | null
+  meter_make?: Partial<ParameterValues> | null
+  meter_type?: Partial<ParameterValues> | null
+  meter_category?: Partial<ParameterValues> | null
+  accuracy_class?: Partial<ParameterValues> | null
+  dialing_factor?: Partial<ParameterValues> | null
+  company_seal_num?: string
+  digit_count: number
+  manufacture_date?: string
+  supply_date?: string
+  meter_unit?: Partial<ParameterValues> | null
+  meter_reset_type?: Partial<ParameterValues> | null
+  smart_meter_ind: boolean
+  bidirectional_ind: boolean
+  created_ts: string
+  updated_ts?: string
+  created_by: number
+  updated_by: number
+  meter_phase?: Partial<ParameterValues> | null
+  decimal_digit_count: number
+  programmable_pt_ratio: number
+  programmable_ct_ratio: number
+  meter_mf: number
+  warranty_period: number
+  meter_constant: number
+  batch_code?: string
+  internal_ct_primary?: number
+  internal_ct_secondary?: number
+  internal_pt_primary?: number
+  internal_pt_secondary?: number
 }

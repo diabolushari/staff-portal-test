@@ -1,54 +1,67 @@
-import { router } from '@inertiajs/react'
-import { Calendar, PencilIcon } from 'lucide-react'
 import { connectionsNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
+import Field from '@/components/ui/field'
 import { TabsContent } from '@/components/ui/tabs'
-import type { Connection } from '@/interfaces/consumers'
+import type { Connection, ConnectionMeterAssignment, Meter } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
-import type { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
+import { router } from '@inertiajs/react'
+import { PencilIcon } from 'lucide-react'
+import { useMemo } from 'react'
 import { MeterTab } from './MeterTab'
-import Field from '@/components/ui/field'
 
-export default function ConnectionsShow({
-  connection,
-  meters,
-}: Readonly<{
+type ConnectionMeter = {
+  relationship: ConnectionMeterAssignment
+  meter: Meter
+}
+
+interface Props {
   connection: Connection
-  meters: any
-}>) {
-  const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Connections', href: '/connections' },
-    {
-      title: 'Show',
-      href: connection?.connection_id
-        ? route('connection.consumer', connection?.connection_id)
-        : '#',
-    },
-  ]
+  meters: ConnectionMeter[] | null
+}
 
+export default function ConnectionsShow({ connection, meters }: Readonly<Props>) {
   const formatDate = (dateStr?: string | null) =>
     dateStr ? new Date(dateStr).toLocaleDateString() : '-'
 
-  const tabs = [
-    {
-      value: 'details',
-      label: 'Connection Details',
-      href: connection?.connection_id ? route('connections.show', connection?.connection_id) : '#',
-    },
-    {
-      value: 'consumer',
-      label: 'Consumer',
-      href: connection?.connection_id
-        ? route('connection.consumer', connection?.connection_id)
-        : '#',
-    },
-    {
-      value: 'meter',
-      label: 'Meter',
-    },
-  ]
+  const tabs = useMemo(
+    () => [
+      {
+        value: 'details',
+        label: 'Connection Details',
+        href: connection?.connection_id
+          ? route('connections.show', connection?.connection_id)
+          : '#',
+      },
+      {
+        value: 'consumer',
+        label: 'Consumer',
+        href: connection?.connection_id
+          ? route('connection.consumer', connection?.connection_id)
+          : '#',
+      },
+      {
+        value: 'meter',
+        label: 'Meter',
+      },
+    ],
+    [connection]
+  )
+
+  const breadcrumbs = useMemo(
+    () => [
+      { title: 'Connections', href: '/connections' },
+      {
+        title: connection.consumer_number.toString(),
+        href: connection?.connection_id
+          ? route('connection.consumer', connection?.connection_id)
+          : '#',
+      },
+    ],
+    [connection]
+  )
+
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -65,12 +78,6 @@ export default function ConnectionsShow({
               Consumer No: {connection?.consumer_number}
             </span>
           </div>
-          <button
-            onClick={() => router.visit(route('connections.edit', connection?.connection_id))}
-            className='flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
-          >
-            Edit
-          </button>
         </div>
 
         {/* Tabs */}
@@ -215,7 +222,6 @@ export default function ConnectionsShow({
               </Card>
             </div>
           </TabsContent>
-
           <TabsContent value='meter'>
             <MeterTab
               meters={meters}

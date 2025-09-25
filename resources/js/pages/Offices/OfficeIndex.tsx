@@ -1,12 +1,10 @@
-import { parties, settingsOffices } from '@/components/Navbar/navitems'
-import { Office } from '@/interfaces/consumers'
+import { settingsOffices } from '@/components/Navbar/navitems'
+import { Office } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import OfficeList from '@/ui/List/OfficeList'
-import DeleteModal from '@/ui/Modal/DeleteModal'
 import ListSearch from '@/ui/Search/ListSearch'
-import { router } from '@inertiajs/react'
 import { useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [

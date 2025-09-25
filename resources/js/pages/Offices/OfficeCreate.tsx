@@ -1,6 +1,6 @@
 import { settingsOffices } from '@/components/Navbar/navitems'
 import OfficeForm from '@/components/Offices/OfficeForm'
-import { Office, OfficeHierarchy } from '@/interfaces/consumers'
+import { Office, OfficeHierarchy } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'

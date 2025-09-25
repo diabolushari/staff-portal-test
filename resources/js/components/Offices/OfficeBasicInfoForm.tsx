@@ -1,4 +1,4 @@
-import { Office } from '@/interfaces/consumers'
+import { Office } from '@/interfaces/data_interfaces'
 import Modal from '@/ui/Modal/Modal'
 
 interface Props {

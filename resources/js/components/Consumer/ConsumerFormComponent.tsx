@@ -1,13 +1,13 @@
-import StrongText from '@/typography/StrongText'
-import { Card } from '../ui/card'
-import Input from '@/ui/form/Input'
 import useCustomForm from '@/hooks/useCustomForm'
-import { ParameterValues } from '@/interfaces/parameter_types'
-import SelectList from '@/ui/form/SelectList'
-import CheckBox from '@/ui/form/CheckBox'
-import Button from '@/ui/button/Button'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ConsumerData } from '@/interfaces/consumers'
+import { ConsumerData } from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
+import StrongText from '@/typography/StrongText'
+import Button from '@/ui/button/Button'
+import CheckBox from '@/ui/form/CheckBox'
+import Input from '@/ui/form/Input'
+import SelectList from '@/ui/form/SelectList'
+import { Card } from '../ui/card'
 
 interface Props {
   consumer_types: ParameterValues[]

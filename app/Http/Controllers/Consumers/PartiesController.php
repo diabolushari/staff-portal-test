@@ -13,7 +13,6 @@ use Inertia\Response;
 use Proto\Parameters\ListParameterValuesRequest;
 use Proto\Parameters\ParameterValueServiceClient;
 
-// TODO Fix Type Errors
 class PartiesController extends Controller
 {
     private ParameterValueServiceClient $parameterValueClient;

@@ -1,9 +1,8 @@
-import React, { useState, useMemo } from 'react'
-import { Office, OfficeHierarchy } from '@/interfaces/consumers'
+import React, { useMemo, useState } from 'react'
+import { Office, OfficeHierarchy } from '@/interfaces/data_interfaces'
 import SelectList from '@/ui/form/SelectList'
 import ComboBox from '@/ui/form/ComboBox'
 import Button from '@/ui/button/Button'
-import StrongText from '@/typography/StrongText'
 import Modal from '@/ui/Modal/Modal'
 
 interface ParentOfficeModalProps {

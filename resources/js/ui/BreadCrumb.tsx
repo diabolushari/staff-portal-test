@@ -3,7 +3,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import { BreadcrumbItem as BreadcrumbItemType } from '@/types'
@@ -13,18 +12,16 @@ export function CustomBreadcrumb({ list }: { list: BreadcrumbItemType[] }) {
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        {list.map((item, index) => (
-          <BreadcrumbItem key={index}>
-            <BreadcrumbLink asChild>
-              <Link href={item.href}>{item.title}</Link>
-            </BreadcrumbLink>
-            <BreadcrumbSeparator />
-          </BreadcrumbItem>
-        ))}
-
-        <BreadcrumbItem>
-          <BreadcrumbPage>{list[list.length - 1]?.title}</BreadcrumbPage>
-        </BreadcrumbItem>
+        {list.map((item, index) => {
+          return (
+            <BreadcrumbItem key={item.href}>
+              <BreadcrumbLink asChild>
+                <Link href={item.href}>{item.title}</Link>
+              </BreadcrumbLink>
+              {index != list.length - 1 && <BreadcrumbSeparator />}
+            </BreadcrumbItem>
+          )
+        })}
       </BreadcrumbList>
     </Breadcrumb>
   )

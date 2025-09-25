@@ -1,4 +1,4 @@
-import { Office } from '@/interfaces/consumers'
+import { Office } from '@/interfaces/data_interfaces'
 import { router } from '@inertiajs/react'
 import { Building, MapPin } from 'lucide-react'
 

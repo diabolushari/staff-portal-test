@@ -1,6 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { Connection, Office, OfficeWithHierarchy } from '@/interfaces/consumers'
+import { Connection, Office } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'

@@ -16,8 +16,9 @@ class MeterConnectionRelCreateController extends Controller
         private readonly ParameterValueService $parameterValueService
     ) {}
 
-    public function __invoke(int $Id)
+    public function __invoke(int $id)
     {
+        // TODO loading all data
         $meters = $this->meterService->listMeters();
         $meterRelations = $this->meterConnectionRelService->listMeterConnectionRels();
         $meterRelationIds = array_column($meterRelations->data, 'meter_id');
@@ -30,7 +31,7 @@ class MeterConnectionRelCreateController extends Controller
         $changeReason = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Change Reason');
 
         return Inertia::render('Connections/ConnectMeter', [
-            'connection_id' => $Id,
+            'connection_id' => $id,
             'meters' => $unrelatedMeters,
             'useCategory' => $useCategory->data,
             'meterStatus' => $meterStatus->data,
