@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/card'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { OfficeContact } from '@/interfaces/consumers'
+import { OfficeContact } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import { Mail, PencilIcon, Phone, Plus, User, X } from 'lucide-react'
 import { useState } from 'react'

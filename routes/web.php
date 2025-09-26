@@ -59,18 +59,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('connections', ConnectionController::class);
     Route::resource('consumers', ConsumerController::class);
     Route::resource('office-hierarchy-rel', OfficeHierarchyRelController::class);
-    Route::get('connection/{id}/consumer', GetConsumerController::class)->name('connection.consumer');
-    Route::get('connection/{id}/consumer/create', CreateConsumerController::class)->name('connection.consumer.create');
+
+    Route::get('connection/{id}/consumer', GetConsumerController::class)
+        ->name('connection.consumer');
+    Route::get('connection/{id}/consumer/create', CreateConsumerController::class)
+        ->name('connection.consumer.create');
+
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)
         ->name('offices.update-contacts');
     Route::resource('meters', MeterController::class);
     Route::resource('meter-timezone-rel', MeterTimezoneTypeRelController::class);
-    Route::get('meters/{id}/ctpt/create', MeterTransfomerCreateController::class)->name('meters.ctpt.create');
-    Route::get('connection/{id}/meter/create', MeterConnectionRelCreateController::class)->name('connection.meter.create');
+    Route::get('meters/{id}/ctpt/create', MeterTransfomerCreateController::class)
+        ->name('meters.ctpt.create');
+    Route::get('connection/{id}/meter/create', MeterConnectionRelCreateController::class)
+        ->name('connection.meter.create');
     Route::resource('meter-connection-rel', MeterConnectionRelController::class);
     Route::post('meter-connection-rel/{id}', [MeterConnectionRelController::class, 'update'])->name('meter-connection-rel.update');
-    Route::get('connection/{id}/meter/edit', MeterConnectionRelEditController::class)->name('connection.meter.edit');
-    Route::delete('meter-connection-rel/{rel_id}', [MeterConnectionRelController::class, 'destroy'])->name('meter-connection-rel.destroy');
+    Route::get('connection/{id}/meter/edit', MeterConnectionRelEditController::class)
+        ->name('connection.meter.edit');
+    Route::delete('meter-connection-rel/{rel_id}', [MeterConnectionRelController::class, 'destroy'])
+        ->name('meter-connection-rel.destroy');
 
     Route::resource('meter-ctpt', MeterTransformerController::class);
     Route::resource('meter-ctpt-rel', MeterTransformerRelController::class);
@@ -106,7 +114,5 @@ Route::get('page-ui', function () {
     return Inertia::render('UItest');
 })->name('page-ui');
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

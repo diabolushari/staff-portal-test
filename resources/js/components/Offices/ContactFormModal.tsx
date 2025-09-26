@@ -1,5 +1,5 @@
 import useCustomForm from '@/hooks/useCustomForm'
-import { OfficeContact } from '@/interfaces/consumers'
+import { OfficeContact } from '@/interfaces/data_interfaces'
 import Modal from '@/ui/Modal/Modal'
 import Input from '@/ui/form/Input'
 import React, { useEffect } from 'react'

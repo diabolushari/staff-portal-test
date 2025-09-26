@@ -80,7 +80,7 @@ class GetMeterReadingController extends Controller
                     $meterWithTimezoneAndProfile['timezones'] = $timezones;
                 }
 
-                $meterProfilesResponse = $this->meteringParameterProfileService->listMeteringParameterProfiles(null, null, null, $meterConnectionRel['meter_profile_id'])->data;
+                $meterProfilesResponse = $this->meteringParameterProfileService->listMeteringProfileParameters(1, 10, null, $meterConnectionRel['meter_profile_id'])->data;
                 $meterProfiles = [];
                 if ($meterProfilesResponse) {
                     foreach ($meterProfilesResponse as $meterProfile) {

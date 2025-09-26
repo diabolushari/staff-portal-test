@@ -6,26 +6,26 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
-use Proto\Metering\ListMeteringParameterProfilesRequest;
-use Proto\Metering\MeteringParameterProfileMessage;
-use Proto\Metering\MeteringParameterProfileServiceClient;
+use Proto\Metering\ListMeteringProfileParametersRequest;
+use Proto\Metering\MeteringProfileParameterMessage;
+use Proto\Metering\MeteringProfileParameterServiceClient;
 
 class MeteringParameterProfileService
 {
-    private MeteringParameterProfileServiceClient $client;
+    private MeteringProfileParameterServiceClient $client;
 
     public function __construct(
         private ParameterValueService $parameterValueService
     ) {
-        $this->client = new MeteringParameterProfileServiceClient(
+        $this->client = new MeteringProfileParameterServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
         );
     }
 
-    public function listMeteringParameterProfiles($page = 1, $pageSize = 10, $search = null, $profileId = null)
+    public function listMeteringProfileParameters(int $page = 1, int $pageSize = 10, ?string $search = null, ?int $profileId = null): GrpcServiceResponse
     {
-        $protoRequest = new ListMeteringParameterProfilesRequest;
+        $protoRequest = new ListMeteringProfileParametersRequest;
         if ($page) {
             $protoRequest->setPage($page);
         }
@@ -38,7 +38,7 @@ class MeteringParameterProfileService
         if ($profileId) {
             $protoRequest->setProfileId($profileId);
         }
-        [$response, $status] = $this->client->listMeteringParameterProfiles($protoRequest)->wait();
+        [$response, $status] = $this->client->listMeteringProfileParameters($protoRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -56,7 +56,10 @@ class MeteringParameterProfileService
         return GrpcServiceResponse::success($meteringParameterProfilesArray, $response, $status->code, $status->details);
     }
 
-    public function toArray(?MeteringParameterProfileMessage $detail): ?array
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(?MeteringProfileParameterMessage $detail): ?array
     {
         if ($detail === null) {
             return null;

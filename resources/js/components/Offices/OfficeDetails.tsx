@@ -1,4 +1,4 @@
-import { Office } from '@/interfaces/consumers'
+import { Office } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import { Card } from '../ui/card'
 import useCustomForm from '@/hooks/useCustomForm'

@@ -122,7 +122,6 @@ class ParameterDefinitionService
     public function createParameterDefinition(ParameterDefinitionFormRequest $request): GrpcServiceResponse
     {
         $proto = new ParameterDefinitionProto;
-        // TODO pass default values
         $proto->setParameterName($request->parameterName ?? '');
         $proto->setAttribute1Name($request->attribute1Name ?? '');
         $proto->setAttribute2Name($request->attribute2Name ?? '');

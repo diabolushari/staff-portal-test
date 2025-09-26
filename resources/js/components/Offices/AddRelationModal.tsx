@@ -1,10 +1,10 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Office,
   OfficeHierarchy,
   OfficeHierarchyRel,
   OfficeWithHierarchy,
-} from '@/interfaces/consumers'
+} from '@/interfaces/data_interfaces'
 import SelectList from '@/ui/form/SelectList'
 import ComboBox from '@/ui/form/ComboBox'
 import Button from '@/ui/button/Button'

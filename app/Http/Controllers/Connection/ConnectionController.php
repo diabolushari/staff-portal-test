@@ -70,6 +70,7 @@ class ConnectionController extends Controller
             }
         }
 
+        // TODO Fetch data directly via relationship
         $meterConnectionRelResponse = $this->meterConnectionRelService->getMeterConnectionRelByConnectionId($id);
         $meterConnectionRels = $meterConnectionRelResponse->data;
         $meters = [];
@@ -86,10 +87,7 @@ class ConnectionController extends Controller
                     }
                 }
             }
-        } else {
-            $meters = [];
         }
-
 
         return Inertia::render('Connections/ConnectionsShow', [
             'connection' => $connection->data,

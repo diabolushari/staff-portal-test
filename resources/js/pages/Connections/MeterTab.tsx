@@ -1,3 +1,6 @@
+import { Card } from '@/components/ui/card'
+import type { ConnectionMeterAssignment, Meter } from '@/interfaces/data_interfaces'
+import StrongText from '@/typography/StrongText'
 import { router } from '@inertiajs/react'
 import {
   Barcode,
@@ -8,78 +11,22 @@ import {
   Plus,
   Settings,
   Shield,
+  Trash2,
   Wrench,
   Zap,
-  Trash2,
 } from 'lucide-react'
-import { Card } from '@/components/ui/card'
-import StrongText from '@/typography/StrongText'
 
-export interface MeterData {
-  relationship: {
-    version_id: number
-    rel_id: number
-    meter_id: number
-    connection_id: number
-    meter_use_category?: { id: number; parameter_value: string }
-    bidirectional_ind: boolean
-    meter_billing_mode: string
-    meter_status?: { id: number; parameter_value: string }
-    faulty_date?: string
-    rectification_date?: string
-    change_reason?: { id: number; parameter_value: string }
-    effective_start_ts: string
-    effective_end_ts?: string
-    is_active: boolean
-    created_ts: string
-    updated_ts?: string
-    created_by: number
-    updated_by: number
-  }
-  meter: {
-    version_id: number
-    meter_id: number
-    meter_serial: string
-    ownership_type?: { id: number; parameter_value: string }
-    meter_make?: { id: number; parameter_value: string }
-    meter_type?: { id: number; parameter_value: string }
-    meter_category?: { id: number; parameter_value: string }
-    accuracy_class?: { id: number; parameter_value: string }
-    dialing_factor?: { id: number; parameter_value: string }
-    company_seal_num?: string
-    digit_count: number
-    manufacture_date?: string
-    supply_date?: string
-    meter_unit?: { id: number; parameter_value: string }
-    meter_reset_type?: { id: number; parameter_value: string }
-    smart_meter_ind: boolean
-    bidirectional_ind: boolean
-    created_ts: string
-    updated_ts?: string
-    created_by: number
-    updated_by: number
-    meter_phase?: { id: number; parameter_value: string }
-    decimal_digit_count: number
-    programmable_pt_ratio: number
-    programmable_ct_ratio: number
-    meter_mf: number
-    warranty_period: number
-    meter_constant: number
-    batch_code?: string
-    internal_ct_primary?: number
-    internal_ct_secondary?: number
-    internal_pt_primary?: number
-    internal_pt_secondary?: number
-  }
+type ConnectionMeter = {
+  relationship: ConnectionMeterAssignment
+  meter: Meter
 }
 
-export function MeterTab({
-  meters,
-  connectionId,
-}: {
-  meters: MeterData[] | null
+interface MeterTabProps {
+  meters: ConnectionMeter[] | null
   connectionId: number
-}) {
+}
+
+export function MeterTab({ meters, connectionId }: Readonly<MeterTabProps>) {
   function handleMeterClick(meterId: number) {
     router.get(`/meters/${meterId}`)
   }
@@ -111,10 +58,11 @@ export function MeterTab({
             return (
               <div
                 key={meter.meter_id}
-                className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-3 py-4 transition-shadow last:mb-0 hover:shadow-md'
+                className='mb-4 rounded-lg border border-gray-200 bg-white px-3 py-4 transition-shadow last:mb-0 hover:shadow-md'
               >
-                <div
-                  className='flex items-start justify-between'
+                <button
+                  type='button'
+                  className='flex w-full items-start justify-between text-left'
                   onClick={() => handleMeterClick(meter.meter_id)}
                 >
                   {/* Left side info */}
@@ -289,7 +237,7 @@ export function MeterTab({
                       </div>
                     </div>
                   </div>
-                </div>
+                </button>
                 <button
                   onClick={() => {
                     handleDeleteMeter(relationship.rel_id)

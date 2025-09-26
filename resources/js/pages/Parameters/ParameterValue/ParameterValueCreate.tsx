@@ -1,7 +1,6 @@
 import { settingsReferenceData } from '@/components/Navbar/navitems'
 import capitalSnakeCase from '@/formaters/capitalcase'
 import useCustomForm from '@/hooks/useCustomForm'
-import useFetchRecord from '@/hooks/useFetchRecord'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { ParameterDefinition, ParameterDomain, ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
@@ -32,7 +31,6 @@ interface Props {
   domains: ParameterDomain[]
 }
 
-//TODO missing prop interface
 export default function ParameterValueCreate({ parameter_value, definitions, domains }: Props) {
   // don't use loose type check values like 0 want be counted
   const attributeValuePresent =

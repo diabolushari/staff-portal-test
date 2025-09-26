@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
-// TODO: Fix Type Errors
 class ParameterDefinitionController extends Controller
 {
     public function __construct(

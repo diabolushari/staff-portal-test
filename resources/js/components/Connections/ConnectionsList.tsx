@@ -1,6 +1,6 @@
-import { Connection } from '@/interfaces/consumers'
+import { Connection } from '@/interfaces/data_interfaces'
 import { router } from '@inertiajs/react'
-import { Zap, Cpu, Calendar, Hash } from 'lucide-react'
+import { Calendar, Cpu, Hash, Zap } from 'lucide-react'
 
 interface Props {
   connections: Connection[]
