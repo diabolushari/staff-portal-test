@@ -17,7 +17,7 @@ interface ConnectionsLayoutProps {
   value: string
   heading: string
   subHeading: string
-  onEdit: () => void
+  onEdit?: () => void
 }
 const connectionTabs = (connection: Connection) => [
   {
@@ -66,12 +66,14 @@ export default function ConnectionsLayout({
             <StrongText className='text-2xl font-semibold text-[#252c32]'>{heading}</StrongText>
             <span className='text-sm text-gray-600'>{subHeading}</span>
           </div>
-          <button
-            onClick={onEdit}
-            className='flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
-          >
-            Edit
-          </button>
+          {onEdit && (
+            <button
+              onClick={onEdit}
+              className='flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
+            >
+              Edit
+            </button>
+          )}
         </div>
         <TabGroup
           tabs={connectionTabs(connection)}

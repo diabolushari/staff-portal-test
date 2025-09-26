@@ -36,7 +36,6 @@ use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
 use App\Http\Requests\SystemModule\SystemModuleFormRequest;
 use App\Services\SystemModule\SystemModuleService;
-use GPBMetadata\MeterTimezoneTypeRel;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -76,7 +75,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('meter-ctpt', MeterTransformerController::class);
     Route::resource('meter-ctpt-rel', MeterTransformerRelController::class);
     Route::resource('meter-conn-rel', MeterConnectionRelController::class);
-    Route::resource('meter-timezone-rel', MeterTimezoneTypeRel::class);
+    Route::resource('meter-timezone-rel', MeterTimezoneTypeRelController::class);
 
     Route::resource('metering-timezone', MeteringTimezoneController::class);
 

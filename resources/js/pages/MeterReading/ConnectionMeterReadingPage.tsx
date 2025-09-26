@@ -1,4 +1,4 @@
-import { Connection } from '@/interfaces/consumers'
+import { Connection, MeterReading } from '@/interfaces/consumers'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { MeterData } from '../Connections/MeterTab'
 import { BreadcrumbItem } from '@/types'
@@ -11,13 +11,15 @@ import { router } from '@inertiajs/react'
 interface ConnectionMeterReadingPageProps {
   connection: Connection
   meters: MeterData[]
-  meterReadings: any[]
+  meterReadings: MeterReading[]
+  meterProfiles: any[]
 }
 
 export default function ConnectionMeterReadingPage({
   connection,
   meters,
   meterReadings,
+  meterProfiles,
 }: ConnectionMeterReadingPageProps) {
   const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -32,6 +34,8 @@ export default function ConnectionMeterReadingPage({
   const handleAddMeterReading = () => {
     router.visit(route('meter-reading.create', { id: connection?.connection_id }))
   }
+  console.log(meterReadings)
+  console.log(meterProfiles)
   return (
     <ConnectionsLayout
       connection={connection}
@@ -59,8 +63,13 @@ export default function ConnectionMeterReadingPage({
         <div className='flex flex-col px-6 pb-6'>
           {meterReadings && meterReadings.length > 0 ? (
             meterReadings?.map((meterReadingData) => {
-              const { meterReading, relationship } = meterReadingData
-              return <div>detials here</div>
+              return (
+                <div className='flex'>
+                  <p>Period: {meterReadingData?.metering_date}</p>
+                  <p>Initial RD: </p>
+                  <p>Final RD: </p>
+                </div>
+              )
             })
           ) : (
             <div className='p-8 text-center text-slate-500'>

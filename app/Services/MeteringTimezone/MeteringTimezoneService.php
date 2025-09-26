@@ -9,13 +9,13 @@ use App\Services\utils\GrpcServiceResponse;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
 use Proto\Metering\CreateMeteringTimezoneRequest;
-use Proto\Metering\UpdateMeteringTimezoneRequest;
+use Proto\Metering\DeleteMeteringTimezoneRequest;
 use Proto\Metering\GetMeteringTimezoneRequest;
 use Proto\Metering\GetMeteringTimezonesByPricingTypeRequest;
-use Proto\Metering\DeleteMeteringTimezoneRequest;
 use Proto\Metering\ListMeteringTimezonesRequest;
 use Proto\Metering\MeteringTimezoneResponse;
 use Proto\Metering\MeteringTimezoneServiceClient;
+use Proto\Metering\UpdateMeteringTimezoneRequest;
 
 class MeteringTimezoneService
 {
@@ -44,10 +44,10 @@ class MeteringTimezoneService
         $request->setToHrs($data['to_hrs'] ?? 0);
         $request->setToMins($data['to_mins'] ?? 0);
 
-        if (!empty($data['effective_start_ts']) && ($ts = self::toTimestamp($data['effective_start_ts']))) {
+        if (! empty($data['effective_start_ts']) && ($ts = self::toTimestamp($data['effective_start_ts']))) {
             $request->setEffectiveStartTs($ts);
         }
-        if (!empty($data['effective_end_ts']) && ($ts = self::toTimestamp($data['effective_end_ts']))) {
+        if (! empty($data['effective_end_ts']) && ($ts = self::toTimestamp($data['effective_end_ts']))) {
             $request->setEffectiveEndTs($ts);
         }
         if (array_key_exists('is_active', $data)) {
@@ -106,9 +106,21 @@ class MeteringTimezoneService
         return GrpcServiceResponse::success($timezonesArray, $response, $status->code, $status->details);
     }
 
-    public function listMeteringTimezones(): GrpcServiceResponse
-    {
+    public function listMeteringTimezones(
+        ?int $pricingTypeId = 0,
+        ?int $timezoneTypeId = 0,
+        ?int $timezoneNameId = 0
+    ): GrpcServiceResponse {
         $request = new ListMeteringTimezonesRequest;
+        if ($pricingTypeId) {
+            $request->setPricingTypeId($pricingTypeId);
+        }
+        if ($timezoneTypeId) {
+            $request->setTimezoneTypeId($timezoneTypeId);
+        }
+        if ($timezoneNameId) {
+            $request->setTimezoneNameId($timezoneNameId);
+        }
 
         [$response, $status] = $this->client->ListMeteringTimezones($request)->wait();
 
@@ -143,10 +155,10 @@ class MeteringTimezoneService
         $request->setToHrs($data['to_hrs'] ?? 0);
         $request->setToMins($data['to_mins'] ?? 0);
 
-        if (!empty($data['effective_start_ts']) && ($ts = self::toTimestamp($data['effective_start_ts']))) {
+        if (! empty($data['effective_start_ts']) && ($ts = self::toTimestamp($data['effective_start_ts']))) {
             $request->setEffectiveStartTs($ts);
         }
-        if (!empty($data['effective_end_ts']) && ($ts = self::toTimestamp($data['effective_end_ts']))) {
+        if (! empty($data['effective_end_ts']) && ($ts = self::toTimestamp($data['effective_end_ts']))) {
             $request->setEffectiveEndTs($ts);
         }
         if (array_key_exists('is_active', $data)) {

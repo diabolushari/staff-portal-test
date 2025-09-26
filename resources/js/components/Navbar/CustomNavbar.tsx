@@ -30,14 +30,7 @@ export const NAV_ITEMS = [
     href: '/billing',
     description: 'Invoices and payments',
   },
-  {
-    title: 'Metering',
-    href: '/metering',
-    description: 'Metering tools',
-    children: [
-      { title: 'Meter Reading', href: '/meter-reading', description: 'Manage meter reading' },
-    ],
-  },
+
   { title: 'Accounts', href: '/accounts', description: 'User accounts and permissions' },
   {
     title: 'Settings',

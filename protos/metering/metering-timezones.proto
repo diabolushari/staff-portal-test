@@ -62,7 +62,11 @@ message DeleteMeteringTimezoneRequest {
     int32 metering_timezone_id = 1;
 }
 
-message ListMeteringTimezonesRequest {}
+message ListMeteringTimezonesRequest {
+  optional int32 pricing_type_id = 1;
+  optional int32 timezone_type_id = 2;
+  optional int32 timezone_name_id = 3;
+}
 
 message ListMeteringTimezonesResponse {
     repeated MeteringTimezoneResponse metering_timezones = 1;

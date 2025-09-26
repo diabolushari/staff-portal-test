@@ -8,10 +8,10 @@ class MeterReadingForm extends Data
 {
     public function __construct(
         public int $connection_id,
-        public float $normal_pf,
-        public float $peak_pf,
-        public float $offpeak_pf,
-        public float $average_power_factor,
+        public ?float $normal_pf,
+        public ?float $peak_pf,
+        public ?float $offpeak_pf,
+        public ?float $average_power_factor,
         public string $reading_type,
         public int $anomaly_id,
         public string $metering_date,
@@ -26,5 +26,6 @@ class MeterReadingForm extends Data
         public float $current_b,
         public float $current_y,
         public string $remarks,
+        public array $readings_by_meter,
     ) {}
 }
