@@ -57,6 +57,10 @@ export default function ConsumerFormComponent({
     pincode: primary?.pincode ?? '',
     district_id: primary?.district_id ?? '',
     state_id: primary?.state_id ?? '',
+    consumer_cin: consumer?.consumer_cin ?? '',
+    seasonal_ind: consumer?.seasonal_ind ?? false,
+    license_ind: consumer?.license_ind ?? false,
+    open_access_ind: consumer?.open_access_ind ?? false,
 
     // Other addresses
     other_addresses: {
@@ -140,6 +144,13 @@ export default function ConsumerFormComponent({
               error={errors?.applicant_code}
             />
             <Input
+              label='Consumer CIN'
+              setValue={setFormValue('consumer_cin')}
+              value={formData.consumer_cin}
+              placeholder='Enter consumer CIN'
+              error={errors?.consumer_cin}
+            />
+            <Input
               label='Consumer PAN'
               setValue={setFormValue('consumer_pan')}
               value={formData.consumer_pan}
@@ -172,6 +183,24 @@ export default function ConsumerFormComponent({
               toggleValue={toggleBoolean('gst_withholding_ind')}
               value={formData.gst_withholding_ind}
               error={errors?.gst_withholding_ind}
+            />
+            <CheckBox
+              label='Seasonal'
+              toggleValue={toggleBoolean('seasonal_ind')}
+              value={formData.seasonal_ind}
+              error={errors?.seasonal_ind}
+            />
+            <CheckBox
+              label='License'
+              toggleValue={toggleBoolean('license_ind')}
+              value={formData.license_ind}
+              error={errors?.license_ind}
+            />
+            <CheckBox
+              label='Open Access'
+              toggleValue={toggleBoolean('open_access_ind')}
+              value={formData.open_access_ind}
+              error={errors?.open_access_ind}
             />
           </div>
         </div>

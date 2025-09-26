@@ -93,16 +93,11 @@ export default function MeterForm({
     internal_ct_secondary: meter?.internal_ct_secondary ?? '',
     internal_pt_primary: meter?.internal_pt_primary ?? '',
     internal_pt_secondary: meter?.internal_pt_secondary ?? '',
-    created_by: auth?.user?.id ?? 0,
-    updated_by: auth?.user?.id ?? 0,
-    _method: isEditing ? 'PUT' : undefined,
   })
-  const { post, loading, errors } = useInertiaPost<typeof formData>(
-    isEditing ? `/meters/${meter.id}` : '/meters'
-  )
+  const { post, loading, errors } = useInertiaPost(isEditing ? `/meters/${meter.id}` : '/meters')
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
+    // Base payload
     const basePayload = {
       meter_serial: formData.meter_serial,
       ownership_type_id: toNumberOrUndef(formData.ownership_type_id),
@@ -131,10 +126,19 @@ export default function MeterForm({
       internal_ct_secondary: toNumberOrUndef(formData.internal_ct_secondary),
       internal_pt_primary: toNumberOrUndef(formData.internal_pt_primary),
       internal_pt_secondary: toNumberOrUndef(formData.internal_pt_secondary),
-      created_by: auth?.user?.id ?? 0,
-      updated_by: auth?.user?.id ?? 0,
     }
-    post(basePayload)
+    if (isEditing) {
+      post({
+        ...basePayload,
+        updated_by: auth?.user?.id ?? 0, // Replace with actual user ID logic
+        _method: 'PUT',
+      })
+    } else {
+      post({
+        ...basePayload,
+        created_by: auth?.user?.id ?? 0, // Replace with actual user ID logic
+      })
+    }
   }
   const renderSection = (title: string, children: React.ReactNode) => (
     <div className='rounded-md border border-slate-200 p-4'>
@@ -172,7 +176,7 @@ export default function MeterForm({
                   setValue={setFormValue('meter_make_id')}
                   list={makes}
                   dataKey='id'
-                  displayKey='parameter_value'
+                  displayKey='parameterValue'
                   error={errors.meter_make_id}
                 />
                 <SelectList
@@ -181,7 +185,7 @@ export default function MeterForm({
                   setValue={setFormValue('meter_type_id')}
                   list={types}
                   dataKey='id'
-                  displayKey='parameter_value'
+                  displayKey='parameterValue'
                   error={errors.meter_type_id}
                 />
                 <SelectList
@@ -190,7 +194,7 @@ export default function MeterForm({
                   setValue={setFormValue('ownership_type_id')}
                   list={ownershipTypes}
                   dataKey='id'
-                  displayKey='parameter_value'
+                  displayKey='parameterValue'
                   error={errors.ownership_type_id}
                 />
                 <SelectList
@@ -199,7 +203,7 @@ export default function MeterForm({
                   setValue={setFormValue('meter_category_id')}
                   list={categories}
                   dataKey='id'
-                  displayKey='parameter_value'
+                  displayKey='parameterValue'
                   error={errors.meter_category_id}
                 />
                 <Input
@@ -225,7 +229,7 @@ export default function MeterForm({
                   setValue={setFormValue('accuracy_class_id')}
                   list={accuracyClasses}
                   dataKey='id'
-                  displayKey='parameter_value'
+                  displayKey='parameterValue'
                   error={errors.accuracy_class_id}
                 />
                 <SelectList
@@ -234,7 +238,7 @@ export default function MeterForm({
                   setValue={setFormValue('dialing_factor_id')}
                   list={dialingFactors}
                   dataKey='id'
-                  displayKey='parameter_value'
+                  displayKey='parameterValue'
                   error={errors.dialing_factor_id}
                 />
                 <SelectList
@@ -243,7 +247,7 @@ export default function MeterForm({
                   setValue={setFormValue('meter_unit_id')}
                   list={units}
                   dataKey='id'
-                  displayKey='parameter_value'
+                  displayKey='parameterValue'
                   error={errors.meter_unit_id}
                 />
                 <SelectList
@@ -252,7 +256,7 @@ export default function MeterForm({
                   setValue={setFormValue('meter_reset_type_id')}
                   list={resetTypes}
                   dataKey='id'
-                  displayKey='parameter_value'
+                  displayKey='parameterValue'
                   error={errors.meter_reset_type_id}
                 />
                 <SelectList
@@ -261,7 +265,7 @@ export default function MeterForm({
                   setValue={setFormValue('meter_phase_id')}
                   list={phases}
                   dataKey='id'
-                  displayKey='parameter_value'
+                  displayKey='parameterValue'
                   error={errors.meter_phase_id}
                 />
                 <Input
@@ -281,6 +285,7 @@ export default function MeterForm({
                 <Input
                   label='Programmable PT Ratio'
                   type='number'
+                  step='any'
                   value={formData.programmable_pt_ratio}
                   setValue={setFormValue('programmable_pt_ratio')}
                   error={errors.programmable_pt_ratio}
@@ -295,6 +300,7 @@ export default function MeterForm({
                 <Input
                   label='Meter MF'
                   type='number'
+                  step='any'
                   value={formData.meter_mf}
                   setValue={setFormValue('meter_mf')}
                   error={errors.meter_mf}
@@ -348,14 +354,16 @@ export default function MeterForm({
                     toggleValue={() => setFormValue('smart_meter_ind')(!formData.smart_meter_ind)}
                     error={errors.smart_meter_ind}
                   />
-                  <CheckBox
-                    label='Bidirectional'
-                    value={formData.bidirectional_ind}
-                    toggleValue={() =>
-                      setFormValue('bidirectional_ind')(!formData.bidirectional_ind)
-                    }
-                    error={errors.bidirectional_ind}
-                  />
+                  {/*<CheckBox*/}
+                  {/*	label="Bidirectional"*/}
+                  {/*	value={formData.bidirectional_ind}*/}
+                  {/*	toggleValue={() =>*/}
+                  {/*		setFormValue("bidirectional_ind")(*/}
+                  {/*			!formData.bidirectional_ind,*/}
+                  {/*		)*/}
+                  {/*	}*/}
+                  {/*	error={errors.bidirectional_ind}*/}
+                  {/*/>*/}
                 </div>
               </>
             )}

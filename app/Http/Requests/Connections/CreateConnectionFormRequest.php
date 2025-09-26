@@ -31,6 +31,10 @@ class CreateConnectionFormRequest extends Data
         public bool $liveIndicator,
         public int $phaseTypeId,
         public ?string $consumerLegacyCode,
+        public float $powerLoadKwVal,
+        public float $lightLoadKwVal,
+        public bool $otherconsFlag,
+        public bool $cppFlag,
 
     ) {}
 }

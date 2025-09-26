@@ -86,6 +86,10 @@ export default function ConnectionForm({
     consumer_legacy_code: connection?.consumer_legacy_code ?? '',
     open_access_selected: connection?.open_access_type_id ? true : false,
     renewable_selected: connection?.renewable_type_id ? true : false,
+    power_load_kw_val: connection?.power_load_kw_val ?? '',
+    light_load_kw_val: connection?.light_load_kw_val ?? '',
+    othercons_flag: connection?.othercons_flag ?? false,
+    cpp_flag: connection?.cpp_flag ?? false,
     _method: connection ? 'PUT' : undefined,
   })
 
@@ -205,7 +209,7 @@ export default function ConnectionForm({
             label='Admin Office'
             url={`/api/offices?sortPriority=3&q=`}
             setValue={(office) => setFormValue('admin_office_code')(office?.office_code ?? '')}
-            value={adminOfficeApiData?.office ?? null} // always derive from API/formData
+            value={adminOfficeApiData?.office ?? null}
             placeholder='Select Admin Office'
             dataKey='office_code'
             displayKey='office_name'
@@ -316,6 +320,18 @@ export default function ConnectionForm({
             value={formData.connected_load_kw_val}
             error={errors?.connected_load_kw_val}
           />
+          <Input
+            label='Power Load (kW)'
+            setValue={setFormValue('power_load_kw_val')}
+            value={formData.power_load_kw_val}
+            error={errors?.power_load_kw_val}
+          />
+          <Input
+            label='Light Load (kW)'
+            setValue={setFormValue('light_load_kw_val')}
+            value={formData.light_load_kw_val}
+            error={errors?.light_load_kw_val}
+          />
         </div>
       </Card>
 
@@ -374,16 +390,31 @@ export default function ConnectionForm({
             label='Solar Indicator'
             toggleValue={toggleBoolean('solar_indicator')}
             value={formData.solar_indicator}
+            error={errors?.solar_indicator}
           />
           <CheckBox
             label='Multi Source Indicator'
             toggleValue={toggleBoolean('multi_source_indicator')}
             value={formData.multi_source_indicator}
+            error={errors?.multi_source_indicator}
           />
           <CheckBox
             label='Live Indicator'
             toggleValue={toggleBoolean('live_indicator')}
             value={formData.live_indicator}
+            error={errors?.live_indicator}
+          />
+          <CheckBox
+            label='Other Cons'
+            toggleValue={toggleBoolean('othercons_flag')}
+            value={formData.othercons_flag}
+            error={errors?.othercons_flag}
+          />
+          <CheckBox
+            label='CPP'
+            toggleValue={toggleBoolean('cpp_flag')}
+            value={formData.cpp_flag}
+            error={errors?.cpp_flag}
           />
         </div>
       </Card>

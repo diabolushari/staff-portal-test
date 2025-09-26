@@ -21,6 +21,7 @@ import { TabGroup } from '@/ui/Tabs/TabGroup'
 import { TabsContent } from '@radix-ui/react-tabs'
 import MeterTransformerTab from '@/components/Meter/MeterTransformer/MeterTransfomerTab'
 import DeleteButton from '@/ui/button/DeleteButton'
+import { ParameterValues } from '@/interfaces/parameter_types'
 
 // --- PROPS AND INTERFACES ---
 interface ParameterValue {
@@ -44,7 +45,7 @@ interface Props {
   meter: Meter
   ctpt: any
   currentTimezone: any
-  timezoneTypes: ParameterValue[]
+  timezoneTypes: ParameterValues[]
   relation: any
 }
 
@@ -346,7 +347,7 @@ export default function MeterShow({
                                 key={type.id}
                                 value={String(type.id)}
                               >
-                                {type.parameterValue}
+                                {type.parameter_value}
                               </SelectItem>
                             ))}
                           </SelectContent>

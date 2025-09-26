@@ -1,4 +1,4 @@
-import { HomeIcon, ListIcon, SettingsIcon } from 'lucide-react'
+import { HomeIcon, ListIcon } from 'lucide-react'
 
 export interface navItem {
   title: string
@@ -20,6 +20,19 @@ export const settingsOffices: navItem[] = [
   },
 ]
 
+export const meterTimezoneNavItems: navItem[] = [
+  {
+    title: 'Search Metering Timezones',
+    href: '/metering-timezone',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+
+  {
+    title: 'Add Metering Timezone',
+    href: '/metering-timezone/create',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
+]
 export const meterNavItems: navItem[] = [
   {
     title: 'Search Meters',
@@ -33,6 +46,7 @@ export const meterNavItems: navItem[] = [
     icon: <HomeIcon className='h-4 w-4' />,
   },
 ]
+
 export const settingsParties: navItem[] = [
   {
     title: 'Search Parties',
@@ -117,6 +131,14 @@ export const transformerrelNavItems: navItem[] = [
   {
     title: 'Search Meter CTPT Relations',
     href: '/meter-ctpt-rel',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+]
+
+export const meterReadingNavItems: navItem[] = [
+  {
+    title: 'Search Connections',
+    href: '/billing',
     icon: <ListIcon className='h-4 w-4' />,
   },
 ]

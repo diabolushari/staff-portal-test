@@ -1,0 +1,165 @@
+import { Card } from '@/components/ui/card'
+import StrongText from '@/typography/StrongText'
+import { useState, useEffect } from 'react'
+import MeterReadingValueForm from './MeterReadingValueForm'
+import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
+import { Info } from 'lucide-react'
+import MeterReadingValueTooltip from './MeterReadingValueTooltip'
+
+interface Props {
+  metersWithTimezonesAndProfiles: any[]
+  formData: any
+  setFormValue: (key: string) => (value: any) => void
+}
+
+export default function MeterReadingsStep({
+  metersWithTimezonesAndProfiles,
+  formData,
+  setFormValue,
+}: Readonly<Props>) {
+  const [activeProfile, setActiveProfile] = useState<{
+    meterIdx: number
+    profileIdx: number
+  } | null>(null)
+
+  // Initialize readings structure if empty
+  useEffect(() => {
+    if (!formData.readings_by_meter || formData.readings_by_meter.length === 0) {
+      const initializedMeters = metersWithTimezonesAndProfiles.map((meter) => ({
+        meter_id: meter.meter_id,
+        parameters: meter.meter_profile.map((profile: any) => ({
+          meter_parameter_id: profile.meter_parameter_id,
+          display_name: profile.display_name,
+          readings: meter.timezones.map((tz: any) => ({
+            timezone_id: tz.timezone_id, // ✅ add timezone_id
+            timezone_name: tz.timezone_name,
+            values: { initial: '', final: '', diff: '' },
+          })),
+        })),
+      }))
+      setFormValue('readings_by_meter')(initializedMeters)
+    }
+  }, [metersWithTimezonesAndProfiles])
+
+  // Update reading in new structure
+  const updateReading = (
+    meterId: number,
+    meterParameterId: number,
+    timezoneId: number,
+    rowKey: string,
+    value: any
+  ) => {
+    const updatedMeters = [...(formData.readings_by_meter || [])]
+
+    const meterIndex = updatedMeters.findIndex((m) => m.meter_id === meterId)
+    if (meterIndex >= 0) {
+      const meter = updatedMeters[meterIndex]
+      const paramIndex = meter.parameters.findIndex(
+        (p: any) => p.meter_parameter_id === meterParameterId
+      )
+      if (paramIndex >= 0) {
+        const param = meter.parameters[paramIndex]
+        const tzIndex = param.readings.findIndex((r: any) => r.timezone_id === timezoneId)
+        if (tzIndex >= 0) {
+          const tzReading = param.readings[tzIndex]
+          const newReadings = [...param.readings]
+          newReadings[tzIndex] = {
+            ...tzReading,
+            values: { ...tzReading.values, [rowKey]: value },
+          }
+          const newParams = [...meter.parameters]
+          newParams[paramIndex] = { ...param, readings: newReadings }
+          updatedMeters[meterIndex] = { ...meter, parameters: newParams }
+        }
+      }
+    }
+
+    setFormValue('readings_by_meter')(updatedMeters)
+  }
+
+  // Edit profile mode
+  if (activeProfile !== null) {
+    const meter = metersWithTimezonesAndProfiles[activeProfile.meterIdx]
+    const profile = meter.meter_profile[activeProfile.profileIdx]
+
+    const meterData = formData.readings_by_meter.find((m: any) => m.meter_id === meter.meter_id)
+    const paramData = meterData?.parameters.find(
+      (p: any) => p.meter_parameter_id === profile.meter_parameter_id
+    )
+
+    return (
+      <div className='flex flex-col gap-4'>
+        <Card className='p-4'>
+          <StrongText>{profile.display_name}</StrongText>
+
+          <MeterReadingValueForm
+            timeZoneNames={meter.timezones.map((tz: any) => ({
+              id: tz.timezone_id,
+              name: tz.timezone_name,
+            }))}
+            profile={profile}
+            values={paramData?.readings || []}
+            onChange={(rowKey, tzId, value) =>
+              updateReading(meter.meter_id, profile.meter_parameter_id, tzId, rowKey, value)
+            }
+          />
+
+          <div className='mt-4 flex justify-end gap-2'>
+            <Button
+              variant='outline'
+              onClick={() => setActiveProfile(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type='button'
+              onClick={() => setActiveProfile(null)}
+            >
+              Save
+            </Button>
+          </div>
+        </Card>
+      </div>
+    )
+  }
+
+  // Default card view
+  return (
+    <div className='flex flex-col gap-6'>
+      {metersWithTimezonesAndProfiles.map((meter, mIdx) => (
+        <div key={meter.meter_id}>
+          <StrongText className='mb-2 block'>
+            {`Meter ${meter.meter_id} — ${meter.meter_timezone_type}`}
+          </StrongText>
+          <div className='grid gap-4 md:grid-cols-2'>
+            {meter.meter_profile.map((profile: any, pIdx: number) => (
+              <Card
+                key={profile.meter_parameter_id}
+                className='hover:ring-primary relative cursor-pointer p-4 hover:ring-2'
+                onClick={() => setActiveProfile({ meterIdx: mIdx, profileIdx: pIdx })}
+              >
+                <StrongText>{profile.display_name}</StrongText>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className='absolute top-2 right-2 h-8 w-8 text-gray-400 hover:text-gray-600' />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side='top'
+                    className='bg-white'
+                  >
+                    <MeterReadingValueTooltip
+                      meterId={meter.meter_id}
+                      readingsByMeter={formData.readings_by_meter}
+                      parameterId={profile.meter_parameter_id}
+                    />
+                  </TooltipContent>
+                </Tooltip>
+              </Card>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
