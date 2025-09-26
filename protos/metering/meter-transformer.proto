@@ -79,7 +79,7 @@ message ListMeterTransformersRequest {
 message ListMeterTransformersResponse {
   repeated MeterTransformerMessage transformers = 1;
 }
-message ListMeterTransformerWithNoRelationRequest{
+message ListUnassignedMeterTransformersRequest{
   int32 page = 1;
   int32 page_size = 2;
 }
@@ -90,5 +90,5 @@ service MeterTransformerService {
   rpc GetMeterTransformer(GetMeterTransformerRequest) returns (MeterTransformerMessage);
   rpc DeleteMeterTransformer(DeleteMeterTransformerRequest) returns (google.protobuf.Empty);
   rpc ListMeterTransformers(ListMeterTransformersRequest) returns (ListMeterTransformersResponse);
-  rpc ListMeterTransformersWithNoRelation(ListMeterTransformerWithNoRelationRequest) returns (ListMeterTransformersResponse);
+  rpc ListUnassignedMeterTransformers(ListUnassignedMeterTransformersRequest) returns (ListMeterTransformersResponse);
 }

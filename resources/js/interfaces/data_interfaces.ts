@@ -199,3 +199,33 @@ export interface Meter {
   internal_pt_primary?: number
   internal_pt_secondary?: number
 }
+
+export interface MeterReading {
+  id: number
+  meter_reading_detail_id: number
+  connection_id: number
+  normal_pf: number
+  peak_pf: number
+  offpeak_pf: number
+  metering_date: string
+  reading_start_date: string
+  reading_end_date: string
+  average_power_factor: number
+  single_reading: boolean
+  multiple_reading: boolean
+  anomaly_id: number
+  meter_health_id: number
+  ctpt_health_id: number
+  voltage_r: number
+  voltage_y: number
+  voltage_b: number
+  current_r: number
+  current_y: number
+  current_b: number
+  remarks: string
+  created_by: number
+  updated_by: number
+  is_active: boolean
+}
+
+  

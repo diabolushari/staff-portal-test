@@ -11,7 +11,7 @@ use Proto\Metering\CreateMeterTransformerRequest;
 use Proto\Metering\DeleteMeterTransformerRequest;
 use Proto\Metering\GetMeterTransformerRequest;
 use Proto\Metering\ListMeterTransformersRequest;
-use Proto\Metering\ListMeterTransformerWithNoRelationRequest;
+use Proto\Metering\ListUnassignedMeterTransformersRequest;
 use Proto\Metering\MeterTransformerMessage;
 use Proto\Metering\MeterTransformerServiceClient;
 
@@ -123,13 +123,13 @@ class MeterTransformerService
         return GrpcServiceResponse::success($transformersArray, $response, $status->code, $status->details);
     }
 
-    public function listTransformersWithNoRelation(): GrpcServiceResponse
+    public function listUnassignedTransformers(): GrpcServiceResponse
     {
-        $request = new ListMeterTransformerWithNoRelationRequest;
+        $request = new ListUnassignedMeterTransformersRequest;
         $request->setPage(1);
         $request->setPageSize(100);
 
-        [$response, $status] = $this->client->ListMeterTransformersWithNoRelation($request)->wait();
+        [$response, $status] = $this->client->ListUnassignedMeterTransformers($request)->wait();
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
