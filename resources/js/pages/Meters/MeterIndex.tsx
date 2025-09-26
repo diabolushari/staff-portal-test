@@ -1,11 +1,10 @@
-import { router } from '@inertiajs/react'
-import { Barcode, Calendar, Cpu, Factory, Shield } from 'lucide-react'
-import { useState } from 'react'
 import { meterNavItems } from '@/components/Navbar/navitems'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import CardHeader from '@/ui/Card/CardHeader'
 import ListSearch from '@/ui/Search/ListSearch'
-import { ParameterValues } from '@/interfaces/parameter_types'
+import { router } from '@inertiajs/react'
+import { Barcode, Calendar, Cpu, Factory, Shield } from 'lucide-react'
 
 export interface Meter {
   meter_id: number

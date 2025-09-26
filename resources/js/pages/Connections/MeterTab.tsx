@@ -1,5 +1,5 @@
 import { Card } from '@/components/ui/card'
-import type { ConnectionMeterAssignment, Meter } from '@/interfaces/data_interfaces'
+import type { Meter, MeterAssignment } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import { router } from '@inertiajs/react'
 import {
@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 
 type ConnectionMeter = {
-  relationship: ConnectionMeterAssignment
+  relationship: MeterAssignment
   meter: Meter
 }
 
