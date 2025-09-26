@@ -62,7 +62,7 @@ class GetMeterReadingWithConnectionController extends Controller
 
                 // Fetch meter parameters
                 $meterParametersResponse = $this->meteringParameterProfileService
-                    ->listMeteringParameterProfiles(1, 10, null, $profileId);
+                    ->listMeteringProfileParameters(1, 10, null, $profileId);
                 $meterParameters = $meterParametersResponse->data ?? [];
 
                 $profileItems = [];
@@ -87,9 +87,7 @@ class GetMeterReadingWithConnectionController extends Controller
                 ];
             }
         }
-        dd($meterProfiles);
 
-        // return via Inertia
         return Inertia::render('MeterReading/ConnectionMeterReadingPage', [
             'connection' => $connection->data,
             'meters' => $meters,

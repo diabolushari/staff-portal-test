@@ -13,7 +13,7 @@ option java_outer_classname = "MeterReadingValuesProto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "parameters/parameter-value.proto";
-import "meter-reading/metering_parameter_profiles.proto";
+import "meter-reading/metering_profile_parameters.proto";
 import "metering/meter.proto";
 
 // ----------- ENTITY MESSAGE ------------
@@ -34,7 +34,7 @@ message MeterReadingValuesMessage {
   int32 created_by = 11;
   int32 updated_by = 12;
   bool is_active = 13;
- com.kseb.consumerservice.proto.meter_reading.MeteringParameterProfileMessage parameter = 14;
+ com.kseb.consumerservice.proto.meter_reading.MeteringProfileParameterMessage parameter = 14;
 }
 
 // ----------- REQUEST/RESPONSE MESSAGES ----------
