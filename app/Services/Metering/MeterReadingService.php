@@ -26,12 +26,9 @@ class MeterReadingService
         );
     }
 
-    public function listMeterReadings(?int $connectionId = null, ?int $page = 1, ?int $pageSize = 10, ?string $search = null): GrpcServiceResponse
+    public function listMeterReadings(?int $page = 1, ?int $pageSize = 10, ?string $search = null, ?int $connectionId = null): GrpcServiceResponse
     {
         $protoRequest = new ListMeterReadingsRequest;
-        if ($connectionId) {
-            $protoRequest->setConnectionId($connectionId);
-        }
         if ($page) {
             $protoRequest->setPage($page);
         }
@@ -40,6 +37,9 @@ class MeterReadingService
         }
         if ($search) {
             $protoRequest->setSearch($search);
+        }
+        if ($connectionId) {
+            $protoRequest->setConnectionId($connectionId);
         }
         [$response, $status] = $this->client->ListMeterReadings($protoRequest)->wait();
         if ($status->code !== 0) {

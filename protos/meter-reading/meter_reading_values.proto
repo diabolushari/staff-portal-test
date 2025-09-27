@@ -15,26 +15,29 @@ import "google/protobuf/timestamp.proto";
 import "parameters/parameter-value.proto";
 import "meter-reading/metering_profile_parameters.proto";
 import "metering/meter.proto";
+import "meter-reading/meter_reading.proto";
 
 // ----------- ENTITY MESSAGE ------------
 message MeterReadingValuesMessage {
   int64 meter_reading_values_id = 1;
 
   int64 parameter_id = 2;
-  int32 meter_id = 3;
-  com.kseb.consumerservice.proto.metering.MeterResponse meter = 4;
-  int64 timezone_id = 5;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto timezone = 6;
+  int64 meter_reading_id = 3;
+  com.kseb.consumerservice.proto.meter_reading.MeterReadingsMessage meter_reading = 4;
+  int32 meter_id = 5;
+  com.kseb.consumerservice.proto.metering.MeterResponse meter = 6;
+  int64 timezone_id = 7;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto timezone = 8;
 
-  double initial_reading = 7;
-  double final_reading = 8;
-  double difference = 9;
-  double value = 10;
+  double initial_reading = 9;
+  double final_reading = 10;
+  double difference = 11;
+  double value = 12;
 
-  int32 created_by = 11;
-  int32 updated_by = 12;
-  bool is_active = 13;
- com.kseb.consumerservice.proto.meter_reading.MeteringProfileParameterMessage parameter = 14;
+  int32 created_by = 13;
+  int32 updated_by = 14;
+  bool is_active = 15;
+  com.kseb.consumerservice.proto.meter_reading.MeteringProfileParameterMessage parameter = 16;
 }
 
 // ----------- REQUEST/RESPONSE MESSAGES ----------
@@ -73,6 +76,10 @@ message UpdateMeterReadingValuesResponse {
 // Get
 message GetMeterReadingValuesRequest {
   int64 meter_reading_values_id = 1;
+  int32 meter_id = 2;
+  int32 meter_parameter_id = 3;
+  int64 timezone_id = 4;
+  int64 meter_reading_id = 5;
 }
 message GetMeterReadingValuesResponse {
   MeterReadingValuesMessage reading = 1;
