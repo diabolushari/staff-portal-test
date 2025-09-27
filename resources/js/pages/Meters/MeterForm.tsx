@@ -14,6 +14,7 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 
 export interface MeterFormProps {
   ownershipTypes: ParameterValues[]
+  meterProfiles: ParameterValues[]
   makes: ParameterValues[]
   types: ParameterValues[]
   categories: ParameterValues[]
@@ -53,6 +54,7 @@ const toFloatOrUndef = (v: unknown) => {
 }
 export default function MeterForm({
   ownershipTypes,
+  meterProfiles,
   makes,
   types,
   categories,
@@ -68,6 +70,7 @@ export default function MeterForm({
   const { formData, setFormValue } = useCustomForm({
     meter_serial: meter?.meter_serial ?? '',
     ownership_type_id: meter?.ownership_type_id ?? null,
+    meter_profile_id: meter?.meter_profile_id ?? null,
     meter_make_id: meter?.meter_make_id ?? null,
     meter_type_id: meter?.meter_type_id ?? null,
     meter_category_id: meter?.meter_category_id ?? null,
@@ -101,6 +104,7 @@ export default function MeterForm({
     const basePayload = {
       meter_serial: formData.meter_serial,
       ownership_type_id: toNumberOrUndef(formData.ownership_type_id),
+      meter_profile_id: toNumberOrUndef(formData.meter_profile_id),
       meter_make_id: toNumberOrUndef(formData.meter_make_id),
       meter_type_id: toNumberOrUndef(formData.meter_type_id),
       meter_category_id: toNumberOrUndef(formData.meter_category_id),
@@ -187,6 +191,15 @@ export default function MeterForm({
                   dataKey='id'
                   displayKey='parameterValue'
                   error={errors.meter_type_id}
+                />
+                <SelectList
+                  label='Meter Profile'
+                  value={formData.meter_profile_id}
+                  setValue={setFormValue('meter_profile_id')}
+                  list={meterProfiles}
+                  dataKey='id'
+                  displayKey='parameterValue'
+                  error={errors.meter_profile_id}
                 />
                 <SelectList
                   label='Ownership Type'

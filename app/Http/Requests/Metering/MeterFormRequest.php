@@ -17,6 +17,7 @@ class MeterFormRequest extends Data
         // Common fields (create + update)
         public string $meterSerial,
         public int $ownershipTypeId,
+        public int $meterProfileId,
         public int $meterMakeId,
         public int $meterTypeId,
         public int $meterCategoryId,

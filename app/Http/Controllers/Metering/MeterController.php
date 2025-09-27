@@ -36,6 +36,7 @@ class MeterController extends Controller
     {
         $viewData = [
             'ownershipTypes' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Ownership Type')->data,
+            'meterProfiles' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile')->data,
             'makes' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Make')->data,
             'types' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Type')->data,
             'categories' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Category')->data,

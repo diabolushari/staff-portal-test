@@ -39,6 +39,9 @@ class MeterService
         if (array_key_exists('ownership_type_id', $data)) {
             $request->setOwnershipTypeId($data['ownership_type_id']);
         }
+        if (array_key_exists('meter_profile_id', $data)) {
+            $request->setMeterProfileId($data['meter_profile_id']);
+        }
         if (array_key_exists('meter_make_id', $data)) {
             $request->setMeterMakeId($data['meter_make_id']);
         }
@@ -196,6 +199,9 @@ class MeterService
         if (array_key_exists('ownership_type_id', $data)) {
             $request->setOwnershipTypeId($data['ownership_type_id']);
         }
+        if (array_key_exists('meter_profile_id', $data)) {
+            $request->setMeterProfileId($data['meter_profile_id']);
+        }
         if (array_key_exists('meter_make_id', $data)) {
             $request->setMeterMakeId($data['meter_make_id']);
         }
@@ -351,6 +357,7 @@ class MeterService
             'meter_serial' => $meter->getMeterSerial(),
 
             'ownership_type' => self::transformParameterValueToArray($meter->getOwnershipType()),
+            'meter_profile' => self::transformParameterValueToArray($meter->getMeterProfile()),
             'meter_make' => self::transformParameterValueToArray($meter->getMeterMake()),
             'meter_type' => self::transformParameterValueToArray($meter->getMeterType()),
             'meter_category' => self::transformParameterValueToArray($meter->getMeterCategory()),
