@@ -40,7 +40,7 @@ class MeterService
             $request->setOwnershipTypeId($data['ownership_type_id']);
         }
         if (array_key_exists('meter_profile_id', $data)) {
-            $request->setMeterProfileId($data['meter_profile_id']);
+            $request->setProfileId($data['meter_profile_id']);
         }
         if (array_key_exists('meter_make_id', $data)) {
             $request->setMeterMakeId($data['meter_make_id']);

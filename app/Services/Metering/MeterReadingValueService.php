@@ -6,6 +6,7 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
+use Proto\Consumers\MeterResponse;
 use Proto\MeterReading\ListMeterReadingValuesRequest;
 use Proto\MeterReading\MeterReadingValuesMessage;
 use Proto\MeterReading\MeterReadingValuesServiceClient;
@@ -17,6 +18,7 @@ class MeterReadingValueService
     public function __construct(
         private ParameterValueService $parameterValueService,
         private MeteringParameterProfileService $meteringParameterProfileService,
+        private MeterService $meterService
     ) {
         $this->client = new MeterReadingValuesServiceClient(
             config('app.consumer_service_grpc_host'),
@@ -89,7 +91,7 @@ class MeterReadingValueService
             'created_by' => $response->getCreatedBy(),
             'updated_by' => $response->getUpdatedBy(),
             'is_active' => $response->getIsActive(),
-            'meter' => $response->getMeter(),
+            'meter' => $this->meterService->meterProtoToArray($response->getMeter() ?? new MeterResponse),
             'timezone' => $this->parameterValueService->toArray($response->getTimezone()),
             'parameter' => $this->meteringParameterProfileService->toArray($response->getParameter()),
         ];

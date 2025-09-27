@@ -4,15 +4,16 @@ import { navItem } from '@/components/Navbar/navitems'
 import { Connection } from '@/interfaces/consumers'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
 import { TabsContent } from '@radix-ui/react-tabs'
-import { MeterData, MeterTab } from '@/pages/Connections/MeterTab'
+import { MeterTab } from '@/pages/Connections/MeterTab'
 import StrongText from '@/typography/StrongText'
+import { ConnectionMeterAssignment, Meter } from '@/interfaces/data_interfaces'
 
 interface ConnectionsLayoutProps {
   children: React.ReactNode
   breadcrumbs: BreadcrumbItem[]
   connectionsNavItems: navItem[]
   connection: Connection
-  meters: MeterData[]
+  meters: ConnectionMeterAssignment[] | null
   connectionId: number
   value: string
   heading: string

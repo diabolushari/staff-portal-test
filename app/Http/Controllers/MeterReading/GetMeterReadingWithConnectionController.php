@@ -68,7 +68,7 @@ class GetMeterReadingWithConnectionController extends Controller
                 $profileItems = [];
                 foreach ($meterParameters as $meterParameter) {
                     $meterReadingValueResponse = $this->meterReadingValueService
-                        ->listMeterReadingValues(1, 10, null, $meterId, $meterParameter['meter_parameter_id']);
+                        ->listMeterReadingValues(1, 10, null, $meterId, null);
 
                     $values = ($meterReadingValueResponse->hasError() || empty($meterReadingValueResponse->data))
                         ? null

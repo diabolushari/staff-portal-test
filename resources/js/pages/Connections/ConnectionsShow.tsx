@@ -10,6 +10,7 @@ import { router } from '@inertiajs/react'
 import { PencilIcon } from 'lucide-react'
 import { useMemo } from 'react'
 import { MeterTab } from './MeterTab'
+import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 
 type ConnectionMeter = {
   relationship: ConnectionMeterAssignment
@@ -18,7 +19,7 @@ type ConnectionMeter = {
 
 interface Props {
   connection: Connection
-  meters: ConnectionMeter[] | null
+  meters: ConnectionMeterAssignment[] | null
 }
 
 export default function ConnectionsShow({ connection, meters }: Readonly<Props>) {
@@ -63,9 +64,15 @@ export default function ConnectionsShow({ connection, meters }: Readonly<Props>)
   )
 
   return (
-    <MainLayout
-      breadcrumb={breadcrumbs}
-      navItems={connectionsNavItems}
+    <ConnectionsLayout
+      connection={connection}
+      meters={meters}
+      connectionId={connection.connection_id}
+      value={'details'}
+      heading='Connection Details'
+      subHeading='Connection Details'
+      breadcrumbs={breadcrumbs}
+      connectionsNavItems={connectionsNavItems}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header */}
@@ -219,6 +226,6 @@ export default function ConnectionsShow({ connection, meters }: Readonly<Props>)
           </Card>
         </div>
       </div>
-    </MainLayout>
+    </ConnectionsLayout>
   )
 }

@@ -94,7 +94,7 @@ message ListMeterReadingValuesRequest {
   optional string search = 3;
   optional int64 meter_reading_values_id = 4;
   optional int32 meter_id = 5;
-    optional int32 meter_parameter_id = 6;
+  optional int32 meter_parameter_id = 6;
 }
 message ListMeterReadingValuesResponse {
   repeated MeterReadingValuesMessage readings = 1;
