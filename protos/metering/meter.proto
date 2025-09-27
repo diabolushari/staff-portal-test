@@ -142,4 +142,6 @@ message MeterResponse {
   optional int32 internal_ct_secondary = 31;
   optional int32 internal_pt_primary = 32;
   optional int32 internal_pt_secondary = 33;
+  optional int32 meter_profile_id = 34;
+  optional parameters.ParameterValueProto meter_profile = 35;
 }
