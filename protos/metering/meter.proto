@@ -9,7 +9,6 @@ import "parameters/parameter-value.proto";
 option php_namespace = "Proto\\Consumers";
 option php_metadata_namespace = "GPBMetadata";
 
-
 option java_package = "com.kseb.consumerservice.proto.metering";
 option java_multiple_files = true;
 option java_outer_classname = "MeterProto";
@@ -63,6 +62,9 @@ message CreateMeterRequest {
   optional int32 internal_ct_secondary = 26;
   optional int32 internal_pt_primary = 27;
   optional int32 internal_pt_secondary = 28;
+
+  int64 profile_id = 29;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 30;
 }
 
 message UpdateMeterRequest {
@@ -100,6 +102,9 @@ message UpdateMeterRequest {
 
   // Allow client to set updated_ts if needed; otherwise server sets it
   optional google.protobuf.Timestamp updated_ts = 30;
+
+  int64 profile_id = 31;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 32;
 }
 
 message DeleteMeterRequest {
@@ -142,6 +147,8 @@ message MeterResponse {
   optional int32 internal_ct_secondary = 31;
   optional int32 internal_pt_primary = 32;
   optional int32 internal_pt_secondary = 33;
-  optional int32 meter_profile_id = 34;
-  optional parameters.ParameterValueProto meter_profile = 35;
+
+  int64 profile_id = 34;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 35;
 }
+

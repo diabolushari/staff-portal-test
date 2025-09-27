@@ -42,6 +42,6 @@ class MeterReadingController extends Controller
             }
         }
 
-        return redirect()->route('meter-reading.index');
+        return redirect()->route('connections.index');
     }
 }

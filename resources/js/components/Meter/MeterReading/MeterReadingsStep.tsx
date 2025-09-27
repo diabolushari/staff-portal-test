@@ -32,7 +32,7 @@ export default function MeterReadingsStep({
           meter_parameter_id: profile.meter_parameter_id,
           display_name: profile.display_name,
           readings: meter.timezones.map((tz: any) => ({
-            timezone_id: tz.timezone_id, // ✅ add timezone_id
+            timezone_id: tz.timezone_id,
             timezone_name: tz.timezone_name,
             values: { initial: '', final: '', diff: '' },
           })),
@@ -40,7 +40,7 @@ export default function MeterReadingsStep({
       }))
       setFormValue('readings_by_meter')(initializedMeters)
     }
-  }, [metersWithTimezonesAndProfiles])
+  }, [metersWithTimezonesAndProfiles, formData.readings_by_meter])
 
   // Update reading in new structure
   const updateReading = (
@@ -50,30 +50,32 @@ export default function MeterReadingsStep({
     rowKey: string,
     value: any
   ) => {
-    const updatedMeters = [...(formData.readings_by_meter || [])]
+    const updatedMeters = formData.readings_by_meter.map((m: any) => {
+      if (m.meter_id !== meterId) return m
 
-    const meterIndex = updatedMeters.findIndex((m) => m.meter_id === meterId)
-    if (meterIndex >= 0) {
-      const meter = updatedMeters[meterIndex]
-      const paramIndex = meter.parameters.findIndex(
-        (p: any) => p.meter_parameter_id === meterParameterId
-      )
-      if (paramIndex >= 0) {
-        const param = meter.parameters[paramIndex]
-        const tzIndex = param.readings.findIndex((r: any) => r.timezone_id === timezoneId)
-        if (tzIndex >= 0) {
-          const tzReading = param.readings[tzIndex]
-          const newReadings = [...param.readings]
-          newReadings[tzIndex] = {
-            ...tzReading,
-            values: { ...tzReading.values, [rowKey]: value },
+      return {
+        ...m,
+        parameters: m.parameters.map((p: any) => {
+          if (p.meter_parameter_id !== meterParameterId) return p
+
+          return {
+            ...p,
+            readings: p.readings.map((r: any) => {
+              if (r.timezone_id !== timezoneId) return r
+
+              const newValues = { ...r.values, [rowKey]: value }
+
+              // Recalculate diff automatically
+              const initial = parseFloat(newValues.initial || 0)
+              const final = parseFloat(newValues.final || 0)
+              newValues.diff = (final - initial).toString()
+
+              return { ...r, values: newValues }
+            }),
           }
-          const newParams = [...meter.parameters]
-          newParams[paramIndex] = { ...param, readings: newReadings }
-          updatedMeters[meterIndex] = { ...meter, parameters: newParams }
-        }
+        }),
       }
-    }
+    })
 
     setFormValue('readings_by_meter')(updatedMeters)
   }
@@ -82,7 +84,6 @@ export default function MeterReadingsStep({
   if (activeProfile !== null) {
     const meter = metersWithTimezonesAndProfiles[activeProfile.meterIdx]
     const profile = meter.meter_profile[activeProfile.profileIdx]
-
     const meterData = formData.readings_by_meter.find((m: any) => m.meter_id === meter.meter_id)
     const paramData = meterData?.parameters.find(
       (p: any) => p.meter_parameter_id === profile.meter_parameter_id
@@ -98,10 +99,9 @@ export default function MeterReadingsStep({
               id: tz.timezone_id,
               name: tz.timezone_name,
             }))}
-            profile={profile}
             values={paramData?.readings || []}
-            onChange={(rowKey, tzId, value) =>
-              updateReading(meter.meter_id, profile.meter_parameter_id, tzId, rowKey, value)
+            onChange={(rowKey, tzId, val) =>
+              updateReading(meter.meter_id, profile.meter_parameter_id, tzId, rowKey, val)
             }
           />
 
@@ -133,30 +133,57 @@ export default function MeterReadingsStep({
             {`Meter ${meter.meter_id} — ${meter.meter_timezone_type}`}
           </StrongText>
           <div className='grid gap-4 md:grid-cols-2'>
-            {meter.meter_profile.map((profile: any, pIdx: number) => (
-              <Card
-                key={profile.meter_parameter_id}
-                className='hover:ring-primary relative cursor-pointer p-4 hover:ring-2'
-                onClick={() => setActiveProfile({ meterIdx: mIdx, profileIdx: pIdx })}
-              >
-                <StrongText>{profile.display_name}</StrongText>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Info className='absolute top-2 right-2 h-8 w-8 text-gray-400 hover:text-gray-600' />
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side='top'
-                    className='bg-white'
-                  >
-                    <MeterReadingValueTooltip
-                      meterId={meter.meter_id}
-                      readingsByMeter={formData.readings_by_meter}
-                      parameterId={profile.meter_parameter_id}
-                    />
-                  </TooltipContent>
-                </Tooltip>
-              </Card>
-            ))}
+            {meter.meter_profile.map((profile: any, pIdx: number) => {
+              const meterData = formData.readings_by_meter?.find(
+                (m: any) => m.meter_id === meter.meter_id
+              )
+              const paramData = meterData?.parameters.find(
+                (p: any) => p.meter_parameter_id === profile.meter_parameter_id
+              )
+
+              return (
+                <Card
+                  key={profile.meter_parameter_id}
+                  className='hover:ring-primary relative cursor-pointer p-4 hover:ring-2'
+                  onClick={() => setActiveProfile({ meterIdx: mIdx, profileIdx: pIdx })}
+                >
+                  <StrongText>{profile.display_name}</StrongText>
+
+                  <div className='mt-2 space-y-1 text-sm text-gray-600'>
+                    {paramData?.readings?.map((r: any) => {
+                      const diff = r.values?.diff
+                      return (
+                        diff && (
+                          <div
+                            key={r.timezone_id}
+                            className='flex justify-between'
+                          >
+                            <span>{r.timezone_name}</span>
+                            <span className='font-medium text-gray-800'>{diff}</span>
+                          </div>
+                        )
+                      )
+                    })}
+                  </div>
+
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className='absolute top-2 right-2 h-8 w-8 text-gray-400 hover:text-gray-600' />
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side='top'
+                      className='bg-white'
+                    >
+                      <MeterReadingValueTooltip
+                        meterId={meter.meter_id}
+                        readingsByMeter={formData.readings_by_meter}
+                        parameterId={profile.meter_parameter_id}
+                      />
+                    </TooltipContent>
+                  </Tooltip>
+                </Card>
+              )
+            })}
           </div>
         </div>
       ))}

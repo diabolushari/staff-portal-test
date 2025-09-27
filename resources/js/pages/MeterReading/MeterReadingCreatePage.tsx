@@ -1,20 +1,19 @@
+import { useState } from 'react'
+import MainLayout from '@/layouts/main-layout'
+import Stepper from '@/components/Stepper'
 import MeterReadingGeneralStep from '@/components/Meter/MeterReading/MeterReadingGeneralStep'
 import MeterReadingObservationStep from '@/components/Meter/MeterReading/MeterReadingObservationStep'
 import MeterReadingsStep from '@/components/Meter/MeterReading/MeterReadingsStep'
 import { connectionsNavItems } from '@/components/Navbar/navitems'
-import Stepper from '@/components/Stepper'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ConsumerData } from '@/interfaces/consumers'
-import { ParameterValues } from '@/interfaces/parameter_types'
-import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 
 interface Props {
-  connectionWithConsumer: ConsumerData
-  meterHealthTypes: ParameterValues[]
-  ctptHealthTypes: ParameterValues[]
-  anomalyTypes: ParameterValues[]
+  connectionWithConsumer: any
+  meterHealthTypes: any[]
+  ctptHealthTypes: any[]
+  anomalyTypes: any[]
   metersWithTimezonesAndProfiles: any[]
 }
 
@@ -31,35 +30,36 @@ export default function MeterReadingCreatePage({
       href: `/meter-reading/${connectionWithConsumer?.connection?.connection_id}/create`,
     },
   ]
-  const { formData, setFormValue, toggleBoolean } = useCustomForm({
+
+  const { formData, setFormValue } = useCustomForm({
     connection_id: connectionWithConsumer?.connection?.connection_id,
-    normal_pf: '',
-    peak_pf: '',
-    offpeak_pf: '',
-    average_power_factor: '',
-    reading_type: '',
-    anomaly_id: '',
     metering_date: '',
     reading_start_date: '',
     reading_end_date: '',
+    reading_type: '',
     meter_health_id: '',
     ctpt_health_id: '',
-    voltage_r: '',
-    voltage_b: '',
-    voltage_y: '',
-    current_r: '',
-    current_b: '',
-    current_y: '',
-    remarks: '',
-    readings: [],
+    anomaly_id: '',
     readings_by_meter: [],
   })
-  const { post } = useInertiaPost(route('meter-reading.store'), {
-    showErrorToast: true,
-  })
+
+  const { post, errors } = useInertiaPost(route('meter-reading.store'))
+
+  const [activeStep, setActiveStep] = useState(0)
+
+  // Check if a step has any errors
+  const hasStepError = (fields: string[]) => fields.some((f) => errors?.[f])
+  const getFirstErrorStep = () => {
+    if (hasStepError(['metering_date', 'reading_start_date', 'reading_end_date', 'reading_type']))
+      return 0
+    if (hasStepError(['meter_health_id', 'ctpt_health_id', 'anomaly_id'])) return 1
+    // last step (readings) we don't force navigation
+    return activeStep
+  }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
     post(formData)
   }
 
@@ -71,22 +71,35 @@ export default function MeterReadingCreatePage({
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         <form onSubmit={handleSubmit}>
           <Stepper
-            onSubmit={handleSubmit}
+            activeStep={activeStep}
+            onStepChange={setActiveStep}
             steps={[
               {
                 id: 1,
                 title: 'General',
+                status: hasStepError([
+                  'metering_date',
+                  'reading_start_date',
+                  'reading_end_date',
+                  'reading_type',
+                ])
+                  ? 'error'
+                  : 'default',
                 content: (
                   <MeterReadingGeneralStep
                     connectionWithConsumer={connectionWithConsumer}
                     formData={formData}
                     setFormValue={setFormValue}
+                    errors={errors}
                   />
                 ),
               },
               {
                 id: 2,
                 title: 'Observations',
+                status: hasStepError(['meter_health_id', 'ctpt_health_id', 'anomaly_id'])
+                  ? 'error'
+                  : 'default',
                 content: (
                   <MeterReadingObservationStep
                     formData={formData}
@@ -94,12 +107,14 @@ export default function MeterReadingCreatePage({
                     meterHealthTypes={meterHealthTypes}
                     ctptHealthTypes={ctptHealthTypes}
                     anomalyTypes={anomalyTypes}
+                    errors={errors}
                   />
                 ),
               },
               {
                 id: 3,
                 title: 'Readings',
+                status: 'default', // don't enforce errors on last step
                 content: (
                   <MeterReadingsStep
                     metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}

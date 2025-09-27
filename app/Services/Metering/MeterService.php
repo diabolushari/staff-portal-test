@@ -200,7 +200,7 @@ class MeterService
             $request->setOwnershipTypeId($data['ownership_type_id']);
         }
         if (array_key_exists('meter_profile_id', $data)) {
-            $request->setMeterProfileId($data['meter_profile_id']);
+            $request->setProfileId($data['meter_profile_id']);
         }
         if (array_key_exists('meter_make_id', $data)) {
             $request->setMeterMakeId($data['meter_make_id']);
@@ -355,17 +355,17 @@ class MeterService
             'version_id' => $meter->getVersionId(),
             'meter_id' => $meter->getMeterId(),
             'meter_serial' => $meter->getMeterSerial(),
+            'profile_id' => $meter->getProfileId(),
 
             'ownership_type' => self::transformParameterValueToArray($meter->getOwnershipType()),
-            'meter_profile' => self::transformParameterValueToArray($meter->getMeterProfile()),
+            'meter_profile' => self::transformParameterValueToArray($meter->getProfile()),
             'meter_make' => self::transformParameterValueToArray($meter->getMeterMake()),
             'meter_type' => self::transformParameterValueToArray($meter->getMeterType()),
             'meter_category' => self::transformParameterValueToArray($meter->getMeterCategory()),
             'accuracy_class' => self::transformParameterValueToArray($meter->getAccuracyClass()),
             'dialing_factor' => self::transformParameterValueToArray($meter->getDialingFactor()),
-
-            'company_seal_num' => method_exists($meter, 'hasCompanySealNum') && $meter->hasCompanySealNum() ? $meter->getCompanySealNum() : null,
-            'digit_count' => method_exists($meter, 'hasDigitCount') && $meter->hasDigitCount() ? $meter->getDigitCount() : null,
+            'company_seal_num' => $meter->getCompanySealNum(),
+            'digit_count' => $meter->getDigitCount(),
 
             'manufacture_date' => $manufactureDate,
             'supply_date' => $supplyDate,
@@ -379,22 +379,22 @@ class MeterService
             'created_ts' => $createdTs,
             'updated_ts' => $updatedTs,
             'created_by' => $meter->getCreatedBy(),
-            'updated_by' => method_exists($meter, 'hasUpdatedBy') && $meter->hasUpdatedBy() ? $meter->getUpdatedBy() : null,
+            'updated_by' => $meter->getUpdatedBy(),
 
             'meter_phase' => self::transformParameterValueToArray($meter->getMeterPhase()),
-            'decimal_digit_count' => method_exists($meter, 'hasDecimalDigitCount') && $meter->hasDecimalDigitCount() ? $meter->getDecimalDigitCount() : null,
-            'programmable_pt_ratio' => method_exists($meter, 'hasProgrammablePtRatio') && $meter->hasProgrammablePtRatio() ? $meter->getProgrammablePtRatio() : null,
-            'programmable_ct_ratio' => method_exists($meter, 'hasProgrammableCtRatio') && $meter->hasProgrammableCtRatio() ? $meter->getProgrammableCtRatio() : null,
-            'meter_mf' => method_exists($meter, 'hasMeterMf') && $meter->hasMeterMf() ? $meter->getMeterMf() : null,
-            'warranty_period' => method_exists($meter, 'hasWarrantyPeriod') && $meter->hasWarrantyPeriod() ? $meter->getWarrantyPeriod() : null,
-            'meter_constant' => method_exists($meter, 'hasMeterConstant') && $meter->hasMeterConstant() ? $meter->getMeterConstant() : null,
-            'batch_code' => method_exists($meter, 'hasBatchCode') && $meter->hasBatchCode() ? $meter->getBatchCode() : null,
+            'decimal_digit_count' => $meter->getDecimalDigitCount(),
+            'programmable_pt_ratio' => $meter->getProgrammablePtRatio(),
+            'programmable_ct_ratio' => $meter->getProgrammableCtRatio(),
+            'meter_mf' => $meter->getMeterMf(),
+            'warranty_period' => $meter->getWarrantyPeriod(),
+            'meter_constant' => $meter->getMeterConstant(),
+            'batch_code' => $meter->getBatchCode(),
 
             // New internal CT/PT ratios
-            'internal_ct_primary' => method_exists($meter, 'hasInternalCtPrimary') && $meter->hasInternalCtPrimary() ? $meter->getInternalCtPrimary() : null,
-            'internal_ct_secondary' => method_exists($meter, 'hasInternalCtSecondary') && $meter->hasInternalCtSecondary() ? $meter->getInternalCtSecondary() : null,
-            'internal_pt_primary' => method_exists($meter, 'hasInternalPtPrimary') && $meter->hasInternalPtPrimary() ? $meter->getInternalPtPrimary() : null,
-            'internal_pt_secondary' => method_exists($meter, 'hasInternalPtSecondary') && $meter->hasInternalPtSecondary() ? $meter->getInternalPtSecondary() : null,
+            'internal_ct_primary' => $meter->getInternalCtPrimary(),
+            'internal_ct_secondary' => $meter->getInternalCtSecondary(),
+            'internal_pt_primary' => $meter->getInternalPtPrimary(),
+            'internal_pt_secondary' => $meter->getInternalPtSecondary(),
         ];
     }
 

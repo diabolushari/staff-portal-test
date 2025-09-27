@@ -8,25 +8,31 @@ import { cn } from '@/lib/utils'
 interface Step {
   id: number
   title: string
-  // Can be any React component or element
   content: React.ReactNode
+  status?: 'default' | 'error' | 'completed'
 }
 
 interface StepperProps {
   steps: Step[]
-  /** Called when the final Submit button is clicked (form handles actual submit) */
-  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void
+  activeStep?: number
+  onStepChange?: (stepIndex: number) => void
 }
 
-export default function Stepper({ steps, onSubmit }: StepperProps) {
-  const [step, setStep] = useState(0)
+export default function Stepper({ steps, activeStep: activeStepProp, onStepChange }: StepperProps) {
+  const [activeStep, setActiveStep] = useState(activeStepProp || 0)
+  const currentStep = activeStepProp ?? activeStep
+
+  const goToStep = (index: number) => {
+    if (onStepChange) onStepChange(index)
+    else setActiveStep(index)
+  }
 
   const nextStep = () => {
-    if (step < steps.length - 1) setStep(step + 1)
+    if (currentStep < steps.length - 1) goToStep(currentStep + 1)
   }
 
   const prevStep = () => {
-    if (step > 0) setStep(step - 1)
+    if (currentStep > 0) goToStep(currentStep - 1)
   }
 
   return (
@@ -35,16 +41,18 @@ export default function Stepper({ steps, onSubmit }: StepperProps) {
       <div className='mb-8 flex justify-between'>
         {steps.map((s, index) => (
           <button
-            type='button'
             key={s.id}
-            onClick={() => setStep(index)} // allow direct navigation
+            type='button'
+            onClick={() => goToStep(index)}
             className={cn(
               'flex-1 border-b-2 py-2 text-center transition-colors',
-              step === index
-                ? 'border-blue-600 font-semibold text-blue-600'
-                : step > index
-                  ? 'border-green-500 text-green-500'
-                  : 'border-gray-300 text-gray-400'
+              s.status === 'error'
+                ? 'border-red-500 text-red-500'
+                : currentStep === index
+                  ? 'border-blue-600 font-semibold text-blue-600'
+                  : currentStep > index
+                    ? 'border-green-500 text-green-500'
+                    : 'border-gray-300 text-gray-400'
             )}
           >
             {s.title}
@@ -55,23 +63,22 @@ export default function Stepper({ steps, onSubmit }: StepperProps) {
       {/* Step content */}
       <Card>
         <CardHeader>
-          <CardTitle>{steps[step].title}</CardTitle>
+          <CardTitle>{steps[currentStep].title}</CardTitle>
         </CardHeader>
         <CardContent>
-          {/* This can be ANY React component */}
-          <div>{steps[step].content}</div>
+          {steps[currentStep].content}
 
           <div className='mt-6 flex justify-between'>
             <Button
               type='button'
               variant='outline'
               onClick={prevStep}
-              disabled={step === 0}
+              disabled={currentStep === 0}
             >
               Back
             </Button>
 
-            {step < steps.length - 1 && (
+            {currentStep < steps.length - 1 && (
               <Button
                 type='button'
                 onClick={nextStep}
@@ -79,10 +86,8 @@ export default function Stepper({ steps, onSubmit }: StepperProps) {
                 Next
               </Button>
             )}
-            {step === steps.length - 1 && (
-              // final submit handled by parent <form>
-              <Button type='submit'>Submit</Button>
-            )}
+
+            {currentStep === steps.length - 1 && <Button type='submit'>Submit</Button>}
           </div>
         </CardContent>
       </Card>

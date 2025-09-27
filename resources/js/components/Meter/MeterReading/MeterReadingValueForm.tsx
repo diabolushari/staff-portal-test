@@ -12,14 +12,12 @@ const rowLabels = ['Initial', 'Final', 'Diff']
 
 interface Props {
   timeZoneNames: { id: number; name: string }[]
-  profile: any
   values: { timezone_id: number; timezone_name: string; values: Record<string, any> }[]
   onChange: (rowKey: string, tzId: number, value: any) => void
 }
 
 export default function MeterReadingValueForm({
   timeZoneNames,
-  profile,
   values,
   onChange,
 }: Readonly<Props>) {
@@ -41,15 +39,18 @@ export default function MeterReadingValueForm({
               <TableRow key={label}>
                 <TableCell className='font-medium'>{label}</TableCell>
                 {timeZoneNames.map((tz) => {
-                  const tzData = values.find((r) => r.timezone_id === tz.id)
-                  const fieldValue = tzData?.values?.[rowKey] ?? ''
+                  const tzData = values.find((r) => r.timezone_id === tz.id) || { values: {} }
+                  const fieldValue = tzData.values[rowKey] ?? ''
 
                   return (
                     <TableCell key={tz.id}>
                       <Input
                         type='number'
                         value={fieldValue}
-                        setValue={(val) => onChange(rowKey, tz.id, val)}
+                        setValue={(val) => {
+                          if (rowKey !== 'diff') onChange(rowKey, tz.id, val)
+                        }}
+                        disabled={rowKey === 'diff'}
                       />
                     </TableCell>
                   )

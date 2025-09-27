@@ -7,6 +7,7 @@ use App\Services\Connection\ConnectionService;
 use App\Services\Connection\ConsumerService;
 use App\Services\Metering\MeterConnectionRelService;
 use App\Services\Metering\MeteringParameterProfileService;
+use App\Services\Metering\MeterService;
 use App\Services\Metering\MeterTimezoneTypeRelService;
 use App\Services\MeteringTimezone\MeteringTimezoneService;
 use App\Services\Parameters\ParameterValueService;
@@ -23,7 +24,8 @@ class GetMeterReadingController extends Controller
         private MeterConnectionRelService $meterConnectionRelService,
         private MeterTimezoneTypeRelService $meterTimezoneTypeRelService,
         private MeteringTimezoneService $meteringTimezoneService,
-        private MeteringParameterProfileService $meteringParameterProfileService
+        private MeteringParameterProfileService $meteringParameterProfileService,
+        private MeterService $meterService
     ) {}
 
     public function __invoke(Request $request, int $connectionId): Response
@@ -57,13 +59,9 @@ class GetMeterReadingController extends Controller
             $meterWithTimezoneAndProfile = [];
 
             foreach ($meterConnectionRel->data as $meterConnectionRel) {
-                if ($meterConnectionRel['meter_id'] == 2) {
-                    $meterConnectionRel['meter_profile_id'] = '56';
-                }
-                if ($meterConnectionRel['meter_id'] == 1) {
-                    $meterConnectionRel['meter_profile_id'] = '52';
-                }
+
                 $meterWithTimezoneAndProfile['meter_id'] = $meterConnectionRel['meter_id'];
+                $meter = $this->meterService->getMeter($meterConnectionRel['meter_id']);
                 $data = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($meterConnectionRel['meter_id'])->data ?? [];
                 $meterWithTimezoneAndProfile['meter_timezone_type'] = $data['timezone_type']['parameter_value'];
                 $meterTimezoneTypeRel[] = $data;
@@ -80,7 +78,7 @@ class GetMeterReadingController extends Controller
                     $meterWithTimezoneAndProfile['timezones'] = $timezones;
                 }
 
-                $meterProfilesResponse = $this->meteringParameterProfileService->listMeteringProfileParameters(1, 10, null, $meterConnectionRel['meter_profile_id'])->data;
+                $meterProfilesResponse = $this->meteringParameterProfileService->listMeteringProfileParameters(1, 10, null, $meter->data['profile_id'] ?? null)->data;
                 $meterProfiles = [];
                 if ($meterProfilesResponse) {
                     foreach ($meterProfilesResponse as $meterProfile) {

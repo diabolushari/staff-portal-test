@@ -11,12 +11,14 @@ interface Props {
   connectionWithConsumer: ConsumerData
   formData: any
   setFormValue: any
+  errors?: any
 }
 
 export default function MeterReadingGeneralStep({
   connectionWithConsumer,
   formData,
   setFormValue,
+  errors,
 }: Props) {
   return (
     <>
@@ -43,16 +45,19 @@ export default function MeterReadingGeneralStep({
               label='Metering Date'
               value={formData.metering_date}
               setValue={setFormValue('metering_date')}
+              error={errors?.metering_date}
             />
             <DatePicker
               label='Reading Start Date'
               value={formData.reading_start_date}
               setValue={setFormValue('reading_start_date')}
+              error={errors?.reading_start_date}
             />
             <DatePicker
               label='Reading End Date'
               value={formData.reading_end_date}
               setValue={setFormValue('reading_end_date')}
+              error={errors?.reading_end_date}
             />
             <RadioGroup
               label='Reading Type'
@@ -64,6 +69,7 @@ export default function MeterReadingGeneralStep({
               displayKey='label'
               setValue={setFormValue('reading_type')}
               value={formData.reading_type}
+              error={errors?.reading_type}
             />
           </div>
         </div>
