@@ -1,4 +1,4 @@
-import { router } from '@inertiajs/react'
+import { transformerNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import MainLayout from '@/layouts/main-layout'
@@ -8,8 +8,8 @@ import CardHeader from '@/ui/Card/CardHeader'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
-import { transformerNavItems } from '@/components/Navbar/navitems'
-import { useState } from 'react'
+import { router } from '@inertiajs/react'
+import { useState, useMemo } from 'react'
 
 // --- Type Definitions ---
 interface ParameterOption {
@@ -59,7 +59,32 @@ export default function MeterTransformerForm({
   console.log('Transformer prop:', transformer) // Debugging line
   const isEditing = Boolean(transformer)
 
-  const [transformerType, setTransformerType] = useState<string>(transformer?.type_name || '')
+  const [transformerType, setTransformerType] = useState<string>(transformer?.type?.parameter_value ?? '')
+
+  const transformerInfo = useMemo(() => {
+    const type = transformerType?.toUpperCase()
+    if (type === 'CT') {
+      return {
+        primary: 'Primary Current',
+        secondary: 'Secondary Current',
+        primaryUnit: 'A',
+        secondaryUnit: 'A',
+      }
+    } else if (type === 'PT') {
+      return {
+        primary: 'Primary Voltage',
+        secondary: 'Secondary Voltage',
+        primaryUnit: 'V',
+        secondaryUnit: 'V',
+      }
+    }
+    return {
+      primary: 'Primary Ratio',
+      secondary: 'Secondary Ratio',
+      primaryUnit: '',
+      secondaryUnit: '',
+    }
+  }, [transformerType])
 
   const { formData, setFormValue } = useCustomForm({
     ctpt_serial: transformer?.ctpt_serial ?? '',
@@ -198,7 +223,7 @@ export default function MeterTransformerForm({
                   error={errors.burden_id}
                 />
                 <Input
-                  label='Primary Ratio'
+                  label={transformerInfo.primary}
                   type='text'
                   value={formData.ratio_primary_value}
                   setValue={setFormValue('ratio_primary_value')}
@@ -206,7 +231,7 @@ export default function MeterTransformerForm({
                 />
 
                 <Input
-                  label='Secondary Ratio'
+                  label={transformerInfo.secondary}
                   type='text'
                   value={formData.ratio_secondary_value}
                   setValue={setFormValue('ratio_secondary_value')}

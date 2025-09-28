@@ -1,30 +1,22 @@
-import MeterTransformerList from '@/components/Meter/MeterTransformer/MeterTransformerList'
+import MeterTransformerListItem from '@/components/Meter/MeterTransformer/MeterTransformerListItem'
 import { transformerNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import CardHeader from '@/ui/Card/CardHeader'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import ListSearch from '@/ui/Search/ListSearch'
-import { router } from '@inertiajs/react'
 import { useState } from 'react'
-import { MeterTransformer } from './MeterTransformerShow'
+import { MeterTransformer } from '@/interfaces/data_interfaces'
 
 interface Props {
   transformers: MeterTransformer[]
 }
+
 const breadcrumbs = [{ title: 'Meter CTPT', href: '/meter-ctpt' }]
 
 export default function MeterTransformerIndex({ transformers }: Readonly<Props>) {
   const [items, setItems] = useState(transformers ?? [])
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedTransformer, setSelectedTransformer] = useState<MeterTransformer | null>(null)
-  console.log('Meter Transformers:', items)
-  function handleShow(id: number) {
-    router.get(`/meter-ctpt/${id}`)
-  }
-
-  function handleCreate() {
-    router.get(route('meter-ctpt.create'))
-  }
 
   function handleDeleteClick(item: MeterTransformer) {
     setShowDeleteModal(true)
@@ -41,21 +33,28 @@ export default function MeterTransformerIndex({ transformers }: Readonly<Props>)
         <ListSearch
           title='Meter CTPT Search'
           url={route('meter-ctpt.index')}
-          //setItems={setItems}
-          //search={query}
         />
         {/* <Button label="Create Meter Transformer" onClick={handleCreate} /> */}
         {items && items.length > 0 ? (
-          <MeterTransformerList
-            transformers={items}
-            onDelete={handleDeleteClick}
-          />
+          <div className='relative w-full rounded-lg bg-white'>
+            <div className='font-inter text-dark-gray px-7 pt-[21px] pb-3 text-[15px] leading-[23px] font-semibold tracking-[-0.0924px]'>
+              Meter Transformer Info
+            </div>
+            <div className='flex flex-col gap-4 px-7 pb-7'>
+              {items.map((transformer) => (
+                <MeterTransformerListItem
+                  key={transformer.meter_ctpt_id}
+                  transformer={transformer}
+                  onDelete={handleDeleteClick}
+                />
+              ))}
+            </div>
+          </div>
         ) : (
           <div className='p-6 text-center text-slate-500'>
             <p>No meter transformers found.</p>
           </div>
         )}
-
         {showDeleteModal && selectedTransformer && (
           <DeleteModal
             setShowModal={setShowDeleteModal}

@@ -13,20 +13,11 @@ use Inertia\Response;
 
 class MeterTransformerController extends Controller
 {
-    protected MeterTransformerService $transformerService;
-
-    protected MeterTransformerRelService $transformerRelService;
-
-    protected ParameterValueService $parameterValueService;
-
-    public function __construct(MeterTransformerService $transformerService,
-        MeterTransformerRelService $transformerRelService,
-        ParameterValueService $parameterValueService)
-    {
-        $this->transformerService = $transformerService;
-        $this->transformerRelService = $transformerRelService;
-        $this->parameterValueService = $parameterValueService;
-    }
+    public function __construct(
+        private readonly MeterTransformerService $transformerService,
+        private readonly MeterTransformerRelService $transformerRelService,
+        private readonly ParameterValueService $parameterValueService
+    ) {}
 
     /**
      * Display a listing of transformers.

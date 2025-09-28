@@ -19,6 +19,7 @@ import {
 } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import type { BreadcrumbItem } from '@/types'
+import StrongText from '@/typography/StrongText'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
 import Button from '@/ui/button/Button'
 import { router } from '@inertiajs/react'
@@ -144,6 +145,14 @@ export default function MeterShow({
       breadcrumb={breadcrumbs}
       navItems={meterNavItems}
     >
+      <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+        <div className='flex flex-col gap-2'>
+          <StrongText className='text-2xl font-semibold text-[#252c32]'>
+            Meter #{meter?.meter_id}
+          </StrongText>
+          <span className='text-sm text-gray-600'>Serial: {meter.meter_serial}</span>
+        </div>
+      </div>
       <TabGroup tabs={tabs}>
         <TabsContent value='details'>
           <div className='space-y-6'>
