@@ -14,6 +14,7 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 
 export interface MeterFormProps {
   ownershipTypes: ParameterValues[]
+  meterProfiles: ParameterValues[]
   makes: ParameterValues[]
   types: ParameterValues[]
   categories: ParameterValues[]
@@ -53,6 +54,7 @@ const toFloatOrUndef = (v: unknown) => {
 }
 export default function MeterForm({
   ownershipTypes,
+  meterProfiles,
   makes,
   types,
   categories,
@@ -68,6 +70,7 @@ export default function MeterForm({
   const { formData, setFormValue } = useCustomForm({
     meter_serial: meter?.meter_serial ?? '',
     ownership_type_id: meter?.ownership_type_id ?? null,
+    meter_profile_id: meter?.meter_profile_id ?? null,
     meter_make_id: meter?.meter_make_id ?? null,
     meter_type_id: meter?.meter_type_id ?? null,
     meter_category_id: meter?.meter_category_id ?? null,
@@ -93,19 +96,17 @@ export default function MeterForm({
     internal_ct_secondary: meter?.internal_ct_secondary ?? '',
     internal_pt_primary: meter?.internal_pt_primary ?? '',
     internal_pt_secondary: meter?.internal_pt_secondary ?? '',
-    created_by: auth?.user?.id ?? 0,
-    updated_by: auth?.user?.id ?? 0,
-    _method: isEditing ? 'PUT' : undefined,
   })
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     isEditing ? `/meters/${meter.id}` : '/meters'
   )
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
+    // Base payload
     const basePayload = {
       meter_serial: formData.meter_serial,
       ownership_type_id: toNumberOrUndef(formData.ownership_type_id),
+      meter_profile_id: toNumberOrUndef(formData.meter_profile_id),
       meter_make_id: toNumberOrUndef(formData.meter_make_id),
       meter_type_id: toNumberOrUndef(formData.meter_type_id),
       meter_category_id: toNumberOrUndef(formData.meter_category_id),
@@ -131,10 +132,19 @@ export default function MeterForm({
       internal_ct_secondary: toNumberOrUndef(formData.internal_ct_secondary),
       internal_pt_primary: toNumberOrUndef(formData.internal_pt_primary),
       internal_pt_secondary: toNumberOrUndef(formData.internal_pt_secondary),
-      created_by: auth?.user?.id ?? 0,
-      updated_by: auth?.user?.id ?? 0,
+      _method: isEditing ? 'PUT' : undefined,
     }
-    post(basePayload)
+    if (isEditing) {
+      post({
+        ...basePayload,
+        updated_by: auth?.user?.id ?? 0,
+      })
+    } else {
+      post({
+        ...basePayload,
+        created_by: auth?.user?.id ?? 0,
+      })
+    }
   }
   const renderSection = (title: string, children: React.ReactNode) => (
     <div className='rounded-md border border-slate-200 p-4'>
@@ -183,6 +193,15 @@ export default function MeterForm({
                   dataKey='id'
                   displayKey='parameter_value'
                   error={errors.meter_type_id}
+                />
+                <SelectList
+                  label='Meter Profile'
+                  value={formData.meter_profile_id}
+                  setValue={setFormValue('meter_profile_id')}
+                  list={meterProfiles}
+                  dataKey='id'
+                  displayKey='parameter_value'
+                  error={errors.meter_profile_id}
                 />
                 <SelectList
                   label='Ownership Type'
@@ -348,14 +367,16 @@ export default function MeterForm({
                     toggleValue={() => setFormValue('smart_meter_ind')(!formData.smart_meter_ind)}
                     error={errors.smart_meter_ind}
                   />
-                  <CheckBox
-                    label='Bidirectional'
-                    value={formData.bidirectional_ind}
-                    toggleValue={() =>
-                      setFormValue('bidirectional_ind')(!formData.bidirectional_ind)
-                    }
-                    error={errors.bidirectional_ind}
-                  />
+                  {/*<CheckBox*/}
+                  {/*	label="Bidirectional"*/}
+                  {/*	value={formData.bidirectional_ind}*/}
+                  {/*	toggleValue={() =>*/}
+                  {/*		setFormValue("bidirectional_ind")(*/}
+                  {/*			!formData.bidirectional_ind,*/}
+                  {/*		)*/}
+                  {/*	}*/}
+                  {/*	error={errors.bidirectional_ind}*/}
+                  {/*/>*/}
                 </div>
               </>
             )}

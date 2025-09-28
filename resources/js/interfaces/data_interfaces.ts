@@ -265,7 +265,7 @@ export interface MeteringTimezoneSlot {
   is_active?: boolean | null
 }
 
-export interface MeterTimezoneAssignment {
+export interface MeterTimezoneType {
   version_id: number
   rel_id?: number | null
   meter_id: number
@@ -278,4 +278,32 @@ export interface MeterTimezoneAssignment {
   created_by?: number | null
   updated_by?: number | null
   is_active?: boolean | null
+}
+
+export interface MeterReading {
+  id: number
+  meter_reading_detail_id: number
+  connection_id: number
+  normal_pf: number
+  peak_pf: number
+  offpeak_pf: number
+  metering_date: string
+  reading_start_date: string
+  reading_end_date: string
+  average_power_factor: number
+  single_reading: boolean
+  multiple_reading: boolean
+  anomaly_id: number
+  meter_health_id: number
+  ctpt_health_id: number
+  voltage_r: number
+  voltage_y: number
+  voltage_b: number
+  current_r: number
+  current_y: number
+  current_b: number
+  remarks: string
+  created_by: number
+  updated_by: number
+  is_active: boolean
 }

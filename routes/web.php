@@ -16,14 +16,18 @@ use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
+use App\Http\Controllers\Metering\GetMeterReadingController;
 use App\Http\Controllers\Metering\MeterConnectionRelController;
 use App\Http\Controllers\Metering\MeterConnectionRelCreateController;
 use App\Http\Controllers\Metering\MeterConnectionRelEditController;
 use App\Http\Controllers\Metering\MeterController;
+use App\Http\Controllers\Metering\MeterReadingController;
 use App\Http\Controllers\Metering\MeterTimezoneTypeRelController;
 use App\Http\Controllers\Metering\MeterTransfomerCreateController;
 use App\Http\Controllers\Metering\MeterTransformerController;
 use App\Http\Controllers\Metering\MeterTransformerRelController;
+use App\Http\Controllers\MeteringTimezone\MeteringTimezoneController;
+use App\Http\Controllers\MeterReading\GetMeterReadingWithConnectionController;
 use App\Http\Controllers\Offices\OfficeHierarchyRelController;
 use App\Http\Controllers\Offices\OfficesCreateWithCsvController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
@@ -32,7 +36,6 @@ use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
 use App\Http\Requests\SystemModule\SystemModuleFormRequest;
 use App\Services\SystemModule\SystemModuleService;
-use GPBMetadata\MeterTimezoneTypeRel;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -80,7 +83,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('meter-ctpt', MeterTransformerController::class);
     Route::resource('meter-ctpt-rel', MeterTransformerRelController::class);
     Route::resource('meter-conn-rel', MeterConnectionRelController::class);
-    Route::resource('meter-timezone-rel', MeterTimezoneTypeRel::class);
+    Route::resource('meter-timezone-rel', MeterTimezoneTypeRelController::class);
+
+    Route::resource('metering-timezone', MeteringTimezoneController::class);
+
+    Route::resource('meter-reading', MeterReadingController::class);
+    Route::get('connection/{connection_id}/meter-reading', GetMeterReadingWithConnectionController::class)->name('connection.meter-reading');
+    Route::get('meter-reading/{connection_id}/create', GetMeterReadingController::class)->name('meter-reading.create');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);

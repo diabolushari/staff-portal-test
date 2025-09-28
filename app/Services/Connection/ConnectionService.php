@@ -192,6 +192,7 @@ class ConnectionService
         return [
             'version_id' => $connection->getVersionId(),
             'connection_id' => $connection->getConnectionId(),
+            'consumer_legacy_code' => $connection->getConsumerLegacyCode(),
             'connection_type_id' => $connection->getConnectionTypeId(),
             'consumer_number' => $connection->getConsumerNum(),
             'connection_status_id' => $connection->getConnectionStatusId(),
@@ -220,7 +221,10 @@ class ConnectionService
             'effective_end' => $this->convertFromTimestamp($connection->getEffectiveEnd()),
             'created_at' => $this->convertFromTimestamp($connection->getCreatedAt()),
             'updated_at' => $this->convertFromTimestamp($connection->getUpdatedAt()),
-            // Structs are converted from JSON string to array
+            'power_load_kw_val' => $connection->getPowerLoadKwVal(),
+            'light_load_kw_val' => $connection->getLightLoadKwVal(),
+            'othercons_flag' => $connection->getOtherconsFlag(),
+            'cpp_flag' => $connection->getCppFlag(),
             'connection_attribs' => $connection->getConnectionAttribs() ? json_decode($connection->getConnectionAttribs()->serializeToJsonString(), true) : null,
             'purposes_info' => $connection->getPurposesInfo() ? json_decode($connection->getPurposesInfo()->serializeToJsonString(), true) : null,
             'connected_load_info' => $connection->getConnectedLoadInfo() ? json_decode($connection->getConnectedLoadInfo()->serializeToJsonString(), true) : null,

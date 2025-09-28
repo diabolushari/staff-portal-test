@@ -11,6 +11,8 @@ import { PencilIcon } from 'lucide-react'
 import { Connection, ConsumerData } from '@/interfaces/data_interfaces'
 import { MeterData, MeterTab } from '../Connections/MeterTab'
 import { Meter } from '../Meters/MeterIndex'
+import ConnectionsLayout, { connectionTabs } from '@/layouts/connection/ConnectionsLayout'
+import MeterReadingTab from '@/components/Connections/MeterReadingTab'
 
 interface ConsumerShowProps {
   consumer: ConsumerData
@@ -50,191 +52,145 @@ export default function ConsumerShow({
   meters,
 }: Readonly<ConsumerShowProps>) {
   const onEdit = () => router.visit(`/consumers/${Number(consumer?.consumer?.connection_id)}/edit`)
-  const tabs = [
-    {
-      value: 'details',
-      label: 'Connection Details',
-      href: route('connections.show', consumer?.consumer.connection_id),
-    },
-    {
-      value: 'consumer',
-      label: 'Consumer',
-      href: route('connection.consumer', consumer.consumer.connection_id),
-    },
-    {
-      value: 'meter',
-      label: 'Meter',
-    },
-  ]
 
   return (
-    <MainLayout
-      breadcrumb={breadcrumbs}
-      navItems={connectionsNavItems}
+    <ConnectionsLayout
+      connection={connection}
+      meters={meters}
+      connectionId={connection?.connection_id}
+      value='consumer'
+      breadcrumbs={breadcrumbs}
+      connectionsNavItems={connectionsNavItems}
+      heading={`Connection #${connection?.connection_id}`}
+      subHeading={`Consumer No: ${connection?.consumer_number}`}
+      onEdit={() => router.visit(route('connection.consumer', connection?.connection_id))}
     >
-      <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
-        {/* Header Section */}
-        <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-          <div className='flex flex-col gap-2'>
-            <div className='flex items-center gap-3'>
-              <StrongText className='text-2xl font-semibold text-[#252c32]'>
-                {safe(consumer?.consumer?.organization_name)}
-              </StrongText>
-              <TinyContainer variant='success'>Consumer</TinyContainer>
-            </div>
-            <div className='text-sm text-slate-600'>
-              Consumer Number: <span className='font-medium'>{connection?.consumer_number}</span>
-            </div>
-          </div>
-          <div className='flex items-center gap-2'>
+      <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto'>
+        {/* --- Basic Information --- */}
+        <Card className='rounded-lg p-7'>
+          <div className='mb-6 flex items-center justify-between'>
+            <StrongText className='text-base font-semibold text-[#252c32]'>
+              Basic Information
+            </StrongText>
             <button
               onClick={onEdit}
-              className='flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
+              className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
             >
-              Edit Details
+              <PencilIcon className='h-4 w-4' />
+              Edit
             </button>
           </div>
-        </div>
-        <TabGroup
-          tabs={tabs}
-          defaultValue='consumer'
-        >
-          <TabsContent value='consumer'>
-            <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto'>
-              {/* --- Basic Information --- */}
-              <Card className='rounded-lg p-7'>
-                <div className='mb-6 flex items-center justify-between'>
-                  <StrongText className='text-base font-semibold text-[#252c32]'>
-                    Basic Information
-                  </StrongText>
-                  <button
-                    onClick={onEdit}
-                    className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
-                  >
-                    <PencilIcon className='h-4 w-4' />
-                    Edit
-                  </button>
-                </div>
-                <hr className='mb-6 border-[#e5e9eb]' />
-                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                  <InfoBlock
-                    label='Applicant Code'
-                    value={safe(consumer.consumer.applicant_code)}
-                  />
-                  <InfoBlock
-                    label='Consumer Type'
-                    value={consumer.consumer.consumer_type?.parameter_value}
-                  />
-                  <InfoBlock
-                    label='Consumer CIN'
-                    value={safe(consumer.consumer.consumer_cin)}
-                  />
-                  <InfoBlock
-                    label='PAN'
-                    value={safe(consumer.consumer.consumer_pan)}
-                  />
-                  <InfoBlock
-                    label='TAN'
-                    value={safe(consumer.consumer.consumer_tan)}
-                  />
-                  <InfoBlock
-                    label='GSTIN'
-                    value={safe(consumer.consumer.consumer_gstin)}
-                  />
-                  <InfoBlock
-                    label='Income Tax Withholding'
-                    value={consumer.consumer.income_tax_withholding_ind ? 'Yes' : 'No'}
-                  />
-                  <InfoBlock
-                    label='GST Withholding'
-                    value={consumer.consumer.gst_withholding_ind ? 'Yes' : 'No'}
-                  />
-                  <InfoBlock
-                    label='Seasonal'
-                    value={consumer.consumer.seasonal_ind ? 'Yes' : 'No'}
-                  />
-                  <InfoBlock
-                    label='License'
-                    value={consumer.consumer.license_ind ? 'Yes' : 'No'}
-                  />
-                  <InfoBlock
-                    label='Open Access'
-                    value={consumer.consumer.open_access_ind ? 'Yes' : 'No'}
-                  />
-                </div>
-              </Card>
-
-              {/* --- Contact --- */}
-              <Card className='rounded-lg p-7'>
-                <StrongText className='text-base font-semibold text-[#252c32]'>Contact</StrongText>
-                <hr className='my-4 border-[#e5e9eb]' />
-                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                  <InfoBlock
-                    label='Email'
-                    value={safe(consumer.contact?.primary_email)}
-                  />
-                  <InfoBlock
-                    label='Phone'
-                    value={safe(consumer.contact?.primary_phone)}
-                  />
-                </div>
-              </Card>
-
-              {/* --- Addresses --- */}
-              {['primary_address', 'billing_address', 'premises_address'].map((key) => {
-                const addr = consumer.contact?.[key]
-                return (
-                  <Card
-                    key={key}
-                    className='rounded-lg p-7'
-                  >
-                    <StrongText className='text-base font-semibold text-[#252c32] capitalize'>
-                      {key.replace('_', ' ')}
-                    </StrongText>
-                    <hr className='my-4 border-[#e5e9eb]' />
-                    {addr ? (
-                      <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                        <InfoBlock
-                          label='Address Line 1'
-                          value={safe(addr.address_line1)}
-                        />
-                        <InfoBlock
-                          label='Address Line 2'
-                          value={safe(addr.address_line2)}
-                        />
-                        <InfoBlock
-                          label='City/Town/Village'
-                          value={safe(addr.city_town_village)}
-                        />
-                        <InfoBlock
-                          label='State'
-                          value={safe(addr.state)}
-                        />
-                        <InfoBlock
-                          label='District ID'
-                          value={safe(addr.district_id)}
-                        />
-                        <InfoBlock
-                          label='Pincode'
-                          value={safe(addr.pincode)}
-                        />
-                      </div>
-                    ) : (
-                      <div className='text-slate-600'>No {key} found</div>
-                    )}
-                  </Card>
-                )
-              })}
-            </div>
-          </TabsContent>
-          <TabsContent value='meter'>
-            <MeterTab
-              meters={meters}
-              connectionId={connection?.connection_id}
+          <hr className='mb-6 border-[#e5e9eb]' />
+          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+            <InfoBlock
+              label='Applicant Code'
+              value={safe(consumer.consumer.applicant_code)}
             />
-          </TabsContent>
-        </TabGroup>
+            <InfoBlock
+              label='Consumer Type'
+              value={consumer.consumer.consumer_type?.parameter_value}
+            />
+            <InfoBlock
+              label='Consumer CIN'
+              value={safe(consumer.consumer.consumer_cin)}
+            />
+            <InfoBlock
+              label='PAN'
+              value={safe(consumer.consumer.consumer_pan)}
+            />
+            <InfoBlock
+              label='TAN'
+              value={safe(consumer.consumer.consumer_tan)}
+            />
+            <InfoBlock
+              label='GSTIN'
+              value={safe(consumer.consumer.consumer_gstin)}
+            />
+            <InfoBlock
+              label='Income Tax Withholding'
+              value={consumer.consumer.income_tax_withholding_ind ? 'Yes' : 'No'}
+            />
+            <InfoBlock
+              label='GST Withholding'
+              value={consumer.consumer.gst_withholding_ind ? 'Yes' : 'No'}
+            />
+            <InfoBlock
+              label='Seasonal'
+              value={consumer.consumer.seasonal_ind ? 'Yes' : 'No'}
+            />
+            <InfoBlock
+              label='License'
+              value={consumer.consumer.license_ind ? 'Yes' : 'No'}
+            />
+            <InfoBlock
+              label='Open Access'
+              value={consumer.consumer.open_access_ind ? 'Yes' : 'No'}
+            />
+          </div>
+        </Card>
+
+        {/* --- Contact --- */}
+        <Card className='rounded-lg p-7'>
+          <StrongText className='text-base font-semibold text-[#252c32]'>Contact</StrongText>
+          <hr className='my-4 border-[#e5e9eb]' />
+          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+            <InfoBlock
+              label='Email'
+              value={safe(consumer.contact?.primary_email)}
+            />
+            <InfoBlock
+              label='Phone'
+              value={safe(consumer.contact?.primary_phone)}
+            />
+          </div>
+        </Card>
+
+        {/* --- Addresses --- */}
+        {['primary_address', 'billing_address', 'premises_address'].map((key) => {
+          const addr = consumer.contact?.[key]
+          return (
+            <Card
+              key={key}
+              className='rounded-lg p-7'
+            >
+              <StrongText className='text-base font-semibold text-[#252c32] capitalize'>
+                {key.replace('_', ' ')}
+              </StrongText>
+              <hr className='my-4 border-[#e5e9eb]' />
+              {addr ? (
+                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                  <InfoBlock
+                    label='Address Line 1'
+                    value={safe(addr.address_line1)}
+                  />
+                  <InfoBlock
+                    label='Address Line 2'
+                    value={safe(addr.address_line2)}
+                  />
+                  <InfoBlock
+                    label='City/Town/Village'
+                    value={safe(addr.city_town_village)}
+                  />
+                  <InfoBlock
+                    label='State'
+                    value={safe(addr.state)}
+                  />
+                  <InfoBlock
+                    label='District ID'
+                    value={safe(addr.district_id)}
+                  />
+                  <InfoBlock
+                    label='Pincode'
+                    value={safe(addr.pincode)}
+                  />
+                </div>
+              ) : (
+                <div className='text-slate-600'>No {key} found</div>
+              )}
+            </Card>
+          )
+        })}
       </div>
-    </MainLayout>
+    </ConnectionsLayout>
   )
 }

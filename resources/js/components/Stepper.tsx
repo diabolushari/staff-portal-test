@@ -1,0 +1,96 @@
+'use client'
+
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
+
+interface Step {
+  id: number
+  title: string
+  content: React.ReactNode
+  status?: 'default' | 'error' | 'completed'
+}
+
+interface StepperProps {
+  steps: Step[]
+  activeStep?: number
+  onStepChange?: (stepIndex: number) => void
+}
+
+export default function Stepper({ steps, activeStep: activeStepProp, onStepChange }: StepperProps) {
+  const [activeStep, setActiveStep] = useState(activeStepProp || 0)
+  const currentStep = activeStepProp ?? activeStep
+
+  const goToStep = (index: number) => {
+    if (onStepChange) onStepChange(index)
+    else setActiveStep(index)
+  }
+
+  const nextStep = () => {
+    if (currentStep < steps.length - 1) goToStep(currentStep + 1)
+  }
+
+  const prevStep = () => {
+    if (currentStep > 0) goToStep(currentStep - 1)
+  }
+
+  return (
+    <div className='w-full'>
+      {/* Step headers */}
+      <div className='mb-8 flex justify-between'>
+        {steps.map((s, index) => (
+          <button
+            key={s.id}
+            type='button'
+            onClick={() => goToStep(index)}
+            className={cn(
+              'flex-1 border-b-2 py-2 text-center transition-colors',
+              s.status === 'error'
+                ? 'border-red-500 text-red-500'
+                : currentStep === index
+                  ? 'border-blue-600 font-semibold text-blue-600'
+                  : currentStep > index
+                    ? 'border-green-500 text-green-500'
+                    : 'border-gray-300 text-gray-400'
+            )}
+          >
+            {s.title}
+          </button>
+        ))}
+      </div>
+
+      {/* Step content */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{steps[currentStep].title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {steps[currentStep].content}
+
+          <div className='mt-6 flex justify-between'>
+            <Button
+              type='button'
+              variant='outline'
+              onClick={prevStep}
+              disabled={currentStep === 0}
+            >
+              Back
+            </Button>
+
+            {currentStep < steps.length - 1 && (
+              <Button
+                type='button'
+                onClick={nextStep}
+              >
+                Next
+              </Button>
+            )}
+
+            {currentStep === steps.length - 1 && <Button type='submit'>Submit</Button>}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}

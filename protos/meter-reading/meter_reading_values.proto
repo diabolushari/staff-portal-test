@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.meter_reading;
+
+option php_namespace = "Proto\\MeterReading";
+option php_metadata_namespace = "GPBMetadata";
+
+
+option java_multiple_files = true;
+option java_package = "com.kseb.consumerservice.proto.meter_reading";
+option java_outer_classname = "MeterReadingValuesProto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "parameters/parameter-value.proto";
+import "meter-reading/metering_profile_parameters.proto";
+import "metering/meter.proto";
+import "meter-reading/meter_reading.proto";
+
+// ----------- ENTITY MESSAGE ------------
+message MeterReadingValuesMessage {
+  int64 meter_reading_values_id = 1;
+
+  int64 parameter_id = 2;
+  int64 meter_reading_id = 3;
+  com.kseb.consumerservice.proto.meter_reading.MeterReadingsMessage meter_reading = 4;
+  int32 meter_id = 5;
+  com.kseb.consumerservice.proto.metering.MeterResponse meter = 6;
+  int64 timezone_id = 7;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto timezone = 8;
+
+  double initial_reading = 9;
+  double final_reading = 10;
+  double difference = 11;
+  double value = 12;
+
+  int32 created_by = 13;
+  int32 updated_by = 14;
+  bool is_active = 15;
+  com.kseb.consumerservice.proto.meter_reading.MeteringProfileParameterMessage parameter = 16;
+}
+
+// ----------- REQUEST/RESPONSE MESSAGES ----------
+
+// Create
+message CreateMeterReadingValuesRequest {
+  int64 parameter_id = 1;
+  int32 meter_id = 2;
+  int64 timezone_id = 3;
+  double initial_reading = 4;
+  double final_reading = 5;
+  double difference = 6;
+  double value = 7;
+  int32 created_by = 8;
+}
+message CreateMeterReadingValuesResponse {
+  MeterReadingValuesMessage reading = 1;
+}
+
+// Update
+message UpdateMeterReadingValuesRequest {
+  int64 meter_reading_values_id = 1;
+  int64 parameter_id = 2;
+  int32 meter_id = 3;
+  int64 timezone_id = 4;
+  double initial_reading = 5;
+  double final_reading = 6;
+  double difference = 7;
+  double value = 8;
+  int32 updated_by = 9;
+}
+message UpdateMeterReadingValuesResponse {
+  MeterReadingValuesMessage reading = 1;
+}
+
+// Get
+message GetMeterReadingValuesRequest {
+  int64 meter_reading_values_id = 1;
+  int32 meter_id = 2;
+  int32 meter_parameter_id = 3;
+  int64 timezone_id = 4;
+  int64 meter_reading_id = 5;
+}
+message GetMeterReadingValuesResponse {
+  MeterReadingValuesMessage reading = 1;
+}
+
+// Delete
+message DeleteMeterReadingValuesRequest {
+  int64 meter_reading_values_id = 1;
+}
+message DeleteMeterReadingValuesResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// List
+message ListMeterReadingValuesRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  optional string search = 3;
+  optional int64 meter_reading_values_id = 4;
+  optional int32 meter_id = 5;
+  optional int32 meter_parameter_id = 6;
+}
+message ListMeterReadingValuesResponse {
+  repeated MeterReadingValuesMessage readings = 1;
+}
+
+// ----------- SERVICE ------------
+service MeterReadingValuesService {
+  rpc CreateMeterReadingValues (CreateMeterReadingValuesRequest) returns (CreateMeterReadingValuesResponse);
+  rpc UpdateMeterReadingValues (UpdateMeterReadingValuesRequest) returns (UpdateMeterReadingValuesResponse);
+  rpc GetMeterReadingValues    (GetMeterReadingValuesRequest)    returns (GetMeterReadingValuesResponse);
+  rpc DeleteMeterReadingValues (DeleteMeterReadingValuesRequest) returns (DeleteMeterReadingValuesResponse);
+  rpc ListMeterReadingValues   (ListMeterReadingValuesRequest)   returns (ListMeterReadingValuesResponse);
+}
