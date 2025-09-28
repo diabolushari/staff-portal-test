@@ -265,7 +265,7 @@ export interface MeteringTimezoneSlot {
   is_active?: boolean | null
 }
 
-export interface MeterTimezoneAssignment {
+export interface MeterTimezoneType {
   version_id: number
   rel_id?: number | null
   meter_id: number
@@ -307,4 +307,3 @@ export interface MeterReading {
   updated_by: number
   is_active: boolean
 }
-

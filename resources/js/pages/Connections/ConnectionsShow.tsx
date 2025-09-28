@@ -1,25 +1,16 @@
 import { connectionsNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
-import { TabsContent } from '@/components/ui/tabs'
-import type { Connection, ConnectionMeterAssignment, Meter } from '@/interfaces/data_interfaces'
-import MainLayout from '@/layouts/main-layout'
+import type { Connection, Meter, MeterAssignment } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
-import { TabGroup } from '@/ui/Tabs/TabGroup'
 import { router } from '@inertiajs/react'
 import { PencilIcon } from 'lucide-react'
 import { useMemo } from 'react'
-import { MeterTab } from './MeterTab'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
-
-type ConnectionMeter = {
-  relationship: ConnectionMeterAssignment
-  meter: Meter
-}
 
 interface Props {
   connection: Connection
-  meters: ConnectionMeterAssignment[] | null
+  meters: MeterAssignment[] | null
 }
 
 export default function ConnectionsShow({ connection, meters }: Readonly<Props>) {

@@ -1,4 +1,4 @@
-import { BreadcrumbItem, NavItem } from '@/types'
+import { BreadcrumbItem } from '@/types'
 import MainLayout from '../main-layout'
 import { navItem } from '@/components/Navbar/navitems'
 import { Connection } from '@/interfaces/consumers'
@@ -6,20 +6,22 @@ import { TabGroup } from '@/ui/Tabs/TabGroup'
 import { TabsContent } from '@radix-ui/react-tabs'
 import { MeterTab } from '@/pages/Connections/MeterTab'
 import StrongText from '@/typography/StrongText'
-import { ConnectionMeterAssignment, Meter } from '@/interfaces/data_interfaces'
+import { Meter, MeterAssignment } from '@/interfaces/data_interfaces'
+import React from 'react'
 
 interface ConnectionsLayoutProps {
   children: React.ReactNode
   breadcrumbs: BreadcrumbItem[]
   connectionsNavItems: navItem[]
   connection: Connection
-  meters: ConnectionMeterAssignment[] | null
+  meters: MeterAssignment[] | null
   connectionId: number
   value: string
   heading: string
   subHeading: string
   onEdit?: () => void
 }
+
 const connectionTabs = (connection: Connection) => [
   {
     value: 'details',
@@ -54,7 +56,7 @@ export default function ConnectionsLayout({
   heading,
   subHeading,
   onEdit,
-}: ConnectionsLayoutProps) {
+}: Readonly<ConnectionsLayoutProps>) {
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
