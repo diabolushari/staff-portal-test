@@ -143,7 +143,7 @@ export interface OfficeHierarchyRel {
   parent_office_code: number
 }
 
-export interface ConnectionMeterAssignment {
+export interface MeterAssignment {
   version_id: number
   rel_id: number
   meter_id: number
@@ -200,6 +200,86 @@ export interface Meter {
   internal_pt_secondary?: number
 }
 
+export interface MeterTransformer {
+  meter_ctpt_id: number
+  ownership_type_id: number | string
+  accuracy_class_id: number | string
+  burden_id: number | string
+  make_id: number | string
+  type_id: number | string
+  ownership_type?: Partial<ParameterValues> | null
+  accuracy_class?: Partial<ParameterValues> | null
+  burden?: Partial<ParameterValues> | null
+  make?: Partial<ParameterValues> | null
+  type?: Partial<ParameterValues> | null
+  ctpt_serial: string
+  ratio_primary_value: string | null
+  ratio_secondary_value: string | null
+  manufacture_date?: string | null
+  created_ts: string | null
+  updated_ts?: string | null
+  created_by: number
+  updated_by?: number | null
+  is_active?: boolean
+}
+
+export interface MeterTransformerAssignment {
+  version_id: number
+  ctpt_id: number
+  meter_id: number
+  meter_serial?: string | null
+  faulty_date?: string | null
+  ctpt_energise_date?: string | null
+  ctpt_change_date?: string | null
+  status_id: number
+  status_label?: string | null
+  change_reason_id: number
+  change_reason_label?: string | null
+  created_ts?: string | null
+  updated_ts?: string | null
+  created_by: number
+  updated_by?: number | null
+  ctpt_type?: string | null
+  ratio?: string | number | null
+}
+
+export interface MeteringTimezoneSlot {
+  version_id: number
+  metering_timezone_id: number
+  pricing_type_id: number
+  pricing_type?: Partial<ParameterValues> | null
+  timezone_type_id: number
+  timezone_type?: Partial<ParameterValues> | null
+  timezone_name_id: number
+  timezone_name?: Partial<ParameterValues> | null
+  from_hrs?: number | null
+  from_mins?: number | null
+  to_hrs?: number | null
+  to_mins?: number | null
+  effective_start_ts: string
+  effective_end_ts?: string | null
+  created_ts: string
+  updated_ts?: string | null
+  created_by?: number | null
+  updated_by?: number | null
+  is_active?: boolean | null
+}
+
+export interface MeterTimezoneAssignment {
+  version_id: number
+  rel_id?: number | null
+  meter_id: number
+  timezone_type_id: number
+  timezone_type?: Partial<ParameterValues> | null
+  effective_start_ts: string
+  effective_end_ts?: string | null
+  created_ts: string
+  updated_ts?: string | null
+  created_by?: number | null
+  updated_by?: number | null
+  is_active?: boolean | null
+}
+
 export interface MeterReading {
   id: number
   meter_reading_detail_id: number
@@ -228,4 +308,3 @@ export interface MeterReading {
   is_active: boolean
 }
 
-  

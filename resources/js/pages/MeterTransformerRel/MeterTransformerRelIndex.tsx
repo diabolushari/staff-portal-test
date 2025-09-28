@@ -1,15 +1,11 @@
-import { router } from '@inertiajs/react'
-import { useState } from 'react'
+import MeterTransformerRelList from '@/components/Meter/MeterTransformer/MeterTransformerRel/MeterTransformerRelList'
+import { transformerrelNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import CardHeader from '@/ui/Card/CardHeader'
-import { transformerrelNavItems } from '@/components/Navbar/navitems'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import ListSearch from '@/ui/Search/ListSearch'
-import MeterTransformerRelList from '@/components/Meter/MeterTransformer/MeterTransformerRel/MeterTransformerRelList'
-
-import { MeterTabs } from '../Meters/MeterShow'
-import { TabGroup } from '@/ui/Tabs/TabGroup'
-import { TabsContent } from '@radix-ui/react-tabs'
+import { router } from '@inertiajs/react'
+import { useState } from 'react'
 
 interface Relation {
   version_id: number
@@ -28,6 +24,18 @@ interface Relation {
 interface Props {
   relations: Relation[]
 }
+
+const MeterTabs = (meterId: number, ctptId?: number, relId?: number) => [
+  {
+    value: 'details',
+    label: 'Meter Details',
+    href: route('meters.show', meterId),
+  },
+  {
+    value: 'meter-ctpt',
+    label: 'Meter CTPT',
+  },
+]
 
 const breadcrumbs = [{ title: 'Meter CTPT Relations', href: '/meter-ctpt-rel' }]
 

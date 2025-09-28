@@ -3,10 +3,11 @@ import { navItem } from '@/components/Navbar/navitems'
 import TopNavBar from '@/components/Navbar/TopNavBar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { BreadcrumbItem, PageProps } from '@/types'
-import { CustomBreadcrumb } from '@/ui/BreadCrumb'
+import CustomBreadcrumb from '@/ui/BreadCrumb'
 import { usePage } from '@inertiajs/react'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
+
 interface Props {
   children: React.ReactNode
   breadcrumb?: BreadcrumbItem[]

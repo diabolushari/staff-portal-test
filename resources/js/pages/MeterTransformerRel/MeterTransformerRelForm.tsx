@@ -8,9 +8,10 @@ import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import DatePicker from '@/ui/form/DatePicker'
 import { meterNavItems } from '@/components/Navbar/navitems'
-import { Meter } from '../Meters/MeterIndex'
 import StrongText from '@/typography/StrongText'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import React from 'react'
+import { Meter } from '@/interfaces/data_interfaces'
 
 interface MeterTransformerRelFormProps {
   ctpts: any[]
@@ -35,15 +36,16 @@ export default function MeterTransformerRelForm({
   changeReasons,
   relation,
 }: MeterTransformerRelFormProps) {
+  const isEditing = Boolean(relation)
+
   const breadcrumbs = [
-    { title: 'Meter', href: '/meters/' + meter.meter_id },
+    { title: 'Meters', href: '/meters' },
+    { title: meter.meter_serial, href: '/meters/' + meter.meter_id },
     {
-      title: 'Add CTPT',
-      href: '/meter-ctpt-rel/create',
+      title: isEditing ? 'Modify CTPT' : 'Connect CTPT',
+      href: route('meters.ctpt.create', { id: meter.meter_id }),
     },
   ]
-
-  const isEditing = Boolean(relation)
 
   const { formData, setFormValue, setAll } = useCustomForm({
     version_id: relation?.version_id ?? null,
@@ -77,10 +79,11 @@ export default function MeterTransformerRelForm({
       navItems={meterNavItems}
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
-        <div className='flex items-center gap-2'>
-          <StrongText className='text-2xl font-semibold'>
+        <div className='flex flex-col gap-2'>
+          <StrongText className='text-2xl font-semibold text-[#252c32]'>
             {isEditing ? 'Edit CTPT' : 'Connect CTPT'}
           </StrongText>
+          <span className='text-sm text-gray-600'>Serial: {meter.meter_serial}</span>
         </div>
 
         <form
