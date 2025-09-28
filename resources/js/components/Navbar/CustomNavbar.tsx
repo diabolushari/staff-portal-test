@@ -8,7 +8,6 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
 import { Link, usePage } from '@inertiajs/react'
-import { Children } from 'react'
 // Using local wrapped NavigationMenu (supports viewport prop)
 
 export const NAV_ITEMS = [
@@ -49,9 +48,9 @@ export const NAV_ITEMS = [
         description: 'Manage meter CTPT',
       },
       {
-        title: 'Meter CTPT Relations',
-        href: '/meter-ctpt-rel',
-        description: 'Manage meter CTPT relations',
+        title: 'Metering Time Zones',
+        href: '/metering-timezone',
+        description: 'Manage metering time zones',
       },
     ],
   },

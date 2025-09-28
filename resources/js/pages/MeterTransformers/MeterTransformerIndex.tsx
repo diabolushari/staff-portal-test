@@ -38,7 +38,7 @@ export default function MeterTransformerIndex({ transformers }: Readonly<Props>)
         {items && items.length > 0 ? (
           <div className='relative w-full rounded-lg bg-white'>
             <div className='font-inter text-dark-gray px-7 pt-[21px] pb-3 text-[15px] leading-[23px] font-semibold tracking-[-0.0924px]'>
-              Meter Transformer Info
+              Meter CTPT List
             </div>
             <div className='flex flex-col gap-4 px-7 pb-7'>
               {items.map((transformer) => (

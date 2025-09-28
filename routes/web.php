@@ -36,7 +36,6 @@ use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
 use App\Http\Requests\SystemModule\SystemModuleFormRequest;
 use App\Services\SystemModule\SystemModuleService;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -46,9 +45,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        Log::info('Accessing dashboard');
-
-        return Inertia::render('dashboard');
+        return redirect()->route('connections.index');
     })->name('dashboard');
     Route::resource('system-module', SystemModuleController::class);
     Route::resource('parameter-domain', ParameterDomainController::class);

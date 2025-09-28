@@ -1,4 +1,5 @@
 import { HomeIcon, ListIcon } from 'lucide-react'
+import React from 'react'
 
 export interface navItem {
   title: string
@@ -67,19 +68,16 @@ export const settingsReferenceData: navItem[] = [
     href: '/system-module',
     icon: <ListIcon className='h-4 w-4' />,
   },
-
   {
     title: 'Parameter Domain',
     href: '/parameter-domain',
     icon: <HomeIcon className='h-4 w-4' />,
   },
-
   {
     title: 'Parameter Definition',
     href: '/parameter-definition',
     icon: <HomeIcon className='h-4 w-4' />,
   },
-
   {
     title: 'Parameter Values',
     href: '/parameter-value',
