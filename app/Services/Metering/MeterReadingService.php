@@ -8,6 +8,7 @@ use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
 use Proto\Metering\CreateMeterReadingsRequest;
 use Proto\Metering\CreateMeterReadingValues;
+use Proto\Metering\GetMeterReadingsRequest;
 use Proto\Metering\ListMeterReadingsRequest;
 use Proto\Metering\MeterReadingsMessage;
 use Proto\Metering\MeterReadingsServiceClient;
@@ -59,40 +60,6 @@ class MeterReadingService
         return GrpcServiceResponse::success($meterReadingsArray, $response, $status->code, $status->details);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function toArray(MeterReadingsMessage $detail): array
-    {
-        return [
-            'id' => $detail->getMeterReadingDetailId(),
-            'metering_date' => $detail->getMeteringDate(),
-            'reading_start_date' => $detail->getReadingStartDate(),
-            'reading_end_date' => $detail->getReadingEndDate(),
-            'meter_reading_detail_id' => $detail->getMeterReadingDetailId(),
-            'connection_id' => $detail->getConnectionId(),
-            'normal_pf' => $detail->getNormalPf(),
-            'peak_pf' => $detail->getPeakPf(),
-            'offpeak_pf' => $detail->getOffpeakPf(),
-            'average_power_factor' => $detail->getAveragePowerFactor(),
-            'single_reading' => $detail->getSingleReading(),
-            'multiple_reading' => $detail->getMultipleReading(),
-            'anomaly_id' => $detail->getAnomalyId(),
-            'meter_health_id' => $detail->getMeterHealthId(),
-            'ctpt_health_id' => $detail->getCtptHealthId(),
-            'voltage_r' => $detail->getVoltageR(),
-            'voltage_y' => $detail->getVoltageY(),
-            'voltage_b' => $detail->getVoltageB(),
-            'current_r' => $detail->getCurrentR(),
-            'current_y' => $detail->getCurrentY(),
-            'current_b' => $detail->getCurrentB(),
-            'remarks' => $detail->getRemarks(),
-            'created_by' => $detail->getCreatedBy(),
-            'updated_by' => $detail->getUpdatedBy(),
-            'is_active' => $detail->getIsActive(),
-        ];
-    }
-
     public function createMeterReading(MeterReadingForm $request): GrpcServiceResponse
     {
         $grpcRequest = $this->toProto($request);
@@ -107,6 +74,23 @@ class MeterReadingService
         }
 
         return GrpcServiceResponse::success([], $response, $status->code, $status->details);
+    }
+
+    public function getMeterReadingById(int $id): GrpcServiceResponse
+    {
+        $protoRequest = new GetMeterReadingsRequest;
+        $protoRequest->setMeterReadingDetailId($id);
+        [$response, $status] = $this->client->GetMeterReadings($protoRequest)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success($this->toArray($response), $response, $status->code, $status->details);
     }
 
     public function toProto(MeterReadingForm $request): CreateMeterReadingsRequest
@@ -213,5 +197,39 @@ class MeterReadingService
         }
 
         return $protoRequest;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(MeterReadingsMessage $detail): array
+    {
+        return [
+            'id' => $detail->getMeterReadingDetailId(),
+            'metering_date' => $detail->getMeteringDate(),
+            'reading_start_date' => $detail->getReadingStartDate(),
+            'reading_end_date' => $detail->getReadingEndDate(),
+            'meter_reading_detail_id' => $detail->getMeterReadingDetailId(),
+            'connection_id' => $detail->getConnectionId(),
+            'normal_pf' => $detail->getNormalPf(),
+            'peak_pf' => $detail->getPeakPf(),
+            'offpeak_pf' => $detail->getOffpeakPf(),
+            'average_power_factor' => $detail->getAveragePowerFactor(),
+            'single_reading' => $detail->getSingleReading(),
+            'multiple_reading' => $detail->getMultipleReading(),
+            'anomaly_id' => $detail->getAnomalyId(),
+            'meter_health_id' => $detail->getMeterHealthId(),
+            'ctpt_health_id' => $detail->getCtptHealthId(),
+            'voltage_r' => $detail->getVoltageR(),
+            'voltage_y' => $detail->getVoltageY(),
+            'voltage_b' => $detail->getVoltageB(),
+            'current_r' => $detail->getCurrentR(),
+            'current_y' => $detail->getCurrentY(),
+            'current_b' => $detail->getCurrentB(),
+            'remarks' => $detail->getRemarks(),
+            'created_by' => $detail->getCreatedBy(),
+            'updated_by' => $detail->getUpdatedBy(),
+            'is_active' => $detail->getIsActive(),
+        ];
     }
 }

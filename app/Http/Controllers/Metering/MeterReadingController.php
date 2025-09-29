@@ -44,4 +44,13 @@ class MeterReadingController extends Controller
 
         return redirect()->route('connections.index');
     }
+
+    public function show(int $meteringId, Request $request): Response
+    {
+        $meterReading = $this->meterReadingService->getMeterReadingById($meteringId);
+
+        return Inertia::render('MeterReading/MeterReadingShowPage', [
+            'meterReading' => $meterReading,
+        ]);
+    }
 }

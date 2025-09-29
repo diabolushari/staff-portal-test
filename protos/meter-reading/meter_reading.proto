@@ -106,6 +106,7 @@ message ListMeterReadingsResponse {
   repeated MeterReadingsMessage details = 1;
 }
 
+
 // ----------- SERVICE ------------
 service MeterReadingsService {
   rpc CreateMeterReadings (CreateMeterReadingsRequest) returns (MeterReadingsMessage);
