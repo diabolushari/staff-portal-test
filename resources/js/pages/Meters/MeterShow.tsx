@@ -23,6 +23,8 @@ import MeterTransformerTab from '@/components/Meter/MeterTransformer/MeterTransf
 import DeleteButton from '@/ui/button/DeleteButton'
 import { MeterTransformer } from '@/pages/MeterTransformers/MeterTransformerShow'
 import { MeterTimezoneType, MeterTransformerAssignment } from '@/interfaces/data_interfaces'
+import StrongText from '@/typography/StrongText'
+import Field from '@/components/ui/field'
 
 // --- PROPS AND INTERFACES ---
 interface ParameterValue {
@@ -171,253 +173,112 @@ export default function MeterShow({
     >
       <TabGroup tabs={tabs}>
         <TabsContent value='details'>
-          <div className='container mx-auto py-8'>
+          <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
             {/* Header */}
-            <div className='mb-8 flex items-center justify-between'>
-              <div>
-                <h1 className='text-3xl font-bold text-gray-800'>{meter.meter_serial}</h1>
-                <p className='text-gray-500'>Meter Details</p>
+            <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+              <div className='flex flex-col gap-2'>
+                <StrongText className='text-2xl font-semibold text-[#252c32]'>{meter.meter_serial}</StrongText>
+                <span className='text-sm text-gray-600'>Meter Details</span>
               </div>
               <DeleteButton onClick={handleDelete} />
             </div>
 
             {/* Main Content Card */}
-            <Card className='overflow-hidden rounded-xl border border-gray-200 shadow-sm'>
-              <CardContent className='p-8'>
+            
                 {/* --- General Information --- */}
-                <Section title='General Information'>
-                  <InfoItem
-                    label='Version ID'
-                    value={meter.version_id}
-                  />
-                  <InfoItem
-                    label='Meter ID'
-                    value={meter.meter_id}
-                  />
-                  <InfoItem
-                    label='Meter Serial'
-                    value={meter.meter_serial}
-                  />
-                  <InfoItem
-                    label='Ownership'
-                    value={meter?.ownership_type?.parameter_value}
-                  />
-                  <InfoItem
-                    label='Make'
-                    value={meter?.meter_make?.parameter_value}
-                  />
-                  <InfoItem
-                    label='Type'
-                    value={meter?.meter_type?.parameter_value}
-                  />
-                  <InfoItem
-                    label='Category'
-                    value={meter?.meter_category?.parameter_value}
-                  />
-                  <InfoItem
-                    label='Unit'
-                    value={meter?.meter_unit?.parameter_value}
-                  />
-                  <InfoItem
-                    label='Phase'
-                    value={meter.meter_phase?.parameter_value}
-                  />
-                  <InfoItem
-                    label='Batch Code'
-                    value={meter.batch_code}
-                  />
-                </Section>
-
-                <Separator className='my-6' />
+                <Card className='rounded-lg p-7'>
+                  <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>General Information</StrongText>
+                  <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                    <Field label='Meter ID' value={meter.meter_id} />
+                    <Field label='Version ID' value={meter.version_id} />
+                    <Field label='Meter Serial' value={meter.meter_serial} />
+                    <Field label='Ownership' value={meter?.ownership_type?.parameter_value} />
+                    <Field label='Make' value={meter?.meter_make?.parameter_value} />
+                    <Field label='Type' value={meter?.meter_type?.parameter_value} />
+                    <Field label='Category' value={meter?.meter_category?.parameter_value} />
+                    <Field label='Unit' value={meter?.meter_unit?.parameter_value} />
+                    <Field label='Phase' value={meter?.meter_phase?.parameter_value} />
+                    <Field label='Batch Code' value={meter.batch_code} />
+                  </div>
+                </Card>
 
                 {/* --- Technical Specifications --- */}
-                <Section title='Technical Specifications'>
-                  <InfoItem
-                    label='Accuracy Class'
-                    value={meter?.accuracy_class?.parameter_value}
-                  />
-                  <InfoItem
-                    label='Dialing Factor'
-                    value={meter?.dialing_factor?.parameter_value}
-                  />
-                  <InfoItem
-                    label='Digit Count'
-                    value={meter?.digit_count}
-                  />
-                  <InfoItem
-                    label='Decimal Digit Count'
-                    value={meter?.decimal_digit_count}
-                  />
-                  <InfoItem
-                    label='Meter Constant'
-                    value={meter?.meter_constant}
-                  />
-                  <InfoItem
-                    label='Meter MF'
-                    value={meter?.meter_mf}
-                  />
-                  <InfoItem
-                    label='Company Seal No.'
-                    value={meter?.company_seal_num}
-                  />
-                  <InfoItem
-                    label='Reset Type'
-                    value={meter?.meter_reset_type?.parameter_value}
-                  />
-                  <InfoItem
-                    label='Smart Meter'
-                    value={meter.smart_meter_ind ? 'Yes' : 'No'}
-                  />
-                  <InfoItem
-                    label='Bidirectional'
-                    value={meter.bidirectional_ind ? 'Yes' : 'No'}
-                  />
-                  <InfoItem
-                    label='Warranty Period (Months)'
-                    value={meter?.warranty_period}
-                  />
-                </Section>
-
-                <Separator className='my-6' />
+                <Card className='rounded-lg p-7'>
+                  <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>Technical Specifications</StrongText>
+                  <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                    <Field label='Accuracy Class' value={meter?.accuracy_class?.parameter_value} />
+                    <Field label='Dialing Factor' value={meter?.dialing_factor?.parameter_value} />
+                    <Field label='Digit Count' value={meter?.digit_count} />
+                    <Field label='Decimal Digit Count' value={meter?.decimal_digit_count} />
+                    <Field label='Meter Constant' value={meter?.meter_constant} />
+                    <Field label='Meter MF' value={meter?.meter_mf} />
+                    <Field label='Company Seal No.' value={meter?.company_seal_num} />
+                    <Field label='Reset Type' value={meter?.meter_reset_type?.parameter_value} />
+                    <Field label='Smart Meter' value={meter.smart_meter_ind ? 'Yes' : 'No'} />
+                    <Field label='Bidirectional' value={meter.bidirectional_ind ? 'Yes' : 'No'} />
+                    <Field label='Warranty Period (Months)' value={meter?.warranty_period} />
+                  </div>
+                </Card>
 
                 {/* --- CT/PT Specifications --- */}
-                <Section title='CT/PT Specifications'>
-                  <InfoItem
-                    label='Programmable PT Ratio'
-                    value={meter?.programmable_pt_ratio}
-                  />
-                  <InfoItem
-                    label='Programmable CT Ratio'
-                    value={meter?.programmable_ct_ratio}
-                  />
-
-                  {/* Internal CT as ratio */}
-                  <InfoItem
-                    label='Internal CT Ratio'
-                    value={
-                      meter?.internal_ct_primary && meter?.internal_ct_secondary
-                        ? `${meter?.internal_ct_primary} / ${meter?.internal_ct_secondary}`
-                        : '-'
-                    }
-                  />
-
-                  {/* Internal PT as ratio */}
-                  <InfoItem
-                    label='Internal PT Ratio'
-                    value={
-                      meter?.internal_pt_primary && meter?.internal_pt_secondary
-                        ? `${meter?.internal_pt_primary} / ${meter?.internal_pt_secondary}`
-                        : '-'
-                    }
-                  />
-                </Section>
-
-                <Separator className='my-6' />
+                <Card className='rounded-lg p-7'>
+                  <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>CT/PT Specifications</StrongText>
+                  <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                    <Field label='Programmable PT Ratio' value={meter?.programmable_pt_ratio} />
+                    <Field label='Programmable CT Ratio' value={meter?.programmable_ct_ratio} />
+                    <Field label='Internal CT Ratio' value={meter?.internal_ct_primary && meter?.internal_ct_secondary ? `${meter.internal_ct_primary} / ${meter.internal_ct_secondary}` : '-'} />
+                    <Field label='Internal PT Ratio' value={meter?.internal_pt_primary && meter?.internal_pt_secondary ? `${meter.internal_pt_primary} / ${meter.internal_pt_secondary}` : '-'} />
+                  </div>
+                </Card>
 
                 {/* --- Timezone Information --- */}
-                <div className='py-6'>
+                <Card className='rounded-lg p-7'>
                   <div className='mb-6 flex items-center justify-between'>
-                    <h3 className='text-lg font-semibold text-gray-700'>Timezone Information</h3>
-                    {!isEditing && (
-                      <Button
-                        label='Edit'
-                        onClick={() => setIsEditing(true)}
-                        variant='outline'
-                        disabled={loading}
-                        icon={<Edit className='mr-2 h-4 w-4' />}
-                      />
-                    )}
+                    <StrongText className='text-base font-semibold text-[#252c32]'>Timezone Information</StrongText>
+                    {!isEditing && <Button label='Edit' onClick={() => setIsEditing(true)} variant='outline' icon={<Edit className='h-4 w-4' />} />}
                   </div>
                   {isEditing ? (
-                    <div className='rounded-lg border bg-gray-50 p-6'>
-                      <div className='max-w-sm space-y-2'>
-                        <Label htmlFor='timezone-select'>Timezone Type</Label>
-                        <Select
-                          value={selectedTimezone}
-                          onValueChange={setSelectedTimezone}
-                        >
-                          <SelectTrigger id='timezone-select'>
-                            <SelectValue placeholder='Select a timezone...' />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {currentTzId && currentTzLabel && (
-                              <SelectItem value={currentTzId}>{currentTzLabel}</SelectItem>
-                            )}
-                            {otherTimezoneOptions.map((type) => (
-                              <SelectItem
-                                key={type.id}
-                                value={String(type.id)}
-                              >
-                                {type.parameterValue}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className='mt-6 flex justify-end gap-2'>
-                        <Button
-                          label='Cancel'
-                          onClick={handleCancel}
-                          variant='secondary'
-                          disabled={loading}
-                        />
-                        <Button
-                          label='Save Changes'
-                          onClick={handleSave}
-                          disabled={loading}
-                        />
+                    <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                      <select value={selectedTimezone} onChange={(e) => setSelectedTimezone(e.target.value)} className='rounded border p-2'>
+                        {currentTzId && currentTzLabel && <option value={currentTzId}>{currentTzLabel}</option>}
+                        {timezoneTypes.filter(t => String(t.id) !== currentTzId).map(t => (
+                          <option key={t.id} value={String(t.id)}>{t.parameterValue}</option>
+                        ))}
+                      </select>
+                      <div className='flex gap-2'>
+                        <Button label='Cancel' onClick={handleCancel} variant='secondary' disabled={loading} />
+                        <Button label='Save Changes' onClick={handleSave} disabled={loading} />
                       </div>
                     </div>
                   ) : (
-                    <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-                      <InfoItem
-                        label='Timezone Type'
-                        value={currentTzLabel || '-'}
-                      />
+                    <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                      <Field label='Timezone Type' value={currentTzLabel || '-'} />
                     </div>
                   )}
-                </div>
+                </Card>
 
-                <Separator className='my-6' />
 
                 {/* --- History --- */}
-                <Section title='History'>
-                  <InfoItem
-                    label='Manufacture Date'
-                    value={formatDate(meter.manufacture_date)}
-                  />
-                  <InfoItem
-                    label='Supply Date'
-                    value={formatDate(meter.supply_date)}
-                  />
-                  <InfoItem
-                    label='Created At'
-                    value={formatDate(meter.created_ts)}
-                  />
-                  <InfoItem
-                    label='Last Updated At'
-                    value={formatDate(meter.updated_ts)}
-                  />
-                  <InfoItem
-                    label='Created By'
-                    value={meter.created_by}
-                  />
-                  <InfoItem
-                    label='Updated By'
-                    value={meter.updated_by || '-'}
-                  />
-                </Section>
-              </CardContent>
-            </Card>
+                <Card className='rounded-lg p-7'>
+                  <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>History</StrongText>
+                  <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                    <Field label='Manufacture Date' value={formatDate(meter.manufacture_date)} />
+                    <Field label='Supply Date' value={formatDate(meter.supply_date)} />
+                    <Field label='Created At' value={formatDate(meter.created_ts)} />
+                    <Field label='Last Updated At' value={formatDate(meter.updated_ts)} />
+                    <Field label='Created By' value={meter.created_by} />
+                    <Field label='Updated By' value={meter.updated_by || '-'} />
+                  </div>
+                </Card>
           </div>
-        </TabsContent>
-        <TabsContent value='meter-ctpt'>
-          <MeterTransformerTab
-            meterId={meter.meter_id}
-            ctpt={ctpt}
-            version_id={relation?.version_id}
-          />
-        </TabsContent>
+          </TabsContent>
+          <TabsContent value='meter-ctpt'>
+            <MeterTransformerTab
+              meterId={meter.meter_id}
+              ctpt={ctpt}
+              version_id={relation?.version_id}
+            />
+          </TabsContent>
       </TabGroup>
     </MainLayout>
   )

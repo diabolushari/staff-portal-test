@@ -7,6 +7,7 @@ import Button from '@/ui/button/Button'
 import { transformerNavItems } from '@/components/Navbar/navitems'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
 import { TabsContent } from '@radix-ui/react-tabs'
+import Field from '@/components/ui/field'
 
 interface ParameterValue {
   parameter_value: string
@@ -93,7 +94,7 @@ export default function MeterTransformerShow({ transformer, relation }: Readonly
         <TabsContent value='meter-ctpt'>
           <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
             {/* Header Section */}
-            <div className='flex flex-col gap-2'>
+            <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
               <div className='flex items-center justify-between'>
                 <StrongText className='text-2xl font-semibold text-[#252c32]'>
                   {transformer.ctpt_serial}
@@ -108,107 +109,33 @@ export default function MeterTransformerShow({ transformer, relation }: Readonly
 
             {/* Main Content Card */}
             <Card className='rounded-lg p-7'>
-              <CardHeader className='mb-6 p-0'>
-                <CardTitle className='text-base font-semibold text-[#252c32]'>
-                  Meter Transformer Details
-                </CardTitle>
-              </CardHeader>
-              <hr className='mb-6 border-[#e5e9eb]' />
-              <CardContent className='p-0'>
-                <div className='space-y-8'>
-                  {/* Section: General Information */}
-                  <div>
-                    <StrongText className='mb-4 block text-sm font-medium text-gray-500'>
-                      General Information
-                    </StrongText>
-                    <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-                      <InfoItem
-                        label='CTPT Serial'
-                        value={transformer.ctpt_serial}
-                      />
-                      <InfoItem
-                        label='Ownership'
-                        value={transformer.ownership_type?.parameter_value}
-                      />
-                      <InfoItem
-                        label='Make'
-                        value={transformer.make?.parameter_value}
-                      />
-                      <InfoItem
-                        label='Type'
-                        value={transformer.type?.parameter_value}
-                      />
-                      {/* <InfoItem
-										label="Status"
-										value={transformer.status?.parameter_value}
-									/>
-									<InfoItem
-										label="Change Reason"
-										value={transformer.change_reason?.parameter_value}
-									/> */}
-                    </div>
-                  </div>
+              <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>General Information</StrongText>
+              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                <Field label='CTPT Serial' value={transformer.ctpt_serial} />
+                <Field label='Ownership' value={transformer.ownership_type?.parameter_value} />
+                <Field label='Make' value={transformer.make?.parameter_value} />
+                <Field label='Type' value={transformer.type?.parameter_value} />
+              </div>
+            </Card>
 
-                  {/* Section: Technical Specifications */}
-                  <div>
-                    <StrongText className='mb-4 block text-sm font-medium text-gray-500'>
-                      Technical Specifications
-                    </StrongText>
-                    <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-                      <InfoItem
-                        label='Internal Ratio'
-                        value={
-                          transformer.ratio_primary_value && transformer.ratio_secondary_value
-                            ? `${transformer.ratio_primary_value} / ${transformer.ratio_secondary_value}`
-                            : '-'
-                        }
-                      />
+            {/* Technical Specifications */}
+            <Card className='rounded-lg p-7'>
+              <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>Technical Specifications</StrongText>
+              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                <Field label='Internal Ratio' value={transformer.ratio_primary_value && transformer.ratio_secondary_value ? `${transformer.ratio_primary_value} / ${transformer.ratio_secondary_value}` : '-'} />
+                <Field label='Accuracy Class' value={transformer.accuracy_class?.parameter_value} />
+                <Field label='Burden' value={transformer.burden?.parameter_value} />
+                <Field label='Manufacture Date' value={formatDate(transformer.manufacture_date)} />
+              </div>
+            </Card>
 
-                      <InfoItem
-                        label='Accuracy Class'
-                        value={transformer.accuracy_class?.parameter_value}
-                      />
-                      <InfoItem
-                        label='Burden'
-                        value={transformer.burden?.parameter_value}
-                      />
-                      <InfoItem
-                        label='Manufacture Date'
-                        value={formatDate(transformer.manufacture_date)}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Section: History */}
-                  <div>
-                    <StrongText className='mb-4 block text-sm font-medium text-gray-500'>
-                      History
-                    </StrongText>
-                    <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-                      {/* <InfoItem
-										label="Faulty Date"
-										value={formatDate(transformer.faulty_date)}
-									/>
-									<InfoItem
-										label="Rectification Date"
-										value={formatDate(transformer.rectification_date)}
-									/> */}
-                      <InfoItem
-                        label='Created At'
-                        value={formatDate(transformer.created_ts)}
-                      />
-                      <InfoItem
-                        label='Last Updated At'
-                        value={formatDate(transformer.updated_ts)}
-                      />
-                      {/* <InfoItem
-										label="Active"
-										value={transformer.is_active ? "Yes" : "No"}
-									/> */}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
+            {/* History */}
+            <Card className='rounded-lg p-7'>
+              <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>History</StrongText>
+              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                <Field label='Created At' value={formatDate(transformer.created_ts)} />
+                <Field label='Last Updated At' value={formatDate(transformer.updated_ts)} />
+              </div>
             </Card>
           </div>
         </TabsContent>
