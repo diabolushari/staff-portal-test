@@ -332,8 +332,12 @@ class MeterService
     /**
      * Convert MeterResponse proto to associative array
      */
-    public static function meterProtoToArray(MeterResponse $meter): array
+    public static function meterProtoToArray(?MeterResponse $meter): ?array
     {
+        if ($meter === null) {
+            return null;
+        }
+
         $manufactureDate = ($meter->hasManufactureDate() && $meter->getManufactureDate())
             ? $meter->getManufactureDate()->toDateTime()->format('Y-m-d')
             : null;
@@ -401,7 +405,7 @@ class MeterService
     /**
      * Transform ParameterValueProto to PHP array
      */
-    private static function transformParameterValueToArray($parameterValue): ?array
+    public static function transformParameterValueToArray($parameterValue): ?array
     {
         if ($parameterValue === null) {
             return null;

@@ -5,6 +5,9 @@ package com.kseb.consumerservice.proto.meter_reading;
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "parameters/parameter-value.proto";
+import "metering/meter.proto";
+import "meter-reading/metering_profile_parameters.proto";
+
 
 option php_namespace = "Proto\\Metering";
 option php_metadata_namespace = "GPBMetadata";
@@ -13,6 +16,25 @@ option java_package = "com.kseb.consumerservice.proto.meter_reading";
 option java_multiple_files = true;
 option java_outer_classname = "MeterReadingsProto";
 
+
+
+message ReadingValueMessage{
+  int64 meter_reading_values_id = 1;
+  int64 parameter_id = 2;
+  int64 meter_reading_id = 3;
+  int32 meter_id = 4;
+  com.kseb.consumerservice.proto.metering.MeterResponse meter = 5;
+  int64 timezone_id = 6;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto timezone = 7;
+  double initial_reading = 8;
+  double final_reading = 9;
+  double difference = 10;
+  double value = 11;
+  int32 created_by = 12;
+  int32 updated_by = 13;
+  bool is_active = 14;
+  com.kseb.consumerservice.proto.meter_reading.MeteringProfileParameterMessage parameter = 15;
+}
 
 message CreateMeterReadingValues {
   int64 parameter_id = 1;
@@ -68,8 +90,15 @@ message MeterReadingsMessage {
 // ----------- REQUEST/RESPONSE ----------
 
 message UpdateMeterReadingsRequest  { MeterReadingsMessage detail = 1; }
-message GetMeterReadingsRequest     { int64 meter_reading_detail_id = 1; }
+message GetMeterReadingsRequest     { int64 meter_reading_detail_id = 1;
+optional int64 meter_id = 2; }
 message DeleteMeterReadingsRequest  { int64 meter_reading_detail_id = 1; }
+
+
+message GetMeterReadingResponse {
+  MeterReadingsMessage reading = 1;
+  repeated ReadingValueMessage values = 2;
+}
 
 message ListMeterReadingsRequest {
   int32 page = 1;
@@ -106,11 +135,12 @@ message ListMeterReadingsResponse {
   repeated MeterReadingsMessage details = 1;
 }
 
+
 // ----------- SERVICE ------------
 service MeterReadingsService {
   rpc CreateMeterReadings (CreateMeterReadingsRequest) returns (MeterReadingsMessage);
   rpc UpdateMeterReadings (UpdateMeterReadingsRequest) returns (MeterReadingsMessage);
-  rpc GetMeterReadings    (GetMeterReadingsRequest)    returns (MeterReadingsMessage);
+  rpc GetMeterReadings    (GetMeterReadingsRequest)    returns (GetMeterReadingResponse);
   rpc DeleteMeterReadings (DeleteMeterReadingsRequest) returns (google.protobuf.Empty);
   rpc ListMeterReadings   (ListMeterReadingsRequest)   returns (ListMeterReadingsResponse);
 }
