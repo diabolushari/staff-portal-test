@@ -53,9 +53,13 @@ class GetMeterReadingWithConnectionController extends Controller
 
                 $meterId = $meterResponse->data['meter_id'] ?? null;
                 $profileId = $meterResponse->data['profile_id'] ?? null;
-                $meterTimezoneTypeRelResponse = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($meterId)->data ?? null;
-                $timezoneId = $meterTimezoneTypeRelResponse['timezone_type']['id'] ?? null;
-                $timzeZones = $this->meteringTimezoneService->listMeteringTimezones(null, $timezoneId)->data ?? [];
+                $timezoneId = null;
+                $timzeZones = [];
+                if ($meterId !== null) {
+                    $meterTimezoneTypeRelResponse = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($meterId)->data ?? null;
+                    $timezoneId = $meterTimezoneTypeRelResponse['timezone_type']['id'] ?? null;
+                    $timzeZones = $this->meteringTimezoneService->listMeteringTimezones(null, $timezoneId)->data ?? [];
+                }
                 // Fetch meter parameters
                 $meterParametersResponse = $this->meteringParameterProfileService
                     ->listMeteringProfileParameters(1, 10, null, $profileId);
@@ -64,21 +68,25 @@ class GetMeterReadingWithConnectionController extends Controller
                 $profileItems = [];
                 foreach ($meterParameters as $meterParameter) {
                     $readingValues = [];
-                    foreach ($readings as $reading) {
-                        $values = [];
-                        foreach ($timzeZones as $timzeZone) {
-                            $value = $this->meterReadingValueService->getMeterReadingValues(null, $meterId, $meterParameter['meter_parameter_id'], $timzeZone['timezone_name']['id'], $reading['id'])->data;
-                            if ($value === null) {
-                                continue;
+                    if ($readings !== null) {
+                        foreach ($readings as $reading) {
+                            $values = [];
+                            if ($timzeZones != null) {
+                                foreach ($timzeZones as $timzeZone) {
+                                    $value = $this->meterReadingValueService->getMeterReadingValues(null, $meterId, $meterParameter['meter_parameter_id'], $timzeZone['timezone_name']['id'], $reading['id'])->data;
+                                    if ($value === null) {
+                                        continue;
+                                    }
+                                    $values[] = [
+                                        $timzeZone['timezone_name']['parameter_value'] => $value,
+                                    ];
+                                }
                             }
-                            $values[] = [
-                                $timzeZone['timezone_name']['parameter_value'] => $value,
+                            $readingValues[] = [
+                                'reading' => $reading,
+                                'values' => $values,
                             ];
                         }
-                        $readingValues[] = [
-                            'reading' => $reading,
-                            'values' => $values,
-                        ];
                     }
                     $profileItems[] = [
                         'meter_parameter' => $meterParameter,
@@ -89,7 +97,7 @@ class GetMeterReadingWithConnectionController extends Controller
                 $meterProfiles[] = [
                     'meter_id' => $meterId,
                     'profile_id' => $profileId,
-                    'timezone_id' => $timezoneId,
+                    'timezone_id' => $timezoneId ?? null,
                     'profile_items' => $profileItems,
                 ];
             }

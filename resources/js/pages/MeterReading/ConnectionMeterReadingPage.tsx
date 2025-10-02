@@ -31,7 +31,14 @@ export default function ConnectionMeterReadingPage({
   const handleAddMeterReading = () => {
     router.visit(route('meter-reading.create', { id: connection?.connection_id }))
   }
-  console.log(meterProfiles)
+  const handleViewMeterReading = (meterReadingId: number, meterId: number) => {
+    router.visit(
+      route('meter-reading.show', {
+        id: meterReadingId,
+        meter_id: meterId,
+      })
+    )
+  }
 
   return (
     <ConnectionsLayout
@@ -122,11 +129,7 @@ export default function ConnectionMeterReadingPage({
                               <td
                                 className='border px-2 py-1 text-center'
                                 onClick={() =>
-                                  router.visit(
-                                    route('meter-reading.show', {
-                                      id: reading.reading?.id,
-                                    })
-                                  )
+                                  handleViewMeterReading(reading.reading?.id, meter?.meter_id)
                                 }
                               >
                                 View

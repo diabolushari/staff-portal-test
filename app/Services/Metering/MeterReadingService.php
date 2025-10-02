@@ -4,6 +4,7 @@ namespace App\Services\Metering;
 
 use App\Http\Requests\Metering\MeterReadingForm;
 use App\Services\Grpc\GrpcErrorService;
+use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
 use Proto\Metering\CreateMeterReadingsRequest;
@@ -13,13 +14,16 @@ use Proto\Metering\ListMeterReadingsRequest;
 use Proto\Metering\MeterReadingsMessage;
 use Proto\Metering\MeterReadingsServiceClient;
 use Proto\Metering\MeterReadingValue;
+use Proto\Metering\ReadingValueMessage;
 
 class MeterReadingService
 {
     private MeterReadingsServiceClient $client;
 
     public function __construct(
-
+        private ParameterValueService $parameterValueService,
+        private MeterService $meterService,
+        private MeteringParameterProfileService $meteringParameterProfileService
     ) {
         $this->client = new MeterReadingsServiceClient(
             config('app.consumer_service_grpc_host'),
@@ -76,10 +80,13 @@ class MeterReadingService
         return GrpcServiceResponse::success([], $response, $status->code, $status->details);
     }
 
-    public function getMeterReadingById(int $id): GrpcServiceResponse
+    public function getMeterReading(int $id, ?int $meterId = null): GrpcServiceResponse
     {
         $protoRequest = new GetMeterReadingsRequest;
         $protoRequest->setMeterReadingDetailId($id);
+        if ($meterId) {
+            $protoRequest->setMeterId($meterId);
+        }
         [$response, $status] = $this->client->GetMeterReadings($protoRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -89,8 +96,15 @@ class MeterReadingService
                 $status->details
             );
         }
+        $meterReadingValuesArray = [];
+        foreach ($response->getValues() as $value) {
+            $value = $this->meterReadingValuesToArray($value);
+            $meterReadingValuesArray[] = $value;
+        }
+        $meterReadingArray = $this->toArray($response->getReading());
+        $meterReadingArray['values'] = $meterReadingValuesArray;
 
-        return GrpcServiceResponse::success($this->toArray($response), $response, $status->code, $status->details);
+        return GrpcServiceResponse::success($meterReadingArray, $response, $status->code, $status->details);
     }
 
     public function toProto(MeterReadingForm $request): CreateMeterReadingsRequest
@@ -230,6 +244,26 @@ class MeterReadingService
             'created_by' => $detail->getCreatedBy(),
             'updated_by' => $detail->getUpdatedBy(),
             'is_active' => $detail->getIsActive(),
+        ];
+    }
+
+    public function meterReadingValuesToArray(ReadingValueMessage $detail): array
+    {
+        return [
+            'id' => $detail->getMeterReadingValuesId(),
+            'meter_id' => $detail->getMeterId(),
+            'parameter_id' => $detail->getParameterId(),
+            'timezone_id' => $detail->getTimezoneId(),
+            'initial_reading' => $detail->getInitialReading(),
+            'final_reading' => $detail->getFinalReading(),
+            'difference' => $detail->getDifference(),
+            'value' => $detail->getValue(),
+            'created_by' => $detail->getCreatedBy(),
+            'updated_by' => $detail->getUpdatedBy(),
+            'is_active' => $detail->getIsActive(),
+            'time_zone' => $this->parameterValueService->toArray($detail->getTimezone()),
+            'meter' => $this->meterService->meterProtoToArray($detail->getMeter()),
+            'meter_profile_parameter' => $this->meteringParameterProfileService->toArray($detail->getParameter()),
         ];
     }
 }

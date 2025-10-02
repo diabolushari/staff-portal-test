@@ -23,12 +23,9 @@ import MeterTransformerTab from '@/components/Meter/MeterTransformer/MeterTransf
 import DeleteButton from '@/ui/button/DeleteButton'
 import { MeterTransformer } from '@/pages/MeterTransformers/MeterTransformerShow'
 import { MeterTimezoneType, MeterTransformerAssignment } from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
 
 // --- PROPS AND INTERFACES ---
-interface ParameterValue {
-  id: number
-  parameterValue: string
-}
 
 export const MeterTabs = (meterId: number, ctptId?: number, relId?: number) => [
   {
@@ -46,7 +43,7 @@ interface Props {
   meter: Meter
   ctpt: MeterTransformer | null
   currentTimezone: MeterTimezoneType
-  timezoneTypes: ParameterValue[]
+  timezoneTypes: ParameterValues[]
   relation: MeterTransformerAssignment | null
 }
 
@@ -348,7 +345,7 @@ export default function MeterShow({
                                 key={type.id}
                                 value={String(type.id)}
                               >
-                                {type.parameterValue}
+                                {type.parameter_value}
                               </SelectItem>
                             ))}
                           </SelectContent>
