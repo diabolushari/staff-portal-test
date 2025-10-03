@@ -51,7 +51,7 @@ export default function MeterReadingValueForm({
                           if (rowKey !== 'diff') onChange(rowKey, tz.id, val)
                         }}
                         required
-                        disabled={rowKey === 'diff'}
+                        disabled={rowKey === 'diff' || rowKey === 'initial'}
                       />
                     </TableCell>
                   )

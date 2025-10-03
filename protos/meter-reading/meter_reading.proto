@@ -141,6 +141,7 @@ message LatestMeterReadingRequest {
 
 message LatestMeterReadingResponse {
   MeterReadingsMessage reading = 1;
+  repeated ReadingValueMessage values = 2;
 }
 
 // ----------- SERVICE ------------

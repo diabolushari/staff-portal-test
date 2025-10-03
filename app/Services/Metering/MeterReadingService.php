@@ -122,6 +122,12 @@ class MeterReadingService
             );
         }
         $meterReadingArray = $this->toArray($response->getReading());
+        $meterReadingValuesArray = [];
+        foreach ($response->getValues() as $value) {
+            $value = $this->meterReadingValuesToArray($value);
+            $meterReadingValuesArray[] = $value;
+        }
+        $meterReadingArray['values'] = $meterReadingValuesArray;
 
         return GrpcServiceResponse::success($meterReadingArray, $response, $status->code, $status->details);
     }

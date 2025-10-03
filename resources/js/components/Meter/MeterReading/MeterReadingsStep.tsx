@@ -11,17 +11,28 @@ interface Props {
   metersWithTimezonesAndProfiles: any[]
   formData: any
   setFormValue: (key: string) => (value: any) => void
+  latestMeterReading: any
 }
 
 export default function MeterReadingsStep({
   metersWithTimezonesAndProfiles,
   formData,
   setFormValue,
+  latestMeterReading,
 }: Readonly<Props>) {
   const [activeProfile, setActiveProfile] = useState<{
     meterIdx: number
     profileIdx: number
   } | null>(null)
+
+  const getPrevFinal = (meterId: number, parameterId: number, timezoneId: number, latest: any) => {
+    return (
+      latest?.values?.find(
+        (v: any) =>
+          v.meter_id === meterId && v.parameter_id === parameterId && v.timezone_id === timezoneId
+      )?.final_reading ?? 0
+    )
+  }
 
   // Initialize readings structure if empty
   useEffect(() => {
@@ -34,7 +45,17 @@ export default function MeterReadingsStep({
           readings: meter.timezones.map((tz: any) => ({
             timezone_id: tz.timezone_id,
             timezone_name: tz.timezone_name,
-            values: { initial: '', final: '', diff: '' },
+            values: {
+              initial:
+                getPrevFinal(
+                  meter.meter_id,
+                  profile.meter_parameter_id,
+                  tz.timezone_id,
+                  latestMeterReading
+                ) ?? 0,
+              final: '',
+              diff: '',
+            },
           })),
         })),
       }))

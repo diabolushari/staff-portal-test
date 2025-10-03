@@ -33,6 +33,7 @@ export default function MeterReadingCreatePage({
       href: `/meter-reading/${connectionWithConsumer?.connection?.connection_id}/create`,
     },
   ]
+  console.log(latestMeterReading)
   const getNextDay = (dateStr: string) => {
     if (!dateStr) return ''
     const date = new Date(dateStr)
@@ -54,6 +55,28 @@ export default function MeterReadingCreatePage({
   const { post, errors } = useInertiaPost(route('meter-reading.store'))
 
   const [activeStep, setActiveStep] = useState(0)
+  const carryForwardInitialReadings = (latestMeterReading: any, setFormValue: any) => {
+    if (!latestMeterReading?.values) return
+
+    setFormValue('readings_by_meter', (prev: any[]) => {
+      return prev.map((reading) => {
+        // find matching parameter + timezone in the old values
+        const prevValue = latestMeterReading.values.find(
+          (v: any) =>
+            v.parameter_id === reading.parameter_id && v.timezone_id === reading.timezone_id
+        )
+
+        if (prevValue) {
+          return {
+            ...reading,
+            initial_reading: prevValue.final_reading, // carry forward
+          }
+        }
+
+        return reading
+      })
+    })
+  }
 
   // Check if a step has any errors
   const hasStepError = (fields: string[]) => fields.some((f) => errors?.[f])
@@ -128,6 +151,7 @@ export default function MeterReadingCreatePage({
                     metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
                     formData={formData}
                     setFormValue={setFormValue}
+                    latestMeterReading={latestMeterReading}
                   />
                 ),
               },
