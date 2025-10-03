@@ -10,6 +10,7 @@ use Grpc\ChannelCredentials;
 use Proto\Metering\CreateMeterReadingsRequest;
 use Proto\Metering\CreateMeterReadingValues;
 use Proto\Metering\GetMeterReadingsRequest;
+use Proto\Metering\LatestMeterReadingRequest;
 use Proto\Metering\ListMeterReadingsRequest;
 use Proto\Metering\MeterReadingsMessage;
 use Proto\Metering\MeterReadingsServiceClient;
@@ -103,6 +104,24 @@ class MeterReadingService
         }
         $meterReadingArray = $this->toArray($response->getReading());
         $meterReadingArray['values'] = $meterReadingValuesArray;
+
+        return GrpcServiceResponse::success($meterReadingArray, $response, $status->code, $status->details);
+    }
+
+    public function latestMeterReading(int $connectionId): GrpcServiceResponse
+    {
+        $protoRequest = new LatestMeterReadingRequest;
+        $protoRequest->setConnectionId($connectionId);
+        [$response, $status] = $this->client->LatestMeterReading($protoRequest)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+        $meterReadingArray = $this->toArray($response->getReading());
 
         return GrpcServiceResponse::success($meterReadingArray, $response, $status->code, $status->details);
     }

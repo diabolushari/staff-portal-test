@@ -7,6 +7,7 @@ use App\Services\Connection\ConnectionService;
 use App\Services\Connection\ConsumerService;
 use App\Services\Metering\MeterConnectionRelService;
 use App\Services\Metering\MeteringParameterProfileService;
+use App\Services\Metering\MeterReadingService;
 use App\Services\Metering\MeterService;
 use App\Services\Metering\MeterTimezoneTypeRelService;
 use App\Services\MeteringTimezone\MeteringTimezoneService;
@@ -25,7 +26,8 @@ class GetMeterReadingController extends Controller
         private MeterTimezoneTypeRelService $meterTimezoneTypeRelService,
         private MeteringTimezoneService $meteringTimezoneService,
         private MeteringParameterProfileService $meteringParameterProfileService,
-        private MeterService $meterService
+        private MeterService $meterService,
+        private MeterReadingService $meterReadingService
     ) {}
 
     public function __invoke(Request $request, int $connectionId): Response
@@ -55,6 +57,7 @@ class GetMeterReadingController extends Controller
         $metersWithTimezonesAndProfiles = [];
         $meterTimezoneTypeRel = [];
         $timeZoneNames = [];
+        $latestMeterReading = $this->meterReadingService->latestMeterReading($connectionId);
         if ($meterConnectionRel->data) {
             $meterWithTimezoneAndProfile = [];
 
@@ -102,6 +105,7 @@ class GetMeterReadingController extends Controller
             'anomalyTypes' => $anomalyTypes->data,
             'timeZoneNames' => $timeZoneNames,
             'metersWithTimezonesAndProfiles' => $metersWithTimezonesAndProfiles,
+            'latestMeterReading' => $latestMeterReading->data,
         ]);
     }
 }

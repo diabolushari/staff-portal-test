@@ -50,6 +50,7 @@ export interface OfficeContact {
 }
 
 export interface Connection {
+  version_id: number
   connection_id: number
   admin_office_code: number
   service_office_code: number
@@ -99,7 +100,6 @@ export interface Connection {
   voltage: ParameterValues
   updated_at: string
   updated_by: number
-  version_id: number
   othercons_flag: boolean
   cpp_flag: boolean
 }
