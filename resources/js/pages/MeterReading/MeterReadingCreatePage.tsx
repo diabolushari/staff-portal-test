@@ -43,7 +43,7 @@ export default function MeterReadingCreatePage({
   const { formData, setFormValue } = useCustomForm({
     connection_id: connectionWithConsumer?.connection?.connection_id,
     metering_date: '',
-    reading_start_date: getNextDay(latestMeterReading?.reading_end_date),
+    reading_start_date: getNextDay(latestMeterReading?.reading_end_date) ?? '',
     reading_end_date: '',
     reading_type: '',
     meter_health_id: '',
@@ -122,6 +122,7 @@ export default function MeterReadingCreatePage({
                     formData={formData}
                     setFormValue={setFormValue}
                     errors={errors}
+                    latestMeterReading={latestMeterReading}
                   />
                 ),
               },

@@ -12,6 +12,7 @@ interface Props {
   formData: any
   setFormValue: any
   errors?: any
+  latestMeterReading?: any
 }
 
 export default function MeterReadingGeneralStep({
@@ -19,6 +20,7 @@ export default function MeterReadingGeneralStep({
   formData,
   setFormValue,
   errors,
+  latestMeterReading,
 }: Props) {
   return (
     <>
@@ -64,7 +66,7 @@ export default function MeterReadingGeneralStep({
               value={formData.reading_start_date}
               setValue={setFormValue('reading_start_date')}
               error={errors?.reading_start_date}
-              disabled
+              disabled={latestMeterReading?.reading_end_date}
             />
             <DatePicker
               label='Reading End Date'
