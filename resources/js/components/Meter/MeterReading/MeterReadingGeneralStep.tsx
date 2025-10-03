@@ -12,6 +12,7 @@ interface Props {
   formData: any
   setFormValue: any
   errors?: any
+  latestMeterReading?: any
 }
 
 export default function MeterReadingGeneralStep({
@@ -19,6 +20,7 @@ export default function MeterReadingGeneralStep({
   formData,
   setFormValue,
   errors,
+  latestMeterReading,
 }: Props) {
   return (
     <>
@@ -47,18 +49,6 @@ export default function MeterReadingGeneralStep({
               setValue={setFormValue('metering_date')}
               error={errors?.metering_date}
             />
-            <DatePicker
-              label='Reading Start Date'
-              value={formData.reading_start_date}
-              setValue={setFormValue('reading_start_date')}
-              error={errors?.reading_start_date}
-            />
-            <DatePicker
-              label='Reading End Date'
-              value={formData.reading_end_date}
-              setValue={setFormValue('reading_end_date')}
-              error={errors?.reading_end_date}
-            />
             <RadioGroup
               label='Reading Type'
               list={[
@@ -70,6 +60,19 @@ export default function MeterReadingGeneralStep({
               setValue={setFormValue('reading_type')}
               value={formData.reading_type}
               error={errors?.reading_type}
+            />
+            <DatePicker
+              label='Reading Start Date'
+              value={formData.reading_start_date}
+              setValue={setFormValue('reading_start_date')}
+              error={errors?.reading_start_date}
+              disabled={latestMeterReading?.reading_end_date}
+            />
+            <DatePicker
+              label='Reading End Date'
+              value={formData.reading_end_date}
+              setValue={setFormValue('reading_end_date')}
+              error={errors?.reading_end_date}
             />
           </div>
         </div>

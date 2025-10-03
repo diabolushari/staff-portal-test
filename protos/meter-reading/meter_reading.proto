@@ -135,6 +135,14 @@ message ListMeterReadingsResponse {
   repeated MeterReadingsMessage details = 1;
 }
 
+message LatestMeterReadingRequest {
+  int64 connection_id = 1;
+}
+
+message LatestMeterReadingResponse {
+  MeterReadingsMessage reading = 1;
+  repeated ReadingValueMessage values = 2;
+}
 
 // ----------- SERVICE ------------
 service MeterReadingsService {
@@ -143,4 +151,5 @@ service MeterReadingsService {
   rpc GetMeterReadings    (GetMeterReadingsRequest)    returns (GetMeterReadingResponse);
   rpc DeleteMeterReadings (DeleteMeterReadingsRequest) returns (google.protobuf.Empty);
   rpc ListMeterReadings   (ListMeterReadingsRequest)   returns (ListMeterReadingsResponse);
+  rpc LatestMeterReading  (LatestMeterReadingRequest)  returns (LatestMeterReadingResponse);
 }

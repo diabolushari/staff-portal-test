@@ -11,41 +11,41 @@ import { Link, usePage } from '@inertiajs/react'
 // Using local wrapped NavigationMenu (supports viewport prop)
 
 export const NAV_ITEMS = [
-  { title: 'Dashboard', href: '/dashboard', description: 'Your main overview' },
-  { title: 'Services', href: '/services', description: 'Manage your services' },
   {
     title: 'Consumers',
     href: '/consumers',
     description: 'Customer data and tools',
     children: [
-      { title: 'Parties', href: '/parties', description: 'Manage parties' },
       { title: 'Connections', href: '/connections', description: 'Manage connections' },
-      { title: 'Meters', href: '/meters', description: 'Manage meters' },
-      { title: 'Meter CTPT', href: '/meter-ctpt', description: 'Manage meter CTPT' },
+      // { title: 'Meters', href: '/meters', description: 'Manage meters' },
+      // { title: 'Meter CTPT', href: '/meter-ctpt', description: 'Manage meter CTPT' },
     ],
   },
   {
     title: 'Billing',
     href: '/billing',
     description: 'Invoices and payments',
+    children: [
+      { title: 'Meter Readings', href: '/meter-reading', description: 'Manage meter readings' },
+      { title: 'Billing', href: '/billing', description: 'Manage billing' },
+    ],
   },
 
-  { title: 'Accounts', href: '/accounts', description: 'User accounts and permissions' },
   {
-    title: 'Settings',
+    title: 'Admin',
     href: '/offices',
     description: '',
     children: [
       { title: 'Offices', href: '/offices', description: 'Manage office locations' },
       {
-        title: 'Reference Data Management',
+        title: 'Meta data Management',
         href: '/parameter-value',
-        description: 'Manage reference data',
+        description: 'Manage meta data',
       },
       {
-        title: 'Meter CTPT',
-        href: '/meter-ctpt',
-        description: 'Manage meter CTPT',
+        title: 'Meters',
+        href: '/meters',
+        description: 'Manage meters',
       },
       {
         title: 'Metering Time Zones',

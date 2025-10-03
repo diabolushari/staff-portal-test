@@ -1,10 +1,18 @@
+import { connectionsNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 
-export default function MeterReadingShowPage({ meterReading }: { meterReading: any }) {
+export default function MeterReadingShowPage({
+  meterReading,
+  connectionId,
+}: {
+  meterReading: any
+  connectionId: number
+}) {
   const breadcrumb: BreadcrumbItem[] = [
-    { title: 'Meter Reading', href: '/meter-reading' },
-    { title: 'Show', href: '/meter-reading/show' },
+    { title: 'Connections', href: `/connections/${Number(connectionId)}` },
+    { title: 'Meter Reading', href: `/connection/${Number(connectionId)}/meter-reading` },
+    { title: 'Show', href: `/connection/${Number(connectionId)}/meter-reading/${meterReading.id}` },
   ]
 
   console.log('MeterReading Data:', meterReading)
@@ -23,7 +31,10 @@ export default function MeterReadingShowPage({ meterReading }: { meterReading: a
   }, {})
 
   return (
-    <MainLayout breadcrumb={breadcrumb}>
+    <MainLayout
+      breadcrumb={breadcrumb}
+      navItems={connectionsNavItems}
+    >
       <div className='flex flex-col gap-6'>
         <h1 className='text-2xl font-bold'>Meter Reading</h1>
         <p className='text-sm text-gray-500'>

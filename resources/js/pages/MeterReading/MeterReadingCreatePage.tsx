@@ -8,13 +8,15 @@ import { connectionsNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { BreadcrumbItem } from '@/types'
+import { ParameterValues } from '@/interfaces/parameter_types'
 
 interface Props {
   connectionWithConsumer: any
-  meterHealthTypes: any[]
-  ctptHealthTypes: any[]
-  anomalyTypes: any[]
+  meterHealthTypes: ParameterValues[]
+  ctptHealthTypes: ParameterValues[]
+  anomalyTypes: ParameterValues[]
   metersWithTimezonesAndProfiles: any[]
+  latestMeterReading: any
 }
 
 export default function MeterReadingCreatePage({
@@ -23,6 +25,7 @@ export default function MeterReadingCreatePage({
   ctptHealthTypes,
   anomalyTypes,
   metersWithTimezonesAndProfiles,
+  latestMeterReading,
 }: Readonly<Props>) {
   const breadcrumb: BreadcrumbItem[] = [
     {
@@ -30,11 +33,17 @@ export default function MeterReadingCreatePage({
       href: `/meter-reading/${connectionWithConsumer?.connection?.connection_id}/create`,
     },
   ]
-
+  console.log(latestMeterReading)
+  const getNextDay = (dateStr: string) => {
+    if (!dateStr) return ''
+    const date = new Date(dateStr)
+    date.setDate(date.getDate() + 1)
+    return date.toISOString().split('T')[0] // format YYYY-MM-DD
+  }
   const { formData, setFormValue } = useCustomForm({
     connection_id: connectionWithConsumer?.connection?.connection_id,
     metering_date: '',
-    reading_start_date: '',
+    reading_start_date: getNextDay(latestMeterReading?.reading_end_date) ?? '',
     reading_end_date: '',
     reading_type: '',
     meter_health_id: '',
@@ -46,6 +55,28 @@ export default function MeterReadingCreatePage({
   const { post, errors } = useInertiaPost(route('meter-reading.store'))
 
   const [activeStep, setActiveStep] = useState(0)
+  const carryForwardInitialReadings = (latestMeterReading: any, setFormValue: any) => {
+    if (!latestMeterReading?.values) return
+
+    setFormValue('readings_by_meter', (prev: any[]) => {
+      return prev.map((reading) => {
+        // find matching parameter + timezone in the old values
+        const prevValue = latestMeterReading.values.find(
+          (v: any) =>
+            v.parameter_id === reading.parameter_id && v.timezone_id === reading.timezone_id
+        )
+
+        if (prevValue) {
+          return {
+            ...reading,
+            initial_reading: prevValue.final_reading, // carry forward
+          }
+        }
+
+        return reading
+      })
+    })
+  }
 
   // Check if a step has any errors
   const hasStepError = (fields: string[]) => fields.some((f) => errors?.[f])
@@ -91,6 +122,7 @@ export default function MeterReadingCreatePage({
                     formData={formData}
                     setFormValue={setFormValue}
                     errors={errors}
+                    latestMeterReading={latestMeterReading}
                   />
                 ),
               },
@@ -120,6 +152,7 @@ export default function MeterReadingCreatePage({
                     metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
                     formData={formData}
                     setFormValue={setFormValue}
+                    latestMeterReading={latestMeterReading}
                   />
                 ),
               },

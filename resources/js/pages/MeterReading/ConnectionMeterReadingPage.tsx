@@ -33,10 +33,8 @@ export default function ConnectionMeterReadingPage({
   }
   const handleViewMeterReading = (meterReadingId: number, meterId: number) => {
     router.visit(
-      route('meter-reading.show', {
-        id: meterReadingId,
-        meter_id: meterId,
-      })
+      route('meter-reading.show', { meter_reading: meterReadingId }) +
+        `?meter_id=${meterId}&connection_id=${connection?.connection_id}`
     )
   }
 
