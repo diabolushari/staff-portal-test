@@ -65,25 +65,25 @@ class MeterTransformerRelService
         return GrpcServiceResponse::success($relsArray, $response, $status->code, $status->details);
     }
 
-    public function createRelation(MeterTransformerRelFormRequest $request): GrpcServiceResponse
+    public function createRelation(MeterTransformerRelFormRequest $data): GrpcServiceResponse
     {
         $request = new MeterTransformerRelCreateRequest;
-        $request->setCtptId($request->ctpt_id);
-        $request->setMeterId($request->meter_id);
-        if (! empty($request->faulty_date)) {
-            $request->setFaultyDate($this->toProtoTimestamp($data['faulty_date']));
+        $request->setCtptId($data->ctptId);
+        $request->setMeterId($data->meterId);
+        if (! empty($data->faultyDate)) {
+            $request->setFaultyDate($this->toProtoTimestamp($data->faultyDate));
         }
-        if (! empty($data['ctpt_energise_date'])) {
-            $request->setCtptEnergiseDate($this->toProtoTimestamp($data['ctpt_energise_date']));
+        if (! empty($data->ctptEnergiseDate)) {
+            $request->setCtptEnergiseDate($this->toProtoTimestamp($data->ctptEnergiseDate));
         }
-        if (! empty($data['ctpt_change_date'])) {
-            $request->setCtptChangeDate($this->toProtoTimestamp($data['ctpt_change_date']));
+        if (! empty($data->ctptChangeDate)) {
+            $request->setCtptChangeDate($this->toProtoTimestamp($data->ctptChangeDate));
         }
 
-        $request->setStatusId($request->status_id);
-        $request->setChangeReasonId($request->change_reason_id);
+        $request->setStatusId($data->statusId);
+        $request->setChangeReasonId($data->changeReasonId);
         // $request->setEffectiveStartTs(Carbon::parse($data['effective_start_ts'])->toProto());
-        $request->setCreatedBy($request->created_by);
+        $request->setCreatedBy($data->createdBy);
         [$response, $status] = $this->client->CreateMeterTransformerRel($request)->wait();
 
         if ($status->code !== 0) {
