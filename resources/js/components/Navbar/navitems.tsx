@@ -1,4 +1,4 @@
-import { HomeIcon, ListIcon } from 'lucide-react'
+import { Contact2Icon, HomeIcon, ListIcon } from 'lucide-react'
 import React from 'react'
 
 export interface navItem {
@@ -46,6 +46,11 @@ export const meterNavItems: navItem[] = [
     href: '/meters/create',
     icon: <HomeIcon className='h-4 w-4' />,
   },
+  {
+    title: 'Meter CTPT',
+    href: '/meter-ctpt',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
 ]
 
 export const settingsParties: navItem[] = [
@@ -86,6 +91,7 @@ export const settingsReferenceData: navItem[] = [
 ]
 
 export const connectionsNavItems: navItem[] = [
+  { title: 'Parties', href: '/parties', icon: <Contact2Icon className='h-4 w-4' /> },
   {
     title: 'Search Connections',
     href: '/connections',
@@ -99,6 +105,11 @@ export const connectionsNavItems: navItem[] = [
   },
 ]
 export const partiesNavItems: navItem[] = [
+  {
+    title: 'Connections',
+    href: '/connections',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
   {
     title: 'Search Parties',
     href: '/parties',
@@ -131,12 +142,17 @@ export const transformerrelNavItems: navItem[] = [
     href: '/meter-ctpt-rel',
     icon: <ListIcon className='h-4 w-4' />,
   },
+  {
+    title: 'Meter CTPT',
+    href: '/meter-ctpt',
+    icon: <HomeIcon className='h-4 w-4' />,
+  },
 ]
 
 export const meterReadingNavItems: navItem[] = [
   {
-    title: 'Search Connections',
-    href: '/billing',
+    title: 'Meter Readings',
+    href: '/meter-reading',
     icon: <ListIcon className='h-4 w-4' />,
   },
 ]

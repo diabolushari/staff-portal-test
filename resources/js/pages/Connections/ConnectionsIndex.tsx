@@ -18,6 +18,7 @@ interface Props {
   }
 }
 export default function ConnectionsIndex({ connections, filter }: Readonly<Props>) {
+  console.log(connections)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
