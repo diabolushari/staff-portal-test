@@ -11,6 +11,7 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
 import "parameters/parameter-value.proto";
+import "consumers/office.proto";
 
 // -------------------- MESSAGES --------------------
 
@@ -67,6 +68,8 @@ message ConnectionMessage {
   com.kseb.consumerservice.proto.parameters.ParameterValueProto tariff = 50;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto primary_purpose = 51;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto billing_process = 52;
+  optional com.kseb.consumerservice.grpc.consumers.OfficeMessage service_office = 53;
+  optional com.kseb.consumerservice.grpc.consumers.OfficeMessage admin_office = 54;
 }
 
 

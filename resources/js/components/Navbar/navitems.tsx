@@ -1,4 +1,4 @@
-import { Contact2Icon, HomeIcon, ListIcon } from 'lucide-react'
+import { Contact2Icon, HomeIcon, ListIcon, PlusIcon } from 'lucide-react'
 import React from 'react'
 
 export interface navItem {
@@ -36,20 +36,38 @@ export const meterTimezoneNavItems: navItem[] = [
 ]
 export const meterNavItems: navItem[] = [
   {
-    title: 'Search Meters',
+    title: 'Meters',
     href: '/meters',
     icon: <ListIcon className='h-4 w-4' />,
-  },
-
-  {
-    title: 'Add Meter',
-    href: '/meters/create',
-    icon: <HomeIcon className='h-4 w-4' />,
+    children: [
+      {
+        title: 'Search Meters',
+        href: '/meters',
+        icon: <ListIcon className='h-4 w-4' />,
+      },
+      {
+        title: 'Add Meter',
+        href: '/meters/create',
+        icon: <PlusIcon className='h-4 w-4' />,
+      },
+    ],
   },
   {
     title: 'Meter CTPT',
     href: '/meter-ctpt',
     icon: <HomeIcon className='h-4 w-4' />,
+    children: [
+      {
+        title: 'Meter CTPT',
+        href: '/meter-ctpt',
+        icon: <ListIcon className='h-4 w-4' />,
+      },
+      {
+        title: 'Add Meter CTPT',
+        href: '/meter-ctpt/create',
+        icon: <PlusIcon className='h-4 w-4' />,
+      },
+    ],
   },
 ]
 

@@ -102,6 +102,8 @@ export interface Connection {
   updated_by: number
   othercons_flag: boolean
   cpp_flag: boolean
+  admin_office: Office | null
+  service_office: Office | null
 }
 
 export interface OfficeHierarchy {

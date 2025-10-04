@@ -3,6 +3,7 @@
 namespace App\Services\Connection;
 
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
+use App\Services\Consumers\OfficeService;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
@@ -23,8 +24,9 @@ class ConnectionService
 
     private ParameterValueService $parameterValueService;
 
-    public function __construct(ParameterValueService $parameterValueService)
-    {
+    public function __construct(ParameterValueService $parameterValueService,
+        private OfficeService $officeService
+    ) {
         $this->client = new ConnectionServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
@@ -242,6 +244,9 @@ class ConnectionService
             'primary_purpose' => $this->parameterValueService->toArray($connection->getPrimaryPurpose()),
             'billing_process' => $this->parameterValueService->toArray($connection->getBillingProcess()),
             'tariff' => $this->parameterValueService->toArray($connection->getTariff()),
+            'service_office' => $connection->getServiceOffice() ? $this->officeService->officeProtoToArray($connection->getServiceOffice()) : null,
+            'admin_office' => $connection->getAdminOffice() ? $this->officeService->officeProtoToArray($connection->getAdminOffice()) : null,
+
         ];
     }
 

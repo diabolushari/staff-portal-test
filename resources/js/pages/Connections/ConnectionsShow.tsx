@@ -132,11 +132,19 @@ export default function ConnectionsShow({ connection, meters }: Readonly<Props>)
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
                 label='Admin Office Code'
-                value={connection?.admin_office_code}
+                value={
+                  connection?.admin_office?.office_type?.parameter_value +
+                  ' - ' +
+                  connection?.admin_office?.office_name
+                }
               />
               <Field
                 label='Service Office Code'
-                value={connection?.service_office_code}
+                value={
+                  connection?.service_office?.office_type?.parameter_value +
+                  ' - ' +
+                  connection?.service_office?.office_name
+                }
               />
             </div>
           </Card>

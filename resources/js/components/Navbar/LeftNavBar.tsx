@@ -53,7 +53,7 @@ export default function LeftNavBar({ title, items = [] }: Props) {
                       <SidebarMenuSubItem key={child.title}>
                         <a
                           href={child.href}
-                          className={`block rounded px-2 py-1 text-sm ${
+                          className={`block flex flex-row items-center gap-4 rounded px-2 py-1 text-sm ${
                             isActive
                               ? 'bg-blue-500 text-white'
                               : 'hover:bg-gray-100 dark:hover:bg-gray-700'

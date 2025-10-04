@@ -1,4 +1,4 @@
-import { transformerNavItems } from '@/components/Navbar/navitems'
+import { meterNavItems, transformerNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import MainLayout from '@/layouts/main-layout'
@@ -56,10 +56,11 @@ export default function MeterTransformerForm({
   types,
   transformer,
 }: MeterTransformerFormProps) {
-  console.log('Transformer prop:', transformer) // Debugging line
   const isEditing = Boolean(transformer)
 
-  const [transformerType, setTransformerType] = useState<string>(transformer?.type?.parameter_value ?? '')
+  const [transformerType, setTransformerType] = useState<string>(
+    transformer?.type?.parameter_value ?? ''
+  )
 
   const transformerInfo = useMemo(() => {
     const type = transformerType?.toUpperCase()
@@ -149,7 +150,7 @@ export default function MeterTransformerForm({
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={transformerNavItems}
+      navItems={meterNavItems}
     >
       <div className='p-6'>
         <CardHeader
