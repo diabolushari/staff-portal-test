@@ -26,9 +26,9 @@ message MeterTransformerRelMessage {
   int64 meter_id = 4;
   com.kseb.consumerservice.proto.metering.MeterResponse meter = 5;
 
-  google.protobuf.Timestamp faulty_date = 6;
-  google.protobuf.Timestamp ctpt_energise_date = 7;
-  google.protobuf.Timestamp ctpt_change_date = 8;
+  optional google.protobuf.Timestamp faulty_date = 6;
+  optional google.protobuf.Timestamp ctpt_energise_date = 7;
+  optional google.protobuf.Timestamp ctpt_change_date = 8;
 
   int64 status_id = 9;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto status = 10;
@@ -48,9 +48,9 @@ message MeterTransformerRelMessage {
 message MeterTransformerRelCreateRequest { 
   int64 ctpt_id = 1;
   int64 meter_id = 2;
-  google.protobuf.Timestamp faulty_date = 3;
-  google.protobuf.Timestamp ctpt_energise_date = 4;
-  google.protobuf.Timestamp ctpt_change_date = 5;
+  optional google.protobuf.Timestamp faulty_date = 3;
+  optional google.protobuf.Timestamp ctpt_energise_date = 4;
+  optional google.protobuf.Timestamp ctpt_change_date = 5;
   int64 status_id = 6;
   int64 change_reason_id = 7;
   int64 created_by = 9;
@@ -65,9 +65,9 @@ message MeterTransformerRelUpdateRequest {
   int32 version_id = 1; 
   int64 ctpt_id = 2;
   int64 meter_id = 3;
-  google.protobuf.Timestamp faulty_date = 4;
-  google.protobuf.Timestamp ctpt_energise_date = 5;
-  google.protobuf.Timestamp ctpt_change_date = 6;
+  optional google.protobuf.Timestamp faulty_date = 4;
+  optional google.protobuf.Timestamp ctpt_energise_date = 5;
+  optional google.protobuf.Timestamp ctpt_change_date = 6;
   int64 status_id = 7;
   int64 change_reason_id = 9;
   int64 updated_by = 12;

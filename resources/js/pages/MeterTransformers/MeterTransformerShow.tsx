@@ -99,11 +99,6 @@ export default function MeterTransformerShow({ transformer, relation }: Readonly
                 <StrongText className='text-2xl font-semibold text-[#252c32]'>
                   {transformer.ctpt_serial}
                 </StrongText>
-                {/* <Button
-							label="Delete Transformer"
-							onClick={handleDelete}
-							variant="destructive"
-						/> */}
               </div>
             </div>
 
