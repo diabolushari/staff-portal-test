@@ -6,11 +6,11 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
-use Proto\MeterReading\GetMeterReadingValuesRequest;
-use Proto\MeterReading\GetMeterReadingValuesResponse;
-use Proto\MeterReading\ListMeterReadingValuesRequest;
-use Proto\MeterReading\MeterReadingValuesMessage;
-use Proto\MeterReading\MeterReadingValuesServiceClient;
+use Proto\MeterReadingValues\GetMeterReadingValuesRequest;
+use Proto\MeterReadingValues\GetMeterReadingValuesResponse;
+use Proto\MeterReadingValues\ListMeterReadingValuesRequest;
+use Proto\MeterReadingValues\MeterReadingValuesMessage;
+use Proto\MeterReadingValues\MeterReadingValuesServiceClient;
 
 class MeterReadingValueService
 {
@@ -28,8 +28,7 @@ class MeterReadingValueService
 
     public function listMeterReadingValues(int $page = 1,
         int $pageSize = 10,
-        ?string $search = null,
-        ?int $meterParameterId = null): GrpcServiceResponse
+        ?string $search = null): GrpcServiceResponse
     {
 
         $request = new ListMeterReadingValuesRequest;

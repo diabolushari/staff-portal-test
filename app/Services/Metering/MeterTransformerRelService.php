@@ -2,6 +2,7 @@
 
 namespace App\Services\Metering;
 
+use App\Http\Requests\Metering\MeterTransformerRelFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Carbon\Carbon;
@@ -64,25 +65,25 @@ class MeterTransformerRelService
         return GrpcServiceResponse::success($relsArray, $response, $status->code, $status->details);
     }
 
-    public function createRelation(array $data): GrpcServiceResponse
+    public function createRelation(MeterTransformerRelFormRequest $data): GrpcServiceResponse
     {
         $request = new MeterTransformerRelCreateRequest;
-        $request->setCtptId($data['ctpt_id']);
-        $request->setMeterId($data['meter_id']);
-        if (! empty($data['faulty_date'])) {
-            $request->setFaultyDate($this->toProtoTimestamp($data['faulty_date']));
+        $request->setCtptId($data->ctptId);
+        $request->setMeterId($data->meterId);
+        if ($data->faultyDate) {
+            $request->setFaultyDate($this->toProtoTimestamp($data->faultyDate));
         }
-        if (! empty($data['ctpt_energise_date'])) {
-            $request->setCtptEnergiseDate($this->toProtoTimestamp($data['ctpt_energise_date']));
+        if ($data->ctptEnergiseDate) {
+            $request->setCtptEnergiseDate($this->toProtoTimestamp($data->ctptEnergiseDate));
         }
-        if (! empty($data['ctpt_change_date'])) {
-            $request->setCtptChangeDate($this->toProtoTimestamp($data['ctpt_change_date']));
+        if ($data->ctptChangeDate) {
+            $request->setCtptChangeDate($this->toProtoTimestamp($data->ctptChangeDate));
         }
 
-        $request->setStatusId($data['status_id']);
-        $request->setChangeReasonId($data['change_reason_id']);
-        // $request->setEffectiveStartTs(Carbon::parse($data['effective_start_ts'])->toProto());
-        $request->setCreatedBy($data['created_by']);
+        $request->setStatusId($data->statusId);
+
+        $request->setChangeReasonId($data->changeReasonId);
+        $request->setCreatedBy(1);
         [$response, $status] = $this->client->CreateMeterTransformerRel($request)->wait();
 
         if ($status->code !== 0) {

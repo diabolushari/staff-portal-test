@@ -4,7 +4,8 @@ import TopNavBar from '@/components/Navbar/TopNavBar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { BreadcrumbItem, PageProps } from '@/types'
 import CustomBreadcrumb from '@/ui/BreadCrumb'
-import { usePage } from '@inertiajs/react'
+import AddButton from '@/ui/button/AddButton'
+import { router, usePage } from '@inertiajs/react'
 import React, { useEffect } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 
@@ -12,9 +13,19 @@ interface Props {
   children: React.ReactNode
   breadcrumb?: BreadcrumbItem[]
   navItems?: navItem[]
+  addBtnUrl?: string
+  addBtnText?: string
+  addBtnClick?: () => void
 }
 
-export default function MainLayout({ children, breadcrumb, navItems }: Readonly<Props>) {
+export default function MainLayout({
+  children,
+  breadcrumb,
+  navItems,
+  addBtnUrl,
+  addBtnText,
+  addBtnClick,
+}: Readonly<Props>) {
   const { flash } = usePage<PageProps>().props
 
   useEffect(() => {
@@ -44,8 +55,22 @@ export default function MainLayout({ children, breadcrumb, navItems }: Readonly<
 
           <main className='flex-1 p-4'>
             <div>
-              <div className='p-2'>
+              <div className='flex justify-between p-2'>
                 <CustomBreadcrumb list={breadcrumb ?? []} />
+                <div>
+                  {addBtnUrl && (
+                    <AddButton
+                      onClick={() => router.get(addBtnUrl)}
+                      buttonText={`Add ${addBtnText}`}
+                    />
+                  )}
+                  {addBtnClick && (
+                    <AddButton
+                      onClick={addBtnClick}
+                      buttonText={`Add ${addBtnText}`}
+                    />
+                  )}
+                </div>
               </div>
               {children}
             </div>

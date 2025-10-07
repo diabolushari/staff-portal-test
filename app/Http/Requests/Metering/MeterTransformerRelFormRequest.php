@@ -10,19 +10,18 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class MeterTransformerRelFormRequest extends Data
 {
     public function __construct(
-        public ?int $version_id,
-        public ?int $ctpt_id,
-        public ?int $meter_id,
-        public ?string $faulty_date,
-        public ?string $ctpt_energise_date,
-        public ?string $ctpt_change_date,
-        public ?int $status_id,
-        public ?int $change_reason_id,
-        public ?string $created_ts,
-        public ?string $updated_ts,
-        public ?int $created_by,
-        public ?int $updated_by,
-        public ?bool $is_active,
+        public ?int $versionId,
+        public int $ctptId,
+        public int $meterId,
+        public ?string $faultyDate,
+        public ?string $ctptEnergiseDate,
+        public ?string $ctptChangeDate,
+        public int $statusId,
+        public int $changeReasonId,
+        public ?string $createdTs,
+        public ?string $updatedTs,
+        public ?int $createdBy,
+        public ?int $updatedBy,
+        public ?bool $isActive,
     ) {}
 }
-

@@ -6,9 +6,9 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
-use Proto\Metering\ListMeteringProfileParametersRequest;
-use Proto\Metering\MeteringProfileParameterMessage;
-use Proto\Metering\MeteringProfileParameterServiceClient;
+use Proto\MeteringProfile\ListMeteringProfileParametersRequest;
+use Proto\MeteringProfile\MeteringProfileParameterMessage;
+use Proto\MeteringProfile\MeteringProfileParameterServiceClient;
 
 class MeteringParameterProfileService
 {
@@ -38,7 +38,7 @@ class MeteringParameterProfileService
         if ($profileId) {
             $protoRequest->setProfileId($profileId);
         }
-        [$response, $status] = $this->client->listMeteringProfileParameters($protoRequest)->wait();
+        [$response, $status] = $this->client->ListMeteringProfileParameters($protoRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),

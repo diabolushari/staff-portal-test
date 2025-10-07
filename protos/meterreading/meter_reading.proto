@@ -1,0 +1,183 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.meterreading;
+
+option php_namespace = "Proto\\MeterReading";
+option php_metadata_namespace = "GPBMetadata";
+option java_multiple_files = true;
+option java_package = "com.kseb.consumerservice.proto.meterreading";
+option java_outer_classname = "MeterReadingProto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "parameters/parameter-value.proto";
+import "metering/meter.proto";
+import "meterreading/metering_profile_parameters.proto";
+
+// ---- Nested Message for Readings ----
+message ReadingValueMessage {
+  int64 meter_reading_values_id = 1;
+  int64 parameter_id = 2;
+  int64 meter_reading_id = 3;
+  int32 meter_id = 4;
+  com.kseb.consumerservice.proto.metering.MeterResponse meter = 5;
+  int64 timezone_id = 6;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto timezone = 7;
+  double initial_reading = 8;
+  double final_reading = 9;
+  double difference = 10;
+  double value = 11;
+  int32 created_by = 12;
+  int32 updated_by = 13;
+  bool is_active = 14;
+  com.kseb.consumerservice.proto.meterreading.MeteringProfileParameterMessage parameter = 15;
+}
+
+message CreateMeterReadingValues {
+  int64 parameter_id = 1;
+  int32 meter_id = 2;
+  int64 timezone_id = 3;
+  double initial_reading = 4;
+  double final_reading = 5;
+  double difference = 6;
+  double value = 7;
+  int32 created_by = 8;
+}
+
+// ---- Entity ----
+message MeterReadingMessage {
+  int64 meter_reading_id = 1;
+  int64 connection_id = 2;
+
+  double normal_pf = 3;
+  double peak_pf = 4;
+  double offpeak_pf = 5;
+  double average_power_factor = 6;
+
+  bool single_reading = 7;
+  bool multiple_reading = 8;
+
+  int64 anomaly_id = 9;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto anomaly = 10;
+
+  string metering_date = 11;
+  string reading_start_date = 12;
+  string reading_end_date = 13;
+
+  int64 meter_health_id = 14;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto meter_health = 15;
+
+  int64 ctpt_health_id = 16;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto ctpt_health = 17;
+
+  double voltage_r = 18;
+  double voltage_y = 19;
+  double voltage_b = 20;
+
+  double current_r = 21;
+  double current_y = 22;
+  double current_b = 23;
+
+  string remarks = 24;
+
+  int32 created_by = 25;
+  int32 updated_by = 26;
+  bool is_active = 27;
+  repeated ReadingValueMessage values = 28;
+}
+
+// ---- Requests/Responses ----
+message CreateMeterReadingRequest {
+  int64 connection_id = 1;
+  double normal_pf = 2;
+  double peak_pf = 3;
+  double offpeak_pf = 4;
+  double average_power_factor = 5;
+  bool single_reading = 6;
+  bool multiple_reading = 7;
+  int64 anomaly_id = 8;
+  string metering_date = 9;
+  string reading_start_date = 10;
+  string reading_end_date = 11;
+  int64 meter_health_id = 12;
+  int64 ctpt_health_id = 13;
+  double voltage_r = 14;
+  double voltage_y = 15;
+  double voltage_b = 16;
+  double current_r = 17;
+  double current_y = 18;
+  double current_b = 19;
+  string remarks = 20;
+  int32 created_by = 21;
+  bool is_active = 22;
+  repeated CreateMeterReadingValues readings = 23;
+}
+
+message CreateMeterReadingResponse { MeterReadingMessage reading = 1; }
+
+message UpdateMeterReadingRequest {
+  int64 meter_reading_id = 1;
+  int64 connection_id = 2;
+  double normal_pf = 3;
+  double peak_pf = 4;
+  double offpeak_pf = 5;
+  double average_power_factor = 6;
+  bool single_reading = 7;
+  bool multiple_reading = 8;
+  int64 anomaly_id = 9;
+  string metering_date = 10;
+  string reading_start_date = 11;
+  string reading_end_date = 12;
+  int64 meter_health_id = 13;
+  int64 ctpt_health_id = 14;
+  double voltage_r = 15;
+  double voltage_y = 16;
+  double voltage_b = 17;
+  double current_r = 18;
+  double current_y = 19;
+  double current_b = 20;
+  string remarks = 21;
+  int32 updated_by = 22;
+  bool is_active = 23;
+}
+
+message UpdateMeterReadingResponse { MeterReadingMessage reading = 1; }
+
+message GetMeterReadingRequest {
+  int64 meter_reading_id = 1;
+  optional int64 meter_id = 2;
+}
+
+message GetMeterReadingResponse {
+  MeterReadingMessage reading = 1;
+  repeated ReadingValueMessage values = 2;
+}
+
+message DeleteMeterReadingRequest { int64 meter_reading_id = 1; }
+message DeleteMeterReadingResponse { bool success = 1; string message = 2; }
+
+message ListMeterReadingRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  int64 connection_id = 3;
+  string search = 4;
+  int64 meter_reading_id = 5;
+}
+
+message ListMeterReadingResponse { repeated MeterReadingMessage readings = 1; }
+
+message LatestMeterReadingRequest { int64 connection_id = 1; }
+message LatestMeterReadingResponse {
+  MeterReadingMessage reading = 1;
+  repeated ReadingValueMessage values = 2;
+}
+
+// ---- Service ----
+service MeterReadingService {
+  rpc CreateMeterReading(CreateMeterReadingRequest) returns (CreateMeterReadingResponse);
+  rpc UpdateMeterReading(UpdateMeterReadingRequest) returns (UpdateMeterReadingResponse);
+  rpc GetMeterReading(GetMeterReadingRequest) returns (GetMeterReadingResponse);
+  rpc DeleteMeterReading(DeleteMeterReadingRequest) returns (DeleteMeterReadingResponse);
+  rpc ListMeterReading(ListMeterReadingRequest) returns (ListMeterReadingResponse);
+  rpc LatestMeterReading(LatestMeterReadingRequest) returns (LatestMeterReadingResponse);
+}

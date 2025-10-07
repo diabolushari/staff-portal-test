@@ -1,4 +1,4 @@
-import { partiesNavItems } from '@/components/Navbar/navitems'
+import { consumerNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { Party } from '@/interfaces/parties'
@@ -104,7 +104,7 @@ export default function PartiesForm({ partyTypes, partyStatus, party }: PartiesF
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={partiesNavItems}
+      navItems={consumerNavItems}
     >
       <div className='p-6'>
         <Card>
