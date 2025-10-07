@@ -1,5 +1,5 @@
 import ConnectionsList from '@/components/Connections/ConnectionsList'
-import { connectionsNavItems } from '@/components/Navbar/navitems'
+import { consumerNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import ListSearch from '@/ui/Search/ListSearch'
@@ -22,7 +22,9 @@ export default function ConnectionsIndex({ connections, filter }: Readonly<Props
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={connectionsNavItems}
+      navItems={consumerNavItems}
+      addBtnText='Connection'
+      addBtnUrl={route('connections.create')}
     >
       <ListSearch
         title='Connections Search'

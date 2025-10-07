@@ -9,7 +9,7 @@ interface Props {
   buttonText?: string
 }
 
-export default function AddButton({ link, onClick }: Readonly<Props>) {
+export default function AddButton({ link, onClick, buttonText }: Readonly<Props>) {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (link != null) {
       router.get(link)
@@ -23,12 +23,13 @@ export default function AddButton({ link, onClick }: Readonly<Props>) {
   return (
     <Button
       variant='highlight'
-      size='icon'
-      className='transition-transform hover:scale-105'
+      size='default'
+      className='flex items-center gap-2 transition-transform'
       onClick={handleClick}
       type='button'
     >
       <PlusIcon className='h-6 w-6 stroke-[2.5]' />
+      {buttonText}
     </Button>
   )
 }

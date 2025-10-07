@@ -55,7 +55,6 @@ export default function ListSearch({ title, placeholder, url, search, filters }:
           </form>
         </div>
       </div>
-
       <div className='h-half absolute right-0 bottom-0 size-18 w-1/12 rounded-tl-full bg-radial-[at_1%_1%] from-[#0078D4]/30 to-[#0078D4]/5 to-90%'></div>
     </div>
   )

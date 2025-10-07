@@ -1,4 +1,4 @@
-import { connectionsNavItems } from '@/components/Navbar/navitems'
+import { consumerNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 
@@ -33,7 +33,7 @@ export default function MeterReadingShowPage({
   return (
     <MainLayout
       breadcrumb={breadcrumb}
-      navItems={connectionsNavItems}
+      navItems={consumerNavItems}
     >
       <div className='flex flex-col gap-6'>
         <h1 className='text-2xl font-bold'>Meter Reading</h1>

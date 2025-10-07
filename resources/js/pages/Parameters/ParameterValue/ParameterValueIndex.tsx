@@ -5,7 +5,7 @@ import useCustomForm from '@/hooks/useCustomForm'
 import { ParameterDefinition, ParameterDomain, ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
-import CardHeader from '@/ui/Card/CardHeader'
+
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import ListSearch from '@/ui/Search/ListSearch'
 import { router } from '@inertiajs/react'

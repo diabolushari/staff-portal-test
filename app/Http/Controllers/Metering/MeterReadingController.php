@@ -48,7 +48,7 @@ class MeterReadingController extends Controller
     public function show(int $meterReadingId, Request $request): Response
     {
         $connectionId = $request->query('connection_id');
-        $meterReading = $this->meterReadingService->getMeterReading($meterReadingId, $request->query('meter_id'));
+        $meterReading = $this->meterReadingService->getMeterReading($meterReadingId, (int) $request->query('meter_id'));
 
         return Inertia::render('MeterReading/MeterReadingShowPage', [
             'meterReading' => $meterReading->data,
