@@ -13,6 +13,7 @@ use Proto\Consumers\OfficeCreateRequest;
 use Proto\Consumers\OfficeIdRequest;
 use Proto\Consumers\OfficeListRequest;
 use Proto\Consumers\OfficeMessage;
+use Proto\Consumers\OfficePaginatedListRequest;
 use Proto\Consumers\OfficeServiceClient;
 use Proto\Consumers\OfficeUpdateContactFolioRequest;
 use Proto\Consumers\OfficeUpdateRequest;
@@ -65,6 +66,59 @@ class OfficeService
         }
 
         return GrpcServiceResponse::success($officesArray, $response, $status->code, $status->details);
+    }
+
+    public function listPaginatedOffices(
+        int $pageNumber = 1,
+        int $pageSize = 10,
+        ?string $sortBy = null,
+        ?string $sortDirection = null,
+        ?string $search = null,
+        ?string $officeType = null,
+        ?string $officeName = null): GrpcServiceResponse
+    {
+        $request = new OfficePaginatedListRequest;
+        $request->setPageNumber($pageNumber);
+        $request->setPageSize($pageSize);
+        if ($sortBy !== null) {
+            $request->setSortBy($sortBy);
+        }
+        if ($sortDirection !== null) {
+            $request->setSortDirection($sortDirection);
+        }
+        if ($search !== null) {
+            $request->setSearch($search);
+        }
+        if ($officeType !== null) {
+            $request->setOfficeType($officeType);
+        }
+        if ($officeName !== null) {
+            $request->setOfficeName($officeName);
+        }
+
+        [$response, $status] = $this->client->ListOfficesPaginated($request)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $officesArray = [];
+        foreach ($response->getOffices() as $office) {
+            $officesArray[] = self::officeProtoToArray($office);
+        }
+        $officeData = [
+            'offices' => $officesArray,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ];
+
+        return GrpcServiceResponse::success($officeData, $response, $status->code, $status->details);
     }
 
     public function createOffice(OfficeFormRequest $request): GrpcServiceResponse

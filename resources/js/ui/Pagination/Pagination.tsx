@@ -46,7 +46,7 @@ const calcUrls = (pagination: Paginator<{}>) => {
               strokeLinejoin='round'
             />
           </svg>
-          <p className='small-1stop ml-2 mr-4 leading-none'>Previous</p>
+          <p className='small-1stop mr-4 ml-2 leading-none'>Previous</p>
         </Link>
       )
     }

@@ -9,6 +9,7 @@ use App\Services\Offices\OfficeHierarchyService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -25,14 +26,26 @@ class OfficeController extends Controller
         $officeType = $request->input('office_type') ?? null;
         $officeName = $request->input('search') ?? null;
         $search = $request->input('search') ?? null;
+        $pageNumber = $request->input('page') ?? 1;
+        $pageSize = $request->input('page_size') ?? 10;
 
-        $offices = $this->officeService->getOffices(
-            page: 1,
-            pageSize: 10,
+        $offices = $this->officeService->listPaginatedOffices(
+            pageNumber: $pageNumber,
+            pageSize: $pageSize,
             search: null,
             officeType: $officeType,
             officeName: $search
         );
+        $paginated = null;
+        if (! empty($offices->data)) {
+            $paginated = new LengthAwarePaginator(
+                $offices->data['offices'],                // items for this page
+                $offices->data['total_count'],            // total items count
+                $offices->data['page_size'],              // items per page
+                $offices->data['page_number'],            // current page
+                ['path' => request()->url()]              // so pagination links work properly
+            );
+        }
         if ($offices->hasError()) {
             return $offices->error ?? redirect()->back()->withErrors([
                 'message' => $offices->statusDetails ?? 'Error',
@@ -41,7 +54,7 @@ class OfficeController extends Controller
         $officeTypes = $this->parameterValueService->getParameterValues(1, 100, null, null, 'Distribution Office Type');
 
         return Inertia::render('Offices/OfficeIndex', [
-            'offices' => $offices->data,
+            'offices' => $paginated ?? [],
             'office_types' => $officeTypes->data,
             'filters' => [
                 'office_type' => $officeType,
