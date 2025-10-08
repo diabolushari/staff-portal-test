@@ -48,7 +48,10 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
                       <div className='flex items-center gap-[3px]'>
                         <Hash className='text-dark-gray h-3.5 w-3.5' />
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          Admin Office: {connection.admin_office_code}
+                          Admin Office:{' '}
+                          {connection.admin_office?.office_type.parameter_value +
+                            ' - ' +
+                            connection.admin_office?.office_name}
                         </div>
                       </div>
 

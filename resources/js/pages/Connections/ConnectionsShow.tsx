@@ -1,4 +1,4 @@
-import { connectionsNavItems } from '@/components/Navbar/navitems'
+import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
 import type { Connection, Meter, MeterAssignment } from '@/interfaces/data_interfaces'
@@ -63,7 +63,7 @@ export default function ConnectionsShow({ connection, meters }: Readonly<Props>)
       heading='Connection Details'
       subHeading='Connection Details'
       breadcrumbs={breadcrumbs}
-      connectionsNavItems={connectionsNavItems}
+      connectionsNavItems={consumerNavItems}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header */}
@@ -132,11 +132,19 @@ export default function ConnectionsShow({ connection, meters }: Readonly<Props>)
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
                 label='Admin Office Code'
-                value={connection?.admin_office_code}
+                value={
+                  connection?.admin_office?.office_type?.parameter_value +
+                  ' - ' +
+                  connection?.admin_office?.office_name
+                }
               />
               <Field
                 label='Service Office Code'
-                value={connection?.service_office_code}
+                value={
+                  connection?.service_office?.office_type?.parameter_value +
+                  ' - ' +
+                  connection?.service_office?.office_name
+                }
               />
             </div>
           </Card>

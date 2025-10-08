@@ -70,20 +70,20 @@ class MeterTransformerRelService
         $request = new MeterTransformerRelCreateRequest;
         $request->setCtptId($data->ctptId);
         $request->setMeterId($data->meterId);
-        if (! empty($data->faultyDate)) {
+        if ($data->faultyDate) {
             $request->setFaultyDate($this->toProtoTimestamp($data->faultyDate));
         }
-        if (! empty($data->ctptEnergiseDate)) {
+        if ($data->ctptEnergiseDate) {
             $request->setCtptEnergiseDate($this->toProtoTimestamp($data->ctptEnergiseDate));
         }
-        if (! empty($data->ctptChangeDate)) {
+        if ($data->ctptChangeDate) {
             $request->setCtptChangeDate($this->toProtoTimestamp($data->ctptChangeDate));
         }
 
         $request->setStatusId($data->statusId);
+
         $request->setChangeReasonId($data->changeReasonId);
-        // $request->setEffectiveStartTs(Carbon::parse($data['effective_start_ts'])->toProto());
-        $request->setCreatedBy($data->createdBy);
+        $request->setCreatedBy(1);
         [$response, $status] = $this->client->CreateMeterTransformerRel($request)->wait();
 
         if ($status->code !== 0) {

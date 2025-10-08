@@ -7,26 +7,25 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
-use Proto\Metering\CreateMeterReadingsRequest;
-use Proto\Metering\CreateMeterReadingValues;
-use Proto\Metering\GetMeterReadingsRequest;
-use Proto\Metering\LatestMeterReadingRequest;
-use Proto\Metering\ListMeterReadingsRequest;
-use Proto\Metering\MeterReadingsMessage;
-use Proto\Metering\MeterReadingsServiceClient;
-use Proto\Metering\MeterReadingValue;
-use Proto\Metering\ReadingValueMessage;
+use Proto\MeterReading\CreateMeterReadingRequest;
+use Proto\MeterReading\CreateMeterReadingValues;
+use Proto\MeterReading\GetMeterReadingRequest;
+use Proto\MeterReading\LatestMeterReadingRequest;
+use Proto\MeterReading\ListMeterReadingRequest;
+use Proto\MeterReading\MeterReadingMessage;
+use Proto\MeterReading\MeterReadingServiceClient;
+use Proto\MeterReading\ReadingValueMessage;
 
 class MeterReadingService
 {
-    private MeterReadingsServiceClient $client;
+    private MeterReadingServiceClient $client;
 
     public function __construct(
         private ParameterValueService $parameterValueService,
         private MeterService $meterService,
         private MeteringParameterProfileService $meteringParameterProfileService
     ) {
-        $this->client = new MeterReadingsServiceClient(
+        $this->client = new MeterReadingServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
         );
@@ -34,7 +33,7 @@ class MeterReadingService
 
     public function listMeterReadings(?int $page = 1, ?int $pageSize = 10, ?string $search = null, ?int $connectionId = null): GrpcServiceResponse
     {
-        $protoRequest = new ListMeterReadingsRequest;
+        $protoRequest = new ListMeterReadingRequest;
         if ($page) {
             $protoRequest->setPage($page);
         }
@@ -47,7 +46,7 @@ class MeterReadingService
         if ($connectionId) {
             $protoRequest->setConnectionId($connectionId);
         }
-        [$response, $status] = $this->client->ListMeterReadings($protoRequest)->wait();
+        [$response, $status] = $this->client->ListMeterReading($protoRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -57,7 +56,7 @@ class MeterReadingService
             );
         }
         $meterReadingsArray = [];
-        foreach ($response->getDetails() as $detail) {
+        foreach ($response->getReadings() as $detail) {
             $detail = $this->toArray($detail);
             $meterReadingsArray[] = $detail;
         }
@@ -67,8 +66,9 @@ class MeterReadingService
 
     public function createMeterReading(MeterReadingForm $request): GrpcServiceResponse
     {
+
         $grpcRequest = $this->toProto($request);
-        [$response, $status] = $this->client->CreateMeterReadings($grpcRequest)->wait();
+        [$response, $status] = $this->client->CreateMeterReading($grpcRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -83,12 +83,12 @@ class MeterReadingService
 
     public function getMeterReading(int $id, ?int $meterId = null): GrpcServiceResponse
     {
-        $protoRequest = new GetMeterReadingsRequest;
-        $protoRequest->setMeterReadingDetailId($id);
+        $protoRequest = new GetMeterReadingRequest;
+        $protoRequest->setMeterReadingId($id);
         if ($meterId) {
             $protoRequest->setMeterId($meterId);
         }
-        [$response, $status] = $this->client->GetMeterReadings($protoRequest)->wait();
+        [$response, $status] = $this->client->GetMeterReading($protoRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -132,42 +132,47 @@ class MeterReadingService
         return GrpcServiceResponse::success($meterReadingArray, $response, $status->code, $status->details);
     }
 
-    public function toProto(MeterReadingForm $request): CreateMeterReadingsRequest
+    public function toProto(MeterReadingForm $request): CreateMeterReadingRequest
     {
-        $protoRequest = new CreateMeterReadingsRequest;
+        $protoRequest = new CreateMeterReadingRequest;
 
         $protoRequest->setConnectionId($request->connection_id);
-        $protoRequest->setNormalPf($request->normal_pf ?? 15.50);
-        $protoRequest->setPeakPf($request->peak_pf ?? 15.50);
-        $protoRequest->setOffpeakPf($request->offpeak_pf ?? 15.50);
-        $protoRequest->setMeteringDate($request->metering_date);
-        $protoRequest->setReadingStartDate($request->reading_start_date);
-        $protoRequest->setReadingEndDate($request->reading_end_date);
-        $protoRequest->setAveragePowerFactor($request->average_power_factor ?? 15.50);
+        $protoRequest->setMeteringDate($request->meteringDate);
+        $protoRequest->setReadingStartDate($request->readingStartDate);
+        $protoRequest->setReadingEndDate($request->readingEndDate);
 
-        if ($request->reading_type === 'single_reading') {
+        if ($request->readingType === 'single_reading') {
             $protoRequest->setSingleReading(true);
             $protoRequest->setMultipleReading(false);
         } else {
             $protoRequest->setMultipleReading(true);
             $protoRequest->setSingleReading(false);
         }
+        if ($request->ctHealthId) {
+            $protoRequest->setCtHealthId($request->ctHealthId);
+        }
+        if ($request->ptHealthId) {
+            $protoRequest->setPtHealthId($request->ptHealthId);
+        }
+        if ($request->faultyDate) {
+            $protoRequest->setFaultyDate($request->faultyDate);
+        }
 
-        $protoRequest->setAnomalyId($request->anomaly_id);
-        $protoRequest->setMeterHealthId($request->meter_health_id);
-        $protoRequest->setCtptHealthId($request->ctpt_health_id);
-        $protoRequest->setVoltageR($request->voltage_r);
-        $protoRequest->setVoltageY($request->voltage_y);
-        $protoRequest->setVoltageB($request->voltage_b);
-        $protoRequest->setCurrentR($request->current_r);
-        $protoRequest->setCurrentY($request->current_y);
-        $protoRequest->setCurrentB($request->current_b);
+        $protoRequest->setAnomalyId($request->anomalyId);
+        $protoRequest->setMeterHealthId($request->meterHealthId);
+        $protoRequest->setCtptHealthId($request->ctptHealthId);
+        $protoRequest->setVoltageR($request->voltageR);
+        $protoRequest->setVoltageY($request->voltageY);
+        $protoRequest->setVoltageB($request->voltageB);
+        $protoRequest->setCurrentR($request->currentR);
+        $protoRequest->setCurrentY($request->currentY);
+        $protoRequest->setCurrentB($request->currentB);
         $protoRequest->setRemarks($request->remarks);
         $protoRequest->setCreatedBy(1);
         $protoRequest->setIsActive(true);
 
         // 🔑 Flatten readings_by_meter into MeterReadingValue list
-        foreach ($request->readings_by_meter as $meter) {
+        foreach ($request->readingsByMeter as $meter) {
             if (empty($meter['meter_id'])) {
                 continue; // skip if meter_id missing
             }
@@ -241,19 +246,20 @@ class MeterReadingService
     /**
      * @return array<string, mixed>
      */
-    public function toArray(MeterReadingsMessage $detail): array
+    public function toArray(MeterReadingMessage $detail): array
     {
+
+        $values = [];
+        foreach ($detail->getValues() as $value) {
+            $values[] = $this->meterReadingValuesToArray($value);
+        }
+
         return [
-            'id' => $detail->getMeterReadingDetailId(),
+            'id' => $detail->getMeterReadingId(),
             'metering_date' => $detail->getMeteringDate(),
             'reading_start_date' => $detail->getReadingStartDate(),
             'reading_end_date' => $detail->getReadingEndDate(),
-            'meter_reading_detail_id' => $detail->getMeterReadingDetailId(),
             'connection_id' => $detail->getConnectionId(),
-            'normal_pf' => $detail->getNormalPf(),
-            'peak_pf' => $detail->getPeakPf(),
-            'offpeak_pf' => $detail->getOffpeakPf(),
-            'average_power_factor' => $detail->getAveragePowerFactor(),
             'single_reading' => $detail->getSingleReading(),
             'multiple_reading' => $detail->getMultipleReading(),
             'anomaly_id' => $detail->getAnomalyId(),
@@ -269,6 +275,7 @@ class MeterReadingService
             'created_by' => $detail->getCreatedBy(),
             'updated_by' => $detail->getUpdatedBy(),
             'is_active' => $detail->getIsActive(),
+            'values' => $values,
         ];
     }
 

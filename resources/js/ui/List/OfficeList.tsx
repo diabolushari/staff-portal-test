@@ -16,7 +16,7 @@ export default function OfficeList({ offices }: Readonly<Props>) {
         Office Info
       </div>
       <div className='flex flex-col px-7 pb-7'>
-        {offices.map((office, index) => (
+        {offices?.map((office, index) => (
           <div
             key={office.office_id}
             onClick={() => {

@@ -1,11 +1,11 @@
 import ConsumerFormComponent from '@/components/Consumer/ConsumerFormComponent'
-import { connectionsNavItems } from '@/components/Navbar/navitems'
 import { Connection, ConsumerData } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import { useMemo } from 'react'
 import StrongText from '@/typography/StrongText'
+import { consumerNavItems } from '@/components/Navbar/navitems'
 
 type RegionOption = {
   region_id: number | string
@@ -50,7 +50,7 @@ export default function ConsumerForm({
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={connectionsNavItems}
+      navItems={consumerNavItems}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header */}

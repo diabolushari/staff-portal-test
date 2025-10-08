@@ -2,30 +2,32 @@
 
 namespace App\Http\Requests\Metering;
 
+use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
+#[MapName(SnakeCaseMapper::class)]
 class MeterReadingForm extends Data
 {
     public function __construct(
         public int $connection_id,
-        public ?float $normal_pf,
-        public ?float $peak_pf,
-        public ?float $offpeak_pf,
-        public ?float $average_power_factor,
-        public string $reading_type,
-        public int $anomaly_id,
-        public string $metering_date,
-        public string $reading_start_date,
-        public string $reading_end_date,
-        public int $meter_health_id,
-        public int $ctpt_health_id,
-        public float $voltage_r,
-        public float $voltage_b,
-        public float $voltage_y,
-        public float $current_r,
-        public float $current_b,
-        public float $current_y,
+        public string $readingType,
+        public int $anomalyId,
+        public string $meteringDate,
+        public string $readingStartDate,
+        public string $readingEndDate,
+        public int $meterHealthId,
+        public ?int $ctHealthId,
+        public ?int $ptHealthId,
+        public ?string $faultyDate,
+        public int $ctptHealthId,
+        public float $voltageR,
+        public float $voltageB,
+        public float $voltageY,
+        public float $currentR,
+        public float $currentB,
+        public float $currentY,
         public string $remarks,
-        public array $readings_by_meter,
+        public array $readingsByMeter,
     ) {}
 }

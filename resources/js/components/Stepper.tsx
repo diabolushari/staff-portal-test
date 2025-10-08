@@ -4,12 +4,15 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import NormalText from '@/typography/NormalText'
 
 interface Step {
   id: number
   title: string
   content: React.ReactNode
   status?: 'default' | 'error' | 'completed'
+  cardTitle?: string
+  cardSubtitle?: string
 }
 
 interface StepperProps {
@@ -63,7 +66,8 @@ export default function Stepper({ steps, activeStep: activeStepProp, onStepChang
       {/* Step content */}
       <Card>
         <CardHeader>
-          <CardTitle>{steps[currentStep].title}</CardTitle>
+          <CardTitle>{steps[currentStep].cardTitle}</CardTitle>
+          <NormalText>{steps[currentStep].cardSubtitle}</NormalText>
         </CardHeader>
         <CardContent>
           {steps[currentStep].content}

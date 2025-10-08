@@ -1,5 +1,4 @@
 import MainLayout from '@/layouts/main-layout'
-import { connectionsNavItems } from '@/components/Navbar/navitems'
 import { BreadcrumbItem } from '@/types'
 import ConnectionForm from '@/components/Connections/ConnectionForm'
 import { ParameterValues } from '@/interfaces/parameter_types'
@@ -8,6 +7,7 @@ import { TabGroup } from '@/ui/Tabs/TabGroup'
 import { TabsContent } from '@/components/ui/tabs'
 import ConsumerForm from '@/components/Connections/ConsumerForm'
 import ConsumerFormComponent from '@/components/Consumer/ConsumerFormComponent'
+import { consumerNavItems } from '@/components/Navbar/navitems'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -59,7 +59,7 @@ export default function ConnectionsForm({
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={connectionsNavItems}
+      navItems={consumerNavItems}
     >
       <div>
         <TabGroup tabs={tabs}>

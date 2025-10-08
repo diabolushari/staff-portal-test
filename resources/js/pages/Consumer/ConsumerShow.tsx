@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/react'
 import MainLayout from '@/layouts/main-layout'
-import { connectionsNavItems } from '@/components/Navbar/navitems'
+import { consumerNavItems } from '@/components/Navbar/navitems'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 import { Card } from '@/components/ui/card'
@@ -8,8 +8,8 @@ import { TabsContent } from '@radix-ui/react-tabs'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
 import TinyContainer from '@/ui/Card/TinyContainer'
 import { PencilIcon } from 'lucide-react'
-import { Connection, ConsumerData } from '@/interfaces/data_interfaces'
-import { MeterData, MeterTab } from '../Connections/MeterTab'
+import { Connection, ConsumerData, MeterAssignment } from '@/interfaces/data_interfaces'
+import { MeterTab } from '../Connections/MeterTab'
 import { Meter } from '../Meters/MeterIndex'
 import ConnectionsLayout, { connectionTabs } from '@/layouts/connection/ConnectionsLayout'
 import MeterReadingTab from '@/components/Connections/MeterReadingTab'
@@ -17,7 +17,7 @@ import MeterReadingTab from '@/components/Connections/MeterReadingTab'
 interface ConsumerShowProps {
   consumer: ConsumerData
   connection: Connection
-  meters: MeterData[]
+  meters: MeterAssignment[]
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -60,7 +60,7 @@ export default function ConsumerShow({
       connectionId={connection?.connection_id}
       value='consumer'
       breadcrumbs={breadcrumbs}
-      connectionsNavItems={connectionsNavItems}
+      connectionsNavItems={consumerNavItems}
       heading={`Connection #${connection?.connection_id}`}
       subHeading={`Consumer No: ${connection?.consumer_number}`}
       onEdit={() => router.visit(route('connection.consumer', connection?.connection_id))}

@@ -1,4 +1,4 @@
-import { partiesNavItems } from '@/components/Navbar/navitems'
+import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Party } from '@/interfaces/parties'
 import MainLayout from '@/layouts/main-layout'
 import PartyList from '@/ui/List/PartiesList'
@@ -194,7 +194,9 @@ export default function PartiesIndex({ parties }: Props) {
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={partiesNavItems}
+      navItems={consumerNavItems}
+      addBtnText='Party'
+      addBtnUrl={route('parties.create')}
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4'>
         {/* Controls */}

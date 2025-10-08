@@ -108,11 +108,30 @@ message OfficeUpdateContactFolioRequest {
     google.protobuf.Struct contact_folio = 2;
     optional int32 updated_by = 3;
 }
+message OfficePaginatedListRequest {
+  optional string office_type = 1;
+  optional string search = 2;
+  optional string office_name = 3;
+  int32 page_number = 4;
+  int32 page_size = 5;
+  optional string sort_by = 6;     // optional sorting field like "office_name", "office_code"
+  optional string sort_direction = 7; // "asc" or "desc"
+}
+
+// Paginated list response with offices and metadata
+message OfficePaginatedListResponse {
+  repeated OfficeMessage offices = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
 
 service OfficeService {
     rpc CreateOffice(OfficeCreateRequest) returns (OfficeResponse);
     rpc GetOfficeById(OfficeIdRequest) returns (OfficeResponse);
     rpc ListOffices(OfficeListRequest) returns (OfficeListResponse);
+    rpc ListOfficesPaginated(OfficePaginatedListRequest) returns (OfficePaginatedListResponse);
     rpc UpdateOffice(OfficeUpdateRequest) returns (OfficeResponse);
     rpc DeleteOffice(OfficeIdRequest) returns (google.protobuf.Empty);
     rpc UpdateOfficeContactFolio(OfficeUpdateContactFolioRequest) returns (OfficeResponse);

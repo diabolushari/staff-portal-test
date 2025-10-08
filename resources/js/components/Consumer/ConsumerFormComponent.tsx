@@ -119,16 +119,18 @@ export default function ConsumerFormComponent({
         <div className='border-b-2 border-gray-200 py-3'>
           <StrongText className='text-base font-semibold'>Basic Information</StrongText>
           <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
-            <SelectList
-              label='Consumer Type'
-              list={consumer_types}
-              dataKey='id'
-              displayKey='parameter_value'
-              setValue={setFormValue('consumer_type_id')}
-              value={formData.consumer_type_id}
-              required
-              error={errors?.consumer_type_id}
-            />
+            {consumer_types && (
+              <SelectList
+                label='Consumer Type'
+                list={consumer_types}
+                dataKey='id'
+                displayKey='parameter_value'
+                setValue={setFormValue('consumer_type_id')}
+                value={formData.consumer_type_id}
+                required
+                error={errors?.consumer_type_id}
+              />
+            )}
             <Input
               label='Organization Name'
               setValue={setFormValue('organization_name')}

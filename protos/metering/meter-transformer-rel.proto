@@ -15,7 +15,6 @@ option java_package = "com.kseb.consumerservice.proto.metering";
 option java_multiple_files = true;
 option java_outer_classname = "MeterTransformerRelProto";
 
-// =========================
 // MeterTransformerRel message
 // =========================
 message MeterTransformerRelMessage {
@@ -111,5 +110,4 @@ service MeterTransformerRelService {
   rpc DeleteMeterTransformerRel(MeterTransformerRelIdRequest) returns (google.protobuf.Empty);
   rpc GetMeterTransformerRelByMeterId(GetMeterTransformerRelByMeterIdRequest) returns (MeterTransformerRelResponse);
   rpc GetMeterTransformerRelByCtptId(GetMeterTransformerRelByCtptIdRequest) returns (MeterTransformerRelResponse);
-
 }
