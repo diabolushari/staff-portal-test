@@ -25,6 +25,7 @@ import { MeterTransformer } from '@/pages/MeterTransformers/MeterTransformerShow
 import { MeterTimezoneType, MeterTransformerAssignment } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import Field from '@/components/ui/field'
+import { ParameterValues } from '@/interfaces/parameter_types'
 
 // --- PROPS AND INTERFACES ---
 
@@ -350,7 +351,7 @@ export default function MeterShow({
                           key={t.id}
                           value={String(t.id)}
                         >
-                          {t.parameterValue}
+                          {t.parameter_value}
                         </option>
                       ))}
                   </select>

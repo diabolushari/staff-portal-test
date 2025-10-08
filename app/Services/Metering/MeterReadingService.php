@@ -66,6 +66,7 @@ class MeterReadingService
 
     public function createMeterReading(MeterReadingForm $request): GrpcServiceResponse
     {
+
         $grpcRequest = $this->toProto($request);
         [$response, $status] = $this->client->CreateMeterReading($grpcRequest)->wait();
         if ($status->code !== 0) {
@@ -136,37 +137,42 @@ class MeterReadingService
         $protoRequest = new CreateMeterReadingRequest;
 
         $protoRequest->setConnectionId($request->connection_id);
-        $protoRequest->setNormalPf($request->normal_pf ?? 15.50);
-        $protoRequest->setPeakPf($request->peak_pf ?? 15.50);
-        $protoRequest->setOffpeakPf($request->offpeak_pf ?? 15.50);
-        $protoRequest->setMeteringDate($request->metering_date);
-        $protoRequest->setReadingStartDate($request->reading_start_date);
-        $protoRequest->setReadingEndDate($request->reading_end_date);
-        $protoRequest->setAveragePowerFactor($request->average_power_factor ?? 15.50);
+        $protoRequest->setMeteringDate($request->meteringDate);
+        $protoRequest->setReadingStartDate($request->readingStartDate);
+        $protoRequest->setReadingEndDate($request->readingEndDate);
 
-        if ($request->reading_type === 'single_reading') {
+        if ($request->readingType === 'single_reading') {
             $protoRequest->setSingleReading(true);
             $protoRequest->setMultipleReading(false);
         } else {
             $protoRequest->setMultipleReading(true);
             $protoRequest->setSingleReading(false);
         }
+        if ($request->ctHealthId) {
+            $protoRequest->setCtHealthId($request->ctHealthId);
+        }
+        if ($request->ptHealthId) {
+            $protoRequest->setPtHealthId($request->ptHealthId);
+        }
+        if ($request->faultyDate) {
+            $protoRequest->setFaultyDate($request->faultyDate);
+        }
 
-        $protoRequest->setAnomalyId($request->anomaly_id);
-        $protoRequest->setMeterHealthId($request->meter_health_id);
-        $protoRequest->setCtptHealthId($request->ctpt_health_id);
-        $protoRequest->setVoltageR($request->voltage_r);
-        $protoRequest->setVoltageY($request->voltage_y);
-        $protoRequest->setVoltageB($request->voltage_b);
-        $protoRequest->setCurrentR($request->current_r);
-        $protoRequest->setCurrentY($request->current_y);
-        $protoRequest->setCurrentB($request->current_b);
+        $protoRequest->setAnomalyId($request->anomalyId);
+        $protoRequest->setMeterHealthId($request->meterHealthId);
+        $protoRequest->setCtptHealthId($request->ctptHealthId);
+        $protoRequest->setVoltageR($request->voltageR);
+        $protoRequest->setVoltageY($request->voltageY);
+        $protoRequest->setVoltageB($request->voltageB);
+        $protoRequest->setCurrentR($request->currentR);
+        $protoRequest->setCurrentY($request->currentY);
+        $protoRequest->setCurrentB($request->currentB);
         $protoRequest->setRemarks($request->remarks);
         $protoRequest->setCreatedBy(1);
         $protoRequest->setIsActive(true);
 
         // 🔑 Flatten readings_by_meter into MeterReadingValue list
-        foreach ($request->readings_by_meter as $meter) {
+        foreach ($request->readingsByMeter as $meter) {
             if (empty($meter['meter_id'])) {
                 continue; // skip if meter_id missing
             }
@@ -254,10 +260,6 @@ class MeterReadingService
             'reading_start_date' => $detail->getReadingStartDate(),
             'reading_end_date' => $detail->getReadingEndDate(),
             'connection_id' => $detail->getConnectionId(),
-            'normal_pf' => $detail->getNormalPf(),
-            'peak_pf' => $detail->getPeakPf(),
-            'offpeak_pf' => $detail->getOffpeakPf(),
-            'average_power_factor' => $detail->getAveragePowerFactor(),
             'single_reading' => $detail->getSingleReading(),
             'multiple_reading' => $detail->getMultipleReading(),
             'anomaly_id' => $detail->getAnomalyId(),

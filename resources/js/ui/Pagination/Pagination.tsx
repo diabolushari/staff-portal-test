@@ -4,8 +4,8 @@ import { Paginator } from '../ui_interfaces'
 
 const calcUrls = (pagination: Paginator<{}>) => {
   let index = 0
-  const listLength = pagination.links.length
-  return pagination.links.map((link) => {
+  const listLength = pagination?.links?.length
+  return pagination?.links?.map((link) => {
     const url = link.url == undefined ? '' : link.url
     index++
     let linkElement: JSX.Element | null = null

@@ -36,32 +36,35 @@ export default function MeterReadingsStep({
 
   // Initialize readings structure if empty
   useEffect(() => {
-    if (!formData.readings_by_meter || formData.readings_by_meter.length === 0) {
-      const initializedMeters = metersWithTimezonesAndProfiles.map((meter) => ({
-        meter_id: meter.meter_id,
-        parameters: meter.meter_profile.map((profile: any) => ({
-          meter_parameter_id: profile.meter_parameter_id,
-          display_name: profile.display_name,
-          readings: meter.timezones.map((tz: any) => ({
-            timezone_id: tz.timezone_id,
-            timezone_name: tz.timezone_name,
-            values: {
-              initial:
-                getPrevFinal(
-                  meter.meter_id,
-                  profile.meter_parameter_id,
-                  tz.timezone_id,
-                  latestMeterReading
-                ) ?? 0,
-              final: '',
-              diff: '',
-            },
-          })),
-        })),
-      }))
-      setFormValue('readings_by_meter')(initializedMeters)
+    if (!Array.isArray(formData.readings_by_meter) || formData.readings_by_meter.length > 0) {
+      return // ✅ prevent reinitialization
     }
-  }, [metersWithTimezonesAndProfiles, formData.readings_by_meter])
+
+    const initializedMeters = metersWithTimezonesAndProfiles.map((meter) => ({
+      meter_id: meter.meter_id,
+      parameters: meter.meter_profile.map((profile: any) => ({
+        meter_parameter_id: profile.meter_parameter_id,
+        display_name: profile.display_name,
+        readings: meter.timezones.map((tz: any) => ({
+          timezone_id: tz.timezone_id,
+          timezone_name: tz.timezone_name,
+          values: {
+            initial:
+              getPrevFinal(
+                meter.meter_id,
+                profile.meter_parameter_id,
+                tz.timezone_id,
+                latestMeterReading
+              ) ?? 0,
+            final: '',
+            diff: '',
+          },
+        })),
+      })),
+    }))
+
+    setFormValue('readings_by_meter')(initializedMeters)
+  }, []) // ✅ run only once
 
   // Update reading in new structure
   const updateReading = (

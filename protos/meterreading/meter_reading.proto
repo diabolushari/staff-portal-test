@@ -46,71 +46,72 @@ message CreateMeterReadingValues {
 
 // ---- Entity ----
 message MeterReadingMessage {
-  int64 meter_reading_id = 1;
+   int64 meter_reading_id = 1;
   int64 connection_id = 2;
 
-  double normal_pf = 3;
-  double peak_pf = 4;
-  double offpeak_pf = 5;
-  double average_power_factor = 6;
+  bool single_reading = 3;
+  bool multiple_reading = 4;
 
-  bool single_reading = 7;
-  bool multiple_reading = 8;
+  int64 anomaly_id = 5;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto anomaly = 6;
 
-  int64 anomaly_id = 9;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto anomaly = 10;
+  string metering_date = 7;
+  string reading_start_date = 8;
+  string reading_end_date = 9;
+  string faulty_date = 10;
 
-  string metering_date = 11;
-  string reading_start_date = 12;
-  string reading_end_date = 13;
+  int64 meter_health_id = 11;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto meter_health = 12;
 
-  int64 meter_health_id = 14;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto meter_health = 15;
+  int64 ct_health_id = 13;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto ct_health = 14;
 
-  int64 ctpt_health_id = 16;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto ctpt_health = 17;
+  int64 pt_health_id = 15;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto pt_health = 16;
 
-  double voltage_r = 18;
-  double voltage_y = 19;
-  double voltage_b = 20;
+  int64 ctpt_health_id = 17;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto ctpt_health = 18;
 
-  double current_r = 21;
-  double current_y = 22;
-  double current_b = 23;
+  double voltage_r = 19;
+  double voltage_y = 20;
+  double voltage_b = 21;
 
-  string remarks = 24;
+  double current_r = 22;
+  double current_y = 23;
+  double current_b = 24;
 
-  int32 created_by = 25;
-  int32 updated_by = 26;
-  bool is_active = 27;
-  repeated ReadingValueMessage values = 28;
+  string remarks = 25;
+
+  int32 created_by = 26;
+  int32 updated_by = 27;
+  bool is_active = 28;
+  repeated ReadingValueMessage values = 29;
 }
 
 // ---- Requests/Responses ----
 message CreateMeterReadingRequest {
   int64 connection_id = 1;
-  double normal_pf = 2;
-  double peak_pf = 3;
-  double offpeak_pf = 4;
-  double average_power_factor = 5;
-  bool single_reading = 6;
-  bool multiple_reading = 7;
-  int64 anomaly_id = 8;
-  string metering_date = 9;
-  string reading_start_date = 10;
-  string reading_end_date = 11;
-  int64 meter_health_id = 12;
-  int64 ctpt_health_id = 13;
-  double voltage_r = 14;
-  double voltage_y = 15;
-  double voltage_b = 16;
-  double current_r = 17;
-  double current_y = 18;
-  double current_b = 19;
-  string remarks = 20;
-  int32 created_by = 21;
-  bool is_active = 22;
-  repeated CreateMeterReadingValues readings = 23;
+  bool single_reading = 2;
+  bool multiple_reading = 3;
+  int64 anomaly_id = 4;
+  string metering_date = 5;
+  string reading_start_date = 6;
+  string reading_end_date = 7;
+  optional string faulty_date = 8;
+  optional int64 meter_health_id = 9;
+  optional int64 ct_health_id = 10;
+  optional int64 pt_health_id = 11;
+  int64 ctpt_health_id = 12;
+  double voltage_r = 13;
+  double voltage_y = 14;
+  double voltage_b = 15;
+  double current_r = 16;
+  double current_y = 17;
+  double current_b = 18;
+  string remarks = 19;
+  int32 created_by = 20;
+  bool is_active = 21;
+  repeated CreateMeterReadingValues readings = 22;
 }
 
 message CreateMeterReadingResponse { MeterReadingMessage reading = 1; }
@@ -118,27 +119,23 @@ message CreateMeterReadingResponse { MeterReadingMessage reading = 1; }
 message UpdateMeterReadingRequest {
   int64 meter_reading_id = 1;
   int64 connection_id = 2;
-  double normal_pf = 3;
-  double peak_pf = 4;
-  double offpeak_pf = 5;
-  double average_power_factor = 6;
-  bool single_reading = 7;
-  bool multiple_reading = 8;
-  int64 anomaly_id = 9;
-  string metering_date = 10;
-  string reading_start_date = 11;
-  string reading_end_date = 12;
-  int64 meter_health_id = 13;
-  int64 ctpt_health_id = 14;
-  double voltage_r = 15;
-  double voltage_y = 16;
-  double voltage_b = 17;
-  double current_r = 18;
-  double current_y = 19;
-  double current_b = 20;
-  string remarks = 21;
-  int32 updated_by = 22;
-  bool is_active = 23;
+  bool single_reading = 3;
+  bool multiple_reading = 4;
+  int64 anomaly_id = 5;
+  string metering_date = 6;
+  string reading_start_date = 7;
+  string reading_end_date = 8;
+  int64 meter_health_id = 9;
+  int64 ctpt_health_id = 10;
+  double voltage_r = 11;
+  double voltage_y = 12;
+  double voltage_b = 13;
+  double current_r = 14;
+  double current_y = 15;
+  double current_b = 16;
+  string remarks = 17;
+  int32 updated_by = 18;
+  bool is_active = 19;
 }
 
 message UpdateMeterReadingResponse { MeterReadingMessage reading = 1; }

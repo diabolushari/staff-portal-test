@@ -11,10 +11,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class MeterFormRequest extends Data
 {
     public function __construct(
-        // Identifiers for updates
         public ?int $meterId,
-
-        // Common fields (create + update)
         public string $meterSerial,
         public int $ownershipTypeId,
         public int $meterProfileId,

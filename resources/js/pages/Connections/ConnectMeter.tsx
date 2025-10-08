@@ -9,6 +9,7 @@ import CheckBox from '@/ui/form/CheckBox'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
+import { consumerNavItems } from '@/components/Navbar/navitems'
 
 interface ParameterOption {
   id: number
@@ -90,7 +91,7 @@ export default function ConnectMeter({
   )
 
   return (
-    <MainLayout>
+    <MainLayout navItems={consumerNavItems}>
       <div className='p-6'>
         <CardHeader
           title={isEditMode ? 'Edit Connected Meter' : 'Connect Meter'}
