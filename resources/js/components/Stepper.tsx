@@ -69,31 +69,7 @@ export default function Stepper({ steps, activeStep: activeStepProp, onStepChang
           <CardTitle>{steps[currentStep].cardTitle}</CardTitle>
           <NormalText>{steps[currentStep].cardSubtitle}</NormalText>
         </CardHeader>
-        <CardContent>
-          {steps[currentStep].content}
-
-          <div className='mt-6 flex justify-between'>
-            <Button
-              type='button'
-              variant='outline'
-              onClick={prevStep}
-              disabled={currentStep === 0}
-            >
-              Back
-            </Button>
-
-            {currentStep < steps.length - 1 && (
-              <Button
-                type='button'
-                onClick={nextStep}
-              >
-                Next
-              </Button>
-            )}
-
-            {currentStep === steps.length - 1 && <Button type='submit'>Submit</Button>}
-          </div>
-        </CardContent>
+        <CardContent>{steps[currentStep].content}</CardContent>
       </Card>
     </div>
   )

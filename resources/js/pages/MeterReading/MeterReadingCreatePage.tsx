@@ -9,6 +9,7 @@ import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { BreadcrumbItem } from '@/types'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import Button from '@/ui/button/Button'
 
 interface Props {
   connectionWithConsumer: any
@@ -19,6 +20,26 @@ interface Props {
   anomalyTypes: ParameterValues[]
   metersWithTimezonesAndProfiles: any[]
   latestMeterReading: any
+}
+const getNextDay = (dateStr: string) => {
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  date.setDate(date.getDate() + 1)
+  return date.toISOString().split('T')[0] // format YYYY-MM-DD
+}
+const getToday = () => {
+  const today = new Date()
+  return today.toISOString().split('T')[0]
+}
+
+// Get last day of current month
+const getMonthEnd = (dateStr: string) => {
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1 // 0-based index
+  const lastDay = new Date(year, month, +1) // 0th day of next month = last day of current
+  return lastDay.toISOString().split('T')[0]
 }
 
 export default function MeterReadingCreatePage({
@@ -37,26 +58,6 @@ export default function MeterReadingCreatePage({
       href: `/meter-reading/${connectionWithConsumer?.connection?.connection_id}/create`,
     },
   ]
-  const getNextDay = (dateStr: string) => {
-    if (!dateStr) return ''
-    const date = new Date(dateStr)
-    date.setDate(date.getDate() + 1)
-    return date.toISOString().split('T')[0] // format YYYY-MM-DD
-  }
-  const getToday = () => {
-    const today = new Date()
-    return today.toISOString().split('T')[0]
-  }
-  console.log(connectionWithConsumer)
-  // Get last day of current month
-  const getMonthEnd = (dateStr: string) => {
-    if (!dateStr) return ''
-    const date = new Date(dateStr)
-    const year = date.getFullYear()
-    const month = date.getMonth() + 1 // 0-based index
-    const lastDay = new Date(year, month, +1) // 0th day of next month = last day of current
-    return lastDay.toISOString().split('T')[0]
-  }
   const { formData, setFormValue } = useCustomForm({
     connection_id: connectionWithConsumer?.connection?.connection_id,
     metering_date: getToday(),
@@ -71,10 +72,11 @@ export default function MeterReadingCreatePage({
     pt_health_id: '',
     readings_by_meter: [],
   })
-
   const { post, errors } = useInertiaPost(route('meter-reading.store'))
 
   const [activeStep, setActiveStep] = useState(0)
+  const [saveAndAddNewReading, setSaveAndAddNewReading] = useState(false)
+
   const carryForwardInitialReadings = (latestMeterReading: any, setFormValue: any) => {
     if (!latestMeterReading?.values) return
 
@@ -108,11 +110,83 @@ export default function MeterReadingCreatePage({
     return activeStep
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    console.log(formData)
-    post(formData)
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement | null>, multipleReading = false) => {
+    e?.preventDefault()
+
+    post({
+      ...formData,
+      multiple_reading: multipleReading,
+    })
   }
+
+  const steps = [
+    {
+      id: 1,
+      title: 'General',
+      status: hasStepError([
+        'metering_date',
+        'reading_start_date',
+        'reading_end_date',
+        'reading_type',
+      ])
+        ? 'error'
+        : 'default',
+      cardTitle: 'General',
+      content: (
+        <MeterReadingGeneralStep
+          connectionWithConsumer={connectionWithConsumer}
+          formData={formData}
+          setFormValue={setFormValue}
+          errors={errors}
+          latestMeterReading={latestMeterReading}
+        />
+      ),
+    },
+    {
+      id: 2,
+      title: 'Observations',
+      status: hasStepError([
+        'meter_health_id',
+        'ctpt_health_id',
+        'anomaly_id',
+        'ct_health_id',
+        'pt_health_id',
+        'faulty_date',
+      ])
+        ? 'error'
+        : 'default',
+      cardTitle: `Observations for ${connectionWithConsumer?.consumer?.organization_name}`,
+      cardSubtitle: `${formData.reading_start_date} to ${formData.reading_end_date}`,
+      content: (
+        <MeterReadingObservationStep
+          formData={formData}
+          setFormValue={setFormValue}
+          meterHealthTypes={meterHealthTypes}
+          ctptHealthTypes={ctptHealthTypes}
+          anomalyTypes={anomalyTypes}
+          errors={errors}
+          ctHealthTypes={ctHealthTypes}
+          ptHealthTypes={ptHealthTypes}
+          connectionType={connectionWithConsumer.connection.connection_type}
+        />
+      ),
+    },
+    {
+      id: 3,
+      title: 'Readings',
+      status: 'default',
+      cardTitle: `Readings for ${connectionWithConsumer?.consumer?.organization_name}`,
+      cardSubtitle: `${formData.reading_start_date} to ${formData.reading_end_date}`,
+      content: (
+        <MeterReadingsStep
+          metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
+          formData={formData}
+          setFormValue={setFormValue}
+          latestMeterReading={latestMeterReading}
+        />
+      ),
+    },
+  ]
 
   return (
     <MainLayout
@@ -124,75 +198,45 @@ export default function MeterReadingCreatePage({
           <Stepper
             activeStep={activeStep}
             onStepChange={setActiveStep}
-            steps={[
-              {
-                id: 1,
-                title: 'General',
-                status: hasStepError([
-                  'metering_date',
-                  'reading_start_date',
-                  'reading_end_date',
-                  'reading_type',
-                ])
-                  ? 'error'
-                  : 'default',
-                cardTitle: 'General',
-
-                content: (
-                  <MeterReadingGeneralStep
-                    connectionWithConsumer={connectionWithConsumer}
-                    formData={formData}
-                    setFormValue={setFormValue}
-                    errors={errors}
-                    latestMeterReading={latestMeterReading}
-                  />
-                ),
-              },
-              {
-                id: 2,
-                title: `Observations`,
-                status: hasStepError([
-                  'meter_health_id',
-                  'ctpt_health_id',
-                  'anomaly_id',
-                  'ct_health_id',
-                  'pt_health_id',
-                ])
-                  ? 'error'
-                  : 'default',
-                cardTitle: `Observations for ${connectionWithConsumer?.consumer?.organization_name}`,
-                cardSubtitle: `${formData.reading_start_date} to ${formData.reading_end_date}`,
-                content: (
-                  <MeterReadingObservationStep
-                    formData={formData}
-                    setFormValue={setFormValue}
-                    meterHealthTypes={meterHealthTypes}
-                    ctptHealthTypes={ctptHealthTypes}
-                    anomalyTypes={anomalyTypes}
-                    errors={errors}
-                    ctHealthTypes={ctHealthTypes}
-                    ptHealthTypes={ptHealthTypes}
-                    connectionType={connectionWithConsumer.connection.connection_type}
-                  />
-                ),
-              },
-              {
-                id: 3,
-                title: 'Readings',
-                status: 'default', // don't enforce errors on last step
-                cardTitle: `Readings for ${connectionWithConsumer?.consumer?.organization_name}`,
-                cardSubtitle: `${formData.reading_start_date} to ${formData.reading_end_date}`,
-                content: (
-                  <MeterReadingsStep
-                    metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
-                    formData={formData}
-                    setFormValue={setFormValue}
-                    latestMeterReading={latestMeterReading}
-                  />
-                ),
-              },
-            ]}
+            steps={steps}
           />
+
+          <div className='mt-6 flex justify-between'>
+            {activeStep >= 0 && (
+              <Button
+                type='button'
+                variant='outline'
+                onClick={() => setActiveStep(activeStep - 1)}
+                label='Back'
+                disabled={activeStep === 0}
+              />
+            )}
+
+            {activeStep < steps.length - 1 && (
+              <Button
+                type='button'
+                onClick={() => setActiveStep(activeStep + 1)}
+                label='Next'
+              />
+            )}
+            {formData.reading_type === 'multiple_reading' && activeStep === steps.length - 1 && (
+              <Button
+                type='button'
+                label='Save & Add New Reading'
+                variant='link'
+                onClick={() => handleSubmit(null, true)}
+              />
+            )}
+
+            {activeStep === steps.length - 1 && (
+              <>
+                <Button
+                  type='submit'
+                  label='Submit'
+                />
+              </>
+            )}
+          </div>
         </form>
       </div>
     </MainLayout>
