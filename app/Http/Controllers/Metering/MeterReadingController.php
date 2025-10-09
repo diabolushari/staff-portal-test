@@ -42,6 +42,10 @@ class MeterReadingController extends Controller
             }
         }
 
+        if ($request->multipleReading) {
+            return redirect()->route('meter-reading.create', $request->connectionId);
+        }
+
         return redirect()->route('connections.index');
     }
 

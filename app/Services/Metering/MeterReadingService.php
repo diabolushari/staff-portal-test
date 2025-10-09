@@ -136,7 +136,7 @@ class MeterReadingService
     {
         $protoRequest = new CreateMeterReadingRequest;
 
-        $protoRequest->setConnectionId($request->connection_id);
+        $protoRequest->setConnectionId($request->connectionId);
         $protoRequest->setMeteringDate($request->meteringDate);
         $protoRequest->setReadingStartDate($request->readingStartDate);
         $protoRequest->setReadingEndDate($request->readingEndDate);
