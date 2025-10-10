@@ -23,8 +23,37 @@ class MeterReadingController extends Controller
         $consumerNumber = $request->input('search') ?? null;
         $connections = $this->connectionService->listConnections($consumerNumber)->data;
 
+        $search = $request->input('search') ?? null;
+        $connectionId = $request->input('connection_id') ?? null;
+        $pageNumber = $request->input('page') ?? 1;
+        $pageSize = $request->input('page_size') ?? 10;
+
+        $meterReadings = $this->meterReadingService->listPaginatedMeterReadings(
+            pageNumber: (int)$pageNumber,
+            pageSize: (int)$pageSize,
+            search: $search,
+            connectionId: $connectionId
+        );
+        if ($meterReadings->hasError()) {
+            return $meterReadings->error ?? redirect()->back()->withErrors([
+                'message' => $meterReadings->statusDetails ?? 'Error fetching meter readings',
+            ]);
+        }
+        $paginated = null;
+        if (! empty($meterReadings->data)) {
+            $paginated = new LengthAwarePaginator(
+                $meterReadings->data['readings'],                // items for this page
+                $meterReadings->data['total_count'],            // total items count
+                $meterReadings->data['page_size'],              // items per page
+                $meterReadings->data['page_number'],            // current page
+                ['path' => request()->url()]              // so pagination links work properly
+            );
+        }
+
+
         return Inertia::render('MeterReading/MeterReadingIndexPage', [
             'connections' => $connections,
+            'meterReadings' => $paginated,
             'filter' => [
                 'consumerNumber' => $consumerNumber,
             ],

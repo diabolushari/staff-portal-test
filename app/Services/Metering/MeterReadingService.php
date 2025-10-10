@@ -64,6 +64,59 @@ class MeterReadingService
         return GrpcServiceResponse::success($meterReadingsArray, $response, $status->code, $status->details);
     }
 
+        public function listPaginatedMeterReadings(
+        int $pageNumber = 1,
+        int $pageSize = 10,
+        ?string $search = null,
+        ?int $connectionId = null,
+        ?string $sortBy = null,
+        ?string $sortDirection = null
+    ): GrpcServiceResponse {
+        $request = new ListMeterReadingPaginatedRequest;
+        $request->setPageNumber($pageNumber);
+        $request->setPageSize($pageSize);
+
+        if ($search !== null) {
+            $request->setSearch($search);
+        }
+        if ($connectionId !== null) {
+            $request->setConnectionId($connectionId);
+        }
+        if ($sortBy !== null) {
+            $request->setSortBy($sortBy);
+        }
+        if ($sortDirection !== null) {
+            $request->setSortDirection($sortDirection);
+        }
+
+        [$response, $status] = $this->client->ListMeterReadingPaginated($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $readingsArray = [];
+        foreach ($response->getReadings() as $reading) {
+            $readingsArray[] = $this->toArray($reading);
+        }
+
+        $data = [
+            'readings' => $readingsArray,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ];
+
+        return GrpcServiceResponse::success($data, $response, $status->code, $status->details);
+    }
+
+
     public function createMeterReading(MeterReadingForm $request): GrpcServiceResponse
     {
 
