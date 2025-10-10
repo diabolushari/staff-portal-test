@@ -124,6 +124,7 @@ export interface Consumer {
   seasonal_ind: boolean
   license_ind: boolean
   open_access_ind: boolean
+  contact_folio: any
 }
 
 export interface ConsumerData {

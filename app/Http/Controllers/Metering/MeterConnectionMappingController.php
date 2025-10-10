@@ -4,21 +4,23 @@ namespace App\Http\Controllers\Metering;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Metering\MeterConnectionRelFormRequest;
-use App\Services\Metering\MeterConnectionRelService;
+use App\Services\Metering\MeterConnectionMappingService;
+use App\Services\Metering\MeterService;
 
-class MeterConnectionRelController extends Controller
+class MeterConnectionMappingController extends Controller
 {
-    public function __construct(protected MeterConnectionRelService $meterConnectionRelService) {}
+    public function __construct(
+        protected MeterConnectionMappingService $meterConnectionMappingService,
+        protected MeterService $meterService,
+    ) {}
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(MeterConnectionRelFormRequest $request)
     {
-        $meterConnectionRelData = $request->toArray();
-        $meterConnectionRelData['created_by'] = auth()->id();
 
-        $response = $this->meterConnectionRelService->createMeterConnectionRel($meterConnectionRelData);
+        $response = $this->meterConnectionMappingService->createMeterConnectionMapping($request);
 
         if ($response->hasError()) {
             return back()->withErrors(['grpc_error' => $response->error])->withInput();
@@ -32,7 +34,7 @@ class MeterConnectionRelController extends Controller
         $meterConnectionRelData = $request->toArray();
         $meterConnectionRelData['updated_by'] = auth()->id();
 
-        $response = $this->meterConnectionRelService->updateMeterConnectionRel($meterConnectionRelData);
+        $response = $this->meterConnectionMappingService->updateMeterConnectionMapping($meterConnectionRelData);
 
         if ($response->hasError()) {
             return back()->withErrors(['grpc_error' => $response->error])->withInput();
@@ -43,7 +45,7 @@ class MeterConnectionRelController extends Controller
 
     public function destroy(int $relId)
     {
-        $response = $this->meterConnectionRelService->deleteMeterConnectionRel($relId);
+        $response = $this->meterConnectionMappingService->deleteMeterConnectionMapping($relId);
 
         if ($response->hasError()) {
             return back()->withErrors(['grpc_error' => $response->error]);

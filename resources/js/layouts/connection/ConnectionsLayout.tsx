@@ -14,7 +14,6 @@ interface ConnectionsLayoutProps {
   breadcrumbs: BreadcrumbItem[]
   connectionsNavItems: navItem[]
   connection: Connection
-  meters: MeterAssignment[] | null
   connectionId: number
   value: string
   heading: string
@@ -36,6 +35,7 @@ const connectionTabs = (connection: Connection) => [
   {
     value: 'meter',
     label: 'Meter',
+    href: connection?.connection_id ? route('connection.meters', connection?.connection_id) : '#',
   },
   {
     value: 'meter-reading',
@@ -50,8 +50,6 @@ export default function ConnectionsLayout({
   breadcrumbs,
   connectionsNavItems,
   connection,
-  meters,
-  connectionId,
   value,
   heading,
   subHeading,
@@ -83,12 +81,6 @@ export default function ConnectionsLayout({
           defaultValue={value}
         >
           <TabsContent value={value}>{children}</TabsContent>
-          <TabsContent value='meter'>
-            <MeterTab
-              meters={meters}
-              connectionId={connectionId}
-            />
-          </TabsContent>
         </TabGroup>
       </div>
     </MainLayout>

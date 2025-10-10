@@ -11,19 +11,19 @@ option php_metadata_namespace = "GPBMetadata";
 
 option java_package = "com.kseb.consumerservice.proto.metering";
 option java_multiple_files = true;
-option java_outer_classname = "MeterConnectionRelProto";
+option java_outer_classname = "MeterConnectionMappingProto";
 
-service MeterConnectionRelService {
-  rpc CreateMeterConnectionRel(CreateMeterConnectionRelRequest) returns (MeterConnectionRelResponse);
-  rpc GetMeterConnectionRel(GetMeterConnectionRelRequest) returns (MeterConnectionRelResponse);
+service MeterConnectionMappingService {
+  rpc CreateMeterConnectionMapping(CreateMeterConnectionMappingRequest) returns (MeterConnectionMappingResponse);
+  rpc GetMeterConnectionMapping(GetMeterConnectionMappingRequest) returns (MeterConnectionMappingResponse);
   // Changed return type to list response
-  rpc GetMeterConnectionRelByConnectionId(GetMeterConnectionRelByConnectionIdRequest) returns (ListMeterConnectionRelsResponse);
-  rpc ListMeterConnectionRels(ListMeterConnectionRelsRequest) returns (ListMeterConnectionRelsResponse);
-  rpc UpdateMeterConnectionRel(UpdateMeterConnectionRelRequest) returns (MeterConnectionRelResponse);
-  rpc DeleteMeterConnectionRel(DeleteMeterConnectionRelRequest) returns (google.protobuf.Empty);
+  rpc GetMeterConnectionMappingByConnectionId(GetMeterConnectionMappingByConnectionIdRequest) returns (ListMeterConnectionMappingsResponse);
+  rpc ListMeterConnectionMappings(ListMeterConnectionMappingsRequest) returns (ListMeterConnectionMappingsResponse);
+  rpc UpdateMeterConnectionMapping(UpdateMeterConnectionMappingRequest) returns (MeterConnectionMappingResponse);
+  rpc DeleteMeterConnectionMapping(DeleteMeterConnectionMappingRequest) returns (google.protobuf.Empty);
 }
 
-message CreateMeterConnectionRelRequest {
+message CreateMeterConnectionMappingRequest {
   int32 rel_id = 1;
   int32 meter_id = 2;
   int32 connection_id = 3;
@@ -38,9 +38,11 @@ message CreateMeterConnectionRelRequest {
   optional google.protobuf.Timestamp effective_end_ts = 12;
   optional bool is_active = 13;
   optional int32 created_by = 14;
+  optional int32 sort_priority = 15;
+  optional bool is_meter_reading_mandatory = 16;
 }
 
-message UpdateMeterConnectionRelRequest {
+message UpdateMeterConnectionMappingRequest {
   int32 rel_id = 1;
   int32 meter_id = 2;
   int32 connection_id = 3;
@@ -55,27 +57,29 @@ message UpdateMeterConnectionRelRequest {
   optional google.protobuf.Timestamp effective_end_ts = 12;
   optional bool is_active = 13;
   optional int32 updated_by = 14;
+  optional int32 sort_priority = 15;
+  optional bool is_meter_reading_mandatory = 16;
 }
 
-message GetMeterConnectionRelRequest {
+message GetMeterConnectionMappingRequest {
   int32 rel_id = 1;
 }
 
-message GetMeterConnectionRelByConnectionIdRequest {
+message GetMeterConnectionMappingByConnectionIdRequest {
   int32 connection_id = 1;
 }
 
-message DeleteMeterConnectionRelRequest {
+message DeleteMeterConnectionMappingRequest {
   int32 rel_id = 1;
 }
 
-message ListMeterConnectionRelsRequest {}
+message ListMeterConnectionMappingsRequest {}
 
-message ListMeterConnectionRelsResponse {
-  repeated MeterConnectionRelResponse meter_connection_rels = 1;
+message ListMeterConnectionMappingsResponse {
+  repeated MeterConnectionMappingResponse meter_connection_mappings = 1;
 }
 
-message MeterConnectionRelResponse {
+message MeterConnectionMappingResponse {
   int32 version_id = 1;
   int32 rel_id = 2;
   int32 meter_id = 3;
@@ -94,4 +98,6 @@ message MeterConnectionRelResponse {
   optional google.protobuf.Timestamp updated_ts = 16;
   optional int32 created_by = 17;
   optional int32 updated_by = 18;
+  optional int32 sort_priority = 19;
+  optional bool is_meter_reading_mandatory = 20;
 }

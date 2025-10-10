@@ -8,6 +8,8 @@ import CheckBox from '@/ui/form/CheckBox'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { Card } from '../ui/card'
+import ConsumerContactFolioModal from './ConsumerContactFolioModal'
+import { useState } from 'react'
 
 interface Props {
   consumer_types: ParameterValues[]
@@ -76,13 +78,19 @@ export default function ConsumerFormComponent({
 
     primary_email: contact?.primary_email ?? '',
     primary_phone: contact?.primary_phone?.toString() ?? '',
+    contact_folio: contact?.contact_folio ?? '',
     _method: consumer ? 'PUT' : undefined,
   })
 
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     consumer ? route('consumers.update', consumer.connection_id) : route('consumers.store')
   )
+  const [showContactModal, setShowContactModal] = useState(false)
+  const [extraContacts, setExtraContacts] = useState<{ email: string; phone: string }[]>([])
 
+  const handleAddContact = (contact: { email: string; phone: string }) => {
+    setExtraContacts((prev) => [...prev, contact])
+  }
   const setOtherAddress = (type: 'billing' | 'premises', value: any) => {
     setAll({
       other_addresses: {
@@ -108,6 +116,7 @@ export default function ConsumerFormComponent({
     e.preventDefault()
     post(formData)
   }
+  console.log(consumer)
 
   return (
     <form
@@ -461,8 +470,57 @@ export default function ConsumerFormComponent({
               error={errors?.primary_phone}
             />
           </div>
+
+          {/* ➕ Add Contact Button */}
+          <div className='flex justify-end px-4'>
+            <Button
+              type='button'
+              label='Add More Contact'
+              onClick={() => setShowContactModal(true)}
+            />
+          </div>
+
+          {/* 📋 Show added contacts */}
+          {extraContacts.length > 0 && (
+            <div className='mt-4 border-t border-gray-200 p-4'>
+              <StrongText className='mb-2 block font-medium'>Additional Contacts</StrongText>
+              <div className='flex flex-col gap-2'>
+                {extraContacts.map((c, i) => (
+                  <div
+                    key={i}
+                    className='flex justify-between rounded border border-gray-200 p-2 text-sm dark:border-gray-700'
+                  >
+                    <div>
+                      <div>
+                        <strong>Email:</strong> {c.email || '-'}
+                      </div>
+                      <div>
+                        <strong>Phone:</strong> {c.phone || '-'}
+                      </div>
+                    </div>
+                    <button
+                      type='button'
+                      className='text-red-500 hover:text-red-700'
+                      onClick={() => setExtraContacts((prev) => prev.filter((_, idx) => idx !== i))}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </Card>
+
+      {/* 🪟 Contact Modal */}
+      {showContactModal && (
+        <ConsumerContactFolioModal
+          setShowModal={setShowContactModal}
+          onAdd={handleAddContact}
+        />
+      )}
+
       <div className='flex justify-end'>
         <Button
           type='submit'

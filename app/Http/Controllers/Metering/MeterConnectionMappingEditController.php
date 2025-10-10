@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\Metering;
 
 use App\Http\Controllers\Controller;
-use App\Services\Metering\MeterConnectionRelService;
+use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterService;
 use App\Services\Parameters\ParameterValueService;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class MeterConnectionRelEditController extends Controller
+class MeterConnectionMappingEditController extends Controller
 {
     public function __construct(
         private readonly MeterService $meterService,
-        private readonly MeterConnectionRelService $meterConnectionRelService,
+        private readonly MeterConnectionMappingService $meterConnectionMappingService,
         private readonly ParameterValueService $parameterValueService
     ) {}
 
     public function __invoke(int $Id): Response
     {
-        $relation = $this->meterConnectionRelService->getMeterConnectionRelByConnectionId($Id);
+        $relation = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($Id);
 
         $meters = $this->meterService->listMeters();
         $useCategory = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Use Category');

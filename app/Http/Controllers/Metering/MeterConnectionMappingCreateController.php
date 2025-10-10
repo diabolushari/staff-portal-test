@@ -3,24 +3,27 @@
 namespace App\Http\Controllers\Metering;
 
 use App\Http\Controllers\Controller;
-use App\Services\Metering\MeterConnectionRelService;
+use App\Services\Connection\ConnectionService;
+use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterService;
 use App\Services\Parameters\ParameterValueService;
 use Inertia\Inertia;
 
-class MeterConnectionRelCreateController extends Controller
+class MeterConnectionMappingCreateController extends Controller
 {
     public function __construct(
         private readonly MeterService $meterService,
-        private readonly MeterConnectionRelService $meterConnectionRelService,
-        private readonly ParameterValueService $parameterValueService
+        private readonly MeterConnectionMappingService $meterConnectionMappingService,
+        private readonly ParameterValueService $parameterValueService,
+        private readonly ConnectionService $connectionService,
     ) {}
 
     public function __invoke(int $id)
     {
         // TODO loading all data
         $meters = $this->meterService->listMeters();
-        $meterRelations = $this->meterConnectionRelService->listMeterConnectionRels();
+        $connection = $this->connectionService->getConnection($id);
+        $meterRelations = $this->meterConnectionMappingService->listMeterConnectionMappings();
         $meterRelationIds = array_column($meterRelations->data, 'meter_id');
         $unrelatedMeters = array_filter($meters->data, function ($meter) use ($meterRelationIds) {
             return ! in_array($meter['meter_id'], $meterRelationIds);
@@ -32,6 +35,7 @@ class MeterConnectionRelCreateController extends Controller
 
         return Inertia::render('Connections/ConnectMeter', [
             'connection_id' => $id,
+            'connection' => $connection->data,
             'meters' => $unrelatedMeters,
             'useCategory' => $useCategory->data,
             'meterStatus' => $meterStatus->data,

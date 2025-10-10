@@ -11,15 +11,16 @@ use App\Http\Controllers\Api\SystemModuleApiController;
 use App\Http\Controllers\Connection\ConnectionController;
 use App\Http\Controllers\Connection\ConsumerController;
 use App\Http\Controllers\Connection\CreateConsumerController;
+use App\Http\Controllers\Connection\GetConnectionMeterController;
 use App\Http\Controllers\Connection\GetConsumerController;
 use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
 use App\Http\Controllers\Metering\GetMeterReadingController;
-use App\Http\Controllers\Metering\MeterConnectionRelController;
-use App\Http\Controllers\Metering\MeterConnectionRelCreateController;
-use App\Http\Controllers\Metering\MeterConnectionRelEditController;
+use App\Http\Controllers\Metering\MeterConnectionMappingController;
+use App\Http\Controllers\Metering\MeterConnectionMappingCreateController;
+use App\Http\Controllers\Metering\MeterConnectionMappingEditController;
 use App\Http\Controllers\Metering\MeterController;
 use App\Http\Controllers\Metering\MeterReadingController;
 use App\Http\Controllers\Metering\MeterTimezoneTypeRelController;
@@ -68,18 +69,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('meter-timezone-rel', MeterTimezoneTypeRelController::class);
     Route::get('meters/{id}/ctpt/create', MeterTransfomerCreateController::class)
         ->name('meters.ctpt.create');
-    Route::get('connection/{id}/meter/create', MeterConnectionRelCreateController::class)
+    Route::get('connection/{id}/meters', GetConnectionMeterController::class)
+        ->name('connection.meters');
+    Route::get('connection/{id}/meter/create', MeterConnectionMappingCreateController::class)
         ->name('connection.meter.create');
-    Route::resource('meter-connection-rel', MeterConnectionRelController::class);
-    Route::post('meter-connection-rel/{id}', [MeterConnectionRelController::class, 'update'])->name('meter-connection-rel.update');
-    Route::get('connection/{id}/meter/edit', MeterConnectionRelEditController::class)
+    Route::resource('meter-connection-rel', MeterConnectionMappingController::class);
+    Route::post('meter-connection-rel/{id}', [MeterConnectionMappingController::class, 'update'])->name('meter-connection-rel.update');
+    Route::get('connection/{id}/meter/edit', MeterConnectionMappingEditController::class)
         ->name('connection.meter.edit');
-    Route::delete('meter-connection-rel/{rel_id}', [MeterConnectionRelController::class, 'destroy'])
+    Route::delete('meter-connection-rel/{rel_id}', [MeterConnectionMappingController::class, 'destroy'])
         ->name('meter-connection-rel.destroy');
 
     Route::resource('meter-ctpt', MeterTransformerController::class);
     Route::resource('meter-ctpt-rel', MeterTransformerRelController::class);
-    Route::resource('meter-conn-rel', MeterConnectionRelController::class);
+    Route::resource('meter-conn-rel', MeterConnectionMappingController::class);
     Route::resource('meter-timezone-rel', MeterTimezoneTypeRelController::class);
 
     Route::resource('metering-timezone', MeteringTimezoneController::class);
