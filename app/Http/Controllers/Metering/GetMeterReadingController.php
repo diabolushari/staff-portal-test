@@ -44,6 +44,18 @@ class GetMeterReadingController extends Controller
             'Meter',
             'Meter CTPT Health',
         );
+        $ctHealthTypes = $this->parameterService->getParameterValues(1,
+            100,
+            null,
+            'Meter CTPT',
+            'CT-Health Type',
+        );
+        $ptHealthTypes = $this->parameterService->getParameterValues(1,
+            100,
+            null,
+            'Meter CTPT',
+            'PT-Health Type',
+        );
 
         $anomalyTypes = $this->parameterService->getParameterValues(1,
             100,
@@ -106,6 +118,8 @@ class GetMeterReadingController extends Controller
             'timeZoneNames' => $timeZoneNames,
             'metersWithTimezonesAndProfiles' => $metersWithTimezonesAndProfiles,
             'latestMeterReading' => $latestMeterReading->data,
+            'ctHealthTypes' => $ctHealthTypes->data,
+            'ptHealthTypes' => $ptHealthTypes->data,
         ]);
     }
 }

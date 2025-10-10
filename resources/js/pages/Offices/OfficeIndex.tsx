@@ -4,7 +4,9 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import OfficeList from '@/ui/List/OfficeList'
+import Pagination from '@/ui/Pagination/Pagination'
 import ListSearch from '@/ui/Search/ListSearch'
+import { Paginator } from '@/ui/ui_interfaces'
 import { useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -13,8 +15,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/offices',
   },
 ]
+
 interface Props {
-  offices?: Office[]
+  offices: Paginator<Office>
   office_types: ParameterValues[]
   filters: {
     office_type: string
@@ -23,11 +26,9 @@ interface Props {
 }
 
 export default function OfficeIndex({ offices, office_types, filters }: Readonly<Props>) {
-  const [items, setItems] = useState(offices)
-
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [editRow, setEditRow] = useState<Office | null>(null)
-
+  console.log(offices)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -43,8 +44,12 @@ export default function OfficeIndex({ offices, office_types, filters }: Readonly
           search={filters.office_name}
         />
 
-        <div>{items != null && <OfficeList offices={items} />}</div>
-        <div>{items == null && <p>No Office Found.</p>}</div>
+        {offices && (
+          <>
+            <OfficeList offices={offices.data} />
+            <Pagination pagination={offices} />
+          </>
+        )}
       </div>
     </MainLayout>
   )

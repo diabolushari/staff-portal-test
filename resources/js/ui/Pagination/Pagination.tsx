@@ -4,8 +4,8 @@ import { Paginator } from '../ui_interfaces'
 
 const calcUrls = (pagination: Paginator<{}>) => {
   let index = 0
-  const listLength = pagination.links.length
-  return pagination.links.map((link) => {
+  const listLength = pagination?.links?.length
+  return pagination?.links?.map((link) => {
     const url = link.url == undefined ? '' : link.url
     index++
     let linkElement: JSX.Element | null = null
@@ -46,7 +46,7 @@ const calcUrls = (pagination: Paginator<{}>) => {
               strokeLinejoin='round'
             />
           </svg>
-          <p className='small-1stop ml-2 mr-4 leading-none'>Previous</p>
+          <p className='small-1stop mr-4 ml-2 leading-none'>Previous</p>
         </Link>
       )
     }

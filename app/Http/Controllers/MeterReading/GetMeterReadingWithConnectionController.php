@@ -23,7 +23,7 @@ class GetMeterReadingWithConnectionController extends Controller
     public function __invoke(Request $request, int $connectionId): Response
     {
         $connection = $this->connectionService->getConnection($connectionId);
-        $meterReadingResponse = $this->meterReadingService->listMeterReadings($connectionId);
+        $meterReadingResponse = $this->meterReadingService->listMeterReadings(1, 100, null, $connectionId);
         $meterConnectionRelResponse = $this->meterConnectionRelService->getMeterConnectionRelByConnectionId($connectionId);
         $meterConnectionRels = $meterConnectionRelResponse->data;
 
