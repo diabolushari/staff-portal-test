@@ -36,7 +36,12 @@ export default function MeterReadingIndexPage({ connections, meterReadings, filt
       />
       <div>{connections &&
        <MeterReadingConnectionsList connections={connections} />}
-       <Pagination pagination={connections} />
+       {meterReadings && (
+        <>
+          <MeterReadingConnectionsList connections={meterReadings.data} />
+          <Pagination pagination={meterReadings} />
+        </>
+      )}
        </div>   
 
     {/* <div className="flex flex-col gap-4">
