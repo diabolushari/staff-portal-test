@@ -52,11 +52,10 @@ export default function ConsumerShow({
   meters,
 }: Readonly<ConsumerShowProps>) {
   const onEdit = () => router.visit(`/consumers/${Number(consumer?.consumer?.connection_id)}/edit`)
-
+  console.log(consumer)
   return (
     <ConnectionsLayout
       connection={connection}
-      meters={meters}
       connectionId={connection?.connection_id}
       value='consumer'
       breadcrumbs={breadcrumbs}
@@ -130,19 +129,53 @@ export default function ConsumerShow({
         </Card>
 
         {/* --- Contact --- */}
+        {/* --- Contact --- */}
         <Card className='rounded-lg p-7'>
           <StrongText className='text-base font-semibold text-[#252c32]'>Contact</StrongText>
           <hr className='my-4 border-[#e5e9eb]' />
-          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+
+          {/* Primary Contact */}
+          <div className='mb-6 grid grid-cols-1 gap-6 md:grid-cols-2'>
             <InfoBlock
-              label='Email'
+              label='Primary Email'
               value={safe(consumer.contact?.primary_email)}
             />
             <InfoBlock
-              label='Phone'
+              label='Primary Phone'
               value={safe(consumer.contact?.primary_phone)}
             />
           </div>
+
+          {/* Pending Contacts */}
+          {consumer.contact?.contact_folio?.length ? (
+            <div>
+              <StrongText className='text-sm font-semibold text-[#252c32]'>
+                Pending Contacts
+              </StrongText>
+              <hr className='my-3 border-[#e5e9eb]' />
+              <div className='flex flex-col gap-4'>
+                {consumer.contact.contact_folio.map((folio, index) => (
+                  <Card
+                    key={index}
+                    className='rounded-lg border border-gray-200 bg-gray-50 p-4'
+                  >
+                    <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                      <InfoBlock
+                        label='Email'
+                        value={safe(folio.email)}
+                      />
+                      <InfoBlock
+                        label='Phone'
+                        value={safe(folio.phone)}
+                      />
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className='text-sm text-gray-500'>No pending contacts found</div>
+          )}
         </Card>
 
         {/* --- Addresses --- */}

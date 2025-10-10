@@ -5,17 +5,18 @@ import Button from '@/ui/button/Button'
 
 interface Props {
   setShowModal: (value: boolean) => void
-  onAdd: (contact: { email: string; phone: string }) => void
+  setFormValue: (field: string) => (value: any) => void
+  formData: any
 }
 
-export default function ConsumerContactFolioModal({ setShowModal, onAdd }: Props) {
+export default function ConsumerContactFolioModal({ setShowModal, setFormValue, formData }: Props) {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleAdd = () => {
     if (!email && !phone) return
-    onAdd({ email, phone })
+    const updated = [...formData.contact_folio, { email, phone }]
+    setFormValue('contact_folio')(updated)
     setShowModal(false)
   }
 
@@ -24,10 +25,7 @@ export default function ConsumerContactFolioModal({ setShowModal, onAdd }: Props
       setShowModal={setShowModal}
       title='Add Contact'
     >
-      <form
-        onSubmit={handleSubmit}
-        className='flex flex-col gap-4'
-      >
+      <div className='flex flex-col gap-4'>
         <Input
           label='Email'
           type='email'
@@ -51,10 +49,10 @@ export default function ConsumerContactFolioModal({ setShowModal, onAdd }: Props
           <Button
             type='button'
             label='Add'
-            onClick={handleSubmit}
+            onClick={handleAdd}
           />
         </div>
-      </form>
+      </div>
     </Modal>
   )
 }
