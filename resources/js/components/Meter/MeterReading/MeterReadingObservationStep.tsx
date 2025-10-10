@@ -1,7 +1,9 @@
 import { ParameterValues } from '@/interfaces/parameter_types'
+import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
+import { useEffect, useState } from 'react'
 
 interface Props {
   formData: any
@@ -26,6 +28,14 @@ export default function MeterReadingObservationStep({
   errors,
   connectionType,
 }: Props) {
+  const [faultyDateField, setFaultyDateField] = useState(false)
+
+  useEffect(() => {
+    const status = meterHealthTypes.find((item) => item.id == Number(formData.meter_health_id))
+
+    setFaultyDateField(status?.parameter_value === 'Not Working')
+  }, [formData.meter_health_id, meterHealthTypes])
+
   return (
     <>
       <div className='w-full'>
@@ -39,6 +49,15 @@ export default function MeterReadingObservationStep({
             value={formData.meter_health_id}
             error={errors?.meter_health_id}
           />
+          {faultyDateField && (
+            <DatePicker
+              label='Faulty Date'
+              setValue={setFormValue('faulty_date')}
+              value={formData.faulty_date}
+              error={errors?.faulty_date}
+              required={faultyDateField}
+            />
+          )}
           {connectionType?.parameter_value === 'HT' && (
             <SelectList
               label='CTPT Health'

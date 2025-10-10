@@ -10,7 +10,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class MeterReadingForm extends Data
 {
     public function __construct(
-        public int $connection_id,
+        public int $connectionId,
         public string $readingType,
         public int $anomalyId,
         public string $meteringDate,
@@ -29,5 +29,6 @@ class MeterReadingForm extends Data
         public float $currentY,
         public string $remarks,
         public array $readingsByMeter,
+        public ?bool $multipleReading,
     ) {}
 }

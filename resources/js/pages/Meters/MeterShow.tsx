@@ -134,6 +134,7 @@ export default function MeterShow({
   }
 
   const handleSave = () => {
+    console.log(selectedTimezone, currentTzId, currentTimezone, timezoneTypes)
     if (!selectedTimezone) return
     const commonData = {
       meter_id: meter.meter_id,

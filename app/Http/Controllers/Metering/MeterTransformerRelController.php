@@ -71,16 +71,15 @@ class MeterTransformerRelController extends Controller
      */
     public function store(MeterTransformerRelFormRequest $request): RedirectResponse
     {
-        $data = $request->toArray();
-
-        $response = $this->relService->createRelation($data);
+        $request->createdBy = auth()->id();
+        $response = $this->relService->createRelation($request); 
 
         if ($response->hasError()) {
             return $response->error;
         }
 
         Log::info('Successfully created MeterTransformerRel:', [
-            'data' => $data,
+            'data' => $request->toArray(),
             'grpcResponse' => $response,
         ]);
 

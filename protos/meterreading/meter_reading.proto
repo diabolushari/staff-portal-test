@@ -169,6 +169,23 @@ message LatestMeterReadingResponse {
   repeated ReadingValueMessage values = 2;
 }
 
+message ListMeterReadingPaginatedRequest {
+  optional int64 connection_id = 1;
+  optional string search = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  optional string sort_by = 5;       
+  optional string sort_direction = 6; 
+}
+
+message ListMeterReadingPaginatedResponse {
+  repeated MeterReadingMessage readings = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
 // ---- Service ----
 service MeterReadingService {
   rpc CreateMeterReading(CreateMeterReadingRequest) returns (CreateMeterReadingResponse);
@@ -177,4 +194,5 @@ service MeterReadingService {
   rpc DeleteMeterReading(DeleteMeterReadingRequest) returns (DeleteMeterReadingResponse);
   rpc ListMeterReading(ListMeterReadingRequest) returns (ListMeterReadingResponse);
   rpc LatestMeterReading(LatestMeterReadingRequest) returns (LatestMeterReadingResponse);
+  rpc ListMeterReadingPaginated(ListMeterReadingPaginatedRequest) returns (ListMeterReadingPaginatedResponse);
 }

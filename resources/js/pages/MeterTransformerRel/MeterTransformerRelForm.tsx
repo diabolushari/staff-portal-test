@@ -40,7 +40,8 @@ export default function MeterTransformerRelForm({
 
   const breadcrumbs = [
     { title: 'Meters', href: '/meters' },
-    { title: meter.meter_serial, href: '/meters/' + meter.meter_id },
+    { title: 'Meter CTPT', href: '/meters/' + meter.meter_id},
+  //  { title: meter.meter_serial, href: '/meters/' + meter.meter_id },
     {
       title: isEditing ? 'Modify CTPT' : 'Connect CTPT',
       href: route('meters.ctpt.create', { id: meter.meter_id }),
