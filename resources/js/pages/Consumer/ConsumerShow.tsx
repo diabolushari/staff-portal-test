@@ -20,13 +20,6 @@ interface ConsumerShowProps {
   meters: MeterAssignment[]
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Consumers',
-    href: '/consumers',
-  },
-]
-
 const safe = (v: unknown, fallback = '-') =>
   v === null || v === undefined || v === '' ? fallback : String(v)
 
@@ -46,13 +39,22 @@ const InfoBlock = ({ label, value }: { label: string; value?: string | number })
   </div>
 )
 
-export default function ConsumerShow({
-  consumer,
-  connection,
-  meters,
-}: Readonly<ConsumerShowProps>) {
+export default function ConsumerShow({ consumer, connection }: Readonly<ConsumerShowProps>) {
   const onEdit = () => router.visit(`/consumers/${Number(consumer?.consumer?.connection_id)}/edit`)
-  console.log(consumer)
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Connections',
+      href: '/connections',
+    },
+    {
+      title: connection?.consumer_number.toString() ?? '',
+      href: route('connections.show', connection?.connection_id),
+    },
+    {
+      title: 'Consumer',
+      href: route('connection.consumer', connection?.connection_id),
+    },
+  ]
   return (
     <ConnectionsLayout
       connection={connection}
@@ -60,8 +62,7 @@ export default function ConsumerShow({
       value='consumer'
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
-      heading={`Connection #${connection?.connection_id}`}
-      subHeading={`Consumer No: ${connection?.consumer_number}`}
+      heading={`Connection #${connection?.consumer_number}`}
       onEdit={() => router.visit(route('connection.consumer', connection?.connection_id))}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto'>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Metering;
 
 use App\Http\Controllers\Controller;
+use App\Services\Connection\ConnectionService;
 use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterService;
 use App\Services\Parameters\ParameterValueService;
@@ -14,13 +15,14 @@ class MeterConnectionMappingEditController extends Controller
     public function __construct(
         private readonly MeterService $meterService,
         private readonly MeterConnectionMappingService $meterConnectionMappingService,
-        private readonly ParameterValueService $parameterValueService
+        private readonly ParameterValueService $parameterValueService,
+        private readonly ConnectionService $connectionService
     ) {}
 
-    public function __invoke(int $Id): Response
+    public function __invoke(int $relId): Response
     {
-        $relation = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($Id);
-
+        $relation = $this->meterConnectionMappingService->getMeterConnectionMapping($relId);
+        $connection = $this->connectionService->getConnection($relation->data['connection_id']);
         $meters = $this->meterService->listMeters();
         $useCategory = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Use Category');
         $meterStatus = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Status');
@@ -32,6 +34,8 @@ class MeterConnectionMappingEditController extends Controller
             'useCategory' => $useCategory->data,
             'meterStatus' => $meterStatus->data,
             'changeReason' => $changeReason->data,
+            'connectionId' => $connection->data['connection_id'] ?? null,
+            'connection' => $connection->data,
         ]);
     }
 }

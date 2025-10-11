@@ -20,12 +20,15 @@ class MeterConnectionMappingService
 {
     private MeterConnectionMappingServiceClient $client;
 
-    public function __construct()
+    private MeterService $meterService;
+
+    public function __construct(MeterService $meterService)
     {
         $this->client = new MeterConnectionMappingServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
         );
+        $this->meterService = $meterService;
     }
 
     public function createMeterConnectionMapping(MeterConnectionRelFormRequest $data): GrpcServiceResponse
@@ -93,7 +96,7 @@ class MeterConnectionMappingService
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
-                GrpcErrorService::handleErrorResponse($status),
+                GrpcErrorService::handleErrorResponse($status, null, false),
                 $response,
                 $status->code,
                 $status->details
@@ -163,6 +166,7 @@ class MeterConnectionMappingService
         $request->setBidirectionalInd($data->bidirectionalInd);
         $request->setMeterStatusId($data->meterStatusId);
         $request->setChangeReason($data->changeReason);
+
         if (isset($data->sortPriority)) {
             $request->setSortPriority($data->sortPriority);
         }
@@ -232,7 +236,10 @@ class MeterConnectionMappingService
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
     }
 
-    public static function meterConnectionMappingProtoToArray(MeterConnectionMappingResponse $rel): array
+    /**
+     * @return array<string, mixed>
+     */
+    public function meterConnectionMappingProtoToArray(MeterConnectionMappingResponse $rel): array
     {
         $faultyDate = $rel->getFaultyDate() ? $rel->getFaultyDate()->toDateTime()->format('Y-m-d') : null;
         $rectificationDate = $rel->getRectificationDate() ? $rel->getRectificationDate()->toDateTime()->format('Y-m-d') : null;
@@ -240,6 +247,7 @@ class MeterConnectionMappingService
         $effectiveEndTs = $rel->getEffectiveEndTs() ? $rel->getEffectiveEndTs()->toDateTime()->format('Y-m-d H:i:s') : null;
         $createdTs = $rel->getCreatedTs() ? $rel->getCreatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
         $updatedTs = $rel->getUpdatedTs() ? $rel->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
+        $meter = $this->meterService->meterProtoToArray($rel->getMeter());
 
         return [
             'version_id' => $rel->getVersionId(),
@@ -252,6 +260,8 @@ class MeterConnectionMappingService
             'meter_status' => self::transformParameterValueToArray($rel->getMeterStatus()),
             'faulty_date' => $faultyDate,
             'rectification_date' => $rectificationDate,
+            'sort_priority' => $rel->getSortPriority(),
+            'is_meter_reading_mandatory' => $rel->getIsMeterReadingMandatory(),
             'change_reason' => self::transformParameterValueToArray($rel->getChangeReason()),
             'effective_start_ts' => $effectiveStartTs,
             'effective_end_ts' => $effectiveEndTs,

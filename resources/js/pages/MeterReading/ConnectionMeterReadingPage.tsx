@@ -24,7 +24,11 @@ export default function ConnectionMeterReadingPage({
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Connections', href: route('connections.index') },
     {
-      title: 'Connection Meter Reading',
+      title: connection?.consumer_number.toString() ?? '',
+      href: route('connections.show', connection?.connection_id),
+    },
+    {
+      title: 'Meter Reading',
       href: route('connection.meter-reading', {
         connection_id: connection?.connection_id,
       }),
@@ -44,7 +48,6 @@ export default function ConnectionMeterReadingPage({
   return (
     <ConnectionsLayout
       connection={connection}
-      meters={meters}
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
       connectionId={connection?.connection_id}

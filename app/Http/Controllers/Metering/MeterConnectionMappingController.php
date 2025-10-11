@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Metering\MeterConnectionRelFormRequest;
 use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterService;
+use Illuminate\Http\RedirectResponse;
 
 class MeterConnectionMappingController extends Controller
 {
@@ -29,18 +30,16 @@ class MeterConnectionMappingController extends Controller
         return redirect()->route('connections.show', ['connection' => $meterConnectionRelData['connection_id']])->with('success', 'Meter assigned to connection successfully.');
     }
 
-    public function update(MeterConnectionRelFormRequest $request)
+    public function update(MeterConnectionRelFormRequest $request): RedirectResponse
     {
-        $meterConnectionRelData = $request->toArray();
-        $meterConnectionRelData['updated_by'] = auth()->id();
 
-        $response = $this->meterConnectionMappingService->updateMeterConnectionMapping($meterConnectionRelData);
+        $response = $this->meterConnectionMappingService->updateMeterConnectionMapping($request);
 
-        if ($response->hasError()) {
-            return back()->withErrors(['grpc_error' => $response->error])->withInput();
+        if ($response->statusCode != 0) {
+            return $response->error ?? redirect()->back();
         }
 
-        return redirect()->route('connections.show', ['connection' => $meterConnectionRelData['connection_id']])->with('success', 'Meter connection details updated successfully.');
+        return redirect()->route('connections.show', $response->data['connection_id'])->with('success', 'Meter connection details updated successfully.');
     }
 
     public function destroy(int $relId)

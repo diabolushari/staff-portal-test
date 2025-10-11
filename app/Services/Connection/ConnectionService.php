@@ -5,6 +5,8 @@ namespace App\Services\Connection;
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
 use App\Services\Consumers\OfficeService;
 use App\Services\Grpc\GrpcErrorService;
+use App\Services\Metering\MeterConnectionMappingService;
+use App\Services\Metering\MeterService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Carbon\Carbon;
@@ -25,7 +27,9 @@ class ConnectionService
     private ParameterValueService $parameterValueService;
 
     public function __construct(ParameterValueService $parameterValueService,
-        private OfficeService $officeService
+        private OfficeService $officeService,
+        private readonly MeterConnectionMappingService $meterConnectionMappingService,
+        private readonly MeterService $meterService
     ) {
         $this->client = new ConnectionServiceClient(
             config('app.consumer_service_grpc_host'),
@@ -128,7 +132,18 @@ class ConnectionService
         }
 
         $connection = $response->getConnection();
+        $meterRelations = $response->getMeters();
         $connectionArray = $this->transformConnectionToArray($connection);
+        $meters = [];
+        foreach ($meterRelations as $meterRelation) {
+            $priority = $meterRelation->getSortPriority();
+            $meters[] = [
+                'priority' => $priority,
+                'meter' => $this->meterService->meterProtoToArray($meterRelation->getMeter()),
+                'relationship' => $this->meterConnectionMappingService->meterConnectionMappingProtoToArray($meterRelation),
+            ];
+        }
+        $connectionArray['meters'] = $meters;
 
         return GrpcServiceResponse::success($connectionArray, $response, $status->code, $status->details);
     }

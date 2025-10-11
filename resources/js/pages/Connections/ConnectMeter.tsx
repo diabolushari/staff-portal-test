@@ -11,7 +11,7 @@ import SelectList from '@/ui/form/SelectList'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { useEffect, useState } from 'react'
-import { Connection, Meter } from '@/interfaces/data_interfaces'
+import { Connection, Meter, MeterConnectionMapping } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import { Card } from '@/components/ui/card'
 import { BreadcrumbItem } from '@/types'
@@ -31,7 +31,7 @@ const toNumberOrUndef = (v: unknown) => {
 }
 
 export default function ConnectMeter({
-  connection_id,
+  connectionId,
   relation,
   meters,
   useCategory,
@@ -39,35 +39,38 @@ export default function ConnectMeter({
   changeReason,
   connection,
 }: {
-  connection_id: number
-  relation?: any
+  connectionId: number
+  relation?: MeterConnectionMapping
   meters: Meter[]
   useCategory: ParameterValues[]
   meterStatus: ParameterValues[]
   changeReason: ParameterValues[]
   connection?: Connection
 }) {
-  const isEditMode = !!relation
   const [isMeterFaulty, setIsMeterFaulty] = useState(false)
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
-    rel_id: isEditMode ? relation.rel_id : undefined,
-    connection_id: isEditMode ? relation.connection_id : connection_id,
-    meter_id: isEditMode ? relation.meter_id : '',
-    meter_use_category: isEditMode ? (relation.meter_use_category?.id ?? null) : null,
-    bidirectional_ind: isEditMode ? relation.bidirectional_ind : false,
-    meter_billing_mode: isEditMode ? (relation.meter_billing_mode ?? '') : '',
-    meter_status_id: isEditMode ? (relation.meter_status?.id ?? null) : null,
-    faulty_date: isEditMode ? toYMD(relation.faulty_date) : '',
-    rectification_date: isEditMode ? toYMD(relation.rectification_date) : '',
-    change_reason: isEditMode ? (relation.change_reason?.id ?? null) : null,
-    sort_priority: isEditMode ? relation.sort_priority : 0,
-    is_meter_reading_mandatory: isEditMode ? relation.is_meter_reading_mandatory : false,
+    rel_id: relation?.rel_id,
+    connection_id: connectionId,
+    meter_id: relation?.meter_id ?? '',
+    meter_use_category: relation?.meter_use_category?.id ?? '',
+    bidirectional_ind: relation?.bidirectional_ind ?? false,
+    meter_billing_mode: relation?.meter_billing_mode ?? '',
+    meter_status_id: relation?.meter_status?.id ?? '',
+    faulty_date: toYMD(relation?.faulty_date) ?? '',
+    rectification_date: toYMD(relation?.rectification_date) ?? '',
+    change_reason: relation?.change_reason?.id ?? '',
+    sort_priority: relation?.sort_priority ?? '0',
+    is_meter_reading_mandatory: relation?.is_meter_reading_mandatory ?? false,
+    _method: relation ? 'PUT' : undefined,
   })
 
   const { post, loading, errors } = useInertiaPost<typeof formData>(
-    isEditMode
-      ? route('meter-connection-rel.update', { id: relation.connection_id })
-      : route('meter-connection-rel.store')
+    relation
+      ? route('meter-connection-rel.update', connectionId)
+      : route('meter-connection-rel.store'),
+    {
+      showErrorToast: true,
+    }
   )
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -100,15 +103,15 @@ export default function ConnectMeter({
 
     {
       title: connection?.consumer_number.toString() ?? '',
-      href: route('connections.show', connection_id),
+      href: route('connections.show', connection?.connection_id),
     },
     {
       title: 'Meters',
-      href: route('connection.meters', connection_id),
+      href: route('connection.meters', connection?.connection_id),
     },
     {
       title: 'Connect Meter',
-      href: route('connection.meter.create', connection_id),
+      href: route('connection.meter.create', connection?.connection_id),
     },
   ]
 
@@ -120,7 +123,7 @@ export default function ConnectMeter({
       heading='Connect Meter'
       subHeading=''
       connection={connection}
-      connectionId={connection_id}
+      connectionId={connection?.connection_id ?? 0}
     >
       <div className='p-6'>
         <form
@@ -141,6 +144,7 @@ export default function ConnectMeter({
                 displayKey='meter_serial'
                 error={errors.meter_id}
                 required
+                disabled={relation ? true : false}
               />
               <SelectList
                 label='Meter Status'
@@ -230,7 +234,7 @@ export default function ConnectMeter({
               />
               <Button
                 type='submit'
-                label={isEditMode ? 'Save Changes' : 'Connect Meter'}
+                label={relation ? 'Save Changes' : 'Connect Meter'}
                 disabled={loading}
               />
             </div>

@@ -5,6 +5,7 @@ package com.kseb.consumerservice.proto.metering;
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "parameters/parameter-value.proto";
+import "metering/meter.proto";
 
 option php_namespace = "Proto\\Metering";
 option php_metadata_namespace = "GPBMetadata";
@@ -100,4 +101,5 @@ message MeterConnectionMappingResponse {
   optional int32 updated_by = 18;
   optional int32 sort_priority = 19;
   optional bool is_meter_reading_mandatory = 20;
+  optional MeterResponse meter = 21;
 }

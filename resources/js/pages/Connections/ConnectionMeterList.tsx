@@ -10,6 +10,7 @@ import {
   Barcode,
   Calendar,
   Cpu,
+  Edit,
   Factory,
   Hash,
   Plus,
@@ -24,19 +25,20 @@ import { router } from '@inertiajs/react'
 import { BreadcrumbItem } from '@/types'
 
 interface ConnectionMeterListProps {
-  meters: Meter[]
   connectionId: number
   connection: Connection
-  heading: string
-  subHeading: string
+  heading?: string
+  subHeading?: string
   onEdit?: () => void
-  value: string
+  value?: string
+  meterConnectionRels?: any[]
 }
 
 export default function ConnectionMeterList({
-  meters,
   connectionId,
   connection,
+  heading,
+  subHeading,
 }: ConnectionMeterListProps) {
   const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -52,18 +54,44 @@ export default function ConnectionMeterList({
       href: route('connection.meters', connectionId),
     },
   ]
+
   function handleAddMeter() {
     router.visit(route('connection.meter.create', { id: connectionId }))
   }
 
   function handleDeleteMeter(rel_id: number) {
-    router.delete(route('meter-connection-rel.destroy', { id: rel_id }))
+    router.delete(route('meter-connection-rel.destroy', rel_id))
   }
+
+  function handleEditMeter(rel_id: number) {
+    router.visit(route('connection.meter.edit', rel_id))
+  }
+
+  function handleMeterClick(meter_id: number) {
+    router.visit(route('meters.show', meter_id))
+  }
+
+  // Clone and sort meters based on priority and meter_id
+  const sortedMeters = connection?.meters?.slice()?.sort((a, b) => {
+    const pa = a.priority ?? 0
+    const pb = b.priority ?? 0
+
+    // Priority 0 goes last
+    if (pa === 0 && pb !== 0) return 1
+    if (pb === 0 && pa !== 0) return -1
+
+    // Sort by priority ascending
+    if (pa !== pb) return pa - pb
+
+    // If same priority, sort by meter_id
+    return (a.meter?.meter_id ?? 0) - (b.meter?.meter_id ?? 0)
+  })
+
   return (
     <ConnectionsLayout
       connectionId={connectionId}
-      heading={'Meters'}
-      subHeading={'Meters assigned to this connection'}
+      heading={heading || 'Meters'}
+      subHeading={subHeading || 'Meters assigned to this connection'}
       value='meter'
       connection={connection}
       breadcrumbs={breadcrumbs}
@@ -80,10 +108,12 @@ export default function ConnectionMeterList({
             Add Meter
           </button>
         </div>
+
         <div className='flex flex-col px-6 pb-6'>
-          {meters && meters.length > 0 ? (
-            meters.map((meterData) => {
-              const { meter, relationship } = meterData
+          {sortedMeters && sortedMeters.length > 0 ? (
+            sortedMeters.map((meterData) => {
+              const { meter, relationship, priority } = meterData
+
               return (
                 <div
                   key={meter.meter_id}
@@ -94,14 +124,14 @@ export default function ConnectionMeterList({
                     className='flex w-full items-start justify-between text-left'
                     onClick={() => handleMeterClick(meter.meter_id)}
                   >
-                    {/* Left side info */}
+                    {/* Left info */}
                     <div className='flex flex-1 flex-col gap-3 p-2'>
                       <div className='flex flex-col gap-2'>
-                        {/* Serial + Seal + Status */}
                         <div className='flex flex-wrap items-center gap-3'>
                           <div className='font-inter text-lg font-semibold text-black'>
                             {meter.meter_serial}
                           </div>
+
                           {meter.company_seal_num && (
                             <div className='rounded-full bg-blue-100 px-3 py-1'>
                               <div className='font-inter text-xs text-blue-800'>
@@ -109,7 +139,8 @@ export default function ConnectionMeterList({
                               </div>
                             </div>
                           )}
-                          {relationship.meter_status && (
+
+                          {relationship?.meter_status && (
                             <div
                               className={`rounded-full px-3 py-1 ${
                                 relationship.meter_status.parameter_value === 'Working'
@@ -122,9 +153,21 @@ export default function ConnectionMeterList({
                               </div>
                             </div>
                           )}
+
+                          {priority > 0 ? (
+                            <div className='rounded-full bg-yellow-100 px-3 py-1'>
+                              <div className='font-inter text-xs text-yellow-800'>
+                                Priority {priority}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className='rounded-full bg-gray-100 px-3 py-1'>
+                              <div className='font-inter text-xs text-gray-700'>No Priority</div>
+                            </div>
+                          )}
                         </div>
 
-                        {/* Meter Type + Make + Category */}
+                        {/* Type + Make + Category */}
                         <div className='flex w-full flex-wrap items-center gap-5 text-sm text-slate-600'>
                           {meter.meter_type && (
                             <div className='flex items-center gap-1'>
@@ -138,7 +181,7 @@ export default function ConnectionMeterList({
                               Make: {meter.meter_make.parameter_value}
                             </div>
                           )}
-                          {relationship.meter_use_category && (
+                          {relationship?.meter_use_category && (
                             <div className='flex items-center gap-1'>
                               <Settings className='h-4 w-4 text-slate-500' />
                               {relationship.meter_use_category.parameter_value}
@@ -146,7 +189,7 @@ export default function ConnectionMeterList({
                           )}
                         </div>
 
-                        {/* Accuracy class + ownership + Phase */}
+                        {/* Accuracy + Ownership + Phase */}
                         <div className='flex w-full flex-wrap items-center gap-5 text-sm text-slate-600'>
                           {meter.accuracy_class && (
                             <div className='flex items-center gap-1'>
@@ -187,48 +230,10 @@ export default function ConnectionMeterList({
                             Warranty: {meter.warranty_period}m
                           </div>
                         </div>
-
-                        {/* Dates */}
-                        <div className='flex w-full flex-wrap items-center gap-5 text-sm text-slate-600'>
-                          {meter.manufacture_date && (
-                            <div className='flex items-center gap-1'>
-                              <Calendar className='h-4 w-4 text-slate-500' />
-                              Mfg: {new Date(meter.manufacture_date).toLocaleDateString()}
-                            </div>
-                          )}
-                          {meter.supply_date && (
-                            <div className='flex items-center gap-1'>
-                              <Calendar className='h-4 w-4 text-slate-500' />
-                              Supply: {new Date(meter.supply_date).toLocaleDateString()}
-                            </div>
-                          )}
-                          {relationship.faulty_date && (
-                            <div className='flex items-center gap-1 text-red-600'>
-                              <Calendar className='h-4 w-4 text-red-500' />
-                              Faulty: {new Date(relationship.faulty_date).toLocaleDateString()}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Batch code and billing mode */}
-                        {(meter.batch_code || relationship.meter_billing_mode) && (
-                          <div className='flex w-full flex-wrap items-center gap-5 text-sm text-slate-600'>
-                            {meter.batch_code && (
-                              <div className='flex items-center gap-1'>
-                                <Barcode className='h-4 w-4 text-slate-500' />
-                                Batch: {meter.batch_code}
-                              </div>
-                            )}
-                            <div className='flex items-center gap-1'>
-                              <Settings className='h-4 w-4 text-slate-500' />
-                              Billing: {relationship.meter_billing_mode}
-                            </div>
-                          </div>
-                        )}
                       </div>
                     </div>
 
-                    {/* Right side status indicators */}
+                    {/* Right side status */}
                     <div className='flex flex-col items-end gap-2 py-2 pr-2 pl-4'>
                       <div
                         className={`rounded-full px-3 py-1 ${
@@ -244,7 +249,7 @@ export default function ConnectionMeterList({
                         </div>
                       </div>
 
-                      {relationship.bidirectional_ind && (
+                      {relationship?.bidirectional_ind && (
                         <div className='rounded-full bg-purple-100 px-3 py-1'>
                           <div className='font-inter text-xs font-medium text-purple-700'>
                             Bidirectional
@@ -254,28 +259,37 @@ export default function ConnectionMeterList({
 
                       <div
                         className={`rounded-full px-3 py-1 ${
-                          relationship.is_active ? 'bg-green-100' : 'bg-red-100'
+                          relationship?.is_active ? 'bg-green-100' : 'bg-red-100'
                         }`}
                       >
                         <div
                           className={`font-inter text-xs font-medium ${
-                            relationship.is_active ? 'text-green-700' : 'text-red-700'
+                            relationship?.is_active ? 'text-green-700' : 'text-red-700'
                           }`}
                         >
-                          {relationship.is_active ? 'Active' : 'Inactive'}
+                          {relationship?.is_active ? 'Active' : 'Inactive'}
                         </div>
                       </div>
                     </div>
                   </button>
-                  <button
-                    onClick={() => {
-                      handleDeleteMeter(relationship.rel_id)
-                    }}
-                    className='inline-flex items-center justify-center rounded-md border border-red-200 bg-white px-2 py-1 text-red-600 shadow-sm transition-colors hover:border-red-300 hover:bg-red-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600'
-                    title='Delete meter'
-                  >
-                    <Trash2 className='h-4 w-4' />
-                  </button>
+
+                  {/* Delete button */}
+                  <div className='flex items-center gap-2'>
+                    <button
+                      onClick={() => handleDeleteMeter(relationship?.rel_id)}
+                      className='inline-flex items-center justify-center rounded-md border border-red-200 bg-white px-2 py-1 text-red-600 shadow-sm transition-colors hover:border-red-300 hover:bg-red-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600'
+                      title='Delete meter'
+                    >
+                      <Trash2 className='h-4 w-4' />
+                    </button>
+                    <button
+                      onClick={() => handleEditMeter(relationship?.rel_id)}
+                      className='inline-flex items-center justify-center rounded-md border border-blue-200 bg-white px-2 py-1 text-blue-600 shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
+                      title='Edit'
+                    >
+                      <Edit className='h-4 w-4' />
+                    </button>
+                  </div>
                 </div>
               )
             })
