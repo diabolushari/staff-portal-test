@@ -163,7 +163,7 @@ class ConsumerService
         $contact->setConnectionId($request->connectionId);
         $contact->setPrimaryEmail($request->primaryEmail);
         $contact->setPrimaryPhone($request->primaryPhone);
-        $contact->setContactFolio(new Struct);
+        $contact->setContactFolio($request->contactFolio ? $this->arrayToStruct($request->contactFolio) : new Struct);
 
         return $contact;
     }
@@ -200,6 +200,8 @@ class ConsumerService
      */
     public function transformContactToArray(ConsumerContactDetailMessage $contact): array
     {
+        $contactFolio = $contact->getContactFolio();
+
         return [
             'connection_id' => $contact->getConnectionId(),
             'version_id' => $contact->hasVersionId() ? $contact->getVersionId() : null,
@@ -208,7 +210,9 @@ class ConsumerService
             'premises_address_id' => $contact->getPremisesAddressId(),
             'primary_email' => $contact->getPrimaryEmail(),
             'primary_phone' => $contact->getPrimaryPhone(),
-            'contact_folio' => $contact->getContactFolio()?->serializeToJsonString(),
+            'contact_folio' => $contactFolio
+            ? json_decode($contactFolio->serializeToJsonString(), true)
+            : null,
             'primary_address' => $this->addressToArray($contact->getPrimaryAddress()),
             'billing_address' => $this->addressToArray($contact->getBillingAddress()),
             'premises_address' => $this->addressToArray($contact->getPremisesAddress()),

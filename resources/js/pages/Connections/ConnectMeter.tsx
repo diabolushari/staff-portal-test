@@ -3,18 +3,19 @@ import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import MainLayout from '@/layouts/main-layout'
 import Button from '@/ui/button/Button'
-import Card from '@/ui/Card/Card'
-import CardHeader from '@/ui/Card/CardHeader'
+
 import CheckBox from '@/ui/form/CheckBox'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { consumerNavItems } from '@/components/Navbar/navitems'
-
-interface ParameterOption {
-  id: number
-  parameterValue: string
-}
+import { ParameterValues } from '@/interfaces/parameter_types'
+import { useEffect, useState } from 'react'
+import { Connection, Meter, MeterConnectionMapping } from '@/interfaces/data_interfaces'
+import StrongText from '@/typography/StrongText'
+import { Card } from '@/components/ui/card'
+import { BreadcrumbItem } from '@/types'
+import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 
 const toYMD = (iso?: string | null): string => {
   if (!iso) return ''
@@ -30,40 +31,46 @@ const toNumberOrUndef = (v: unknown) => {
 }
 
 export default function ConnectMeter({
-  connection_id,
+  connectionId,
   relation,
   meters,
   useCategory,
   meterStatus,
   changeReason,
+  connection,
 }: {
-  connection_id: number
-  relation?: any
-  meters: any[]
-  useCategory: ParameterOption[]
-  meterStatus: ParameterOption[]
-  changeReason: ParameterOption[]
+  connectionId: number
+  relation?: MeterConnectionMapping
+  meters: Meter[]
+  useCategory: ParameterValues[]
+  meterStatus: ParameterValues[]
+  changeReason: ParameterValues[]
+  connection?: Connection
 }) {
-  console.log(meters)
-  const isEditMode = !!relation
-
-  const { formData, setFormValue } = useCustomForm({
-    rel_id: isEditMode ? relation.rel_id : undefined,
-    connection_id: isEditMode ? relation.connection_id : connection_id,
-    meter_id: isEditMode ? relation.meter_id : '',
-    meter_use_category: isEditMode ? (relation.meter_use_category?.id ?? null) : null,
-    bidirectional_ind: isEditMode ? relation.bidirectional_ind : false,
-    meter_billing_mode: isEditMode ? (relation.meter_billing_mode ?? '') : '',
-    meter_status_id: isEditMode ? (relation.meter_status?.id ?? null) : null,
-    faulty_date: isEditMode ? toYMD(relation.faulty_date) : '',
-    rectification_date: isEditMode ? toYMD(relation.rectification_date) : '',
-    change_reason: isEditMode ? (relation.change_reason?.id ?? null) : null,
+  const [isMeterFaulty, setIsMeterFaulty] = useState(false)
+  const { formData, setFormValue, toggleBoolean } = useCustomForm({
+    rel_id: relation?.rel_id,
+    connection_id: connectionId,
+    meter_id: relation?.meter_id ?? '',
+    meter_use_category: relation?.meter_use_category?.id ?? '',
+    bidirectional_ind: relation?.bidirectional_ind ?? false,
+    meter_billing_mode: relation?.meter_billing_mode ?? '',
+    meter_status_id: relation?.meter_status?.id ?? '',
+    faulty_date: toYMD(relation?.faulty_date) ?? '',
+    rectification_date: toYMD(relation?.rectification_date) ?? '',
+    change_reason: relation?.change_reason?.id ?? '',
+    sort_priority: relation?.sort_priority ?? '0',
+    is_meter_reading_mandatory: relation?.is_meter_reading_mandatory ?? false,
+    _method: relation ? 'PUT' : undefined,
   })
 
-  const { post, loading, errors } = useInertiaPost(
-    isEditMode
-      ? route('meter-connection-rel.update', { id: relation.connection_id })
-      : route('meter-connection-rel.store')
+  const { post, loading, errors } = useInertiaPost<typeof formData>(
+    relation
+      ? route('meter-connection-rel.update', connectionId)
+      : route('meter-connection-rel.store'),
+    {
+      showErrorToast: true,
+    }
   )
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -81,123 +88,141 @@ export default function ConnectMeter({
     post(payload)
   }
 
-  const renderSection = (title: string, children: React.ReactNode) => (
-    <div className='rounded-md border border-slate-200 p-4'>
-      <h3 className='mb-4 text-lg font-medium'>{title}</h3>
-      <div className='grid grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-3'>
-        {children}
-      </div>
-    </div>
-  )
+  useEffect(() => {
+    const meterStatusValue: ParameterValues | undefined = meterStatus.find(
+      (status: ParameterValues) => status.id == Number(formData.meter_status_id)
+    )
+
+    setIsMeterFaulty(meterStatusValue?.parameter_value === 'Not Working')
+  }, [formData.meter_status_id])
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Connections',
+      href: route('connections.index'),
+    },
+
+    {
+      title: connection?.consumer_number.toString() ?? '',
+      href: route('connections.show', connection?.connection_id),
+    },
+    {
+      title: 'Meters',
+      href: route('connection.meters', connection?.connection_id),
+    },
+    {
+      title: 'Connect Meter',
+      href: route('connection.meter.create', connection?.connection_id),
+    },
+  ]
 
   return (
-    <MainLayout navItems={consumerNavItems}>
+    <ConnectionsLayout
+      connectionsNavItems={consumerNavItems}
+      breadcrumbs={breadcrumbs}
+      value='meter'
+      heading='Connect Meter'
+      subHeading=''
+      connection={connection}
+      connectionId={connection?.connection_id ?? 0}
+    >
       <div className='p-6'>
-        <CardHeader
-          title={isEditMode ? 'Edit Connected Meter' : 'Connect Meter'}
-          subheading={
-            isEditMode
-              ? 'Edit the details of the meter connected to this connection'
-              : 'Connect a meter to the selected connection'
-          }
-        />
-        <Card>
-          <form
-            onSubmit={handleSubmit}
-            className='space-y-8'
-          >
-            {renderSection(
-              'Meter Connection Details',
-              <>
-                <SelectList
-                  label='Meter'
-                  value={formData.meter_id}
-                  setValue={setFormValue('meter_id')}
-                  list={meters.map((meter) => ({
-                    id: meter.meter_id,
-                    parameterValue: meter.meter_serial,
-                  }))}
-                  dataKey='id'
-                  displayKey='parameterValue'
-                  error={errors.meter_id}
-                  required
-                />
+        <form
+          onSubmit={handleSubmit}
+          className='space-y-8'
+        >
+          <Card>
+            <div className='border-b-2 border-gray-200 py-3'>
+              <StrongText className='text-base font-semibold'>Connect Meter</StrongText>
+            </div>
+            <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
+              <SelectList
+                label='Meter'
+                value={formData.meter_id}
+                setValue={setFormValue('meter_id')}
+                list={meters}
+                dataKey='meter_id'
+                displayKey='meter_serial'
+                error={errors.meter_id}
+                required
+                disabled={relation ? true : false}
+              />
+              <SelectList
+                label='Meter Status'
+                value={formData.meter_status_id}
+                setValue={setFormValue('meter_status_id')}
+                list={meterStatus}
+                dataKey='id'
+                displayKey='parameter_value'
+                error={errors.meter_status_id}
+                required
+              />
 
-                <SelectList
-                  label='Meter Use Category'
-                  value={formData.meter_use_category}
-                  setValue={setFormValue('meter_use_category')}
-                  list={useCategory.map((category) => ({
-                    id: category.id,
-                    parameterValue: category.parameter_value,
-                  }))}
-                  dataKey='id'
-                  displayKey='parameterValue'
-                  error={errors.meter_use_category}
-                  required
-                />
+              <SelectList
+                label='Meter Use Category'
+                value={formData.meter_use_category}
+                setValue={setFormValue('meter_use_category')}
+                list={useCategory}
+                dataKey='id'
+                displayKey='parameter_value'
+                error={errors.meter_use_category}
+                required
+              />
 
-                <Input
-                  label='Meter Billing Mode'
-                  value={formData.meter_billing_mode}
-                  setValue={setFormValue('meter_billing_mode')}
-                  error={errors.meter_billing_mode}
-                />
+              <Input
+                label='Meter Billing Mode'
+                value={formData.meter_billing_mode}
+                setValue={setFormValue('meter_billing_mode')}
+                error={errors.meter_billing_mode}
+              />
 
-                <SelectList
-                  label='Meter Status'
-                  value={formData.meter_status_id}
-                  setValue={setFormValue('meter_status_id')}
-                  list={meterStatus.map((status) => ({
-                    id: status.id,
-                    parameterValue: status.parameter_value,
-                  }))}
-                  dataKey='id'
-                  displayKey='parameterValue'
-                  error={errors.meter_status_id}
-                  required
-                />
+              <SelectList
+                label='Change Reason'
+                value={formData.change_reason}
+                setValue={setFormValue('change_reason')}
+                list={changeReason}
+                dataKey='id'
+                displayKey='parameter_value'
+                error={errors.change_reason}
+                required
+              />
+              <Input
+                label='Sort Priority'
+                type='number'
+                value={formData.sort_priority}
+                setValue={setFormValue('sort_priority')}
+                error={errors.sort_priority}
+              />
 
-                <SelectList
-                  label='Change Reason'
-                  value={formData.change_reason}
-                  setValue={setFormValue('change_reason')}
-                  list={changeReason.map((reason) => ({
-                    id: reason.id,
-                    parameterValue: reason.parameter_value,
-                  }))}
-                  dataKey='id'
-                  displayKey='parameterValue'
-                  error={errors.change_reason}
-                  required
-                />
+              <CheckBox
+                label='Meter Reading Mandatory'
+                value={formData.is_meter_reading_mandatory}
+                toggleValue={toggleBoolean('is_meter_reading_mandatory')}
+                error={errors.is_meter_reading_mandatory}
+              />
 
-                <DatePicker
-                  label='Faulty Date'
-                  value={formData.faulty_date}
-                  setValue={setFormValue('faulty_date')}
-                  error={errors.faulty_date}
-                />
-
-                <DatePicker
-                  label='Rectification Date'
-                  value={formData.rectification_date}
-                  setValue={setFormValue('rectification_date')}
-                  error={errors.rectification_date}
-                />
-
-                <div className='flex items-center space-x-4 pt-6'>
-                  <CheckBox
-                    label='Bidirectional'
-                    value={formData.bidirectional_ind}
-                    toggleValue={() =>
-                      setFormValue('bidirectional_ind')(!formData.bidirectional_ind)
-                    }
-                    error={errors.bidirectional_ind}
+              <CheckBox
+                label='Bidirectional'
+                value={formData.bidirectional_ind}
+                toggleValue={toggleBoolean('bidirectional_ind')}
+                error={errors.bidirectional_ind}
+              />
+              {isMeterFaulty && (
+                <>
+                  <DatePicker
+                    label='Faulty Date'
+                    value={formData.faulty_date}
+                    setValue={setFormValue('faulty_date')}
+                    error={errors.faulty_date}
                   />
-                </div>
-              </>
-            )}
+                  <DatePicker
+                    label='Rectification Date'
+                    value={formData.rectification_date}
+                    setValue={setFormValue('rectification_date')}
+                    error={errors.rectification_date}
+                  />
+                </>
+              )}
+            </div>
 
             <div className='flex justify-end gap-3 border-t pt-6'>
               <Button
@@ -209,13 +234,13 @@ export default function ConnectMeter({
               />
               <Button
                 type='submit'
-                label={isEditMode ? 'Save Changes' : 'Connect Meter'}
+                label={relation ? 'Save Changes' : 'Connect Meter'}
                 disabled={loading}
               />
             </div>
-          </form>
-        </Card>
+          </Card>
+        </form>
       </div>
-    </MainLayout>
+    </ConnectionsLayout>
   )
 }

@@ -12,6 +12,7 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
 import "parameters/parameter-value.proto";
 import "consumers/office.proto";
+import "metering/meter_connection_mapping.proto";
 
 // -------------------- MESSAGES --------------------
 
@@ -173,7 +174,8 @@ message CreateConnectionResponse {
 }
 
 message GetConnectionResponse {
-    ConnectionMessage connection = 1;
+  ConnectionMessage connection = 1;
+  repeated com.kseb.consumerservice.proto.metering.MeterConnectionMappingResponse meters = 2;
 }
 
 message ConnectionUpdateResponse {

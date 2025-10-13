@@ -94,55 +94,63 @@ export default function MeterReadingsStep({
   }
 
   // 🧮 Calculate Power Factors (only for Main Meter)
-  const powerFactors = useMemo(() => {
-    const meter = metersWithTimezonesAndProfiles.find((m) =>
-      m.meter_profile.some((p: any) => p.profile?.parameter_value === 'Main Meter')
-    )
-    if (!meter) return []
+  // ⚡ Calculate Power Factors for all meters
+  const powerFactorsByMeter = useMemo(() => {
+    return metersWithTimezonesAndProfiles.map((meter) => {
+      const kwhProfile = meter.meter_profile.find((p: any) => p.name === 'kWh')
+      const kvahProfile = meter.meter_profile.find((p: any) => p.name === 'kVAh')
 
-    const kwhProfile = meter.meter_profile.find((p: any) => p.name === 'kWh')
-    const kvahProfile = meter.meter_profile.find((p: any) => p.name === 'kVAh')
-    if (!kwhProfile || !kvahProfile) return []
+      if (!kwhProfile || !kvahProfile) return { meter_id: meter.meter_id, factors: [] }
 
-    const meterData = formData.readings_by_meter?.find((m: any) => m.meter_id === meter.meter_id)
-    const kwh = meterData?.parameters.find(
-      (p: any) => p.meter_parameter_id === kwhProfile.meter_parameter_id
-    )
-    const kvah = meterData?.parameters.find(
-      (p: any) => p.meter_parameter_id === kvahProfile.meter_parameter_id
-    )
+      const meterData = formData.readings_by_meter?.find((m: any) => m.meter_id === meter.meter_id)
+      if (!meterData) return { meter_id: meter.meter_id, factors: [] }
 
-    if (!kwh || !kvah) return []
+      const kwh = meterData.parameters.find(
+        (p: any) => p.meter_parameter_id === kwhProfile.meter_parameter_id
+      )
+      const kvah = meterData.parameters.find(
+        (p: any) => p.meter_parameter_id === kvahProfile.meter_parameter_id
+      )
+      if (!kwh || !kvah) return { meter_id: meter.meter_id, factors: [] }
 
-    const factors = kwh.readings.map((r: any, idx: number) => {
-      const kwhDiff = parseFloat(r.values?.diff || 0)
-      const kvahDiff = parseFloat(kvah.readings[idx]?.values?.diff || 0)
-      const pf = kvahDiff !== 0 ? (kwhDiff / kvahDiff).toFixed(3) : '0.000'
-      return { timezone_name: r.timezone_name, pf: parseFloat(pf) }
+      const factors = kwh.readings.map((r: any, idx: number) => {
+        const kwhDiff = parseFloat(r.values?.diff || 0)
+        const kvahDiff = parseFloat(kvah.readings[idx]?.values?.diff || 0)
+        const pf = kvahDiff !== 0 ? (kwhDiff / kvahDiff).toFixed(3) : '0.000'
+        return { timezone_name: r.timezone_name, pf: parseFloat(pf) }
+      })
+
+      const avg =
+        factors.length > 0
+          ? (factors.reduce((sum, f) => sum + (f.pf || 0), 0) / factors.length).toFixed(3)
+          : '0.000'
+
+      return {
+        meter_id: meter.meter_id,
+        factors: [{ timezone_name: 'Average', pf: parseFloat(avg) }, ...factors],
+      }
     })
+  }, [formData, metersWithTimezonesAndProfiles])
 
-    const avg =
-      factors.length > 0
-        ? (factors.reduce((sum, f) => sum + (f.pf || 0), 0) / factors.length).toFixed(3)
-        : '0.000'
+  // 🎨 Power Factor Bar per meter
+  const PowerFactorBar = ({ meterId }: { meterId: number }) => {
+    const pfSet = powerFactorsByMeter.find((pf) => pf.meter_id === meterId)
+    if (!pfSet || pfSet.factors.length === 0) return null
 
-    return [{ timezone_name: 'Average', pf: parseFloat(avg) }, ...factors]
-  }, [formData])
-
-  // 🎨 Scrollable power factor bar
-  const PowerFactorBar = () => (
-    <div className='mb-4 flex space-x-4 overflow-x-auto pb-2'>
-      {powerFactors.map((pf) => (
-        <Card
-          key={pf.timezone_name}
-          className='min-w-[140px] flex-shrink-0 border border-gray-300 bg-gradient-to-b from-white to-gray-50 p-3 text-center shadow-sm'
-        >
-          <strong>{pf.timezone_name}</strong>
-          <div className='text-lg font-bold text-blue-700'>{pf.pf}</div>
-        </Card>
-      ))}
-    </div>
-  )
+    return (
+      <div className='mb-4 flex space-x-4 overflow-x-auto pb-2'>
+        {pfSet.factors.map((pf) => (
+          <Card
+            key={pf.timezone_name}
+            className='min-w-[140px] flex-shrink-0 border border-gray-300 bg-gradient-to-b from-white to-gray-50 p-3 text-center shadow-sm'
+          >
+            <strong>{pf.timezone_name}</strong>
+            <div className='text-lg font-bold text-blue-700'>{pf.pf}</div>
+          </Card>
+        ))}
+      </div>
+    )
+  }
 
   if (activeProfile !== null) {
     const meter = metersWithTimezonesAndProfiles[activeProfile.meterIdx]
@@ -154,7 +162,6 @@ export default function MeterReadingsStep({
 
     return (
       <div className='flex flex-col gap-4'>
-        <PowerFactorBar />
         <Card className='p-4'>
           <StrongText>{profile.display_name}</StrongText>
           <div
@@ -194,14 +201,18 @@ export default function MeterReadingsStep({
   }
 
   // 🧱 Default card view
+  // 🧱 Default card view
   return (
     <div className='flex flex-col gap-6'>
-      <PowerFactorBar />
       {metersWithTimezonesAndProfiles.map((meter, mIdx) => (
         <div key={meter.meter_id}>
           <StrongText className='mb-2 block'>
             Meter {meter.meter_id} — {meter.meter_timezone_type}
           </StrongText>
+
+          {/* 🧮 Power Factor Bar — show only if available */}
+          <PowerFactorBar meterId={meter.meter_id} />
+
           <div className='grid gap-4 md:grid-cols-2'>
             {meter.meter_profile.map((profile: any, pIdx: number) => {
               const meterData = formData.readings_by_meter?.find(

@@ -54,8 +54,20 @@ export default function MeterReadingCreatePage({
 }: Readonly<Props>) {
   const breadcrumb: BreadcrumbItem[] = [
     {
+      title: 'Connections',
+      href: '/connections',
+    },
+    {
+      title: connectionWithConsumer?.connection?.consumer_number,
+      href: `/connection/${connectionWithConsumer?.connection?.connection_id}`,
+    },
+    {
       title: 'Meter Reading',
-      href: `/meter-reading/${connectionWithConsumer?.connection?.connection_id}/create`,
+      href: `/connection/${connectionWithConsumer?.connection?.connection_id}/meter-reading`,
+    },
+    {
+      title: 'Create',
+      href: `/connection/${connectionWithConsumer?.connection?.connection_id}/meter-reading/create`,
     },
   ]
   const { formData, setFormValue } = useCustomForm({

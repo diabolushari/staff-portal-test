@@ -4,7 +4,7 @@ namespace App\Http\Controllers\MeterReading;
 
 use App\Http\Controllers\Controller;
 use App\Services\Connection\ConnectionService;
-use App\Services\Metering\MeterConnectionRelService;
+use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterReadingService;
 use App\Services\Metering\MeterService;
 use Illuminate\Http\Request;
@@ -16,7 +16,7 @@ class GetMeterReadingWithConnectionController extends Controller
     public function __construct(
         private ConnectionService $connectionService,
         private MeterService $meterService,
-        private MeterConnectionRelService $meterConnectionRelService,
+        private MeterConnectionMappingService $meterConnectionMappingService,
         private MeterReadingService $meterReadingService,
     ) {}
 
@@ -24,17 +24,17 @@ class GetMeterReadingWithConnectionController extends Controller
     {
         $connection = $this->connectionService->getConnection($connectionId);
         $meterReadingResponse = $this->meterReadingService->listMeterReadings(1, 100, null, $connectionId);
-        $meterConnectionRelResponse = $this->meterConnectionRelService->getMeterConnectionRelByConnectionId($connectionId);
-        $meterConnectionRels = $meterConnectionRelResponse->data;
+        $meterConnectionMappingResponse = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($connectionId);
+        $meterConnectionMappings = $meterConnectionMappingResponse->data;
 
         $meters = [];
 
-        if ($meterConnectionRels !== null) {
-            foreach ($meterConnectionRels as $meterConnectionRel) {
-                if (! isset($meterConnectionRel['meter_id'])) {
+        if ($meterConnectionMappings !== null) {
+            foreach ($meterConnectionMappings as $meterConnectionMapping) {
+                if (! isset($meterConnectionMapping['meter_id'])) {
                     continue;
                 }
-                $meterResponse = $this->meterService->getMeter($meterConnectionRel['meter_id']);
+                $meterResponse = $this->meterService->getMeter($meterConnectionMapping['meter_id']);
                 if ($meterResponse->hasError()) {
                     continue;
                 }

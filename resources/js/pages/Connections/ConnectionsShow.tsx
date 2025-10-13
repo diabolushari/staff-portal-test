@@ -45,7 +45,7 @@ export default function ConnectionsShow({ connection, meters }: Readonly<Props>)
     () => [
       { title: 'Connections', href: '/connections' },
       {
-        title: connection.consumer_number.toString(),
+        title: connection?.consumer_number?.toString(),
         href: connection?.connection_id
           ? route('connection.consumer', connection?.connection_id)
           : '#',
@@ -57,8 +57,7 @@ export default function ConnectionsShow({ connection, meters }: Readonly<Props>)
   return (
     <ConnectionsLayout
       connection={connection}
-      meters={meters}
-      connectionId={connection.connection_id}
+      connectionId={connection?.connection_id ?? 0}
       value={'details'}
       heading='Connection Details'
       subHeading='Connection Details'

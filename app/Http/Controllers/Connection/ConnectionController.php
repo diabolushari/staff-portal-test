@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
 use App\Services\Connection\ConnectionFormItemService;
 use App\Services\Connection\ConnectionService;
-use App\Services\Metering\MeterConnectionRelService;
+use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
@@ -19,7 +19,7 @@ class ConnectionController extends Controller
     public function __construct(
         private readonly ConnectionService $connectionService,
         private readonly ParameterValueService $parameterValueService,
-        private readonly MeterConnectionRelService $meterConnectionRelService,
+        private readonly MeterConnectionMappingService $meterConnectionMappingService,
         private readonly MeterService $meterService
     ) {}
 
@@ -71,7 +71,7 @@ class ConnectionController extends Controller
         }
 
         // TODO Fetch data directly via relationship
-        $meterConnectionRelResponse = $this->meterConnectionRelService->getMeterConnectionRelByConnectionId($id);
+        $meterConnectionRelResponse = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($id);
         $meterConnectionRels = $meterConnectionRelResponse->data;
         $meters = [];
 

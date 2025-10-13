@@ -49,6 +49,28 @@ export interface OfficeContact {
   employee_id: string | null
 }
 
+export interface MeterConnectionMapping {
+  version_id: number
+  rel_id: number
+  meter_id: number
+  connection_id: number
+  meter_use_category?: Partial<ParameterValues> | null
+  bidirectional_ind: boolean
+  meter_billing_mode: string
+  meter_status?: Partial<ParameterValues> | null
+  faulty_date?: string
+  rectification_date?: string
+  sort_priority: number
+  is_meter_reading_mandatory: boolean
+  change_reason?: Partial<ParameterValues> | null
+  effective_start_ts: string
+  effective_end_ts?: string
+  created_ts: string
+  updated_ts?: string
+  created_by: number
+  updated_by: number
+}
+
 export interface Connection {
   version_id: number
   connection_id: number
@@ -104,6 +126,13 @@ export interface Connection {
   cpp_flag: boolean
   admin_office: Office | null
   service_office: Office | null
+  meters: [
+    {
+      priority: number
+      meter: Meter
+      relationship: any
+    }
+  ]
 }
 
 export interface OfficeHierarchy {
@@ -124,6 +153,7 @@ export interface Consumer {
   seasonal_ind: boolean
   license_ind: boolean
   open_access_ind: boolean
+  contact_folio: any
 }
 
 export interface ConsumerData {

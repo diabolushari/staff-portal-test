@@ -26,6 +26,8 @@ class MeterConnectionRelFormRequest extends Data
         public ?string $effectiveStartTs,
         public ?string $effectiveEndTs,
         public ?bool $isActive,
+        public ?int $sortPriority,
+        public bool $isMeterReadingMandatory,
 
         // Fields to be set by the system (e.g., from auth user)
         public ?int $createdBy,

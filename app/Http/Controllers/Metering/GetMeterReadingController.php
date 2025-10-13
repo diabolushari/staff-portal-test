@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Metering;
 use App\Http\Controllers\Controller;
 use App\Services\Connection\ConnectionService;
 use App\Services\Connection\ConsumerService;
-use App\Services\Metering\MeterConnectionRelService;
+use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeteringParameterProfileService;
 use App\Services\Metering\MeterReadingService;
 use App\Services\Metering\MeterService;
@@ -22,7 +22,7 @@ class GetMeterReadingController extends Controller
         private ConnectionService $connectionService,
         private ParameterValueService $parameterService,
         private ConsumerService $consumerService,
-        private MeterConnectionRelService $meterConnectionRelService,
+        private MeterConnectionMappingService $meterConnectionMappingService,
         private MeterTimezoneTypeRelService $meterTimezoneTypeRelService,
         private MeteringTimezoneService $meteringTimezoneService,
         private MeteringParameterProfileService $meteringParameterProfileService,
@@ -65,7 +65,7 @@ class GetMeterReadingController extends Controller
         );
         $connection = $this->connectionService->getConnection($connectionId);
         $consumer = $this->consumerService->getConsumer($connectionId);
-        $meterConnectionRel = $this->meterConnectionRelService->getMeterConnectionRelByConnectionId($connectionId);
+        $meterConnectionRel = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($connectionId);
         $metersWithTimezonesAndProfiles = [];
         $meterTimezoneTypeRel = [];
         $timeZoneNames = [];
