@@ -1,4 +1,3 @@
-import { partiesNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
@@ -141,10 +140,7 @@ export default function PartiesShow({ party }: Props) {
     </div>
   )
   return (
-    <MainLayout
-      breadcrumb={breadcrumbs}
-      navItems={partiesNavItems}
-    >
+    <MainLayout breadcrumb={breadcrumbs}>
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header Section */}
         <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>

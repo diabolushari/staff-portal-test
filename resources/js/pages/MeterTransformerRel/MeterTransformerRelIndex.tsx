@@ -1,5 +1,4 @@
 import MeterTransformerRelList from '@/components/Meter/MeterTransformer/MeterTransformerRel/MeterTransformerRelList'
-import { transformerrelNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import CardHeader from '@/ui/Card/CardHeader'
 import DeleteModal from '@/ui/Modal/DeleteModal'
@@ -54,10 +53,7 @@ export default function MeterTransformerRelIndex({ relations }: Props) {
   }
 
   return (
-    <MainLayout
-      breadcrumb={breadcrumbs}
-      navItems={transformerrelNavItems}
-    >
+    <MainLayout breadcrumb={breadcrumbs}>
       <div className='flex h-full flex-1 flex-col gap-6 p-6'>
         <CardHeader title='Meter CTPT Relations' />
 
