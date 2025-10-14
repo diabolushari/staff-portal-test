@@ -18,7 +18,7 @@ class TariffOrderController extends Controller
         private readonly TariffOrderService $tariffOrderService
     ) {}
 
-    public function index(Request $request): Response
+    public function index(Request $request): Response|RedirectResponse
     {
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 10;
@@ -52,6 +52,11 @@ class TariffOrderController extends Controller
 
         return Inertia::render('TariffOrder/TariffOrderIndexPage', [
             'tariffOrders' => $paginated ?? [],
+            'filters' => [
+                'search' => $orderDescriptor,
+                'order_by' => $orderBy,
+                'order_direction' => $orderDirection,
+            ],
         ]);
     }
 

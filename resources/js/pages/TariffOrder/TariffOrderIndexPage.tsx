@@ -15,7 +15,9 @@ const breadcrumb: BreadcrumbItem[] = [
 ]
 interface Props {
   filters: {
-    tariff_order_name: string
+    search: string
+    orderBy: string
+    orderDirection: string
   }
   tariffOrders: Paginator<TariffOrder>
 }
@@ -34,7 +36,7 @@ export default function TariffOrderIndexPage({ filters, tariffOrders }: Props) {
         title='Tariff Order search'
         placeholder='Enter tariff order name'
         url={route('tariff-order.index')}
-        search={filters?.tariff_order_name}
+        search={filters?.search}
       />
       {tariffOrders.data.length > 0 ? (
         <>
