@@ -1,0 +1,98 @@
+import StrongText from '@/typography/StrongText'
+import { Card } from '../ui/card'
+import useCustomForm from '@/hooks/useCustomForm'
+import useInertiaPost from '@/hooks/useInertiaPost'
+import Input from '@/ui/form/Input'
+import DatePicker from '@/ui/form/DatePicker'
+import FileInput from '@/ui/form/FileInput'
+import Button from '@/ui/button/Button'
+
+interface PageProps {
+  tariffOrder: any
+}
+const formatDateForInput = (dateString?: string) => {
+  if (!dateString) return ''
+  return dateString.split('T')[0]
+}
+export default function TariffOrderForm({ tariffOrder }: Readonly<PageProps>) {
+  const { formData, setFormValue } = useCustomForm({
+    tariff_order_id: tariffOrder?.tariff_order_id ?? '',
+    order_descriptor: tariffOrder?.order_descriptor ?? '',
+    reference_document: tariffOrder?.reference_document ?? '',
+    published_date: formatDateForInput(tariffOrder?.published_date) ?? '',
+    from_date: formatDateForInput(tariffOrder?.effective_start) ?? '',
+    to_date: formatDateForInput(tariffOrder?.effective_end) ?? '',
+    _method: tariffOrder != null ? 'PUT' : undefined,
+  })
+
+  const { post, errors, loading } = useInertiaPost<typeof formData>(
+    tariffOrder
+      ? route('tariff-order.update', tariffOrder.tariff_order_id)
+      : route('tariff-order.store'),
+    {
+      showErrorToast: true,
+    }
+  )
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    console.log(formData)
+    if (tariffOrder && typeof formData.reference_document === 'string') {
+      formData.reference_document = null
+    }
+
+    post(formData)
+  }
+  return (
+    <form onSubmit={handleSubmit}>
+      <Card>
+        <div className='flex justify-between border-b-2 border-gray-200 py-4'>
+          <StrongText className='text-base font-semibold'>Basic Information</StrongText>
+        </div>
+
+        <div className='mt-6 grid grid-cols-1 gap-8 p-4 md:grid-cols-2'>
+          <Input
+            label='Order Descriptor'
+            setValue={setFormValue('order_descriptor')}
+            value={formData.order_descriptor}
+            error={errors?.order_descriptor}
+            type='text'
+          />
+          <FileInput
+            label='Reference Document'
+            setValue={setFormValue('reference_document')}
+            file={
+              typeof formData.reference_document === 'string'
+                ? { name: formData.reference_document, size: 0, type: '' }
+                : formData.reference_document
+            }
+            error={errors?.reference_document}
+          />
+          <DatePicker
+            label='Published Date'
+            setValue={setFormValue('published_date')}
+            value={formData.published_date}
+            error={errors?.published_date}
+          />
+          <DatePicker
+            label='From Date'
+            setValue={setFormValue('from_date')}
+            value={formData.from_date}
+            error={errors?.from_date}
+          />
+          <DatePicker
+            label='To Date'
+            setValue={setFormValue('to_date')}
+            value={formData.to_date}
+            error={errors?.to_date}
+          />
+        </div>
+      </Card>
+      <Button
+        type='submit'
+        disabled={loading}
+        label={loading ? 'Saving...' : 'Save'}
+      />
+    </form>
+  )
+}

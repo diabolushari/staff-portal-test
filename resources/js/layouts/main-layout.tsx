@@ -16,6 +16,7 @@ interface Props {
   addBtnUrl?: string
   addBtnText?: string
   addBtnClick?: () => void
+  leftBarTitle?: string
 }
 
 export default function MainLayout({
@@ -25,6 +26,7 @@ export default function MainLayout({
   addBtnUrl,
   addBtnText,
   addBtnClick,
+  leftBarTitle,
 }: Readonly<Props>) {
   const { flash } = usePage<PageProps>().props
 
@@ -48,7 +50,7 @@ export default function MainLayout({
         <div className='flex flex-1'>
           <div className='hidden w-60 border-r lg:block'>
             <LeftNavBar
-              title='Navigation'
+              title={leftBarTitle ?? 'Navigation'}
               items={navItems}
             />
           </div>

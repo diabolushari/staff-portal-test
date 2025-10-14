@@ -6,21 +6,17 @@ import StrongText from '@/typography/StrongText'
 import { Card } from '@/components/ui/card'
 import { router } from '@inertiajs/react'
 import { Connection } from '@/interfaces/data_interfaces'
+import EditButton from '@/ui/button/EditButton'
 
 interface ConnectionMeterReadingPageProps {
   connection: Connection
-  meters: any[]
-  meterProfiles: any[]
   meterReadings: any[]
 }
 
 export default function ConnectionMeterReadingPage({
   connection,
-  meters,
-  meterProfiles,
   meterReadings,
 }: ConnectionMeterReadingPageProps) {
-  console.log(meterReadings)
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Connections', href: route('connections.index') },
     {
@@ -43,6 +39,9 @@ export default function ConnectionMeterReadingPage({
       route('meter-reading.show', { meter_reading: meterReadingId }) +
         `?meter_id=${Number(meterId)}&connection_id=${connection?.connection_id}`
     )
+  }
+  const handleEditMeterReading = () => {
+    router.visit(route('meter-reading.edit', connection?.connection_id))
   }
 
   return (
@@ -101,9 +100,12 @@ export default function ConnectionMeterReadingPage({
                   key={meterId}
                   className='p-4'
                 >
-                  <h2 className='text-md mb-3 font-bold text-gray-700'>
-                    Meter #{meterId} — kWh Readings
-                  </h2>
+                  <div className='flex items-center justify-between'>
+                    <h2 className='text-md mb-3 font-bold text-gray-700'>
+                      Meter #{meterId} — kWh Readings
+                    </h2>
+                    <EditButton onClick={() => handleEditMeterReading(meterId)} />
+                  </div>
 
                   <table className='w-full border border-gray-300 text-sm'>
                     <thead className='bg-gray-100'>

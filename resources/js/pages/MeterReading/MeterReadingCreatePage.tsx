@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import MainLayout from '@/layouts/main-layout'
 import Stepper from '@/components/Stepper'
 import MeterReadingGeneralStep from '@/components/Meter/MeterReading/MeterReadingGeneralStep'
@@ -20,7 +20,51 @@ interface Props {
   anomalyTypes: ParameterValues[]
   metersWithTimezonesAndProfiles: any[]
   latestMeterReading: any
+  editMode: boolean
 }
+function transformToFormData(values: any[], metersWithTimezonesAndProfiles: any[]) {
+  // Group readings by meter
+  const groupedByMeter = metersWithTimezonesAndProfiles.map((meter) => {
+    const meterReadings = values.filter((v) => v.meter_id === meter.meter_id)
+
+    const parameters = meter.meter_profile.map((profile: any) => {
+      const parameterReadings = meterReadings.filter(
+        (r) => r.parameter_id === profile.meter_parameter_id
+      )
+
+      const readings = meter.timezones.map((tz: any) => {
+        const match = parameterReadings.find((r) => r.timezone_id === tz.timezone_id)
+        return {
+          timezone_id: tz.timezone_id,
+          timezone_name: tz.timezone_name,
+          values: {
+            initial: match?.initial_reading ?? 0,
+            final: match?.final_reading ?? '',
+            diff:
+              match?.difference ??
+              (match?.final_reading && match?.initial_reading
+                ? match.final_reading - match.initial_reading
+                : ''),
+          },
+        }
+      })
+
+      return {
+        meter_parameter_id: profile.meter_parameter_id,
+        display_name: profile.display_name,
+        readings,
+      }
+    })
+
+    return {
+      meter_id: meter.meter_id,
+      parameters,
+    }
+  })
+
+  return groupedByMeter
+}
+
 const getNextDay = (dateStr: string) => {
   if (!dateStr) return ''
   const date = new Date(dateStr)
@@ -51,6 +95,7 @@ export default function MeterReadingCreatePage({
   anomalyTypes,
   metersWithTimezonesAndProfiles,
   latestMeterReading,
+  editMode,
 }: Readonly<Props>) {
   const breadcrumb: BreadcrumbItem[] = [
     {
@@ -74,43 +119,57 @@ export default function MeterReadingCreatePage({
     connection_id: connectionWithConsumer?.connection?.connection_id,
     metering_date: getToday(),
     reading_start_date: getNextDay(latestMeterReading?.reading_end_date) ?? '',
-    reading_end_date: getMonthEnd(getNextDay(latestMeterReading?.reading_end_date)) ?? '',
-    reading_type: '',
-    meter_health_id: '',
-    faulty_date: '',
-    ctpt_health_id: '',
-    anomaly_id: '',
-    ct_health_id: '',
-    pt_health_id: '',
+    reading_end_date: editMode
+      ? latestMeterReading?.reading_end_date
+      : (getMonthEnd(getNextDay(latestMeterReading?.reading_end_date)) ?? ''),
+    reading_type: editMode ? latestMeterReading?.reading_type : '',
+    meter_health_id: editMode ? latestMeterReading?.meter_health_id : '',
+    faulty_date: editMode ? latestMeterReading?.faulty_date : '',
+    ctpt_health_id: editMode ? latestMeterReading?.ctpt_health_id : '',
+    anomaly_id: editMode ? latestMeterReading?.anomaly_id : '',
+    ct_health_id: editMode ? latestMeterReading?.ct_health_id : '',
+    pt_health_id: editMode ? latestMeterReading?.pt_health_id : '',
+    voltage_r: editMode ? latestMeterReading?.voltage_r : '',
+    voltage_y: editMode ? latestMeterReading?.voltage_y : '',
+    voltage_b: editMode ? latestMeterReading?.voltage_b : '',
+    current_r: editMode ? latestMeterReading?.current_r : '',
+    current_y: editMode ? latestMeterReading?.current_y : '',
+    current_b: editMode ? latestMeterReading?.current_b : '',
+    remarks: editMode ? latestMeterReading?.remarks : '',
     readings_by_meter: [],
   })
   const { post, errors } = useInertiaPost(route('meter-reading.store'))
 
   const [activeStep, setActiveStep] = useState(0)
-  const [saveAndAddNewReading, setSaveAndAddNewReading] = useState(false)
 
-  const carryForwardInitialReadings = (latestMeterReading: any, setFormValue: any) => {
-    if (!latestMeterReading?.values) return
+  useEffect(() => {
+    // If already initialized, skip
+    if (formData.readings_by_meter?.length > 0) return
 
-    setFormValue('readings_by_meter', (prev: any[]) => {
-      return prev.map((reading) => {
-        // find matching parameter + timezone in the old values
-        const prevValue = latestMeterReading.values.find(
-          (v: any) =>
-            v.parameter_id === reading.parameter_id && v.timezone_id === reading.timezone_id
-        )
+    if (latestMeterReading?.values?.length > 0) {
+      const transformed = transformToFormData(
+        latestMeterReading.values,
+        metersWithTimezonesAndProfiles
+      )
 
-        if (prevValue) {
-          return {
-            ...reading,
-            initial_reading: prevValue.final_reading, // carry forward
-          }
-        }
-
-        return reading
-      })
-    })
-  }
+      setFormValue('readings_by_meter')(transformed)
+    } else {
+      // Normal initialization (as in your existing code)
+      const initializedMeters = metersWithTimezonesAndProfiles.map((meter) => ({
+        meter_id: meter.meter_id,
+        parameters: meter.meter_profile.map((profile: any) => ({
+          meter_parameter_id: profile.meter_parameter_id,
+          display_name: profile.display_name,
+          readings: meter.timezones.map((tz: any) => ({
+            timezone_id: tz.timezone_id,
+            timezone_name: tz.timezone_name,
+            values: { initial: 0, final: '', diff: '' },
+          })),
+        })),
+      }))
+      setFormValue('readings_by_meter')(initializedMeters)
+    }
+  }, [latestMeterReading, metersWithTimezonesAndProfiles])
 
   // Check if a step has any errors
   const hasStepError = (fields: string[]) => fields.some((f) => errors?.[f])
