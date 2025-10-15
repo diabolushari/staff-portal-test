@@ -31,7 +31,7 @@ class TariffOrderService
     }
 
     /** List tariff orders */
-    public function listTariffOrders(?int $pageNumber = 1, ?int $pageSize = 10, ?string $orderBy = 'created_ts', ?string $orderDirection = 'desc', ?string $orderDescriptor = null): GrpcServiceResponse
+    public function listTariffOrders(?int $pageNumber = 1, ?int $pageSize = 10, ?string $orderBy = null, ?string $orderDirection = null, ?string $orderDescriptor = null): GrpcServiceResponse
     {
         $request = new TariffOrderListRequest;
         $request->setPageNumber($pageNumber ?? 1);

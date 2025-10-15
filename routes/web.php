@@ -37,6 +37,7 @@ use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
+use App\Http\Controllers\Tariff\TariffConfigController;
 use App\Http\Controllers\Tariff\TariffOrderController;
 use App\Http\Requests\SystemModule\SystemModuleFormRequest;
 use App\Services\SystemModule\SystemModuleService;
@@ -96,6 +97,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('connection/{connection_id}/meter-reading/edit', GetMeterReadingEditController::class)->name('meter-reading.edit');
 
     Route::resource('tariff-order', TariffOrderController::class);
+    Route::resource('tariff-config', TariffConfigController::class);
 
 });
 
@@ -116,6 +118,7 @@ Route::get('consumer-test', function (SystemModuleService $service) {
 
     return response()->json($response);
 });
+
 Route::get('offices-create-with-csv', OfficesCreateWithCsvController::class)->name('offices.create-with-csv');
 Route::get('create-georegion-seed', CreateGeoregionSeedController::class)->name('create-georegion-seed');
 Route::get('page-ui', function () {

@@ -38,7 +38,7 @@ export default function TariffOrderIndexPage({ filters, tariffOrders }: Props) {
         url={route('tariff-order.index')}
         search={filters?.search}
       />
-      {tariffOrders.data.length > 0 ? (
+      {tariffOrders?.data?.length > 0 ? (
         <>
           <TariffOrderList tariff_orders={tariffOrders.data} />
           <Pagination pagination={tariffOrders} />

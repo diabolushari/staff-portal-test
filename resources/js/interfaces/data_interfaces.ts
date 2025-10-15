@@ -351,3 +351,15 @@ export interface TariffOrder {
   created_ts?: string
   updated_ts?: string
 }
+export interface TariffConfig {
+  tariff_config_id: number,
+  tariff_order_id: number,
+  connection_purpose: Partial<ParameterValues>,
+  connection_tariff: Partial<ParameterValues>,
+  consumption_lower_limit: number,
+  consumption_upper_limit: number,
+  demand_charge_kva: number,
+  energy_charge_kwh: number,
+  effective_start: string,
+  effective_end?: string
+}

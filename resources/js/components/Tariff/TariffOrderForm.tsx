@@ -69,12 +69,6 @@ export default function TariffOrderForm({ tariffOrder }: Readonly<PageProps>) {
             error={errors?.reference_document}
           />
           <DatePicker
-            label='Published Date'
-            setValue={setFormValue('published_date')}
-            value={formData.published_date}
-            error={errors?.published_date}
-          />
-          <DatePicker
             label='From Date'
             setValue={setFormValue('from_date')}
             value={formData.from_date}
@@ -86,13 +80,21 @@ export default function TariffOrderForm({ tariffOrder }: Readonly<PageProps>) {
             value={formData.to_date}
             error={errors?.to_date}
           />
+          <DatePicker
+            label='Published Date'
+            setValue={setFormValue('published_date')}
+            value={formData.published_date}
+            error={errors?.published_date}
+          />
         </div>
       </Card>
-      <Button
-        type='submit'
-        disabled={loading}
-        label={loading ? 'Saving...' : 'Save'}
-      />
+      <div className='mt-4 flex justify-end'>
+        <Button
+          type='submit'
+          disabled={loading}
+          label={loading ? 'Saving...' : 'Save'}
+        />
+      </div>
     </form>
   )
 }

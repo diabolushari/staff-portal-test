@@ -1,0 +1,144 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.tariffconfig;
+
+option php_namespace = "Proto\\Tariff";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "parameters/parameter-value.proto";
+import "tariff/tariff_order.proto";
+
+// ----------------- ENTITY MESSAGE -----------------
+message TariffConfigMessage {
+  int64 tariff_config_id = 1;
+  int64 tariff_order_id = 2;
+  int64 connection_purpose_id = 3;
+  int64 connection_tariff_id = 4;
+  com.kseb.consumerservice.proto.tariff.TariffOrderMessage tariff_order = 5;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_purpose = 6;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_tariff = 7;
+
+  double consumption_lower_limit = 8;
+  double consumption_upper_limit = 9;
+
+  double demand_charge_kva = 10;
+  double energy_charge_kwh = 11;
+
+  google.protobuf.Timestamp effective_start = 12;
+  google.protobuf.Timestamp effective_end = 13;
+
+  google.protobuf.Timestamp created_ts = 14;
+  google.protobuf.Timestamp updated_ts = 15;
+  google.protobuf.Timestamp deleted_at = 16;
+
+  int32 created_by = 17;
+  int32 updated_by = 18;
+  int32 deleted_by = 19;
+
+  bool is_active = 20;
+}
+
+// ----------------- FORM / Create / Update -----------------
+message TariffConfigFormMessage {
+  optional int64 tariff_config_id = 1; // present for update
+  int64 tariff_order_id = 2;
+  int64 connection_purpose_id = 3;
+  int64 connection_tariff_id = 4;
+
+  double consumption_lower_limit = 5;
+  double consumption_upper_limit = 6;
+
+  double demand_charge_kva = 7;
+  double energy_charge_kwh = 8;
+
+  google.protobuf.Timestamp effective_start = 9;
+  google.protobuf.Timestamp effective_end = 10;
+
+  optional int32 created_by = 11;
+  optional int32 updated_by = 12;
+  optional int32 deleted_by = 13;
+
+  optional bool is_active = 14;
+}
+
+message CreateTariffConfigRequest {
+  TariffConfigFormMessage config = 1;
+}
+message CreateTariffConfigResponse {
+  TariffConfigMessage config = 1;
+}
+
+message CreateMultipleTariffConfigRequest{
+repeated TariffConfigFormMessage configs = 1;
+}
+
+message CreateMultipleTariffConfigResponse{
+repeated TariffConfigMessage created_configs = 1;
+}
+
+message UpdateTariffConfigRequest {
+  TariffConfigFormMessage config = 1;
+}
+message UpdateTariffConfigResponse {
+  TariffConfigMessage config = 1;
+}
+
+// ----------------- Get / Delete -----------------
+message GetTariffConfigRequest {
+  int64 tariff_config_id = 1;
+}
+message GetTariffConfigResponse {
+  TariffConfigMessage config = 1;
+}
+
+message DeleteTariffConfigRequest {
+  int64 tariff_config_id = 1;
+   optional int32 deleted_by = 2;
+}
+message DeleteTariffConfigResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListTariffConfigRequest {
+  optional int64 tariff_order_id = 1;
+  optional int64 connection_purpose_id = 2;
+  optional int64 connection_tariff_id = 3;
+  optional string search = 4;
+}
+message ListTariffConfigResponse {
+  repeated TariffConfigMessage configs = 1;
+}
+
+message ListTariffConfigPaginatedRequest {
+  optional int64 tariff_order_id = 1;
+  optional int64 connection_purpose_id = 2;
+  optional int64 connection_tariff_id = 3;
+  optional string search = 4;
+
+  int32 page_number = 5;
+  int32 page_size = 6;
+  optional string sort_by = 7;
+  optional string sort_direction = 8; 
+}
+
+message ListTariffConfigPaginatedResponse {
+  repeated TariffConfigMessage configs = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
+// ----------------- SERVICE -----------------
+service TariffConfigService {
+  rpc CreateTariffConfig (CreateTariffConfigRequest) returns (CreateTariffConfigResponse);
+  rpc UpdateTariffConfig (UpdateTariffConfigRequest) returns (UpdateTariffConfigResponse);
+  rpc GetTariffConfig    (GetTariffConfigRequest)    returns (GetTariffConfigResponse);
+  rpc DeleteTariffConfig (DeleteTariffConfigRequest) returns (DeleteTariffConfigResponse);
+  rpc ListTariffConfig (ListTariffConfigRequest) returns (ListTariffConfigResponse);
+  rpc ListTariffConfigPaginated (ListTariffConfigPaginatedRequest) returns (ListTariffConfigPaginatedResponse);
+  rpc CreateMultipleTariffConfig (CreateMultipleTariffConfigRequest) returns (CreateMultipleTariffConfigResponse);
+}
