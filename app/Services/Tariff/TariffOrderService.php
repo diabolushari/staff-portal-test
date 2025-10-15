@@ -205,6 +205,7 @@ class TariffOrderService
             if ($bytes !== false) {
                 $msg->setReferenceDocument($bytes);
             }
+            $msg->setReferenceDocumentName($data->referenceDocumentName ?? '');
         }
 
         $msg->setPublishedDate($data->publishedDate);

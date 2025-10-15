@@ -19,5 +19,6 @@ class TariffOrderUpdateFormRequest extends Data
         public string $publishedDate,
         public string $fromDate,
         public ?string $toDate,
+        public ?string $referenceDocumentName,
     ) {}
 }
