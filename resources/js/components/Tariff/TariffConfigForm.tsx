@@ -75,8 +75,8 @@ export default function TariffConfigForm({
       consumption_upper_limit: '',
       demand_charge_kva: '',
       energy_charge_kwh: '',
-      effective_start: tariffOrder.effective_start.toString(),
-      effective_end: tariffOrder.effective_end?.toString() ?? '',
+      effective_start: dateToString(tariffOrder.effective_start),
+      effective_end: tariffOrder.effective_end ? dateToString(tariffOrder.effective_end) : '',
     })
     setModalOpen(false)
   }

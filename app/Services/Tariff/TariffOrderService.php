@@ -129,9 +129,9 @@ class TariffOrderService
     {
         $request = new DeleteTariffOrderRequest;
         $request->setTariffOrderId($id);
-        $userId = Auth::user()->id;
+        $userId = Auth::id();
         if ($userId) {
-            $request->setDeletedBy($userId);
+            $request->setDeletedBy(intval($userId));
         }
 
         [$response, $status] = $this->client->deleteTariffOrder($request)->wait();
