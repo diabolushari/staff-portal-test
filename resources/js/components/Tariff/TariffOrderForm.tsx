@@ -21,8 +21,8 @@ export default function TariffOrderForm({ tariffOrder }: Readonly<PageProps>) {
     order_descriptor: tariffOrder?.order_descriptor ?? '',
     reference_document: tariffOrder?.reference_document ?? '',
     published_date: formatDateForInput(tariffOrder?.published_date) ?? '',
-    from_date: formatDateForInput(tariffOrder?.effective_start) ?? '',
-    to_date: formatDateForInput(tariffOrder?.effective_end) ?? '',
+    effective_start: formatDateForInput(tariffOrder?.effective_start) ?? '',
+    effective_end: formatDateForInput(tariffOrder?.effective_end) ?? '',
     reference_document_name: '',
     _method: tariffOrder != null ? 'PUT' : undefined,
   })
@@ -75,15 +75,15 @@ export default function TariffOrderForm({ tariffOrder }: Readonly<PageProps>) {
           />
           <DatePicker
             label='From Date'
-            setValue={setFormValue('from_date')}
-            value={formData.from_date}
-            error={errors?.from_date}
+            setValue={setFormValue('effective_start')}
+            value={formData.effective_start}
+            error={errors?.effective_start}
           />
           <DatePicker
             label='To Date'
-            setValue={setFormValue('to_date')}
-            value={formData.to_date}
-            error={errors?.to_date}
+            setValue={setFormValue('effective_end')}
+            value={formData.effective_end}
+            error={errors?.effective_end}
           />
           <DatePicker
             label='Published Date'

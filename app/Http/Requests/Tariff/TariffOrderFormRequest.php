@@ -16,8 +16,8 @@ class TariffOrderFormRequest extends Data
         public string $orderDescriptor,
         public UploadedFile $referenceDocument,
         public string $publishedDate,
-        public string $fromDate,
-        public ?string $toDate,
+        public string $effectiveStart,
+        public ?string $effectiveEnd,
         public string $referenceDocumentName,
     ) {}
 }

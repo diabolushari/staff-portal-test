@@ -186,9 +186,9 @@ class TariffOrderService
         $msg->setReferenceDocumentName($data->referenceDocumentName);
 
         $msg->setPublishedDate($data->publishedDate);
-        $msg->setEffectiveStart($data->fromDate);
-        if ($data->toDate) {
-            $msg->setEffectiveEnd($data->toDate);
+        $msg->setEffectiveStart($data->effectiveStart);
+        if ($data->effectiveEnd) {
+            $msg->setEffectiveEnd($data->effectiveEnd);
         }
 
         return $msg;
@@ -209,9 +209,9 @@ class TariffOrderService
         }
 
         $msg->setPublishedDate($data->publishedDate);
-        $msg->setEffectiveStart($data->fromDate);
-        if ($data->toDate) {
-            $msg->setEffectiveEnd($data->toDate);
+        $msg->setEffectiveStart($data->effectiveStart);
+        if ($data->effectiveEnd) {
+            $msg->setEffectiveEnd($data->effectiveEnd);
         }
 
         return $msg;
