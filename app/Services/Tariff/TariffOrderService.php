@@ -7,6 +7,7 @@ use App\Http\Requests\Tariff\TariffOrderUpdateFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
+use Illuminate\Support\Facades\Auth;
 use Proto\Tariff\CreateTariffOrderRequest;
 use Proto\Tariff\DeleteTariffOrderRequest;
 use Proto\Tariff\DownloadTariffOrderRequest;
@@ -128,7 +129,10 @@ class TariffOrderService
     {
         $request = new DeleteTariffOrderRequest;
         $request->setTariffOrderId($id);
-        $request->setDeletedBy(1);
+        $userId = Auth::user()->id;
+        if ($userId) {
+            $request->setDeletedBy($userId);
+        }
 
         [$response, $status] = $this->client->deleteTariffOrder($request)->wait();
         if ($status->code === 1) {

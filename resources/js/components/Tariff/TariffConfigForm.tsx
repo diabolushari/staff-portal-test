@@ -82,9 +82,7 @@ export default function TariffConfigForm({
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    console.log(formData)
     e.preventDefault()
-    console.log(addedItems)
     post({ ...formData, tariff_config_items: addedItems })
   }
 

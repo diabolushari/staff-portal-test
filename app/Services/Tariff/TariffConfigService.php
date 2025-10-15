@@ -84,12 +84,12 @@ class TariffConfigService
             );
         }
         $configs = $response->getCreatedConfigs();
-        $cofigItems = [];
+        $configItems = [];
         foreach ($configs as $config) {
-            $cofigItems[] = $this->tariffConfigMessageToArray($config);
+            $configItems[] = $this->tariffConfigMessageToArray($config);
         }
 
-        return GrpcServiceResponse::success($cofigItems, $response, $status->code, $status->details);
+        return GrpcServiceResponse::success($configItems, $response, $status->code, $status->details);
     }
 
     public function getTariffConfig(int $id): GrpcServiceResponse

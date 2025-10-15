@@ -6,9 +6,10 @@ import Input from '@/ui/form/Input'
 import DatePicker from '@/ui/form/DatePicker'
 import FileInput from '@/ui/form/FileInput'
 import Button from '@/ui/button/Button'
+import { TariffOrder } from '@/interfaces/data_interfaces'
 
 interface PageProps {
-  tariffOrder: any
+  tariffOrder: TariffOrder
 }
 const formatDateForInput = (dateString?: string) => {
   if (!dateString) return ''
@@ -36,7 +37,7 @@ export default function TariffOrderForm({ tariffOrder }: Readonly<PageProps>) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(formData)
+
     if (tariffOrder && typeof formData.reference_document === 'string') {
       formData.reference_document = null
     }

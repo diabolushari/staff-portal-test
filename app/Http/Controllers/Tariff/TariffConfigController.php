@@ -24,9 +24,6 @@ class TariffConfigController extends Controller
 
     public function index(Request $request): Response
     {
-        $search = $request->input('search');
-        $sort = $request->input('sort');
-        $sortBy = $request->input('sortBy');
         $pageNumber = $request->input('pageNumber');
         $pageSize = $request->input('pageSize');
         $tariffOrderId = $request->input('tariffOrderId');
@@ -49,9 +46,9 @@ class TariffConfigController extends Controller
 
         return Inertia::render('TariffConfig/TariffConfigIndexPage', [
             'filters' => [
-                'search' => $search,
-                'sort' => $sort,
-                'sortBy' => $sortBy,
+                'search' => '',
+                'sort' => '',
+                'sortBy' => '',
             ],
             'tariff_configs' => $paginatedData,
         ]);
