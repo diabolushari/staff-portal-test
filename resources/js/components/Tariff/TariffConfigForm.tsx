@@ -8,6 +8,8 @@ import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import DatePicker from '@/ui/form/DatePicker'
 import Modal from '@/ui/Modal/Modal'
+import { TariffOrder } from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
 
 interface TariffConfigItem {
   connection_purpose: string
@@ -20,28 +22,28 @@ interface TariffConfigItem {
   effective_end: string
 }
 
+const dateToString = (date: string) => {
+  return date.split('T')[0]
+}
+
 interface PageProps {
-  tariffConfig?: any
-  tariffOrder: any[]
-  connectionPurpose: any[]
-  consumptionTariff: any[]
+  tariffOrder: TariffOrder
+  connectionPurpose: ParameterValues[]
+  consumptionTariff: ParameterValues[]
 }
 
 export default function TariffConfigForm({
-  tariffConfig,
   tariffOrder,
   connectionPurpose,
   consumptionTariff,
 }: Readonly<PageProps>) {
   const { formData, setFormValue } = useCustomForm({
-    tariff_config_id: tariffConfig?.tariff_config_id ?? '',
-    tariff_order_id: tariffConfig?.tariff_order_id ?? '',
+    tariff_order_id: tariffOrder.tariff_order_id,
   })
 
-  const { post, errors, loading } = useInertiaPost<typeof formData>(
-    tariffConfig ? route('tariff-config.update', 1) : route('tariff-config.store'),
-    { showErrorToast: true }
-  )
+  const { post, errors, loading } = useInertiaPost<typeof formData>(route('tariff-config.store'), {
+    showErrorToast: true,
+  })
 
   // State for modal
   const [modalOpen, setModalOpen] = useState(false)
@@ -52,8 +54,8 @@ export default function TariffConfigForm({
     consumption_upper_limit: '',
     demand_charge_kva: '',
     energy_charge_kwh: '',
-    effective_start: '',
-    effective_end: '',
+    effective_start: dateToString(tariffOrder.effective_start),
+    effective_end: tariffOrder.effective_end ? dateToString(tariffOrder.effective_end) : '',
   })
 
   // List of added items
@@ -73,8 +75,8 @@ export default function TariffConfigForm({
       consumption_upper_limit: '',
       demand_charge_kva: '',
       energy_charge_kwh: '',
-      effective_start: '',
-      effective_end: '',
+      effective_start: tariffOrder.effective_start.toString(),
+      effective_end: tariffOrder.effective_end?.toString() ?? '',
     })
     setModalOpen(false)
   }
@@ -89,24 +91,6 @@ export default function TariffConfigForm({
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <Card>
-          <div className='flex justify-between border-b-2 border-gray-200 py-4'>
-            <StrongText className='text-base font-semibold'>Basic Information</StrongText>
-          </div>
-          <div className='mt-4 md:grid md:grid-cols-2 md:gap-4'>
-            {tariffOrder && (
-              <SelectList
-                label='Tariff Order'
-                list={tariffOrder}
-                dataKey='tariff_order_id'
-                displayKey='order_descriptor'
-                setValue={setFormValue('tariff_order_id')}
-                value={formData.tariff_order_id}
-                error={errors.tariff_order_id}
-              />
-            )}
-          </div>
-        </Card>
         {/* Modal */}
         {modalOpen && (
           <div className='w-full max-w-lg rounded-lg bg-white p-6'>

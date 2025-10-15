@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Tariff;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tariff\TariffConfigFormRequest;
+use App\Http\Requests\Tariff\TariffConfigUpdateFormRequest;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\Tariff\TariffConfigService;
 use App\Services\Tariff\TariffOrderService;
@@ -56,9 +57,9 @@ class TariffConfigController extends Controller
         ]);
     }
 
-    public function create(Request $request): Response
+    public function create(Request $request, int $tariffOrderId): Response
     {
-        $tariffOrder = $this->tariffOrderService->listTariffOrders();
+        $tariffOrder = $this->tariffOrderService->getTariffOrder($tariffOrderId);
 
         $consumptionTariff = $this->parameterValueService->getParameterValues(
             1,
@@ -76,7 +77,7 @@ class TariffConfigController extends Controller
         );
 
         return Inertia::render('TariffConfig/TariffConfigCreatePage', [
-            'tariff_order' => $tariffOrder->data['tariff_orders'] ?? [],
+            'tariff_order' => $tariffOrder->data,
             'consumption_tariff' => $consumptionTariff->data,
             'connection_purpose' => $connectionPurpose->data,
         ]);
@@ -90,7 +91,7 @@ class TariffConfigController extends Controller
             return redirect()->back()->with('error', $response->error);
         }
 
-        return redirect()->route('tariff-config.index');
+        return redirect()->route('tariff-order.show', $request->tariffOrderId);
     }
 
     public function show(Request $request): Response
@@ -98,18 +99,53 @@ class TariffConfigController extends Controller
         return Inertia::render('TariffConfig/TariffConfigShowPage');
     }
 
-    public function edit(Request $request): Response
+    public function edit(Request $request, int $id): Response
     {
-        return Inertia::render('TariffConfig/TariffConfigCreatePage');
+        $tariffOrder = $this->tariffOrderService->listTariffOrders();
+
+        $consumptionTariff = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Tariff'
+        );
+        $connectionPurpose = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Primary Purpose'
+        );
+        $tariffConfig = $this->tariffConfigService->getTariffConfig($id);
+
+        return Inertia::render('TariffConfig/TariffConfigEditPage', [
+            'tariff_orders' => $tariffOrder->data['tariff_orders'] ?? [],
+            'consumption_tariffs' => $consumptionTariff->data,
+            'connection_purposes' => $connectionPurpose->data,
+            'tariff_config' => $tariffConfig->data,
+        ]);
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(TariffConfigUpdateFormRequest $request, int $id): RedirectResponse
     {
-        return redirect()->route('tariff-config.index');
+        $response = $this->tariffConfigService->updateTariffConfig($request, $id);
+
+        if ($response->hasError()) {
+            return redirect()->back()->with('error', $response->error);
+        }
+
+        return redirect()->route('tariff-order.show', $request->tariffOrderId);
     }
 
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request, int $id): RedirectResponse
     {
-        return redirect()->route('tariff-config.index');
+        $response = $this->tariffConfigService->deleteTariffConfig($id);
+
+        if ($response->hasError()) {
+            return redirect()->back()->with('error', $response->error);
+        }
+
+        return redirect()->back()->with('success', 'Tariff config deleted successfully');
     }
 }

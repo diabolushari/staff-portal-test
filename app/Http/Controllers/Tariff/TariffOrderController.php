@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tariff;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tariff\TariffOrderFormRequest;
 use App\Http\Requests\Tariff\TariffOrderUpdateFormRequest;
+use App\Services\Tariff\TariffConfigService;
 use App\Services\Tariff\TariffOrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,8 @@ use Inertia\Response;
 class TariffOrderController extends Controller
 {
     public function __construct(
-        private readonly TariffOrderService $tariffOrderService
+        private readonly TariffOrderService $tariffOrderService,
+        private readonly TariffConfigService $tariffConfigService
     ) {}
 
     public function index(Request $request): Response|RedirectResponse
@@ -76,9 +78,34 @@ class TariffOrderController extends Controller
         return redirect()->route('tariff-order.index');
     }
 
-    public function show(int $id): Response
+    public function show(int $id): Response|RedirectResponse
     {
-        return Inertia::render('TariffOrder/TariffOrderShowPage');
+        $response = $this->tariffOrderService->getTariffOrder($id);
+        if ($response->hasError()) {
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
+        }
+        $tariffConfigs = $this->tariffConfigService->listPaginatedTariffConfigs(
+            pageNumber: 1,
+            pageSize: 10,
+            tariffOrderId: $response->data['tariff_order_id'] ?? null
+        );
+        $paginated = null;
+        if (! empty($tariffConfigs->data)) {
+            $paginated = new LengthAwarePaginator(
+                $tariffConfigs->data['tariff_configs'],                // items for this page
+                $tariffConfigs->data['total_count'],            // total items count
+                $tariffConfigs->data['page_size'],              // items per page
+                $tariffConfigs->data['page_number'],            // current page
+                ['path' => request()->url()]              // so pagination links work properly
+            );
+        }
+
+        return Inertia::render('TariffOrder/TariffOrderShowPage', [
+            'tariff_order' => $response->data,
+            'tariff_configs' => $paginated ?? [],
+        ]);
     }
 
     public function edit(int $id): Response|RedirectResponse

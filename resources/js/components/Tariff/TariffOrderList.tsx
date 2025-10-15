@@ -5,6 +5,7 @@ import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import { useState } from 'react'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import Button from '@/ui/button/Button'
 
 interface Props {
   tariff_orders: TariffOrder[]
@@ -58,17 +59,26 @@ export default function TariffOrderList({ tariff_orders }: Readonly<Props>) {
                 </div>
               </div>
               <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
-                <button
-                  onClick={() => handleDownload(order)}
-                  className='flex items-center gap-2 rounded-md bg-blue-100 px-3 py-1.5 text-sm font-medium text-blue-800 hover:bg-blue-200'
-                >
-                  <Download className='h-4 w-4' />
-                  Download
-                </button>
-                <EditButton
-                  onClick={() => router.visit(route('tariff-order.edit', order.tariff_order_id))}
-                />
-                <DeleteButton onClick={() => handleDelete(order)} />
+                <div className='flex items-center gap-2'>
+                  <EditButton
+                    onClick={() => router.visit(route('tariff-order.edit', order.tariff_order_id))}
+                  />
+                  <DeleteButton onClick={() => handleDelete(order)} />
+                </div>
+                <div className='flex items-center gap-2'>
+                  <Button
+                    onClick={() => router.visit(route('tariff-order.show', order.tariff_order_id))}
+                    label='View'
+                    variant='link'
+                  />
+                  <button
+                    onClick={() => handleDownload(order)}
+                    className='flex items-center gap-2 rounded-md bg-blue-100 px-3 py-1.5 text-sm font-medium text-blue-800 hover:bg-blue-200'
+                  >
+                    <Download className='h-4 w-4' />
+                    Download
+                  </button>
+                </div>
               </div>
             </div>
           </div>

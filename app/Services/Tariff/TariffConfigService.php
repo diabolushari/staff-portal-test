@@ -4,24 +4,30 @@ namespace App\Services\Tariff;
 
 use App\Http\Requests\Tariff\TariffConfigFormItems;
 use App\Http\Requests\Tariff\TariffConfigFormRequest;
+use App\Http\Requests\Tariff\TariffConfigUpdateFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
+use Illuminate\Support\Facades\Auth;
 use Proto\Tariff\CreateMultipleTariffConfigRequest;
+use Proto\Tariff\DeleteTariffConfigRequest;
+use Proto\Tariff\GetTariffConfigRequest;
 use Proto\Tariff\ListTariffConfigPaginatedRequest;
 use Proto\Tariff\ListTariffConfigPaginatedResponse;
 use Proto\Tariff\TariffConfigFormMessage;
 use Proto\Tariff\TariffConfigMessage;
 use Proto\Tariff\TariffConfigServiceClient;
+use Proto\Tariff\UpdateTariffConfigRequest;
 
 class TariffConfigService
 {
     private TariffConfigServiceClient $client;
 
     public function __construct(
-        private ParameterValueService $parameterValueService
+        private ParameterValueService $parameterValueService,
+        private TariffOrderService $tariffOrderService
     ) {
         $this->client = new TariffConfigServiceClient(
             config('app.consumer_service_grpc_host'),
@@ -77,11 +83,74 @@ class TariffConfigService
                 $status->details
             );
         }
-        $configs = $response->getConfigs()?->map(function (TariffConfigMessage $msg) {
-            return $this->tariffConfigMessageToArray($msg);
-        });
+        $configs = $response->getCreatedConfigs();
+        $cofigItems = [];
+        foreach ($configs as $config) {
+            $cofigItems[] = $this->tariffConfigMessageToArray($config);
+        }
 
-        return GrpcServiceResponse::success($configs->toArray(), $response, $status->code, $status->details);
+        return GrpcServiceResponse::success($cofigItems, $response, $status->code, $status->details);
+    }
+
+    public function getTariffConfig(int $id): GrpcServiceResponse
+    {
+        $grpcRequest = new GetTariffConfigRequest;
+        $grpcRequest->setTariffConfigId($id);
+
+        [$response, $status] = $this->client->getTariffConfig($grpcRequest)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success($this->tariffConfigMessageToArray($response->getConfig()), $response, $status->code, $status->details);
+    }
+
+    public function updateTariffConfig(TariffConfigUpdateFormRequest $request, int $id): GrpcServiceResponse
+    {
+        $grpcRequest = new UpdateTariffConfigRequest;
+        $grpcRequest->setConfig($this->configToGrpcMessage($request));
+
+        [$response, $status] = $this->client->updateTariffConfig($grpcRequest)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success($this->tariffConfigMessageToArray($response->getConfig()), $response, $status->code, $status->details);
+    }
+
+    public function deleteTariffConfig(int $id): GrpcServiceResponse
+    {
+        $grpcRequest = new DeleteTariffConfigRequest;
+        $grpcRequest->setTariffConfigId($id);
+        $userId = Auth::id();
+        if ($userId) {
+            $grpcRequest->setDeletedBy(intval($userId));
+        }
+
+        [$response, $status] = $this->client->deleteTariffConfig($grpcRequest)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
     }
 
     public function configFormToGrpcMessage(TariffConfigFormItems $request, int $tariffOrderId): TariffConfigFormMessage
@@ -114,6 +183,7 @@ class TariffConfigService
             'consumption_upper_limit' => $msg->getConsumptionUpperLimit(),
             'demand_charge_kva' => $msg->getDemandChargeKva(),
             'energy_charge_kwh' => $msg->getEnergyChargeKwh(),
+            'tariff_order' => $msg->getTariffOrder() ? $this->tariffOrderService->tariffMessageToArray($msg->getTariffOrder()) : null,
             'effective_start' => DateTimeConverter::convertTimestampToString($msg->getEffectiveStart()),
             'effective_end' => DateTimeConverter::convertTimestampToString($msg->getEffectiveEnd()),
         ];
@@ -137,5 +207,24 @@ class TariffConfigService
             'page_size' => $response->getPageSize(),
             'total_pages' => $response->getTotalPages(),
         ];
+    }
+
+    public function configToGrpcMessage(TariffConfigUpdateFormRequest $request): TariffConfigFormMessage
+    {
+        $msg = new TariffConfigFormMessage;
+        $msg->setTariffConfigId($request->tariffConfigId);
+        $msg->setTariffOrderId($request->tariffOrderId);
+        $msg->setConnectionPurposeId($request->connectionPurposeId);
+        $msg->setConnectionTariffId($request->connectionTariffId);
+        $msg->setConsumptionLowerLimit($request->consumptionLowerLimit);
+        $msg->setConsumptionUpperLimit($request->consumptionUpperLimit);
+        $msg->setDemandChargeKva($request->demandChargeKva);
+        $msg->setEnergyChargeKwh($request->energyChargeKwh);
+        $msg->setEffectiveStart(DateTimeConverter::convertStringToTimestamp($request->effectiveStart));
+        if ($request->effectiveEnd) {
+            $msg->setEffectiveEnd(DateTimeConverter::convertStringToTimestamp($request->effectiveEnd));
+        }
+
+        return $msg;
     }
 }

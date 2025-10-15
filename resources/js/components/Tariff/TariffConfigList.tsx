@@ -5,6 +5,8 @@ import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import { useState } from 'react'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import NormalText from '@/typography/NormalText'
+import StrongText from '@/typography/StrongText'
 
 interface Props {
   tariff_configs: TariffConfig[]
@@ -34,11 +36,19 @@ export default function TariffConfigList({ tariff_configs }: Readonly<Props>) {
                 <div className='flex flex-col gap-1'>
                   <div className='flex items-center gap-2'>
                     <div className='font-inter text-base font-semibold text-black'>
-                      {config.connection_purpose?.parameter_value}
+                      <NormalText>Tariff Order: </NormalText>
+                      <StrongText>{config.tariff_order?.order_descriptor}</StrongText>
                     </div>
                     <div className='rounded-[50px] bg-blue-100 px-2.5 py-px'>
                       <div className='font-inter text-xs text-blue-800'>
-                        #{config.tariff_config_id}
+                        <NormalText>
+                          #Connection tariff :{config.connection_tariff?.parameter_value}
+                        </NormalText>
+                      </div>
+                      <div className='font-inter text-xs text-green-800'>
+                        <NormalText>
+                          #Connection purpose:{config.connection_purpose?.parameter_value}
+                        </NormalText>
                       </div>
                     </div>
                   </div>

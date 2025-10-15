@@ -98,6 +98,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('tariff-order', TariffOrderController::class);
     Route::resource('tariff-config', TariffConfigController::class);
+    Route::get('tariff-order/{tariffOrderId}/config/create', [TariffConfigController::class, 'create'])
+        ->name('tariff-config.create');
 
 });
 
