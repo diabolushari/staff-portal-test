@@ -23,6 +23,7 @@ export default function TariffOrderForm({ tariffOrder }: Readonly<PageProps>) {
     published_date: formatDateForInput(tariffOrder?.published_date) ?? '',
     from_date: formatDateForInput(tariffOrder?.effective_start) ?? '',
     to_date: formatDateForInput(tariffOrder?.effective_end) ?? '',
+    reference_document_name: '',
     _method: tariffOrder != null ? 'PUT' : undefined,
   })
 
@@ -61,7 +62,10 @@ export default function TariffOrderForm({ tariffOrder }: Readonly<PageProps>) {
           />
           <FileInput
             label='Reference Document'
-            setValue={setFormValue('reference_document')}
+            setValue={(file) => {
+              setFormValue('reference_document')(file)
+              setFormValue('reference_document_name')(file ? file.name : '')
+            }}
             file={
               typeof formData.reference_document === 'string'
                 ? { name: formData.reference_document, size: 0, type: '' }

@@ -30,6 +30,7 @@ message TariffOrderFormMessage {
   optional string effective_end = 6;
   optional int32 created_by = 7;
   optional int32 updated_by = 8;
+  string reference_document_name = 9;
  
 }
 message TariffOrderUpdateRequest {
