@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ParameterDefinitionItemApiController;
 use App\Http\Controllers\Api\ParameterDefinitionListApiController;
 use App\Http\Controllers\Api\ParameterDomainListApiController;
 use App\Http\Controllers\Api\SystemModuleApiController;
+use App\Http\Controllers\Api\Tariff\TariffOrderDownloadApiController;
 use App\Http\Controllers\Connection\ConnectionController;
 use App\Http\Controllers\Connection\ConsumerController;
 use App\Http\Controllers\Connection\CreateConsumerController;
@@ -28,6 +29,7 @@ use App\Http\Controllers\Metering\MeterTransfomerCreateController;
 use App\Http\Controllers\Metering\MeterTransformerController;
 use App\Http\Controllers\Metering\MeterTransformerRelController;
 use App\Http\Controllers\MeteringTimezone\MeteringTimezoneController;
+use App\Http\Controllers\MeterReading\GetMeterReadingEditController;
 use App\Http\Controllers\MeterReading\GetMeterReadingWithConnectionController;
 use App\Http\Controllers\Offices\OfficeHierarchyRelController;
 use App\Http\Controllers\Offices\OfficesCreateWithCsvController;
@@ -35,6 +37,8 @@ use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
+use App\Http\Controllers\Tariff\TariffConfigController;
+use App\Http\Controllers\Tariff\TariffOrderController;
 use App\Http\Requests\SystemModule\SystemModuleFormRequest;
 use App\Services\SystemModule\SystemModuleService;
 use Illuminate\Support\Facades\Route;
@@ -90,6 +94,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('meter-reading', MeterReadingController::class);
     Route::get('connection/{connection_id}/meter-reading', GetMeterReadingWithConnectionController::class)->name('connection.meter-reading');
     Route::get('connection/{connection_id}/meter-reading/create', GetMeterReadingController::class)->name('meter-reading.create');
+    Route::get('connection/{connection_id}/meter-reading/edit', GetMeterReadingEditController::class)->name('meter-reading.edit');
+
+    Route::resource('tariff-order', TariffOrderController::class);
+    Route::resource('tariff-config', TariffConfigController::class);
+    Route::get('tariff-order/{tariffOrderId}/config/create', [TariffConfigController::class, 'create'])
+        ->name('tariff-config.create');
 
 });
 
@@ -101,6 +111,7 @@ Route::get('api/offices', OfficeListApiController::class);
 Route::get('api/office/{id}', GetOfficeByIdApiController::class);
 Route::get('api/parameter-values', ListParameterValuesApiController::class);
 Route::get('api/office/code/{office_code}', GetOfficeByCodeApiController::class);
+Route::get('api/tariff-order/{id}/download', TariffOrderDownloadApiController::class)->name('tariff-order.download');
 
 Route::get('consumer-test', function (SystemModuleService $service) {
     $response = $service->createSystemModule(
@@ -109,6 +120,7 @@ Route::get('consumer-test', function (SystemModuleService $service) {
 
     return response()->json($response);
 });
+
 Route::get('offices-create-with-csv', OfficesCreateWithCsvController::class)->name('offices.create-with-csv');
 Route::get('create-georegion-seed', CreateGeoregionSeedController::class)->name('create-georegion-seed');
 Route::get('page-ui', function () {

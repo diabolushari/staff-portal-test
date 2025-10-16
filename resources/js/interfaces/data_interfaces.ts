@@ -339,3 +339,28 @@ export interface MeterReading {
   updated_by: number
   is_active: boolean
 }
+export interface TariffOrder {
+  tariff_order_id: number
+  order_descriptor: string
+  reference_document: string 
+  published_date: string
+  effective_start: string
+  effective_end?: string
+  created_by: number
+  updated_by: number
+  created_ts?: string
+  updated_ts?: string
+}
+export interface TariffConfig {
+  tariff_config_id: number,
+  tariff_order_id: number,
+  connection_purpose: ParameterValues,
+  connection_tariff: ParameterValues,
+  consumption_lower_limit: number,
+  consumption_upper_limit: number,
+  demand_charge_kva: number,
+  energy_charge_kwh: number,
+  tariff_order: TariffOrder,
+  effective_start: string,
+  effective_end?: string
+}

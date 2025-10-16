@@ -21,10 +21,9 @@ export default function EditButton({ link, onClick }: Props) {
 
   return (
     <Button
-      size='icon'
-      className='text-base font-semibold text-[#0078D4] transition-transform hover:scale-105 hover:cursor-pointer dark:bg-blue-600 dark:hover:bg-blue-700'
+      className='flex items-center gap-2 transition-transform'
       onClick={handleClick}
-      variant='link'
+      variant='highlight'
     >
       <Edit2Icon className='h-6 w-6 fill-[#0078D4]' /> Edit
     </Button>

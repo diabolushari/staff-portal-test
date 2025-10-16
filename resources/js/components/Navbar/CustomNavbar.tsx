@@ -52,6 +52,11 @@ export const NAV_ITEMS = [
         href: '/metering-timezone',
         description: 'Manage metering time zones',
       },
+      {
+        title: 'Tariff Management',
+        href: '/tariff-order',
+        description: 'Manage tariff',
+      },
     ],
   },
 ]

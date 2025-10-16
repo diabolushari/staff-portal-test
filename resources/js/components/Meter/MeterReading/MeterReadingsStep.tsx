@@ -105,17 +105,17 @@ export default function MeterReadingsStep({
       const meterData = formData.readings_by_meter?.find((m: any) => m.meter_id === meter.meter_id)
       if (!meterData) return { meter_id: meter.meter_id, factors: [] }
 
-      const kwh = meterData.parameters.find(
+      const kwh = meterData?.parameters?.find(
         (p: any) => p.meter_parameter_id === kwhProfile.meter_parameter_id
       )
-      const kvah = meterData.parameters.find(
+      const kvah = meterData?.parameters?.find(
         (p: any) => p.meter_parameter_id === kvahProfile.meter_parameter_id
       )
       if (!kwh || !kvah) return { meter_id: meter.meter_id, factors: [] }
 
-      const factors = kwh.readings.map((r: any, idx: number) => {
+      const factors = kwh?.readings?.map((r: any, idx: number) => {
         const kwhDiff = parseFloat(r.values?.diff || 0)
-        const kvahDiff = parseFloat(kvah.readings[idx]?.values?.diff || 0)
+        const kvahDiff = parseFloat(kvah?.readings[idx]?.values?.diff || 0)
         const pf = kvahDiff !== 0 ? (kwhDiff / kvahDiff).toFixed(3) : '0.000'
         return { timezone_name: r.timezone_name, pf: parseFloat(pf) }
       })
@@ -214,11 +214,11 @@ export default function MeterReadingsStep({
           <PowerFactorBar meterId={meter.meter_id} />
 
           <div className='grid gap-4 md:grid-cols-2'>
-            {meter.meter_profile.map((profile: any, pIdx: number) => {
+            {meter?.meter_profile?.map((profile: any, pIdx: number) => {
               const meterData = formData.readings_by_meter?.find(
                 (m: any) => m.meter_id === meter.meter_id
               )
-              const paramData = meterData?.parameters.find(
+              const paramData = meterData?.parameters?.find(
                 (p: any) => p.meter_parameter_id === profile.meter_parameter_id
               )
               const hasData = paramData?.readings?.some(

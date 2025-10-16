@@ -27,7 +27,7 @@ export default function FileInput({ file, label, error, setValue, accept }: Prop
   return (
     <>
       {file == null && (
-        <>
+        <div className='flex flex-col gap-2'>
           <label className='small-1stop standard-label'>{label}</label>
           <input
             type='file'
@@ -36,7 +36,7 @@ export default function FileInput({ file, label, error, setValue, accept }: Prop
             className='standard-input'
             accept={accept}
           />
-        </>
+        </div>
       )}
       {file != null && (
         <div className='flex flex-col items-center text-center'>
