@@ -5,7 +5,7 @@ import { Cpu, Plus } from 'lucide-react'
 import StrongText from '@/typography/StrongText'
 import { Card } from '@/components/ui/card'
 import { router } from '@inertiajs/react'
-import { Connection, MeterReading } from '@/interfaces/data_interfaces'
+import { Connection, Meter, MeterReading } from '@/interfaces/data_interfaces'
 import EditButton from '@/ui/button/EditButton'
 import { useMemo } from 'react'
 import MeterReadingIndexPage from './MeterReadingIndexPage'
@@ -73,10 +73,10 @@ export default function ConnectionMeterReadingPage({
 
         <div className='flex flex-col gap-6 px-6 pb-6'>
           {meterReadings && meterReadings.length > 0 ? (
-            meterReadings.map((meterReading) => (
+            connection.meters.map((meter) => (
               <MeterReadingCard
-                key={meterReading.id}
-                meterReadings={meterReading.values}
+                meterReadings={meterReadings}
+                meter={meter.meter}
               />
             ))
           ) : (

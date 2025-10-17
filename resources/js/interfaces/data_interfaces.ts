@@ -201,6 +201,7 @@ export interface Meter {
   meter_id: number
   meter_serial: string
   ownership_type?: Partial<ParameterValues> | null
+  meter_profile?: ParameterValues | null
   meter_make?: Partial<ParameterValues> | null
   meter_type?: Partial<ParameterValues> | null
   meter_category?: Partial<ParameterValues> | null
@@ -339,6 +340,7 @@ export interface MeterReading {
 export interface MeterReadingValue {
   id: number
   meter_reading_id: number
+  meter_id: number
   meter_profile_parameter_id: number
   meter_profile_parameter?: MeterProfileParameter
   time_zone_id: number
