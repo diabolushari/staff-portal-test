@@ -69,6 +69,7 @@ export interface MeterConnectionMapping {
   updated_ts?: string
   created_by: number
   updated_by: number
+  meter: Meter
 }
 
 export interface Connection {
@@ -348,6 +349,7 @@ export interface MeterReadingValue {
   final_reading: number
   initial_reading: number
   difference: number
+  meter?: Meter
 }
 export interface MeterProfileParameter {
   version_id: number

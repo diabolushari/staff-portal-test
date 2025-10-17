@@ -5,9 +5,7 @@ import { Cpu, Plus } from 'lucide-react'
 import StrongText from '@/typography/StrongText'
 import { Card } from '@/components/ui/card'
 import { router } from '@inertiajs/react'
-import { Connection, Meter, MeterReading } from '@/interfaces/data_interfaces'
-import EditButton from '@/ui/button/EditButton'
-import { useMemo } from 'react'
+import { Connection, MeterReading } from '@/interfaces/data_interfaces'
 
 import MeterReadingCard from '@/components/Meter/MeterReading/MeterReadingCard'
 

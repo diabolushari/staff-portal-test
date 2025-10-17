@@ -69,7 +69,11 @@ export default function MeterReadingCard({ meterReading, meters }: Props) {
           </NormalText>
         </div>
         <Button
-          onClick={() => router.visit(route('meter-reading.show', meterReading?.id))}
+          onClick={() =>
+            router.visit(
+              `/meter-reading/${meterReading.id}?connection_id=${meterReading.connection_id}`
+            )
+          }
           label='View'
         />
       </div>

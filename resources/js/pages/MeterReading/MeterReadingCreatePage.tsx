@@ -117,6 +117,7 @@ export default function MeterReadingCreatePage({
     },
   ]
   const { formData, setFormValue } = useCustomForm({
+    id: editMode ? latestMeterReading?.id : '',
     connection_id: connectionWithConsumer?.connection?.connection_id,
     metering_date: getToday(),
     reading_start_date: getNextDay(latestMeterReading?.reading_end_date) ?? '',
@@ -138,8 +139,14 @@ export default function MeterReadingCreatePage({
     current_b: editMode ? latestMeterReading?.current_b : '',
     remarks: editMode ? latestMeterReading?.remarks : '',
     readings_by_meter: [],
+    _method: editMode ? 'PUT' : undefined,
   })
-  const { post, errors } = useInertiaPost(route('meter-reading.store'))
+  const { post, errors } = useInertiaPost(
+    editMode ? route('meter-reading.update', formData.id) : route('meter-reading.store'),
+    {
+      showErrorToast: true,
+    }
+  )
 
   const [activeStep, setActiveStep] = useState(0)
 

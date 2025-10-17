@@ -59,11 +59,27 @@ class MeterReadingController extends Controller
         if ($meterReading->data !== null) {
             $connectionRel = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($meterReading->data['connection_id'])->data;
         }
+        $connection = $this->connectionService->getConnection((int) $connectionId)->data;
 
         return Inertia::render('MeterReading/MeterReadingShowPage', [
             'meterReading' => $meterReading->data,
             'connectionId' => $connectionId,
+            'connection' => $connection,
             'meterConnectionMapping' => $connectionRel,
         ]);
+    }
+
+    public function update(MeterReadingForm $request, int $meterReadingId): RedirectResponse
+    {
+        $response = $this->meterReadingService->updateMeterReading($request, $meterReadingId);
+        if ($response->hasError()) {
+            if ($response->error) {
+                return $response->error;
+            } else {
+                return redirect()->back()->with('error', 'Failed to get connection');
+            }
+        }
+
+        return redirect()->back()->with('success', 'Meter reading updated successfully');
     }
 }
