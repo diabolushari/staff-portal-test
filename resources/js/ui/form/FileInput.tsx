@@ -25,7 +25,7 @@ export default function FileInput({ file, label, error, setValue, accept }: Prop
   }
 
   return (
-    <>
+    <div>
       {file == null && (
         <div className='flex flex-col gap-2'>
           <label className='small-1stop standard-label'>{label}</label>
@@ -53,6 +53,6 @@ export default function FileInput({ file, label, error, setValue, accept }: Prop
         </div>
       )}
       {error && <ErrorText>{error}</ErrorText>}
-    </>
+    </div>
   )
 }

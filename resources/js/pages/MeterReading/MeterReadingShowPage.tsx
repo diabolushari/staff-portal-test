@@ -1,4 +1,5 @@
 import { consumerNavItems } from '@/components/Navbar/navitems'
+import { MeterReading } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 
@@ -6,7 +7,7 @@ export default function MeterReadingShowPage({
   meterReading,
   connectionId,
 }: {
-  meterReading: any
+  meterReading: MeterReading
   connectionId: number
 }) {
   const breadcrumb: BreadcrumbItem[] = [

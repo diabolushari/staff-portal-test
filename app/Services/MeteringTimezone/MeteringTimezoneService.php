@@ -13,8 +13,10 @@ use Proto\Metering\DeleteMeteringTimezoneRequest;
 use Proto\Metering\GetMeteringTimezoneRequest;
 use Proto\Metering\GetMeteringTimezonesByPricingTypeRequest;
 use Proto\Metering\ListMeteringTimezonesRequest;
+use Proto\Metering\ListTimezoneGroupByMeteringTypeRequest;
 use Proto\Metering\MeteringTimezoneResponse;
 use Proto\Metering\MeteringTimezoneServiceClient;
+use Proto\Metering\TimezoneGroup;
 use Proto\Metering\UpdateMeteringTimezoneRequest;
 
 class MeteringTimezoneService
@@ -106,6 +108,27 @@ class MeteringTimezoneService
         return GrpcServiceResponse::success($timezonesArray, $response, $status->code, $status->details);
     }
 
+    public function listTimezoneGroupByMeteringType(): GrpcServiceResponse
+    {
+        $request = new ListTimezoneGroupByMeteringTypeRequest;
+
+        [$response, $status] = $this->client->ListTimezoneGroupByMeteringType($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response, $status->code, $status->details
+            );
+        }
+
+        $timezonesArray = [];
+        foreach ($response->getTimezoneGroups() as $tz) {
+            $timezonesArray[] = self::timezoneByGroupBymessageToArray($tz);
+        }
+
+        return GrpcServiceResponse::success($timezonesArray, $response, $status->code, $status->details);
+    }
+
     public function listMeteringTimezones(
         ?int $pricingTypeId = 0,
         ?int $timezoneTypeId = 0,
@@ -178,6 +201,14 @@ class MeteringTimezoneService
         }
 
         return GrpcServiceResponse::success(self::timezoneProtoToArray($response), $response, $status->code, $status->details);
+    }
+
+    public function timezoneByGroupBymessageToArray(TimezoneGroup $timezoneGroup)
+    {
+        return [
+            'timezone_type' => self::transformParameterValueToArray($timezoneGroup->getTimezoneType()),
+            'metering_timezones' => array_map(fn (MeteringTimezoneResponse $tz) => self::timezoneProtoToArray($tz), $timezoneGroup->getMeteringTimezones()),
+        ];
     }
 
     public function deleteMeteringTimezone(int $id): GrpcServiceResponse

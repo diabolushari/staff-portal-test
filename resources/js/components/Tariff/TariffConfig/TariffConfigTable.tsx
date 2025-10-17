@@ -58,7 +58,7 @@ export default function TariffConfigTable({
               <TableCell>{config.consumption_upper_limit}</TableCell>
               <TableCell>{config.demand_charge_kva}</TableCell>
               <TableCell>{config.energy_charge_kwh}</TableCell>
-              <TableCell>
+              <TableCell className='flex gap-2'>
                 <EditButton link={route('tariff-config.edit', config.tariff_config_id)} />
                 <DeleteButton onClick={() => handleDelete(config.tariff_config_id)} />
               </TableCell>

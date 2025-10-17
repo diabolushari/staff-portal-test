@@ -10,16 +10,17 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 import { BreadcrumbItem } from '@/types'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
+import { Connection, ConsumerData, MeterReading } from '@/interfaces/data_interfaces'
 
 interface Props {
-  connectionWithConsumer: any
+  connectionWithConsumer: ConsumerData
   meterHealthTypes: ParameterValues[]
   ctptHealthTypes: ParameterValues[]
   ctHealthTypes: ParameterValues[]
   ptHealthTypes: ParameterValues[]
   anomalyTypes: ParameterValues[]
   metersWithTimezonesAndProfiles: any[]
-  latestMeterReading: any
+  latestMeterReading: MeterReading
   editMode: boolean
 }
 function transformToFormData(values: any[], metersWithTimezonesAndProfiles: any[]) {

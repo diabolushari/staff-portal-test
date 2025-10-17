@@ -78,8 +78,10 @@ class TariffOrderController extends Controller
         return redirect()->route('tariff-order.index');
     }
 
-    public function show(int $id): Response|RedirectResponse
+    public function show(int $id, Request $request): Response|RedirectResponse
     {
+        $pageNumber = $request->input('page') ?? 1;
+        $pageSize = $request->input('page_size') ?? 5;
         $response = $this->tariffOrderService->getTariffOrder($id);
         if ($response->hasError()) {
             return redirect()->back()->withErrors([
@@ -87,8 +89,8 @@ class TariffOrderController extends Controller
             ]);
         }
         $tariffConfigs = $this->tariffConfigService->listPaginatedTariffConfigs(
-            pageNumber: 1,
-            pageSize: 10,
+            pageNumber: $pageNumber,
+            pageSize: $pageSize,
             tariffOrderId: $response->data['tariff_order_id'] ?? null
         );
         $paginated = null;

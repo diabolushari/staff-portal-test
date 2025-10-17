@@ -316,13 +316,9 @@ export interface MeterReading {
   id: number
   meter_reading_detail_id: number
   connection_id: number
-  normal_pf: number
-  peak_pf: number
-  offpeak_pf: number
   metering_date: string
   reading_start_date: string
   reading_end_date: string
-  average_power_factor: number
   single_reading: boolean
   multiple_reading: boolean
   anomaly_id: number
@@ -338,6 +334,32 @@ export interface MeterReading {
   created_by: number
   updated_by: number
   is_active: boolean
+  values: MeterReadingValue[]
+}
+export interface MeterReadingValue {
+  id: number
+  meter_reading_id: number
+  meter_profile_parameter_id: number
+  meter_profile_parameter?: MeterProfileParameter
+  time_zone_id: number
+  time_zone?: Partial<ParameterValues> | null
+  final_reading: number
+  initial_reading: number
+  difference: number
+}
+export interface MeterProfileParameter {
+  version_id: number
+  meter_parameter_id: number
+  profile_id: number
+  name: string
+  display_name: string
+}
+export interface MeterReadingPowerFactor{
+  id: number
+  meter_reading_id: number
+  average_power_factor: number
+  meter_reading: MeterReading
+  meter: Meter
 }
 export interface TariffOrder {
   tariff_order_id: number
