@@ -1,98 +1,103 @@
 import { useMemo } from 'react'
 import { Card } from '@/components/ui/card'
 import StrongText from '@/typography/StrongText'
-import { Meter, MeterReading } from '@/interfaces/data_interfaces'
+import NormalText from '@/typography/NormalText'
+import {
+  Meter,
+  MeterConnectionMapping,
+  MeterReading,
+  MeterReadingValue,
+} from '@/interfaces/data_interfaces'
+import Button from '@/ui/button/Button'
+import { router } from '@inertiajs/react'
 
-interface Props {
-  meterReadings: MeterReading[]
+interface MeterWithConnection {
   meter: Meter
+  priority: number
+  relationship: MeterConnectionMapping
 }
 
-export default function MeterReadingCard({ meterReadings, meter }: Props) {
-  const readingsForMeter = useMemo(() => {
-    return meterReadings.filter((reading) =>
-      reading.values.some((value) => value.meter_id === meter.meter_id)
-    )
-  }, [meterReadings, meter.meter_id])
+interface Props {
+  meterReading: MeterReading
+  meters: MeterWithConnection[]
+}
 
-  const processedReadings = useMemo(() => {
-    const isMainProfile = meter.meter_profile?.parameter_value?.toLowerCase().includes('main')
+export default function MeterReadingCard({ meterReading, meters }: Props) {
+  const meterSummaries = useMemo(() => {
+    return meters.map((meterWithConn) => {
+      const meter = meterWithConn.meter
 
-    return readingsForMeter.map((reading, idx) => {
-      const meterValues = reading.values.filter((value) => value.meter_id === meter.meter_id)
+      const filteredValues =
+        meterReading?.values?.filter((v: MeterReadingValue) => v.meter_id === meter?.meter_id) || []
 
-      if (isMainProfile) {
-        const kwhValues = meterValues
-          .filter((v) => v.meter_profile_parameter?.name === 'kWh')
-          .map((v) => v.final_reading ?? 0)
+      const kvaValues = filteredValues.filter((v) => v.meter_profile_parameter?.name == 'kVAh')
+      const kvaMax =
+        kvaValues.length > 0
+          ? kvaValues.reduce((max, curr) =>
+              (curr.final_reading ?? 0) > (max.final_reading ?? 0) ? curr : max
+            )
+          : null
 
-        const kvaValues = meterValues
-          .filter((v) => v.meter_profile_parameter?.name === 'kVAh')
-          .map((v) => v.final_reading ?? 0)
+      const kwhSum = filteredValues
+        .filter((v) => v.meter_profile_parameter?.name === 'kWh')
+        .reduce((sum, v) => sum + (v.final_reading ?? 0), 0)
 
-        const kwhMax = kwhValues.length ? Math.max(...kwhValues) : 0
-        const kvaSum = kvaValues.reduce((sum, val) => sum + val, 0)
-
-        return {
-          id: reading.id,
-          index: idx + 1,
-          date: reading.metering_date,
-          type: 'main',
-          kwhMax,
-          kvaSum,
-        }
-      } else {
-        return {
-          id: reading.id,
-          index: idx + 1,
-          date: reading.metering_date,
-          type: 'other',
-          values: meterValues.map((v) => ({
-            name: v.meter_profile_parameter?.name,
-            value: v.final_reading ?? 0,
-          })),
-        }
+      return {
+        meterId: meter?.meter_id,
+        serial: meter?.meter_serial,
+        meterProfile: meter?.meter_profile,
+        kva: kvaMax
+          ? {
+              value: kvaMax.final_reading ?? 0,
+              timezone: kvaMax.time_zone?.parameter_value,
+            }
+          : null,
+        kwhSum,
       }
     })
-  }, [readingsForMeter, meter.meter_id, meter.meter_profile])
+  }, [meterReading, meters])
 
   return (
     <Card className='mb-4 p-4'>
-      <StrongText className='mb-2 text-lg font-semibold'>
-        Meter Serial: {meter.meter_serial} ({meter.meter_profile?.parameter_value})
-      </StrongText>
-
-      {processedReadings.length === 0 ? (
-        <p className='text-sm text-gray-500'>No readings found for this meter.</p>
-      ) : (
-        <div className='space-y-4'>
-          {processedReadings.map((reading) => (
-            <div
-              key={reading.id}
-              className='rounded-lg border bg-gray-50 p-3'
-            >
-              <p className='mb-1 text-sm font-medium'>
-                Reading #{reading.index} — Date: {reading.date}
-              </p>
-
-              {reading.type === 'main' ? (
-                <div className='text-sm text-gray-700'>
-                  <p>
-                    KVA (sum of timezones): <b>{reading.kvaSum}</b>
-                  </p>
-                  <p>
-                    KWH (max of timezones): <b>{reading.kwhMax}</b>
-                  </p>
-                </div>
-              ) : (
-                <div className='text-sm text-gray-700'>
-                  <h1></h1>
-                </div>
-              )}
-            </div>
-          ))}
+      <div className='flex justify-between'>
+        <div>
+          <StrongText className='mb-2 text-lg font-semibold'>
+            Meter Reading: {meterReading?.metering_date}
+          </StrongText>
+          <NormalText>
+            {meterReading?.reading_start_date} to {meterReading?.reading_end_date}
+          </NormalText>
         </div>
-      )}
+        <Button
+          onClick={() => router.visit(route('meter-reading.show', meterReading?.id))}
+          label='View'
+        />
+      </div>
+      <div className='mt-4 space-y-4'>
+        {meterSummaries.map((summary) => (
+          <div
+            key={summary.meterId}
+            className='rounded-lg border bg-gray-50 p-3'
+          >
+            <StrongText className='text-md font-semibold'>
+              Meter Serial: {summary.serial}({summary.meterProfile?.parameter_value})
+            </StrongText>
+
+            <div className='mt-1 text-sm text-gray-700'>
+              {summary.kva ? (
+                <p>
+                  <b>KVA (highest):</b> {summary.kva.value} at timezone {summary.kva.timezone}
+                </p>
+              ) : (
+                <p>No KVA data available</p>
+              )}
+              <p>
+                <b>KWH (sum):</b> {summary.kwhSum}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </Card>
   )
 }

@@ -8,7 +8,7 @@ import { router } from '@inertiajs/react'
 import { Connection, Meter, MeterReading } from '@/interfaces/data_interfaces'
 import EditButton from '@/ui/button/EditButton'
 import { useMemo } from 'react'
-import MeterReadingIndexPage from './MeterReadingIndexPage'
+
 import MeterReadingCard from '@/components/Meter/MeterReading/MeterReadingCard'
 
 interface ConnectionMeterReadingPageProps {
@@ -73,10 +73,10 @@ export default function ConnectionMeterReadingPage({
 
         <div className='flex flex-col gap-6 px-6 pb-6'>
           {meterReadings && meterReadings.length > 0 ? (
-            connection.meters.map((meter) => (
+            meterReadings.map((meterReading) => (
               <MeterReadingCard
-                meterReadings={meterReadings}
-                meter={meter.meter}
+                meterReading={meterReading}
+                meters={connection.meters}
               />
             ))
           ) : (

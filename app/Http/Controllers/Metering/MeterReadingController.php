@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Metering;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Metering\MeterReadingForm;
 use App\Services\Connection\ConnectionService;
+use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterReadingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,8 @@ class MeterReadingController extends Controller
 {
     public function __construct(
         private ConnectionService $connectionService,
-        private MeterReadingService $meterReadingService
+        private MeterReadingService $meterReadingService,
+        private MeterConnectionMappingService $meterConnectionMappingService
     ) {}
 
     public function index(Request $request): Response
@@ -52,11 +54,16 @@ class MeterReadingController extends Controller
     public function show(int $meterReadingId, Request $request): Response
     {
         $connectionId = $request->query('connection_id');
+        $connectionRel = null;
         $meterReading = $this->meterReadingService->getMeterReading($meterReadingId, (int) $request->query('meter_id'));
+        if ($meterReading->data !== null) {
+            $connectionRel = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($meterReading->data['connection_id'])->data;
+        }
 
         return Inertia::render('MeterReading/MeterReadingShowPage', [
             'meterReading' => $meterReading->data,
             'connectionId' => $connectionId,
+            'meterConnectionMapping' => $connectionRel,
         ]);
     }
 }

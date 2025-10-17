@@ -31,6 +31,7 @@ message ReadingValueMessage {
   int32 updated_by = 13;
   bool is_active = 14;
   com.kseb.consumerservice.proto.meterreading.MeteringProfileParameterMessage parameter = 15;
+  
 }
 
 message CreateMeterReadingValues {
@@ -42,6 +43,7 @@ message CreateMeterReadingValues {
   double difference = 6;
   double value = 7;
   int32 created_by = 8;
+  optional int64 meter_reading_value_id = 9;
 }
 
 // ---- Entity ----
@@ -136,6 +138,7 @@ message UpdateMeterReadingRequest {
   string remarks = 17;
   int32 updated_by = 18;
   bool is_active = 19;
+  repeated CreateMeterReadingValues readings = 20;
 }
 
 message UpdateMeterReadingResponse { MeterReadingMessage reading = 1; }

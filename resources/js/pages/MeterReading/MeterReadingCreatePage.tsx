@@ -23,7 +23,11 @@ interface Props {
   latestMeterReading: MeterReading
   editMode: boolean
 }
-function transformToFormData(values: any[], metersWithTimezonesAndProfiles: any[]) {
+function transformToFormData(
+  values: any[],
+  metersWithTimezonesAndProfiles: any[],
+  editMode: boolean
+) {
   // Group readings by meter
   const groupedByMeter = metersWithTimezonesAndProfiles.map((meter) => {
     const meterReadings = values.filter((v) => v.meter_id === meter.meter_id)
@@ -39,13 +43,9 @@ function transformToFormData(values: any[], metersWithTimezonesAndProfiles: any[
           timezone_id: tz.timezone_id,
           timezone_name: tz.timezone_name,
           values: {
-            initial: match?.initial_reading ?? 0,
-            final: match?.final_reading ?? '',
-            diff:
-              match?.difference ??
-              (match?.final_reading && match?.initial_reading
-                ? match.final_reading - match.initial_reading
-                : ''),
+            initial: editMode ? match?.final_reading : (match?.initial_reading ?? 0),
+            final: editMode ? match?.final_reading : '',
+            diff: editMode ? match?.difference : '0',
           },
         }
       })
@@ -150,7 +150,8 @@ export default function MeterReadingCreatePage({
     if (latestMeterReading?.values?.length > 0) {
       const transformed = transformToFormData(
         latestMeterReading.values,
-        metersWithTimezonesAndProfiles
+        metersWithTimezonesAndProfiles,
+        editMode
       )
 
       setFormValue('readings_by_meter')(transformed)

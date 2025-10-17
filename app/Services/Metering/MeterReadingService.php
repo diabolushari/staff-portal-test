@@ -15,6 +15,7 @@ use Proto\MeterReading\ListMeterReadingRequest;
 use Proto\MeterReading\MeterReadingMessage;
 use Proto\MeterReading\MeterReadingServiceClient;
 use Proto\MeterReading\ReadingValueMessage;
+use Proto\MeterReading\UpdateMeterReadingRequest;
 
 class MeterReadingService
 {
@@ -106,6 +107,24 @@ class MeterReadingService
         $meterReadingArray['values'] = $meterReadingValuesArray;
 
         return GrpcServiceResponse::success($meterReadingArray, $response, $status->code, $status->details);
+    }
+
+    public function updateMeterReading(MeterReadingForm $request, int $id): GrpcServiceResponse
+    {
+        $protoRequest = new UpdateMeterReadingRequest;
+        $protoRequest->setMeterReadingId($id);
+        $grpcRequest = $this->toProto($request);
+        [$response, $status] = $this->client->UpdateMeterReading($grpcRequest)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success([], $response, $status->code, $status->details);
     }
 
     public function latestMeterReading(int $connectionId): GrpcServiceResponse
@@ -215,6 +234,9 @@ class MeterReadingService
                     }
 
                     $protoReading = new CreateMeterReadingValues;
+                    if (isset($reading['meter_reading_value_id'])) {
+                        $protoReading->setMeterReadingValueId($reading['meter_reading_value_id']);
+                    }
                     $protoReading->setMeterId($meterId);
                     $protoReading->setParameterId($parameterId);
                     $protoReading->setTimezoneId($timezoneId);
