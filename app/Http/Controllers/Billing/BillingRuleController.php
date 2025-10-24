@@ -63,7 +63,7 @@ class BillingRuleController extends Controller
         return redirect()->route('billing-rule.index');
     }
 
-    public function show(int $id): Response
+    public function show(Request $request, int $id): Response
     {
 
         $response = $this->billingRuleService->getBillingRule($id);

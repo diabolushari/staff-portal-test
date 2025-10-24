@@ -144,11 +144,6 @@ class BillingRuleService
         $proto->setId($id);
 
         [$response, $status] = $this->client->GetBillingRule($proto)->wait();
-
-        $billingRule = [];
-        if ($response->getBillingRule() != null) {
-            $billingRule = $this->BillingRuleMessageToArray($response->getBillingRule());
-        }
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -156,6 +151,11 @@ class BillingRuleService
                 $status->code,
                 $status->details
             );
+        }
+
+        $billingRule = [];
+        if ($response->getBillingRule() != null) {
+            $billingRule = $this->BillingRuleMessageToArray($response->getBillingRule());
         }
 
         return GrpcServiceResponse::success($billingRule, $response, $status->code, $status->details);
@@ -308,7 +308,6 @@ class BillingRuleService
             $proto->setEffectiveEnd(DateTimeConverter::convertStringToTimestamp($effectiveEnd));
         }
         $proto->setEffectiveStart(DateTimeConverter::convertStringToTimestamp($effectiveStart));
-        $proto->setEffectiveEnd(DateTimeConverter::convertStringToTimestamp($effectiveEnd));
 
         return $proto;
     }
