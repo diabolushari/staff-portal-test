@@ -403,5 +403,33 @@ export interface BillingRule {
     updated_by?: number,
     created_at?: string,
     updated_at?: string,
-    
 }
+
+export interface ComputedProperty {
+    id: number,
+    name: string,
+    effective_start: string,
+    effective_end: string
+    billing_rule: JSON,
+    calculations: JSON,
+    deleted_at?: string,
+    created_by?: number,
+    updated_by?: number,
+    created_at?: string,
+    updated_at?: string,
+}
+
+export interface ChargeHead {
+    id: number,
+    name: ParameterValues,
+    effective_start: string,
+    effective_end: string
+    billing_rule: JSON,
+    calculations: JSON,
+    deleted_at?: string,
+    created_by?: number,
+    updated_by?: number,
+    created_at?: string,
+    updated_at?: string,
+}
+

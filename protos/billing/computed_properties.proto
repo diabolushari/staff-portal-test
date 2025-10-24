@@ -89,6 +89,24 @@ message ListComputedPropertiesResponse {
   repeated ComputedPropertyMessage computed_properties = 1;
 }
 
+// ----------------- PAGINATED LIST -----------------
+message ComputedPropertyPaginatedListRequest {
+  optional string search = 1;
+  optional int64 billing_rule_id = 2;
+  int32 page_number = 3;        
+  int32 page_size = 4;          
+  optional string sort_by = 5;  
+  optional string sort_direction = 6; 
+}
+
+message ComputedPropertyPaginatedListResponse {
+  repeated ComputedPropertyMessage computed_properties = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
 // ----------------- SERVICE -----------------
 service ComputedPropertyService {
   rpc CreateComputedProperty (CreateComputedPropertyRequest) returns (CreateComputedPropertyResponse);
@@ -96,4 +114,5 @@ service ComputedPropertyService {
   rpc GetComputedProperty (GetComputedPropertyRequest) returns (GetComputedPropertyResponse);
   rpc DeleteComputedProperty (DeleteComputedPropertyRequest) returns (DeleteComputedPropertyResponse);
   rpc ListComputedProperties (ListComputedPropertiesRequest) returns (ListComputedPropertiesResponse);
+  rpc ListComputedPropertiesPaginated (ComputedPropertyPaginatedListRequest) returns (ComputedPropertyPaginatedListResponse);
 }

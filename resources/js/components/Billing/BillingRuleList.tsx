@@ -94,6 +94,12 @@ export default function BillingRuleList({ billingRules }: Props) {
                 <div className='flex flex-row gap-2'>
                   <EditButton link={route('billing-rule.edit', billingRule?.id)} />
                   <DeleteButton onClick={() => handleDeleteClick(billingRule)} />
+
+                  <Button
+                    variant='link'
+                    label='View'
+                    onClick={() => router.get(route('billing-rule.show', billingRule?.id))}
+                  />
                 </div>
                 <div
                   className={`rounded-[50px] px-2.5 py-px ${

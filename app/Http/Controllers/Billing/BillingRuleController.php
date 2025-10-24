@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Billing;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Billing\BillingRuleRequest;
 use App\Services\Billing\BillingRuleService;
+use App\Services\Billing\ChargeHeadService;
 use App\Services\Billing\ComputedPropertyService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ class BillingRuleController extends Controller
 {
     public function __construct(
         public BillingRuleService $billingRuleService,
-        public ComputedPropertyService $computedPropertyService
+        public ComputedPropertyService $computedPropertyService,
+        public ChargeHeadService $chargeHeadService
     ) {}
 
     public function index(Request $request): Response
@@ -63,7 +65,49 @@ class BillingRuleController extends Controller
 
     public function show(int $id): Response
     {
-        return Inertia::render('Billing/BillingShowPage');
+
+        $response = $this->billingRuleService->getBillingRule($id);
+        $computedPropertiesResponse = $this->computedPropertyService->listPaginatedComputedProperties(
+            1,
+            4,
+            null,
+            null,
+            $id,
+        );
+        $paginatedComputedProperties = null;
+        if (! empty($computedPropertiesResponse->data)) {
+            $paginatedComputedProperties = new LengthAwarePaginator(
+                $computedPropertiesResponse->data['computed_properties'],
+                $computedPropertiesResponse->data['total_count'],
+                $computedPropertiesResponse->data['page_size'],
+                $computedPropertiesResponse->data['page_number'],
+                ['path' => request()->url()]
+            );
+        }
+        $chargeHeadsResponse = $this->chargeHeadService->listPaginatedChargeHeads(
+            1,
+            4,
+            null,
+            null,
+            $id,
+            null
+        );
+        $paginatedChargeHeads = null;
+        if (! empty($chargeHeadsResponse->data)) {
+            $paginatedChargeHeads = new LengthAwarePaginator(
+                $chargeHeadsResponse->data['charge_heads'],
+                $chargeHeadsResponse->data['total_count'],
+                $chargeHeadsResponse->data['page_size'],
+                $chargeHeadsResponse->data['page_number'],
+                ['path' => request()->url()]
+            );
+        }
+
+        return Inertia::render('Billing/BillingRuleShowPage', [
+            'billingRule' => $response->data,
+            'paginatedComputedProperties' => $paginatedComputedProperties,
+            'paginatedChargeHeads' => $paginatedChargeHeads,
+        ]);
     }
 
     public function edit(int $id): Response

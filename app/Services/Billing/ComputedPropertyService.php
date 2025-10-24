@@ -11,6 +11,7 @@ use App\Services\utils\StructConverter;
 use Grpc\ChannelCredentials;
 use Proto\Billing\ComputedPropertyFormMessage;
 use Proto\Billing\ComputedPropertyMessage;
+use Proto\Billing\ComputedPropertyPaginatedListRequest;
 use Proto\Billing\ComputedPropertyServiceClient;
 use Proto\Billing\CreateComputedPropertyRequest;
 
@@ -52,6 +53,58 @@ class ComputedPropertyService
     }
 
     public function getComputedProperty() {}
+
+    public function listPaginatedComputedProperties(
+        ?int $pageNumber = 1,
+        ?int $pageSize = 10,
+        ?string $sortBy = null,
+        ?string $sortDirection = null,
+        ?int $billingRuleId = null,
+    ): GrpcServiceResponse {
+        $request = new ComputedPropertyPaginatedListRequest;
+        if ($pageNumber != null) {
+            $request->setPageNumber($pageNumber);
+        }
+        if ($pageSize != null) {
+            $request->setPageSize($pageSize);
+        }
+        if ($sortBy != null) {
+            $request->setSortBy($sortBy);
+        }
+        if ($sortDirection != null) {
+            $request->setSortDirection($sortDirection);
+        }
+        if ($billingRuleId != null) {
+            $request->setBillingRuleId($billingRuleId);
+        }
+
+        [$response, $status] = $this->client->ListComputedPropertiesPaginated($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $computedProperties = [];
+        if ($response->getComputedProperties() != null) {
+            foreach ($response->getComputedProperties() as $computedProperty) {
+                $computedProperties[] = $this->computedPropertyMessageToArray($computedProperty);
+            }
+        }
+        $data = [
+            'computed_properties' => $computedProperties,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ];
+
+        return GrpcServiceResponse::success($data, $response, $status->code, $status->details);
+    }
 
     public function updateComputedProperty() {}
 

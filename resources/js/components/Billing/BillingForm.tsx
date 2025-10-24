@@ -8,8 +8,11 @@ import Input from '@/ui/form/Input'
 import { formatDateForInput } from '@/utils/DateConverter'
 import { Card } from '../ui/card'
 import StrongText from '@/typography/StrongText'
+import { useEffect, useState } from 'react'
+import { FolderMinus } from 'lucide-react'
 
 export default function BillingForm({ billingRule }: { billingRule?: BillingRule }) {
+  const [billingRuleJson, setBillingRuleJson] = useState<any>(billingRule?.rule ?? null)
   const { formData, setFormValue } = useCustomForm({
     name: billingRule?.name ?? '',
     effective_start: formatDateForInput(billingRule?.effective_start ?? ''),
@@ -23,10 +26,35 @@ export default function BillingForm({ billingRule }: { billingRule?: BillingRule
     billingRule ? route('billing-rule.update', billingRule.id) : route('billing-rule.store'),
     { showErrorToast: true }
   )
-
+  useEffect(() => {
+    if (formData.billing_rule || billingRule?.rule) {
+      if (formData.billing_rule_json) {
+        setBillingRuleJson(formData.billing_rule_json)
+      }
+    } else {
+      setBillingRuleJson(null)
+    }
+  }, [formData.billing_rule])
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     post(formData)
+  }
+  const handleBillingRuleChange = (file: File) => {
+    setFormValue('billing_rule')(file)
+
+    // Read the file content
+    if (file && file.type === 'application/json') {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        try {
+          const jsonData = JSON.parse(event.target?.result as string)
+          setFormValue('billing_rule_json')(jsonData)
+        } catch (err) {
+          setFormValue('billing_rule_json')({ error: 'Invalid JSON content' })
+        }
+      }
+      reader.readAsText(file)
+    }
   }
 
   return (
@@ -48,22 +76,7 @@ export default function BillingForm({ billingRule }: { billingRule?: BillingRule
           <FileInput
             label='Billing Rule'
             setValue={(file) => {
-              setFormValue('billing_rule')(file)
-
-              // Read the file content
-              if (file && file.type === 'application/json') {
-                const reader = new FileReader()
-                reader.onload = (event) => {
-                  try {
-                    const jsonData = JSON.parse(event.target?.result as string)
-                    setFormValue('billing_rule_json')(jsonData)
-                  } catch (err) {
-                    console.error('Invalid JSON file:', err)
-                    setFormValue('billing_rule_json')({ error: 'Invalid JSON content' })
-                  }
-                }
-                reader.readAsText(file)
-              }
+              handleBillingRuleChange(file)
             }}
             file={
               typeof formData.billing_rule === 'string'
@@ -97,17 +110,11 @@ export default function BillingForm({ billingRule }: { billingRule?: BillingRule
       </div>
 
       {/* JSON Preview Section */}
-      {billingRule && (
+      {billingRuleJson && (
         <Card className='max-h-[400px] max-w-[1200px] overflow-x-auto overflow-y-scroll'>
           <StrongText className='mb-2 text-base font-semibold'>Billing Rule Data</StrongText>
           <div className=''>
-            <pre>
-              {JSON.stringify(
-                formData.billing_rule_json ? formData.billing_rule_json : billingRule?.rule,
-                null,
-                2
-              )}
-            </pre>
+            <pre>{JSON.stringify(billingRuleJson ?? {}, null, 2)}</pre>
           </div>
         </Card>
       )}
