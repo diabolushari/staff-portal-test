@@ -28,7 +28,6 @@ class BillingRuleController extends Controller
         $search = $request->input('search') ?? null;
         $sortBy = $request->input('sort_by') ?? null;
         $sortDirection = $request->input('sort_direction') ?? null;
-
         $response = $this->billingRuleService->listBillingRulesPaginated($pageNumber, $pageSize, $search, $sortBy, $sortDirection);
         $paginated = null;
         if (! empty($response->data)) {
@@ -43,6 +42,9 @@ class BillingRuleController extends Controller
 
         return Inertia::render('Billing/BillingRuleIndexPage', [
             'billingRules' => $paginated,
+            'filters' => [
+                'search' => $search ?? null,
+            ],
         ]);
     }
 

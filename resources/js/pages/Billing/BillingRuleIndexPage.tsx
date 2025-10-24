@@ -10,9 +10,12 @@ import { Paginator } from '@/ui/ui_interfaces'
 
 interface pageProps {
   billingRules: Paginator<BillingRule>
+  filters: {
+    search: string
+  }
 }
 
-export default function BillingRuleIndexPage({ billingRules }: pageProps) {
+export default function BillingRuleIndexPage({ billingRules, filters }: pageProps) {
   const breadcrumb: BreadcrumbItem[] = [{ title: 'Billing', href: '/billing-rule' }]
 
   return (
@@ -23,7 +26,12 @@ export default function BillingRuleIndexPage({ billingRules }: pageProps) {
       addBtnText='Add Billing Rule'
       addBtnUrl='/billing-rule/create'
     >
-      <ListSearch />
+      <ListSearch
+        title='Billing Rule'
+        placeholder='Search Billing Rule'
+        url='/billing-rule'
+        filters={filters}
+      />
       {billingRules && billingRules.data.length > 0 ? (
         <>
           <BillingRuleList billingRules={billingRules.data} />
