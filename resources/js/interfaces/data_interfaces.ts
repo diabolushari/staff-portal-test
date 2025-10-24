@@ -390,3 +390,18 @@ export interface TariffConfig {
   effective_start: string,
   effective_end?: string
 }
+
+export interface BillingRule {
+    id: number,
+    name: string,
+    effective_start: string,
+    effective_end: string
+    billing_rule: JSON,
+    rule: JSON,
+    deleted_at?: string,
+    created_by?: number,
+    updated_by?: number,
+    created_at?: string,
+    updated_at?: string,
+    
+}

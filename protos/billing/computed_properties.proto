@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.billing;
+
+option php_namespace = "Proto\\Billing";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/empty.proto";
+import "billing/billing_rule.proto";
+
+// ----------------- ENTITY MESSAGE -----------------
+message ComputedPropertyMessage {
+  int64 id = 1;
+  int64 billing_rule_id = 2;
+  string name = 3;
+  google.protobuf.Struct calculations = 4;
+  com.kseb.consumerservice.proto.billing.BillingRuleMessage billing_rule = 5;
+
+
+  google.protobuf.Timestamp effective_start = 6;
+  google.protobuf.Timestamp effective_end = 7;
+
+  google.protobuf.Timestamp created_ts = 8;
+  google.protobuf.Timestamp updated_ts = 9;
+  google.protobuf.Timestamp deleted_ts = 10;
+
+  int32 created_by = 11;
+  int32 updated_by = 12;
+  int32 deleted_by = 13;
+}
+
+// ----------------- FORM / CREATE / UPDATE -----------------
+message ComputedPropertyFormMessage {
+  optional int64 id = 1;
+  int64 billing_rule_id = 2;
+  string name = 3;
+  google.protobuf.Struct calculations = 4;
+  com.kseb.consumerservice.proto.billing.BillingRuleMessage billing_rule = 5;
+
+  google.protobuf.Timestamp effective_start = 6;
+  optional google.protobuf.Timestamp effective_end = 7;
+
+  optional int32 created_by = 8;
+  optional int32 updated_by = 9;
+  optional int32 deleted_by = 10;
+}
+
+// ----------------- CREATE -----------------
+message CreateComputedPropertyRequest {
+  ComputedPropertyFormMessage computed_property = 1;
+}
+message CreateComputedPropertyResponse {
+  ComputedPropertyMessage computed_property = 1;
+}
+
+// ----------------- UPDATE -----------------
+message UpdateComputedPropertyRequest {
+  ComputedPropertyFormMessage computed_property = 1;
+}
+message UpdateComputedPropertyResponse {
+  ComputedPropertyMessage computed_property = 1;
+}
+
+// ----------------- GET -----------------
+message GetComputedPropertyRequest {
+  int64 id = 1;
+}
+message GetComputedPropertyResponse {
+  ComputedPropertyMessage computed_property = 1;
+}
+
+// ----------------- DELETE -----------------
+message DeleteComputedPropertyRequest {
+  int64 id = 1;
+  optional int32 deleted_by = 2;
+}
+message DeleteComputedPropertyResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// ----------------- LIST -----------------
+message ListComputedPropertiesRequest {
+  optional string search = 1; 
+}
+message ListComputedPropertiesResponse {
+  repeated ComputedPropertyMessage computed_properties = 1;
+}
+
+// ----------------- SERVICE -----------------
+service ComputedPropertyService {
+  rpc CreateComputedProperty (CreateComputedPropertyRequest) returns (CreateComputedPropertyResponse);
+  rpc UpdateComputedProperty (UpdateComputedPropertyRequest) returns (UpdateComputedPropertyResponse);
+  rpc GetComputedProperty (GetComputedPropertyRequest) returns (GetComputedPropertyResponse);
+  rpc DeleteComputedProperty (DeleteComputedPropertyRequest) returns (DeleteComputedPropertyResponse);
+  rpc ListComputedProperties (ListComputedPropertiesRequest) returns (ListComputedPropertiesResponse);
+}

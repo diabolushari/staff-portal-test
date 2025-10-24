@@ -1,0 +1,136 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.billing;
+
+option php_namespace = "Proto\\Billing";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/empty.proto";
+
+// ----------------- ENTITY MESSAGE -----------------
+message BillingRuleMessage {
+  int64 id = 1;
+  string name = 2;
+  google.protobuf.Struct rule = 3; 
+
+  google.protobuf.Timestamp effective_start = 4;
+  google.protobuf.Timestamp effective_end = 5;
+
+  google.protobuf.Timestamp created_ts = 6;
+  google.protobuf.Timestamp updated_ts = 7;
+  google.protobuf.Timestamp deleted_ts = 8;
+
+  int32 created_by = 9;
+  int32 updated_by = 10;
+  int32 deleted_by = 11;
+}
+message JsonComputedPropertyFormMessage {
+  optional int64 id = 1;
+  string name = 2;
+  google.protobuf.Struct calculations = 3;
+  com.kseb.consumerservice.proto.billing.BillingRuleMessage billing_rule = 4;
+
+  google.protobuf.Timestamp effective_start = 5;
+  optional google.protobuf.Timestamp effective_end = 6;
+
+  optional int32 created_by = 7;
+  optional int32 updated_by = 8;
+  optional int32 deleted_by = 9;
+}
+message JsonChargeHeadFormMessage {
+  optional int64 id = 1;
+  int64 name_id = 2;
+  google.protobuf.Struct calculations = 3;
+  google.protobuf.Timestamp effective_start = 4;
+  optional google.protobuf.Timestamp effective_end = 5;
+
+  optional int32 created_by = 6;
+  optional int32 updated_by = 7;
+  optional int32 deleted_by = 8;
+}
+
+// ----------------- FORM / CREATE / UPDATE -----------------
+message BillingRuleFormMessage {
+  optional int64 id = 1; 
+  string name = 2;
+  google.protobuf.Struct rule = 3;
+
+  google.protobuf.Timestamp effective_start = 4;
+  optional google.protobuf.Timestamp effective_end = 5;
+
+  optional int32 created_by = 6;
+  optional int32 updated_by = 7;
+  optional int32 deleted_by = 8;
+}
+
+// ----------------- CREATE -----------------
+message CreateBillingRuleRequest {
+  BillingRuleFormMessage billing_rule = 1;
+  repeated JsonComputedPropertyFormMessage computed_properties = 2;
+  repeated JsonChargeHeadFormMessage charge_heads = 3;
+}
+message CreateBillingRuleResponse {
+  BillingRuleMessage billing_rule = 1;
+}
+
+// ----------------- UPDATE -----------------
+message UpdateBillingRuleRequest {
+  BillingRuleFormMessage billing_rule = 1;
+  repeated JsonComputedPropertyFormMessage computed_properties = 2;
+  repeated JsonChargeHeadFormMessage charge_heads = 3;
+}
+message UpdateBillingRuleResponse {
+  BillingRuleMessage billing_rule = 1;
+}
+
+// ----------------- GET -----------------
+message GetBillingRuleRequest {
+  int64 id = 1;
+}
+message GetBillingRuleResponse {
+  BillingRuleMessage billing_rule = 1;
+}
+
+// ----------------- DELETE -----------------
+message DeleteBillingRuleRequest {
+  int64 id = 1;
+  optional int32 deleted_by = 2;
+}
+message DeleteBillingRuleResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// ----------------- LIST -----------------
+message ListBillingRuleRequest {
+  optional string search = 1; 
+}
+message ListBillingRuleResponse {
+  repeated BillingRuleMessage billing_rules = 1;
+}
+message BillingRulePaginatedListRequest {
+  optional string search = 1;
+  int32 page_number = 2;        
+  int32 page_size = 3;          
+  optional string sort_by = 4;  
+  optional string sort_direction = 5; 
+}
+message BillingRulePaginatedListResponse {
+  repeated BillingRuleMessage billing_rules = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
+// ----------------- SERVICE -----------------
+service BillingRuleService {
+  rpc CreateBillingRule (CreateBillingRuleRequest) returns (CreateBillingRuleResponse);
+  rpc UpdateBillingRule (UpdateBillingRuleRequest) returns (UpdateBillingRuleResponse);
+  rpc GetBillingRule (GetBillingRuleRequest) returns (GetBillingRuleResponse);
+  rpc DeleteBillingRule (DeleteBillingRuleRequest) returns (DeleteBillingRuleResponse);
+  rpc ListBillingRules (ListBillingRuleRequest) returns (ListBillingRuleResponse);
+  rpc ListBillingRulesPaginated (BillingRulePaginatedListRequest) returns (BillingRulePaginatedListResponse);
+}

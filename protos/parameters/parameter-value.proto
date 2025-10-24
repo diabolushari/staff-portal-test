@@ -38,7 +38,8 @@ message UpdateParameterValueRequest {
 }
 
 message GetParameterValueRequest {
-  int64 id = 1;
+ optional int64 id = 1;
+ optional string parameter_value = 2;
 }
 
 message DeleteParameterValueRequest {

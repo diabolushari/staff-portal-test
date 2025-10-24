@@ -57,6 +57,11 @@ export const NAV_ITEMS = [
         href: '/tariff-order',
         description: 'Manage tariff',
       },
+      {
+        title: 'Billing',
+        href: '/billing-rule',
+        description: 'Manage billing',
+      },
     ],
   },
 ]
