@@ -5,17 +5,16 @@ import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Pagination from '@/ui/Pagination/Pagination'
 import ListSearch from '@/ui/Search/ListSearch'
-import Table from '@/ui/Table/Table'
 import { Paginator } from '@/ui/ui_interfaces'
 
-interface pageProps {
+interface PageProps {
   billingRules: Paginator<BillingRule>
   filters: {
     search: string
   }
 }
 
-export default function BillingRuleIndexPage({ billingRules, filters }: pageProps) {
+export default function BillingRuleIndexPage({ billingRules, filters }: PageProps) {
   const breadcrumb: BreadcrumbItem[] = [{ title: 'Billing', href: '/billing-rule' }]
 
   return (

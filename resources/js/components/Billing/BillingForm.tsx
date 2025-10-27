@@ -8,8 +8,7 @@ import Input from '@/ui/form/Input'
 import { formatDateForInput } from '@/utils/DateConverter'
 import { Card } from '../ui/card'
 import StrongText from '@/typography/StrongText'
-import { useEffect, useState } from 'react'
-import { FolderMinus } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 
 export default function BillingForm({ billingRule }: { billingRule?: BillingRule }) {
   const [billingRuleJson, setBillingRuleJson] = useState<any>(billingRule?.rule ?? null)
@@ -17,7 +16,7 @@ export default function BillingForm({ billingRule }: { billingRule?: BillingRule
     name: billingRule?.name ?? '',
     effective_start: formatDateForInput(billingRule?.effective_start ?? ''),
     effective_end: formatDateForInput(billingRule?.effective_end ?? ''),
-    billing_rule: billingRule?.billing_rule ?? '',
+    billing_rule: null,
     billing_rule_json: billingRule?.billing_rule ?? '',
     _method: billingRule ? 'PUT' : undefined,
   })
@@ -27,18 +26,20 @@ export default function BillingForm({ billingRule }: { billingRule?: BillingRule
     { showErrorToast: true }
   )
   useEffect(() => {
-    if (formData.billing_rule || billingRule?.rule) {
+    if (formData.billing_rule != null || billingRule?.rule != null) {
       if (formData.billing_rule_json) {
         setBillingRuleJson(formData.billing_rule_json)
       }
     } else {
       setBillingRuleJson(null)
     }
-  }, [formData.billing_rule])
+  }, [formData, billingRule])
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     post(formData)
   }
+
   const handleBillingRuleChange = (file: File) => {
     setFormValue('billing_rule')(file)
 

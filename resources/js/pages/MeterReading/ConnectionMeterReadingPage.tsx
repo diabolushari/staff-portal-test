@@ -68,7 +68,6 @@ export default function ConnectionMeterReadingPage({
             Add Meter Reading
           </button>
         </div>
-
         <div className='flex flex-col gap-6 px-6 pb-6'>
           {meterReadings && meterReadings.length > 0 ? (
             meterReadings.map((meterReading) => (
