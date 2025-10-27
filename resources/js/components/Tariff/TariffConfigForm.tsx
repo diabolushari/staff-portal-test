@@ -49,7 +49,7 @@ export default function TariffConfigForm({
     tariff_order_id: tariffOrder.tariff_order_id,
   })
 
-  const { post, loading } = useInertiaPost<typeof formData>(route('tariff-config.store'), {
+  const { post, loading } = useInertiaPost<typeof formData>(route('tariff-configs.store'), {
     showErrorToast: true,
   })
 

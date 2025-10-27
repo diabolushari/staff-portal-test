@@ -10,7 +10,7 @@ import { Paginator } from '@/ui/ui_interfaces'
 const breadcrumb: BreadcrumbItem[] = [
   {
     title: 'Tariff Order',
-    href: '/tariff-order',
+    href: '/tariff-orders',
   },
 ]
 interface Props {
@@ -29,13 +29,13 @@ export default function TariffOrderIndexPage({ filters, tariffOrders }: Props) {
       breadcrumb={breadcrumb}
       navItems={tariffNavItems}
       leftBarTitle='Tariff Management'
-      addBtnUrl={route('tariff-order.create')}
+      addBtnUrl={route('tariff-orders.create')}
       addBtnText='Tariff Order'
     >
       <ListSearch
         title='Tariff Order search'
         placeholder='Enter tariff order name'
-        url={route('tariff-order.index')}
+        url={route('tariff-orders.index')}
         search={filters?.search}
       />
       {tariffOrders?.data?.length > 0 ? (

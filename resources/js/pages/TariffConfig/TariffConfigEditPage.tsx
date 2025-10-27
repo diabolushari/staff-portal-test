@@ -20,12 +20,16 @@ export default function TariffConfigEditPage({
 }: Props) {
   const breadcrumb: BreadcrumbItem[] = [
     {
-      title: 'Tariff Config',
-      href: route('tariff-config.index'),
+      title: 'Tariff Order',
+      href: route('tariff-orders.index'),
+    },
+    {
+      title: tariff_config?.tariff_order?.order_descriptor ?? 'Tariff Order',
+      href: route('tariff-orders.show', tariff_config.tariff_order_id),
     },
     {
       title: 'Edit',
-      href: route('tariff-config.edit', tariff_config.tariff_config_id),
+      href: route('tariff-configs.edit', tariff_config.tariff_config_id),
     },
   ]
   return (

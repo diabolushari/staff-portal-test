@@ -92,7 +92,7 @@ export default function BillingRuleList({ billingRules }: Props) {
 
               <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
                 <div className='flex flex-row gap-2'>
-                  <EditButton link={route('billing-rule.edit', billingRule?.id)} />
+                  <EditButton link={route('billing-rules.edit', billingRule?.id)} />
                   <DeleteButton onClick={() => handleDeleteClick(billingRule)} />
 
                   <Button

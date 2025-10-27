@@ -75,7 +75,7 @@ class TariffOrderController extends Controller
             return redirect()->back()->with('error', 'Failed to create tariff order');
         }
 
-        return redirect()->route('tariff-order.index');
+        return redirect()->route('tariff-orders.index');
     }
 
     public function show(int $id, Request $request): Response|RedirectResponse
@@ -132,7 +132,7 @@ class TariffOrderController extends Controller
             return redirect()->back()->with('error', 'Failed to update tariff order');
         }
 
-        return redirect()->route('tariff-order.index');
+        return redirect()->route('tariff-orders.index');
     }
 
     public function destroy(int $id): RedirectResponse
@@ -142,6 +142,6 @@ class TariffOrderController extends Controller
             return redirect()->back()->with('error', 'Failed to delete tariff order');
         }
 
-        return redirect()->route('tariff-order.index');
+        return redirect()->route('tariff-orders.index');
     }
 }

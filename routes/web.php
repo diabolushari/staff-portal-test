@@ -97,12 +97,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('connection/{connection_id}/meter-reading/create', GetMeterReadingController::class)->name('meter-reading.create');
     Route::get('connection/{connection_id}/meter-reading/edit', GetMeterReadingEditController::class)->name('meter-reading.edit');
 
-    Route::resource('tariff-order', TariffOrderController::class);
-    Route::resource('tariff-config', TariffConfigController::class);
+    Route::resource('tariff-orders', TariffOrderController::class);
+    Route::resource('tariff-configs', TariffConfigController::class);
     Route::get('tariff-order/{tariffOrderId}/config/create', [TariffConfigController::class, 'create'])
         ->name('tariff-config.create');
 
-    Route::resource('billing-rule', BillingRuleController::class);
+    Route::resource('billing-rules', BillingRuleController::class);
 
 });
 

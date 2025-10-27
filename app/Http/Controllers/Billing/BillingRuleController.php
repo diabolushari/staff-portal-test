@@ -62,7 +62,7 @@ class BillingRuleController extends Controller
             );
         }
 
-        return redirect()->route('billing-rule.index');
+        return redirect()->route('billing-rules.index');
     }
 
     public function show(Request $request, int $id): Response
@@ -125,7 +125,7 @@ class BillingRuleController extends Controller
     {
         $this->billingRuleService->updateBillingRule($request, $id);
 
-        return redirect()->route('billing-rule.index');
+        return redirect()->route('billing-rules.index');
     }
 
     public function destroy(int $id): RedirectResponse
@@ -137,6 +137,6 @@ class BillingRuleController extends Controller
             );
         }
 
-        return redirect()->route('billing-rule.index');
+        return redirect()->route('billing-rules.index');
     }
 }

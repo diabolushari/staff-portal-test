@@ -29,8 +29,8 @@ export default function TariffOrderForm({ tariffOrder }: Readonly<PageProps>) {
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     tariffOrder
-      ? route('tariff-order.update', tariffOrder.tariff_order_id)
-      : route('tariff-order.store'),
+      ? route('tariff-orders.update', tariffOrder.tariff_order_id)
+      : route('tariff-orders.store'),
     {
       showErrorToast: true,
     }
