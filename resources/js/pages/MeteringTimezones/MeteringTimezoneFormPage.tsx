@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { ParameterValues } from '@/interfaces/parameter_types'
@@ -10,14 +10,10 @@ import { route } from 'ziggy-js'
 import Card from '@/ui/Card/Card'
 import MainLayout from '@/layouts/main-layout'
 import type { BreadcrumbItem } from '@/types'
-import { meterNavItems, meterTimezoneNavItems } from '@/components/Navbar/navitems'
+import { meterTimezoneNavItems } from '@/components/Navbar/navitems'
 import { Save, ArrowLeft } from 'lucide-react'
 import { router } from '@inertiajs/react'
 import dayjs from 'dayjs'
-import customParseFormat from 'dayjs/plugin/customParseFormat'
-
-// Enable custom parse format plugin for strict validation
-dayjs.extend(customParseFormat)
 
 interface MeteringTimezone {
   metering_timezone_id?: number
@@ -47,16 +43,8 @@ export default function MeteringTimezoneFormPage({
   timezoneNames,
   isEdit = false,
 }: Props) {
-  console.log(timezone)
-  console.log(timezoneTypes, pricingTypes, timezoneNames)
+  const [timeSummary, setTimeSummary] = useState<string>('')
 
-  // Time validation state
-  const [timeErrors, setTimeErrors] = useState<{
-    timeFormat?: string
-    timeRange?: string
-  }>({})
-
-  // --- BREADCRUMBS ---
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Metering Timezones', href: route('metering-timezone.index') },
     {
@@ -81,96 +69,51 @@ export default function MeteringTimezoneFormPage({
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     isEdit
       ? route('metering-timezone.update', timezone?.metering_timezone_id)
-      : route('metering-timezone.store'),
-    {
-      onComplete: () => {
-        // Redirect handled by controller
-      },
-    }
+      : route('metering-timezone.store')
   )
-
-  // Helper function to create Day.js time object for comparison
-  const createTimeObject = (hours: string, minutes: string) => {
-    if (!hours || !minutes) return null
-
-    // Pad with zeros for consistent format
-    const paddedHours = hours.padStart(2, '0')
-    const paddedMinutes = minutes.padStart(2, '0')
-    const timeString = `${paddedHours}:${paddedMinutes}`
-
-    // Parse with strict validation using base date
-    return dayjs(`2000-01-01 ${timeString}`, 'YYYY-MM-DD HH:mm', true)
-  }
-
-  // Validate individual time components
-  const validateTimeComponents = (hours: string, minutes: string): boolean => {
-    const h = parseInt(hours)
-    const m = parseInt(minutes)
-
-    return !isNaN(h) && !isNaN(m) && h >= 0 && h <= 23 && m >= 0 && m <= 59
-  }
-
-  // Cross-field validation using useEffect with Day.js
-  useEffect(() => {
-    const newTimeErrors: typeof timeErrors = {}
-
-    const fromHours = formData.from_hrs
-    const fromMins = formData.from_mins
-    const toHours = formData.to_hrs
-    const toMins = formData.to_mins
-
-    // Only validate if all fields have values
-    if (fromHours && fromMins && toHours && toMins) {
-      // Validate basic format first
-      const fromValid = validateTimeComponents(fromHours, fromMins)
-      const toValid = validateTimeComponents(toHours, toMins)
-
-      if (!fromValid || !toValid) {
-        newTimeErrors.timeFormat = 'Please enter valid time in 24-hour format (00-23:00-59)'
-      } else {
-        // Create Day.js objects for comparison
-        const fromTime = createTimeObject(fromHours, fromMins)
-        const toTime = createTimeObject(toHours, toMins)
-
-        // Check if Day.js objects are valid
-        if (!fromTime?.isValid() || !toTime?.isValid()) {
-          newTimeErrors.timeFormat = 'Invalid time format detected'
-        } else {
-          // Compare times using Day.js - fromTime should be before toTime
-          if (!fromTime.isBefore(toTime) && !fromTime.isSame(toTime)) {
-            // If fromTime is not before toTime and not same, then it's after
-            newTimeErrors.timeRange = 'From time must be earlier than To time'
-          } else if (fromTime.isSame(toTime)) {
-            // If times are the same, that's also invalid for a range
-            newTimeErrors.timeRange = 'From time and To time cannot be the same'
-          }
-
-          // Optional: Check for reasonable time ranges (e.g., not too short)
-          const diffMinutes = toTime.diff(fromTime, 'minutes')
-          if (diffMinutes < 1 && diffMinutes >= 0) {
-            newTimeErrors.timeRange = 'Time range must be at least 1 minute'
-          }
-        }
-      }
-    }
-
-    setTimeErrors(newTimeErrors)
-  }, [formData.from_hrs, formData.from_mins, formData.to_hrs, formData.to_mins])
-
-  // Enhanced handleSubmit with Day.js validation
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    // Check for time validation errors
-    if (Object.keys(timeErrors).length > 0) {
-      return // Don't submit if there are time validation errors
-    }
-
-    post(formData)
-  }
 
   const handleBack = () => {
     router.get(route('metering-timezone.index'))
+  }
+
+  // Utility to create readable time string
+  const formatTime = (hrs: string, mins: string) =>
+    `${hrs.padStart(2, '0')}:${mins.padStart(2, '0')}`
+
+  // Compute time difference — supports next-day scenario
+  const computeTimeSummary = (fromH: string, fromM: string, toH: string, toM: string) => {
+    if (!fromH || !fromM || !toH || !toM) return ''
+
+    const start = dayjs(`2000-01-01 ${formatTime(fromH, fromM)}`)
+    let end = dayjs(`2000-01-01 ${formatTime(toH, toM)}`)
+
+    // Handle "next day" scenario (e.g. 22:00 → 06:00)
+    if (end.isBefore(start)) {
+      end = end.add(1, 'day')
+    }
+
+    const duration = end.diff(start, 'minutes')
+    const hours = Math.floor(duration / 60)
+    const minutes = duration % 60
+
+    const nextDayText = end.isAfter(start, 'day') ? ' (next day)' : ''
+    return `From ${formatTime(fromH, fromM)} to ${formatTime(toH, toM)}${nextDayText} — Duration: ${hours}h ${minutes}m`
+  }
+
+  // Update preview whenever user types
+  const handleTimeChange = (key: string, value: string) => {
+    setFormValue(key)(value)
+    const { from_hrs, from_mins, to_hrs, to_mins } = {
+      ...formData,
+      [key]: value,
+    }
+    const summary = computeTimeSummary(from_hrs, from_mins, to_hrs, to_mins)
+    setTimeSummary(summary)
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    post(formData)
   }
 
   return (
@@ -230,7 +173,7 @@ export default function MeteringTimezoneFormPage({
                 required
               />
             </div>
-            <div className='mt-6 grid grid-cols-1 gap-6 p-6 md:grid-cols-1'>
+            <div className='mt-6 grid grid-cols-1 gap-6 p-6'>
               <SelectList
                 label='Timezone Name'
                 list={timezoneNames}
@@ -249,43 +192,11 @@ export default function MeteringTimezoneFormPage({
               <StrongText className='text-base font-semibold'>Time Range Configuration</StrongText>
             </div>
 
-            {/* Display time validation errors */}
-            {(timeErrors.timeFormat || timeErrors.timeRange) && (
-              <div className='mx-6 mt-4 rounded-md border border-red-200 bg-red-50 p-3'>
-                {timeErrors.timeFormat && (
-                  <p className='mb-1 text-sm text-red-600'> {timeErrors.timeFormat}</p>
-                )}
-                {timeErrors.timeRange && (
-                  <p className='text-sm text-red-600'> {timeErrors.timeRange}</p>
-                )}
+            {timeSummary && (
+              <div className='mx-6 mt-4 rounded-md border border-blue-200 bg-blue-50 p-3'>
+                <p className='text-sm text-blue-700'>{timeSummary}</p>
               </div>
             )}
-
-            {/* Show time preview when valid */}
-            {!Object.keys(timeErrors).length &&
-              formData.from_hrs &&
-              formData.from_mins &&
-              formData.to_hrs &&
-              formData.to_mins && (
-                <div className='mx-6 mt-4 rounded-md border border-green-200 bg-green-50 p-3'>
-                  <p className='text-sm text-green-700'>
-                    Time Range: {formData.from_hrs.padStart(2, '0')}:
-                    {formData.from_mins.padStart(2, '0')} - {formData.to_hrs.padStart(2, '0')}:
-                    {formData.to_mins.padStart(2, '0')}
-                    {(() => {
-                      const fromTime = createTimeObject(formData.from_hrs, formData.from_mins)
-                      const toTime = createTimeObject(formData.to_hrs, formData.to_mins)
-                      if (fromTime?.isValid() && toTime?.isValid()) {
-                        const duration = toTime.diff(fromTime, 'minutes')
-                        const hours = Math.floor(duration / 60)
-                        const minutes = duration % 60
-                        return ` (Duration: ${hours}h ${minutes}m)`
-                      }
-                      return ''
-                    })()}
-                  </p>
-                </div>
-              )}
 
             <div className='mt-6 grid grid-cols-1 gap-6 p-6 md:grid-cols-2'>
               <div className='space-y-4'>
@@ -296,9 +207,8 @@ export default function MeteringTimezoneFormPage({
                     type='number'
                     min={0}
                     max={23}
-                    setValue={setFormValue('from_hrs')}
+                    setValue={(val) => handleTimeChange('from_hrs', val)}
                     value={formData.from_hrs}
-                    error={errors?.from_hrs}
                     placeholder='00'
                     required
                   />
@@ -307,9 +217,8 @@ export default function MeteringTimezoneFormPage({
                     type='number'
                     min={0}
                     max={59}
-                    setValue={setFormValue('from_mins')}
+                    setValue={(val) => handleTimeChange('from_mins', val)}
                     value={formData.from_mins}
-                    error={errors?.from_mins}
                     placeholder='00'
                     required
                   />
@@ -323,9 +232,8 @@ export default function MeteringTimezoneFormPage({
                     type='number'
                     min={0}
                     max={23}
-                    setValue={setFormValue('to_hrs')}
+                    setValue={(val) => handleTimeChange('to_hrs', val)}
                     value={formData.to_hrs}
-                    error={errors?.to_hrs}
                     placeholder='00'
                     required
                   />
@@ -334,9 +242,8 @@ export default function MeteringTimezoneFormPage({
                     type='number'
                     min={0}
                     max={59}
-                    setValue={setFormValue('to_mins')}
+                    setValue={(val) => handleTimeChange('to_mins', val)}
                     value={formData.to_mins}
-                    error={errors?.to_mins}
                     placeholder='00'
                     required
                   />
@@ -357,7 +264,7 @@ export default function MeteringTimezoneFormPage({
             <Button
               label={isEdit ? 'Update Timezone' : 'Create Timezone'}
               type='submit'
-              disabled={loading || Object.keys(timeErrors).length > 0}
+              disabled={loading}
               variant='primary'
               icon={<Save className='mr-2 h-4 w-4' />}
             />
