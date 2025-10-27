@@ -266,7 +266,6 @@ export default function MeteringTimezoneFormPage({
               type='submit'
               disabled={loading}
               variant='primary'
-              icon={<Save className='mr-2 h-4 w-4' />}
             />
           </div>
         </form>
