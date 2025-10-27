@@ -203,11 +203,17 @@ class MeteringTimezoneService
         return GrpcServiceResponse::success(self::timezoneProtoToArray($response), $response, $status->code, $status->details);
     }
 
-    public function timezoneByGroupBymessageToArray(TimezoneGroup $timezoneGroup)
+    public function timezoneByGroupBymessageToArray(TimezoneGroup $timezoneGroup): array
     {
+        // Convert RepeatedField to normal PHP array (preserves object type)
+        $meteringTimezones = iterator_to_array($timezoneGroup->getMeteringTimezones());
+
         return [
             'timezone_type' => self::transformParameterValueToArray($timezoneGroup->getTimezoneType()),
-            'metering_timezones' => array_map(fn (MeteringTimezoneResponse $tz) => self::timezoneProtoToArray($tz), $timezoneGroup->getMeteringTimezones()),
+            'metering_timezones' => array_map(
+                fn (MeteringTimezoneResponse $tz) => self::timezoneProtoToArray($tz),
+                $meteringTimezones
+            ),
         ];
     }
 
