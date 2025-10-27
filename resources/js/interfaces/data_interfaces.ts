@@ -69,6 +69,7 @@ export interface MeterConnectionMapping {
   updated_ts?: string
   created_by: number
   updated_by: number
+  meter: Meter
 }
 
 export interface Connection {
@@ -201,6 +202,7 @@ export interface Meter {
   meter_id: number
   meter_serial: string
   ownership_type?: Partial<ParameterValues> | null
+  meter_profile?: ParameterValues | null
   meter_make?: Partial<ParameterValues> | null
   meter_type?: Partial<ParameterValues> | null
   meter_category?: Partial<ParameterValues> | null
@@ -316,13 +318,9 @@ export interface MeterReading {
   id: number
   meter_reading_detail_id: number
   connection_id: number
-  normal_pf: number
-  peak_pf: number
-  offpeak_pf: number
   metering_date: string
   reading_start_date: string
   reading_end_date: string
-  average_power_factor: number
   single_reading: boolean
   multiple_reading: boolean
   anomaly_id: number
@@ -338,6 +336,34 @@ export interface MeterReading {
   created_by: number
   updated_by: number
   is_active: boolean
+  values: MeterReadingValue[]
+}
+export interface MeterReadingValue {
+  id: number
+  meter_reading_id: number
+  meter_id: number
+  meter_profile_parameter_id: number
+  meter_profile_parameter?: MeterProfileParameter
+  time_zone_id: number
+  time_zone?: Partial<ParameterValues> | null
+  final_reading: number
+  initial_reading: number
+  difference: number
+  meter?: Meter
+}
+export interface MeterProfileParameter {
+  version_id: number
+  meter_parameter_id: number
+  profile_id: number
+  name: string
+  display_name: string
+}
+export interface MeterReadingPowerFactor{
+  id: number
+  meter_reading_id: number
+  average_power_factor: number
+  meter_reading: MeterReading
+  meter: Meter
 }
 export interface TariffOrder {
   tariff_order_id: number
@@ -364,3 +390,46 @@ export interface TariffConfig {
   effective_start: string,
   effective_end?: string
 }
+
+export interface BillingRule {
+    id: number,
+    name: string,
+    effective_start: string,
+    effective_end: string
+    billing_rule: JSON,
+    rule: JSON,
+    deleted_at?: string,
+    created_by?: number,
+    updated_by?: number,
+    created_at?: string,
+    updated_at?: string,
+}
+
+export interface ComputedProperty {
+    id: number,
+    name: string,
+    effective_start: string,
+    effective_end: string
+    billing_rule: JSON,
+    calculations: JSON,
+    deleted_at?: string,
+    created_by?: number,
+    updated_by?: number,
+    created_at?: string,
+    updated_at?: string,
+}
+
+export interface ChargeHead {
+    id: number,
+    name: ParameterValues,
+    effective_start: string,
+    effective_end: string
+    billing_rule: JSON,
+    calculations: JSON,
+    deleted_at?: string,
+    created_by?: number,
+    updated_by?: number,
+    created_at?: string,
+    updated_at?: string,
+}
+

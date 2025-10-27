@@ -15,6 +15,7 @@ use Proto\MeterReading\ListMeterReadingRequest;
 use Proto\MeterReading\MeterReadingMessage;
 use Proto\MeterReading\MeterReadingServiceClient;
 use Proto\MeterReading\ReadingValueMessage;
+use Proto\MeterReading\UpdateMeterReadingRequest;
 
 class MeterReadingService
 {
@@ -161,6 +162,22 @@ class MeterReadingService
         return GrpcServiceResponse::success($meterReadingArray, $response, $status->code, $status->details);
     }
 
+    public function updateMeterReading(MeterReadingForm $request, int $id): GrpcServiceResponse
+    {
+        $grpcRequest = $this->updateMeterReadingToProto($request, $id);
+        [$response, $status] = $this->client->UpdateMeterReading($grpcRequest)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success([], $response, $status->code, $status->details);
+    }
+
     public function latestMeterReading(int $connectionId): GrpcServiceResponse
     {
         $protoRequest = new LatestMeterReadingRequest;
@@ -268,6 +285,124 @@ class MeterReadingService
                     }
 
                     $protoReading = new CreateMeterReadingValues;
+                    if (isset($reading['meter_reading_value_id'])) {
+                        $protoReading->setMeterReadingValueId($reading['meter_reading_value_id']);
+                    }
+                    $protoReading->setMeterId($meterId);
+                    $protoReading->setParameterId($parameterId);
+                    $protoReading->setTimezoneId($timezoneId);
+
+                    if ($initial !== null) {
+                        $protoReading->setInitialReading((float) $initial);
+                    }
+                    if ($final !== null) {
+                        $protoReading->setFinalReading((float) $final);
+                    }
+                    if ($diff !== null) {
+                        $protoReading->setDifference((float) $diff);
+                    }
+                    if ($value !== null) {
+                        $protoReading->setValue((float) $value);
+                    }
+
+                    $protoReading->setCreatedBy(1);
+
+                    $protoRequest->getReadings()[] = $protoReading;
+
+                }
+            }
+        }
+
+        return $protoRequest;
+    }
+
+    public function updateMeterReadingToProto(MeterReadingForm $request, int $id): UpdateMeterReadingRequest
+    {
+        $protoRequest = new UpdateMeterReadingRequest;
+        $protoRequest->setMeterReadingId($id);
+
+        $protoRequest->setConnectionId($request->connectionId);
+        $protoRequest->setMeteringDate($request->meteringDate);
+        $protoRequest->setReadingStartDate($request->readingStartDate);
+        $protoRequest->setReadingEndDate($request->readingEndDate);
+
+        if ($request->readingType === 'single_reading') {
+            $protoRequest->setSingleReading(true);
+            $protoRequest->setMultipleReading(false);
+        } else {
+            $protoRequest->setMultipleReading(true);
+            $protoRequest->setSingleReading(false);
+        }
+        if ($request->ctHealthId) {
+            $protoRequest->setCtHealthId($request->ctHealthId);
+        }
+        if ($request->ptHealthId) {
+            $protoRequest->setPtHealthId($request->ptHealthId);
+        }
+        if ($request->faultyDate) {
+            $protoRequest->setFaultyDate($request->faultyDate);
+        }
+
+        $protoRequest->setAnomalyId($request->anomalyId);
+        $protoRequest->setMeterHealthId($request->meterHealthId);
+        $protoRequest->setCtptHealthId($request->ctptHealthId);
+        $protoRequest->setVoltageR($request->voltageR);
+        $protoRequest->setVoltageY($request->voltageY);
+        $protoRequest->setVoltageB($request->voltageB);
+        $protoRequest->setCurrentR($request->currentR);
+        $protoRequest->setCurrentY($request->currentY);
+        $protoRequest->setCurrentB($request->currentB);
+        $protoRequest->setRemarks($request->remarks);
+        $protoRequest->setIsActive(true);
+        $protoRequest->setUpdatedBy(1);
+
+        // 🔑 Flatten readings_by_meter into MeterReadingValue list
+        foreach ($request->readingsByMeter as $meter) {
+            if (empty($meter['meter_id'])) {
+                continue; // skip if meter_id missing
+            }
+            $meterId = (int) $meter['meter_id'];
+
+            if (empty($meter['parameters']) || ! is_array($meter['parameters'])) {
+                continue; // skip if no parameters
+            }
+
+            foreach ($meter['parameters'] as $parameter) {
+                if (empty($parameter['meter_parameter_id'])) {
+                    continue; // skip if parameter_id missing
+                }
+                $parameterId = (int) $parameter['meter_parameter_id'];
+
+                if (empty($parameter['readings']) || ! is_array($parameter['readings'])) {
+                    continue; // skip if no readings
+                }
+
+                foreach ($parameter['readings'] as $reading) {
+                    if (empty($reading['timezone_id'])) {
+                        continue; // skip if timezone missing
+                    }
+                    $timezoneId = (int) $reading['timezone_id'];
+
+                    $values = $reading['values'] ?? null;
+                    if (! $values || ! is_array($values)) {
+                        continue; // skip if no values
+                    }
+
+                    // extract safely, default to null
+                    $initial = $values['initial'] ?? null;
+                    $final = $values['final'] ?? null;
+                    $diff = $values['diff'] ?? null;
+                    $value = $values['final'] ?? null;
+
+                    // ensure required values exist (initial/final/diff/value at least one must be non-null)
+                    if ($initial === null && $final === null && $diff === null && $value === null) {
+                        continue; // nothing to save
+                    }
+
+                    $protoReading = new CreateMeterReadingValues;
+                    if (isset($reading['meter_reading_value_id'])) {
+                        $protoReading->setMeterReadingValueId($reading['meter_reading_value_id']);
+                    }
                     $protoReading->setMeterId($meterId);
                     $protoReading->setParameterId($parameterId);
                     $protoReading->setTimezoneId($timezoneId);

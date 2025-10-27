@@ -270,6 +270,7 @@ class MeterConnectionMappingService
             'updated_ts' => $updatedTs,
             'created_by' => $rel->getCreatedBy(),
             'updated_by' => $rel->getUpdatedBy(),
+            'meter' => $meter,
         ];
     }
 

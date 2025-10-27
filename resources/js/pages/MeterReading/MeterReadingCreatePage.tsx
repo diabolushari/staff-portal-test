@@ -10,19 +10,24 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 import { BreadcrumbItem } from '@/types'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
+import { Connection, ConsumerData, MeterReading } from '@/interfaces/data_interfaces'
 
 interface Props {
-  connectionWithConsumer: any
+  connectionWithConsumer: ConsumerData
   meterHealthTypes: ParameterValues[]
   ctptHealthTypes: ParameterValues[]
   ctHealthTypes: ParameterValues[]
   ptHealthTypes: ParameterValues[]
   anomalyTypes: ParameterValues[]
   metersWithTimezonesAndProfiles: any[]
-  latestMeterReading: any
+  latestMeterReading: MeterReading
   editMode: boolean
 }
-function transformToFormData(values: any[], metersWithTimezonesAndProfiles: any[]) {
+function transformToFormData(
+  values: any[],
+  metersWithTimezonesAndProfiles: any[],
+  editMode: boolean
+) {
   // Group readings by meter
   const groupedByMeter = metersWithTimezonesAndProfiles.map((meter) => {
     const meterReadings = values.filter((v) => v.meter_id === meter.meter_id)
@@ -38,13 +43,9 @@ function transformToFormData(values: any[], metersWithTimezonesAndProfiles: any[
           timezone_id: tz.timezone_id,
           timezone_name: tz.timezone_name,
           values: {
-            initial: match?.initial_reading ?? 0,
-            final: match?.final_reading ?? '',
-            diff:
-              match?.difference ??
-              (match?.final_reading && match?.initial_reading
-                ? match.final_reading - match.initial_reading
-                : ''),
+            initial: editMode ? match?.final_reading : (match?.initial_reading ?? 0),
+            final: editMode ? match?.final_reading : '',
+            diff: editMode ? match?.difference : '0',
           },
         }
       })
@@ -116,6 +117,7 @@ export default function MeterReadingCreatePage({
     },
   ]
   const { formData, setFormValue } = useCustomForm({
+    id: editMode ? latestMeterReading?.id : '',
     connection_id: connectionWithConsumer?.connection?.connection_id,
     metering_date: getToday(),
     reading_start_date: getNextDay(latestMeterReading?.reading_end_date) ?? '',
@@ -137,8 +139,14 @@ export default function MeterReadingCreatePage({
     current_b: editMode ? latestMeterReading?.current_b : '',
     remarks: editMode ? latestMeterReading?.remarks : '',
     readings_by_meter: [],
+    _method: editMode ? 'PUT' : undefined,
   })
-  const { post, errors } = useInertiaPost(route('meter-reading.store'))
+  const { post, errors } = useInertiaPost(
+    editMode ? route('meter-reading.update', formData.id) : route('meter-reading.store'),
+    {
+      showErrorToast: true,
+    }
+  )
 
   const [activeStep, setActiveStep] = useState(0)
 
@@ -149,7 +157,8 @@ export default function MeterReadingCreatePage({
     if (latestMeterReading?.values?.length > 0) {
       const transformed = transformToFormData(
         latestMeterReading.values,
-        metersWithTimezonesAndProfiles
+        metersWithTimezonesAndProfiles,
+        editMode
       )
 
       setFormValue('readings_by_meter')(transformed)

@@ -202,11 +202,15 @@ class ParameterValueService
         return GrpcServiceResponse::success($parameterValueArray, $response, $status->code, $status->details);
     }
 
-    public function getParameterValue(int|string $id): GrpcServiceResponse
+    public function getParameterValue(?int $id = null, ?string $parameterValue = null): GrpcServiceResponse
     {
         $request = new GetParameterValueRequest;
-        $request->setId((int) $id);
-
+        if ($id) {
+            $request->setId((int) $id);
+        }
+        if ($parameterValue) {
+            $request->setParameterValue($parameterValue);
+        }
         [$response, $status] = $this->client->getParameterValue($request)->wait();
 
         if ($status->code !== 0) {

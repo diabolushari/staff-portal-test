@@ -82,3 +82,11 @@ export const tariffNavItems: navItem[] = [
     icon: <ListIcon className='h-4 w-4' />,
   },
 ]
+
+export const billingNavItems: navItem[] = [
+  {
+    title: 'Billing',
+    href: '/billing-rule',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+]

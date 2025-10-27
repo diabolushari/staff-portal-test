@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ParameterDefinitionListApiController;
 use App\Http\Controllers\Api\ParameterDomainListApiController;
 use App\Http\Controllers\Api\SystemModuleApiController;
 use App\Http\Controllers\Api\Tariff\TariffOrderDownloadApiController;
+use App\Http\Controllers\Billing\BillingRuleController;
 use App\Http\Controllers\Connection\ConnectionController;
 use App\Http\Controllers\Connection\ConsumerController;
 use App\Http\Controllers\Connection\CreateConsumerController;
@@ -100,6 +101,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('tariff-config', TariffConfigController::class);
     Route::get('tariff-order/{tariffOrderId}/config/create', [TariffConfigController::class, 'create'])
         ->name('tariff-config.create');
+
+    Route::resource('billing-rule', BillingRuleController::class);
 
 });
 

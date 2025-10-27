@@ -120,6 +120,7 @@ class GetMeterReadingController extends Controller
             'latestMeterReading' => $latestMeterReading->data,
             'ctHealthTypes' => $ctHealthTypes->data,
             'ptHealthTypes' => $ptHealthTypes->data,
+            'editMode' => false,
         ]);
     }
 }

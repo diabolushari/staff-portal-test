@@ -18,6 +18,8 @@ service MeteringTimezoneService {
     rpc ListMeteringTimezones(ListMeteringTimezonesRequest) returns (ListMeteringTimezonesResponse);
     rpc UpdateMeteringTimezone(UpdateMeteringTimezoneRequest) returns (MeteringTimezoneResponse);
     rpc DeleteMeteringTimezone(DeleteMeteringTimezoneRequest) returns (google.protobuf.Empty);
+
+    rpc ListTimezoneGroupByMeteringType(ListTimezoneGroupByMeteringTypeRequest) returns (ListTimezoneGroupByMeteringTypeResponse);
 }
 
 message CreateMeteringTimezoneRequest {
@@ -89,4 +91,18 @@ message MeteringTimezoneResponse {
     optional google.protobuf.Timestamp updated_ts = 14;
     int32 created_by = 15;
     optional int32 updated_by = 16;
+}
+message ListTimezoneGroupByMeteringTypeRequest {
+  optional int32 pricing_type_id = 1; // filter by pricing type if needed
+}
+
+// Each group contains the timezone_type and the list of timezones in that group
+message TimezoneGroup {
+  parameters.ParameterValueProto timezone_type = 1;
+  repeated MeteringTimezoneResponse metering_timezones = 2;
+}
+
+// Response message containing multiple groups
+message ListTimezoneGroupByMeteringTypeResponse {
+  repeated TimezoneGroup timezone_groups = 1;
 }
