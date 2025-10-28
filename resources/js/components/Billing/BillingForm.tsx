@@ -1,6 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { BillingRule } from '@/interfaces/data_interfaces'
+import { BillingRule, BillingRuleJson } from '@/interfaces/data_interfaces'
 import Button from '@/ui/button/Button'
 import DatePicker from '@/ui/form/DatePicker'
 import FileInput from '@/ui/form/FileInput'
@@ -11,24 +11,26 @@ import StrongText from '@/typography/StrongText'
 import React, { useEffect, useState } from 'react'
 
 export default function BillingForm({ billingRule }: { billingRule?: BillingRule }) {
-  const [billingRuleJson, setBillingRuleJson] = useState<any>(billingRule?.rule ?? null)
+  const [billingRuleJson, setBillingRuleJson] = useState<BillingRuleJson | null>(
+    billingRule?.rule ?? null
+  )
   const { formData, setFormValue } = useCustomForm({
     name: billingRule?.name ?? '',
     effective_start: formatDateForInput(billingRule?.effective_start ?? ''),
     effective_end: formatDateForInput(billingRule?.effective_end ?? ''),
     billing_rule: null,
-    billing_rule_json: billingRule?.billing_rule ?? '',
+    billing_rule_json: billingRule?.rule ?? '',
     _method: billingRule ? 'PUT' : undefined,
   })
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
-    billingRule ? route('billing-rule.update', billingRule.id) : route('billing-rule.store'),
+    billingRule ? route('billing-rules.update', billingRule.id) : route('billing-rules.store'),
     { showErrorToast: true }
   )
   useEffect(() => {
     if (formData.billing_rule != null || billingRule?.rule != null) {
       if (formData.billing_rule_json) {
-        setBillingRuleJson(formData.billing_rule_json)
+        setBillingRuleJson(formData.billing_rule_json as BillingRuleJson)
       }
     } else {
       setBillingRuleJson(null)

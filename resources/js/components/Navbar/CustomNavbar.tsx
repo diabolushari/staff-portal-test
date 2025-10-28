@@ -54,12 +54,12 @@ export const NAV_ITEMS = [
       },
       {
         title: 'Tariff Management',
-        href: '/tariff-order',
+        href: '/tariff-orders',
         description: 'Manage tariff',
       },
       {
         title: 'Billing',
-        href: '/billing-rule',
+        href: '/billing-rules',
         description: 'Manage billing',
       },
     ],

@@ -396,8 +396,7 @@ export interface BillingRule {
     name: string,
     effective_start: string,
     effective_end: string
-    billing_rule: JSON,
-    rule: JSON,
+    rule: BillingRuleJson,
     deleted_at?: string,
     created_by?: number,
     updated_by?: number,
@@ -410,7 +409,6 @@ export interface ComputedProperty {
     name: string,
     effective_start: string,
     effective_end: string
-    billing_rule: JSON,
     calculations: JSON,
     deleted_at?: string,
     created_by?: number,
@@ -423,8 +421,7 @@ export interface ChargeHead {
     id: number,
     name: ParameterValues,
     effective_start: string,
-    effective_end: string
-    billing_rule: JSON,
+    effective_end: string,
     calculations: JSON,
     deleted_at?: string,
     created_by?: number,
@@ -432,4 +429,13 @@ export interface ChargeHead {
     created_at?: string,
     updated_at?: string,
 }
+export interface BillingRuleJson {
+    id: number,
+    no_of_zones: number,
+    name: string,
+    computed_properties: ComputedProperty[],
+    charge_heads: ChargeHead[]
+    
+}
+
 

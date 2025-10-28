@@ -6,9 +6,12 @@ use Google\Protobuf\Timestamp;
 
 class DateTimeConverter
 {
-    public static function convertStringToTimestamp(?string $date): Timestamp
+    public static function convertStringToTimestamp(?string $date): ?Timestamp
     {
         $timestamp = new Timestamp;
+        if ($date === null) {
+            return null;
+        }
 
         if ($date !== null) {
             $seconds = strtotime($date);

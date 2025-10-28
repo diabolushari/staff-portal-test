@@ -38,6 +38,7 @@ class BillingRuleService
     public function createBillingRule(BillingRuleRequest $request): GrpcServiceResponse
     {
         $proto = new CreateBillingRuleRequest;
+        $request->validateJsonStructure();
         $jsonContents = $request->billingRule->get();
         $decoded = json_decode($jsonContents, true);
         $computedProperties = [];
@@ -283,10 +284,14 @@ class BillingRuleService
         $proto = new JsonComputedPropertyFormMessage;
         $proto->setName($jsonComputedPropertyFormMessage['name']);
         $proto->setCalculations(ArrayToStructConverter::convert($jsonComputedPropertyFormMessage['calculations']));
+        $effectiveStart = DateTimeConverter::convertStringToTimestamp($effectiveStart);
+        $effectiveEnd = DateTimeConverter::convertStringToTimestamp($effectiveEnd);
         if ($effectiveEnd != null) {
-            $proto->setEffectiveEnd(DateTimeConverter::convertStringToTimestamp($effectiveEnd));
+            $proto->setEffectiveEnd($effectiveEnd);
         }
-        $proto->setEffectiveStart(DateTimeConverter::convertStringToTimestamp($effectiveStart));
+        if ($effectiveStart != null) {
+            $proto->setEffectiveStart($effectiveStart);
+        }
 
         return $proto;
     }
@@ -304,10 +309,14 @@ class BillingRuleService
 
         $proto->setNameId($parameter->data['id'] ?? 0);
         $proto->setCalculations(ArrayToStructConverter::convert($jsonChargeHeadFormMessage['calculations']));
+        $effectiveStart = DateTimeConverter::convertStringToTimestamp($effectiveStart);
+        $effectiveEnd = DateTimeConverter::convertStringToTimestamp($effectiveEnd);
         if ($effectiveEnd != null) {
-            $proto->setEffectiveEnd(DateTimeConverter::convertStringToTimestamp($effectiveEnd));
+            $proto->setEffectiveEnd($effectiveEnd);
         }
-        $proto->setEffectiveStart(DateTimeConverter::convertStringToTimestamp($effectiveStart));
+        if ($effectiveStart != null) {
+            $proto->setEffectiveStart($effectiveStart);
+        }
 
         return $proto;
     }

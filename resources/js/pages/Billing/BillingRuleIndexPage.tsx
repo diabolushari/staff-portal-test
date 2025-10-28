@@ -15,7 +15,7 @@ interface PageProps {
 }
 
 export default function BillingRuleIndexPage({ billingRules, filters }: PageProps) {
-  const breadcrumb: BreadcrumbItem[] = [{ title: 'Billing', href: '/billing-rule' }]
+  const breadcrumb: BreadcrumbItem[] = [{ title: 'Billing', href: '/billing-rules' }]
 
   return (
     <MainLayout
@@ -23,12 +23,12 @@ export default function BillingRuleIndexPage({ billingRules, filters }: PageProp
       leftBarTitle='Billing Rule'
       navItems={billingNavItems}
       addBtnText='Add Billing Rule'
-      addBtnUrl='/billing-rule/create'
+      addBtnUrl='/billing-rules/create'
     >
       <ListSearch
         title='Billing Rule'
         placeholder='Search Billing Rule'
-        url='/billing-rule'
+        url='/billing-rules'
         filters={filters}
       />
       {billingRules && billingRules.data.length > 0 ? (

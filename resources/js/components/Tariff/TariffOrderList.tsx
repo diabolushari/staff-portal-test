@@ -61,13 +61,13 @@ export default function TariffOrderList({ tariff_orders }: Readonly<Props>) {
               <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
                 <div className='flex items-center gap-2'>
                   <EditButton
-                    onClick={() => router.visit(route('tariff-order.edit', order.tariff_order_id))}
+                    onClick={() => router.visit(route('tariff-orders.edit', order.tariff_order_id))}
                   />
                   <DeleteButton onClick={() => handleDelete(order)} />
                 </div>
                 <div className='flex items-center gap-2'>
                   <Button
-                    onClick={() => router.visit(route('tariff-order.show', order.tariff_order_id))}
+                    onClick={() => router.visit(route('tariff-orders.show', order.tariff_order_id))}
                     label='View'
                     variant='link'
                   />
@@ -88,7 +88,7 @@ export default function TariffOrderList({ tariff_orders }: Readonly<Props>) {
         <DeleteModal
           setShowModal={setDeleteModalOpen}
           title='Delete Tariff Order'
-          url={route('tariff-order.destroy', deleteModalOrder?.tariff_order_id)}
+          url={route('tariff-orders.destroy', deleteModalOrder?.tariff_order_id)}
         />
       )}
     </div>

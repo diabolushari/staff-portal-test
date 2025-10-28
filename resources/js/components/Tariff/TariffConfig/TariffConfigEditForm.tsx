@@ -41,7 +41,7 @@ export default function TariffConfigEditForm({
     _method: 'PUT',
   })
   const { post, errors, loading } = useInertiaPost<typeof formData>(
-    route('tariff-config.update', tariff_config.tariff_config_id)
+    route('tariff-configs.update', tariff_config.tariff_config_id)
   )
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

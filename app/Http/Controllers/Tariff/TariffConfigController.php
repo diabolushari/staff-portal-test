@@ -22,7 +22,7 @@ class TariffConfigController extends Controller
         private TariffConfigService $tariffConfigService
     ) {}
 
-    public function index(Request $request): Response
+    public function index(Request $request): Response|RedirectResponse
     {
         $pageNumber = $request->input('pageNumber');
         $pageSize = $request->input('pageSize');
@@ -30,7 +30,7 @@ class TariffConfigController extends Controller
 
         $response = $this->tariffConfigService->listPaginatedTariffConfigs($pageNumber, $pageSize, $tariffOrderId);
         if ($response->hasError()) {
-            return redirect()->back()->with('error', $response->error);
+            return redirect()->back()->with('error', $response->error ?? 'Unknown error');
         }
 
         $paginatedData = null;
@@ -88,7 +88,7 @@ class TariffConfigController extends Controller
             return redirect()->back()->with('error', $response->error);
         }
 
-        return redirect()->route('tariff-order.show', $request->tariffOrderId);
+        return redirect()->route('tariff-orders.show', $request->tariffOrderId);
     }
 
     public function show(Request $request): Response
@@ -132,7 +132,7 @@ class TariffConfigController extends Controller
             return redirect()->back()->with('error', $response->error);
         }
 
-        return redirect()->route('tariff-order.show', $request->tariffOrderId);
+        return redirect()->route('tariff-orders.show', $request->tariffOrderId);
     }
 
     public function destroy(Request $request, int $id): RedirectResponse

@@ -52,8 +52,7 @@ export default function BillingRuleList({ billingRules }: Props) {
       <div className='flex flex-col px-7 pb-7'>
         {billingRules.map((billingRule, index) => (
           <div
-            key={billingRule.billing_id ?? index} // unique key fallback
-            onClick={() => handleBillingRuleClick(billingRule)}
+            key={billingRule.id ?? index} // unique key fallback
             className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
           >
             <div className='flex items-start justify-between'>
@@ -92,7 +91,7 @@ export default function BillingRuleList({ billingRules }: Props) {
 
               <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
                 <div className='flex flex-row gap-2'>
-                  <EditButton link={route('billing-rule.edit', billingRule?.id)} />
+                  <EditButton link={route('billing-rules.edit', billingRule?.id)} />
                   <DeleteButton onClick={() => handleDeleteClick(billingRule)} />
 
                   <Button
@@ -123,7 +122,7 @@ export default function BillingRuleList({ billingRules }: Props) {
         <DeleteModal
           setShowModal={setDeleteModalOpen}
           title='Delete Billing Rule'
-          url={route('billing-rule.destroy', selectedBillingRule?.id)}
+          url={route('billing-rules.destroy', selectedBillingRule?.id)}
         />
       )}
     </div>

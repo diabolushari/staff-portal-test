@@ -6,20 +6,22 @@ import { Props } from 'node_modules/@headlessui/react/dist/types'
 import TariffOrderForm from '@/components/Tariff/TariffOrderForm'
 import { TariffOrder } from '@/interfaces/data_interfaces'
 
-const breadcrumb: BreadcrumbItem[] = [
-  {
-    title: 'Tariff Order',
-    href: '/tariff-order',
-  },
-  {
-    title: 'Tariff Order Create',
-    href: '/tariff-order/create',
-  },
-]
 interface PageProps {
   tariff_order: TariffOrder
 }
 export default function TariffOrderCreatePage({ tariff_order }: Readonly<PageProps>) {
+  const breadcrumb: BreadcrumbItem[] = [
+    {
+      title: 'Tariff Order',
+      href: '/tariff-orders',
+    },
+    {
+      title: tariff_order ? 'Edit Tariff Order' : 'Add Tariff Order',
+      href: tariff_order
+        ? `/tariff-orders/${tariff_order.tariff_order_id}/edit`
+        : '/tariff-orders/create',
+    },
+  ]
   return (
     <MainLayout
       breadcrumb={breadcrumb}

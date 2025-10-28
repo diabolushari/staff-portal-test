@@ -27,16 +27,16 @@ export default function TariffConfigCreatePage({
 }: Props) {
   const breadcrumb: BreadcrumbItem[] = [
     {
-      title: 'Tariff Config',
-      href: '/tariff-config',
+      title: 'Tariff Order',
+      href: '/tariff-orders',
     },
     {
       title: tariff_order?.order_descriptor ?? 'Tariff Order',
-      href: `/tariff-order/${tariff_order?.tariff_order_id}`,
+      href: `/tariff-orders/${tariff_order?.tariff_order_id}`,
     },
     {
       title: 'Create Tariff Config',
-      href: '/tariff-config/create',
+      href: '/tariff-configs/create',
     },
   ]
   return (

@@ -59,7 +59,7 @@ export default function TariffConfigTable({
               <TableCell>{config.demand_charge_kva}</TableCell>
               <TableCell>{config.energy_charge_kwh}</TableCell>
               <TableCell className='flex gap-2'>
-                <EditButton link={route('tariff-config.edit', config.tariff_config_id)} />
+                <EditButton link={route('tariff-configs.edit', config.tariff_config_id)} />
                 <DeleteButton onClick={() => handleDelete(config.tariff_config_id)} />
               </TableCell>
             </TableRow>
@@ -67,7 +67,7 @@ export default function TariffConfigTable({
           {isDeleteModalOpen && selectedTariffConfigId && (
             <DeleteModal
               title='Delete Tariff Config'
-              url={route('tariff-config.destroy', selectedTariffConfigId)}
+              url={route('tariff-configs.destroy', selectedTariffConfigId)}
               setShowModal={() => setIsDeleteModalOpen(false)}
             />
           )}

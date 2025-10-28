@@ -24,8 +24,8 @@ export default function BillingRuleShowPage({
   paginatedChargeHeads,
 }: Props) {
   const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Billing Rules', href: route('billing-rule.index') },
-    { title: 'Billing Rule Show', href: route('billing-rule.show', billingRule.id) },
+    { title: 'Billing Rules', href: route('billing-rules.index') },
+    { title: 'Billing Rule Show', href: route('billing-rules.show', billingRule.id) },
   ]
   console.log(billingRule, paginatedComputedProperties, paginatedChargeHeads)
   return (
@@ -40,7 +40,7 @@ export default function BillingRuleShowPage({
               Basic Information
             </StrongText>
             <button
-              onClick={() => router.visit(route('billing-rule.edit', billingRule.id))}
+              onClick={() => router.visit(route('billing-rules.edit', billingRule.id))}
               className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
             >
               <PencilIcon className='h-4 w-4' />
