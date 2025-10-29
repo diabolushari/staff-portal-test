@@ -1,7 +1,8 @@
-import { router, usePage } from '@inertiajs/react'
 import { meterNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
+import { Meter } from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import Button from '@/ui/button/Button'
 import Card from '@/ui/Card/Card'
@@ -10,7 +11,8 @@ import CheckBox from '@/ui/form/CheckBox'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
-import { ParameterValues } from '@/interfaces/parameter_types'
+import { router } from '@inertiajs/react'
+import React from 'react'
 
 export interface MeterFormProps {
   ownershipTypes: ParameterValues[]
@@ -25,33 +27,9 @@ export interface MeterFormProps {
   resetTypes: ParameterValues[]
   internalPtRatios: ParameterValues[]
   internalCtRatios: ParameterValues[]
-  meter?: any // Add meter prop for edit mode later
+  meter?: Meter
 }
-// --- Helper Functions ---
-const toYMD = (iso?: string | null): string => {
-  if (!iso) return ''
-  const d = new Date(iso)
-  return !Number.isNaN(d.getTime()) ? d.toISOString().split('T')[0] : ''
-}
-const toISOorNull = (ymd: string) => {
-  if (!ymd) return null
-  const date = new Date(ymd)
-  // Format to match 'Y-m-d\TH:i:sP' exactly, e.g., '2025-09-17T00:00:00+00:00'
-  const year = date.getUTCFullYear()
-  const month = String(date.getUTCMonth() + 1).padStart(2, '0')
-  const day = String(date.getUTCDate()).padStart(2, '0')
-  return `${year}-${month}-${day}T00:00:00+00:00`
-}
-const toNumberOrUndef = (v: unknown) => {
-  if (v === null || v === undefined || v === '') return undefined
-  const n = Number(v)
-  return Number.isFinite(n) ? n : undefined
-}
-const toFloatOrUndef = (v: unknown) => {
-  if (v === null || v === undefined || v === '') return undefined
-  const n = parseFloat(v as string)
-  return Number.isFinite(n) ? n : undefined
-}
+
 export default function MeterForm({
   ownershipTypes,
   meterProfiles,
@@ -64,27 +42,26 @@ export default function MeterForm({
   units,
   resetTypes,
   meter,
-}: MeterFormProps) {
-  const { auth } = usePage().props as any // Assuming auth is available in page props
-  const isEditing = Boolean(meter)
+}: Readonly<MeterFormProps>) {
+  const isEditing = meter != null
   const { formData, setFormValue } = useCustomForm({
     meter_serial: meter?.meter_serial ?? '',
-    ownership_type_id: meter?.ownership_type_id ?? null,
-    meter_profile_id: meter?.meter_profile_id ?? null,
-    meter_make_id: meter?.meter_make_id ?? null,
-    meter_type_id: meter?.meter_type_id ?? null,
-    meter_category_id: meter?.meter_category_id ?? null,
-    accuracy_class_id: meter?.accuracy_class_id ?? null,
-    dialing_factor_id: meter?.dialing_factor_id ?? null,
+    ownership_type_id: meter?.ownership_type_id ?? '',
+    meter_profile_id: meter?.meter_profile_id ?? '',
+    meter_make_id: meter?.meter_make_id ?? '',
+    meter_type_id: meter?.meter_type_id ?? '',
+    meter_category_id: meter?.meter_category_id ?? '',
+    accuracy_class_id: meter?.accuracy_class_id ?? '',
+    dialing_factor_id: meter?.dialing_factor_id ?? '',
     company_seal_num: meter?.company_seal_num ?? '',
     digit_count: meter?.digit_count ?? '',
-    manufacture_date: toYMD(meter?.manufacture_date),
-    supply_date: toYMD(meter?.supply_date),
-    meter_unit_id: meter?.meter_unit_id ?? null,
-    meter_reset_type_id: meter?.meter_reset_type_id ?? null,
+    manufacture_date: meter?.manufacture_date ?? '',
+    supply_date: meter?.supply_date ?? '',
+    meter_unit_id: meter?.meter_unit_id ?? '',
+    meter_reset_type_id: meter?.meter_reset_type_id ?? '',
     smart_meter_ind: meter?.smart_meter_ind ?? false,
     bidirectional_ind: meter?.bidirectional_ind ?? false,
-    meter_phase_id: meter?.meter_phase_id ?? null,
+    meter_phase_id: meter?.meter_phase_id ?? '',
     decimal_digit_count: meter?.decimal_digit_count ?? '',
     programmable_pt_ratio: meter?.programmable_pt_ratio ?? '',
     programmable_ct_ratio: meter?.programmable_ct_ratio ?? '',
@@ -98,62 +75,20 @@ export default function MeterForm({
     internal_pt_secondary: meter?.internal_pt_secondary ?? '',
   })
   const { post, loading, errors } = useInertiaPost<typeof formData>(
-    isEditing ? `/meters/${meter.id}` : '/meters'
+    isEditing ? `/meters/${meter?.meter_id}` : '/meters'
   )
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     // Base payload
     const basePayload = {
-      meter_serial: formData.meter_serial,
-      ownership_type_id: toNumberOrUndef(formData.ownership_type_id),
-      meter_profile_id: toNumberOrUndef(formData.meter_profile_id),
-      meter_make_id: toNumberOrUndef(formData.meter_make_id),
-      meter_type_id: toNumberOrUndef(formData.meter_type_id),
-      meter_category_id: toNumberOrUndef(formData.meter_category_id),
-      accuracy_class_id: toNumberOrUndef(formData.accuracy_class_id),
-      dialing_factor_id: toNumberOrUndef(formData.dialing_factor_id),
-      company_seal_num: formData.company_seal_num,
-      digit_count: toNumberOrUndef(formData.digit_count),
-      manufacture_date: toISOorNull(formData.manufacture_date),
-      supply_date: toISOorNull(formData.supply_date),
-      meter_unit_id: toNumberOrUndef(formData.meter_unit_id),
-      meter_reset_type_id: toNumberOrUndef(formData.meter_reset_type_id),
-      smart_meter_ind: formData.smart_meter_ind,
-      bidirectional_ind: formData.bidirectional_ind,
-      meter_phase_id: toNumberOrUndef(formData.meter_phase_id),
-      decimal_digit_count: toNumberOrUndef(formData.decimal_digit_count),
-      programmable_pt_ratio: toFloatOrUndef(formData.programmable_pt_ratio),
-      programmable_ct_ratio: toNumberOrUndef(formData.programmable_ct_ratio),
-      meter_mf: toFloatOrUndef(formData.meter_mf),
-      warranty_period: toNumberOrUndef(formData.warranty_period),
-      meter_constant: toNumberOrUndef(formData.meter_constant),
-      batch_code: formData.batch_code,
-      internal_ct_primary: toNumberOrUndef(formData.internal_ct_primary),
-      internal_ct_secondary: toNumberOrUndef(formData.internal_ct_secondary),
-      internal_pt_primary: toNumberOrUndef(formData.internal_pt_primary),
-      internal_pt_secondary: toNumberOrUndef(formData.internal_pt_secondary),
+      ...formData,
       _method: isEditing ? 'PUT' : undefined,
     }
-    if (isEditing) {
-      post({
-        ...basePayload,
-        updated_by: auth?.user?.id ?? 0,
-      })
-    } else {
-      post({
-        ...basePayload,
-        created_by: auth?.user?.id ?? 0,
-      })
-    }
+    post({
+      ...basePayload,
+    })
   }
-  const renderSection = (title: string, children: React.ReactNode) => (
-    <div className='rounded-md border border-slate-200 p-4'>
-      <h3 className='mb-4 text-lg font-medium'>{title}</h3>
-      <div className='grid grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-3'>
-        {children}
-      </div>
-    </div>
-  )
+
   return (
     <MainLayout navItems={meterNavItems}>
       <div className='p-6'>
@@ -166,9 +101,9 @@ export default function MeterForm({
             onSubmit={handleSubmit}
             className='space-y-8'
           >
-            {renderSection(
-              'Basic Information',
-              <>
+            <div className='rounded-md border border-slate-200 p-4'>
+              <h3 className='mb-4 text-lg font-medium'>Basic Information</h3>
+              <div className='grid grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-3'>
                 <Input
                   label='Meter Serial'
                   required
@@ -233,11 +168,11 @@ export default function MeterForm({
                   setValue={setFormValue('batch_code')}
                   error={errors.batch_code}
                 />
-              </>
-            )}
-            {renderSection(
-              'Technical Specifications',
-              <>
+              </div>
+            </div>
+            <div className='rounded-md border border-slate-200 p-4'>
+              <h3 className='mb-4 text-lg font-medium'>Technical Specifications</h3>
+              <div className='grid grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-3'>
                 <SelectList
                   label='Accuracy Class'
                   value={formData.accuracy_class_id}
@@ -367,22 +302,12 @@ export default function MeterForm({
                     toggleValue={() => setFormValue('smart_meter_ind')(!formData.smart_meter_ind)}
                     error={errors.smart_meter_ind}
                   />
-                  {/*<CheckBox*/}
-                  {/*	label="Bidirectional"*/}
-                  {/*	value={formData.bidirectional_ind}*/}
-                  {/*	toggleValue={() =>*/}
-                  {/*		setFormValue("bidirectional_ind")(*/}
-                  {/*			!formData.bidirectional_ind,*/}
-                  {/*		)*/}
-                  {/*	}*/}
-                  {/*	error={errors.bidirectional_ind}*/}
-                  {/*/>*/}
                 </div>
-              </>
-            )}
-            {renderSection(
-              'Dates',
-              <>
+              </div>
+            </div>
+            <div className='rounded-md border border-slate-200 p-4'>
+              <h3 className='mb-4 text-lg font-medium'>Dates</h3>
+              <div className='grid grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-3'>
                 <DatePicker
                   label='Manufacture Date'
                   value={formData.manufacture_date}
@@ -395,8 +320,8 @@ export default function MeterForm({
                   setValue={setFormValue('supply_date')}
                   error={errors.supply_date}
                 />
-              </>
-            )}
+              </div>
+            </div>
             <div className='flex justify-end gap-3 border-t pt-6'>
               <Button
                 type='button'
