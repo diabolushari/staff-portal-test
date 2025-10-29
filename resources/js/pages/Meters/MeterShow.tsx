@@ -1,33 +1,22 @@
+import MeterTransformerTab from '@/components/Meter/MeterTransformer/MeterTransfomerTab'
+import { meterNavItems } from '@/components/Navbar/navitems'
+import { Card } from '@/components/ui/card'
+import Field from '@/components/ui/field'
+import { Label } from '@/components/ui/label'
+import useInertiaPost from '@/hooks/useInertiaPost'
+import { Meter, MeterTimezoneType, MeterTransformerAssignment } from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
+import MainLayout from '@/layouts/main-layout'
+import { MeterTransformer } from '@/pages/MeterTransformers/MeterTransformerShow'
+import type { BreadcrumbItem } from '@/types'
+import StrongText from '@/typography/StrongText'
+import Button from '@/ui/button/Button'
+import DeleteButton from '@/ui/button/DeleteButton'
+import { TabGroup } from '@/ui/Tabs/TabGroup'
 import { router } from '@inertiajs/react'
+import { TabsContent } from '@radix-ui/react-tabs'
 import { Edit } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import useInertiaPost from '@/hooks/useInertiaPost'
-import MainLayout from '@/layouts/main-layout'
-import type { BreadcrumbItem } from '@/types'
-import Button from '@/ui/button/Button'
-import { Meter } from './MeterIndex'
-import { meterNavItems } from '@/components/Navbar/navitems'
-import { TabGroup } from '@/ui/Tabs/TabGroup'
-import { TabsContent } from '@radix-ui/react-tabs'
-import MeterTransformerTab from '@/components/Meter/MeterTransformer/MeterTransfomerTab'
-import DeleteButton from '@/ui/button/DeleteButton'
-import { MeterTransformer } from '@/pages/MeterTransformers/MeterTransformerShow'
-import { MeterTimezoneType, MeterTransformerAssignment } from '@/interfaces/data_interfaces'
-import StrongText from '@/typography/StrongText'
-import Field from '@/components/ui/field'
-import { ParameterValues } from '@/interfaces/parameter_types'
-
-// --- PROPS AND INTERFACES ---
 
 export const MeterTabs = (meterId: number, ctptId?: number, relId?: number) => [
   {

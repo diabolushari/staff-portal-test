@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace App\Services\Metering;
 
+use App\GrpcConverters\MeterProtoConvertor;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
+use Exception;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use InvalidArgumentException;
 use Proto\Consumers\CreateMeterRequest;
 use Proto\Consumers\DeleteMeterRequest;
 use Proto\Consumers\GetMeterRequest;
 use Proto\Consumers\ListMetersRequest;
-use Proto\Consumers\MeterResponse;
 use Proto\Consumers\MeterServiceClient;
 use Proto\Consumers\UpdateMeterRequest;
 
@@ -28,6 +31,13 @@ class MeterService
         );
     }
 
+    /**
+     * @param  mixed[]  $data
+     *
+     * @throws InvalidArgumentException
+     * @throws Exception
+     * @throws BindingResolutionException
+     */
     public function createMeter(array $data): GrpcServiceResponse
     {
         $request = new CreateMeterRequest;
@@ -159,7 +169,7 @@ class MeterService
             );
         }
 
-        return GrpcServiceResponse::success(self::meterProtoToArray($response), $response, $status->code, $status->details);
+        return GrpcServiceResponse::success(MeterProtoConvertor::convertToArray($response), $response, $status->code, $status->details);
     }
 
     public function listMeters(): GrpcServiceResponse
@@ -178,17 +188,21 @@ class MeterService
 
         $metersArray = [];
         foreach ($response->getMeters() as $meter) {
-            $metersArray[] = self::meterProtoToArray($meter);
+            $metersArray[] = MeterProtoConvertor::convertToArray($meter);
         }
 
         return GrpcServiceResponse::success($metersArray, $response, $status->code, $status->details);
     }
 
+    /**
+     * @param  mixed[]  $data
+     *
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws BindingResolutionException
+     */
     public function updateMeter(array $data): GrpcServiceResponse
     {
-        if (empty($data['meter_id'])) {
-            return GrpcServiceResponse::error(['meter_id' => ['meter_id is required']], null, 3, 'INVALID_ARGUMENT');
-        }
 
         $request = new UpdateMeterRequest;
         $request->setMeterId($data['meter_id']);
@@ -307,7 +321,7 @@ class MeterService
             );
         }
 
-        return GrpcServiceResponse::success(self::meterProtoToArray($response), $response, $status->code, $status->details);
+        return GrpcServiceResponse::success(MeterProtoConvertor::convertToArray($response), $response, $status->code, $status->details);
     }
 
     public function deleteMeter(int $meterId): GrpcServiceResponse
@@ -327,94 +341,6 @@ class MeterService
         }
 
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
-    }
-
-    /**
-     * Convert MeterResponse proto to associative array
-     */
-    public static function meterProtoToArray(?MeterResponse $meter): ?array
-    {
-        if ($meter === null) {
-            return null;
-        }
-
-        $manufactureDate = ($meter->hasManufactureDate() && $meter->getManufactureDate())
-            ? $meter->getManufactureDate()->toDateTime()->format('Y-m-d')
-            : null;
-
-        $supplyDate = ($meter->hasSupplyDate() && $meter->getSupplyDate())
-            ? $meter->getSupplyDate()->toDateTime()->format('Y-m-d')
-            : null;
-
-        // created_ts and updated_ts are not optional in the proto
-        $createdTs = $meter->getCreatedTs()
-            ? $meter->getCreatedTs()->toDateTime()->format('Y-m-d H:i:s')
-            : null;
-
-        $updatedTs = $meter->getUpdatedTs()
-            ? $meter->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s')
-            : null;
-
-        return [
-            'version_id' => $meter->getVersionId(),
-            'meter_id' => $meter->getMeterId(),
-            'meter_serial' => $meter->getMeterSerial(),
-            'profile_id' => $meter->getProfileId(),
-
-            'ownership_type' => self::transformParameterValueToArray($meter->getOwnershipType()),
-            'meter_profile' => self::transformParameterValueToArray($meter->getProfile()),
-            'meter_make' => self::transformParameterValueToArray($meter->getMeterMake()),
-            'meter_type' => self::transformParameterValueToArray($meter->getMeterType()),
-            'meter_category' => self::transformParameterValueToArray($meter->getMeterCategory()),
-            'accuracy_class' => self::transformParameterValueToArray($meter->getAccuracyClass()),
-            'dialing_factor' => self::transformParameterValueToArray($meter->getDialingFactor()),
-            'company_seal_num' => $meter->getCompanySealNum(),
-            'digit_count' => $meter->getDigitCount(),
-
-            'manufacture_date' => $manufactureDate,
-            'supply_date' => $supplyDate,
-
-            'meter_unit' => self::transformParameterValueToArray($meter->getMeterUnit()),
-            'meter_reset_type' => self::transformParameterValueToArray($meter->getMeterResetType()),
-
-            'smart_meter_ind' => $meter->getSmartMeterInd(),
-            'bidirectional_ind' => $meter->getBidirectionalInd(),
-
-            'created_ts' => $createdTs,
-            'updated_ts' => $updatedTs,
-            'created_by' => $meter->getCreatedBy(),
-            'updated_by' => $meter->getUpdatedBy(),
-
-            'meter_phase' => self::transformParameterValueToArray($meter->getMeterPhase()),
-            'decimal_digit_count' => $meter->getDecimalDigitCount(),
-            'programmable_pt_ratio' => $meter->getProgrammablePtRatio(),
-            'programmable_ct_ratio' => $meter->getProgrammableCtRatio(),
-            'meter_mf' => $meter->getMeterMf(),
-            'warranty_period' => $meter->getWarrantyPeriod(),
-            'meter_constant' => $meter->getMeterConstant(),
-            'batch_code' => $meter->getBatchCode(),
-
-            // New internal CT/PT ratios
-            'internal_ct_primary' => $meter->getInternalCtPrimary(),
-            'internal_ct_secondary' => $meter->getInternalCtSecondary(),
-            'internal_pt_primary' => $meter->getInternalPtPrimary(),
-            'internal_pt_secondary' => $meter->getInternalPtSecondary(),
-        ];
-    }
-
-    /**
-     * Transform ParameterValueProto to PHP array
-     */
-    public static function transformParameterValueToArray($parameterValue): ?array
-    {
-        if ($parameterValue === null) {
-            return null;
-        }
-
-        return [
-            'id' => $parameterValue->getId(),
-            'parameter_value' => $parameterValue->getParameterValue(),
-        ];
     }
 
     /**
