@@ -201,37 +201,75 @@ export interface Meter {
   version_id: number
   meter_id: number
   meter_serial: string
-  ownership_type?: Partial<ParameterValues> | null
-  meter_profile?: ParameterValues | null
-  meter_make?: Partial<ParameterValues> | null
-  meter_type?: Partial<ParameterValues> | null
-  meter_category?: Partial<ParameterValues> | null
-  accuracy_class?: Partial<ParameterValues> | null
-  dialing_factor?: Partial<ParameterValues> | null
-  company_seal_num?: string
-  digit_count: number
-  manufacture_date?: string
-  supply_date?: string
-  meter_unit?: Partial<ParameterValues> | null
-  meter_reset_type?: Partial<ParameterValues> | null
+
+  // Ownership Type
+  ownership_type_id: number
+  ownership_type: ParameterValues | null
+
+  // Meter Profile
+  profile_id: number
+  meter_profile_id: number
+  profile: ParameterValues | null
+  meter_profile: ParameterValues | null
+
+  // Meter Make
+  meter_make_id: number
+  meter_make: ParameterValues | null
+
+  // Meter Type
+  meter_type_id: number
+  meter_type: ParameterValues | null
+
+  // Meter Category
+  meter_category_id: number
+  meter_category: ParameterValues | null
+
+  // Accuracy Class
+  accuracy_class_id: number
+  accuracy_class: ParameterValues | null
+
+  // Dialing Factor
+  dialing_factor_id: number
+  dialing_factor: ParameterValues | null
+
+  company_seal_num: string | null
+  digit_count: number | null
+  manufacture_date: string | null
+  supply_date: string | null
+
+  // Meter Unit
+  meter_unit_id: number
+  meter_unit: ParameterValues | null
+
+  // Meter Reset Type
+  meter_reset_type_id: number
+  meter_reset_type: ParameterValues | null
+
   smart_meter_ind: boolean
   bidirectional_ind: boolean
-  created_ts: string
-  updated_ts?: string
+
+  // Meter Phase
+  meter_phase_id: number
+  meter_phase: ParameterValues | null
+
+  decimal_digit_count: number | null
+  programmable_pt_ratio: number | null
+  programmable_ct_ratio: number | null
+  meter_mf: number | null
+  warranty_period: number | null
+  meter_constant: number | null
+  batch_code: string | null
+
+  // Internal CT/PT ratios
+  internal_ct_primary: number | null
+  internal_ct_secondary: number | null
+  internal_pt_primary: number | null
+  internal_pt_secondary: number | null
+
+  created_ts: string | null
+  updated_ts: string | null
   created_by: number
   updated_by: number
-  meter_phase?: Partial<ParameterValues> | null
-  decimal_digit_count: number
-  programmable_pt_ratio: number
-  programmable_ct_ratio: number
-  meter_mf: number
-  warranty_period: number
-  meter_constant: number
-  batch_code?: string
-  internal_ct_primary?: number
-  internal_ct_secondary?: number
-  internal_pt_primary?: number
-  internal_pt_secondary?: number
 }
 
 export interface MeterTransformer {

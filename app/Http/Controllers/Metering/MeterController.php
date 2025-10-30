@@ -16,11 +16,11 @@ use Inertia\Response;
 class MeterController extends Controller
 {
     public function __construct(
-        private MeterService $meterService,
-        private MeterTimezoneTypeRelService $meterTimezoneTypeRelService,
-        private MeterTransformerRelService $meterTransformerRelService,
-        private MeterTransformerService $meterTransformerService,
-        private ParameterValueService $parameterValueService
+        private readonly MeterService $meterService,
+        private readonly MeterTimezoneTypeRelService $meterTimezoneTypeRelService,
+        private readonly MeterTransformerRelService $meterTransformerRelService,
+        private readonly MeterTransformerService $meterTransformerService,
+        private readonly ParameterValueService $parameterValueService
     ) {}
 
     public function index(): Response
@@ -35,18 +35,42 @@ class MeterController extends Controller
     public function create(): Response|RedirectResponse
     {
         $viewData = [
-            'ownershipTypes' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Ownership Type')->data,
-            'meterProfiles' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile')->data,
-            'makes' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Make')->data,
-            'types' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Type')->data,
-            'categories' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Category')->data,
-            'accuracyClasses' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Accuracy Class')->data,
-            'phases' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Phase')->data,
-            'dialingFactors' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Dialing Factor')->data,
-            'units' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Unit')->data,
-            'resetTypes' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Reset Type')->data,
-            'internalPtRatios' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Internal PT Ratio')->data,
-            'internalCtRatios' => $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Internal CT Ratio')->data,
+            'ownershipTypes' => $this->parameterValueService->getParameterValues(
+                null, null, null, 'Meter', 'Ownership Type'
+            )->data,
+            'meterProfiles' => $this->parameterValueService->getParameterValues(
+                null, null, null, 'Meter', 'Meter Profile'
+            )->data,
+            'makes' => $this->parameterValueService->getParameterValues(
+                null, null, null, 'Meter', 'Make'
+            )->data,
+            'types' => $this->parameterValueService->getParameterValues(
+                null, null, null, 'Meter', 'Type'
+            )->data,
+            'categories' => $this->parameterValueService->getParameterValues(
+                null, null, null, 'Meter', 'Category'
+            )->data,
+            'accuracyClasses' => $this->parameterValueService->getParameterValues(
+                null, null, null, 'Meter', 'Accuracy Class'
+            )->data,
+            'phases' => $this->parameterValueService->getParameterValues(
+                null, null, null, 'Meter', 'Phase'
+            )->data,
+            'dialingFactors' => $this->parameterValueService->getParameterValues(
+                null, null, null, 'Meter', 'Dialing Factor'
+            )->data,
+            'units' => $this->parameterValueService->getParameterValues(
+                null, null, null, 'Meter', 'Unit'
+            )->data,
+            'resetTypes' => $this->parameterValueService->getParameterValues(
+                null, null, null, 'Meter', 'Reset Type'
+            )->data,
+            'internalPtRatios' => $this->parameterValueService->getParameterValues(
+                null, null, null, 'Meter', 'Internal PT Ratio'
+            )->data,
+            'internalCtRatios' => $this->parameterValueService->getParameterValues(
+                null, null, null, 'Meter', 'Internal CT Ratio'
+            )->data,
         ];
 
         return Inertia::render('Meters/MeterForm', $viewData);
@@ -67,7 +91,8 @@ class MeterController extends Controller
             return $response->error;
         }
 
-        return redirect()->route('meters.index')->with('success', 'Meter created successful');
+        return redirect()->route('meters.index')
+            ->with(['message' => 'Meter created successful']);
     }
 
     /**

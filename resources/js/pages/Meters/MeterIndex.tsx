@@ -1,34 +1,20 @@
 import { meterNavItems } from '@/components/Navbar/navitems'
-import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import CardHeader from '@/ui/Card/CardHeader'
 import ListSearch from '@/ui/Search/ListSearch'
 import { router } from '@inertiajs/react'
 import { Barcode, Calendar, Cpu, Factory, Shield } from 'lucide-react'
-
-export interface Meter {
-  meter_id: number
-  meter_serial: string
-  company_seal_num: string | null
-  manufacture_date: string | null
-  supply_date: string | null
-  accuracy_class?: ParameterValues
-  meter_type?: ParameterValues
-  meter_make?: ParameterValues
-  ownership_type?: ParameterValues
-  meter_unit?: ParameterValues
-
-  smart_meter_ind?: boolean
-}
+import { Meter } from '@/interfaces/data_interfaces'
 
 interface Props {
   meters: Meter[]
 }
+const handleShow = (id: number) => {
+  router.get(`/meters/${id}`)
+}
 
-export default function MeterIndex({ meters }: Props) {
-  function handleShow(id: number) {
-    router.get(`/meters/${id}`)
-  }
+export default function MeterIndex({ meters }: Readonly<Props>) {
+  console.log('Meters:', meters)
 
   return (
     <MainLayout
@@ -49,10 +35,10 @@ export default function MeterIndex({ meters }: Props) {
           <div className='flex flex-col px-7 pb-7'>
             {meters && meters.length > 0 ? (
               meters.map((meter) => (
-                <div
+                <button
                   key={meter.meter_id}
                   onClick={() => handleShow(meter.meter_id)}
-                  className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
+                  className='mb-4 w-full cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] text-left transition-shadow last:mb-0 hover:shadow-md'
                 >
                   <div className='flex items-start justify-between'>
                     {/* Left side info */}
@@ -139,7 +125,7 @@ export default function MeterIndex({ meters }: Props) {
                       </div>
                     </div>
                   </div>
-                </div>
+                </button>
               ))
             ) : (
               <div className='p-6 text-center text-slate-500'>
