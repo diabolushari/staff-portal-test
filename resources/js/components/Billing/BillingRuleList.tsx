@@ -97,7 +97,7 @@ export default function BillingRuleList({ billingRules }: Props) {
                   <Button
                     variant='link'
                     label='View'
-                    onClick={() => router.get(route('billing-rule.show', billingRule?.id))}
+                    onClick={() => router.get(route('billing-rules.show', billingRule?.id))}
                   />
                 </div>
                 <div

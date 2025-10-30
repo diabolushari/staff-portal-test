@@ -2,6 +2,7 @@
 
 namespace App\Services\Connection;
 
+use App\GrpcConverters\MeterProtoConvertor;
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
 use App\Services\Consumers\OfficeService;
 use App\Services\Grpc\GrpcErrorService;
@@ -139,7 +140,7 @@ class ConnectionService
             $priority = $meterRelation->getSortPriority();
             $meters[] = [
                 'priority' => $priority,
-                'meter' => $this->meterService->meterProtoToArray($meterRelation->getMeter()),
+                'meter' => MeterProtoConvertor::convertToArray($meterRelation->getMeter()),
                 'relationship' => $this->meterConnectionMappingService->meterConnectionMappingProtoToArray($meterRelation),
             ];
         }

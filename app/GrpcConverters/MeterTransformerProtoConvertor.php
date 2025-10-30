@@ -44,11 +44,11 @@ class MeterTransformerProtoConvertor
             : null;
 
         $createdTs = $t->getCreatedTs()
-            ? $t->getCreatedTs()->toDateTime()->format('Y-m-d H:i:s')
+            ? $t->getCreatedTs()
             : null;
 
         $updatedTs = $t->getUpdatedTs()
-            ? $t->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s')
+            ? $t->getUpdatedTs()
             : null;
 
         return [

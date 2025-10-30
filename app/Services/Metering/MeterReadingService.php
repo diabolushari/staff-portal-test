@@ -2,6 +2,7 @@
 
 namespace App\Services\Metering;
 
+use App\GrpcConverters\MeterProtoConvertor;
 use App\Http\Requests\Metering\MeterReadingForm;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
@@ -65,7 +66,7 @@ class MeterReadingService
         return GrpcServiceResponse::success($meterReadingsArray, $response, $status->code, $status->details);
     }
 
-        public function listPaginatedMeterReadings(
+    public function listPaginatedMeterReadings(
         int $pageNumber = 1,
         int $pageSize = 10,
         ?string $search = null,
@@ -116,7 +117,6 @@ class MeterReadingService
 
         return GrpcServiceResponse::success($data, $response, $status->code, $status->details);
     }
-
 
     public function createMeterReading(MeterReadingForm $request): GrpcServiceResponse
     {
@@ -482,7 +482,7 @@ class MeterReadingService
             'updated_by' => $detail->getUpdatedBy(),
             'is_active' => $detail->getIsActive(),
             'time_zone' => $this->parameterValueService->toArray($detail->getTimezone()),
-            'meter' => $this->meterService->meterProtoToArray($detail->getMeter()),
+            'meter' => MeterProtoConvertor::convertToArray($detail->getMeter()),
             'meter_profile_parameter' => $this->meteringParameterProfileService->toArray($detail->getParameter()),
         ];
     }
