@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react'
-import MainLayout from '@/layouts/main-layout'
-import Stepper from '@/components/Stepper'
 import MeterReadingGeneralStep from '@/components/Meter/MeterReading/MeterReadingGeneralStep'
 import MeterReadingObservationStep from '@/components/Meter/MeterReading/MeterReadingObservationStep'
 import MeterReadingsStep from '@/components/Meter/MeterReading/MeterReadingsStep'
 import { consumerNavItems } from '@/components/Navbar/navitems'
+import Stepper from '@/components/Stepper'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { BreadcrumbItem } from '@/types'
+import { ConsumerData, MeterReading } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import MainLayout from '@/layouts/main-layout'
+import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
-import { Connection, ConsumerData, MeterReading } from '@/interfaces/data_interfaces'
+import { useEffect, useState } from 'react'
 
 interface Props {
   connectionWithConsumer: ConsumerData
@@ -98,6 +98,8 @@ export default function MeterReadingCreatePage({
   latestMeterReading,
   editMode,
 }: Readonly<Props>) {
+  console.log(metersWithTimezonesAndProfiles)
+
   const breadcrumb: BreadcrumbItem[] = [
     {
       title: 'Connections',
