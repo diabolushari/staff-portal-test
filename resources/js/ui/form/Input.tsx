@@ -19,6 +19,8 @@ export default function Input({
   formatter,
   showClearButton = false,
   className = '',
+  min,
+  max,
 }: FormFieldProp) {
   const handleKeydown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (preventFormSubmit && event.key === 'Enter') {
@@ -47,6 +49,8 @@ export default function Input({
         <ShadcnInput
           type={type}
           value={value}
+          min={min ?? undefined}
+          max={max ?? undefined}
           onKeyDown={handleKeydown}
           onChange={(event) =>
             formatter ? setValue(formatter(event.target.value)) : setValue(event.target.value)

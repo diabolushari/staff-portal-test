@@ -33,6 +33,8 @@ export interface FormFieldProp {
   required?: boolean
   formatter?: (value: string) => string
   showClearButton?: boolean
+  min?: number
+  max?: number
   className?: string
 }
 
