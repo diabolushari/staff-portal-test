@@ -4,6 +4,7 @@ namespace App\Services\Metering;
 
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
+use App\GrpcConverters\MeterTransformerProtoConvertor;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
 use Proto\Metering\CreateMeterTransformerMessage;
@@ -68,7 +69,7 @@ class MeterTransformerService
         }
 
         return GrpcServiceResponse::success(
-            self::transformerProtoToArray($response),
+            MeterTransformerProtoConvertor::convertToArray($response),
             $response,
             $status->code,
             $status->details
@@ -92,7 +93,7 @@ class MeterTransformerService
         }
 
         return GrpcServiceResponse::success(
-            self::transformerProtoToArray($response),
+            MeterTransformerProtoConvertor::convertToArray($response),
             $response,
             $status->code,
             $status->details
@@ -116,7 +117,7 @@ class MeterTransformerService
 
         $transformersArray = [];
         foreach ($response->getTransformers() as $transformer) {
-            $transformersArray[] = self::transformerProtoToArray($transformer);
+            $transformersArray[] = MeterTransformerProtoConvertor::convertToArray($transformer);
         }
         logger()->info('Fetched transformers from gRPC', $transformersArray);
 
@@ -142,7 +143,7 @@ class MeterTransformerService
 
         $transformersArray = [];
         foreach ($response->getTransformers() as $transformer) {
-            $transformersArray[] = self::transformerProtoToArray($transformer);
+            $transformersArray[] = MeterTransformerProtoConvertor::convertToArray($transformer);
         }
         logger()->info('Fetched transformers from gRPC', $transformersArray);
 
@@ -168,38 +169,8 @@ class MeterTransformerService
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
     }
 
-    /**
-     * Convert proto to array
-     */
-    public static function transformerProtoToArray(MeterTransformerMessage $t): array
-    {
-
-        $createdTs = $t->getCreatedTs() ?: null;
-        $updatedTs = $t->getUpdatedTs() ?: null;
-
-        return [
-            'meter_ctpt_id' => $t->getMeterCtptId(),
-            'ownership_type_id' => $t->getOwnershipTypeId(),
-            'accuracy_class_id' => $t->getAccuracyClassId(),
-            'burden_id' => $t->getBurdenId(),
-            'make_id' => $t->getMakeId(),
-            'type_id' => $t->getTypeId(),
-            'ownership_type' => self::transformParameterValueToArray($t->getOwnershipType()),
-            'accuracy_class' => self::transformParameterValueToArray($t->getAccuracyClass()),
-            'burden' => self::transformParameterValueToArray($t->getBurden()),
-            'make' => self::transformParameterValueToArray($t->getMake()),
-            'type' => self::transformParameterValueToArray($t->getType()),
-            'ctpt_serial' => $t->getCtptSerial(),
-            'ratio_primary_value' => $t->getRatioPrimaryValue(),
-            'ratio_secondary_value' => $t->getRatioSecondaryValue(),
-            'manufacture_date' => $t->hasManufactureDate() ? $t->getManufactureDate()->toDateTime()->format('Y-m-d') : null,
-
-            'created_ts' => $t->getCreatedTs() ?: null,
-            'updated_ts' => $t->getUpdatedTs() ?: null,
-            'created_by' => $t->getCreatedBy(),
-        ];
-    }
-
+    
+   
     private static function transformParameterValueToArray($parameterValue): ?array
     {
         if ($parameterValue === null) {
