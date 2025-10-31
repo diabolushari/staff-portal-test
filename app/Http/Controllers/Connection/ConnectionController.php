@@ -115,4 +115,17 @@ class ConnectionController extends Controller
 
         return redirect()->route('connections.index')->with('success', 'Connection updated successfully.');
     }
+
+    public function destroy(int $id): RedirectResponse
+    {
+        $response = $this->connectionService->deleteConnection($id);
+
+        if ($response->hasError()) {
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
+        }
+
+        return redirect()->route('connections.index')->with('success', 'Connection deleted successfully.');
+    }
 }

@@ -10,6 +10,7 @@ use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\utils\GrpcServiceResponse;
 use Google\Protobuf\Struct;
 use Grpc\ChannelCredentials;
+use Proto\Connections\ConnectionRequest;
 use Proto\Connections\ConnectionServiceClient;
 use Proto\Connections\ConnectionUpdateRequest;
 use Proto\Connections\CreateConnectionRequest;
@@ -228,5 +229,23 @@ class ConnectionService
         $connectionArray = ConnectionProtoConverter::convertToArray($connection);
 
         return GrpcServiceResponse::success($connectionArray, $response, $status->code, $status->details);
+    }
+
+    public function deleteConnection(int $connectionId): GrpcServiceResponse
+    {
+        $grpcRequest = new ConnectionRequest;
+        $grpcRequest->setConnectionId($connectionId);
+
+        [$response, $status] = $this->client->deleteConnection($grpcRequest)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success($response, $response, $status->code, $status->details);
     }
 }
