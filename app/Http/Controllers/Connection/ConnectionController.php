@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
 use App\Services\Connection\ConnectionFormItemService;
 use App\Services\Connection\ConnectionService;
+use App\Services\Connection\ConsumerService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ class ConnectionController extends Controller
     public function __construct(
         private readonly ConnectionService $connectionService,
         private readonly ParameterValueService $parameterValueService,
+        private readonly ConsumerService $consumerService,
 
     ) {}
 
@@ -76,10 +78,17 @@ class ConnectionController extends Controller
                 return redirect()->back()->with('error', 'Failed to get connection');
             }
         }
+        $consumerExist = false;
+        $consumer = $this->consumerService->getConsumer($id);
+        if ($consumer->data === null) {
+            $consumerExist = false;
+        } else {
+            $consumerExist = true;
+        }
 
         return Inertia::render('Connections/ConnectionsShow', [
             'connection' => $connection->data,
-            'meters' => $connection->data['meters'] ?? [],
+            'consumerExist' => $consumerExist,
         ]);
     }
 

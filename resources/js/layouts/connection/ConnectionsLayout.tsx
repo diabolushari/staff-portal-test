@@ -19,9 +19,11 @@ interface ConnectionsLayoutProps {
   heading: string
   subHeading: string
   onEdit?: () => void
+  consumerExist?: boolean
+  meterExist?: boolean
 }
 
-const connectionTabs = (connection: Connection) => [
+const connectionTabs = (connection: Connection, consumerExist: boolean, meterExist: boolean) => [
   {
     value: 'details',
     label: 'Connection Details',
@@ -32,12 +34,12 @@ const connectionTabs = (connection: Connection) => [
     label: 'Consumer',
     href: connection?.connection_id ? route('connection.consumer', connection?.connection_id) : '#',
   },
-  {
+  consumerExist && {
     value: 'meter',
     label: 'Meter',
     href: connection?.connection_id ? route('connection.meters', connection?.connection_id) : '#',
   },
-  {
+  meterExist && {
     value: 'meter-reading',
     label: 'Meter Reading',
     href: connection?.connection_id
@@ -54,6 +56,8 @@ export default function ConnectionsLayout({
   heading,
   subHeading,
   onEdit,
+  consumerExist = true,
+  meterExist = true,
 }: Readonly<ConnectionsLayoutProps>) {
   return (
     <MainLayout
@@ -77,7 +81,7 @@ export default function ConnectionsLayout({
           )}
         </div>
         <TabGroup
-          tabs={connectionTabs(connection)}
+          tabs={connectionTabs(connection, consumerExist, meterExist)}
           defaultValue={value}
         >
           <TabsContent value={value}>{children}</TabsContent>

@@ -96,6 +96,8 @@ export default function ConnectionMeterList({
       connection={connection}
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
+      consumerExist={true}
+      meterExist={connection?.meters?.length > 0}
     >
       <Card className='relative w-full rounded-lg bg-white'>
         <div className='flex items-center justify-between border-b border-gray-200 px-6 py-4'>
