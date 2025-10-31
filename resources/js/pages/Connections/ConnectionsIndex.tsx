@@ -1,8 +1,11 @@
 import ConnectionsList from '@/components/Connections/ConnectionsList'
 import { consumerNavItems } from '@/components/Navbar/navitems'
+import { Connection } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
+import Pagination from '@/ui/Pagination/Pagination'
 import ListSearch from '@/ui/Search/ListSearch'
+import { Paginator } from '@/ui/ui_interfaces'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -12,7 +15,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 interface Props {
-  connections: any
+  connections: Paginator<Connection>
   filter: {
     consumerNumber: string
   }
@@ -32,7 +35,8 @@ export default function ConnectionsIndex({ connections, filter }: Readonly<Props
         url={route('connections.index')}
         search={filter.consumerNumber}
       />
-      <div>{connections && <ConnectionsList connections={connections} />}</div>
+      <div>{connections && <ConnectionsList connections={connections.data} />}</div>
+      <div>{connections && <Pagination pagination={connections} />}</div>
     </MainLayout>
   )
 }

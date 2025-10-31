@@ -11,6 +11,7 @@ use App\Services\Metering\MeterService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -25,11 +26,23 @@ class ConnectionController extends Controller
 
     public function index(Request $request): Response|RedirectResponse
     {
+        $pageNumber = $request->input('page') ?? 1;
+        $pageSize = $request->input('page_size') ?? 5;
         $consumerNumber = $request->input('search') ?? null;
-        $connections = $this->connectionService->listConnections($consumerNumber);
+        $connections = $this->connectionService->listPaginatedConnections($pageNumber, $pageSize, $consumerNumber);
+        $paginated = null;
+        if (! empty($connections->data)) {
+            $paginated = new LengthAwarePaginator(
+                $connections->data['connections'],                // items for this page
+                $connections->data['total_count'],            // total items count
+                $connections->data['page_size'],              // items per page
+                $connections->data['page_number'],            // current page
+                ['path' => request()->url()]              // so pagination links work properly
+            );
+        }
 
         return Inertia::render('Connections/ConnectionsIndex', [
-            'connections' => $connections->data,
+            'connections' => $paginated,
             'filter' => [
                 'consumerNumber' => $consumerNumber,
             ],
