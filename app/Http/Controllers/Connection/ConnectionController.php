@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
 use App\Services\Connection\ConnectionFormItemService;
 use App\Services\Connection\ConnectionService;
-use App\Services\Metering\MeterConnectionMappingService;
-use App\Services\Metering\MeterService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,8 +18,7 @@ class ConnectionController extends Controller
     public function __construct(
         private readonly ConnectionService $connectionService,
         private readonly ParameterValueService $parameterValueService,
-        private readonly MeterConnectionMappingService $meterConnectionMappingService,
-        private readonly MeterService $meterService
+
     ) {}
 
     public function index(Request $request): Response|RedirectResponse
@@ -57,9 +54,6 @@ class ConnectionController extends Controller
         return Inertia::render('Connections/ConnectionsForm', $formItems);
     }
 
-    /**
-     * Store a newly created connection and consumer profile in storage.
-     */
     public function store(CreateConnectionFormRequest $request): RedirectResponse
     {
         $response = $this->connectionService->createConnection($request);
@@ -83,28 +77,9 @@ class ConnectionController extends Controller
             }
         }
 
-        // TODO Fetch data directly via relationship
-        $meterConnectionRelResponse = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($id);
-        $meterConnectionRels = $meterConnectionRelResponse->data;
-        $meters = [];
-
-        if ($meterConnectionRels !== null) {
-            foreach ($meterConnectionRels as $meterConnectionRel) {
-                if (isset($meterConnectionRel['meter_id'])) {
-                    $meterResponse = $this->meterService->getMeter($meterConnectionRel['meter_id']);
-                    if (! $meterResponse->hasError()) {
-                        $meters[] = [
-                            'relationship' => $meterConnectionRel,
-                            'meter' => $meterResponse->data,
-                        ];
-                    }
-                }
-            }
-        }
-
         return Inertia::render('Connections/ConnectionsShow', [
             'connection' => $connection->data,
-            'meters' => $meters,
+            'meters' => $connection->data['meters'] ?? [],
         ]);
     }
 

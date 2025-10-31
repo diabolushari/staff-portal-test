@@ -68,6 +68,9 @@ class ConnectionService
         if ($pageSize) {
             $request->setPageSize($pageSize);
         }
+        if ($consumerNumber) {
+            $request->setConsumerNumber($consumerNumber);
+        }
 
         [$response, $status] = $this->client->ListConnectionsPaginated($request)->wait();
         if ($status->code !== 0) {
