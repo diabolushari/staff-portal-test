@@ -1,6 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { Connection, Office } from '@/interfaces/data_interfaces'
+import { Connection, Office, OfficeWithHierarchy } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
@@ -107,12 +107,13 @@ export default function ConnectionForm({
     post(formData)
   }
 
-  const [adminOfficeApiData] = useFetchRecord(
+  const [adminOfficeApiData] = useFetchRecord<OfficeWithHierarchy>(
     formData.admin_office_code ? '/api/office/code/' + formData.admin_office_code : ''
   )
-  const [serviceOfficeApiData] = useFetchRecord(
+  const [serviceOfficeApiData] = useFetchRecord<OfficeWithHierarchy>(
     formData.service_office_code ? '/api/office/code/' + formData.service_office_code : ''
   )
+
   useEffect(() => {
     if (adminOfficeApiData?.office) {
       setAdminOfficeData(adminOfficeApiData.office)
@@ -130,7 +131,7 @@ export default function ConnectionForm({
   const [subCategoryData] = useFetchRecord<ParameterValues[]>(
     '/api/parameter-values?attribute_name=attribute1Value&attribute_value=' + category
   )
-  console.log(subCategoryData)
+
   useEffect(() => {
     if (subCategoryData) {
       setSubCategories(subCategoryData)

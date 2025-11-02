@@ -22,7 +22,7 @@ export default function BillingRuleIndexPage({ billingRules, filters }: PageProp
       breadcrumb={breadcrumb}
       leftBarTitle='Billing Rule'
       navItems={billingNavItems}
-      addBtnText='Add Billing Rule'
+      addBtnText='Billing Rule'
       addBtnUrl='/billing-rules/create'
     >
       <ListSearch
