@@ -1,4 +1,9 @@
-import { Connection, Meter } from '@/interfaces/data_interfaces'
+import {
+  Connection,
+  Meter,
+  MeterAssignment,
+  MeterConnectionMapping,
+} from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { consumerNavItems } from '../../components/Navbar/navitems'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
@@ -23,6 +28,10 @@ import {
 import { Card } from '../../components/ui/card'
 import { router } from '@inertiajs/react'
 import { BreadcrumbItem } from '@/types'
+import DeleteButton from '@/ui/button/DeleteButton'
+import EditButton from '@/ui/button/EditButton'
+import { useState } from 'react'
+import DeleteModal from '@/ui/Modal/DeleteModal'
 
 interface ConnectionMeterListProps {
   connectionId: number
@@ -31,7 +40,7 @@ interface ConnectionMeterListProps {
   subHeading?: string
   onEdit?: () => void
   value?: string
-  meterConnectionRels?: any[]
+  meterConnectionRels?: MeterConnectionMapping[]
 }
 
 export default function ConnectionMeterList({
@@ -40,6 +49,9 @@ export default function ConnectionMeterList({
   heading,
   subHeading,
 }: ConnectionMeterListProps) {
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [deleteRelationId, setDeleteRelation] = useState<MeterConnectionMapping | null>(null)
+
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Connections',
@@ -59,8 +71,9 @@ export default function ConnectionMeterList({
     router.visit(route('connection.meter.create', { id: connectionId }))
   }
 
-  function handleDeleteMeter(rel_id: number) {
-    router.delete(route('meter-connection-rel.destroy', rel_id))
+  function handleDeleteMeter(meterRelation: MeterConnectionMapping) {
+    setDeleteRelation(meterRelation)
+    setDeleteModalOpen(true)
   }
 
   function handleEditMeter(rel_id: number) {
@@ -277,20 +290,8 @@ export default function ConnectionMeterList({
 
                   {/* Delete button */}
                   <div className='flex items-center gap-2'>
-                    <button
-                      onClick={() => handleDeleteMeter(relationship?.rel_id)}
-                      className='inline-flex items-center justify-center rounded-md border border-red-200 bg-white px-2 py-1 text-red-600 shadow-sm transition-colors hover:border-red-300 hover:bg-red-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600'
-                      title='Delete meter'
-                    >
-                      <Trash2 className='h-4 w-4' />
-                    </button>
-                    <button
-                      onClick={() => handleEditMeter(relationship?.rel_id)}
-                      className='inline-flex items-center justify-center rounded-md border border-blue-200 bg-white px-2 py-1 text-blue-600 shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
-                      title='Edit'
-                    >
-                      <Edit className='h-4 w-4' />
-                    </button>
+                    <DeleteButton onClick={() => handleDeleteMeter(relationship)} />
+                    <EditButton onClick={() => handleEditMeter(relationship?.rel_id)} />
                   </div>
                 </div>
               )
@@ -305,6 +306,13 @@ export default function ConnectionMeterList({
             </div>
           )}
         </div>
+        {deleteModalOpen && (
+          <DeleteModal
+            setShowModal={setDeleteModalOpen}
+            url={route('meter-connection-rel.destroy', deleteRelationId?.rel_id)}
+            title='Delete Meter'
+          />
+        )}
       </Card>
     </ConnectionsLayout>
   )

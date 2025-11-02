@@ -60,7 +60,7 @@ export default function MeterReadingCard({ meterReading, meters }: Props) {
   return (
     <Card className='mb-4 p-4'>
       <div className='flex justify-between'>
-        <div>
+        <div className='flex flex-col'>
           <StrongText className='mb-2 text-lg font-semibold'>
             Meter Reading: {meterReading?.metering_date}
           </StrongText>

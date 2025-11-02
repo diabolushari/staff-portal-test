@@ -19,7 +19,7 @@ class ConnectionController extends Controller
     public function __construct(
         private readonly ConnectionService $connectionService,
         private readonly ParameterValueService $parameterValueService,
-        private readonly ConsumerService $consumerService,
+        private readonly ConsumerService $consumerService
 
     ) {}
 
@@ -78,13 +78,9 @@ class ConnectionController extends Controller
                 return redirect()->back()->with('error', 'Failed to get connection');
             }
         }
-        $consumerExist = false;
+
         $consumer = $this->consumerService->getConsumer($id);
-        if ($consumer->data === null) {
-            $consumerExist = false;
-        } else {
-            $consumerExist = true;
-        }
+        $consumerExist = ! $consumer->hasError() && $consumer->data !== null;
 
         return Inertia::render('Connections/ConnectionsShow', [
             'connection' => $connection->data,

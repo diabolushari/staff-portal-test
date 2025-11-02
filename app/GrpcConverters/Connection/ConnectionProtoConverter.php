@@ -144,7 +144,6 @@ class ConnectionProtoConverter
             'service_office_code' => $connection->getServiceOfficeCode(),
             'admin_office_code' => $connection->getAdminOfficeCode(),
             'voltage_id' => $connection->getVoltageId(),
-            'contract_demand_kw_val' => $connection->getContractDemandKvaVal(),
             'connected_load_kw_val' => $connection->getConnectedLoadKwVal(),
             'tariff_id' => $connection->getTariffId(),
             'primary_purpose_id' => $connection->getPrimaryPurposeId(),

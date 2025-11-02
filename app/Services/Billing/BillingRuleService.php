@@ -166,8 +166,8 @@ class BillingRuleService
     {
         $proto = new UpdateBillingRuleRequest;
         $proto->setBillingRule($this->BillingRuleUpdateRequestToProto($request, $id));
-        $jsonContents = $request->billingRule->get();
         $request->validateJsonStructure();
+        $jsonContents = $request->billingRule->get();
         $decoded = json_decode($jsonContents, true);
 
         $computedProperties = [];
