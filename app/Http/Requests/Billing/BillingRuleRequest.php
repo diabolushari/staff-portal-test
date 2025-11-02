@@ -19,6 +19,9 @@ class BillingRuleRequest extends Data
         public UploadedFile $billingRule,
     ) {}
 
+    /**
+     * @return array<string, string[]>
+     */
     public static function rules(): array
     {
         return [
@@ -33,7 +36,7 @@ class BillingRuleRequest extends Data
      */
     public function validateJsonStructure(): void
     {
-        $json = json_decode($this->billingRule->get(), true);
+        $json = json_decode($this->billingRule->get() ?? '', true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw ValidationException::withMessages([
