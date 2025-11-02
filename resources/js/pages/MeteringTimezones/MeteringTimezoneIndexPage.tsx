@@ -1,10 +1,15 @@
 import { router } from '@inertiajs/react'
-import { Clock, Settings } from 'lucide-react'
+import { Clock } from 'lucide-react'
 import { useState } from 'react'
-import { meterNavItems, meterTimezoneNavItems } from '@/components/Navbar/navitems'
+import { meterTimezoneNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import CardHeader from '@/ui/Card/CardHeader'
 import ListSearch from '@/ui/Search/ListSearch'
+
+interface TimezoneGroup {
+  timezone_type: { id: number; parameter_value: string }
+  metering_timezones: MeteringTimezone[]
+}
 
 export interface MeteringTimezone {
   version_id: number
@@ -28,24 +33,21 @@ export interface MeteringTimezone {
 interface Props {
   timezones:
     | {
-        data?: MeteringTimezone[]
+        data?: TimezoneGroup[]
       }
-    | MeteringTimezone[]
+    | TimezoneGroup[]
 }
 
 export default function MeteringTimezonesIndexPage({ timezones }: Props) {
-  // Handle both array and object with data property
   const timezonesData = Array.isArray(timezones) ? timezones : timezones?.data || []
-  const [items, setItems] = useState<MeteringTimezone[]>(timezonesData)
+  const [groups] = useState<TimezoneGroup[]>(timezonesData)
 
   function handleShow(id: number) {
     router.get(`/metering-timezone/${id}`)
   }
 
   function formatTime(hrs: number, mins: number): string {
-    const formattedHrs = hrs.toString().padStart(2, '0')
-    const formattedMins = mins.toString().padStart(2, '0')
-    return `${formattedHrs}:${formattedMins}`
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
   }
 
   return (
@@ -58,45 +60,41 @@ export default function MeteringTimezonesIndexPage({ timezones }: Props) {
         <ListSearch
           title='Metering Timezones search'
           placeholder='Enter timezone name'
-          // url={route("metering-timezones.index")}
         />
 
         <div className='relative w-full rounded-lg bg-white'>
           <CardHeader title='Metering Timezones' />
 
-          <div className='flex flex-col px-7 pb-7'>
-            {items && items.length > 0 ? (
-              items.map((timezone) => (
+          <div className='flex flex-col gap-6 px-7 pb-7'>
+            {groups && groups.length > 0 ? (
+              groups.map((group) => (
                 <div
-                  key={timezone.metering_timezone_id}
-                  onClick={() => handleShow(timezone.metering_timezone_id)}
-                  className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
+                  key={group.timezone_type.id}
+                  className='rounded-lg border border-gray-200 bg-white shadow-sm'
                 >
-                  <div className='flex items-center justify-between'>
-                    {/* Left side info */}
-                    <div className='flex flex-1 flex-col gap-2 p-[10px]'>
-                      {/* Timezone Name */}
-                      <div className='font-inter text-base font-semibold text-black'>
-                        {timezone.timezone_name.parameter_value}
-                      </div>
+                  {/* Header */}
+                  <div className='font-inter border-b border-gray-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800'>
+                    {group.timezone_type.parameter_value}
+                  </div>
 
-                      {/* Time Range */}
-                      <div className='flex items-center gap-1 text-sm text-slate-600'>
-                        <Clock className='h-3.5 w-3.5 text-slate-500' />
-                        {formatTime(timezone.from_hrs, timezone.from_mins)} -{' '}
-                        {formatTime(timezone.to_hrs, timezone.to_mins)}
-                      </div>
-
-                      {/* Pricing Type + Timezone Type */}
-                      <div className='flex flex-wrap items-center gap-4 text-sm text-slate-600'>
-                        <div className='flex items-center gap-1'>
-                          <Settings className='h-3.5 w-3.5 text-slate-500' />
-                          {timezone.pricing_type.parameter_value}
+                  {/* Timezones row */}
+                  <div className='flex w-full items-center gap-6 overflow-x-auto px-4 py-3 text-sm text-slate-700'>
+                    {group.metering_timezones.map((tz) => (
+                      <div
+                        key={tz.metering_timezone_id}
+                        onClick={() => handleShow(tz.metering_timezone_id)}
+                        className='flex min-w-[220px] cursor-pointer flex-col'
+                      >
+                        <div className='font-medium text-slate-900'>
+                          {tz.timezone_name.parameter_value}
                         </div>
-                        <div className='text-slate-400'>•</div>
-                        <div>{timezone.timezone_type.parameter_value}</div>
+                        <div className='flex items-center gap-1 text-slate-600'>
+                          <Clock className='h-3.5 w-3.5 text-slate-500' />
+                          {formatTime(tz.from_hrs, tz.from_mins)} -{' '}
+                          {formatTime(tz.to_hrs, tz.to_mins)}
+                        </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               ))

@@ -2,6 +2,7 @@
 
 namespace App\Services\Metering;
 
+use App\GrpcConverters\MeterProtoConvertor;
 use App\Http\Requests\Metering\MeterConnectionRelFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
@@ -16,6 +17,7 @@ use Proto\Metering\ListMeterConnectionMappingsRequest;
 use Proto\Metering\MeterConnectionMappingResponse;
 use Proto\Metering\MeterConnectionMappingServiceClient;
 use Proto\Metering\UpdateMeterConnectionMappingRequest;
+use Proto\Parameters\ParameterValueProto;
 
 class MeterConnectionMappingService
 {
@@ -248,7 +250,7 @@ class MeterConnectionMappingService
         $effectiveEndTs = $rel->getEffectiveEndTs() ? $rel->getEffectiveEndTs()->toDateTime()->format('Y-m-d H:i:s') : null;
         $createdTs = $rel->getCreatedTs() ? $rel->getCreatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
         $updatedTs = $rel->getUpdatedTs() ? $rel->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
-        $meter = $this->meterService->meterProtoToArray($rel->getMeter());
+        $meter = MeterProtoConvertor::convertToArray($rel->getMeter());
 
         return [
             'version_id' => $rel->getVersionId(),
@@ -275,7 +277,10 @@ class MeterConnectionMappingService
         ];
     }
 
-    private static function transformParameterValueToArray($parameterValue): ?array
+    /**
+     * @return array<string, mixed>
+     */
+    private static function transformParameterValueToArray(ParameterValueProto $parameterValue): ?array
     {
         if ($parameterValue === null) {
             return null;

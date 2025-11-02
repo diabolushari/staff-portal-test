@@ -14,8 +14,7 @@ import "parameters/parameter-value.proto";
 import "consumers/office.proto";
 import "metering/meter_connection_mapping.proto";
 
-// -------------------- MESSAGES --------------------
-
+// Connection table
 message ConnectionMessage {
   int32 version_id = 1;
   int32 connection_id = 2;
@@ -69,12 +68,10 @@ message ConnectionMessage {
   com.kseb.consumerservice.proto.parameters.ParameterValueProto tariff = 50;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto primary_purpose = 51;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto billing_process = 52;
-  optional com.kseb.consumerservice.grpc.consumers.OfficeMessage service_office = 53;
-  optional com.kseb.consumerservice.grpc.consumers.OfficeMessage admin_office = 54;
+  optional com.kseb.consumerservice.grpc.consumers.OfficeMessage admin_office = 53;
+  optional com.kseb.consumerservice.grpc.consumers.OfficeMessage service_office = 54;
 }
 
-
-// -------------------- REQUESTS --------------------
 
 message CreateConnectionRequest {
   int32 connection_type_id = 1;
@@ -109,8 +106,71 @@ message CreateConnectionRequest {
   bool othercons_flag = 30;
   bool cpp_flag = 31;
 }
-message GetConnectionRequest {
-    int32 connection_id = 1;
+
+message GetConnectionRequest{
+  int32 connection_id = 1;
+}
+
+message GetConnectionResponse {
+  ConnectionMessage connection = 1;
+  repeated com.kseb.consumerservice.proto.metering.MeterConnectionMappingResponse meters = 2;
+}
+
+message CreateConnectionResponse {
+  ConnectionMessage connection = 1;
+}
+
+
+message ListConnectionsRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  optional string consumer_number = 3;
+}
+message ListConnectionsResponse {
+  repeated ConnectionMessage items = 1;
+}
+
+message ListConnectionsPaginatedRequest {
+  optional string connection_type = 1;
+  optional string search = 2;
+  optional string consumer_number = 3;
+  int32 page_number = 4;   
+  int32 page_size = 5;
+  optional string sort_by = 6;      
+  optional string sort_direction = 7;
+}
+message ListConnectionsPaginatedResponse {
+  repeated ConnectionMessage items = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
+// Response message for delete operations
+message DeleteResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// Request messages
+message ConnectionRequest {
+  int32 connection_id = 1;
+  int32 version_id = 2;
+}
+
+message ConsumerProfileRequest {
+  int32 connection_id = 1;
+  int32 version_id = 2;
+}
+
+message ConsumerAddressRequest {
+  int32 address_id = 1;
+}
+
+message ConsumerContactDetailsRequest {
+  int32 connection_id = 1;
+  int32 version_id = 2;
 }
 
 message ConnectionUpdateRequest {
@@ -145,53 +205,17 @@ message ConnectionUpdateRequest {
   bool othercons_flag = 29;
   bool cpp_flag = 30;
 }
-
-message ConnectionRequest {
-    int32 connection_id = 1;
-    int32 version_id = 2;
-}
-
-message ListConnectionsRequest {
-    int32 page = 1;
-    int32 page_size = 2;
-    optional string consumer_number = 3;
-}
-
-message ConsumerProfileRequest {
-    int32 connection_id = 1;
-    int32 version_id = 2;
-}
-
-message DeleteResponse {
-    bool success = 1;
-    string message = 2;
-}
-
-// -------------------- RESPONSES --------------------
-
-message CreateConnectionResponse {
-    ConnectionMessage connection = 1;
-}
-
-message GetConnectionResponse {
-  ConnectionMessage connection = 1;
-  repeated com.kseb.consumerservice.proto.metering.MeterConnectionMappingResponse meters = 2;
-}
-
 message ConnectionUpdateResponse {
-    ConnectionMessage connection = 1;
+  ConnectionMessage connection = 1;
 }
 
-message ListConnectionsResponse {
-    repeated ConnectionMessage items = 1;
-}
 
-// -------------------- SERVICE --------------------
-
+// Service definitions
 service ConnectionService {
-    rpc CreateConnection(CreateConnectionRequest) returns (CreateConnectionResponse);
-    rpc GetConnection(GetConnectionRequest) returns (GetConnectionResponse);
-    rpc UpdateConnection(ConnectionUpdateRequest) returns (ConnectionUpdateResponse);
-    rpc DeleteConnection(ConnectionRequest) returns (DeleteResponse);
-    rpc ListConnections(ListConnectionsRequest) returns (ListConnectionsResponse);
+  rpc CreateConnection(CreateConnectionRequest) returns (CreateConnectionResponse);
+  rpc ListConnections(ListConnectionsRequest) returns (ListConnectionsResponse);
+  rpc ListConnectionsPaginated(ListConnectionsPaginatedRequest) returns (ListConnectionsPaginatedResponse);
+  rpc GetConnection(GetConnectionRequest) returns (GetConnectionResponse);
+  rpc UpdateConnection(ConnectionUpdateRequest) returns (ConnectionUpdateResponse);
+  rpc DeleteConnection(ConnectionRequest) returns (DeleteResponse);
 }

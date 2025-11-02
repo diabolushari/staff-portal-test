@@ -5,13 +5,15 @@ import { Cpu, Plus } from 'lucide-react'
 import StrongText from '@/typography/StrongText'
 import { Card } from '@/components/ui/card'
 import { router } from '@inertiajs/react'
-import { Connection, MeterReading } from '@/interfaces/data_interfaces'
+import { Connection, Meter, MeterReading } from '@/interfaces/data_interfaces'
 
 import MeterReadingCard from '@/components/Meter/MeterReading/MeterReadingCard'
+import { Paginator } from '@/ui/ui_interfaces'
+import Pagination from '@/ui/Pagination/Pagination'
 
 interface ConnectionMeterReadingPageProps {
   connection: Connection
-  meterReadings: MeterReading[]
+  meterReadings: Paginator<MeterReading>
 }
 
 export default function ConnectionMeterReadingPage({
@@ -41,10 +43,7 @@ export default function ConnectionMeterReadingPage({
         `?meter_id=${Number(meterId)}&connection_id=${connection?.connection_id}`
     )
   }
-  const handleEditMeterReading = () => {
-    router.visit(route('meter-reading.edit', connection?.connection_id))
-  }
-
+  console.log(meterReadings)
   return (
     <ConnectionsLayout
       connection={connection}
@@ -69,22 +68,27 @@ export default function ConnectionMeterReadingPage({
           </button>
         </div>
         <div className='flex flex-col gap-6 px-6 pb-6'>
-          {meterReadings && meterReadings.length > 0 ? (
-            meterReadings.map((meterReading) => (
-              <MeterReadingCard
-                meterReading={meterReading}
-                meters={connection.meters}
-              />
-            ))
-          ) : (
-            <div className='p-8 text-center text-slate-500'>
-              <div className='flex flex-col items-center gap-2'>
-                <Cpu className='h-12 w-12 text-slate-300' />
-                <p className='text-lg font-medium'>No meter readings found</p>
-                <p className='text-sm'>No kWh readings available for this connection.</p>
+          <div>
+            {meterReadings?.data && meterReadings.data.length > 0 ? (
+              meterReadings?.data.map((meterReading) => (
+                <>
+                  <MeterReadingCard
+                    meterReading={meterReading}
+                    meters={connection.meters}
+                  />
+                </>
+              ))
+            ) : (
+              <div className='p-8 text-center text-slate-500'>
+                <div className='flex flex-col items-center gap-2'>
+                  <Cpu className='h-12 w-12 text-slate-300' />
+                  <p className='text-lg font-medium'>No meter readings found</p>
+                  <p className='text-sm'>No kWh readings available for this connection.</p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+          <Pagination pagination={meterReadings} />
         </div>
       </Card>
     </ConnectionsLayout>

@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
 use App\Services\Connection\ConnectionFormItemService;
 use App\Services\Connection\ConnectionService;
-use App\Services\Metering\MeterConnectionMappingService;
-use App\Services\Metering\MeterService;
+use App\Services\Connection\ConsumerService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -19,17 +19,29 @@ class ConnectionController extends Controller
     public function __construct(
         private readonly ConnectionService $connectionService,
         private readonly ParameterValueService $parameterValueService,
-        private readonly MeterConnectionMappingService $meterConnectionMappingService,
-        private readonly MeterService $meterService
+        private readonly ConsumerService $consumerService
+
     ) {}
 
     public function index(Request $request): Response|RedirectResponse
     {
+        $pageNumber = $request->input('page') ?? 1;
+        $pageSize = $request->input('page_size') ?? 5;
         $consumerNumber = $request->input('search') ?? null;
-        $connections = $this->connectionService->listConnections($consumerNumber);
+        $connections = $this->connectionService->listPaginatedConnections($pageNumber, $pageSize, $consumerNumber);
+        $paginated = null;
+        if (! empty($connections->data)) {
+            $paginated = new LengthAwarePaginator(
+                $connections->data['connections'],                // items for this page
+                $connections->data['total_count'],            // total items count
+                $connections->data['page_size'],              // items per page
+                $connections->data['page_number'],            // current page
+                ['path' => request()->url()]              // so pagination links work properly
+            );
+        }
 
         return Inertia::render('Connections/ConnectionsIndex', [
-            'connections' => $connections->data,
+            'connections' => $paginated,
             'filter' => [
                 'consumerNumber' => $consumerNumber,
             ],
@@ -44,9 +56,6 @@ class ConnectionController extends Controller
         return Inertia::render('Connections/ConnectionsForm', $formItems);
     }
 
-    /**
-     * Store a newly created connection and consumer profile in storage.
-     */
     public function store(CreateConnectionFormRequest $request): RedirectResponse
     {
         $response = $this->connectionService->createConnection($request);
@@ -70,28 +79,12 @@ class ConnectionController extends Controller
             }
         }
 
-        // TODO Fetch data directly via relationship
-        $meterConnectionRelResponse = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($id);
-        $meterConnectionRels = $meterConnectionRelResponse->data;
-        $meters = [];
-
-        if ($meterConnectionRels !== null) {
-            foreach ($meterConnectionRels as $meterConnectionRel) {
-                if (isset($meterConnectionRel['meter_id'])) {
-                    $meterResponse = $this->meterService->getMeter($meterConnectionRel['meter_id']);
-                    if (! $meterResponse->hasError()) {
-                        $meters[] = [
-                            'relationship' => $meterConnectionRel,
-                            'meter' => $meterResponse->data,
-                        ];
-                    }
-                }
-            }
-        }
+        $consumer = $this->consumerService->getConsumer($id);
+        $consumerExist = ! $consumer->hasError() && $consumer->data !== null;
 
         return Inertia::render('Connections/ConnectionsShow', [
             'connection' => $connection->data,
-            'meters' => $meters,
+            'consumerExist' => $consumerExist,
         ]);
     }
 
@@ -117,5 +110,18 @@ class ConnectionController extends Controller
         }
 
         return redirect()->route('connections.index')->with('success', 'Connection updated successfully.');
+    }
+
+    public function destroy(int $id): RedirectResponse
+    {
+        $response = $this->connectionService->deleteConnection($id);
+
+        if ($response->hasError()) {
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
+        }
+
+        return redirect()->route('connections.index')->with('success', 'Connection deleted successfully.');
     }
 }

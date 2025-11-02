@@ -156,9 +156,11 @@ class BillingRuleService
     public function updateBillingRule(BillingRuleRequest $request, int $id): GrpcServiceResponse
     {
         $proto = new UpdateBillingRuleRequest;
-        $proto->setBillingRule($this->billingRuleUpdateRequestToProto($request, $id));
+        $proto->setBillingRule($this->BillingRuleUpdateRequestToProto($request, $id));
+        $request->validateJsonStructure();
         $jsonContents = $request->billingRule->get();
         $decoded = json_decode($jsonContents, true);
+
         $computedProperties = [];
         foreach ($decoded['computed_properties'] as $property) {
             $computedProperty = $this->JsonComputedPropertyFormMessageToProto($property, $request->effectiveStart, $request->effectiveEnd);
