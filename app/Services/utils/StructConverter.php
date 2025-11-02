@@ -8,6 +8,9 @@ use Google\Protobuf\Value;
 
 class StructConverter
 {
+    /**
+     * @return array<string, mixed>
+     */
     public static function convert(Struct $struct): array
     {
         $array = [];
@@ -32,17 +35,25 @@ class StructConverter
         if ($value->hasStringValue()) {
             return $value->getStringValue();
         }
-        if ($value->hasStructValue()) {
+        if ($value->hasStructValue() && $value->getStructValue() != null) {
             return self::convert($value->getStructValue());
         }
         if ($value->hasListValue()) {
             return self::convertList($value->getListValue());
         }
+
+        return null;
     }
 
-    private static function convertList(ListValue $listValue): array
+    /**
+     * @return array<int, mixed>
+     */
+    private static function convertList(?ListValue $listValue): array
     {
         $array = [];
+        if ($listValue == null) {
+            return $array;
+        }
         foreach ($listValue->getValues() as $value) {
             $array[] = self::convertValue($value);
         }
