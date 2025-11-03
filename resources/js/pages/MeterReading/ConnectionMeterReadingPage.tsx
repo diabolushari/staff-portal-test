@@ -43,7 +43,7 @@ export default function ConnectionMeterReadingPage({
         `?meter_id=${Number(meterId)}&connection_id=${connection?.connection_id}`
     )
   }
-  console.log(meterReadings)
+
   return (
     <ConnectionsLayout
       connection={connection}
@@ -74,7 +74,7 @@ export default function ConnectionMeterReadingPage({
                 <>
                   <MeterReadingCard
                     meterReading={meterReading}
-                    meters={connection.meters}
+                    meters={connection?.meters}
                   />
                 </>
               ))

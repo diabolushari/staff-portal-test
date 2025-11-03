@@ -26,7 +26,7 @@ export const NAV_ITEMS = [
     href: '/billing',
     description: 'Invoices and payments',
     children: [
-      { title: 'Meter Readings', href: '/meter-reading', description: 'Manage meter readings' },
+      { title: 'Meter Readings', href: '/meter-readings', description: 'Manage meter readings' },
       { title: 'Billing', href: '/billing', description: 'Manage billing' },
     ],
   },
