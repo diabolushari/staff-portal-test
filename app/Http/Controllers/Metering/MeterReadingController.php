@@ -9,6 +9,7 @@ use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterReadingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -31,8 +32,8 @@ class MeterReadingController extends Controller
         $pageSize = $request->input('page_size') ?? 10;
 
         $meterReadings = $this->meterReadingService->listPaginatedMeterReadings(
-            pageNumber: (int)$pageNumber,
-            pageSize: (int)$pageSize,
+            pageNumber: (int) $pageNumber,
+            pageSize: (int) $pageSize,
             search: $search,
             connectionId: $connectionId
         );
@@ -44,14 +45,13 @@ class MeterReadingController extends Controller
         $paginated = null;
         if (! empty($meterReadings->data)) {
             $paginated = new LengthAwarePaginator(
-                $meterReadings->data['readings'],                // items for this page
+                $meterReadings->data['data'],                // items for this page
                 $meterReadings->data['total_count'],            // total items count
                 $meterReadings->data['page_size'],              // items per page
                 $meterReadings->data['page_number'],            // current page
                 ['path' => request()->url()]              // so pagination links work properly
             );
         }
-
 
         return Inertia::render('MeterReading/MeterReadingIndexPage', [
             'connections' => $connections,

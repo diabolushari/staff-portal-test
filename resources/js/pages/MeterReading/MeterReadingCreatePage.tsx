@@ -29,6 +29,7 @@ function transformToFormData(
   editMode: boolean
 ) {
   // Group readings by meter
+
   const groupedByMeter = metersWithTimezonesAndProfiles.map((meter) => {
     const meterReadings = values.filter((v) => v.meter_id === meter.meter_id)
 
@@ -43,7 +44,7 @@ function transformToFormData(
           timezone_id: tz.timezone_id,
           timezone_name: tz.timezone_name,
           values: {
-            initial: editMode ? match?.final_reading : (match?.initial_reading ?? 0),
+            initial: editMode ? (match?.initial_reading ?? 0) : match?.final_reading,
             final: editMode ? match?.final_reading : '',
             diff: editMode ? match?.difference : '0',
           },
@@ -98,16 +99,14 @@ export default function MeterReadingCreatePage({
   latestMeterReading,
   editMode,
 }: Readonly<Props>) {
-  console.log(metersWithTimezonesAndProfiles)
-
   const breadcrumb: BreadcrumbItem[] = [
     {
       title: 'Connections',
       href: '/connections',
     },
     {
-      title: connectionWithConsumer?.connection?.consumer_number,
-      href: `/connection/${connectionWithConsumer?.connection?.connection_id}`,
+      title: connectionWithConsumer?.connection?.consumer_number ?? '',
+      href: `/connections/${connectionWithConsumer?.connection?.connection_id}`,
     },
     {
       title: 'Meter Reading',

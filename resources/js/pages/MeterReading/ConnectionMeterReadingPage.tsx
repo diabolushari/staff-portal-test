@@ -43,7 +43,7 @@ export default function ConnectionMeterReadingPage({
         `?meter_id=${Number(meterId)}&connection_id=${connection?.connection_id}`
     )
   }
-  console.log(meterReadings)
+
   return (
     <ConnectionsLayout
       connection={connection}
@@ -69,12 +69,12 @@ export default function ConnectionMeterReadingPage({
         </div>
         <div className='flex flex-col gap-6 px-6 pb-6'>
           <div>
-            {meterReadings?.data && meterReadings.data.length > 0 ? (
-              meterReadings?.data.map((meterReading) => (
+            {meterReadings?.data && meterReadings?.data?.length > 0 ? (
+              meterReadings?.data?.map((meterReading) => (
                 <>
                   <MeterReadingCard
                     meterReading={meterReading}
-                    meters={connection.meters}
+                    meters={connection?.meters}
                   />
                 </>
               ))
@@ -88,7 +88,9 @@ export default function ConnectionMeterReadingPage({
               </div>
             )}
           </div>
-          <Pagination pagination={meterReadings} />
+          {meterReadings?.data && meterReadings?.data?.length > 0 && (
+            <Pagination pagination={meterReadings} />
+          )}
         </div>
       </Card>
     </ConnectionsLayout>
