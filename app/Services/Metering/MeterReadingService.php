@@ -18,8 +18,6 @@ use Proto\MeterReading\MeterReadingMessage;
 use Proto\MeterReading\MeterReadingServiceClient;
 use Proto\MeterReading\ReadingValueMessage;
 use Proto\MeterReading\UpdateMeterReadingRequest;
-use Proto\MeterReading\ListMeterReadingPaginatedRequest;
-
 class MeterReadingService
 {
     private MeterReadingServiceClient $client;
