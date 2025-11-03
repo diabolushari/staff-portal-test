@@ -99,16 +99,14 @@ export default function MeterReadingCreatePage({
   latestMeterReading,
   editMode,
 }: Readonly<Props>) {
-  console.log(metersWithTimezonesAndProfiles)
-
   const breadcrumb: BreadcrumbItem[] = [
     {
       title: 'Connections',
       href: '/connections',
     },
     {
-      title: connectionWithConsumer?.connection?.consumer_number,
-      href: `/connection/${connectionWithConsumer?.connection?.connection_id}`,
+      title: connectionWithConsumer?.connection?.consumer_number ?? '',
+      href: `/connections/${connectionWithConsumer?.connection?.connection_id}`,
     },
     {
       title: 'Meter Reading',

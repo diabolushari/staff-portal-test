@@ -78,7 +78,7 @@ export const meterReadingNavItems: navItem[] = [
 export const tariffNavItems: navItem[] = [
   {
     title: 'Tariff Order',
-    href: '/tariff-order',
+    href: '/tariff-orders',
     icon: <ListIcon className='h-4 w-4' />,
   },
 ]

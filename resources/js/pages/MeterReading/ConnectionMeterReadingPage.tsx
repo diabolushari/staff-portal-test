@@ -69,8 +69,8 @@ export default function ConnectionMeterReadingPage({
         </div>
         <div className='flex flex-col gap-6 px-6 pb-6'>
           <div>
-            {meterReadings?.data && meterReadings.data.length > 0 ? (
-              meterReadings?.data.map((meterReading) => (
+            {meterReadings?.data && meterReadings?.data?.length > 0 ? (
+              meterReadings?.data?.map((meterReading) => (
                 <>
                   <MeterReadingCard
                     meterReading={meterReading}
@@ -88,7 +88,9 @@ export default function ConnectionMeterReadingPage({
               </div>
             )}
           </div>
-          <Pagination pagination={meterReadings} />
+          {meterReadings?.data && meterReadings?.data?.length > 0 && (
+            <Pagination pagination={meterReadings} />
+          )}
         </div>
       </Card>
     </ConnectionsLayout>

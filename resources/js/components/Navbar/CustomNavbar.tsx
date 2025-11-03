@@ -26,8 +26,13 @@ export const NAV_ITEMS = [
     href: '/billing',
     description: 'Invoices and payments',
     children: [
-      { title: 'Meter Readings', href: '/meter-readings', description: 'Manage meter readings' },
-      { title: 'Billing', href: '/billing', description: 'Manage billing' },
+      {
+        title: 'Meter Readings',
+        href: '/meter-readings',
+        description: 'Manage meter readings',
+        disabled: true,
+      },
+      { title: 'Billing', href: '/billing', description: 'Manage billing', disabled: true },
     ],
   },
 
@@ -96,7 +101,7 @@ export function CustomNavbar() {
                               data-active={subActive || undefined}
                               data-variant='panel'
                             >
-                              <Link href={child.href}>
+                              <Link href={child.disabled ? '' : child.href}>
                                 <div className='font-medium'>{child.title}</div>
                               </Link>
                             </NavigationMenuLink>
