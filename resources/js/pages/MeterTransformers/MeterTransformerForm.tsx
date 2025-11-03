@@ -259,7 +259,7 @@ export default function MeterTransformerForm({
               />
               <Button
                 type='submit'
-                label={isEditing ? 'Update Transformer' : 'Create Transformer'}
+                label={isEditing ? 'Update CTPT' : 'Create CTPT'}
                 disabled={loading}
               />
             </div>

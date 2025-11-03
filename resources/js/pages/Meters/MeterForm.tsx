@@ -30,6 +30,15 @@ export interface MeterFormProps {
   meter?: Meter
 }
 
+const breadcrumbs = [
+  { title: 'Meters', href: '/meters' },
+  { title: 'Meter', href: '/meters' },
+  {
+    title: 'Add Meter',
+    href: '/meters/create',
+  },
+]
+
 export default function MeterForm({
   ownershipTypes,
   meterProfiles,
@@ -90,7 +99,10 @@ export default function MeterForm({
   }
 
   return (
-    <MainLayout navItems={meterNavItems}>
+    <MainLayout
+      breadcrumb={breadcrumbs}
+      navItems={meterNavItems}
+    >
       <div className='p-6'>
         <CardHeader
           title={isEditing ? 'Edit Meter' : 'Create New Meter'}
