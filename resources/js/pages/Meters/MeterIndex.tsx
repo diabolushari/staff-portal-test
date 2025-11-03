@@ -5,19 +5,27 @@ import ListSearch from '@/ui/Search/ListSearch'
 import { router } from '@inertiajs/react'
 import { Barcode, Calendar, Cpu, Factory, Shield } from 'lucide-react'
 import { Meter } from '@/interfaces/data_interfaces'
+import { Paginator } from '@/ui/ui_interfaces'
+import Pagination from '@/ui/Pagination/Pagination'
 
 interface Props {
-  meters: Meter[]
+  filters: {
+    search: string
+    sort_by: string
+    sort_direction: string
+  }
+  meters: Paginator<Meter>
 }
+const breadcrumbs = [{ title: 'Meters', href: '/meters' }]
+
 const handleShow = (id: number) => {
   router.get(`/meters/${id}`)
 }
 
-export default function MeterIndex({ meters }: Readonly<Props>) {
-  console.log('Meters:', meters)
-
+export default function MeterIndex({ filters, meters }: Readonly<Props>) {
   return (
     <MainLayout
+      breadcrumb={breadcrumbs}
       navItems={meterNavItems}
       addBtnText='Meter'
       addBtnUrl={route('meters.create')}
@@ -27,14 +35,15 @@ export default function MeterIndex({ meters }: Readonly<Props>) {
           title='Meters search'
           placeholder='Enter meter serial'
           url={route('meters.index')}
+          search={filters?.search}
         />
 
         <div className='relative w-full rounded-lg bg-white'>
           <CardHeader title='Meter Info' />
 
           <div className='flex flex-col px-7 pb-7'>
-            {meters && meters.length > 0 ? (
-              meters.map((meter) => (
+            {meters && meters?.data?.length > 0 ? (
+              meters?.data?.map((meter) => (
                 <button
                   key={meter.meter_id}
                   onClick={() => handleShow(meter.meter_id)}
@@ -132,6 +141,7 @@ export default function MeterIndex({ meters }: Readonly<Props>) {
                 <p>No meters found.</p>
               </div>
             )}
+            <Pagination pagination={meters} />
           </div>
         </div>
       </div>
