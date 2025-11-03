@@ -7,7 +7,6 @@ import MainLayout from '@/layouts/main-layout'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
 import Card from '@/ui/Card/Card'
-import CardHeader from '@/ui/Card/CardHeader'
 import FormCard from '@/ui/Card/FormCard'
 import CheckBox from '@/ui/form/CheckBox'
 import DatePicker from '@/ui/form/DatePicker'
@@ -34,7 +33,6 @@ export interface MeterFormProps {
 
 const breadcrumbs = [
   { title: 'Meters', href: '/meters' },
-  { title: 'Meter', href: '/meters' },
   {
     title: 'Add Meter',
     href: '/meters/create',

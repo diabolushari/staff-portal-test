@@ -52,7 +52,6 @@ class TariffOrderController extends Controller
             ]);
         }
 
-        
         return Inertia::render('TariffOrder/TariffOrderIndexPage', [
             'tariffOrders' => $paginated ?? [],
             'filters' => [
