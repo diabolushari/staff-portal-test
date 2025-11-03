@@ -2,41 +2,33 @@
 
 namespace App\Services\Connection;
 
+use App\GrpcConverters\Connection\ConnectionProtoConverter;
 use App\GrpcConverters\MeterProtoConvertor;
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
-use App\Services\Consumers\OfficeService;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Metering\MeterConnectionMappingService;
-use App\Services\Metering\MeterService;
-use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
-use Carbon\Carbon;
 use Google\Protobuf\Struct;
-use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
-use Proto\Connections\ConnectionMessage;
+use Proto\Connections\ConnectionRequest;
 use Proto\Connections\ConnectionServiceClient;
 use Proto\Connections\ConnectionUpdateRequest;
 use Proto\Connections\CreateConnectionRequest;
 use Proto\Connections\GetConnectionRequest;
+use Proto\Connections\ListConnectionsPaginatedRequest;
 use Proto\Connections\ListConnectionsRequest;
 
 class ConnectionService
 {
     private ConnectionServiceClient $client;
 
-    private ParameterValueService $parameterValueService;
-
-    public function __construct(ParameterValueService $parameterValueService,
-        private OfficeService $officeService,
-        private readonly MeterConnectionMappingService $meterConnectionMappingService,
-        private readonly MeterService $meterService
+    public function __construct(
+        private readonly MeterConnectionMappingService $meterConnectionMappingService
     ) {
         $this->client = new ConnectionServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
         );
-        $this->parameterValueService = $parameterValueService;
     }
 
     public function listConnections(?string $consumerNumber): GrpcServiceResponse
@@ -61,10 +53,49 @@ class ConnectionService
         $connections = $response->getItems();
         $connectionArray = [];
         foreach ($connections as $connection) {
-            $connectionArray[] = $this->transformConnectionToArray($connection);
+            $connectionArray[] = ConnectionProtoConverter::convertToArray($connection);
         }
 
         return GrpcServiceResponse::success($connectionArray, $response, $status->code, $status->details);
+    }
+
+    public function listPaginatedConnections(?int $pageNumber = 1, ?int $pageSize = 10, ?string $consumerNumber = null): GrpcServiceResponse
+    {
+        $request = new ListConnectionsPaginatedRequest;
+
+        if ($pageNumber) {
+            $request->setPageNumber($pageNumber);
+        }
+        if ($pageSize) {
+            $request->setPageSize($pageSize);
+        }
+        if ($consumerNumber) {
+            $request->setConsumerNumber($consumerNumber);
+        }
+
+        [$response, $status] = $this->client->ListConnectionsPaginated($request)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+        $connections = $response->getItems();
+        $connectionArray = [];
+        foreach ($connections as $connection) {
+            $connectionArray[] = ConnectionProtoConverter::convertToArray($connection);
+        }
+        $paginatedData = [
+            'connections' => $connectionArray,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ];
+
+        return GrpcServiceResponse::success($paginatedData, $response, $status->code, $status->details);
     }
 
     public function createConnection(CreateConnectionFormRequest $request): GrpcServiceResponse
@@ -113,7 +144,7 @@ class ConnectionService
             );
         }
 
-        $result = $this->transformConnectionToArray($response->getConnection());
+        $result = ConnectionProtoConverter::convertToArray($response->getConnection());
 
         return GrpcServiceResponse::success($result, $response, $status->code, $status->details);
     }
@@ -134,7 +165,7 @@ class ConnectionService
 
         $connection = $response->getConnection();
         $meterRelations = $response->getMeters();
-        $connectionArray = $this->transformConnectionToArray($connection);
+        $connectionArray = ConnectionProtoConverter::convertToArray($connection);
         $meters = [];
         foreach ($meterRelations as $meterRelation) {
             $priority = $meterRelation->getSortPriority();
@@ -152,7 +183,6 @@ class ConnectionService
     public function updateConnection(CreateConnectionFormRequest $request, int $connectionId): GrpcServiceResponse
     {
 
-        // Wrap into UpdateConnectionRequest
         $grpcRequest = new ConnectionUpdateRequest;
         $grpcRequest->setConnectionId($connectionId);
         $grpcRequest->setConnectionStatusId($request->connectionStatusId);
@@ -196,95 +226,26 @@ class ConnectionService
         }
 
         $connection = $response->getConnection();
-        $connectionArray = $this->transformConnectionToArray($connection);
+        $connectionArray = ConnectionProtoConverter::convertToArray($connection);
 
         return GrpcServiceResponse::success($connectionArray, $response, $status->code, $status->details);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function transformConnectionToArray(ConnectionMessage $connection): array
+    public function deleteConnection(int $connectionId): GrpcServiceResponse
     {
+        $grpcRequest = new ConnectionRequest;
+        $grpcRequest->setConnectionId($connectionId);
 
-        return [
-            'version_id' => $connection->getVersionId(),
-            'connection_id' => $connection->getConnectionId(),
-            'consumer_legacy_code' => $connection->getConsumerLegacyCode(),
-            'connection_type_id' => $connection->getConnectionTypeId(),
-            'consumer_number' => $connection->getConsumerNum(),
-            'connection_status_id' => $connection->getConnectionStatusId(),
-            'connected_date' => $connection->getConnectedDate(),
-            'service_office_code' => $connection->getServiceOfficeCode(),
-            'admin_office_code' => $connection->getAdminOfficeCode(),
-            'voltage_id' => $connection->getVoltageId(),
-            'contract_demand_kw_val' => $connection->getContractDemandKvaVal(),
-            'connected_load_kw_val' => $connection->getConnectedLoadKwVal(),
-            'tariff_id' => $connection->getTariffId(),
-            'primary_purpose_id' => $connection->getPrimaryPurposeId(),
-            'connection_category_id' => $connection->getConnectionCategoryId(),
-            'connection_subcategory_id' => $connection->getConnectionSubcategoryId(),
-            'billing_process_id' => $connection->getBillingProcessId(),
-            'phase_type_id' => $connection->getPhaseTypeId(),
-            'solar_indicator' => $connection->getSolarIndicator(),
-            'open_access_type_id' => $connection->getOpenAccessTypeId(),
-            'metering_type_id' => $connection->getMeteringTypeId(),
-            'renewable_type_id' => $connection->getRenewableTypeId(),
-            'multi_source_indicator' => $connection->getMultiSourceIndicator(),
-            'live_indicator' => $connection->getLiveIndicator(),
-            'is_current' => $connection->getIsCurrent(),
-            'created_by' => $connection->getCreatedBy(),
-            'updated_by' => $connection->getUpdatedBy(),
-            'effective_start' => $this->convertFromTimestamp($connection->getEffectiveStart()),
-            'effective_end' => $this->convertFromTimestamp($connection->getEffectiveEnd()),
-            'created_at' => $this->convertFromTimestamp($connection->getCreatedAt()),
-            'updated_at' => $this->convertFromTimestamp($connection->getUpdatedAt()),
-            'power_load_kw_val' => $connection->getPowerLoadKwVal(),
-            'light_load_kw_val' => $connection->getLightLoadKwVal(),
-            'othercons_flag' => $connection->getOtherconsFlag(),
-            'cpp_flag' => $connection->getCppFlag(),
-            'connection_attribs' => $connection->getConnectionAttribs() ? json_decode($connection->getConnectionAttribs()->serializeToJsonString(), true) : null,
-            'purposes_info' => $connection->getPurposesInfo() ? json_decode($connection->getPurposesInfo()->serializeToJsonString(), true) : null,
-            'connected_load_info' => $connection->getConnectedLoadInfo() ? json_decode($connection->getConnectedLoadInfo()->serializeToJsonString(), true) : null,
-            'multi_source_info' => $connection->getMultiSourceInfo() ? json_decode($connection->getMultiSourceInfo()->serializeToJsonString(), true) : null,
-            'consumer_type' => $this->parameterValueService->toArray($connection->getConsumerType()),
-            'connection_type' => $this->parameterValueService->toArray($connection->getConnectionType()),
-            'connection_status' => $this->parameterValueService->toArray($connection->getConnectionStatus()),
-            'open_access_type' => $this->parameterValueService->toArray($connection->getOpenAccessType()),
-            'metering_type' => $this->parameterValueService->toArray($connection->getMeteringType()),
-            'renewable_type' => $this->parameterValueService->toArray($connection->getRenewableType()),
-            'phase_type' => $this->parameterValueService->toArray($connection->getPhaseType()),
-            'voltage' => $this->parameterValueService->toArray($connection->getVoltage()),
-            'connection_category' => $this->parameterValueService->toArray($connection->getConnectionCategory()),
-            'connection_subcategory' => $this->parameterValueService->toArray($connection->getConnectionSubcategory()),
-            'primary_purpose' => $this->parameterValueService->toArray($connection->getPrimaryPurpose()),
-            'billing_process' => $this->parameterValueService->toArray($connection->getBillingProcess()),
-            'tariff' => $this->parameterValueService->toArray($connection->getTariff()),
-            'service_office' => $connection->getServiceOffice() ? $this->officeService->officeProtoToArray($connection->getServiceOffice()) : null,
-            'admin_office' => $connection->getAdminOffice() ? $this->officeService->officeProtoToArray($connection->getAdminOffice()) : null,
-
-        ];
-    }
-
-    /**
-     * Convert protobuf Timestamp to a Carbon ISO string.
-     */
-    private function convertFromTimestamp(?Timestamp $timestamp): ?string
-    {
-        if ($timestamp === null) {
-            return null;
+        [$response, $status] = $this->client->deleteConnection($grpcRequest)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
         }
 
-        $seconds = $timestamp->getSeconds();
-        $nanos = $timestamp->getNanos();
-
-        if ($seconds === 0 && $nanos === 0) {
-            return null;
-        }
-
-        $carbon = Carbon::createFromTimestamp($seconds);
-        $carbon->addMicroseconds(intval($nanos / 1000));
-
-        return $carbon->toISOString();
+        return GrpcServiceResponse::success($response, $response, $status->code, $status->details);
     }
 }

@@ -165,6 +165,6 @@ class MeterController extends Controller
             return $response->error;
         }
 
-        return redirect()->route('meters.index')->with('success', 'Meter deleted successfully.');
+        return redirect()->route('meters.index')->with(['message' => 'Meter deleted successfully.']);
     }
 }

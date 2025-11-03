@@ -2,6 +2,7 @@
 
 namespace App\Services\Billing;
 
+use App\GrpcConverters\BillingRuleProtoConvertor;
 use App\Http\Requests\Billing\BillingRuleRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
@@ -40,20 +41,9 @@ class BillingRuleService
         $proto = new CreateBillingRuleRequest;
         $request->validateJsonStructure();
         $jsonContents = $request->billingRule->get();
-        $decoded = json_decode($jsonContents, true);
-        $computedProperties = [];
-        foreach ($decoded['computed_properties'] as $property) {
-            $computedProperty = $this->JsonComputedPropertyFormMessageToProto($property, $request->effectiveStart, $request->effectiveEnd);
-            $computedProperties[] = $computedProperty;
-        }
-        $chargeHeads = [];
-        foreach ($decoded['charge_heads'] as $chargeHead) {
-            $chargeHeads[] = $this->jsonChargeHeadToProto($chargeHead, $request->effectiveStart, $request->effectiveEnd);
+        $decoded = json_decode($jsonContents ?? '', true);
 
-        }
-        $proto->setBillingRule($this->BillingRuleRequestToProto($request));
-        $proto->setComputedProperties($computedProperties);
-        $proto->setChargeHeads($chargeHeads);
+        $proto->setBillingRule(BillingRuleProtoConvertor::billingRuleRequestToProto($request));
 
         [$response, $status] = $this->client->CreateBillingRule($proto)->wait();
 
@@ -65,9 +55,10 @@ class BillingRuleService
                 $status->details
             );
         }
+
         $billingRule = [];
         if ($response->getBillingRule() != null) {
-            $billingRule = $this->BillingRuleMessageToArray($response->getBillingRule());
+            $billingRule = $this->billingRuleMessageToArray($response->getBillingRule());
         }
 
         return GrpcServiceResponse::success($billingRule, $response, $status->code, $status->details);
@@ -89,7 +80,7 @@ class BillingRuleService
 
         $billingRules = [];
         foreach ($response->getBillingRules() as $billingRule) {
-            $billingRules[] = $this->BillingRuleMessageToArray($billingRule);
+            $billingRules[] = $this->billingRuleMessageToArray($billingRule);
         }
 
         return GrpcServiceResponse::success($billingRules, $response, $status->code, $status->details);
@@ -127,7 +118,7 @@ class BillingRuleService
 
         $billingRules = [];
         foreach ($response->getBillingRules() as $billingRule) {
-            $billingRules[] = $this->BillingRuleMessageToArray($billingRule);
+            $billingRules[] = $this->billingRuleMessageToArray($billingRule);
         }
         $billingRules = [
             'billing_rules' => $billingRules,
@@ -156,7 +147,7 @@ class BillingRuleService
 
         $billingRule = [];
         if ($response->getBillingRule() != null) {
-            $billingRule = $this->BillingRuleMessageToArray($response->getBillingRule());
+            $billingRule = $this->billingRuleMessageToArray($response->getBillingRule());
         }
 
         return GrpcServiceResponse::success($billingRule, $response, $status->code, $status->details);
@@ -166,8 +157,8 @@ class BillingRuleService
     {
         $proto = new UpdateBillingRuleRequest;
         $proto->setBillingRule($this->BillingRuleUpdateRequestToProto($request, $id));
-        $jsonContents = $request->billingRule->get();
         $request->validateJsonStructure();
+        $jsonContents = $request->billingRule->get();
         $decoded = json_decode($jsonContents, true);
 
         $computedProperties = [];
@@ -215,28 +206,7 @@ class BillingRuleService
         return GrpcServiceResponse::success([], $response, $status->code, $status->details);
     }
 
-    public function BillingRuleRequestToProto(BillingRuleRequest $request): BillingRuleFormMessage
-    {
-        $proto = new BillingRuleFormMessage;
-        $proto->setName($request->name);
-        $jsonContents = $request->billingRule->get();
-        if ($jsonContents != false) {
-            $decoded = json_decode($jsonContents, true);
-            $proto->setRule(ArrayToStructConverter::convert($decoded));
-        }
-        $effectiveStart = DateTimeConverter::convertStringToTimestamp($request->effectiveStart ?? null);
-        if ($effectiveStart != null) {
-            $proto->setEffectiveStart($effectiveStart);
-        }
-        $effectiveEnd = DateTimeConverter::convertStringToTimestamp($request->effectiveEnd ?? null);
-        if ($effectiveEnd != null) {
-            $proto->setEffectiveEnd($effectiveEnd);
-        }
-
-        return $proto;
-    }
-
-    public function BillingRuleUpdateRequestToProto(BillingRuleRequest $request, int $id): BillingRuleFormMessage
+    public function billingRuleUpdateRequestToProto(BillingRuleRequest $request, int $id): BillingRuleFormMessage
     {
         $billingMessage = new BillingRuleFormMessage;
         $billingMessage->setId($id);
@@ -261,7 +231,7 @@ class BillingRuleService
     /**
      * @return array<string, mixed>
      */
-    public function BillingRuleMessageToArray(BillingRuleMessage $billingRuleMessage): array
+    public function billingRuleMessageToArray(BillingRuleMessage $billingRuleMessage): array
     {
         return [
             'id' => $billingRuleMessage->getId(),

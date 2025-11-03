@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react'
-import MainLayout from '@/layouts/main-layout'
-import Stepper from '@/components/Stepper'
 import MeterReadingGeneralStep from '@/components/Meter/MeterReading/MeterReadingGeneralStep'
 import MeterReadingObservationStep from '@/components/Meter/MeterReading/MeterReadingObservationStep'
 import MeterReadingsStep from '@/components/Meter/MeterReading/MeterReadingsStep'
 import { consumerNavItems } from '@/components/Navbar/navitems'
+import Stepper from '@/components/Stepper'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { BreadcrumbItem } from '@/types'
+import { ConsumerData, MeterReading } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import MainLayout from '@/layouts/main-layout'
+import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
-import { Connection, ConsumerData, MeterReading } from '@/interfaces/data_interfaces'
+import { useEffect, useState } from 'react'
 
 interface Props {
   connectionWithConsumer: ConsumerData
@@ -29,6 +29,7 @@ function transformToFormData(
   editMode: boolean
 ) {
   // Group readings by meter
+
   const groupedByMeter = metersWithTimezonesAndProfiles.map((meter) => {
     const meterReadings = values.filter((v) => v.meter_id === meter.meter_id)
 
@@ -43,7 +44,7 @@ function transformToFormData(
           timezone_id: tz.timezone_id,
           timezone_name: tz.timezone_name,
           values: {
-            initial: editMode ? match?.final_reading : (match?.initial_reading ?? 0),
+            initial: editMode ? (match?.initial_reading ?? 0) : match?.final_reading,
             final: editMode ? match?.final_reading : '',
             diff: editMode ? match?.difference : '0',
           },
@@ -104,8 +105,8 @@ export default function MeterReadingCreatePage({
       href: '/connections',
     },
     {
-      title: connectionWithConsumer?.connection?.consumer_number,
-      href: `/connection/${connectionWithConsumer?.connection?.connection_id}`,
+      title: connectionWithConsumer?.connection?.consumer_number ?? '',
+      href: `/connections/${connectionWithConsumer?.connection?.connection_id}`,
     },
     {
       title: 'Meter Reading',

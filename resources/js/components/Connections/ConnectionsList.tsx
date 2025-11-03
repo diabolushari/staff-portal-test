@@ -1,14 +1,24 @@
 import { Connection } from '@/interfaces/data_interfaces'
+import Button from '@/ui/button/Button'
+import DeleteButton from '@/ui/button/DeleteButton'
+import DeleteModal from '@/ui/Modal/DeleteModal'
 import { router } from '@inertiajs/react'
 import { Calendar, Cpu, Hash, Zap } from 'lucide-react'
+import { useState } from 'react'
 
 interface Props {
   connections: Connection[]
 }
 
 export default function ConnectionsList({ connections }: Readonly<Props>) {
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [selectedDeleteConnection, setSelectedDeleteConnection] = useState<Connection | null>(null)
   const handleConnectionClick = (connection: Connection) => {
     router.get(route('connections.show', connection.connection_id))
+  }
+  const handleDeleteConnection = (connection: Connection) => {
+    setSelectedDeleteConnection(connection)
+    setShowDeleteModal(true)
   }
 
   return (
@@ -21,7 +31,6 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
           connections.map((connection) => (
             <div
               key={connection.connection_id}
-              onClick={() => handleConnectionClick(connection)}
               className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
             >
               <div className='flex items-start justify-between'>
@@ -83,6 +92,11 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
                       <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
                         Connected on: {new Date(connection.connected_date).toLocaleDateString()}
                       </div>
+                      <Button
+                        variant='link'
+                        label='View'
+                        onClick={() => handleConnectionClick(connection)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -101,10 +115,20 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
                       {connection.is_current ? 'Active' : 'Inactive'}
                     </div>
                   </div>
+                  <div className='flex flex-col items-end justify-end gap-2'>
+                    <DeleteButton onClick={() => handleDeleteConnection(connection)} />
+                  </div>
                 </div>
               </div>
             </div>
           ))}
+        {showDeleteModal && (
+          <DeleteModal
+            title='Delete Connection'
+            url={route('connections.destroy', selectedDeleteConnection?.connection_id)}
+            setShowModal={(showModal) => setShowDeleteModal(showModal)}
+          />
+        )}
       </div>
     </div>
   )

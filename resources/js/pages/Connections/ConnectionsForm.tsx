@@ -9,16 +9,34 @@ import ConsumerForm from '@/components/Connections/ConsumerForm'
 import ConsumerFormComponent from '@/components/Consumer/ConsumerFormComponent'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Connections',
-    href: '/connections',
-  },
-  {
-    title: 'Add Connection',
-    href: '/connections/create',
-  },
-]
+const getBreadcrumb = (connection: any) => {
+  if (!connection) {
+    return [
+      {
+        title: 'Connections',
+        href: '/connections',
+      },
+      {
+        title: 'Add Connection',
+        href: '/connections/create',
+      },
+    ]
+  }
+  return [
+    {
+      title: 'Connections',
+      href: '/connections',
+    },
+    {
+      title: connection.consumer_number,
+      href: `/connections/${connection.connection_id}`,
+    },
+    {
+      title: 'Edit Connection',
+      href: `/connections/${connection.connection_id}/edit`,
+    },
+  ]
+}
 interface Props {
   connectionTypes: ParameterValues[]
   connectionStatus: ParameterValues[]
@@ -56,9 +74,10 @@ export default function ConnectionsForm({
       label: 'Connection',
     },
   ]
+
   return (
     <MainLayout
-      breadcrumb={breadcrumbs}
+      breadcrumb={getBreadcrumb(connection)}
       navItems={consumerNavItems}
     >
       <div>

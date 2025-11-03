@@ -60,8 +60,8 @@ export default function ParameterValueCreate({ parameter_value, definitions, dom
     domain_name: parameter_value?.definition?.parameter_domain ?? '',
     _method: parameter_value != null ? 'PUT' : undefined,
   })
-  console.log(parameter_value)
-  const { post, errors } = useInertiaPost<typeof formData>(
+
+  const { post, errors, loading } = useInertiaPost<typeof formData>(
     parameter_value
       ? route('parameter-value.update', parameter_value.id)
       : route('parameter-value.store'),
@@ -254,6 +254,7 @@ export default function ParameterValueCreate({ parameter_value, definitions, dom
                 <Button
                   type='submit'
                   label='Save'
+                  disabled={loading}
                 />
               </div>
             </form>

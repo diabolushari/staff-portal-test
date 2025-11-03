@@ -12,6 +12,7 @@ use Proto\MeterReading\CreateMeterReadingRequest;
 use Proto\MeterReading\CreateMeterReadingValues;
 use Proto\MeterReading\GetMeterReadingRequest;
 use Proto\MeterReading\LatestMeterReadingRequest;
+use Proto\MeterReading\ListMeterReadingPaginatedRequest;
 use Proto\MeterReading\ListMeterReadingRequest;
 use Proto\MeterReading\MeterReadingMessage;
 use Proto\MeterReading\MeterReadingServiceClient;
@@ -78,17 +79,16 @@ class MeterReadingService
         $request = new ListMeterReadingPaginatedRequest;
         $request->setPageNumber($pageNumber);
         $request->setPageSize($pageSize);
-
-        if ($search !== null) {
+        if ($search) {
             $request->setSearch($search);
         }
-        if ($connectionId !== null) {
+        if ($connectionId) {
             $request->setConnectionId($connectionId);
         }
-        if ($sortBy !== null) {
+        if ($sortBy) {
             $request->setSortBy($sortBy);
         }
-        if ($sortDirection !== null) {
+        if ($sortDirection) {
             $request->setSortDirection($sortDirection);
         }
 
@@ -109,7 +109,7 @@ class MeterReadingService
         }
 
         $data = [
-            'readings' => $readingsArray,
+            'data' => $readingsArray,
             'total_count' => $response->getTotalCount(),
             'page_number' => $response->getPageNumber(),
             'page_size' => $response->getPageSize(),

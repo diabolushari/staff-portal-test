@@ -10,10 +10,10 @@ import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 
 interface Props {
   connection: Connection
-  meters: MeterAssignment[] | null
+  consumerExist: boolean
 }
 
-export default function ConnectionsShow({ connection, meters }: Readonly<Props>) {
+export default function ConnectionsShow({ connection, consumerExist }: Readonly<Props>) {
   const formatDate = (dateStr?: string | null) =>
     dateStr ? new Date(dateStr).toLocaleDateString() : '-'
 
@@ -63,6 +63,8 @@ export default function ConnectionsShow({ connection, meters }: Readonly<Props>)
       subHeading='Connection Details'
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
+      consumerExist={consumerExist}
+      meterExist={connection?.meters?.length > 0}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header */}

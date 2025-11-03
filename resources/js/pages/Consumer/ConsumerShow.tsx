@@ -64,6 +64,9 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
       connectionsNavItems={consumerNavItems}
       heading={`Connection #${connection?.consumer_number}`}
       onEdit={() => router.visit(route('connection.consumer', connection?.connection_id))}
+      subHeading='Consumer'
+      consumerExist={true}
+      meterExist={connection?.meters?.length > 0}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto'>
         {/* --- Basic Information --- */}
