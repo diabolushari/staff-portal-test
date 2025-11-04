@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Metering;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Metering\MeterTransformerFormRequest;
-use App\Services\Metering\MeterTransformerRelService;
 use App\Services\Metering\MeterTransformerService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
@@ -16,14 +15,13 @@ class MeterTransformerController extends Controller
 {
     public function __construct(
         private readonly MeterTransformerService $transformerService,
-        private readonly MeterTransformerRelService $transformerRelService,
         private readonly ParameterValueService $parameterValueService
     ) {}
 
     /**
      * Display a listing of transformers.
      */
-    public function index(): Response
+    public function index(): Response|RedirectResponse
     {
         $pageNumber = request()->input('page') ?? 1;
         $pageSize = request()->input('page_size') ?? 10;
@@ -85,13 +83,11 @@ class MeterTransformerController extends Controller
      */
     public function store(MeterTransformerFormRequest $request): RedirectResponse
     {
-        $data = $request->toArray();
-        $data['created_by'] = auth()->id();
 
-        $response = $this->transformerService->createTransformer($data);
+        $response = $this->transformerService->createTransformer($request);
 
         if ($response->hasError()) {
-            return redirect()->back()->withErrors($response->error);
+            return redirect()->back()->withErrors($response->error ?? 'Unknown error');
         }
 
         return redirect()->route('meter-ctpt.index')
@@ -104,11 +100,9 @@ class MeterTransformerController extends Controller
     public function show(int $id): Response
     {
         $response = $this->transformerService->getTransformer($id);
-        $relation = $this->transformerRelService->getRelByCtptId($id);
 
         return Inertia::render('MeterTransformers/MeterTransformerShow', [
             'transformer' => $response->data ?? null,
-            'relation' => $relation->data,
         ]);
     }
 
@@ -120,7 +114,7 @@ class MeterTransformerController extends Controller
         $response = $this->transformerService->deleteTransformer($id);
 
         if ($response->hasError()) {
-            return redirect()->back()->withErrors($response->error);
+            return redirect()->back()->withErrors($response->error ?? 'Unknown error');
         }
 
         return redirect()->route('meter-ctpt.index')
