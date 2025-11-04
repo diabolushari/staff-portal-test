@@ -141,7 +141,10 @@ export default function MeterIndex({ filters, meters }: Readonly<Props>) {
                 <p>No meters found.</p>
               </div>
             )}
-            <Pagination pagination={meters} />
+            <Pagination
+              pagination={meters}
+              filters={{ search: filters?.search }}
+            />
           </div>
         </div>
       </div>
