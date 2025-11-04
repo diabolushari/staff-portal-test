@@ -3,6 +3,7 @@ import { navItem } from '@/components/Navbar/navitems'
 import TopNavBar from '@/components/Navbar/TopNavBar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { BreadcrumbItem, PageProps } from '@/types'
+import StrongText from '@/typography/StrongText'
 import CustomBreadcrumb from '@/ui/BreadCrumb'
 import AddButton from '@/ui/button/AddButton'
 import { router, usePage } from '@inertiajs/react'
@@ -17,6 +18,7 @@ interface Props {
   addBtnText?: string
   addBtnClick?: () => void
   leftBarTitle?: string
+  title?: string
 }
 
 export default function MainLayout({
@@ -27,6 +29,7 @@ export default function MainLayout({
   addBtnText,
   addBtnClick,
   leftBarTitle,
+  title,
 }: Readonly<Props>) {
   const { flash } = usePage<PageProps>().props
 
@@ -74,7 +77,16 @@ export default function MainLayout({
                   )}
                 </div>
               </div>
-              {children}
+              {title ? (
+                <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
+                  <div className='flex items-center gap-2'>
+                    <StrongText className='text-2xl font-semibold'>{title}</StrongText>
+                  </div>
+                  {children}
+                </div>
+              ) : (
+                children
+              )}
             </div>
           </main>
         </div>

@@ -10,6 +10,7 @@ use Proto\Parameters\CreateParameterValueRequest;
 use Proto\Parameters\DeleteParameterValueRequest;
 use Proto\Parameters\GetParameterValueRequest;
 use Proto\Parameters\ListParameterValuesRequest;
+use Proto\Parameters\ParameterValuePaginatedListRequest;
 use Proto\Parameters\ParameterValueProto;
 use Proto\Parameters\ParameterValueServiceClient;
 use Proto\Parameters\UpdateParameterValueRequest;
@@ -101,6 +102,53 @@ class ParameterValueService
         }
 
         return GrpcServiceResponse::success($parameterValuesArray, $response, $status->code, $status->details);
+    }
+
+    public function listParameterValuePaginated(
+        int $pageNumber = 1,
+        int $pageSize = 10,
+        ?string $search = null,
+        ?string $domainName = null,
+        ?string $parameterName = null,
+        ?string $sortBy = null,
+        ?string $sortDirection = null,
+        ?string $attributeName = null,
+        ?string $attributeValue = null,
+
+    ): GrpcServiceResponse {
+        $request = new ParameterValuePaginatedListRequest;
+        $request->setPageNumber($pageNumber);
+        $request->setPageSize($pageSize);
+        $request->setSortBy($sortBy ?? '');
+        $request->setSortDirection($sortDirection ?? '');
+        $request->setSearch($search ?? '');
+        $request->setAttributeName($attributeName ?? '');
+        $request->setAttributeValue($attributeValue ?? '');
+        $request->setDomainName($domainName ?? '');
+        $request->setParameterName($parameterName ?? '');
+        [$response, $status] = $this->client->ListParameterValuesPaginated($request)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $parameterValuesArray = [];
+        foreach ($response->getValues() as $parameterValue) {
+            $parameterValuesArray[] = self::toArray($parameterValue);
+        }
+        $parameterValuesData = [
+            'parameter_values' => $parameterValuesArray,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ];
+
+        return GrpcServiceResponse::success($parameterValuesData, $response, $status->code, $status->details);
     }
 
     public function createParameterValue(ParameterValueFormRequest $request): GrpcServiceResponse

@@ -3,8 +3,6 @@
 namespace App\Http\Requests\Metering;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Proto\Parameters\ParameterValueServiceClient;
-use Proto\Parameters\GetParameterValueRequest;
 
 class MeterTransformerFormRequest extends FormRequest
 {
@@ -18,13 +16,13 @@ class MeterTransformerFormRequest extends FormRequest
             'burden_id' => 'required|integer',
             'make_id' => 'required|integer',
             'type_id' => 'required|integer',
-            'ratio_primary_value'   => 'nullable|string|max:20',
+            'ratio_primary_value' => 'nullable|string|max:20',
             'ratio_secondary_value' => 'nullable|string|max:20',
-            'manufacture_date'      => 'nullable|date',
+            'manufacture_date' => 'nullable|date',
 
         ];
 
-          return $rules;
+        return $rules;
     }
 
     public function authorize(): bool
