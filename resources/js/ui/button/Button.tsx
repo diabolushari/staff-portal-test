@@ -17,7 +17,7 @@ export const chooseButtonColor = (type: string): [string, string] => {
   switch (type) {
     case 'primary': {
       return [
-        'rounded-[8px] bg-[#4094F7] text-white dark:bg-[#4094F7] px-8 py-2 font-inter font-medium',
+        'rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]',
         '',
       ]
     }
@@ -59,7 +59,7 @@ export const chooseButtonColor = (type: string): [string, string] => {
     default: {
       return [
         'bg-[#0078D4] text-white dark:bg-blue-700 dark:text-white hover:shadow-lg rounded-sm hover:opacity-75 focus:ring-1',
-        'text-blue-700 dark:text-blue-700',
+        'text-blue-700 dark:text-blue-700 hover:text-blue-700 dark:hover:text-blue-700',
       ]
     }
   }

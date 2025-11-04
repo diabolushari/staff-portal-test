@@ -5,6 +5,7 @@ import useCustomForm from '@/hooks/useCustomForm'
 import { ParameterDefinition, ParameterDomain, ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
+import Button from '@/ui/button/Button'
 
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import ListSearch from '@/ui/Search/ListSearch'
@@ -73,12 +74,11 @@ export default function ParameterValueIndex({ values, domains, definitions, filt
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <div className='mb-4 flex items-center justify-between'>
           <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Values</h2>
-          <button
+          <Button
+            label='Add Value'
             onClick={handleCreateClick}
-            className='rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
-          >
-            + Add Value
-          </button>
+            variant='primary'
+          />
         </div>
         <ListSearch
           title='Parameter Value'
