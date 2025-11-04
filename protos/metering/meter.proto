@@ -19,6 +19,7 @@ service MeterService {
   rpc ListMeters(ListMetersRequest) returns (ListMetersResponse);
   rpc UpdateMeter(UpdateMeterRequest) returns (MeterResponse);
   rpc DeleteMeter(DeleteMeterRequest) returns (google.protobuf.Empty);
+  rpc ListMetersPaginated(MeterPaginatedListRequest) returns (MeterPaginatedListResponse);
 }
 
 message ListMetersResponse {
@@ -150,5 +151,22 @@ message MeterResponse {
 
   int64 profile_id = 34;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 35;
+}
+
+message MeterPaginatedListRequest {
+  optional string meter_serial = 1; // search filter
+  int32 page_number = 2;
+  int32 page_size = 3;
+  optional string sort_by = 4;       
+  optional string sort_direction = 5;
+}
+
+// Paginated list response
+message MeterPaginatedListResponse {
+  repeated MeterResponse meters = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
 }
 

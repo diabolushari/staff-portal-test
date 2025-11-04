@@ -5,22 +5,14 @@ import useCustomForm from '@/hooks/useCustomForm'
 import { ParameterDefinition, ParameterDomain, ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
-
+import Button from '@/ui/button/Button'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import Pagination from '@/ui/Pagination/Pagination'
 import ListSearch from '@/ui/Search/ListSearch'
+import { Paginator } from '@/ui/ui_interfaces'
 import { router } from '@inertiajs/react'
 import React, { useState } from 'react'
 import { route } from 'ziggy-js'
-
-const columns = [
-  'S.No',
-  'ID',
-  'Parameter Code',
-  'Parameter Value',
-  'Definition Name',
-  'Notes',
-  'Actions',
-]
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -30,7 +22,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 interface Props {
-  values: ParameterValues[]
+  values: Paginator<ParameterValues>
   domains: ParameterDomain[]
   definitions: ParameterDefinition[]
   filters: {
@@ -52,15 +44,6 @@ export default function ParameterValueIndex({ values, domains, definitions, filt
     setShowDeleteModal(true)
     setEditRow(item)
   }
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    router.get(route('parameter-value.index'), { ...formData })
-  }
-
-  const handleEditClick = (item: any) => {
-    router.get(route('parameter-value.edit', item.id))
-  }
-
   const handleCreateClick = () => {
     router.get(route('parameter-value.create'))
   }
@@ -69,17 +52,10 @@ export default function ParameterValueIndex({ values, domains, definitions, filt
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={settingsReferenceData}
+      addBtnClick={handleCreateClick}
+      addBtnText='Value'
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
-        <div className='mb-4 flex items-center justify-between'>
-          <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Values</h2>
-          <button
-            onClick={handleCreateClick}
-            className='rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
-          >
-            + Add Value
-          </button>
-        </div>
         <ListSearch
           title='Parameter Value'
           url={route('parameter-value.index')}
@@ -91,12 +67,17 @@ export default function ParameterValueIndex({ values, domains, definitions, filt
           parameterDefinitions={definitions}
           filters={filters}
         />
-        <ParameterValuesList
-          parameterValues={values}
-          onView={(item) => router.get(route('parameter-value.show', item.id))}
-          onEdit={(item) => router.get(route('parameter-value.edit', item.id))}
-          onDelete={handleDeleteClick}
-        />
+        {values?.data && (
+          <>
+            <ParameterValuesList
+              parameterValues={values?.data}
+              onView={(item) => router.get(route('parameter-value.show', item.id))}
+              onEdit={(item) => router.get(route('parameter-value.edit', item.id))}
+              onDelete={handleDeleteClick}
+            />
+            <Pagination pagination={values} />
+          </>
+        )}
         {showDeleteModal && editRow && (
           <DeleteModal
             setShowModal={setShowDeleteModal}

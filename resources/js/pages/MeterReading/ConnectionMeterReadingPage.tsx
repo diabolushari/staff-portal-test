@@ -81,7 +81,9 @@ export default function ConnectionMeterReadingPage({
               </div>
             )}
           </div>
-          <Pagination pagination={meterReadings} />
+          {meterReadings?.data && meterReadings?.data?.length > 0 && (
+            <Pagination pagination={meterReadings} />
+          )}
         </div>
       </Card>
     </ConnectionsLayout>

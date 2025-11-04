@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Metering;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Metering\MeterTransformerFormRequest;
-use App\Services\Metering\MeterTransformerRelService;
 use App\Services\Metering\MeterTransformerService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -15,19 +15,50 @@ class MeterTransformerController extends Controller
 {
     public function __construct(
         private readonly MeterTransformerService $transformerService,
-        private readonly MeterTransformerRelService $transformerRelService,
         private readonly ParameterValueService $parameterValueService
     ) {}
 
     /**
      * Display a listing of transformers.
      */
-    public function index(): Response
+    public function index(): Response|RedirectResponse
     {
-        $response = $this->transformerService->listTransformers();
+        $pageNumber = request()->input('page') ?? 1;
+        $pageSize = request()->input('page_size') ?? 10;
+        $search = request()->input('search') ?? null;
+        $sortBy = request()->input('sort_by') ?? null;
+        $sortDirection = request()->input('sort_direction') ?? null;
+        $response = $this->transformerService->listTransformersPaginated(
+            pageNumber: $pageNumber,
+            pageSize: $pageSize,
+            ctptSerial: $search,
+            sortBy: $sortBy,
+            sortDirection: $sortDirection,
+        );
+        $paginated = null;
+        if (! empty($response->data)) {
+            $paginated = new LengthAwarePaginator(
+                $response->data['transformers'],                // items for this page
+                $response->data['total_count'],            // total items count
+                $response->data['page_size'],              // items per page
+                $response->data['page_number'],            // current page
+                ['path' => request()->url()]              // so pagination links work properly
+            );
+        }
+
+        if ($response->hasError()) {
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
+        }
 
         return Inertia::render('MeterTransformers/MeterTransformerIndex', [
-            'transformers' => $response->data,
+            'transformers' => $paginated ?? [],
+            'filters' => [
+                'search' => $search,
+                'sort_by' => $sortBy,
+                'sort_direction' => $sortDirection,
+            ],
         ]);
     }
 
@@ -52,13 +83,11 @@ class MeterTransformerController extends Controller
      */
     public function store(MeterTransformerFormRequest $request): RedirectResponse
     {
-        $data = $request->toArray();
-        $data['created_by'] = auth()->id();
 
-        $response = $this->transformerService->createTransformer($data);
+        $response = $this->transformerService->createTransformer($request);
 
         if ($response->hasError()) {
-            return redirect()->back()->withErrors($response->error);
+            return redirect()->back()->withErrors($response->error ?? 'Unknown error');
         }
 
         return redirect()->route('meter-ctpt.index')
@@ -71,11 +100,9 @@ class MeterTransformerController extends Controller
     public function show(int $id): Response
     {
         $response = $this->transformerService->getTransformer($id);
-        $relation = $this->transformerRelService->getRelByCtptId($id);
 
         return Inertia::render('MeterTransformers/MeterTransformerShow', [
             'transformer' => $response->data ?? null,
-            'relation' => $relation->data,
         ]);
     }
 
@@ -87,7 +114,7 @@ class MeterTransformerController extends Controller
         $response = $this->transformerService->deleteTransformer($id);
 
         if ($response->hasError()) {
-            return redirect()->back()->withErrors($response->error);
+            return redirect()->back()->withErrors($response->error ?? 'Unknown error');
         }
 
         return redirect()->route('meter-ctpt.index')

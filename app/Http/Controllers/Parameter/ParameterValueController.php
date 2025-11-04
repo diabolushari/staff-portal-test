@@ -9,6 +9,7 @@ use App\Services\Parameters\ParameterDomainService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -51,7 +52,7 @@ class ParameterValueController extends Controller
         $domainName = $request->input('domain_name');
         $parameterName = $request->input('parameter_name');
         $search = $request->input('search');
-        $values = $this->parameterValueService->getParameterValues($page, $pageSize, $search, $domainName, $parameterName);
+        $values = $this->parameterValueService->listParameterValuePaginated($page, $pageSize, $search, $domainName, $parameterName);
         $domains = $this->parameterDomainService->getParameterDomains($page, $pageSize, null, null);
         $definitions = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, null, null);
         if ($values->hasError()) {
@@ -63,9 +64,19 @@ class ParameterValueController extends Controller
                 ],
             ]);
         }
+        $paginated = null;
+        if (! empty($values->data)) {
+            $paginated = new LengthAwarePaginator(
+                $values->data['parameter_values'],                // items for this page
+                $values->data['total_count'],            // total items count
+                $values->data['page_size'],              // items per page
+                $values->data['page_number'],            // current page
+                ['path' => request()->url()]              // so pagination links work properly
+            );
+        }
 
         return Inertia::render('Parameters/ParameterValue/ParameterValueIndex', [
-            'values' => $values->data,
+            'values' => $paginated,
             'domains' => $domains->data,
             'definitions' => $definitions->data,
             'filters' => [

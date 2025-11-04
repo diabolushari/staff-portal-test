@@ -47,7 +47,10 @@ export default function OfficeIndex({ offices, office_types, filters }: Readonly
         {offices && (
           <>
             <OfficeList offices={offices.data} />
-            <Pagination pagination={offices} />
+            <Pagination
+              pagination={offices}
+              filters={{ search: filters.office_name }}
+            />
           </>
         )}
       </div>

@@ -2,9 +2,10 @@
 
 namespace App\Services\Metering;
 
+use App\GrpcConverters\Metering\MeterTransformerProtoConvertor;
+use App\Http\Requests\Metering\MeterTransformerFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
-use App\GrpcConverters\MeterTransformerProtoConvertor;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
 use Proto\Metering\CreateMeterTransformerMessage;
@@ -13,12 +14,12 @@ use Proto\Metering\DeleteMeterTransformerRequest;
 use Proto\Metering\GetMeterTransformerRequest;
 use Proto\Metering\ListMeterTransformersRequest;
 use Proto\Metering\ListUnassignedMeterTransformersRequest;
-use Proto\Metering\MeterTransformerMessage;
+use Proto\Metering\MeterTransformerPaginatedListRequest;
 use Proto\Metering\MeterTransformerServiceClient;
 
 class MeterTransformerService
 {
-    private $client;
+    private MeterTransformerServiceClient $client;
 
     public function __construct()
     {
@@ -28,36 +29,31 @@ class MeterTransformerService
         );
     }
 
-    public function createTransformer(array $data): GrpcServiceResponse
+    public function createTransformer(MeterTransformerFormRequest $request): GrpcServiceResponse
     {
         $transformer = new CreateMeterTransformerMessage;
-        $transformer->setOwnershipTypeId($data['ownership_type_id']);
-        $transformer->setAccuracyClassId($data['accuracy_class_id']);
-        $transformer->setBurdenId($data['burden_id']);
-        $transformer->setMakeId($data['make_id']);
-        $transformer->setTypeId($data['type_id']);
-        $transformer->setCtptSerial($data['ctpt_serial']);
-        $transformer->setRatioPrimaryValue($data['ratio_primary_value'] ?? '');
-        $transformer->setRatioSecondaryValue($data['ratio_secondary_value'] ?? '');
+        $transformer->setOwnershipTypeId($request->ownership_type_id);
+        $transformer->setAccuracyClassId($request->accuracy_class_id);
+        $transformer->setBurdenId($request->burden_id);
+        $transformer->setMakeId($request->make_id);
+        $transformer->setTypeId($request->type_id);
+        $transformer->setCtptSerial($request->ctpt_serial);
+        $transformer->setRatioPrimaryValue($request->ratio_primary_value ?? '');
+        $transformer->setRatioSecondaryValue($request->ratio_secondary_value ?? '');
 
-        if (! empty($data['manufacture_date'])) {
+        if (! empty($request->manufacture_date)) {
             $timestamp = new Timestamp;
-            $timestamp->fromDateTime(new \DateTime($data['manufacture_date']));
+            $timestamp->fromDateTime(new \DateTime($request->manufacture_date));
             $transformer->setManufactureDate($timestamp);
         }
 
-        $transformer->setCreatedBy($data['created_by']);
+        $transformer->setCreatedBy($request->created_by);
 
         // Wrap in Create request
         $request = new CreateMeterTransformerRequest;
         $request->setTransformer($transformer);
 
         [$response, $status] = $this->client->CreateMeterTransformer($request)->wait();
-        \Log::info('Create transformer response:', [
-            'status_code' => $status->code,
-            'status_details' => $status->details,
-            'response_id' => $response ? $response->getMeterCtptId() : null,
-        ]);
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -150,6 +146,51 @@ class MeterTransformerService
         return GrpcServiceResponse::success($transformersArray, $response, $status->code, $status->details);
     }
 
+    public function listTransformersPaginated(int $pageNumber = 1, int $pageSize = 10, ?string $ctptSerial = null, ?string $sortBy = null,
+        ?string $sortDirection = null): GrpcServiceResponse
+    {
+        $request = new MeterTransformerPaginatedListRequest;
+        $request->setPageNumber($pageNumber);
+        $request->setPageSize($pageSize);
+
+        if ($ctptSerial) {
+            $request->setCtptSerial($ctptSerial);
+        }
+
+        if ($sortBy !== null && $sortBy !== '') {
+            $request->setSortBy($sortBy);
+        }
+
+        if ($sortDirection !== null && $sortDirection !== '') {
+            $request->setSortDirection($sortDirection);
+        }
+
+        [$response, $status] = $this->client->ListMeterTransformersPaginated($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $transformers = array_map(
+            fn ($o) => MeterTransformerProtoConvertor::convertToArray($o),
+            iterator_to_array($response->getTransformers())
+        );
+
+        return GrpcServiceResponse::success([
+            'transformers' => $transformers,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ], $response, $status->code, $status->details);
+
+    }
+
     public function deleteTransformer(int $id): GrpcServiceResponse
     {
         $request = new DeleteMeterTransformerRequest;
@@ -167,19 +208,5 @@ class MeterTransformerService
         }
 
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
-    }
-
-    
-   
-    private static function transformParameterValueToArray($parameterValue): ?array
-    {
-        if ($parameterValue === null) {
-            return null;
-        }
-
-        return [
-            'id' => $parameterValue->getId(),
-            'parameter_value' => $parameterValue->getParameterValue(),
-        ];
     }
 }

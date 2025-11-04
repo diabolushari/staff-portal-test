@@ -16,6 +16,7 @@ use Proto\Consumers\CreateMeterRequest;
 use Proto\Consumers\DeleteMeterRequest;
 use Proto\Consumers\GetMeterRequest;
 use Proto\Consumers\ListMetersRequest;
+use Proto\Consumers\MeterPaginatedListRequest;
 use Proto\Consumers\MeterServiceClient;
 use Proto\Consumers\UpdateMeterRequest;
 
@@ -192,6 +193,50 @@ class MeterService
         }
 
         return GrpcServiceResponse::success($metersArray, $response, $status->code, $status->details);
+    }
+
+    public function listMetersPaginated(int $pageNumber = 1, int $pageSize = 10, ?string $meterSerial = null, ?string $sortBy = null,
+        ?string $sortDirection = null): GrpcServiceResponse
+    {
+        $request = new MeterPaginatedListRequest;
+        $request->setPageNumber($pageNumber);
+        $request->setPageSize($pageSize);
+
+        if ($meterSerial) {
+            $request->setMeterSerial($meterSerial);
+        }
+
+        if ($sortBy !== null && $sortBy !== '') {
+            $request->setSortBy($sortBy);
+        }
+
+        if ($sortDirection !== null && $sortDirection !== '') {
+            $request->setSortDirection($sortDirection);
+        }
+
+        [$response, $status] = $this->client->ListMetersPaginated($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $meters = array_map(
+            fn ($o) => MeterProtoConvertor::convertToArray($o),
+            iterator_to_array($response->getMeters())
+        );
+
+        return GrpcServiceResponse::success([
+            'meters' => $meters,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ], $response, $status->code, $status->details);
     }
 
     /**
