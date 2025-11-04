@@ -24,7 +24,7 @@ class MeterController extends Controller
         private readonly ParameterValueService $parameterValueService
     ) {}
 
-    public function index(): Response
+    public function index(): Response|RedirectResponse
     {
         $pageNumber = request()->input('page') ?? 1;
         $pageSize = request()->input('page_size') ?? 10;
@@ -39,6 +39,11 @@ class MeterController extends Controller
             sortDirection: $sortDirection,
 
         );
+        if ($response->hasError()) {
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
+        }
         $paginated = null;
         if (! empty($response->data)) {
             $paginated = new LengthAwarePaginator(
@@ -48,12 +53,6 @@ class MeterController extends Controller
                 $response->data['page_number'],            // current page
                 ['path' => request()->url()]              // so pagination links work properly
             );
-        }
-
-        if ($response->hasError()) {
-            return $response->error ?? redirect()->back()->withErrors([
-                'message' => $response->statusDetails ?? 'Unknown error',
-            ]);
         }
 
         return Inertia::render('Meters/MeterIndex', [
@@ -142,7 +141,7 @@ class MeterController extends Controller
                 $ctptResponse = $this->meterTransformerService->getTransformer($ctptId);
             }
         }
-        
+
         $currentTimezone = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($id);
 
         $timezoneTypesResponse = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Timezone Type');

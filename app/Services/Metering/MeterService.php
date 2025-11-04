@@ -16,9 +16,9 @@ use Proto\Consumers\CreateMeterRequest;
 use Proto\Consumers\DeleteMeterRequest;
 use Proto\Consumers\GetMeterRequest;
 use Proto\Consumers\ListMetersRequest;
+use Proto\Consumers\MeterPaginatedListRequest;
 use Proto\Consumers\MeterServiceClient;
 use Proto\Consumers\UpdateMeterRequest;
-use Proto\Consumers\MeterPaginatedListRequest;
 
 class MeterService
 {
@@ -196,16 +196,15 @@ class MeterService
     }
 
     public function listMetersPaginated(int $pageNumber = 1, int $pageSize = 10, ?string $meterSerial = null, ?string $sortBy = null,
-    ?string $sortDirection = null): GrpcServiceResponse
+        ?string $sortDirection = null): GrpcServiceResponse
     {
         $request = new MeterPaginatedListRequest;
         $request->setPageNumber($pageNumber);
         $request->setPageSize($pageSize);
-        
-       if ($meterSerial) {
-            $request->setMeterSerial(strtolower($meterSerial));
-        }
 
+        if ($meterSerial) {
+            $request->setMeterSerial($meterSerial);
+        }
 
         if ($sortBy !== null && $sortBy !== '') {
             $request->setSortBy($sortBy);
@@ -230,8 +229,6 @@ class MeterService
             fn ($o) => MeterProtoConvertor::convertToArray($o),
             iterator_to_array($response->getMeters())
         );
-
-
 
         return GrpcServiceResponse::success([
             'meters' => $meters,

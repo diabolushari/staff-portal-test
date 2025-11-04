@@ -23,8 +23,6 @@ const handleShow = (id: number) => {
 }
 
 export default function MeterIndex({ filters, meters }: Readonly<Props>) {
-  console.log('Meters:', meters)
-
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
