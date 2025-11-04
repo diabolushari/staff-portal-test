@@ -1,15 +1,16 @@
-import { useMemo } from 'react'
 import { Card } from '@/components/ui/card'
-import StrongText from '@/typography/StrongText'
-import NormalText from '@/typography/NormalText'
 import {
   Meter,
   MeterConnectionMapping,
   MeterReading,
   MeterReadingValue,
 } from '@/interfaces/data_interfaces'
+import { CONSUMPTION_PARAMETER_NAME, DEMAND_PARAMETER_NAME } from '@/types/constants'
+import NormalText from '@/typography/NormalText'
+import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
 import { router } from '@inertiajs/react'
+import { useMemo } from 'react'
 
 interface MeterWithConnection {
   meter: Meter
@@ -22,7 +23,7 @@ interface Props {
   meters: MeterWithConnection[]
 }
 
-export default function MeterReadingCard({ meterReading, meters }: Props) {
+export default function MeterReadingCard({ meterReading, meters }: Readonly<Props>) {
   const meterSummaries = useMemo(() => {
     return meters.map((meterWithConn) => {
       const meter = meterWithConn.meter
@@ -30,16 +31,25 @@ export default function MeterReadingCard({ meterReading, meters }: Props) {
       const filteredValues =
         meterReading?.values?.filter((v: MeterReadingValue) => v.meter_id === meter?.meter_id) || []
 
-      const kvaValues = filteredValues.filter((v) => v.meter_profile_parameter?.name == 'kVAh')
-      const kvaMax =
-        kvaValues.length > 0
-          ? kvaValues.reduce((max, curr) =>
-              (curr.final_reading ?? 0) > (max.final_reading ?? 0) ? curr : max
-            )
-          : null
+      const kvaValues = filteredValues.filter(
+        (v) => v.meter_profile_parameter?.name.toLowerCase() == DEMAND_PARAMETER_NAME.toLowerCase()
+      )
+      let kvaMax = null
+      if (kvaValues.length > 0) {
+        kvaMax = kvaValues.reduce(
+          (max: MeterReadingValue | null, curr: MeterReadingValue | null) => {
+            return (curr?.final_reading ?? 0) > (max?.final_reading ?? 0) ? curr : max
+          },
+          null
+        )
+      }
 
       const kwhSum = filteredValues
-        .filter((v) => v.meter_profile_parameter?.name === 'kWh')
+        .filter(
+          (v) =>
+            v.meter_profile_parameter?.name.toLowerCase() ===
+            CONSUMPTION_PARAMETER_NAME.toLowerCase()
+        )
         .reduce((sum, v) => sum + (v.final_reading ?? 0), 0)
 
       return {
