@@ -1,7 +1,6 @@
 import Field from '@/components/ui/field'
 import { ConsumerData } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
-import Button from '@/ui/button/Button'
 import DatePicker from '@/ui/form/DatePicker'
 import RadioGroup from '@/ui/form/RadioGroup'
 import { ConnectionDetailTooltip } from './ConnectionDetailTooltip'
@@ -41,11 +40,6 @@ export default function MeterReadingGeneralStep({
         />
       </div>
       <hr className='mb-6 border-[#e5e9eb]' />
-      <Button
-        onClick={handleCounterIncrement}
-        label='Increment Counter'
-        type='button'
-      />
       <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
         <Field
           label='Tariff'
