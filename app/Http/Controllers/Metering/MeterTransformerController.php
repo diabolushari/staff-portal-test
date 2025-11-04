@@ -8,6 +8,7 @@ use App\Services\Metering\MeterTransformerRelService;
 use App\Services\Metering\MeterTransformerService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -24,10 +25,42 @@ class MeterTransformerController extends Controller
      */
     public function index(): Response
     {
-        $response = $this->transformerService->listTransformers();
+        $pageNumber = request()->input('page') ?? 1;
+        $pageSize = request()->input('page_size') ?? 10;
+        $search = request()->input('search') ?? null;
+        $sortBy = request()->input('sort_by') ?? null;
+        $sortDirection = request()->input('sort_direction') ?? null;
+        $response = $this->transformerService->listTransformersPaginated(
+            pageNumber: $pageNumber,
+            pageSize: $pageSize,
+            ctptSerial: $search,
+            sortBy: $sortBy,
+            sortDirection: $sortDirection,
+        );
+        $paginated = null;
+        if (! empty($response->data)) {
+            $paginated = new LengthAwarePaginator(
+                $response->data['transformers'],                // items for this page
+                $response->data['total_count'],            // total items count
+                $response->data['page_size'],              // items per page
+                $response->data['page_number'],            // current page
+                ['path' => request()->url()]              // so pagination links work properly
+            );
+        }
+
+        if ($response->hasError()) {
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
+        }
 
         return Inertia::render('MeterTransformers/MeterTransformerIndex', [
-            'transformers' => $response->data,
+            'transformers' => $paginated ?? [],
+            'filters' => [
+                'search' => $search,
+                'sort_by' => $sortBy,
+                'sort_direction' => $sortDirection,
+            ],
         ]);
     }
 

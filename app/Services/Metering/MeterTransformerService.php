@@ -4,7 +4,7 @@ namespace App\Services\Metering;
 
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
-use App\GrpcConverters\MeterTransformerProtoConvertor;
+use App\GrpcConverters\Metering\MeterTransformerProtoConvertor;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
 use Proto\Metering\CreateMeterTransformerMessage;
@@ -15,6 +15,8 @@ use Proto\Metering\ListMeterTransformersRequest;
 use Proto\Metering\ListUnassignedMeterTransformersRequest;
 use Proto\Metering\MeterTransformerMessage;
 use Proto\Metering\MeterTransformerServiceClient;
+use Proto\Metering\MeterTransformerPaginatedListRequest;
+use Proto\Metering\MeterTransformerPaginatedListResponse;
 
 class MeterTransformerService
 {
@@ -148,6 +150,54 @@ class MeterTransformerService
         logger()->info('Fetched transformers from gRPC', $transformersArray);
 
         return GrpcServiceResponse::success($transformersArray, $response, $status->code, $status->details);
+    }
+
+    public function listTransformersPaginated(int $pageNumber = 1, int $pageSize = 10, ?string $ctptSerial = null, ?string $sortBy = null,
+    ?string $sortDirection = null): GrpcServiceResponse
+    {
+        $request = new MeterTransformerPaginatedListRequest;
+        $request->setPageNumber($pageNumber);
+        $request->setPageSize($pageSize);
+        
+       if ($ctptSerial) {
+            $request->setCtptSerial($ctptSerial);
+        }
+
+
+        if ($sortBy !== null && $sortBy !== '') {
+            $request->setSortBy($sortBy);
+        }
+
+        if ($sortDirection !== null && $sortDirection !== '') {
+            $request->setSortDirection($sortDirection);
+        }
+
+        [$response, $status] = $this->client->ListMeterTransformersPaginated($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $transformers = array_map(
+            fn ($o) => MeterTransformerProtoConvertor::convertToArray($o),
+            iterator_to_array($response->getTransformers())
+        );
+
+
+
+        return GrpcServiceResponse::success([
+            'transformers' => $transformers,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ], $response, $status->code, $status->details);
+
     }
 
     public function deleteTransformer(int $id): GrpcServiceResponse

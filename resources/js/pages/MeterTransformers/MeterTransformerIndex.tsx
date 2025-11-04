@@ -6,15 +6,22 @@ import DeleteModal from '@/ui/Modal/DeleteModal'
 import ListSearch from '@/ui/Search/ListSearch'
 import { useState } from 'react'
 import { MeterTransformer } from '@/interfaces/data_interfaces'
+import { Paginator } from '@/ui/ui_interfaces'
+import Pagination from '@/ui/Pagination/Pagination'
 
 interface Props {
-  transformers: MeterTransformer[]
+  filters: {
+    search: string
+    sort_by: string
+    sort_direction: string
+  }
+  transformers: Paginator<MeterTransformer>
 }
 
 const breadcrumbs = [{ title: 'Meter CTPT', href: '/meter-ctpt' }]
 
-export default function MeterTransformerIndex({ transformers }: Readonly<Props>) {
-  const [items, setItems] = useState(transformers ?? [])
+export default function MeterTransformerIndex({ filters, transformers }: Readonly<Props>) {
+  const [items, setItems] = useState(transformers?.data ?? [])
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedTransformer, setSelectedTransformer] = useState<MeterTransformer | null>(null)
 
@@ -34,7 +41,9 @@ export default function MeterTransformerIndex({ transformers }: Readonly<Props>)
         <CardHeader title='Meter CTPT' />
         <ListSearch
           title='Meter CTPT Search'
+          placeholder='Enter CTPT Serial'
           url={route('meter-ctpt.index')}
+          search={filters?.search}
         />
         {/* <Button label="Create Meter Transformer" onClick={handleCreate} /> */}
         {items && items.length > 0 ? (
@@ -64,6 +73,7 @@ export default function MeterTransformerIndex({ transformers }: Readonly<Props>)
             url={`/meter-ctpt/${selectedTransformer.meter_ctpt_id}`}
           />
         )}
+        <Pagination pagination={transformers} />
       </div>
     </MainLayout>
   )
