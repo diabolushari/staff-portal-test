@@ -10,7 +10,7 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 interface Props {
   connectionWithConsumer: ConsumerData
@@ -142,6 +142,7 @@ export default function MeterReadingCreatePage({
     readings_by_meter: [],
     _method: editMode ? 'PUT' : undefined,
   })
+
   const { post, errors } = useInertiaPost(
     editMode ? route('meter-reading.update', formData.id) : route('meter-reading.store'),
     {
@@ -200,74 +201,46 @@ export default function MeterReadingCreatePage({
     })
   }
 
-  const steps = [
-    {
-      id: 1,
-      title: 'General',
-      status: hasStepError([
-        'metering_date',
-        'reading_start_date',
-        'reading_end_date',
-        'reading_type',
-      ])
-        ? 'error'
-        : 'default',
-      cardTitle: 'General',
-      content: (
-        <MeterReadingGeneralStep
-          connectionWithConsumer={connectionWithConsumer}
-          formData={formData}
-          setFormValue={setFormValue}
-          errors={errors}
-          latestMeterReading={latestMeterReading}
-        />
-      ),
-    },
-    {
-      id: 2,
-      title: 'Observations',
-      status: hasStepError([
-        'meter_health_id',
-        'ctpt_health_id',
-        'anomaly_id',
-        'ct_health_id',
-        'pt_health_id',
-        'faulty_date',
-      ])
-        ? 'error'
-        : 'default',
-      cardTitle: `Observations for ${connectionWithConsumer?.consumer?.organization_name}`,
-      cardSubtitle: `${formData.reading_start_date} to ${formData.reading_end_date}`,
-      content: (
-        <MeterReadingObservationStep
-          formData={formData}
-          setFormValue={setFormValue}
-          meterHealthTypes={meterHealthTypes}
-          ctptHealthTypes={ctptHealthTypes}
-          anomalyTypes={anomalyTypes}
-          errors={errors}
-          ctHealthTypes={ctHealthTypes}
-          ptHealthTypes={ptHealthTypes}
-          connectionType={connectionWithConsumer.connection.connection_type}
-        />
-      ),
-    },
-    {
-      id: 3,
-      title: 'Readings',
-      status: 'default',
-      cardTitle: `Readings for ${connectionWithConsumer?.consumer?.organization_name}`,
-      cardSubtitle: `${formData.reading_start_date} to ${formData.reading_end_date}`,
-      content: (
-        <MeterReadingsStep
-          metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
-          formData={formData}
-          setFormValue={setFormValue}
-          latestMeterReading={latestMeterReading}
-        />
-      ),
-    },
-  ]
+  const steps = useMemo(() => {
+    return [
+      {
+        id: 1,
+        title: 'General',
+        status: hasStepError([
+          'metering_date',
+          'reading_start_date',
+          'reading_end_date',
+          'reading_type',
+        ])
+          ? 'error'
+          : 'default',
+        cardTitle: 'General',
+      },
+      {
+        id: 2,
+        title: 'Observations',
+        status: hasStepError([
+          'meter_health_id',
+          'ctpt_health_id',
+          'anomaly_id',
+          'ct_health_id',
+          'pt_health_id',
+          'faulty_date',
+        ])
+          ? 'error'
+          : 'default',
+        cardTitle: `Observations for ${connectionWithConsumer?.consumer?.organization_name}`,
+        cardSubtitle: `${formData.reading_start_date} to ${formData.reading_end_date}`,
+      },
+      {
+        id: 3,
+        title: 'Readings',
+        status: 'default',
+        cardTitle: `Readings for ${connectionWithConsumer?.consumer?.organization_name}`,
+        cardSubtitle: `${formData.reading_start_date} to ${formData.reading_end_date}`,
+      },
+    ]
+  }, [connectionWithConsumer, formData, hasStepError])
 
   return (
     <MainLayout
@@ -280,8 +253,34 @@ export default function MeterReadingCreatePage({
             activeStep={activeStep}
             onStepChange={setActiveStep}
             steps={steps}
-          />
-
+          >
+            {activeStep === 0 && (
+              <MeterReadingGeneralStep
+                connectionWithConsumer={connectionWithConsumer}
+                formData={formData}
+                setFormValue={setFormValue}
+                errors={errors}
+                latestMeterReading={latestMeterReading}
+              />
+            )}
+            {activeStep === 1 && (
+              <MeterReadingObservationStep
+                formData={formData}
+                setFormValue={setFormValue}
+                meterHealthTypes={meterHealthTypes}
+                ctptHealthTypes={ctptHealthTypes}
+                anomalyTypes={anomalyTypes}
+              />
+            )}
+            {activeStep === 2 && (
+              <MeterReadingsStep
+                metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
+                formData={formData}
+                setFormValue={setFormValue}
+                latestMeterReading={latestMeterReading}
+              />
+            )}
+          </Stepper>
           <div className='mt-6 flex justify-between'>
             {activeStep >= 0 && (
               <Button
@@ -292,7 +291,6 @@ export default function MeterReadingCreatePage({
                 disabled={activeStep === 0}
               />
             )}
-
             {activeStep < steps.length - 1 && (
               <Button
                 type='button'
@@ -308,7 +306,6 @@ export default function MeterReadingCreatePage({
                 onClick={() => handleSubmit(null, true)}
               />
             )}
-
             {activeStep === steps.length - 1 && (
               <>
                 <Button

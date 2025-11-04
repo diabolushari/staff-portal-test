@@ -1,15 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import NormalText from '@/typography/NormalText'
+import { useState } from 'react'
 
 interface Step {
   id: number
   title: string
-  content: React.ReactNode
   status?: 'default' | 'error' | 'completed'
   cardTitle?: string
   cardSubtitle?: string
@@ -19,9 +17,15 @@ interface StepperProps {
   steps: Step[]
   activeStep?: number
   onStepChange?: (stepIndex: number) => void
+  children?: React.ReactNode
 }
 
-export default function Stepper({ steps, activeStep: activeStepProp, onStepChange }: StepperProps) {
+export default function Stepper({
+  steps,
+  activeStep: activeStepProp,
+  onStepChange,
+  children,
+}: StepperProps) {
   const [activeStep, setActiveStep] = useState(activeStepProp || 0)
   const currentStep = activeStepProp ?? activeStep
 
@@ -69,7 +73,7 @@ export default function Stepper({ steps, activeStep: activeStepProp, onStepChang
           <CardTitle>{steps[currentStep].cardTitle}</CardTitle>
           <NormalText>{steps[currentStep].cardSubtitle}</NormalText>
         </CardHeader>
-        <CardContent>{steps[currentStep].content}</CardContent>
+        <CardContent>{children}</CardContent>
       </Card>
     </div>
   )

@@ -1,9 +1,9 @@
 import Field from '@/components/ui/field'
+import { ConsumerData } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
-import { ConnectionDetailTooltip } from './ConnectionDetailTooltip'
 import DatePicker from '@/ui/form/DatePicker'
 import RadioGroup from '@/ui/form/RadioGroup'
-import { ConsumerData } from '@/interfaces/data_interfaces'
+import { ConnectionDetailTooltip } from './ConnectionDetailTooltip'
 
 interface Props {
   connectionWithConsumer: ConsumerData

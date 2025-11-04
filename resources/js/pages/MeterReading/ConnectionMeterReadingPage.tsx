@@ -1,15 +1,15 @@
+import { consumerNavItems } from '@/components/Navbar/navitems'
+import { Card } from '@/components/ui/card'
+import { Connection, MeterReading } from '@/interfaces/data_interfaces'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { BreadcrumbItem } from '@/types'
-import { consumerNavItems } from '@/components/Navbar/navitems'
-import { Cpu, Plus } from 'lucide-react'
 import StrongText from '@/typography/StrongText'
-import { Card } from '@/components/ui/card'
 import { router } from '@inertiajs/react'
-import { Connection, Meter, MeterReading } from '@/interfaces/data_interfaces'
+import { Cpu, Plus } from 'lucide-react'
 
 import MeterReadingCard from '@/components/Meter/MeterReading/MeterReadingCard'
-import { Paginator } from '@/ui/ui_interfaces'
 import Pagination from '@/ui/Pagination/Pagination'
+import { Paginator } from '@/ui/ui_interfaces'
 
 interface ConnectionMeterReadingPageProps {
   connection: Connection
@@ -19,7 +19,7 @@ interface ConnectionMeterReadingPageProps {
 export default function ConnectionMeterReadingPage({
   connection,
   meterReadings,
-}: ConnectionMeterReadingPageProps) {
+}: Readonly<ConnectionMeterReadingPageProps>) {
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Connections', href: route('connections.index') },
     {
@@ -36,12 +36,6 @@ export default function ConnectionMeterReadingPage({
 
   const handleAddMeterReading = () => {
     router.visit(route('meter-reading.create', { id: connection?.connection_id }))
-  }
-  const handleViewMeterReading = (meterReadingId: number, meterId: number) => {
-    router.visit(
-      route('meter-reading.show', { meter_reading: meterReadingId }) +
-        `?meter_id=${Number(meterId)}&connection_id=${connection?.connection_id}`
-    )
   }
 
   return (
@@ -69,14 +63,13 @@ export default function ConnectionMeterReadingPage({
         </div>
         <div className='flex flex-col gap-6 px-6 pb-6'>
           <div>
-            {meterReadings?.data && meterReadings?.data?.length > 0 ? (
-              meterReadings?.data?.map((meterReading) => (
-                <>
-                  <MeterReadingCard
-                    meterReading={meterReading}
-                    meters={connection?.meters}
-                  />
-                </>
+            {meterReadings?.data && meterReadings.data.length > 0 ? (
+              meterReadings?.data.map((meterReading) => (
+                <MeterReadingCard
+                  meterReading={meterReading}
+                  meters={connection.meters}
+                  key={meterReading.id}
+                />
               ))
             ) : (
               <div className='p-8 text-center text-slate-500'>
