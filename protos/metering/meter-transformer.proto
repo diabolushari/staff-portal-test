@@ -84,6 +84,23 @@ message ListUnassignedMeterTransformersRequest{
   int32 page_size = 2;
 }
 
+ message MeterTransformerPaginatedListRequest {
+  optional string ctpt_serial = 1;         
+  int32 page_number = 2;                   
+  int32 page_size = 3;                     
+  optional string sort_by = 4;             
+  optional string sort_direction = 5;     
+}
+
+message MeterTransformerPaginatedListResponse {
+  repeated MeterTransformerMessage transformers = 1;
+
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
 // ----------- SERVICE ------------
 service MeterTransformerService {
   rpc CreateMeterTransformer(CreateMeterTransformerRequest) returns (MeterTransformerMessage);
@@ -91,4 +108,5 @@ service MeterTransformerService {
   rpc DeleteMeterTransformer(DeleteMeterTransformerRequest) returns (google.protobuf.Empty);
   rpc ListMeterTransformers(ListMeterTransformersRequest) returns (ListMeterTransformersResponse);
   rpc ListUnassignedMeterTransformers(ListUnassignedMeterTransformersRequest) returns (ListMeterTransformersResponse);
+  rpc ListMeterTransformersPaginated(MeterTransformerPaginatedListRequest) returns (MeterTransformerPaginatedListResponse);
 }

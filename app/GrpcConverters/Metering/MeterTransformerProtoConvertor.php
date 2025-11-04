@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\GrpcConverters;
+namespace App\GrpcConverters\Metering;
+use App\GrpcConverters\ParameterValueProtoConvertor;
 
 use Proto\Metering\MeterTransformerMessage;
 

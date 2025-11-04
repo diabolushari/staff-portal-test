@@ -5,6 +5,7 @@ import MainLayout from '@/layouts/main-layout'
 import Button from '@/ui/button/Button'
 import Card from '@/ui/Card/Card'
 import CardHeader from '@/ui/Card/CardHeader'
+import FormCard from '@/ui/Card/FormCard'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
@@ -163,91 +164,84 @@ export default function MeterTransformerForm({
             onSubmit={handleSubmit}
             className='space-y-8'
           >
-            {renderSection(
-              'Basic Information',
-              <>
-                <Input
-                  label='CT/PT Serial'
-                  required
-                  value={formData.ctpt_serial}
-                  setValue={setFormValue('ctpt_serial')}
-                  error={errors.ctpt_serial}
-                />
-                <SelectList
-                  label='Ownership Type'
-                  value={formData.ownership_type_id}
-                  setValue={setFormValue('ownership_type_id')}
-                  list={ownershipTypes}
-                  dataKey='id'
-                  displayKey='parameter_value'
-                  error={errors.ownership_type_id}
-                />
-                <SelectList
-                  label='Make'
-                  value={formData.make_id}
-                  setValue={setFormValue('make_id')}
-                  list={makes}
-                  dataKey='id'
-                  displayKey='parameter_value'
-                  error={errors.make_id}
-                />
-                <SelectList
-                  label='Type'
-                  value={formData.type_id}
-                  setValue={handletypeChange}
-                  list={types}
-                  dataKey='id'
-                  displayKey='parameter_value'
-                  error={errors.type_id}
-                />
-              </>
-            )}
+            <FormCard title='Basic Information'>
+              <Input
+                label='CT/PT Serial'
+                required
+                value={formData.ctpt_serial}
+                setValue={setFormValue('ctpt_serial')}
+                error={errors.ctpt_serial}
+              />
+              <SelectList
+                label='Ownership Type'
+                value={formData.ownership_type_id}
+                setValue={setFormValue('ownership_type_id')}
+                list={ownershipTypes}
+                dataKey='id'
+                displayKey='parameter_value'
+                error={errors.ownership_type_id}
+              />
+              <SelectList
+                label='Make'
+                value={formData.make_id}
+                setValue={setFormValue('make_id')}
+                list={makes}
+                dataKey='id'
+                displayKey='parameter_value'
+                error={errors.make_id}
+              />
+              <SelectList
+                label='Type'
+                value={formData.type_id}
+                setValue={handletypeChange}
+                list={types}
+                dataKey='id'
+                displayKey='parameter_value'
+                error={errors.type_id}
+              />
+            </FormCard>
+            <FormCard title='Technical Specifications'>
+              <SelectList
+                label='Accuracy Class'
+                value={formData.accuracy_class_id}
+                setValue={setFormValue('accuracy_class_id')}
+                list={accuracyClasses}
+                dataKey='id'
+                displayKey='parameter_value'
+                error={errors.accuracy_class_id}
+              />
+              <SelectList
+                label='Burden'
+                value={formData.burden_id}
+                setValue={setFormValue('burden_id')}
+                list={burdens}
+                dataKey='id'
+                displayKey='parameter_value'
+                error={errors.burden_id}
+              />
+              <Input
+                label={transformerInfo.primary}
+                type='text'
+                value={formData.ratio_primary_value}
+                setValue={setFormValue('ratio_primary_value')}
+                error={errors.ratio_primary_value}
+              />
 
-            {renderSection(
-              'Technical Specifications',
-              <>
-                <SelectList
-                  label='Accuracy Class'
-                  value={formData.accuracy_class_id}
-                  setValue={setFormValue('accuracy_class_id')}
-                  list={accuracyClasses}
-                  dataKey='id'
-                  displayKey='parameter_value'
-                  error={errors.accuracy_class_id}
-                />
-                <SelectList
-                  label='Burden'
-                  value={formData.burden_id}
-                  setValue={setFormValue('burden_id')}
-                  list={burdens}
-                  dataKey='id'
-                  displayKey='parameter_value'
-                  error={errors.burden_id}
-                />
-                <Input
-                  label={transformerInfo.primary}
-                  type='text'
-                  value={formData.ratio_primary_value}
-                  setValue={setFormValue('ratio_primary_value')}
-                  error={errors.ratio_primary_value}
-                />
+              <Input
+                label={transformerInfo.secondary}
+                type='text'
+                value={formData.ratio_secondary_value}
+                setValue={setFormValue('ratio_secondary_value')}
+                error={errors.ratio_secondary_value}
+              />
 
-                <Input
-                  label={transformerInfo.secondary}
-                  type='text'
-                  value={formData.ratio_secondary_value}
-                  setValue={setFormValue('ratio_secondary_value')}
-                  error={errors.ratio_secondary_value}
-                />
-
-                <DatePicker
-                  label='Manufacture Date'
-                  value={formData.manufacture_date}
-                  setValue={setFormValue('manufacture_date')}
-                  error={errors.manufacture_date}
-                />
-              </>
-            )}
+              <DatePicker
+                label='Manufacture Date'
+                value={formData.manufacture_date}
+                setValue={setFormValue('manufacture_date')}
+                error={errors.manufacture_date}
+              />
+            </FormCard>
 
             <div className='flex justify-end gap-3 border-t pt-6'>
               <Button
