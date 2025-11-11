@@ -85,7 +85,6 @@ export default function ParameterDefinitionIndex({
           {items != null && items.length > 0 ? (
             <ParameterDefinitionList
               parameterDefinitions={items}
-              onEdit={handleEditClick}
               onDelete={handleDeleteClick}
             />
           ) : (

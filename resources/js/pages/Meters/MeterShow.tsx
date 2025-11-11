@@ -32,7 +32,7 @@ export const MeterTabs = (meterId: number, ctptId?: number, relId?: number) => [
 
 interface Props {
   meter: Meter
-  ctpt: MeterTransformer | null
+  transformers: MeterTransformer[]
   currentTimezone: MeterTimezoneType
   timezoneTypes: ParameterValues[]
   relation: MeterTransformerAssignment | null
@@ -70,7 +70,7 @@ export default function MeterShow({
   meter,
   currentTimezone,
   timezoneTypes,
-  ctpt,
+  transformers,
   relation,
 }: Readonly<Props>) {
   // --- STATE AND DATA NORMALIZATION ---
@@ -151,7 +151,11 @@ export default function MeterShow({
     [timezoneTypes, currentTzId]
   )
 
-  const tabs = MeterTabs(meter.meter_id, ctpt?.ctpt_id, ctpt?.version_id)
+  const tabs = MeterTabs(
+    meter.meter_id,
+    transformers.length > 0 ? transformers[0].ctpt_id : null,
+    transformers.length > 0 ? transformers[0].version_id : null
+  )
 
   return (
     <MainLayout
@@ -406,7 +410,7 @@ export default function MeterShow({
         <TabsContent value='meter-ctpt'>
           <MeterTransformerTab
             meterId={meter.meter_id}
-            ctpt={ctpt}
+            transformers={transformers}
             version_id={relation?.version_id}
           />
         </TabsContent>

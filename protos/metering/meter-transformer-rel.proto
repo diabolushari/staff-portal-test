@@ -94,6 +94,9 @@ message MeterTransformerRelIdRequest {
 message GetMeterTransformerRelByMeterIdRequest {
   int64 meter_id = 1;
 }
+message GetMeterTransformerRelByMeterIdResponse {
+  repeated MeterTransformerRelMessage relations = 1;
+}
 
 message GetMeterTransformerRelByCtptIdRequest {
   int64 ctpt_id = 1;
@@ -108,6 +111,6 @@ service MeterTransformerRelService {
   rpc ListMeterTransformerRels(google.protobuf.Empty) returns (MeterTransformerRelListResponse);
   rpc UpdateMeterTransformerRel(MeterTransformerRelUpdateRequest) returns (MeterTransformerRelResponse);
   rpc DeleteMeterTransformerRel(MeterTransformerRelIdRequest) returns (google.protobuf.Empty);
-  rpc GetMeterTransformerRelByMeterId(GetMeterTransformerRelByMeterIdRequest) returns (MeterTransformerRelResponse);
+  rpc GetMeterTransformerRelByMeterId(GetMeterTransformerRelByMeterIdRequest) returns (GetMeterTransformerRelByMeterIdResponse);
   rpc GetMeterTransformerRelByCtptId(GetMeterTransformerRelByCtptIdRequest) returns (MeterTransformerRelResponse);
 }

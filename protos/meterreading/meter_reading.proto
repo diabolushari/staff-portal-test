@@ -14,8 +14,12 @@ import "parameters/parameter-value.proto";
 import "metering/meter.proto";
 import "meterreading/metering_profile_parameters.proto";
 
-// ---- Nested Message for Readings ----
-message ReadingValueMessage {
+
+
+// Nested messages for JSON-like structure
+
+
+message ReadingValueMessage{
   int64 meter_reading_values_id = 1;
   int64 parameter_id = 2;
   int64 meter_reading_id = 3;
@@ -26,12 +30,11 @@ message ReadingValueMessage {
   double initial_reading = 8;
   double final_reading = 9;
   double difference = 10;
-  double value = 11;
+  double mul_value = 11;
   int32 created_by = 12;
   int32 updated_by = 13;
   bool is_active = 14;
   com.kseb.consumerservice.proto.meterreading.MeteringProfileParameterMessage parameter = 15;
-  
 }
 
 message CreateMeterReadingValues {
@@ -41,14 +44,15 @@ message CreateMeterReadingValues {
   double initial_reading = 4;
   double final_reading = 5;
   double difference = 6;
-  double value = 7;
+  double mul_value = 7;
   int32 created_by = 8;
   optional int64 meter_reading_value_id = 9;
 }
 
-// ---- Entity ----
+
+// ----------- ENTITY MESSAGE ------------
 message MeterReadingMessage {
-   int64 meter_reading_id = 1;
+  int64 meter_reading_id = 1;
   int64 connection_id = 2;
 
   bool single_reading = 3;
@@ -62,17 +66,6 @@ message MeterReadingMessage {
   string reading_end_date = 9;
   string faulty_date = 10;
 
-  int64 meter_health_id = 11;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto meter_health = 12;
-
-  int64 ct_health_id = 13;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto ct_health = 14;
-
-  int64 pt_health_id = 15;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto pt_health = 16;
-
-  int64 ctpt_health_id = 17;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto ctpt_health = 18;
 
   double voltage_r = 19;
   double voltage_y = 20;
@@ -90,7 +83,20 @@ message MeterReadingMessage {
   repeated ReadingValueMessage values = 29;
 }
 
-// ---- Requests/Responses ----
+// ----------- REQUEST/RESPONSE MESSAGES ----------
+
+message Health {
+  int64 ctpt_id = 1;
+  int64 parameter_id = 2;
+}
+message MeterReadingValuesWithMeter {
+  int32 meter_id = 1;
+  int64 meter_health_id = 2;
+  repeated Health healths = 3;
+
+}
+
+// Create
 message CreateMeterReadingRequest {
   int64 connection_id = 1;
   bool single_reading = 2;
@@ -100,24 +106,23 @@ message CreateMeterReadingRequest {
   string reading_start_date = 6;
   string reading_end_date = 7;
   optional string faulty_date = 8;
-  optional int64 meter_health_id = 9;
-  optional int64 ct_health_id = 10;
-  optional int64 pt_health_id = 11;
-  int64 ctpt_health_id = 12;
-  double voltage_r = 13;
-  double voltage_y = 14;
-  double voltage_b = 15;
-  double current_r = 16;
-  double current_y = 17;
-  double current_b = 18;
-  string remarks = 19;
-  int32 created_by = 20;
-  bool is_active = 21;
-  repeated CreateMeterReadingValues readings = 22;
+  double voltage_r = 9;
+  double voltage_y = 10;
+  double voltage_b = 11;
+  double current_r = 12;
+  double current_y = 13;
+  double current_b = 14;
+  string remarks = 15;
+  int32 created_by = 16;
+  bool is_active = 17;
+  repeated CreateMeterReadingValues readings = 18;
+  repeated MeterReadingValuesWithMeter meter_healths = 19;
+}
+message CreateMeterReadingResponse {
+  MeterReadingMessage reading = 1;
 }
 
-message CreateMeterReadingResponse { MeterReadingMessage reading = 1; }
-
+// Update
 message UpdateMeterReadingRequest {
   int64 meter_reading_id = 1;
   int64 connection_id = 2;
@@ -127,35 +132,43 @@ message UpdateMeterReadingRequest {
   string metering_date = 6;
   string reading_start_date = 7;
   string reading_end_date = 8;
-  int64 meter_health_id = 9;
-  int64 ctpt_health_id = 10;
-  double voltage_r = 11;
-  double voltage_y = 12;
-  double voltage_b = 13;
-  double current_r = 14;
-  double current_y = 15;
-  double current_b = 16;
-  string remarks = 17;
-  int32 updated_by = 18;
-  bool is_active = 19;
-  repeated CreateMeterReadingValues readings = 20;
+  string faulty_date = 9;
+  double voltage_r = 10;
+  double voltage_y = 11;
+  double voltage_b = 12;
+  double current_r = 13;
+  double current_y = 14;
+  double current_b = 15;
+  string remarks = 16;
+  int32 updated_by = 17;
+  bool is_active = 18;
+  repeated CreateMeterReadingValues readings = 19;
+  repeated MeterReadingValuesWithMeter meter_healths = 20;
+}
+message UpdateMeterReadingResponse {
+  MeterReadingMessage reading = 1;
 }
 
-message UpdateMeterReadingResponse { MeterReadingMessage reading = 1; }
-
+// Get
 message GetMeterReadingRequest {
   int64 meter_reading_id = 1;
   optional int64 meter_id = 2;
 }
-
 message GetMeterReadingResponse {
   MeterReadingMessage reading = 1;
   repeated ReadingValueMessage values = 2;
 }
 
-message DeleteMeterReadingRequest { int64 meter_reading_id = 1; }
-message DeleteMeterReadingResponse { bool success = 1; string message = 2; }
+// Delete
+message DeleteMeterReadingRequest {
+  int64 meter_reading_id = 1;
+}
+message DeleteMeterReadingResponse {
+  bool success = 1;
+  string message = 2;
+}
 
+// List
 message ListMeterReadingRequest {
   int32 page = 1;
   int32 page_size = 2;
@@ -163,10 +176,14 @@ message ListMeterReadingRequest {
   string search = 4;
   int64 meter_reading_id = 5;
 }
+message ListMeterReadingResponse {
+  repeated MeterReadingMessage readings = 1;
+}
 
-message ListMeterReadingResponse { repeated MeterReadingMessage readings = 1; }
-
-message LatestMeterReadingRequest { int64 connection_id = 1; }
+// Latest
+message LatestMeterReadingRequest {
+  int64 connection_id = 1;
+}
 message LatestMeterReadingResponse {
   MeterReadingMessage reading = 1;
   repeated ReadingValueMessage values = 2;
@@ -189,13 +206,15 @@ message ListMeterReadingPaginatedResponse {
   int32 total_pages = 5;
 }
 
-// ---- Service ----
+
+
+// ----------- SERVICE ------------
 service MeterReadingService {
-  rpc CreateMeterReading(CreateMeterReadingRequest) returns (CreateMeterReadingResponse);
-  rpc UpdateMeterReading(UpdateMeterReadingRequest) returns (UpdateMeterReadingResponse);
-  rpc GetMeterReading(GetMeterReadingRequest) returns (GetMeterReadingResponse);
-  rpc DeleteMeterReading(DeleteMeterReadingRequest) returns (DeleteMeterReadingResponse);
-  rpc ListMeterReading(ListMeterReadingRequest) returns (ListMeterReadingResponse);
-  rpc LatestMeterReading(LatestMeterReadingRequest) returns (LatestMeterReadingResponse);
-  rpc ListMeterReadingPaginated(ListMeterReadingPaginatedRequest) returns (ListMeterReadingPaginatedResponse);
+  rpc CreateMeterReading (CreateMeterReadingRequest) returns (CreateMeterReadingResponse);
+  rpc UpdateMeterReading (UpdateMeterReadingRequest) returns (UpdateMeterReadingResponse);
+  rpc GetMeterReading    (GetMeterReadingRequest)    returns (GetMeterReadingResponse);
+  rpc DeleteMeterReading (DeleteMeterReadingRequest) returns (DeleteMeterReadingResponse);
+  rpc ListMeterReading   (ListMeterReadingRequest)   returns (ListMeterReadingResponse);
+  rpc LatestMeterReading  (LatestMeterReadingRequest)  returns (LatestMeterReadingResponse);
+  rpc ListMeterReadingPaginated (ListMeterReadingPaginatedRequest) returns (ListMeterReadingPaginatedResponse);
 }

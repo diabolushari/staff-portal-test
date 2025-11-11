@@ -11,13 +11,16 @@ use Grpc\ChannelCredentials;
 use Proto\MeterReading\CreateMeterReadingRequest;
 use Proto\MeterReading\CreateMeterReadingValues;
 use Proto\MeterReading\GetMeterReadingRequest;
+use Proto\MeterReading\Health;
 use Proto\MeterReading\LatestMeterReadingRequest;
 use Proto\MeterReading\ListMeterReadingPaginatedRequest;
 use Proto\MeterReading\ListMeterReadingRequest;
 use Proto\MeterReading\MeterReadingMessage;
 use Proto\MeterReading\MeterReadingServiceClient;
+use Proto\MeterReading\MeterReadingValuesWithMeter;
 use Proto\MeterReading\ReadingValueMessage;
 use Proto\MeterReading\UpdateMeterReadingRequest;
+
 class MeterReadingService
 {
     private MeterReadingServiceClient $client;
@@ -217,19 +220,8 @@ class MeterReadingService
             $protoRequest->setMultipleReading(true);
             $protoRequest->setSingleReading(false);
         }
-        if ($request->ctHealthId) {
-            $protoRequest->setCtHealthId($request->ctHealthId);
-        }
-        if ($request->ptHealthId) {
-            $protoRequest->setPtHealthId($request->ptHealthId);
-        }
-        if ($request->faultyDate) {
-            $protoRequest->setFaultyDate($request->faultyDate);
-        }
 
         $protoRequest->setAnomalyId($request->anomalyId);
-        $protoRequest->setMeterHealthId($request->meterHealthId);
-        $protoRequest->setCtptHealthId($request->ctptHealthId);
         $protoRequest->setVoltageR($request->voltageR);
         $protoRequest->setVoltageY($request->voltageY);
         $protoRequest->setVoltageB($request->voltageB);
@@ -241,6 +233,7 @@ class MeterReadingService
         $protoRequest->setIsActive(true);
 
         // 🔑 Flatten readings_by_meter into MeterReadingValue list
+
         foreach ($request->readingsByMeter as $meter) {
             if (empty($meter['meter_id'])) {
                 continue; // skip if meter_id missing
@@ -276,7 +269,7 @@ class MeterReadingService
                     $initial = $values['initial'] ?? null;
                     $final = $values['final'] ?? null;
                     $diff = $values['diff'] ?? null;
-                    $value = $values['final'] ?? null;
+                    $value = $values['mf'] ?? null;
 
                     // ensure required values exist (initial/final/diff/value at least one must be non-null)
                     if ($initial === null && $final === null && $diff === null && $value === null) {
@@ -301,7 +294,7 @@ class MeterReadingService
                         $protoReading->setDifference((float) $diff);
                     }
                     if ($value !== null) {
-                        $protoReading->setValue((float) $value);
+                        $protoReading->setMulValue((float) $value);
                     }
 
                     $protoReading->setCreatedBy(1);
@@ -310,6 +303,20 @@ class MeterReadingService
 
                 }
             }
+        }
+        foreach ($request->meterHealth as $meterHealth) {
+            $protoMeterHealth = new MeterReadingValuesWithMeter;
+            $protoMeterHealth->setMeterId($meterHealth['meter_id']);
+            $protoMeterHealth->setMeterHealthId($meterHealth['meter_health_id']);
+            $transformers = $meterHealth['ctpts'];
+            $transformerHealth = [];
+            foreach ($transformers as $transformer) {
+                $ctptHealth = new Health;
+                $ctptHealth->setCtptId($transformer['ctpt_id']);
+                $ctptHealth->setParameterId($transformer['health']);
+                $transformerHealth[] = $ctptHealth;
+            }
+            $protoMeterHealth->setHealths($transformerHealth);
         }
 
         return $protoRequest;
@@ -332,19 +339,9 @@ class MeterReadingService
             $protoRequest->setMultipleReading(true);
             $protoRequest->setSingleReading(false);
         }
-        if ($request->ctHealthId) {
-            $protoRequest->setCtHealthId($request->ctHealthId);
-        }
-        if ($request->ptHealthId) {
-            $protoRequest->setPtHealthId($request->ptHealthId);
-        }
-        if ($request->faultyDate) {
-            $protoRequest->setFaultyDate($request->faultyDate);
-        }
 
         $protoRequest->setAnomalyId($request->anomalyId);
-        $protoRequest->setMeterHealthId($request->meterHealthId);
-        $protoRequest->setCtptHealthId($request->ctptHealthId);
+
         $protoRequest->setVoltageR($request->voltageR);
         $protoRequest->setVoltageY($request->voltageY);
         $protoRequest->setVoltageB($request->voltageB);
@@ -391,7 +388,7 @@ class MeterReadingService
                     $initial = $values['initial'] ?? null;
                     $final = $values['final'] ?? null;
                     $diff = $values['diff'] ?? null;
-                    $value = $values['final'] ?? null;
+                    $value = $values['mf'] ?? null;
 
                     // ensure required values exist (initial/final/diff/value at least one must be non-null)
                     if ($initial === null && $final === null && $diff === null && $value === null) {
@@ -416,7 +413,7 @@ class MeterReadingService
                         $protoReading->setDifference((float) $diff);
                     }
                     if ($value !== null) {
-                        $protoReading->setValue((float) $value);
+                        $protoReading->setMulValue((float) $value);
                     }
 
                     $protoReading->setCreatedBy(1);
@@ -450,8 +447,6 @@ class MeterReadingService
             'single_reading' => $detail->getSingleReading(),
             'multiple_reading' => $detail->getMultipleReading(),
             'anomaly_id' => $detail->getAnomalyId(),
-            'meter_health_id' => $detail->getMeterHealthId(),
-            'ctpt_health_id' => $detail->getCtptHealthId(),
             'voltage_r' => $detail->getVoltageR(),
             'voltage_y' => $detail->getVoltageY(),
             'voltage_b' => $detail->getVoltageB(),
@@ -476,7 +471,7 @@ class MeterReadingService
             'initial_reading' => $detail->getInitialReading(),
             'final_reading' => $detail->getFinalReading(),
             'difference' => $detail->getDifference(),
-            'value' => $detail->getValue(),
+            'value' => $detail->getMulValue(),
             'created_by' => $detail->getCreatedBy(),
             'updated_by' => $detail->getUpdatedBy(),
             'is_active' => $detail->getIsActive(),

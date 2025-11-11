@@ -30,7 +30,7 @@ export default function TariffConfigTable({
     setSelectedTariffConfigId(id)
     setIsDeleteModalOpen(true)
   }
-
+  console.log(tariff_configs)
   return (
     <CustomCard
       title='Tariff Configurations'
@@ -40,8 +40,8 @@ export default function TariffConfigTable({
         <TableHeader>
           <TableRow>
             <TableHead className='w-[50px]'>#</TableHead>
-            <TableHead>Connection Purpose</TableHead>
             <TableHead>Connection Tariff</TableHead>
+            <TableHead>Tariff Type</TableHead>
             <TableHead>Lower Limit</TableHead>
             <TableHead>Upper Limit</TableHead>
             <TableHead>Demand Charge</TableHead>
@@ -49,11 +49,11 @@ export default function TariffConfigTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {tariff_configs.data.map((config, index) => (
+          {tariff_configs?.data?.map((config, index) => (
             <TableRow key={config.tariff_config_id}>
               <TableCell>{index + 1}</TableCell>
-              <TableCell>{config.connection_purpose?.parameter_value || '-'}</TableCell>
               <TableCell>{config.connection_tariff?.parameter_value || '-'}</TableCell>
+              <TableCell>{config.connection_tariff?.attribute1_value ?? '-'}</TableCell>
               <TableCell>{config.consumption_lower_limit}</TableCell>
               <TableCell>{config.consumption_upper_limit}</TableCell>
               <TableCell>{config.demand_charge_kva}</TableCell>

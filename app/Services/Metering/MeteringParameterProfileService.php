@@ -70,6 +70,7 @@ class MeteringParameterProfileService
             'meter_parameter_id' => $detail->getMeterParameterId(),
             'name' => $detail->getName(),
             'display_name' => $detail->getDisplayName(),
+            'is_export' => $detail->getIsExport(),
             'profile_id' => $detail->getProfileId(),
             'created_by' => $detail->getCreatedBy(),
             'updated_by' => $detail->getUpdatedBy(),

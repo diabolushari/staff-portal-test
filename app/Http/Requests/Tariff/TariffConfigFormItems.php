@@ -10,7 +10,6 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class TariffConfigFormItems extends Data
 {
     public function __construct(
-        public int $connectionPurpose,
         public int $connectionTariff,
         public int $consumptionLowerLimit,
         public int $consumptionUpperLimit,

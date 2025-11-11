@@ -77,7 +77,6 @@ export default function TariffConfigCreatePage({
       {tariff_order && (
         <TariffConfigForm
           tariffOrder={tariff_order}
-          connectionPurpose={connection_purpose ?? []}
           consumptionTariff={consumption_tariff ?? []}
         />
       )}

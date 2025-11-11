@@ -36,7 +36,7 @@ export default function TariffOrderShowPage({
       {/* ---- Tariff Order Card ---- */}
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         <CustomCard
-          title={tariff_order.order_descriptor}
+          title={tariff_order?.order_descriptor}
           editButton={{
             title: 'Edit',
             url: `/tariff-orders/${tariff_order?.tariff_order_id}/edit`,
@@ -52,28 +52,28 @@ export default function TariffOrderShowPage({
             <div>
               <Field
                 label='Published Date'
-                value={new Date(tariff_order.published_date).toLocaleDateString()}
+                value={new Date(tariff_order?.published_date).toLocaleDateString()}
               />
             </div>
             <div>
               <Field
                 label='Effective Start'
-                value={new Date(tariff_order.effective_start).toLocaleDateString()}
+                value={new Date(tariff_order?.effective_start).toLocaleDateString()}
               />
             </div>
             <div>
               <Field
                 label='Effective End'
-                value={new Date(tariff_order.effective_end || '').toLocaleDateString()}
+                value={new Date(tariff_order?.effective_end || '').toLocaleDateString()}
               />
             </div>
             <div>
               <Field
                 label='Reference Document'
-                value={tariff_order.reference_document}
+                value={tariff_order?.reference_document}
               />
               <a
-                href={`/api/tariff-order/${tariff_order.tariff_order_id}/download`}
+                href={`/api/tariff-order/${tariff_order?.tariff_order_id}/download`}
                 target='_blank'
                 className='text-blue-600 underline'
               >

@@ -135,10 +135,11 @@ class MeterController extends Controller
     {
         $response = $this->meterService->getMeter($id);
         $relResponse = $this->meterTransformerRelService->getRelByMeterId($id);
+        $transformers = [];
         if ($relResponse->hasError() == false) {
-            $ctptId = $relResponse->data['ctpt_id'] ?? null;
-            if ($ctptId) {
-                $ctptResponse = $this->meterTransformerService->getTransformer($ctptId);
+            $ctpts = $relResponse->data ?? [];
+            foreach ($ctpts as $ctpt) {
+                $transformers[] = $this->meterTransformerService->getTransformer($ctpt['ctpt_id'])->data;
             }
         }
 
@@ -148,7 +149,7 @@ class MeterController extends Controller
 
         return Inertia::render('Meters/MeterShow', [
             'meter' => $response->data,
-            'ctpt' => $ctptResponse->data ?? null,
+            'transformers' => $transformers,
             'currentTimezone' => $currentTimezone->data,
             'timezoneTypes' => $timezoneTypesResponse->data,
             'relation' => $relResponse->data ?? null,

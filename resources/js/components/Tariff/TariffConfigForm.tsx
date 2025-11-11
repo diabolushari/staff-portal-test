@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import StrongText from '@/typography/StrongText'
 import { Card } from '../ui/card'
 import useCustomForm from '@/hooks/useCustomForm'
@@ -20,9 +20,9 @@ import {
 } from '@/components/ui/table'
 import DeleteButton from '@/ui/button/DeleteButton'
 import dayjs from 'dayjs'
+import Field from '../ui/field'
 
 interface TariffConfigItem {
-  connection_purpose: string
   connection_tariff: string
   consumption_lower_limit: string
   consumption_upper_limit: string
@@ -36,18 +36,14 @@ const dateToString = (date: string) => date.split('T')[0]
 
 interface PageProps {
   tariffOrder: TariffOrder
-  connectionPurpose: ParameterValues[]
   consumptionTariff: ParameterValues[]
 }
 
-export default function TariffConfigForm({
-  tariffOrder,
-  connectionPurpose,
-  consumptionTariff,
-}: Readonly<PageProps>) {
+export default function TariffConfigForm({ tariffOrder, consumptionTariff }: Readonly<PageProps>) {
   const { formData } = useCustomForm({
     tariff_order_id: tariffOrder.tariff_order_id,
   })
+  const [connectionTariff, setConnectionTariff] = useState<ParameterValues | null>(null)
 
   const { post, loading } = useInertiaPost<typeof formData>(route('tariff-configs.store'), {
     showErrorToast: true,
@@ -57,7 +53,6 @@ export default function TariffConfigForm({
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   const [modalForm, setModalForm] = useState<TariffConfigItem>({
-    connection_purpose: '',
     connection_tariff: '',
     consumption_lower_limit: '',
     consumption_upper_limit: '',
@@ -73,6 +68,12 @@ export default function TariffConfigForm({
     setModalForm((prev) => ({ ...prev, [field]: value }))
     setErrors((prev) => ({ ...prev, [field]: '' })) // clear error on change
   }
+  useEffect(() => {
+    const tariff = consumptionTariff.find((t) => t.id === Number(modalForm.connection_tariff))
+    if (tariff) {
+      setConnectionTariff(tariff)
+    }
+  }, [modalForm.connection_tariff])
 
   const validateModalForm = (): boolean => {
     const newErrors: Record<string, string> = {}
@@ -98,9 +99,7 @@ export default function TariffConfigForm({
 
     // Rule 4: Duplicate / overlapping range for same combo
     const overlap = addedItems.find((item) => {
-      const sameCombo =
-        item.connection_purpose === modalForm.connection_purpose &&
-        item.connection_tariff === modalForm.connection_tariff
+      const sameCombo = item.connection_tariff === modalForm.connection_tariff
       if (!sameCombo) return false
 
       // check if date ranges overlap
@@ -118,7 +117,6 @@ export default function TariffConfigForm({
 
       // Check all fields are filled
       const allFieldsFilled =
-        modalForm.connection_purpose &&
         modalForm.connection_tariff &&
         modalForm.consumption_lower_limit &&
         modalForm.consumption_upper_limit &&
@@ -142,7 +140,6 @@ export default function TariffConfigForm({
     if (!validateModalForm()) return
     setAddedItems((prev) => [...prev, modalForm])
     setModalForm({
-      connection_purpose: '',
       connection_tariff: '',
       consumption_lower_limit: '',
       consumption_upper_limit: '',
@@ -183,16 +180,6 @@ export default function TariffConfigForm({
             >
               <div className='grid gap-4 md:grid-cols-2'>
                 <SelectList
-                  label='Connection Purpose'
-                  list={connectionPurpose}
-                  dataKey='id'
-                  displayKey='parameter_value'
-                  setValue={(val: any) => handleModalChange('connection_purpose', val)}
-                  value={modalForm.connection_purpose}
-                  error={errors.connection_purpose}
-                  required
-                />
-                <SelectList
                   label='Connection Tariff'
                   list={consumptionTariff}
                   dataKey='id'
@@ -201,6 +188,10 @@ export default function TariffConfigForm({
                   value={modalForm.connection_tariff}
                   error={errors.connection_tariff}
                   required
+                />
+                <Field
+                  label='Tariff Type'
+                  value={connectionTariff?.attribute1_value || ''}
                 />
                 <Input
                   label='Consumption Lower Limit'
@@ -287,8 +278,8 @@ export default function TariffConfigForm({
           <Table className='mt-4'>
             <TableHeader>
               <TableRow>
-                <TableHead>Purpose</TableHead>
                 <TableHead>Tariff</TableHead>
+                <TableHead>Tariff Type</TableHead>
                 <TableHead>Lower</TableHead>
                 <TableHead>Upper</TableHead>
                 <TableHead>KVA</TableHead>
@@ -302,11 +293,9 @@ export default function TariffConfigForm({
               {addedItems.map((item, idx) => (
                 <TableRow key={idx}>
                   <TableCell>
-                    {getParameterLabel(connectionPurpose, item.connection_purpose)}
-                  </TableCell>
-                  <TableCell>
                     {getParameterLabel(consumptionTariff, item.connection_tariff)}
                   </TableCell>
+                  <TableCell>{connectionTariff?.attribute1_value || ''}</TableCell>
                   <TableCell>{item.consumption_lower_limit}</TableCell>
                   <TableCell>{item.consumption_upper_limit}</TableCell>
                   <TableCell>{item.demand_charge_kva}</TableCell>
