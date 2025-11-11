@@ -96,7 +96,7 @@ export interface Connection {
   connection_subcategory: ParameterValues
   consumer_number: number
   consumer_type: ParameterValues[]
-  contract_demand_kw_val: number
+  contract_demand_kva_val: number
   created_at: string
   created_by: number
   effective_start: string

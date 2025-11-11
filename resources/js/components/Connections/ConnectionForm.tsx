@@ -99,6 +99,7 @@ export default function ConnectionForm({
       onComplete: () => {
         router.visit(route('consumer.create'))
       },
+      showErrorToast: true,
     }
   )
 

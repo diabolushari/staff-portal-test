@@ -53,6 +53,7 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
     ],
     [connection]
   )
+  console.log(connection)
 
   return (
     <ConnectionsLayout
@@ -120,7 +121,15 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
               />
               <Field
                 label='Contract Demand (KVA)'
-                value={connection?.contract_demand_kw_val}
+                value={connection?.contract_demand_kva_val}
+              />
+              <Field
+                label='Power Load (KW)'
+                value={connection?.power_load_kw_val}
+              />
+              <Field
+                label='Light Load (KW)'
+                value={connection?.light_load_kw_val}
               />
             </div>
           </Card>
