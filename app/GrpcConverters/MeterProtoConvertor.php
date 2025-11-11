@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\GrpcConverters;
 
+use App\GrpcConverters\Metering\MeterTransformerProtoConvertor;
 use Proto\Consumers\MeterResponse;
 
 class MeterProtoConvertor
@@ -71,6 +72,10 @@ class MeterProtoConvertor
         $updatedTs = $meter->getUpdatedTs()
             ? $meter->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s')
             : null;
+        $transformers = [];
+        foreach ($meter->getTransformers() as $transformer) {
+            $transformers[] = MeterTransformerProtoConvertor::convertToArray($transformer);
+        }
 
         return [
             'version_id' => $meter->getVersionId(),
@@ -108,6 +113,7 @@ class MeterProtoConvertor
             'updated_ts' => $updatedTs,
             'created_by' => $meter->getCreatedBy(),
             'updated_by' => $meter->getUpdatedBy(),
+            'transformers' => $transformers,
 
         ];
     }

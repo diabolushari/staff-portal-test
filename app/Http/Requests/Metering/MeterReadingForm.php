@@ -16,11 +16,6 @@ class MeterReadingForm extends Data
         public string $meteringDate,
         public string $readingStartDate,
         public string $readingEndDate,
-        public int $meterHealthId,
-        public ?int $ctHealthId,
-        public ?int $ptHealthId,
-        public ?string $faultyDate,
-        public int $ctptHealthId,
         public float $voltageR,
         public float $voltageB,
         public float $voltageY,
@@ -29,6 +24,8 @@ class MeterReadingForm extends Data
         public float $currentY,
         public string $remarks,
         public array $readingsByMeter,
+        public array $meterHealth,
         public ?bool $multipleReading,
+
     ) {}
 }

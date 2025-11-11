@@ -271,6 +271,7 @@ export interface Meter {
   updated_ts: string | null
   created_by: number
   updated_by: number
+  transformers: MeterTransformer[]
 }
 
 export interface MeterTransformer {
@@ -396,6 +397,7 @@ export interface MeterProfileParameter {
   profile_id: number
   name: string
   display_name: string
+  is_export: boolean
 }
 export interface MeterReadingPowerFactor {
   id: number
@@ -474,4 +476,11 @@ export interface BillingRuleJson {
   name: string
   computed_properties: ComputedProperty[]
   charge_heads: ChargeHead[]
+}
+
+export interface meterWithTimezoneAndProfile {
+    meter_id: number;
+    meter: Meter;
+    timezones: MeterTimezoneType[];
+    meter_profiles: MeterProfileParameter[];
 }

@@ -5,12 +5,30 @@ import { consumerNavItems } from '@/components/Navbar/navitems'
 import Stepper from '@/components/Stepper'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ConsumerData, MeterReading } from '@/interfaces/data_interfaces'
+import {
+  ConsumerData,
+  Meter,
+  MeterProfileParameter,
+  MeterReading,
+  meterWithTimezoneAndProfile,
+} from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
 import { useEffect, useMemo, useState } from 'react'
+
+interface ReadingForm extends MeterReading {
+  readings_by_meter: any[]
+  reading_type: string
+  _method: 'PUT' | 'POST' | undefined
+  meter_health: {
+    meter_id: number
+    meter_serial: string
+    meter_health_id?: number
+    ctpts?: { ctpt_id: number; health: number }[]
+  }[]
+}
 
 interface Props {
   connectionWithConsumer: ConsumerData
@@ -19,21 +37,19 @@ interface Props {
   ctHealthTypes: ParameterValues[]
   ptHealthTypes: ParameterValues[]
   anomalyTypes: ParameterValues[]
-  metersWithTimezonesAndProfiles: any[]
+  metersWithTimezonesAndProfiles: meterWithTimezoneAndProfile[]
   latestMeterReading: MeterReading
   editMode: boolean
 }
 function transformToFormData(
   values: any[],
-  metersWithTimezonesAndProfiles: any[],
+  metersWithTimezonesAndProfiles: meterWithTimezoneAndProfile[],
   editMode: boolean
 ) {
-  // Group readings by meter
-
   const groupedByMeter = metersWithTimezonesAndProfiles.map((meter) => {
     const meterReadings = values.filter((v) => v.meter_id === meter.meter_id)
 
-    const parameters = meter.meter_profile.map((profile: any) => {
+    const parameters = meter.meter_profiles.map((profile: MeterProfileParameter) => {
       const parameterReadings = meterReadings.filter(
         (r) => r.parameter_id === profile.meter_parameter_id
       )
@@ -71,20 +87,19 @@ const getNextDay = (dateStr: string) => {
   if (!dateStr) return ''
   const date = new Date(dateStr)
   date.setDate(date.getDate() + 1)
-  return date.toISOString().split('T')[0] // format YYYY-MM-DD
+  return date.toISOString().split('T')[0]
 }
 const getToday = () => {
   const today = new Date()
   return today.toISOString().split('T')[0]
 }
 
-// Get last day of current month
 const getMonthEnd = (dateStr: string) => {
   if (!dateStr) return ''
   const date = new Date(dateStr)
   const year = date.getFullYear()
-  const month = date.getMonth() + 1 // 0-based index
-  const lastDay = new Date(year, month, +1) // 0th day of next month = last day of current
+  const month = date.getMonth() + 1
+  const lastDay = new Date(year, month, +1)
   return lastDay.toISOString().split('T')[0]
 }
 
@@ -105,7 +120,7 @@ export default function MeterReadingCreatePage({
       href: '/connections',
     },
     {
-      title: connectionWithConsumer?.connection?.consumer_number ?? '',
+      title: String(connectionWithConsumer?.connection?.consumer_number) ?? '',
       href: `/connections/${connectionWithConsumer?.connection?.connection_id}`,
     },
     {
@@ -117,29 +132,26 @@ export default function MeterReadingCreatePage({
       href: `/connection/${connectionWithConsumer?.connection?.connection_id}/meter-reading/create`,
     },
   ]
-  const { formData, setFormValue } = useCustomForm({
-    id: editMode ? latestMeterReading?.id : '',
-    connection_id: connectionWithConsumer?.connection?.connection_id,
+  const { formData, setFormValue } = useCustomForm<ReadingForm>({
+    id: editMode ? latestMeterReading?.id : 0,
+    connection_id: connectionWithConsumer?.connection?.connection_id ?? 0,
     metering_date: getToday(),
     reading_start_date: getNextDay(latestMeterReading?.reading_end_date) ?? '',
     reading_end_date: editMode
       ? latestMeterReading?.reading_end_date
       : (getMonthEnd(getNextDay(latestMeterReading?.reading_end_date)) ?? ''),
-    reading_type: editMode ? latestMeterReading?.reading_type : '',
-    meter_health_id: editMode ? latestMeterReading?.meter_health_id : '',
-    faulty_date: editMode ? latestMeterReading?.faulty_date : '',
-    ctpt_health_id: editMode ? latestMeterReading?.ctpt_health_id : '',
-    anomaly_id: editMode ? latestMeterReading?.anomaly_id : '',
-    ct_health_id: editMode ? latestMeterReading?.ct_health_id : '',
-    pt_health_id: editMode ? latestMeterReading?.pt_health_id : '',
-    voltage_r: editMode ? latestMeterReading?.voltage_r : '',
-    voltage_y: editMode ? latestMeterReading?.voltage_y : '',
-    voltage_b: editMode ? latestMeterReading?.voltage_b : '',
-    current_r: editMode ? latestMeterReading?.current_r : '',
-    current_y: editMode ? latestMeterReading?.current_y : '',
-    current_b: editMode ? latestMeterReading?.current_b : '',
+    reading_type: editMode ? latestMeterReading?.single_reading : '',
+
+    anomaly_id: editMode ? latestMeterReading?.anomaly_id : 0,
+    voltage_r: editMode ? latestMeterReading?.voltage_r : 0,
+    voltage_y: editMode ? latestMeterReading?.voltage_y : 0,
+    voltage_b: editMode ? latestMeterReading?.voltage_b : 0,
+    current_r: editMode ? latestMeterReading?.current_r : 0,
+    current_y: editMode ? latestMeterReading?.current_y : 0,
+    current_b: editMode ? latestMeterReading?.current_b : 0,
     remarks: editMode ? latestMeterReading?.remarks : '',
     readings_by_meter: [],
+    meter_health: [],
     _method: editMode ? 'PUT' : undefined,
   })
 
@@ -149,11 +161,55 @@ export default function MeterReadingCreatePage({
       showErrorToast: true,
     }
   )
+  const updateMeterHealth = (meterHealthId: number, meter: Meter) => {
+    const updated = [...formData.meter_health]
+    const existingIdx = updated.findIndex((m) => m.meter_id === meter.meter_id)
+
+    if (existingIdx !== -1) {
+      // Update existing meter health
+      updated[existingIdx].meter_health_id = meterHealthId
+    } else {
+      // Add new meter health entry
+      updated.push({
+        meter_id: meter.meter_id,
+        meter_serial: meter.meter_serial,
+        meter_health_id: meterHealthId,
+        ctpts: [],
+      })
+    }
+
+    setFormValue('meter_health')(updated)
+  }
+  const updateCTPTHealth = (meterId: number, ctptId: number, healthId: number, meter: Meter) => {
+    const updated = [...formData.meter_health]
+    const existingIdx = updated.findIndex((m) => m.meter_id === meterId)
+
+    if (existingIdx !== -1) {
+      const ctptList = updated[existingIdx].ctpts || []
+      const ctptIdx = ctptList.findIndex((c) => c.ctpt_id === ctptId)
+
+      if (ctptIdx !== -1) {
+        ctptList[ctptIdx].health = healthId
+      } else {
+        ctptList.push({ ctpt_id: ctptId, health: healthId })
+      }
+
+      updated[existingIdx].ctpts = ctptList
+    } else {
+      updated.push({
+        meter_id: meterId,
+        meter_serial: meter.meter_serial,
+        meter_health_id: undefined,
+        ctpts: [{ ctpt_id: ctptId, health: healthId }],
+      })
+    }
+
+    setFormValue('meter_health')(updated)
+  }
 
   const [activeStep, setActiveStep] = useState(0)
 
   useEffect(() => {
-    // If already initialized, skip
     if (formData.readings_by_meter?.length > 0) return
 
     if (latestMeterReading?.values?.length > 0) {
@@ -165,16 +221,15 @@ export default function MeterReadingCreatePage({
 
       setFormValue('readings_by_meter')(transformed)
     } else {
-      // Normal initialization (as in your existing code)
       const initializedMeters = metersWithTimezonesAndProfiles.map((meter) => ({
         meter_id: meter.meter_id,
-        parameters: meter.meter_profile.map((profile: any) => ({
+        parameters: meter.meter_profiles.map((profile: any) => ({
           meter_parameter_id: profile.meter_parameter_id,
           display_name: profile.display_name,
           readings: meter.timezones.map((tz: any) => ({
             timezone_id: tz.timezone_id,
             timezone_name: tz.timezone_name,
-            values: { initial: 0, final: '', diff: '' },
+            values: { initial: 0, final: '', diff: '', mf: 0 },
           })),
         })),
       }))
@@ -184,17 +239,10 @@ export default function MeterReadingCreatePage({
 
   // Check if a step has any errors
   const hasStepError = (fields: string[]) => fields.some((f) => errors?.[f])
-  const getFirstErrorStep = () => {
-    if (hasStepError(['metering_date', 'reading_start_date', 'reading_end_date', 'reading_type']))
-      return 0
-    if (hasStepError(['meter_health_id', 'ctpt_health_id', 'anomaly_id'])) return 1
-    // last step (readings) we don't force navigation
-    return activeStep
-  }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement | null>, multipleReading = false) => {
     e?.preventDefault()
-
+    console.log(formData)
     post({
       ...formData,
       multiple_reading: multipleReading,
@@ -236,7 +284,7 @@ export default function MeterReadingCreatePage({
         id: 3,
         title: 'Readings',
         status: 'default',
-        cardTitle: `Readings for ${connectionWithConsumer?.consumer?.organization_name}`,
+        cardTitle: `Readings for ${connectionWithConsumer?.consumer?.organization_name ?? connectionWithConsumer?.connection?.consumer_number}`,
         cardSubtitle: `${formData.reading_start_date} to ${formData.reading_end_date}`,
       },
     ]
@@ -267,9 +315,8 @@ export default function MeterReadingCreatePage({
               <MeterReadingObservationStep
                 formData={formData}
                 setFormValue={setFormValue}
-                meterHealthTypes={meterHealthTypes}
-                ctptHealthTypes={ctptHealthTypes}
                 anomalyTypes={anomalyTypes}
+                errors={errors}
               />
             )}
             {activeStep === 2 && (
@@ -278,6 +325,12 @@ export default function MeterReadingCreatePage({
                 formData={formData}
                 setFormValue={setFormValue}
                 latestMeterReading={latestMeterReading}
+                meterHealthTypes={meterHealthTypes}
+                ctptHealthTypes={ctptHealthTypes}
+                ctHealthTypes={ctHealthTypes}
+                ptHealthTypes={ptHealthTypes}
+                updateMeterHealth={updateMeterHealth}
+                updateCTPTHealth={updateCTPTHealth}
               />
             )}
           </Stepper>

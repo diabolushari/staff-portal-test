@@ -157,7 +157,6 @@ class TariffConfigService
     {
         $msg = new TariffConfigFormMessage;
         $msg->setTariffOrderId($tariffOrderId);
-        $msg->setConnectionPurposeId($request->connectionPurpose);
         $msg->setConnectionTariffId($request->connectionTariff);
         $msg->setConsumptionLowerLimit($request->consumptionLowerLimit);
         $msg->setConsumptionUpperLimit($request->consumptionUpperLimit);
@@ -177,7 +176,6 @@ class TariffConfigService
         return [
             'tariff_config_id' => $msg->getTariffConfigId(),
             'tariff_order_id' => $msg->getTariffOrderId(),
-            'connection_purpose' => $this->parameterValueService->toArray($msg->getConnectionPurpose()),
             'connection_tariff' => $this->parameterValueService->toArray($msg->getConnectionTariff()),
             'consumption_lower_limit' => $msg->getConsumptionLowerLimit(),
             'consumption_upper_limit' => $msg->getConsumptionUpperLimit(),
@@ -214,7 +212,6 @@ class TariffConfigService
         $msg = new TariffConfigFormMessage;
         $msg->setTariffConfigId($request->tariffConfigId);
         $msg->setTariffOrderId($request->tariffOrderId);
-        $msg->setConnectionPurposeId($request->connectionPurposeId);
         $msg->setConnectionTariffId($request->connectionTariffId);
         $msg->setConsumptionLowerLimit($request->consumptionLowerLimit);
         $msg->setConsumptionUpperLimit($request->consumptionUpperLimit);

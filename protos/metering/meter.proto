@@ -5,6 +5,9 @@ package com.kseb.consumerservice.proto.metering;
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "parameters/parameter-value.proto";
+import "metering/meter-transformer.proto";
+
+
 
 option php_namespace = "Proto\\Consumers";
 option php_metadata_namespace = "GPBMetadata";
@@ -151,6 +154,8 @@ message MeterResponse {
 
   int64 profile_id = 34;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 35;
+  repeated com.kseb.consumerservice.proto.metering.MeterTransformerMessage transformers = 36;
+
 }
 
 message MeterPaginatedListRequest {

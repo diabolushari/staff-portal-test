@@ -12,7 +12,6 @@ class TariffConfigUpdateFormRequest extends Data
     public function __construct(
         public int $tariffConfigId,
         public int $tariffOrderId,
-        public int $connectionPurposeId,
         public int $connectionTariffId,
         public int $consumptionLowerLimit,
         public int $consumptionUpperLimit,

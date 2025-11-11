@@ -6,20 +6,25 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Meter } from '@/interfaces/data_interfaces'
 import Input from '@/ui/form/Input'
 
-const rowLabels = ['Initial', 'Final', 'Diff']
+const rowLabels = ['Initial', 'Final', 'Diff', 'MF']
 
 interface Props {
   timeZoneNames: { id: number; name: string }[]
   values: { timezone_id: number; timezone_name: string; values: Record<string, any> }[]
-  onChange: (rowKey: string, tzId: number, value: any) => void
+  onChange: (rowKey: string, tzId: number, value: any, meter: Meter) => void
+  onMultiplierChange: (tzId: number, value: any, meter: Meter) => void
+  meter: Meter
 }
 
 export default function MeterReadingValueForm({
   timeZoneNames,
   values,
   onChange,
+  onMultiplierChange,
+  meter,
 }: Readonly<Props>) {
   return (
     <div className='rounded border bg-white p-4'>
@@ -48,10 +53,11 @@ export default function MeterReadingValueForm({
                         type='number'
                         value={fieldValue}
                         setValue={(val) => {
-                          if (rowKey !== 'diff') onChange(rowKey, tz.id, val)
+                          if (rowKey !== 'diff') onChange(rowKey, tz.id, val, meter)
+                          if (rowKey === 'mf') onMultiplierChange(tz.id, val, meter)
                         }}
                         required
-                        disabled={rowKey === 'diff' || rowKey === 'initial'}
+                        disabled={rowKey === 'diff' || rowKey === 'initial' || rowKey === 'mf'}
                       />
                     </TableCell>
                   )

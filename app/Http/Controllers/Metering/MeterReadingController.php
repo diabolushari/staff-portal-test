@@ -7,9 +7,9 @@ use App\Http\Requests\Metering\MeterReadingForm;
 use App\Services\Connection\ConnectionService;
 use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterReadingService;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -64,13 +64,12 @@ class MeterReadingController extends Controller
 
     public function store(MeterReadingForm $request): RedirectResponse
     {
+
         $response = $this->meterReadingService->createMeterReading($request);
         if ($response->hasError()) {
-            if ($response->error) {
-                return $response->error;
-            } else {
-                return redirect()->back()->with('error', 'Failed to get connection');
-            }
+            return redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Error creating meter reading',
+            ]);
         }
 
         if ($request->multipleReading) {

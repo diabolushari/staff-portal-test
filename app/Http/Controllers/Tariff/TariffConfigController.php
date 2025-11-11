@@ -65,18 +65,10 @@ class TariffConfigController extends Controller
             'Connection',
             'Tariff'
         );
-        $connectionPurpose = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Primary Purpose'
-        );
 
         return Inertia::render('TariffConfig/TariffConfigCreatePage', [
             'tariff_order' => $tariffOrder->data,
             'consumption_tariff' => $consumptionTariff->data,
-            'connection_purpose' => $connectionPurpose->data,
         ]);
     }
 
@@ -107,19 +99,12 @@ class TariffConfigController extends Controller
             'Connection',
             'Tariff'
         );
-        $connectionPurpose = $this->parameterValueService->getParameterValues(
-            1,
-            10,
-            null,
-            'Connection',
-            'Primary Purpose'
-        );
+
         $tariffConfig = $this->tariffConfigService->getTariffConfig($id);
 
         return Inertia::render('TariffConfig/TariffConfigEditPage', [
             'tariff_orders' => $tariffOrder->data['tariff_orders'] ?? [],
             'consumption_tariffs' => $consumptionTariff->data,
-            'connection_purposes' => $connectionPurpose->data,
             'tariff_config' => $tariffConfig->data,
         ]);
     }

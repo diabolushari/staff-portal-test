@@ -10,57 +10,54 @@ import "google/protobuf/timestamp.proto";
 import "parameters/parameter-value.proto";
 import "tariff/tariff_order.proto";
 
-// ----------------- ENTITY MESSAGE -----------------
 message TariffConfigMessage {
   int64 tariff_config_id = 1;
   int64 tariff_order_id = 2;
   int64 connection_purpose_id = 3;
   int64 connection_tariff_id = 4;
   com.kseb.consumerservice.proto.tariff.TariffOrderMessage tariff_order = 5;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_purpose = 6;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_tariff = 7;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_tariff = 6;
 
-  double consumption_lower_limit = 8;
-  double consumption_upper_limit = 9;
+  double consumption_lower_limit = 7;
+  double consumption_upper_limit = 8;
 
-  double demand_charge_kva = 10;
-  double energy_charge_kwh = 11;
+  double demand_charge_kva = 9;
+  double energy_charge_kwh = 10;
 
-  google.protobuf.Timestamp effective_start = 12;
-  google.protobuf.Timestamp effective_end = 13;
+  google.protobuf.Timestamp effective_start = 11;
+  google.protobuf.Timestamp effective_end = 12;
 
-  google.protobuf.Timestamp created_ts = 14;
-  google.protobuf.Timestamp updated_ts = 15;
-  google.protobuf.Timestamp deleted_at = 16;
+  google.protobuf.Timestamp created_ts = 13;
+  google.protobuf.Timestamp updated_ts = 14;
+  google.protobuf.Timestamp deleted_at = 15;
 
-  int32 created_by = 17;
-  int32 updated_by = 18;
-  int32 deleted_by = 19;
+  int32 created_by = 16;
+  int32 updated_by = 17;
+  int32 deleted_by = 18;
 
-  bool is_active = 20;
+  bool is_active = 19;
 }
 
 // ----------------- FORM / Create / Update -----------------
 message TariffConfigFormMessage {
   optional int64 tariff_config_id = 1; // present for update
   int64 tariff_order_id = 2;
-  int64 connection_purpose_id = 3;
-  int64 connection_tariff_id = 4;
+  int64 connection_tariff_id = 3;
 
-  double consumption_lower_limit = 5;
-  double consumption_upper_limit = 6;
+  double consumption_lower_limit = 4;
+  double consumption_upper_limit = 5;
 
-  double demand_charge_kva = 7;
-  double energy_charge_kwh = 8;
+  double demand_charge_kva = 6;
+  double energy_charge_kwh = 7;
 
-  google.protobuf.Timestamp effective_start = 9;
-  google.protobuf.Timestamp effective_end = 10;
+  google.protobuf.Timestamp effective_start = 8;
+  google.protobuf.Timestamp effective_end = 9;
 
-  optional int32 created_by = 11;
-  optional int32 updated_by = 12;
-  optional int32 deleted_by = 13;
+  optional int32 created_by = 10;
+  optional int32 updated_by = 11;
+  optional int32 deleted_by = 12;
 
-  optional bool is_active = 14;
+  optional bool is_active = 13;
 }
 
 message CreateTariffConfigRequest {
@@ -104,9 +101,8 @@ message DeleteTariffConfigResponse {
 
 message ListTariffConfigRequest {
   optional int64 tariff_order_id = 1;
-  optional int64 connection_purpose_id = 2;
-  optional int64 connection_tariff_id = 3;
-  optional string search = 4;
+  optional int64 connection_tariff_id = 2;
+  optional string search = 3;
 }
 message ListTariffConfigResponse {
   repeated TariffConfigMessage configs = 1;
@@ -114,14 +110,13 @@ message ListTariffConfigResponse {
 
 message ListTariffConfigPaginatedRequest {
   optional int64 tariff_order_id = 1;
-  optional int64 connection_purpose_id = 2;
-  optional int64 connection_tariff_id = 3;
-  optional string search = 4;
+  optional int64 connection_tariff_id = 2;
+  optional string search = 3;
 
-  int32 page_number = 5;
-  int32 page_size = 6;
-  optional string sort_by = 7;
-  optional string sort_direction = 8; 
+  int32 page_number = 4;
+  int32 page_size = 5;
+  optional string sort_by = 6;
+  optional string sort_direction = 7; 
 }
 
 message ListTariffConfigPaginatedResponse {

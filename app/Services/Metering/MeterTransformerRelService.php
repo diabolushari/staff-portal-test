@@ -143,9 +143,13 @@ class MeterTransformerRelService
                 $status->details
             );
         }
+        $relations = [];
+        foreach ($response->getRelations() as $rel) {
+            $relations[] = self::relProtoToArray($rel);
+        }
 
         return GrpcServiceResponse::success(
-            self::relProtoToArray($response->getRel()),
+            $relations,
             $response,
             $status->code,
             $status->details
