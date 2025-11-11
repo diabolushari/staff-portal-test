@@ -242,7 +242,7 @@ export default function MeterReadingCreatePage({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement | null>, multipleReading = false) => {
     e?.preventDefault()
-    console.log(formData)
+
     post({
       ...formData,
       multiple_reading: multipleReading,

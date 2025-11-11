@@ -37,11 +37,7 @@ class MeterReadingController extends Controller
             search: $search,
             connectionId: $connectionId
         );
-        if ($meterReadings->hasError()) {
-            return $meterReadings->error ?? redirect()->back()->withErrors([
-                'message' => $meterReadings->statusDetails ?? 'Error fetching meter readings',
-            ]);
-        }
+
         $paginated = null;
         if (! empty($meterReadings->data)) {
             $paginated = new LengthAwarePaginator(

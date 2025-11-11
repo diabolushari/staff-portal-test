@@ -309,14 +309,14 @@ class MeterReadingService
             $protoMeterHealth->setMeterId($meterHealth['meter_id']);
             $protoMeterHealth->setMeterHealthId($meterHealth['meter_health_id']);
             $transformers = $meterHealth['ctpts'];
-            $transfomreHealth = [];
+            $transformerHealth = [];
             foreach ($transformers as $transformer) {
                 $ctptHealth = new Health;
                 $ctptHealth->setCtptId($transformer['ctpt_id']);
                 $ctptHealth->setParameterId($transformer['health']);
-                $transfomreHealth[] = $ctptHealth;
+                $transformerHealth[] = $ctptHealth;
             }
-            $protoMeterHealth->setHealths($transfomreHealth);
+            $protoMeterHealth->setHealths($transformerHealth);
         }
 
         return $protoRequest;
