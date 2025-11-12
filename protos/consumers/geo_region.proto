@@ -12,12 +12,14 @@ option php_metadata_namespace = "GPBMetadata";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/empty.proto";
+import "parameters/parameter-value.proto";
+
 
 // -------------------- Messages --------------------
 message GeoRegionMessage {
   int32 region_id = 1;
   string region_name = 2;
-  int32 region_classification = 3;
+  int32 region_classification_id = 3;
   int32 region_type_id = 4;
   google.protobuf.Struct region_attributes = 5;
   optional int32 parent_region_id = 6;
@@ -25,6 +27,8 @@ message GeoRegionMessage {
   google.protobuf.Timestamp updated_at = 8;
   int32 created_by = 9;
   int32 updated_by = 10;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto region_classification = 11;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto region_type = 12;
 }
 
 message GeoRegionListResponse {

@@ -155,19 +155,59 @@ export interface Consumer {
   seasonal_ind: boolean
   license_ind: boolean
   open_access_ind: boolean
+  income_tax_withholding_ind: boolean
+  gst_withholding_ind: boolean
+  solar_indicator: boolean // if applicable from frontend logic
+
+  // Missing fields from PHP
+  manufacturing_info: Record<string, any>
+  tax_info: Record<string, any>
+  identity_info: Record<string, any>
+  application_info: Record<string, any>
+  addresses?: Record<string, any> // billing/premises from Struct
+
   contact_folio: any
+}
+
+export interface Contact {
+  connection_id: number | string
+  version_id: number | null
+  primary_address_id: number | null
+  billing_address_id: number | null
+  premises_address_id: number | null
+  primary_email?: string
+  primary_phone?: string
+  contact_folio: any
+  primary_address?: Address
+  billing_address?: Address
+  premises_address?: Address
 }
 
 export interface ConsumerData {
   consumer: Consumer
-  contact: {
-    connection_id: number | string
-    version_id: number | null
-    primary_address_id: number | null
-    billing_address_id: number | null
-    premises_address_id: number | null
-  }
+  contact: Contact
   connection?: Connection
+}
+
+export interface Address {
+  address_id: number | string
+  address_line1: string
+  address_line2: string
+  city_town_village: string
+  district: GeoRegion
+  district_id: number
+  pincode: number
+  state: GeoRegion
+  state_id: number
+}
+
+
+export interface GeoRegion {
+  id: number
+  name: string
+  type_id: number
+  type: ParameterValues
+  classification_id: number
 }
 
 export interface OfficeHierarchyRel {

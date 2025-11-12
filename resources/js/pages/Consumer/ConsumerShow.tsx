@@ -1,18 +1,11 @@
 import { router } from '@inertiajs/react'
-import MainLayout from '@/layouts/main-layout'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 import { Card } from '@/components/ui/card'
-import { TabsContent } from '@radix-ui/react-tabs'
-import { TabGroup } from '@/ui/Tabs/TabGroup'
-import TinyContainer from '@/ui/Card/TinyContainer'
-import { PencilIcon } from 'lucide-react'
+import { Info, PencilIcon } from 'lucide-react'
 import { Connection, ConsumerData, MeterAssignment } from '@/interfaces/data_interfaces'
-import { MeterTab } from '../Connections/MeterTab'
-import { Meter } from '../Meters/MeterIndex'
-import ConnectionsLayout, { connectionTabs } from '@/layouts/connection/ConnectionsLayout'
-import MeterReadingTab from '@/components/Connections/MeterReadingTab'
+import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 
 interface ConsumerShowProps {
   consumer: ConsumerData
@@ -41,6 +34,7 @@ const InfoBlock = ({ label, value }: { label: string; value?: string | number })
 
 export default function ConsumerShow({ consumer, connection }: Readonly<ConsumerShowProps>) {
   const onEdit = () => router.visit(`/consumers/${Number(consumer?.consumer?.connection_id)}/edit`)
+
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Connections',
@@ -55,6 +49,7 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
       href: route('connection.consumer', connection?.connection_id),
     },
   ]
+  console.log(consumer)
   return (
     <ConnectionsLayout
       connection={connection}
@@ -86,6 +81,10 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
           <hr className='mb-6 border-[#e5e9eb]' />
           <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
             <InfoBlock
+              label='Organization Name'
+              value={safe(consumer.consumer.organization_name)}
+            />
+            <InfoBlock
               label='Applicant Code'
               value={safe(consumer.consumer.applicant_code)}
             />
@@ -109,6 +108,12 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
               label='GSTIN'
               value={safe(consumer.consumer.consumer_gstin)}
             />
+          </div>
+        </Card>
+        <Card className='rounded-lg p-7'>
+          <StrongText className='text-base font-semibold text-[#252c32]'>Indicators</StrongText>
+          <hr className='my-4 border-[#e5e9eb]' />
+          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
             <InfoBlock
               label='Income Tax Withholding'
               value={consumer.consumer.income_tax_withholding_ind ? 'Yes' : 'No'}
@@ -128,6 +133,10 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
             <InfoBlock
               label='Open Access'
               value={consumer.consumer.open_access_ind ? 'Yes' : 'No'}
+            />
+            <InfoBlock
+              label='Renewable'
+              value={consumer.consumer.solar_indicator ? 'Yes' : 'No'}
             />
           </div>
         </Card>
@@ -210,11 +219,11 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
                   />
                   <InfoBlock
                     label='State'
-                    value={safe(addr.state)}
+                    value={safe(addr.state.name)}
                   />
                   <InfoBlock
-                    label='District ID'
-                    value={safe(addr.district_id)}
+                    label='District'
+                    value={safe(addr.district.name)}
                   />
                   <InfoBlock
                     label='Pincode'

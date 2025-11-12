@@ -35,7 +35,7 @@ export default function ConsumerContactFolioModal({ setShowModal, setFormValue, 
         />
         <Input
           label='Phone'
-          type='text'
+          type='number'
           value={phone}
           setValue={setPhone}
           placeholder='Enter additional phone number'

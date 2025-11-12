@@ -2,6 +2,7 @@
 
 namespace App\Services\Connection;
 
+use App\GrpcConverters\Connection\GeoRegionProtoConverter;
 use App\Http\Requests\Connections\ConsumerFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
@@ -24,7 +25,9 @@ class ConsumerService
     private ConsumerServiceClient $client;
 
     public function __construct(
-        private ParameterValueService $parameterValueService
+        private ParameterValueService $parameterValueService,
+        private GeoRegionProtoConverter $geoRegionProtoConverter
+
     ) {
         $this->client = new ConsumerServiceClient(
             config('app.consumer_service_grpc_host'),
@@ -267,6 +270,8 @@ class ConsumerService
             'state_id' => $address->getStateId(),
             'pincode' => $address->getPincode(),
             'district_id' => $address->getDistrictId(),
+            'state' => $address->getState() ? $this->geoRegionProtoConverter->toArray($address->getState()) : null,
+            'district' => $address->getDistrict() ? $this->geoRegionProtoConverter->toArray($address->getDistrict()) : null,
         ];
     }
 }
