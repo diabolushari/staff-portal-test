@@ -72,7 +72,7 @@ export default function ConnectionForm({
     primary_purpose_id: connection?.primary_purpose_id ?? '',
     admin_office_code: connection?.admin_office_code ?? '',
     service_office_code: connection?.service_office_code ?? '',
-    contract_demand_kw_val: connection?.contract_demand_kw_val ?? '',
+    contract_demand_kw_val: connection?.contract_demand_kva_val ?? '',
     connected_load_kw_val: connection?.connected_load_kw_val ?? '',
     solar_indicator: connection?.solar_indicator ?? false,
     multi_source_indicator: connection?.multi_source_indicator ?? false,
@@ -99,6 +99,7 @@ export default function ConnectionForm({
       onComplete: () => {
         router.visit(route('consumer.create'))
       },
+      showErrorToast: true,
     }
   )
 

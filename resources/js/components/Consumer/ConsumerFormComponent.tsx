@@ -99,18 +99,6 @@ export default function ConsumerFormComponent({
     })
   }
 
-  const updateOtherAddressField = (type: 'billing' | 'premises', field: string, value: any) => {
-    if (!formData.other_addresses[type]) return
-    setOtherAddress(type, {
-      ...formData.other_addresses[type],
-      [field]: value,
-    })
-  }
-
-  const removeOtherAddress = (type: 'billing' | 'premises') => {
-    setOtherAddress(type, null)
-  }
-
   const handleRemoveContact = (index: number) => {
     const updated = formData.contact_folio.filter((_, i) => i !== index)
     setFormValue('contact_folio')(updated)
@@ -276,7 +264,7 @@ export default function ConsumerFormComponent({
             />
             <Input
               label='Primary Phone'
-              type='text'
+              type='number'
               setValue={setFormValue('primary_phone')}
               value={formData.primary_phone}
               error={errors?.primary_phone}

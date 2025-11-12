@@ -70,9 +70,7 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
         {/* Header */}
         <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
           <div className='flex flex-col gap-2'>
-            <StrongText className='text-2xl font-semibold text-[#252c32]'>
-              Connection #{connection?.connection_id}
-            </StrongText>
+            <StrongText className='text-2xl font-semibold text-[#252c32]'>Connection</StrongText>
             <span className='text-sm text-gray-600'>
               Consumer No: {connection?.consumer_number}
             </span>
@@ -102,6 +100,12 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                 label='Consumer Number'
                 value={connection?.consumer_number}
               />
+              {connection?.consumer_legacy_code && (
+                <Field
+                  label='Consumer Legacy Code'
+                  value={connection?.consumer_legacy_code}
+                />
+              )}
               <Field
                 label='Connection Type'
                 value={connection?.connection_type?.parameter_value}
@@ -120,7 +124,19 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
               />
               <Field
                 label='Contract Demand (KVA)'
-                value={connection?.contract_demand_kw_val}
+                value={connection?.contract_demand_kva_val}
+              />
+              <Field
+                label='Power Load (KW)'
+                value={connection?.power_load_kw_val}
+              />
+              <Field
+                label='Light Load (KW)'
+                value={connection?.light_load_kw_val}
+              />
+              <Field
+                label='Connected Load'
+                value={connection?.connected_load_kw_val}
               />
             </div>
           </Card>
