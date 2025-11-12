@@ -17,12 +17,12 @@ interface Props {
 const rowLabels = ['initial', 'final', 'diff']
 
 export default function MeterReadingValueTooltip({ meterId, readingsByMeter, parameterId }: Props) {
-  const meterData = readingsByMeter.find((m) => m.meter_id === meterId)
+  const meterData = readingsByMeter?.find((m) => m.meter_id === meterId)
   if (!meterData) {
     return <div className='p-2 text-xs text-gray-500'>No data available</div>
   }
 
-  const paramData = meterData.parameters.find((p: any) => p.meter_parameter_id === parameterId)
+  const paramData = meterData?.parameters?.find((p: any) => p.meter_parameter_id === parameterId)
   if (!paramData) {
     return <div className='p-2 text-xs text-gray-500'>No data available</div>
   }
@@ -34,12 +34,12 @@ export default function MeterReadingValueTooltip({ meterId, readingsByMeter, par
         <TableHeader>
           <TableRow>
             <TableHead></TableHead>
-            {paramData.readings.map((tz: any) => (
+            {paramData?.readings?.map((tz: any) => (
               <TableHead
-                key={tz.timezone_id}
+                key={tz?.timezone_id}
                 className='text-center'
               >
-                {tz.timezone_name}
+                {tz?.timezone_name}
               </TableHead>
             ))}
           </TableRow>
@@ -50,12 +50,12 @@ export default function MeterReadingValueTooltip({ meterId, readingsByMeter, par
               <TableCell className='text-center font-medium text-black'>
                 {rowKey.charAt(0).toUpperCase() + rowKey.slice(1)}
               </TableCell>
-              {paramData.readings.map((tz: any) => (
+              {paramData?.readings?.map((tz: any) => (
                 <TableCell
-                  key={tz.timezone_id}
+                  key={tz?.timezone_id}
                   className='text-center text-gray-800'
                 >
-                  {tz.values?.[rowKey] ?? ''}
+                  {tz?.values?.[rowKey] ?? ''}
                 </TableCell>
               ))}
             </TableRow>

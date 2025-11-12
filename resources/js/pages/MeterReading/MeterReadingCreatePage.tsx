@@ -163,14 +163,14 @@ export default function MeterReadingCreatePage({
   )
   const updateMeterHealth = (meterHealthId: number, meter: Meter) => {
     const updated = [...formData.meter_health]
-    const existingIdx = updated.findIndex((m) => m.meter_id === meter.meter_id)
+    const existingIdx = updated?.findIndex((m) => m.meter_id === meter.meter_id)
 
     if (existingIdx !== -1) {
       // Update existing meter health
       updated[existingIdx].meter_health_id = meterHealthId
     } else {
       // Add new meter health entry
-      updated.push({
+      updated?.push({
         meter_id: meter.meter_id,
         meter_serial: meter.meter_serial,
         meter_health_id: meterHealthId,
@@ -182,11 +182,11 @@ export default function MeterReadingCreatePage({
   }
   const updateCTPTHealth = (meterId: number, ctptId: number, healthId: number, meter: Meter) => {
     const updated = [...formData.meter_health]
-    const existingIdx = updated.findIndex((m) => m.meter_id === meterId)
+    const existingIdx = updated?.findIndex((m) => m.meter_id === meterId)
 
     if (existingIdx !== -1) {
       const ctptList = updated[existingIdx].ctpts || []
-      const ctptIdx = ctptList.findIndex((c) => c.ctpt_id === ctptId)
+      const ctptIdx = ctptList?.findIndex((c) => c.ctpt_id === ctptId)
 
       if (ctptIdx !== -1) {
         ctptList[ctptIdx].health = healthId
@@ -226,7 +226,7 @@ export default function MeterReadingCreatePage({
         parameters: meter.meter_profiles.map((profile: any) => ({
           meter_parameter_id: profile.meter_parameter_id,
           display_name: profile.display_name,
-          readings: meter.timezones.map((tz: any) => ({
+          readings: meter?.timezones?.map((tz: any) => ({
             timezone_id: tz.timezone_id,
             timezone_name: tz.timezone_name,
             values: { initial: 0, final: '', diff: '', mf: 0 },

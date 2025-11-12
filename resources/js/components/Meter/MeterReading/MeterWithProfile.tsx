@@ -6,7 +6,6 @@ import StrongText from '@/typography/StrongText'
 import { Card } from '@/components/ui/card'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import SelectList from '@/ui/form/SelectList'
-import { number } from 'framer-motion'
 
 interface Props {
   meterIdx: number
@@ -36,7 +35,6 @@ export default function MeterWithProfile({
   meterHealthTypes,
   ctHealthTypes,
 }: Props) {
-  console.log(meterWithTimezoneAndProfile)
   return (
     <div
       key={meterWithTimezoneAndProfile.meter_id}
@@ -115,7 +113,7 @@ export default function MeterWithProfile({
 
               <div
                 className={`mt-2 space-y-1 text-sm text-gray-600 ${
-                  meterWithTimezoneAndProfile.timezones.length > 2
+                  meterWithTimezoneAndProfile?.timezones?.length > 2
                     ? 'scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent max-h-[60px] overflow-y-auto pr-1'
                     : ''
                 }`}

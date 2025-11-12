@@ -32,9 +32,7 @@ export default function MeterReadingValueForm({
         <TableHeader>
           <TableRow>
             <TableHead></TableHead>
-            {timeZoneNames.map((tz) => (
-              <TableHead key={tz.id}>{tz.name}</TableHead>
-            ))}
+            {timeZoneNames?.map((tz) => <TableHead key={tz.id}>{tz.name}</TableHead>)}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -43,9 +41,9 @@ export default function MeterReadingValueForm({
             return (
               <TableRow key={label}>
                 <TableCell className='font-medium'>{label}</TableCell>
-                {timeZoneNames.map((tz) => {
-                  const tzData = values.find((r) => r.timezone_id === tz.id) || { values: {} }
-                  const fieldValue = tzData.values[rowKey] ?? ''
+                {timeZoneNames?.map((tz) => {
+                  const tzData = values?.find((r) => r.timezone_id === tz.id) || { values: {} }
+                  const fieldValue = tzData?.values[rowKey] ?? ''
 
                   return (
                     <TableCell key={tz.id}>

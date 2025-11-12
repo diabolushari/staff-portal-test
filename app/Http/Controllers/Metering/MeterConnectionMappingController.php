@@ -27,7 +27,7 @@ class MeterConnectionMappingController extends Controller
             return back()->withErrors(['grpc_error' => $response->error])->withInput();
         }
 
-        return redirect()->route('connections.show', ['connection' => $meterConnectionRelData['connection_id']])->with('success', 'Meter assigned to connection successfully.');
+        return redirect()->route('connections.show', ['connection' => $request->connectionId])->with('success', 'Meter assigned to connection successfully.');
     }
 
     public function update(MeterConnectionRelFormRequest $request): RedirectResponse

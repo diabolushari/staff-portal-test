@@ -187,7 +187,7 @@ class MeterReadingService
         [$response, $status] = $this->client->LatestMeterReading($protoRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
-                GrpcErrorService::handleErrorResponse($status),
+                GrpcErrorService::handleErrorResponse($status, $response, false),
                 $response,
                 $status->code,
                 $status->details

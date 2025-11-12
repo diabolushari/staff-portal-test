@@ -43,14 +43,14 @@ export default function ProfileReadingForm({
     return (
       <div className='flex flex-col gap-4'>
         <Card className='p-4'>
-          <StrongText>{profile.display_name}</StrongText>
+          <StrongText>{profile?.display_name}</StrongText>
           <div
             className={`mt-2 ${
               paramData?.readings?.length > 2 ? 'max-h-64 overflow-y-auto pr-2' : ''
             }`}
           >
             <MeterReadingValueForm
-              timeZoneNames={meter.timezones.map((tz: any) => ({
+              timeZoneNames={meter?.timezones?.map((tz: any) => ({
                 id: tz.timezone_id,
                 name: tz.timezone_name,
               }))}
