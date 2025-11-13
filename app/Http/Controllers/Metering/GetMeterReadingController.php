@@ -99,7 +99,7 @@ class GetMeterReadingController extends Controller
                 $meterProfiles = [];
                 if ($meterProfilesResponse) {
                     foreach ($meterProfilesResponse as $meterProfile) {
-                        if ($meter->data != null && $meter->data['bidirectional_ind'] != 'true' && $meterProfile['is_export'] != 'true') {
+                        if ($meter->data != null && $meter->data['bidirectional_ind'] == false && $meterProfile['is_export'] == true) {
                             continue;
                         }
                         $meterProfiles[] = $meterProfile;
