@@ -9,15 +9,15 @@ use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
 use Proto\MeterReading\CreateMeterReadingRequest;
-use Proto\MeterReading\CreateMeterReadingValues;
+use Proto\MeterReading\CtptHealthFormMessage;
 use Proto\MeterReading\GetMeterReadingRequest;
-use Proto\MeterReading\Health;
 use Proto\MeterReading\LatestMeterReadingRequest;
 use Proto\MeterReading\ListMeterReadingPaginatedRequest;
 use Proto\MeterReading\ListMeterReadingRequest;
+use Proto\MeterReading\MeterHealthFormMessage;
 use Proto\MeterReading\MeterReadingMessage;
 use Proto\MeterReading\MeterReadingServiceClient;
-use Proto\MeterReading\MeterReadingValuesWithMeter;
+use Proto\MeterReading\ReadingValueFormMessage;
 use Proto\MeterReading\ReadingValueMessage;
 use Proto\MeterReading\UpdateMeterReadingRequest;
 
@@ -275,7 +275,7 @@ class MeterReadingService
                         continue; // nothing to save
                     }
 
-                    $protoReading = new CreateMeterReadingValues;
+                    $protoReading = new ReadingValueFormMessage;
                     if (isset($reading['meter_reading_value_id'])) {
                         $protoReading->setMeterReadingValueId($reading['meter_reading_value_id']);
                     }
@@ -296,21 +296,19 @@ class MeterReadingService
                         $protoReading->setMulValue((float) $value);
                     }
 
-                    $protoReading->setCreatedBy(1);
-
                     $protoRequest->getReadings()[] = $protoReading;
 
                 }
             }
         }
         foreach ($request->meterHealth as $meterHealth) {
-            $protoMeterHealth = new MeterReadingValuesWithMeter;
+            $protoMeterHealth = new MeterHealthFormMessage;
             $protoMeterHealth->setMeterId($meterHealth['meter_id']);
             $protoMeterHealth->setMeterHealthId($meterHealth['meter_health_id']);
             $transformers = $meterHealth['ctpts'];
             $transformerHealth = [];
             foreach ($transformers as $transformer) {
-                $ctptHealth = new Health;
+                $ctptHealth = new CtptHealthFormMessage;
                 $ctptHealth->setCtptId($transformer['ctpt_id']);
                 $ctptHealth->setParameterId($transformer['health']);
                 $transformerHealth[] = $ctptHealth;
@@ -394,7 +392,7 @@ class MeterReadingService
                         continue; // nothing to save
                     }
 
-                    $protoReading = new CreateMeterReadingValues;
+                    $protoReading = new ReadingValueFormMessage;
                     if (isset($reading['meter_reading_value_id'])) {
                         $protoReading->setMeterReadingValueId($reading['meter_reading_value_id']);
                     }
@@ -414,8 +412,6 @@ class MeterReadingService
                     if ($value !== null) {
                         $protoReading->setMulValue((float) $value);
                     }
-
-                    $protoReading->setCreatedBy(1);
 
                     $protoRequest->getReadings()[] = $protoReading;
 

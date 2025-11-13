@@ -62,7 +62,7 @@ class MeterReadingController extends Controller
     {
 
         $response = $this->meterReadingService->createMeterReading($request);
-        if ($response->hasError()) {
+        if ($response->hasError() || $response->data === null) {
             return redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Error creating meter reading',
             ]);
