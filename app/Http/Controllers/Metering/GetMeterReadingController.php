@@ -82,25 +82,24 @@ class GetMeterReadingController extends Controller
                 if (! empty($data)) {
                     $meterWithTimezoneAndProfile['meter_timezone_type'] = $data['timezone_type']['parameter_value'];
                     $meterTimezoneTypeRel[] = $data;
-                    if (! empty($data)) {
-                        $timeZonesResponse = $this->meteringTimezoneService->listMeteringTimezones(null, $data['timezone_type']['id'])->data;
-                        $timezones = [];
-                        if (! empty($timeZonesResponse)) {
-                            foreach ($timeZonesResponse as $timeZone) {
-                                $timeZoneItem['timezone_name'] = $timeZone['timezone_name']['parameter_value'];
-                                $timeZoneItem['timezone_id'] = $timeZone['timezone_name']['id'];
-                                $timezones[] = $timeZoneItem;
-                            }
+
+                    $timeZonesResponse = $this->meteringTimezoneService->listMeteringTimezones(null, $data['timezone_type']['id'])->data;
+                    $timezones = [];
+                    if (! empty($timeZonesResponse)) {
+                        foreach ($timeZonesResponse as $timeZone) {
+                            $timeZoneItem['timezone_name'] = $timeZone['timezone_name']['parameter_value'];
+                            $timeZoneItem['timezone_id'] = $timeZone['timezone_name']['id'];
+                            $timezones[] = $timeZoneItem;
                         }
-                        $meterWithTimezoneAndProfile['timezones'] = $timezones;
                     }
+                    $meterWithTimezoneAndProfile['timezones'] = $timezones;
                 }
 
                 $meterProfilesResponse = $this->meteringParameterProfileService->listMeteringProfileParameters(1, 10, null, $meter->data['profile_id'] ?? null)->data;
                 $meterProfiles = [];
                 if ($meterProfilesResponse) {
                     foreach ($meterProfilesResponse as $meterProfile) {
-                        if ($meter->data != null && $meter->data['bidirectional_ind'] == false && $meterProfile['is_export'] == true) {
+                        if ($meter->data != null && $meter->data['bidirectional_ind'] != 'true' && $meterProfile['is_export'] != 'true') {
                             continue;
                         }
                         $meterProfiles[] = $meterProfile;

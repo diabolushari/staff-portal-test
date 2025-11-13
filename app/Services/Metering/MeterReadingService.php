@@ -27,7 +27,6 @@ class MeterReadingService
 
     public function __construct(
         private ParameterValueService $parameterValueService,
-        private MeterService $meterService,
         private MeteringParameterProfileService $meteringParameterProfileService
     ) {
         $this->client = new MeterReadingServiceClient(
