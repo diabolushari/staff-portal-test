@@ -79,12 +79,13 @@ class GetMeterReadingController extends Controller
                 $meter = $this->meterService->getMeter($meterConnectionRel['meter_id']);
                 $meterWithTimezoneAndProfile['meter'] = $meter->data;
                 $data = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($meterConnectionRel['meter_id'])->data ?? [];
-                $meterWithTimezoneAndProfile['meter_timezone_type'] = $data['timezone_type']['parameter_value'];
-                $meterTimezoneTypeRel[] = $data;
-                if ($data) {
+                if (! empty($data)) {
+                    $meterWithTimezoneAndProfile['meter_timezone_type'] = $data['timezone_type']['parameter_value'];
+                    $meterTimezoneTypeRel[] = $data;
+
                     $timeZonesResponse = $this->meteringTimezoneService->listMeteringTimezones(null, $data['timezone_type']['id'])->data;
                     $timezones = [];
-                    if ($timeZonesResponse) {
+                    if (! empty($timeZonesResponse)) {
                         foreach ($timeZonesResponse as $timeZone) {
                             $timeZoneItem['timezone_name'] = $timeZone['timezone_name']['parameter_value'];
                             $timeZoneItem['timezone_id'] = $timeZone['timezone_name']['id'];

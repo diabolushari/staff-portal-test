@@ -31,7 +31,7 @@ const toNumberOrUndef = (v: unknown) => {
 }
 
 export default function ConnectMeter({
-  connectionId,
+  connection_id,
   relation,
   meters,
   useCategory,
@@ -39,7 +39,7 @@ export default function ConnectMeter({
   changeReason,
   connection,
 }: {
-  connectionId: number
+  connection_id: number
   relation?: MeterConnectionMapping
   meters: Meter[]
   useCategory: ParameterValues[]
@@ -50,7 +50,7 @@ export default function ConnectMeter({
   const [isMeterFaulty, setIsMeterFaulty] = useState(false)
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     rel_id: relation?.rel_id,
-    connection_id: connectionId,
+    connection_id: connection_id,
     meter_id: relation?.meter_id ?? '',
     meter_use_category: relation?.meter_use_category?.id ?? '',
     bidirectional_ind: relation?.bidirectional_ind ?? false,
@@ -66,7 +66,7 @@ export default function ConnectMeter({
 
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     relation
-      ? route('meter-connection-rel.update', connectionId)
+      ? route('meter-connection-rel.update', connection_id)
       : route('meter-connection-rel.store'),
     {
       showErrorToast: true,

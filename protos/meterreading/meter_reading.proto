@@ -16,6 +16,7 @@ import "meterreading/metering_profile_parameters.proto";
 
 
 
+
 // Nested messages for JSON-like structure
 
 
@@ -37,7 +38,7 @@ message ReadingValueMessage{
   com.kseb.consumerservice.proto.meterreading.MeteringProfileParameterMessage parameter = 15;
 }
 
-message CreateMeterReadingValues {
+message ReadingValueFormMessage {
   int64 parameter_id = 1;
   int32 meter_id = 2;
   int64 timezone_id = 3;
@@ -85,15 +86,14 @@ message MeterReadingMessage {
 
 // ----------- REQUEST/RESPONSE MESSAGES ----------
 
-message Health {
+message CtptHealthFormMessage {
   int64 ctpt_id = 1;
   int64 parameter_id = 2;
 }
-message MeterReadingValuesWithMeter {
+message MeterHealthFormMessage {
   int32 meter_id = 1;
   int64 meter_health_id = 2;
-  repeated Health healths = 3;
-
+  repeated CtptHealthFormMessage healths = 3;
 }
 
 // Create
@@ -115,8 +115,8 @@ message CreateMeterReadingRequest {
   string remarks = 15;
   int32 created_by = 16;
   bool is_active = 17;
-  repeated CreateMeterReadingValues readings = 18;
-  repeated MeterReadingValuesWithMeter meter_healths = 19;
+  repeated ReadingValueFormMessage readings = 18;
+  repeated MeterHealthFormMessage meter_healths = 19;
 }
 message CreateMeterReadingResponse {
   MeterReadingMessage reading = 1;
@@ -142,8 +142,8 @@ message UpdateMeterReadingRequest {
   string remarks = 16;
   int32 updated_by = 17;
   bool is_active = 18;
-  repeated CreateMeterReadingValues readings = 19;
-  repeated MeterReadingValuesWithMeter meter_healths = 20;
+  repeated ReadingValueFormMessage readings = 19;
+  repeated MeterHealthFormMessage meter_healths = 20;
 }
 message UpdateMeterReadingResponse {
   MeterReadingMessage reading = 1;

@@ -4,7 +4,7 @@ import StrongText from '@/typography/StrongText'
 import MeterReadingValueForm from './MeterReadingValueForm'
 import Button from '@/ui/button/Button'
 
-export default function ProfileReadingForm({
+export default function ParameterForm({
   activeProfile,
   metersWithTimezonesAndProfiles,
   formData,

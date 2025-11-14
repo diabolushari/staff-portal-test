@@ -18,7 +18,7 @@ class MeterConnectionMappingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(MeterConnectionRelFormRequest $request)
+    public function store(MeterConnectionRelFormRequest $request): RedirectResponse
     {
 
         $response = $this->meterConnectionMappingService->createMeterConnectionMapping($request);
@@ -27,7 +27,7 @@ class MeterConnectionMappingController extends Controller
             return back()->withErrors(['grpc_error' => $response->error])->withInput();
         }
 
-        return redirect()->route('connections.show', ['connection' => $meterConnectionRelData['connection_id']])->with('success', 'Meter assigned to connection successfully.');
+        return redirect()->route('connections.show', $request->connectionId)->with('success', 'Meter assigned to connection successfully.');
     }
 
     public function update(MeterConnectionRelFormRequest $request): RedirectResponse
@@ -39,10 +39,10 @@ class MeterConnectionMappingController extends Controller
             return $response->error ?? redirect()->back();
         }
 
-        return redirect()->route('connections.show', $response->data['connection_id'])->with('success', 'Meter connection details updated successfully.');
+        return redirect()->route('connections.show', $request->connectionId)->with('success', 'Meter connection details updated successfully.');
     }
 
-    public function destroy(int $relId)
+    public function destroy(int $relId): RedirectResponse
     {
         $response = $this->meterConnectionMappingService->deleteMeterConnectionMapping($relId);
 

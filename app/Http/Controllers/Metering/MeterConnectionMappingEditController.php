@@ -22,7 +22,10 @@ class MeterConnectionMappingEditController extends Controller
     public function __invoke(int $relId): Response
     {
         $relation = $this->meterConnectionMappingService->getMeterConnectionMapping($relId);
-        $connection = $this->connectionService->getConnection($relation->data['connection_id']);
+        $connection = null;
+        if ($relation->data != null) {
+            $connection = $this->connectionService->getConnection($relation->data['connection_id']);
+        }
         $meters = $this->meterService->listMeters();
         $useCategory = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Use Category');
         $meterStatus = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Status');
@@ -34,8 +37,8 @@ class MeterConnectionMappingEditController extends Controller
             'useCategory' => $useCategory->data,
             'meterStatus' => $meterStatus->data,
             'changeReason' => $changeReason->data,
-            'connectionId' => $connection->data['connection_id'] ?? null,
-            'connection' => $connection->data,
+            'connection_id' => $connection->data['connection_id'] ?? null,
+            'connection' => $connection->data ?? null,
         ]);
     }
 }

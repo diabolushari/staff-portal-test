@@ -18,6 +18,10 @@ interface Props {
   connection_id: number
   data?: ConsumerData
 }
+interface ContactFolio {
+  email?: string
+  phone?: string
+}
 
 const isSameAddress = (primary?: any, other?: any) => {
   return primary?.address_id === other?.address_id
@@ -61,7 +65,7 @@ export default function ConsumerFormComponent({
     consumer_cin: consumer?.consumer_cin ?? '',
     seasonal_ind: consumer?.seasonal_ind ?? false,
     license_ind: consumer?.license_ind ?? false,
-    open_access_ind: consumer?.open_access_ind ?? false,
+    open_access_ind: false,
 
     // Other addresses
     other_addresses: {
@@ -90,17 +94,8 @@ export default function ConsumerFormComponent({
 
   const [showContactModal, setShowContactModal] = useState(false)
 
-  const setOtherAddress = (type: 'billing' | 'premises', value: any) => {
-    setAll({
-      other_addresses: {
-        ...formData.other_addresses,
-        [type]: value,
-      },
-    })
-  }
-
   const handleRemoveContact = (index: number) => {
-    const updated = formData.contact_folio.filter((_, i) => i !== index)
+    const updated = formData.contact_folio.filter((_: ContactFolio, i: number) => i !== index)
     setFormValue('contact_folio')(updated)
   }
 
@@ -183,14 +178,9 @@ export default function ConsumerFormComponent({
               value={formData.seasonal_ind}
             />
             <CheckBox
-              label='License'
+              label='Licensee'
               toggleValue={toggleBoolean('license_ind')}
               value={formData.license_ind}
-            />
-            <CheckBox
-              label='Open Access'
-              toggleValue={toggleBoolean('open_access_ind')}
-              value={formData.open_access_ind}
             />
           </div>
         </div>
@@ -284,23 +274,23 @@ export default function ConsumerFormComponent({
             <div className='mt-4 border-t border-gray-200 p-4'>
               <StrongText className='mb-2 block font-medium'>Additional Contacts</StrongText>
               <div className='flex flex-col gap-2'>
-                {formData.contact_folio.map((c, i) => (
+                {formData.contact_folio.map((contact: ContactFolio, index: number) => (
                   <div
-                    key={i}
+                    key={index}
                     className='flex justify-between rounded border border-gray-200 p-2 text-sm'
                   >
                     <div>
                       <div>
-                        <strong>Email:</strong> {c.email || '-'}
+                        <strong>Email:</strong> {contact.email ?? '-'}
                       </div>
                       <div>
-                        <strong>Phone:</strong> {c.phone || '-'}
+                        <strong>Phone:</strong> {contact.phone ?? '-'}
                       </div>
                     </div>
                     <button
                       type='button'
                       className='text-red-500 hover:text-red-700'
-                      onClick={() => handleRemoveContact(i)}
+                      onClick={() => handleRemoveContact(index)}
                     >
                       Remove
                     </button>
@@ -325,6 +315,7 @@ export default function ConsumerFormComponent({
         <Button
           type='submit'
           label='Submit'
+          disabled={loading}
         />
       </div>
     </form>

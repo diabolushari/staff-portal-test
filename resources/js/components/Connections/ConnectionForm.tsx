@@ -22,7 +22,6 @@ interface Props {
   voltageTypes: ParameterValues[]
   tariffTypes: ParameterValues[]
   connectionCategory: ParameterValues[]
-  connectionSubCategory: ParameterValues[]
   billingProcesses: ParameterValues[]
   phaseTypes: ParameterValues[]
   primaryPurposes: ParameterValues[]
@@ -46,7 +45,6 @@ export default function ConnectionForm({
   voltageTypes,
   tariffTypes,
   connectionCategory,
-  connectionSubCategory,
   billingProcesses,
   phaseTypes,
   primaryPurposes,
@@ -427,7 +425,7 @@ export default function ConnectionForm({
           label='Submit'
           type='submit'
           disabled={loading}
-          variant='primary'
+          variant={loading ? 'loading' : 'primary'}
         />
       </div>
     </form>

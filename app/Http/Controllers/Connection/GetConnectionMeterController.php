@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Services\Connection\ConnectionService;
 use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterService;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class GetConnectionMeterController extends Controller
 {
@@ -16,7 +18,7 @@ class GetConnectionMeterController extends Controller
         protected ConnectionService $connectionService,
     ) {}
 
-    public function __invoke(int $id)
+    public function __invoke(int $id): Response|RedirectResponse
     {
         $response = $this->meterConnectionMappingService->getMeterConnectionMapping($id);
         $connectionResponse = $this->connectionService->getConnection($id);
