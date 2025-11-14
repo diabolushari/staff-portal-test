@@ -141,7 +141,6 @@ export default function MeterReadingCreatePage({
       ? latestMeterReading?.reading_end_date
       : (getMonthEnd(getNextDay(latestMeterReading?.reading_end_date)) ?? ''),
     reading_type: editMode ? latestMeterReading?.single_reading : '',
-
     anomaly_id: editMode ? latestMeterReading?.anomaly_id : 0,
     voltage_r: editMode ? latestMeterReading?.voltage_r : 0,
     voltage_y: editMode ? latestMeterReading?.voltage_y : 0,
