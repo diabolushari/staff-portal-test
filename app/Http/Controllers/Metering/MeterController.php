@@ -104,6 +104,9 @@ class MeterController extends Controller
             'internalCtRatios' => $this->parameterValueService->getParameterValues(
                 null, null, null, 'Meter', 'Internal CT Ratio'
             )->data,
+            'timezoneTypes' => $this->parameterValueService->getParameterValues(
+                null, null, null, 'Meter', 'Timezone Type'
+            )->data,
         ];
 
         return Inertia::render('Meters/MeterForm', $viewData);

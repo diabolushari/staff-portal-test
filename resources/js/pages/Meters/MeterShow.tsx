@@ -1,8 +1,10 @@
+import MeterTimezoneCard from '@/components/Meter/MeterTimezoneCard'
 import MeterTransformerTab from '@/components/Meter/MeterTransformer/MeterTransfomerTab'
 import { meterNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
 import { Label } from '@/components/ui/label'
+import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { Meter, MeterTimezoneType, MeterTransformerAssignment } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
@@ -38,33 +40,6 @@ interface Props {
   relation: MeterTransformerAssignment | null
 }
 
-interface StoreForm {
-  meter_id: number
-  timezone_type_id: string
-}
-
-interface UpdateForm {
-  rel_id: number
-  timezone_type_id: string
-  _method: 'PUT'
-}
-
-// --- HELPER COMPONENT: InfoItem ---
-const InfoItem = ({ label, value }: { label: string; value: string | number | undefined }) => (
-  <div className='flex flex-col gap-1'>
-    <Label className='text-sm font-medium text-gray-500'>{label}</Label>
-    <p className='text-base text-gray-800'>{value ?? '-'}</p>
-  </div>
-)
-
-// --- HELPER COMPONENT: Section ---
-const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <div className='py-6'>
-    <h3 className='mb-6 text-lg font-semibold text-gray-700'>{title}</h3>
-    <div className='grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-3'>{children}</div>
-  </div>
-)
-
 // --- MAIN COMPONENT: MeterShow ---
 export default function MeterShow({
   meter,
@@ -73,32 +48,12 @@ export default function MeterShow({
   transformers,
   relation,
 }: Readonly<Props>) {
-  // --- STATE AND DATA NORMALIZATION ---
-  const [isEditing, setIsEditing] = useState(false)
   const currentTzId = useMemo<string | undefined>(
     () =>
       String(currentTimezone?.timezone_type_id ?? currentTimezone?.timezone_type?.id ?? '') ||
       undefined,
     [currentTimezone]
   )
-  const currentTzLabel = useMemo<string | undefined>(
-    () => currentTimezone?.timezone_type?.parameter_value ?? undefined,
-    [currentTimezone]
-  )
-  const [selectedTimezone, setSelectedTimezone] = useState<string | undefined>(currentTzId)
-
-  // --- FORM AND API HANDLING ---
-  const isUpdate = !!(currentTimezone as any)?.rel_id
-  const url = isUpdate
-    ? route('meter-timezone-rel.update', {
-        meter_timezone_rel: (currentTimezone as any).rel_id,
-      })
-    : route('meter-timezone-rel.store')
-
-  const { post, loading } = useInertiaPost<StoreForm | UpdateForm>(url, {
-    //onSuccess: () => setIsEditing(false),
-    onComplete: () => setIsEditing(false),
-  })
 
   // --- BREADCRUMBS AND FORMATTERS ---
   const breadcrumbs: BreadcrumbItem[] = [
@@ -121,34 +76,6 @@ export default function MeterShow({
       router.delete(route('meters.destroy', meter.meter_id))
     }
   }
-
-  const handleSave = () => {
-    if (!selectedTimezone) return
-    const commonData = {
-      meter_id: meter.meter_id,
-      timezone_type_id: selectedTimezone,
-    }
-    if (isUpdate) {
-      post({
-        ...commonData,
-        rel_id: currentTimezone.rel_id,
-        _method: 'PUT',
-      })
-    } else {
-      post(commonData)
-    }
-  }
-
-  const handleCancel = () => {
-    setSelectedTimezone(currentTzId)
-    setIsEditing(false)
-  }
-
-  // --- RENDER LOGIC ---
-  const otherTimezoneOptions = useMemo(
-    () => timezoneTypes.filter((t) => String(t.id) !== currentTzId),
-    [timezoneTypes, currentTzId]
-  )
 
   const tabs = MeterTabs(
     meter.meter_id,
@@ -313,64 +240,11 @@ export default function MeterShow({
             </Card>
 
             {/* --- Timezone Information --- */}
-            <Card className='rounded-lg p-7'>
-              <div className='mb-6 flex items-center justify-between'>
-                <StrongText className='text-base font-semibold text-[#252c32]'>
-                  Timezone Information
-                </StrongText>
-                {!isEditing && (
-                  <Button
-                    label='Edit'
-                    onClick={() => setIsEditing(true)}
-                    variant='outline'
-                    icon={<Edit className='h-4 w-4' />}
-                  />
-                )}
-              </div>
-              {isEditing ? (
-                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                  <select
-                    value={selectedTimezone}
-                    onChange={(e) => setSelectedTimezone(e.target.value)}
-                    className='rounded border p-2'
-                  >
-                    {currentTzId && currentTzLabel && (
-                      <option value={currentTzId}>{currentTzLabel}</option>
-                    )}
-                    {timezoneTypes
-                      .filter((t) => String(t.id) !== currentTzId)
-                      .map((t) => (
-                        <option
-                          key={t.id}
-                          value={String(t.id)}
-                        >
-                          {t.parameter_value}
-                        </option>
-                      ))}
-                  </select>
-                  <div className='flex gap-2'>
-                    <Button
-                      label='Cancel'
-                      onClick={handleCancel}
-                      variant='secondary'
-                      disabled={loading}
-                    />
-                    <Button
-                      label='Save Changes'
-                      onClick={handleSave}
-                      disabled={loading}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                  <Field
-                    label='Timezone Type'
-                    value={currentTzLabel || '-'}
-                  />
-                </div>
-              )}
-            </Card>
+            <MeterTimezoneCard
+              meter={meter}
+              currentTimezone={currentTimezone}
+              timezoneTypes={timezoneTypes}
+            />
 
             {/* --- History --- */}
             <Card className='rounded-lg p-7'>
