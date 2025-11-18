@@ -8,6 +8,7 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
+use Illuminate\Validation\ValidationException;
 use Proto\MeterReading\CreateMeterReadingRequest;
 use Proto\MeterReading\CtptHealthFormMessage;
 use Proto\MeterReading\GetMeterReadingRequest;
@@ -304,16 +305,33 @@ class MeterReadingService
         foreach ($request->meterHealth as $meterHealth) {
             $protoMeterHealth = new MeterHealthFormMessage;
             $protoMeterHealth->setMeterId($meterHealth['meter_id']);
-            $protoMeterHealth->setMeterHealthId($meterHealth['meter_health_id']);
-            $transformers = $meterHealth['ctpts'];
-            $transformerHealth = [];
-            foreach ($transformers as $transformer) {
-                $ctptHealth = new CtptHealthFormMessage;
-                $ctptHealth->setCtptId($transformer['ctpt_id']);
-                $ctptHealth->setParameterId($transformer['health']);
-                $transformerHealth[] = $ctptHealth;
+
+            if ($meterHealth['meter_health_id'] == null) {
+                throw ValidationException::withMessages([
+                    'meter_health_id' => ['Meter health is required. for meter :'.$meterHealth['meter_serial']],
+                ]);
             }
-            $protoMeterHealth->setHealths($transformerHealth);
+            $protoMeterHealth->setMeterHealthId($meterHealth['meter_health_id']);
+
+            foreach ($meterHealth['ctpts'] as $transformer) {
+                $ctptHealth = new CtptHealthFormMessage;
+
+                $ctptHealth->setCtptId($transformer['ctpt_id']);
+
+                if ($transformer['health'] == null) {
+                    throw ValidationException::withMessages([
+                        'ctpt_health_id' => ['CTPT health is required. for meter CTPT :'.$transformer['ctpt_serial']],
+                    ]);
+                }
+
+                $ctptHealth->setParameterId($transformer['health']);
+
+                // ⬅⬅ CORRECT WAY TO ADD TO REPEATED FIELD
+                $protoMeterHealth->getHealths()[] = $ctptHealth;
+            }
+
+            // ⬅⬅ Add MeterHealth to parent request
+            $protoRequest->getMeterHealths()[] = $protoMeterHealth;
         }
 
         return $protoRequest;
