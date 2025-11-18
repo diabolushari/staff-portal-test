@@ -124,7 +124,9 @@ class MeterController extends Controller
         $response = $this->meterService->createMeter($meterDataArray);
 
         if ($response->hasError()) {
-            return $response->error;
+            return redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
         }
 
         return redirect()->route('meters.index')
