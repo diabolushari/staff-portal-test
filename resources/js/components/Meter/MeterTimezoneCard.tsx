@@ -23,7 +23,7 @@ export default function MeterTimezoneCard({
   timezoneTypes: ParameterValues[]
 }) {
   const { formData, setFormValue } = useCustomForm<StoreForm>({
-    timezone_type_id: currentTimezone?.timezone_type_id ?? '',
+    timezone_type_id: currentTimezone?.timezone_type?.id ?? '',
     meter_id: meter.meter_id,
     _method: currentTimezone ? 'PUT' : undefined,
   })
@@ -45,7 +45,7 @@ export default function MeterTimezoneCard({
           Timezone Information
         </StrongText>
       </div>
-      {currentTimezone ? (
+      {
         <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
           <SelectList
             label='Timezone Type'
@@ -63,14 +63,7 @@ export default function MeterTimezoneCard({
             />
           </div>
         </div>
-      ) : (
-        <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-          <Field
-            label='Timezone Type'
-            value={currentTzLabel || '-'}
-          />
-        </div>
-      )}
+      }
     </Card>
   )
 }

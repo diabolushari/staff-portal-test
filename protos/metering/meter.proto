@@ -69,6 +69,7 @@ message CreateMeterRequest {
 
   int64 profile_id = 29;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 30;
+  optional int32 timezone_type_id = 31;
 }
 
 message UpdateMeterRequest {
