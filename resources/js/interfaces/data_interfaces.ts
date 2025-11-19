@@ -524,3 +524,17 @@ export interface meterWithTimezoneAndProfile {
     timezones: MeterTimezoneType[];
     meter_profiles: MeterProfileParameter[];
 }
+
+export interface BillingGroup {
+    version_id: number;
+    billing_group_id: number;
+    name: string;
+    description: string;
+    effective_start: string;
+    effective_end: string;
+    deleted_at?: string;
+    created_by?: number;
+    updated_by?: number;
+    created_at?: string;
+    updated_at?: string;
+}

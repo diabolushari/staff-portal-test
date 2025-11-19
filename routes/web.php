@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ParameterDomainListApiController;
 use App\Http\Controllers\Api\SystemModuleApiController;
 use App\Http\Controllers\Api\Tariff\TariffOrderDownloadApiController;
 use App\Http\Controllers\Billing\BillingRuleController;
+use App\Http\Controllers\BillingGroup\BillingGroupController;
 use App\Http\Controllers\Connection\ConnectionController;
 use App\Http\Controllers\Connection\ConsumerController;
 use App\Http\Controllers\Connection\CreateConsumerController;
@@ -32,6 +33,7 @@ use App\Http\Controllers\Metering\MeterTransformerRelController;
 use App\Http\Controllers\MeteringTimezone\MeteringTimezoneController;
 use App\Http\Controllers\MeterReading\GetMeterReadingEditController;
 use App\Http\Controllers\MeterReading\GetMeterReadingWithConnectionController;
+use App\Http\Controllers\Offices\OfficeBillingController;
 use App\Http\Controllers\Offices\OfficeHierarchyRelController;
 use App\Http\Controllers\Offices\OfficesCreateWithCsvController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
@@ -58,6 +60,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('parameter-definition', ParameterDefinitionController::class);
     Route::resource('parameter-value', ParameterValueController::class);
     Route::resource('offices', OfficeController::class);
+    Route::get('offices/{officeCode}/billings', OfficeBillingController::class)->name('offices.billings');
     Route::resource('parties', PartiesController::class);
     Route::resource('connections', ConnectionController::class);
     Route::resource('consumers', ConsumerController::class);
@@ -103,6 +106,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('tariff-config.create');
 
     Route::resource('billing-rules', BillingRuleController::class);
+    Route::resource('billing-groups', BillingGroupController::class);
 
 });
 

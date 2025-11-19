@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card'
 import { TabsContent } from '@/components/ui/tabs'
 import { Office, OfficeHierarchyRel } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
+import OfficeLayout from '@/layouts/OfficeLayout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 import AddButton from '@/ui/button/AddButton'
@@ -39,25 +40,6 @@ const placeholderData = {
   updatedBy: 'Section Officer',
   updatedAt: '18 July 2025',
 }
-
-const tabs = [
-  {
-    value: 'details',
-    label: 'Office Details',
-  },
-  {
-    value: 'substations',
-    label: 'Substations',
-  },
-  {
-    value: 'consumers',
-    label: 'Consumers',
-  },
-  {
-    value: 'activity',
-    label: 'Activity History',
-  },
-]
 
 export default function OfficeShow({
   office,
@@ -100,29 +82,15 @@ export default function OfficeShow({
     updatedAt: '18 July 2025',
   }
 
-  const tabs = [
-    {
-      value: 'details',
-      label: 'Office Details',
-    },
-    {
-      value: 'substations',
-      label: 'Substations',
-    },
-    {
-      value: 'consumers',
-      label: 'Consumers',
-    },
-    {
-      value: 'activity',
-      label: 'Activity History',
-    },
-  ]
-
   return (
-    <MainLayout
-      breadcrumb={breadcrumbs}
-      navItems={settingsOffices}
+    <OfficeLayout
+      breadcrumbs={breadcrumbs}
+      officeNavItems={settingsOffices}
+      office={office}
+      value='details'
+      heading={office.office_code}
+      subHeading={office.office_name}
+      onEdit={() => router.visit(route('offices.edit', office.office_id))}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header Section */}
@@ -146,280 +114,233 @@ export default function OfficeShow({
         </div>
 
         {/* Main Content Tabs */}
-        <TabGroup tabs={tabs}>
-          <TabsContent value='details'>
-            <div className='space-y-4'>
-              {/* Basic Information */}
-              <Card className='rounded-lg p-7'>
-                <div className='mb-6 flex items-center justify-between'>
-                  <StrongText className='text-base font-semibold text-[#252c32]'>
-                    Basic Information
-                  </StrongText>
-                  <button
-                    onClick={() => router.visit(route('offices.edit', office.office_id))}
-                    className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
-                  >
-                    <PencilIcon className='h-4 w-4' />
-                    Edit
-                  </button>
+
+        <div className='space-y-4'>
+          {/* Basic Information */}
+          <Card className='rounded-lg p-7'>
+            <div className='mb-6 flex items-center justify-between'>
+              <StrongText className='text-base font-semibold text-[#252c32]'>
+                Basic Information
+              </StrongText>
+              <button
+                onClick={() => router.visit(route('offices.edit', office.office_id))}
+                className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
+              >
+                <PencilIcon className='h-4 w-4' />
+                Edit
+              </button>
+            </div>
+            <hr className='mb-6 border-[#e5e9eb]' />
+            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+              <div className='space-y-1'>
+                <label className='text-sm font-normal text-[#252c32]'>Office Code</label>
+                <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+                  {office.office_code}
                 </div>
-                <hr className='mb-6 border-[#e5e9eb]' />
-                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                  <div className='space-y-1'>
-                    <label className='text-sm font-normal text-[#252c32]'>Office Code</label>
-                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {office.office_code}
-                    </div>
-                  </div>
-                  <div className='space-y-1'>
-                    <label className='text-sm font-normal text-[#252c32]'>Name</label>
-                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {office.office_name}
-                    </div>
-                  </div>
-                  <div className='space-y-1'>
-                    <label className='text-sm font-normal text-[#252c32]'>Office Type</label>
-                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {office.office_type?.parameter_value || 'Subdivision'}
-                    </div>
-                  </div>
-                  <div className='space-y-1'>
-                    <label className='text-sm font-normal text-[#252c32]'>Office Status</label>
-                    <div className='px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {office.is_current ? 'Active' : 'Inactive'}
-                    </div>
-                  </div>
+              </div>
+              <div className='space-y-1'>
+                <label className='text-sm font-normal text-[#252c32]'>Name</label>
+                <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+                  {office.office_name}
                 </div>
-              </Card>
-
-              {/* Location Details */}
-              <Card className='rounded-lg p-7'>
-                <div className='mb-6 flex items-center justify-between'>
-                  <StrongText className='text-base font-semibold text-[#252c32]'>
-                    Location Details
-                  </StrongText>
-                  <button
-                    onClick={() => router.visit(route('offices.edit', office.office_id))}
-                    className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
-                  >
-                    <PencilIcon className='h-4 w-4' />
-                    Edit
-                  </button>
+              </div>
+              <div className='space-y-1'>
+                <label className='text-sm font-normal text-[#252c32]'>Office Type</label>
+                <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+                  {office.office_type?.parameter_value || 'Subdivision'}
                 </div>
-                <hr className='mb-6 border-[#e5e9eb]' />
-                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                  <div className='space-y-1'>
-                    <label className='text-sm font-normal text-[#252c32]'>District</label>
-                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {placeholderData.district}
-                    </div>
-                  </div>
-                  <div className='space-y-1'>
-                    <label className='text-sm font-normal text-[#252c32]'>Taluk</label>
-                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {placeholderData.taluk}
-                    </div>
-                  </div>
-                  <div className='space-y-1'>
-                    <label className='text-sm font-normal text-[#252c32]'>Latitude</label>
-                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {placeholderData.latitude}
-                    </div>
-                  </div>
-                  <div className='space-y-1'>
-                    <label className='text-sm font-normal text-[#252c32]'>Longitude</label>
-                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {placeholderData.longitude}
-                    </div>
-                  </div>
-                  <div className='space-y-1 md:col-span-2'>
-                    <label className='text-sm font-normal text-[#252c32]'>Address</label>
-                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-normal text-[#252c32]'>
-                      {placeholderData.address}
-                    </div>
-                  </div>
+              </div>
+              <div className='space-y-1'>
+                <label className='text-sm font-normal text-[#252c32]'>Office Status</label>
+                <div className='px-2.5 py-2.5 text-sm font-medium text-black'>
+                  {office.is_current ? 'Active' : 'Inactive'}
                 </div>
-              </Card>
+              </div>
+            </div>
+          </Card>
 
-              {/* Parent Details */}
-              <Card className='rounded-lg p-7'>
-                <div className='mb-6 flex items-center justify-between'>
-                  <StrongText className='text-base font-semibold text-[#252c32]'>
-                    Parent Details
-                  </StrongText>
-                  <AddButton
-                    onClick={() => setCreateRelationModalOpen(true)}
-                    buttonText='Add Parent Office'
-                  />
+          {/* Location Details */}
+          <Card className='rounded-lg p-7'>
+            <div className='mb-6 flex items-center justify-between'>
+              <StrongText className='text-base font-semibold text-[#252c32]'>
+                Location Details
+              </StrongText>
+              <button
+                onClick={() => router.visit(route('offices.edit', office.office_id))}
+                className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
+              >
+                <PencilIcon className='h-4 w-4' />
+                Edit
+              </button>
+            </div>
+            <hr className='mb-6 border-[#e5e9eb]' />
+            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+              <div className='space-y-1'>
+                <label className='text-sm font-normal text-[#252c32]'>District</label>
+                <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+                  {placeholderData.district}
                 </div>
-
-                <hr className='mb-6 border-[#e5e9eb]' />
-
-                {parentOffices.map((parentRel, index) => (
-                  <div
-                    key={index}
-                    className='relative mb-4 rounded-lg border border-gray-200 p-2.5'
-                  >
-                    {/* Parent info */}
-                    <div className='flex items-start justify-between p-2.5'>
-                      <div className='flex-1 space-y-2.5'>
-                        <div className='space-y-1'>
-                          <div className='flex items-center gap-3'>
-                            <div className='text-base font-semibold text-black'>
-                              {parentRel.parent_office?.office_name || 'N/A'}
-                            </div>
-                            <div className='rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-normal text-blue-800'>
-                              {parentRel.parent_office?.office_code || 'N/A'}
-                            </div>
-                          </div>
-                          <div className='flex items-center gap-5'>
-                            <div className='flex items-center gap-1'>
-                              <Building className='h-3.5 w-3.5 text-gray-400' />
-                              <span className='text-sm font-normal text-[#252c32]'>
-                                {parentRel.parent_office?.office_type?.parameter_value || 'N/A'}
-                              </span>
-                            </div>
-                            <div className='flex items-center gap-1'>
-                              <MapPin className='h-3.5 w-3.5 text-gray-400' />
-                              <span className='text-sm font-normal text-[#252c32]'>
-                                {parentRel.parent_office?.location_id || 'N/A'}
-                              </span>
-                            </div>
-                          </div>
-                          <div className='text-sm font-normal text-[#252c32]'>
-                            {parentRel.parent_office?.office_description || 'N/A'}
-                          </div>
-                          <div className='text-sm font-normal text-[#252c32]'>
-                            Hierarchy: {parentRel.office_hierarchy?.hierarchy_name || 'N/A'}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className='flex flex-col items-end gap-2 p-2.5'>
-                        <DeleteButton
-                          onClick={() => {
-                            setOfficeHierarchyRelId(parentRel.hierarchy_rel_hist_id)
-                            setIsDeleting(true)
-                          }}
-                        />
-                        <EditButton
-                          onClick={() => {
-                            setHierarchyData(parentRel)
-                            setCreateRelationModalOpen(true)
-                          }}
-                        />
-                        <div className='rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-normal text-[#1c6534]'>
-                          {parentRel.parent_office?.is_current ? 'Active' : 'Inactive'}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Delete button at bottom right */}
-                  </div>
-                ))}
-              </Card>
-
-              {/* Other Info */}
-              <Card className='rounded-lg p-7'>
-                <div className='mb-6 flex items-center justify-between'>
-                  <StrongText className='text-base font-semibold text-[#252c32]'>
-                    Other info
-                  </StrongText>
-                  <button
-                    onClick={() => router.visit(route('offices.edit', office.office_id))}
-                    className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
-                  >
-                    <PencilIcon className='h-4 w-4' />
-                    Edit
-                  </button>
+              </div>
+              <div className='space-y-1'>
+                <label className='text-sm font-normal text-[#252c32]'>Taluk</label>
+                <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+                  {placeholderData.taluk}
                 </div>
-                <hr className='mb-6 border-[#e5e9eb]' />
-                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                  <div className='space-y-1'>
-                    <label className='text-sm font-normal text-[#252c32]'>
-                      Effective Start Date
-                    </label>
-                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {formatDate(office.effective_start) || '12 May 1990'}
-                    </div>
-                  </div>
-                  <div className='space-y-1'>
-                    <label className='text-sm font-normal text-[#252c32]'>Effective End date</label>
-                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {formatDate(office.effective_end) || 'Active'}
-                    </div>
-                  </div>
-                  <div className='space-y-1'>
-                    <label className='text-sm font-normal text-[#252c32]'>Created by</label>
-                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {placeholderData.createdBy}
-                    </div>
-                  </div>
-                  <div className='space-y-1'>
-                    <label className='text-sm font-normal text-[#252c32]'>Updated by</label>
-                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
-                      {placeholderData.updatedBy}
-                    </div>
-                  </div>
-                  <div className='space-y-1 md:col-span-2'>
-                    <label className='text-sm font-normal text-[#252c32]'>Updated at</label>
-                    <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-normal text-[#252c32]'>
-                      {placeholderData.updatedAt}
-                    </div>
-                  </div>
+              </div>
+              <div className='space-y-1'>
+                <label className='text-sm font-normal text-[#252c32]'>Latitude</label>
+                <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+                  {placeholderData.latitude}
                 </div>
-              </Card>
+              </div>
+              <div className='space-y-1'>
+                <label className='text-sm font-normal text-[#252c32]'>Longitude</label>
+                <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+                  {placeholderData.longitude}
+                </div>
+              </div>
+              <div className='space-y-1 md:col-span-2'>
+                <label className='text-sm font-normal text-[#252c32]'>Address</label>
+                <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-normal text-[#252c32]'>
+                  {placeholderData.address}
+                </div>
+              </div>
+            </div>
+          </Card>
 
-              {/* Contact Folio */}
-              <ContactFolioCard
-                contacts={office.contact_folio?.contacts || []}
-                officeId={office.office_id}
-                officeCode={office?.office_code?.toString()}
-                onContactsUpdate={() => {}}
+          {/* Parent Details */}
+          <Card className='rounded-lg p-7'>
+            <div className='mb-6 flex items-center justify-between'>
+              <StrongText className='text-base font-semibold text-[#252c32]'>
+                Parent Details
+              </StrongText>
+              <AddButton
+                onClick={() => setCreateRelationModalOpen(true)}
+                buttonText='Add Parent Office'
               />
             </div>
-          </TabsContent>
 
-          <TabsContent value='substations'>
-            <Card className='p-6'>
-              <div className='mb-6 flex items-center justify-between'>
-                <StrongText className='text-lg font-semibold text-gray-900'>Substations</StrongText>
-              </div>
-              <div className='py-12 text-center'>
-                <Zap className='mx-auto mb-4 h-12 w-12 text-gray-400' />
-                <p className='text-gray-600'>Substation data will be displayed here</p>
-                <p className='mt-2 text-sm text-gray-500'>Feature coming soon</p>
-              </div>
-            </Card>
-          </TabsContent>
-          <TabsContent value='consumers'>
-            <Card className='p-6'>
-              <div className='mb-6 flex items-center justify-between'>
-                <StrongText className='text-lg font-semibold text-gray-900'>Consumers</StrongText>
-              </div>
-              <div className='py-12 text-center'>
-                <Users className='mx-auto mb-4 h-12 w-12 text-gray-400' />
-                <p className='text-gray-600'>Consumer data will be displayed here</p>
-                <p className='mt-2 text-sm text-gray-500'>Feature coming soon</p>
-              </div>
-            </Card>
-          </TabsContent>
+            <hr className='mb-6 border-[#e5e9eb]' />
 
-          <TabsContent value='activity'>
-            <Card className='p-6'>
-              <div className='mb-6 flex items-center justify-between'>
-                <StrongText className='text-lg font-semibold text-gray-900'>
-                  Activity History
-                </StrongText>
+            {parentOffices.map((parentRel, index) => (
+              <div
+                key={index}
+                className='relative mb-4 rounded-lg border border-gray-200 p-2.5'
+              >
+                {/* Parent info */}
+                <div className='flex items-start justify-between p-2.5'>
+                  <div className='flex-1 space-y-2.5'>
+                    <div className='space-y-1'>
+                      <div className='flex items-center gap-3'>
+                        <div className='text-base font-semibold text-black'>
+                          {parentRel.parent_office?.office_name || 'N/A'}
+                        </div>
+                        <div className='rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-normal text-blue-800'>
+                          {parentRel.parent_office?.office_code || 'N/A'}
+                        </div>
+                      </div>
+                      <div className='flex items-center gap-5'>
+                        <div className='flex items-center gap-1'>
+                          <Building className='h-3.5 w-3.5 text-gray-400' />
+                          <span className='text-sm font-normal text-[#252c32]'>
+                            {parentRel.parent_office?.office_type?.parameter_value || 'N/A'}
+                          </span>
+                        </div>
+                        <div className='flex items-center gap-1'>
+                          <MapPin className='h-3.5 w-3.5 text-gray-400' />
+                          <span className='text-sm font-normal text-[#252c32]'>
+                            {parentRel.parent_office?.location_id || 'N/A'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className='text-sm font-normal text-[#252c32]'>
+                        {parentRel.parent_office?.office_description || 'N/A'}
+                      </div>
+                      <div className='text-sm font-normal text-[#252c32]'>
+                        Hierarchy: {parentRel.office_hierarchy?.hierarchy_name || 'N/A'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className='flex flex-col items-end gap-2 p-2.5'>
+                    <DeleteButton
+                      onClick={() => {
+                        setOfficeHierarchyRelId(parentRel.hierarchy_rel_hist_id)
+                        setIsDeleting(true)
+                      }}
+                    />
+                    <EditButton
+                      onClick={() => {
+                        setHierarchyData(parentRel)
+                        setCreateRelationModalOpen(true)
+                      }}
+                    />
+                    <div className='rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-normal text-[#1c6534]'>
+                      {parentRel.parent_office?.is_current ? 'Active' : 'Inactive'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Delete button at bottom right */}
               </div>
-              <div className='py-12 text-center'>
-                <Calendar className='mx-auto mb-4 h-12 w-12 text-gray-400' />
-                <p className='text-gray-600'>Activity history will be displayed here</p>
-                <p className='mt-2 text-sm text-gray-500'>Feature coming soon</p>
+            ))}
+          </Card>
+
+          {/* Other Info */}
+          <Card className='rounded-lg p-7'>
+            <div className='mb-6 flex items-center justify-between'>
+              <StrongText className='text-base font-semibold text-[#252c32]'>Other info</StrongText>
+              <button
+                onClick={() => router.visit(route('offices.edit', office.office_id))}
+                className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
+              >
+                <PencilIcon className='h-4 w-4' />
+                Edit
+              </button>
+            </div>
+            <hr className='mb-6 border-[#e5e9eb]' />
+            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+              <div className='space-y-1'>
+                <label className='text-sm font-normal text-[#252c32]'>Effective Start Date</label>
+                <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+                  {formatDate(office.effective_start) || '12 May 1990'}
+                </div>
               </div>
-            </Card>
-          </TabsContent>
-        </TabGroup>
+              <div className='space-y-1'>
+                <label className='text-sm font-normal text-[#252c32]'>Effective End date</label>
+                <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+                  {formatDate(office.effective_end) || 'Active'}
+                </div>
+              </div>
+              <div className='space-y-1'>
+                <label className='text-sm font-normal text-[#252c32]'>Created by</label>
+                <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+                  {placeholderData.createdBy}
+                </div>
+              </div>
+              <div className='space-y-1'>
+                <label className='text-sm font-normal text-[#252c32]'>Updated by</label>
+                <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-medium text-black'>
+                  {placeholderData.updatedBy}
+                </div>
+              </div>
+              <div className='space-y-1 md:col-span-2'>
+                <label className='text-sm font-normal text-[#252c32]'>Updated at</label>
+                <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-normal text-[#252c32]'>
+                  {placeholderData.updatedAt}
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Contact Folio */}
+          <ContactFolioCard
+            contacts={office.contact_folio?.contacts || []}
+            officeId={office.office_id}
+            officeCode={office?.office_code?.toString()}
+            onContactsUpdate={() => {}}
+          />
+        </div>
       </div>
       {createRelationModalOpen && (
         <AddRelationModal
@@ -436,6 +357,6 @@ export default function OfficeShow({
           url={`/office-hierarchy-rel/${officeHierarchyRelId}`}
         />
       )}
-    </MainLayout>
+    </OfficeLayout>
   )
 }
