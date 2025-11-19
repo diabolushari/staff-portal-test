@@ -18,16 +18,17 @@ import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
 import { useEffect, useMemo, useState } from 'react'
 
+interface MeterHealth {
+  meter_id: number
+  meter_serial: string | null
+  meter_health_id?: number | null
+  ctpts?: { ctpt_id: number; health: number | null; ctpt_serial: string }[]
+}
 interface ReadingForm extends MeterReading {
   readings_by_meter: any[]
   reading_type: string
   _method: 'PUT' | 'POST' | undefined
-  meter_health: {
-    meter_id: number
-    meter_serial: string
-    meter_health_id?: number
-    ctpts?: { ctpt_id: number; health: number }[]
-  }[]
+  meter_health: MeterHealth[]
 }
 
 interface Props {
@@ -41,6 +42,7 @@ interface Props {
   latestMeterReading: MeterReading
   editMode: boolean
 }
+
 function transformToFormData(
   values: any[],
   metersWithTimezonesAndProfiles: meterWithTimezoneAndProfile[],
@@ -103,6 +105,21 @@ const getMonthEnd = (dateStr: string) => {
   return lastDay.toISOString().split('T')[0]
 }
 
+const storeIntialMetersHealthData = (
+  metersWithTimezonesAndProfiles: meterWithTimezoneAndProfile[]
+) => {
+  return metersWithTimezonesAndProfiles.map((meter) => ({
+    meter_id: meter.meter_id,
+    meter_health_id: null,
+    meter_serial: meter.meter.meter_serial,
+    ctpts: meter.meter.transformers.map((ctpt) => ({
+      ctpt_id: ctpt.meter_ctpt_id,
+      health: null,
+      ctpt_serial: ctpt.ctpt_serial,
+    })),
+  }))
+}
+
 export default function MeterReadingCreatePage({
   connectionWithConsumer,
   meterHealthTypes,
@@ -132,6 +149,7 @@ export default function MeterReadingCreatePage({
       href: `/connection/${connectionWithConsumer?.connection?.connection_id}/meter-reading/create`,
     },
   ]
+
   const { formData, setFormValue } = useCustomForm<ReadingForm>({
     id: editMode ? latestMeterReading?.id : 0,
     connection_id: connectionWithConsumer?.connection?.connection_id ?? 0,
@@ -150,7 +168,7 @@ export default function MeterReadingCreatePage({
     current_b: editMode ? latestMeterReading?.current_b : 0,
     remarks: editMode ? latestMeterReading?.remarks : '',
     readings_by_meter: [],
-    meter_health: [],
+    meter_health: storeIntialMetersHealthData(metersWithTimezonesAndProfiles),
     _method: editMode ? 'PUT' : undefined,
   })
 
@@ -199,7 +217,13 @@ export default function MeterReadingCreatePage({
         meter_id: meterId,
         meter_serial: meter.meter_serial,
         meter_health_id: undefined,
-        ctpts: [{ ctpt_id: ctptId, health: healthId }],
+        ctpts: [
+          {
+            ctpt_id: ctptId,
+            health: healthId,
+            ctpt_serial: meter.transformers.find((t) => t.meter_ctpt_id === ctptId)?.ctpt_serial,
+          },
+        ],
       })
     }
 

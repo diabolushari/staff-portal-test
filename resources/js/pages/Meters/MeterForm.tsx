@@ -28,7 +28,12 @@ export interface MeterFormProps {
   resetTypes: ParameterValues[]
   internalPtRatios: ParameterValues[]
   internalCtRatios: ParameterValues[]
+  timezoneTypes: ParameterValues[]
   meter?: Meter
+}
+
+interface MeterForm extends Meter {
+  timezone_type_id: number
 }
 
 const breadcrumbs = [
@@ -51,6 +56,7 @@ export default function MeterForm({
   units,
   resetTypes,
   meter,
+  timezoneTypes,
 }: Readonly<MeterFormProps>) {
   const isEditing = meter != null
   const { formData, setFormValue } = useCustomForm({
@@ -59,6 +65,7 @@ export default function MeterForm({
     meter_profile_id: meter?.meter_profile_id ?? '',
     meter_make_id: meter?.meter_make_id ?? '',
     meter_type_id: meter?.meter_type_id ?? '',
+    timezone_type_id: '',
     meter_category_id: meter?.meter_category_id ?? '',
     accuracy_class_id: meter?.accuracy_class_id ?? '',
     dialing_factor_id: meter?.dialing_factor_id ?? '',
@@ -140,6 +147,17 @@ export default function MeterForm({
                 displayKey='parameter_value'
                 error={errors.meter_type_id}
               />
+              {!meter && (
+                <SelectList
+                  label='Timezone Type'
+                  value={formData.timezone_type_id}
+                  setValue={setFormValue('timezone_type_id')}
+                  list={timezoneTypes}
+                  dataKey='id'
+                  displayKey='parameter_value'
+                  error={errors.timezone_type_id}
+                />
+              )}
               <SelectList
                 label='Meter Profile'
                 value={formData.meter_profile_id}

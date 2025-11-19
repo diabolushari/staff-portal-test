@@ -89,7 +89,6 @@ export default function ConnectionsForm({
               voltageTypes={voltageTypes}
               tariffTypes={tariffTypes}
               connectionCategory={connectionCategory}
-              connectionSubCategory={connectionSubCategory}
               billingProcesses={billingProcesses}
               phaseTypes={phaseTypes}
               primaryPurposes={primaryPurposes}

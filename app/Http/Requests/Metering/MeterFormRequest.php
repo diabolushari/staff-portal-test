@@ -50,5 +50,6 @@ class MeterFormRequest extends Data
         public int $warrantyPeriod,
         public int $meterConstant,
         public string $batchCode,
+        public int $timezoneTypeId,
     ) {}
 }

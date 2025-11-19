@@ -104,6 +104,9 @@ class MeterController extends Controller
             'internalCtRatios' => $this->parameterValueService->getParameterValues(
                 null, null, null, 'Meter', 'Internal CT Ratio'
             )->data,
+            'timezoneTypes' => $this->parameterValueService->getParameterValues(
+                null, null, null, 'Meter', 'Timezone Type'
+            )->data,
         ];
 
         return Inertia::render('Meters/MeterForm', $viewData);
@@ -121,7 +124,9 @@ class MeterController extends Controller
         $response = $this->meterService->createMeter($meterDataArray);
 
         if ($response->hasError()) {
-            return $response->error;
+            return redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
         }
 
         return redirect()->route('meters.index')

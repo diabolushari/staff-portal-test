@@ -139,6 +139,9 @@ class MeterService
         if (array_key_exists('internal_pt_secondary', $data)) {
             $request->setInternalPtSecondary($data['internal_pt_secondary']);
         }
+        if (array_key_exists('timezone_type_id', $data)) {
+            $request->setTimezoneTypeId($data['timezone_type_id']);
+        }
 
         [$response, $status] = $this->client->CreateMeter($request)->wait();
 
