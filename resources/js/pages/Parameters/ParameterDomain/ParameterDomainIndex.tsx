@@ -2,33 +2,16 @@ import { settingsReferenceData } from '@/components/Navbar/navitems'
 import ParameterDomainForm from '@/components/Parameter/ParameterDomain/ParameterDomainForm'
 import ParameterDomainList from '@/components/Parameter/ParameterDomain/ParameterDomainList'
 import ParameterDomainSearchForm from '@/components/Parameter/ParameterDomain/ParameterDomainSearchForm'
-import { TableCell, TableRow } from '@/components/ui/table'
 import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
-import AppLayout from '@/layouts/app-layout'
 import MainLayout from '@/layouts/main-layout'
 import { type BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
-import DeleteButton from '@/ui/button/DeleteButton'
-import EditButton from '@/ui/button/EditButton'
-import CardHeader from '@/ui/Card/CardHeader'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import ListSearch from '@/ui/Search/ListSearch'
-import Table from '@/ui/Table/Table'
-import { Head } from '@inertiajs/react'
 import { router } from '@inertiajs/react'
 import { AnimatePresence } from 'framer-motion'
 import { useCallback, useState } from 'react'
 import { route } from 'ziggy-js'
-
-const tableHeads = [
-  'S.No',
-  'ID',
-  'Domain Name',
-  'Description',
-  'Domain Code',
-  'System Module',
-  'Actions',
-]
 
 interface Props {
   domains: ParameterDomain[]
@@ -149,7 +132,6 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
             <ParameterDomainForm
               title={parameterDomainToEdit ? 'Edit Parameter Domain' : 'Add Parameter Domain'}
               setShowModal={setShowModal}
-              show={showModal}
               parameterDomain={parameterDomainToEdit ?? undefined}
               modules={modules}
             />

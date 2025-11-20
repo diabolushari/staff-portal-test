@@ -5,11 +5,10 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 
 import { TabGroup } from '@/ui/Tabs/TabGroup'
 import { TabsContent } from '@/components/ui/tabs'
-import ConsumerForm from '@/components/Connections/ConsumerForm'
-import ConsumerFormComponent from '@/components/Consumer/ConsumerFormComponent'
 import { consumerNavItems } from '@/components/Navbar/navitems'
+import { Connection } from '@/interfaces/data_interfaces'
 
-const getBreadcrumb = (connection: any) => {
+const getBreadcrumb = (connection?: Connection | null): BreadcrumbItem[] => {
   if (!connection) {
     return [
       {
@@ -43,14 +42,13 @@ interface Props {
   voltageTypes: ParameterValues[]
   tariffTypes: ParameterValues[]
   connectionCategory: ParameterValues[]
-  connectionSubCategory: ParameterValues[]
   billingProcesses: ParameterValues[]
   phaseTypes: ParameterValues[]
   primaryPurposes: ParameterValues[]
   openAccessTypes: ParameterValues[]
   meteringTypes: ParameterValues[]
   renewableTypes: ParameterValues[]
-  connection?: any
+  connection?: Connection
 }
 
 export default function ConnectionsForm({
@@ -59,7 +57,6 @@ export default function ConnectionsForm({
   voltageTypes,
   tariffTypes,
   connectionCategory,
-  connectionSubCategory,
   billingProcesses,
   phaseTypes,
   primaryPurposes,
