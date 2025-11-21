@@ -1,8 +1,7 @@
 import MainLayout from '@/layouts/main-layout'
-import { tariffNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
-import { Props } from 'node_modules/@headlessui/react/dist/types'
 import TariffOrderForm from '@/components/Tariff/TariffOrderForm'
 import { TariffOrder } from '@/interfaces/data_interfaces'
 
@@ -25,8 +24,9 @@ export default function TariffOrderCreatePage({ tariff_order }: Readonly<PagePro
   return (
     <MainLayout
       breadcrumb={breadcrumb}
-      navItems={tariffNavItems}
+      navItems={meteringBillingNavItems}
       leftBarTitle='Tariff Management'
+      selectedItem='Tariffs'
     >
       {' '}
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>

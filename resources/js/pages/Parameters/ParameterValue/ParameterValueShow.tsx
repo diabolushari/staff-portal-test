@@ -1,7 +1,7 @@
 import ViewParameterDetail from '@/components/Parameter/ViewParameterDetails'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
-import { settingsReferenceData } from '@/components/Navbar/navitems'
+import { metadataNavItems } from '@/components/Navbar/navitems'
 import { BreadcrumbItem } from '@/types'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -42,7 +42,8 @@ export default function ParameterValueShow({
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={settingsReferenceData}
+      navItems={metadataNavItems}
+      selectedItem='Values'
     >
       <ViewParameterDetail
         title='Parameter Value Details'

@@ -1,5 +1,6 @@
+import { metadataNavItems } from '@/components/Navbar/navitems'
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern'
-import AppLayout from '@/layouts/app-layout'
+import MainLayout from '@/layouts/main-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head } from '@inertiajs/react'
 
@@ -11,7 +12,11 @@ export default function ParameterIndex() {
     },
   ]
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
+    <MainLayout
+      breadcrumb={breadcrumbs}
+      navItems={metadataNavItems}
+      selectedItem='Values'
+    >
       <Head title='Dashboard' />
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <div className='grid auto-rows-min gap-4 md:grid-cols-3'>
@@ -29,6 +34,6 @@ export default function ParameterIndex() {
           <PlaceholderPattern className='absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20' />
         </div>
       </div>
-    </AppLayout>
+    </MainLayout>
   )
 }

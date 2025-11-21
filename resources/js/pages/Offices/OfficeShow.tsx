@@ -1,4 +1,4 @@
-import { settingsOffices } from '@/components/Navbar/navitems'
+import { metadataNavItems, settingsOffices } from '@/components/Navbar/navitems'
 import AddRelationModal from '@/components/Offices/AddRelationModal'
 import ContactFolioCard from '@/components/Offices/ContactFolioCard'
 import { Card } from '@/components/ui/card'
@@ -122,7 +122,8 @@ export default function OfficeShow({
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={settingsOffices}
+      selectedItem='Office Details'
+      navItems={metadataNavItems}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header Section */}

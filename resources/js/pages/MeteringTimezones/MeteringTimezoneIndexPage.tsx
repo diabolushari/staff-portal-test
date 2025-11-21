@@ -1,7 +1,7 @@
 import { router } from '@inertiajs/react'
 import { Clock } from 'lucide-react'
 import { useState } from 'react'
-import { meterTimezoneNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import CardHeader from '@/ui/Card/CardHeader'
 import ListSearch from '@/ui/Search/ListSearch'
@@ -52,7 +52,8 @@ export default function MeteringTimezonesIndexPage({ timezones }: Props) {
 
   return (
     <MainLayout
-      navItems={meterTimezoneNavItems}
+      navItems={meteringBillingNavItems}
+      selectedItem='Metering Timezones'
       addBtnText='Metering Timezone'
       addBtnUrl={route('metering-timezone.create')}
     >

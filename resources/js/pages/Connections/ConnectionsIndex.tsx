@@ -25,6 +25,7 @@ export default function ConnectionsIndex({ connections, filter }: Readonly<Props
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={consumerNavItems}
+      selectedItem='Connections'
       addBtnText='Connection'
       addBtnUrl={route('connections.create')}
     >

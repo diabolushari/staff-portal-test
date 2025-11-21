@@ -1,14 +1,10 @@
-import { tariffNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { TariffConfig, TariffOrder } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import { Paginator } from '@/ui/ui_interfaces'
-import { Card, CardHeader } from '@/components/ui/card'
-import { router } from '@inertiajs/react'
-import Pagination from '@/ui/Pagination/Pagination'
 import Field from '@/components/ui/field'
 import StrongText from '@/typography/StrongText'
-import { PencilIcon } from 'lucide-react'
 import TariffConfigTable from '@/components/Tariff/TariffConfig/TariffConfigTable'
 import CustomCard from '@/ui/Card/CustomCard'
 
@@ -30,7 +26,8 @@ export default function TariffOrderShowPage({
   return (
     <MainLayout
       leftBarTitle='Tariff Management'
-      navItems={tariffNavItems}
+      navItems={meteringBillingNavItems}
+      selectedItem='Tariffs'
       breadcrumb={breadcrumb}
     >
       {/* ---- Tariff Order Card ---- */}

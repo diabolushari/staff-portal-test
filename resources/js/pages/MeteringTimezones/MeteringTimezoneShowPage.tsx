@@ -3,11 +3,10 @@ import { Edit, Trash2, Clock, Calendar, Settings, User } from 'lucide-react'
 import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import useInertiaPost from '@/hooks/useInertiaPost'
 import MainLayout from '@/layouts/main-layout'
 import type { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
-import { meterTimezoneNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { InfoItem } from '@/components/meteringtimezones/InfoItem'
 import { Section } from '@/components/meteringtimezones/Section'
 
@@ -35,7 +34,6 @@ interface Props {
   timezone: MeteringTimezone
 }
 
-
 // --- MAIN COMPONENT: MeteringTimezoneShowPage ---
 export default function MeteringTimezoneShowPage({ timezone }: Readonly<Props>) {
   console.log(timezone)
@@ -46,7 +44,10 @@ export default function MeteringTimezoneShowPage({ timezone }: Readonly<Props>) 
   // --- BREADCRUMBS AND FORMATTERS ---
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Metering Timezones', href: route('metering-timezone.index') },
-    { title: timezone.timezone_name.parameter_value, href: route('metering-timezone.show', timezone.metering_timezone_id) },
+    {
+      title: timezone.timezone_name.parameter_value,
+      href: route('metering-timezone.show', timezone.metering_timezone_id),
+    },
   ]
 
   const formatTime = (hrs: number, mins: number): string => {
@@ -75,7 +76,7 @@ export default function MeteringTimezoneShowPage({ timezone }: Readonly<Props>) 
     if (confirm('Are you sure you want to delete this metering timezone?')) {
       setLoading(true)
       router.delete(route('metering-timezone.destroy', timezone.metering_timezone_id), {
-        onFinish: () => setLoading(false)
+        onFinish: () => setLoading(false),
       })
     }
   }
@@ -84,7 +85,8 @@ export default function MeteringTimezoneShowPage({ timezone }: Readonly<Props>) 
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={meterTimezoneNavItems}
+      navItems={meteringBillingNavItems}
+      selectedItem='Metering Timezones'
     >
       <div className='container mx-auto py-8'>
         {/* Header */}
@@ -151,7 +153,7 @@ export default function MeteringTimezoneShowPage({ timezone }: Readonly<Props>) 
               />
               <InfoItem
                 label='Duration'
-                value={`${(timezone.to_hrs * 60 + timezone.to_mins) - (timezone.from_hrs * 60 + timezone.from_mins)} minutes`}
+                value={`${timezone.to_hrs * 60 + timezone.to_mins - (timezone.from_hrs * 60 + timezone.from_mins)} minutes`}
                 icon={<Clock className='h-4 w-4' />}
               />
               <InfoItem

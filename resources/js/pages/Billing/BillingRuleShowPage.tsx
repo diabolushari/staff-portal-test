@@ -1,6 +1,6 @@
 import ChargeHeadTable from '@/components/Billing/ChargeHeadTable'
 import ComputedPropertyTable from '@/components/Billing/ComputedPropertyTable'
-import { billingNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
 import { BillingRule, ChargeHead, ComputedProperty } from '@/interfaces/data_interfaces'
@@ -27,11 +27,12 @@ export default function BillingRuleShowPage({
     { title: 'Billing Rules', href: route('billing-rules.index') },
     { title: 'Billing Rule Show', href: route('billing-rules.show', billingRule.id) },
   ]
-  console.log(billingRule, paginatedComputedProperties, paginatedChargeHeads)
+
   return (
     <MainLayout
-      navItems={billingNavItems}
+      navItems={meteringBillingNavItems}
       breadcrumb={breadcrumbs}
+      selectedItem='Billing Rule'
     >
       <div className='flex flex-col gap-6'>
         <Card className='rounded-lg p-7'>

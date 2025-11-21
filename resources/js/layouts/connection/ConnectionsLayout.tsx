@@ -1,12 +1,10 @@
 import { BreadcrumbItem } from '@/types'
 import MainLayout from '../main-layout'
 import { navItem } from '@/components/Navbar/navitems'
-import { Connection } from '@/interfaces/consumers'
+import { Connection } from '@/interfaces/data_interfaces'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
 import { TabsContent } from '@radix-ui/react-tabs'
-import { MeterTab } from '@/pages/Connections/MeterTab'
 import StrongText from '@/typography/StrongText'
-import { Meter, MeterAssignment } from '@/interfaces/data_interfaces'
 import React from 'react'
 
 interface ConnectionsLayoutProps {
@@ -63,6 +61,7 @@ export default function ConnectionsLayout({
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={connectionsNavItems}
+      selectedItem='Connections'
     >
       {' '}
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>

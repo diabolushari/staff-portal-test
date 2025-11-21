@@ -1,4 +1,4 @@
-import { usePage } from '@inertiajs/react'
+import { router, usePage } from '@inertiajs/react'
 import { BellIcon, HelpCircle, Search as SearchIcon, SettingsIcon, UserIcon } from 'lucide-react'
 import { CustomNavbar } from './CustomNavbar'
 import { MobileNavSheet } from './MobileNavSheet'
@@ -51,6 +51,7 @@ export default function TopNavBar() {
               <HelpCircle className='h-5 w-5' />
             </button>
             <button
+              onClick={() => router.get(route('settings-page'))}
               type='button'
               aria-label='Settings'
               className='rounded p-1 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200'

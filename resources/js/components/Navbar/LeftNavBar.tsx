@@ -6,12 +6,10 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from '../ui/sidebar'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible'
-import { ChevronDown } from 'lucide-react'
-import { useEffect, useState } from 'react'
 
 interface Props {
   title: string
+  selectedItem?: string
   items?: {
     title: string
     href?: string
@@ -20,73 +18,67 @@ interface Props {
   }[]
 }
 
-export default function LeftNavBar({ title, items = [] }: Props) {
-  const [pathname, setPathname] = useState<string>('')
-
-  useEffect(() => {
-    setPathname(window.location.pathname) // current URL path
-  }, [])
-
+export default function LeftNavBar({ title, items = [], selectedItem }: Props) {
+  console.log(selectedItem)
   return (
     <SidebarMenu className='p-4'>
       <NormalText>{title}</NormalText>
 
-      {items.map((item) =>
-        item.children && item.children.length > 0 ? (
-          <Collapsible
-            key={item.title}
-            className='group/collapsible'
-          >
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton>
-                  <NormalText className='font-normal'>{item.title}</NormalText>
-                  <ChevronDown className='ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180' />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
+      {items.map((item) => {
+        const hasChildren = item.children && item.children.length > 0
 
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {item.children.map((child) => {
-                    const isActive = pathname === child.href
-                    return (
-                      <SidebarMenuSubItem key={child.title}>
-                        <a
-                          href={child.href}
-                          className={`block flex flex-row items-center gap-4 rounded px-2 py-1 text-sm ${
-                            isActive
-                              ? 'bg-blue-500 text-white'
-                              : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                          }`}
-                        >
-                          {child.icon}
-                          {child.title}
-                        </a>
-                      </SidebarMenuSubItem>
-                    )
-                  })}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        ) : (
+        return (
           <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton asChild>
-              <a
-                href={item.href}
-                className={`w-full text-left ${
-                  pathname === item.href
-                    ? 'bg-[#D7EDFF] text-[#0E73F6]'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
-              >
+            {/* MAIN HEADING IF CHILDREN */}
+            {hasChildren ? (
+              <div className='flex items-center gap-2 py-1'>
                 {item.icon}
-                <NormalText className='font-normal'>{item.title}</NormalText>
-              </a>
-            </SidebarMenuButton>
+                <NormalText className='font-semibold'>{item.title}</NormalText>
+              </div>
+            ) : (
+              // LEFT ALIGNED MENU ITEM IF NO CHILDREN
+              <SidebarMenuButton asChild>
+                <a
+                  href={item.href}
+                  className={`flex w-full items-center gap-2 rounded px-2 py-1 text-left ${
+                    selectedItem === item.title
+                      ? 'bg-[#D7EDFF] text-[#0E73F6]'
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  {item.icon}
+                  <NormalText className='font-normal'>{item.title}</NormalText>
+                </a>
+              </SidebarMenuButton>
+            )}
+
+            {/* CHILDREN */}
+            {hasChildren && (
+              <SidebarMenuSub className='mt-1 ml-4'>
+                {item.children!.map((child) => {
+                  const isActive = selectedItem === child.title
+
+                  return (
+                    <SidebarMenuSubItem key={child.title}>
+                      <a
+                        href={child.href}
+                        className={`flex items-center gap-3 rounded px-2 py-1 text-sm ${
+                          isActive
+                            ? 'bg-blue-500 text-white'
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        {child.icon}
+                        {child.title}
+                      </a>
+                    </SidebarMenuSubItem>
+                  )
+                })}
+              </SidebarMenuSub>
+            )}
           </SidebarMenuItem>
         )
-      )}
+      })}
     </SidebarMenu>
   )
 }

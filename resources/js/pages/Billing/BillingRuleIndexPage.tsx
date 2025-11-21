@@ -1,5 +1,5 @@
 import BillingRuleList from '@/components/Billing/BillingRuleList'
-import { billingNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { BillingRule } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
@@ -21,7 +21,8 @@ export default function BillingRuleIndexPage({ billingRules, filters }: PageProp
     <MainLayout
       breadcrumb={breadcrumb}
       leftBarTitle='Billing Rule'
-      navItems={billingNavItems}
+      navItems={meteringBillingNavItems}
+      selectedItem='Billing Rule'
       addBtnText='Billing Rule'
       addBtnUrl='/billing-rules/create'
     >
