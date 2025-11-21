@@ -2,18 +2,18 @@ import { BreadcrumbItem } from '@/types'
 import MainLayout from '../main-layout'
 import { navItem } from '@/components/Navbar/navitems'
 import { Connection } from '@/interfaces/data_interfaces'
-import { TabGroup } from '@/ui/Tabs/TabGroup'
-import { TabsContent } from '@radix-ui/react-tabs'
 import StrongText from '@/typography/StrongText'
 import React from 'react'
+import { NestedTabGroup } from '@/components/ui/nestedTab'
 
 interface ConnectionsLayoutProps {
   children: React.ReactNode
   breadcrumbs: BreadcrumbItem[]
   connectionsNavItems: navItem[]
-  connection: Connection
+  connection?: Connection
   connectionId: number
   value: string
+  subTabValue?: string
   heading: string
   subHeading: string
   onEdit?: () => void
@@ -21,29 +21,73 @@ interface ConnectionsLayoutProps {
   meterExist?: boolean
 }
 
-const connectionTabs = (connection: Connection, consumerExist: boolean, meterExist: boolean) => [
+const connectionTabs = (connection?: Connection) => [
   {
-    value: 'details',
+    value: 'connection',
     label: 'Connection Details',
     href: connection?.connection_id ? route('connections.show', connection?.connection_id) : '#',
+    item: [
+      {
+        subValue: 'connection',
+        subLabel: 'Connection',
+        subLink: connection?.connection_id
+          ? route('connections.show', connection?.connection_id)
+          : '#',
+      },
+      {
+        subValue: 'consumer',
+        subLabel: 'Consumer',
+        subLink: connection?.connection_id
+          ? route('connection.consumer', connection?.connection_id)
+          : '#',
+      },
+      {
+        subValue: 'parties',
+        subLabel: 'Parties',
+        subLink: '#',
+      },
+    ],
   },
   {
-    value: 'consumer',
-    label: 'Consumer',
-    href: connection?.connection_id ? route('connection.consumer', connection?.connection_id) : '#',
-  },
-  consumerExist && {
-    value: 'meter',
-    label: 'Meter',
-    href: connection?.connection_id ? route('connection.meters', connection?.connection_id) : '#',
-  },
-  meterExist && {
     value: 'meter-reading',
-    label: 'Meter Reading',
+    label: 'Meter & Readings',
     href: connection?.connection_id
-      ? route('connection.meter-reading', connection?.connection_id)
+      ? route('connection.meter-reading', connection.connection_id)
       : '#',
+    item: [
+      {
+        subValue: 'meter',
+        subLabel: 'Meter',
+        subLink: connection?.connection_id
+          ? route('connection.meters', connection?.connection_id)
+          : '#',
+      },
+      {
+        subValue: 'reading',
+        subLabel: 'Readings',
+        subLink: connection?.connection_id
+          ? route('connection.meter-reading', connection?.connection_id)
+          : '#',
+      },
+    ],
   },
+  // {
+  //   value: 'consumer',
+  //   label: 'Consumer',
+  //   href: connection?.connection_id ? route('connection.consumer', connection?.connection_id) : '#',
+  // },
+  // consumerExist && {
+  //   value: 'meter',
+  //   label: 'Meter',
+  //   href: connection?.connection_id ? route('connection.meters', connection?.connection_id) : '#',
+  // },
+  // meterExist && {
+  //   value: 'meter-reading',
+  //   label: 'Meter Reading',
+  //   href: connection?.connection_id
+  //     ? route('connection.meter-reading', connection?.connection_id)
+  //     : '#',
+  // },
 ]
 export default function ConnectionsLayout({
   children,
@@ -51,11 +95,10 @@ export default function ConnectionsLayout({
   connectionsNavItems,
   connection,
   value,
+  subTabValue,
   heading,
   subHeading,
   onEdit,
-  consumerExist = true,
-  meterExist = true,
 }: Readonly<ConnectionsLayoutProps>) {
   return (
     <MainLayout
@@ -79,12 +122,13 @@ export default function ConnectionsLayout({
             </button>
           )}
         </div>
-        <TabGroup
-          tabs={connectionTabs(connection, consumerExist, meterExist)}
+        <NestedTabGroup
+          tabs={connectionTabs(connection)}
           defaultValue={value}
+          defaultSubValue={subTabValue}
         >
-          <TabsContent value={value}>{children}</TabsContent>
-        </TabGroup>
+          <div>{children}</div>
+        </NestedTabGroup>
       </div>
     </MainLayout>
   )

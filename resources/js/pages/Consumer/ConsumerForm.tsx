@@ -51,6 +51,7 @@ export default function ConsumerForm({
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={consumerNavItems}
+      selectedItem='Connections'
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header */}

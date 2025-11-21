@@ -34,7 +34,8 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
     <ConnectionsLayout
       connection={connection}
       connectionId={connection?.connection_id ?? 0}
-      value={'details'}
+      value={'connection'}
+      subTabValue='connection'
       heading='Connection Details'
       subHeading='Connection Details'
       breadcrumbs={breadcrumbs}

@@ -47,6 +47,7 @@ export default function ConnectionMeterReadingPage({
       heading='Connection Meter Reading'
       subHeading='Connection Meter Reading'
       value='meter-reading'
+      subTabValue='reading'
     >
       <Card className='relative w-full rounded-lg bg-white'>
         <div className='flex items-center justify-between border-b border-gray-200 px-6 py-4'>
