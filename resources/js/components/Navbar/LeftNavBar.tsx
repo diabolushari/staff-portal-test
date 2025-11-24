@@ -19,7 +19,6 @@ interface Props {
 }
 
 export default function LeftNavBar({ title, items = [], selectedItem }: Props) {
-  console.log(selectedItem)
   return (
     <SidebarMenu className='p-4'>
       <NormalText>{title}</NormalText>
