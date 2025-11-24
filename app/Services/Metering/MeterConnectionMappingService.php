@@ -16,6 +16,7 @@ use Proto\Metering\GetMeterConnectionMappingRequest;
 use Proto\Metering\ListMeterConnectionMappingsRequest;
 use Proto\Metering\MeterConnectionMappingResponse;
 use Proto\Metering\MeterConnectionMappingServiceClient;
+use Proto\Metering\MeterTransformerRelFormRequest;
 use Proto\Metering\UpdateMeterConnectionMappingRequest;
 use Proto\Parameters\ParameterValueProto;
 
@@ -23,19 +24,17 @@ class MeterConnectionMappingService
 {
     private MeterConnectionMappingServiceClient $client;
 
-    private MeterService $meterService;
-
-    public function __construct(MeterService $meterService)
+    public function __construct()
     {
         $this->client = new MeterConnectionMappingServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
         );
-        $this->meterService = $meterService;
     }
 
     public function createMeterConnectionMapping(MeterConnectionRelFormRequest $data): GrpcServiceResponse
     {
+
         $request = new CreateMeterConnectionMappingRequest;
         $request->setMeterId($data->meterId);
         $request->setConnectionId($data->connectionId);
@@ -74,6 +73,48 @@ class MeterConnectionMappingService
         }
         if (isset($data->createdBy)) {
             $request->setCreatedBy($data->createdBy);
+        }
+        if ($data->meterTransformers !== null) {
+            foreach ($data->meterTransformers as $transformer) {
+
+                $transformer_proto = new MeterTransformerRelFormRequest;
+
+                $transformer_proto->setCtptId($transformer->ctptId);
+                $transformer_proto->setStatusId($transformer->statusId);
+
+                if ($transformer->changeReasonId !== null) {
+                    $transformer_proto->setChangeReasonId($transformer->changeReasonId);
+                }
+
+                // faulty_date
+                if ($transformer->faultyDate !== null) {
+                    $faulty = new Timestamp;
+                    $faulty->fromDateTime(new \DateTime($transformer->faultyDate));
+                    $transformer_proto->setFaultyDate($faulty);
+                }
+
+                // ctpt_energise_date
+                if ($transformer->ctptEnergiseDate !== null) {
+                    $energise = new Timestamp;
+                    $energise->fromDateTime(new \DateTime($transformer->ctptEnergiseDate));
+                    $transformer_proto->setCtptEnergiseDate($energise);
+                }
+
+                // ctpt_change_date
+                if ($transformer->ctptChangeDate !== null) {
+                    $change = new Timestamp;
+                    $change->fromDateTime(new \DateTime($transformer->ctptChangeDate));
+                    $transformer_proto->setCtptChangeDate($change);
+                }
+
+                // created_by → map from parent created_by
+                if ($data->createdBy !== null) {
+                    $transformer_proto->setCreatedBy($data->createdBy);
+                }
+
+                // Add to main request
+                $request->getMeterTransformers()[] = $transformer_proto;
+            }
         }
 
         [$response, $status] = $this->client->CreateMeterConnectionMapping($request)->wait();
@@ -280,9 +321,9 @@ class MeterConnectionMappingService
     /**
      * @return array<string, mixed>
      */
-    private static function transformParameterValueToArray(ParameterValueProto $parameterValue): ?array
+    private static function transformParameterValueToArray(?ParameterValueProto $parameterValue): ?array
     {
-        if ($parameterValue === null) {
+        if ($parameterValue == null) {
             return null;
         }
 

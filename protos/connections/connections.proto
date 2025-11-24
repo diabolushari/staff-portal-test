@@ -134,10 +134,13 @@ message ListConnectionsPaginatedRequest {
   optional string connection_type = 1;
   optional string search = 2;
   optional string consumer_number = 3;
-  int32 page_number = 4;   
-  int32 page_size = 5;
-  optional string sort_by = 6;      
-  optional string sort_direction = 7;
+  optional int32 office_code = 4;               
+  optional int32 consumer_type_id = 5;          
+  optional int32 primary_purpose_id = 6;
+  int32 page_number = 7;   
+  int32 page_size = 8;
+  optional string sort_by = 9;      
+  optional string sort_direction = 10;
 }
 message ListConnectionsPaginatedResponse {
   repeated ConnectionMessage items = 1;

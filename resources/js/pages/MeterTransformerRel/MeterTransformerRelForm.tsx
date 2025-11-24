@@ -27,8 +27,6 @@ const toYMD = (iso?: string | null): string => {
   return !Number.isNaN(d.getTime()) ? d.toISOString().split('T')[0] : ''
 }
 
-const toISOorNull = (ymd: string) => (ymd ? new Date(ymd).toISOString() : null)
-
 export default function MeterTransformerRelForm({
   ctpts,
   meter,
@@ -40,8 +38,8 @@ export default function MeterTransformerRelForm({
 
   const breadcrumbs = [
     { title: 'Meters', href: '/meters' },
-    { title: 'Meter CTPT', href: '/meters/' + meter.meter_id},
-  //  { title: meter.meter_serial, href: '/meters/' + meter.meter_id },
+    { title: 'Meter CTPT', href: '/meters/' + meter.meter_id },
+    //  { title: meter.meter_serial, href: '/meters/' + meter.meter_id },
     {
       title: isEditing ? 'Modify CTPT' : 'Connect CTPT',
       href: route('meters.ctpt.create', { id: meter.meter_id }),

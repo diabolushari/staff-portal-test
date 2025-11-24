@@ -32,7 +32,7 @@ export const NAV_ITEMS = [
         description: 'Manage meter readings',
         disabled: true,
       },
-      { title: 'Billing', href: '/billing-groups', description: 'Manage billing', disabled: true },
+      { title: 'Billing', href: '/billing-groups', description: 'Manage billing' },
     ],
   },
 

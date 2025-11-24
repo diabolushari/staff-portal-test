@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Metering;
 
 use App\Http\Controllers\Controller;
 use App\Services\Metering\MeterService;
-use App\Services\Metering\MeterTransformerRelService;
 use App\Services\Metering\MeterTransformerService;
 use App\Services\Parameters\ParameterValueService;
 use Inertia\Inertia;
@@ -15,7 +14,6 @@ class MeterTransfomerCreateController extends Controller
     public function __construct(
         private readonly MeterTransformerService $meterTransformerService,
         private readonly MeterService $meterService,
-        private readonly MeterTransformerRelService $relService,
         private readonly ParameterValueService $parameterValueService
     ) {}
 
