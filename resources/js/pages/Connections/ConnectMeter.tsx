@@ -1,9 +1,7 @@
 import { router } from '@inertiajs/react'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import MainLayout from '@/layouts/main-layout'
 import Button from '@/ui/button/Button'
-
 import CheckBox from '@/ui/form/CheckBox'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'

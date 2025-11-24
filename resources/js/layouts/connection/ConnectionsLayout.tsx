@@ -5,6 +5,8 @@ import { Connection } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import React from 'react'
 import { NestedTabGroup } from '@/components/ui/nestedTab'
+import { Breadcrumb } from '@/components/ui/breadcrumb'
+import CustomBreadcrumb from '@/ui/BreadCrumb'
 
 interface ConnectionsLayoutProps {
   children: React.ReactNode
@@ -102,34 +104,35 @@ export default function ConnectionsLayout({
 }: Readonly<ConnectionsLayoutProps>) {
   return (
     <MainLayout
-      breadcrumb={breadcrumbs}
       navItems={connectionsNavItems}
       selectedItem='Connections'
     >
-      {' '}
-      <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
-        <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-          <div className='flex flex-col gap-2'>
-            <StrongText className='text-2xl font-semibold text-[#252c32]'>{heading}</StrongText>
-            <span className='text-sm text-gray-600'>{subHeading}</span>
+      <NestedTabGroup
+        tabs={connectionTabs(connection)}
+        defaultValue={value}
+        defaultSubValue={subTabValue}
+      >
+        {' '}
+        <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
+          <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+            <div className='flex flex-col gap-2'>
+              <StrongText className='text-2xl font-semibold text-[#252c32]'>{heading}</StrongText>
+              <CustomBreadcrumb list={breadcrumbs} />
+              {/* <span className='text-sm text-gray-600'>{subHeading}</span> */}
+            </div>
+            {onEdit && (
+              <button
+                onClick={onEdit}
+                className='flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
+              >
+                Edit
+              </button>
+            )}
           </div>
-          {onEdit && (
-            <button
-              onClick={onEdit}
-              className='flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
-            >
-              Edit
-            </button>
-          )}
-        </div>
-        <NestedTabGroup
-          tabs={connectionTabs(connection)}
-          defaultValue={value}
-          defaultSubValue={subTabValue}
-        >
+
           <div>{children}</div>
-        </NestedTabGroup>
-      </div>
+        </div>
+      </NestedTabGroup>
     </MainLayout>
   )
 }

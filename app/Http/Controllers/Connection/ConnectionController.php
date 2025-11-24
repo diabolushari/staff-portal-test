@@ -27,7 +27,7 @@ class ConnectionController extends Controller
     {
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 5;
-        $consumerNumber = $request->input('search') ?? null;
+        $consumerNumber = $request->input('consumer_number') ?? null;
         $connections = $this->connectionService->listPaginatedConnections($pageNumber, $pageSize, $consumerNumber);
         $paginated = null;
         if (! empty($connections->data)) {
@@ -42,7 +42,8 @@ class ConnectionController extends Controller
 
         return Inertia::render('Connections/ConnectionsIndex', [
             'connections' => $paginated,
-            'filter' => [
+            'oldConsumerNumber' => $consumerNumber,
+            'filters' => [
                 'consumerNumber' => $consumerNumber,
             ],
         ]);

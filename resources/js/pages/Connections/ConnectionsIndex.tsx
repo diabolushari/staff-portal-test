@@ -18,7 +18,7 @@ interface Props {
   connections: Paginator<Connection>
   oldOffice?: Office
   oldConsumerNumber?: string
-  filter: {
+  filters: {
     consumerNumber: string
   }
 }
@@ -26,7 +26,6 @@ export default function ConnectionsIndex({
   connections,
   oldOffice,
   oldConsumerNumber,
-  filter,
 }: Readonly<Props>) {
   return (
     <MainLayout
@@ -45,7 +44,6 @@ export default function ConnectionsIndex({
       <ConnectionIndexSearch
         oldOffice={oldOffice}
         oldConsumerNumber={oldConsumerNumber}
-        filter={filter}
       />
       <div>{connections && <ConnectionsList connections={connections.data} />}</div>
       <div>{connections && <Pagination pagination={connections} />}</div>

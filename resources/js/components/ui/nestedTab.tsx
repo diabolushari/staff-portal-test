@@ -40,7 +40,7 @@ export function NestedTabGroup({
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className="rounded-none border-b-2 text-xl border-transparent p-3 font-normal data-[state=active]:border-black data-[state=active]:font-semibold"
+              className="rounded-none border-b-2 text-xl border-transparent p-3 font-normal data-[state=active]:border-blue-400 data-[state=active]:font-semibold data-[state=active]:text-blue-400 data-[state=active]:bg-blue-50"
               onClick={() => {
                 if (tab.href) window.location.href = tab.href
                 else setActiveTab(tab.value)
@@ -61,7 +61,7 @@ export function NestedTabGroup({
                 <TabsTrigger
                   key={st.subValue}
                   value={st.subValue}
-                  className="p-2  font-semibold border-b-2  data-[state=active]:border-black"
+                  className="p-2  font-semibold border-b-2  data-[state=active]:border-blue-400 data-[state=active]:font-semibold data-[state=active]:text-blue-400 data-[state=active]:bg-blue-50"
                   onClick={() => {
                     if (st.subLink) window.location.href = st.subLink
                     else setActiveSub(st.subValue)

@@ -6,16 +6,14 @@ import Button from '@/ui/button/Button'
 import { Office } from '@/interfaces/data_interfaces'
 
 interface Props {
-  filters?: {}
   oldConsumerNumber?: string
   oldOffice?: Office
 }
 
-const ConnectionIndexSearch = ({ filters, oldConsumerNumber, oldOffice }: Readonly<Props>) => {
+const ConnectionIndexSearch = ({ oldConsumerNumber, oldOffice }: Readonly<Props>) => {
   const { formData, setFormValue } = useCustomForm({
     consumer_number: oldConsumerNumber ?? '',
     office_id: oldOffice?.office_code ?? '',
-    ...filters,
   })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

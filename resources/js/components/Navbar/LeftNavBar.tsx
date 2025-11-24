@@ -42,7 +42,7 @@ export default function LeftNavBar({ title, items = [], selectedItem }: Props) {
                   href={item.href}
                   className={`flex w-full items-center gap-2 rounded px-2 py-1 text-left ${
                     selectedItem === item.title
-                      ? 'bg-[#D7EDFF] text-[#0E73F6]'
+                      ? 'bg-[#D7EDFF] text-blue-500'
                       : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
                 >

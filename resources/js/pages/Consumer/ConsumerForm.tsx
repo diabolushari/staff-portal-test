@@ -31,20 +31,22 @@ export default function ConsumerForm({
   connection,
 }: Readonly<Props>) {
   const breadcrumbs = useMemo<BreadcrumbItem[]>(() => {
-    return [
-      {
-        title: 'Connections',
-        href: '/connections',
-      },
-      {
-        title: connection?.consumer_number.toString(),
-        href: connectionId ? route('connections.show', connectionId) : '#',
-      },
-      {
-        title: 'Consumer Details',
-        href: connectionId ? route('connection.consumer', connectionId) : '#',
-      },
-    ]
+    const items: BreadcrumbItem[] = [{ title: 'Connections', href: '/connections' }]
+
+    if (connection && connectionId) {
+      items.push(
+        {
+          title: connection.consumer_number.toString(),
+          href: route('connections.show', connectionId),
+        },
+        {
+          title: 'Consumer Details',
+          href: route('connection.consumer', connectionId),
+        }
+      )
+    }
+
+    return items
   }, [connection, connectionId])
 
   return (
