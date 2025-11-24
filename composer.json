@@ -12,7 +12,7 @@
         "php": "^8.2",
         "ext-grpc": "*",
         "google/common-protos": "^4.12",
-        "google/protobuf": "^4.32",
+        "google/protobuf": "^4.33",
         "grpc/grpc": "^1.74",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^12.0",

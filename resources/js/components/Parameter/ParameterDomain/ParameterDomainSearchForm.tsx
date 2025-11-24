@@ -1,7 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import { SystemModule } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
-import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
 import { route } from 'ziggy-js'
@@ -10,7 +9,7 @@ interface Props {
   systemModules: SystemModule[]
   filters: {
     search: string
-    module_id: string
+    module_id: number
   }
 }
 

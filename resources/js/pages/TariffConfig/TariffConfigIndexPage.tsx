@@ -1,4 +1,4 @@
-import { tariffNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import TariffConfigList from '@/components/Tariff/TariffConfigList'
 import { TariffConfig } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
@@ -24,8 +24,9 @@ interface Props {
 export default function TariffConfigIndexPage({ filters, tariff_configs }: Props) {
   return (
     <MainLayout
-      navItems={tariffNavItems}
+      navItems={meteringBillingNavItems}
       breadcrumb={breadcrumb}
+      selectedItem='Tariffs'
       addBtnUrl='/tariff-config/create'
       addBtnText='Create Tariff Config'
     >

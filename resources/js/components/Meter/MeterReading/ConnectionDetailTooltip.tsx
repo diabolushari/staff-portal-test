@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import Field from '@/components/ui/field'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { ConsumerData } from '@/interfaces/consumers'
+import { ConsumerData } from '@/interfaces/data_interfaces'
 import { InfoIcon } from 'lucide-react'
 
 export function ConnectionDetailTooltip({
@@ -43,7 +43,7 @@ export function ConnectionDetailTooltip({
           />
           <Field
             label='Contract Demand'
-            value={connectionWithConsumer?.connection?.contract_demand_kw_val}
+            value={connectionWithConsumer?.connection?.contract_demand_kva_val}
           />
           <Field
             label='Connected Load'

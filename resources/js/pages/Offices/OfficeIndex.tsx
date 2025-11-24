@@ -1,4 +1,4 @@
-import { settingsOffices } from '@/components/Navbar/navitems'
+import { metadataNavItems, settingsOffices } from '@/components/Navbar/navitems'
 import { Office } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
@@ -32,8 +32,9 @@ export default function OfficeIndex({ offices, office_types, filters }: Readonly
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={settingsOffices}
+      navItems={metadataNavItems}
       addBtnUrl={route('offices.create')}
+      selectedItem='Office Details'
       addBtnText='Office'
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>

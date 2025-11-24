@@ -1,9 +1,7 @@
 import { router } from '@inertiajs/react'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import MainLayout from '@/layouts/main-layout'
 import Button from '@/ui/button/Button'
-
 import CheckBox from '@/ui/form/CheckBox'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
@@ -119,7 +117,8 @@ export default function ConnectMeter({
     <ConnectionsLayout
       connectionsNavItems={consumerNavItems}
       breadcrumbs={breadcrumbs}
-      value='meter'
+      value='meter-reading'
+      subTabValue='meter'
       heading='Connect Meter'
       subHeading=''
       connection={connection}

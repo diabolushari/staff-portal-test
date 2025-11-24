@@ -1,4 +1,4 @@
-import { tariffNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import TariffOrderList from '@/components/Tariff/TariffOrderList'
 import { TariffOrder } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
@@ -27,9 +27,10 @@ export default function TariffOrderIndexPage({ filters, tariffOrders }: Props) {
   return (
     <MainLayout
       breadcrumb={breadcrumb}
-      navItems={tariffNavItems}
+      navItems={meteringBillingNavItems}
       leftBarTitle='Tariff Management'
       addBtnUrl={route('tariff-orders.create')}
+      selectedItem='Tariffs'
       addBtnText='Tariff Order'
     >
       <ListSearch

@@ -1,10 +1,10 @@
+import ConnectionIndexSearch from '@/components/Connections/ConnectionIndexSearch'
 import ConnectionsList from '@/components/Connections/ConnectionsList'
 import { consumerNavItems } from '@/components/Navbar/navitems'
-import { Connection } from '@/interfaces/data_interfaces'
+import { Connection, Office } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Pagination from '@/ui/Pagination/Pagination'
-import ListSearch from '@/ui/Search/ListSearch'
 import { Paginator } from '@/ui/ui_interfaces'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -16,23 +16,34 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface Props {
   connections: Paginator<Connection>
-  filter: {
+  oldOffice?: Office
+  oldConsumerNumber?: string
+  filters: {
     consumerNumber: string
   }
 }
-export default function ConnectionsIndex({ connections, filter }: Readonly<Props>) {
+export default function ConnectionsIndex({
+  connections,
+  oldOffice,
+  oldConsumerNumber,
+}: Readonly<Props>) {
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={consumerNavItems}
+      selectedItem='Connections'
       addBtnText='Connection'
       addBtnUrl={route('connections.create')}
     >
-      <ListSearch
+      {/* <ListSearch
         title='Connections Search'
         placeholder='Enter connection number'
         url={route('connections.index')}
         search={filter.consumerNumber}
+      /> */}
+      <ConnectionIndexSearch
+        oldOffice={oldOffice}
+        oldConsumerNumber={oldConsumerNumber}
       />
       <div>{connections && <ConnectionsList connections={connections.data} />}</div>
       <div>{connections && <Pagination pagination={connections} />}</div>

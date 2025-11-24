@@ -1,4 +1,4 @@
-import { settingsReferenceData } from '@/components/Navbar/navitems'
+import { metadataNavItems, settingsReferenceData } from '@/components/Navbar/navitems'
 import ParameterValuesList from '@/components/Parameter/ParameterValue/ParameterValueList'
 import ParameterValueSearchForm from '@/components/Parameter/ParameterValue/ParameterValueSearchForm'
 import useCustomForm from '@/hooks/useCustomForm'
@@ -51,7 +51,8 @@ export default function ParameterValueIndex({ values, domains, definitions, filt
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={settingsReferenceData}
+      navItems={metadataNavItems}
+      selectedItem='Values'
       addBtnClick={handleCreateClick}
       addBtnText='Value'
     >

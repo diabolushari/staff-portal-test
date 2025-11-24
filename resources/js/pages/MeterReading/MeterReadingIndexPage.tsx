@@ -22,7 +22,11 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ]
 
-export default function MeterReadingIndexPage({ connections, meterReadings, filter }: Readonly<Props>) {
+export default function MeterReadingIndexPage({
+  connections,
+  meterReadings,
+  filter,
+}: Readonly<Props>) {
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -34,17 +38,17 @@ export default function MeterReadingIndexPage({ connections, meterReadings, filt
         url={route('connections.index')}
         search={filter.consumerNumber}
       />
-      <div>{connections &&
-       <MeterReadingConnectionsList connections={connections} />}
-       {meterReadings && (
-        <>
-          <MeterReadingConnectionsList connections={meterReadings.data} />
-          <Pagination pagination={meterReadings} />
-        </>
-      )}
-       </div>   
+      <div>
+        {connections && <MeterReadingConnectionsList connections={connections} />}
+        {meterReadings && (
+          <>
+            <MeterReadingConnectionsList connections={meterReadings.data} />
+            <Pagination pagination={meterReadings} />
+          </>
+        )}
+      </div>
 
-    {/* <div className="flex flex-col gap-4">
+      {/* <div className="flex flex-col gap-4">
       {meterReadings && (
         <>
           <MeterReadingConnectionsList connections={meterReadings.data} />
