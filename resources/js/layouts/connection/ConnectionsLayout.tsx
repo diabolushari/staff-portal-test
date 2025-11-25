@@ -106,6 +106,7 @@ export default function ConnectionsLayout({
     <MainLayout
       navItems={connectionsNavItems}
       selectedItem='Connections'
+      selectedTopNav='Consumers'
     >
       <NestedTabGroup
         tabs={connectionTabs(connection)}

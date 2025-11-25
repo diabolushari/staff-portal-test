@@ -1,7 +1,7 @@
 import MeterReadingGeneralStep from '@/components/Meter/MeterReading/MeterReadingGeneralStep'
 import MeterReadingObservationStep from '@/components/Meter/MeterReading/MeterReadingObservationStep'
 import MeterReadingsStep from '@/components/Meter/MeterReading/MeterReadingsStep'
-import { consumerNavItems } from '@/components/Navbar/navitems'
+import { consumerNavItems, metadataNavItems } from '@/components/Navbar/navitems'
 import Stepper from '@/components/Stepper'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
@@ -317,6 +317,8 @@ export default function MeterReadingCreatePage({
     <MainLayout
       breadcrumb={breadcrumb}
       navItems={consumerNavItems}
+      selectedItem='Meter & Readings'
+      selectedTopNav='Consumers'
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         <form onSubmit={handleSubmit}>

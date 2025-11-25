@@ -8,6 +8,9 @@ import {
 import { Link, usePage } from '@inertiajs/react'
 // Using local wrapped NavigationMenu (supports viewport prop)
 
+interface Props {
+  selectedTopNav?: string
+}
 export const NAV_ITEMS = [
   {
     title: 'Consumers',
@@ -69,7 +72,7 @@ export const NAV_ITEMS = [
   // },
 ]
 
-export function CustomNavbar() {
+export function CustomNavbar({ selectedTopNav }: Props) {
   const { url } = usePage()
 
   return (
@@ -79,7 +82,7 @@ export function CustomNavbar() {
     >
       <NavigationMenuList className='flex gap-4 border-b border-gray-200 bg-white px-4 dark:border-gray-700 dark:bg-gray-900'>
         {NAV_ITEMS.map((item) => {
-          const isActive = url.startsWith(item.href)
+          const isActive = selectedTopNav === item.title
 
           return (
             <NavigationMenuItem key={item.title}>

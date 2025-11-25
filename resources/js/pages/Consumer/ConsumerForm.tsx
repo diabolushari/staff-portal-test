@@ -54,6 +54,7 @@ export default function ConsumerForm({
       breadcrumb={breadcrumbs}
       navItems={consumerNavItems}
       selectedItem='Connections'
+      selectedTopNav='Consumers'
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header */}

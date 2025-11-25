@@ -4,18 +4,18 @@ import { router } from "@inertiajs/react";
 
 interface NestedTabProps {
   tabs: {
-    value: string;
-    label: string;
-    href?: string;
+    value: string
+    label: string
+    href?: string
     item?: {
-      subValue: string;
-      subLabel: string;
-      subLink?: string;
-    }[];
-  }[];
-  defaultValue?: string;
-  defaultSubValue?: string;
-  children?: React.ReactNode;
+      subValue: string
+      subLabel: string
+      subLink?: string
+    }[]
+  }[]
+  defaultValue?: string
+  defaultSubValue?: string
+  children?: React.ReactNode
 }
 
 export function NestedTabGroup({
@@ -24,14 +24,14 @@ export function NestedTabGroup({
   defaultSubValue,
   children,
 }: Readonly<NestedTabProps>) {
-  const [activeTab, setActiveTab] = useState(defaultValue || tabs[0].value);
+  const [activeTab, setActiveTab] = useState(defaultValue || tabs[0].value)
 
-  const activeMasterTab = tabs.find((t) => t.value === activeTab);
-  const subTabs = activeMasterTab?.item || [];
+  const activeMasterTab = tabs.find((t) => t.value === activeTab)
+  const subTabs = activeMasterTab?.item || []
 
   const [activeSub, setActiveSub] = useState(
     defaultSubValue || subTabs?.[0]?.subValue || ""
-  );
+  )
 
  
   useEffect(() => {
@@ -67,7 +67,6 @@ export function NestedTabGroup({
         </TabsList>
       </Tabs>
 
-      {/* SUB TABS */}
       {subTabs.length > 0 && (
         <div className="flex justify-end">
           <Tabs value={activeSub} onValueChange={setActiveSub}>
@@ -96,8 +95,7 @@ export function NestedTabGroup({
         </div>
       )}
 
-      {/* PAGE CONTENT */}
       <div>{children}</div>
     </div>
-  );
+  )
 }

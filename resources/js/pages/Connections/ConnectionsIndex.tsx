@@ -34,6 +34,7 @@ export default function ConnectionsIndex({
       selectedItem='Connections'
       addBtnText='Connection'
       addBtnUrl={route('connections.create')}
+      selectedTopNav='Consumers'
     >
       {/* <ListSearch
         title='Connections Search'
