@@ -9,29 +9,17 @@ use App\Services\Metering\MeterTransformerRelService;
 use App\Services\Metering\MeterTransformerService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class MeterTransformerRelController extends Controller
 {
-    protected MeterTransformerRelService $relService;
-
-    protected MeterService $meterService;
-
-    protected MeterTransformerService $meterTransformerService;
-
     public function __construct(
-        MeterTransformerRelService $relService,
-        MeterService $meterService,
-        MeterTransformerService $meterTransformerService,
-        ParameterValueService $parameterValueService
-    ) {
-        $this->relService = $relService;
-        $this->meterService = $meterService;
-        $this->meterTransformerService = $meterTransformerService;
-        $this->parameterValueService = $parameterValueService;
-    }
+        private readonly MeterTransformerRelService $relService,
+        private readonly MeterService $meterService,
+        private readonly MeterTransformerService $meterTransformerService,
+        private readonly ParameterValueService $parameterValueService
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -51,7 +39,7 @@ class MeterTransformerRelController extends Controller
     public function create(): Response|RedirectResponse
     {
         // Fetch dropdowns
-        $ctpts = $this->meterTransformerService->listTransformersWithNoRelation();
+        $ctpts = $this->meterTransformerService->listUnassignedTransformers();
         $meters = $this->meterService->listMeters();
 
         $parameterRequests = [
@@ -71,17 +59,13 @@ class MeterTransformerRelController extends Controller
      */
     public function store(MeterTransformerRelFormRequest $request): RedirectResponse
     {
+
         $request->createdBy = auth()->id();
         $response = $this->relService->createRelation($request);
 
         if ($response->hasError()) {
-            return $response->error;
+            return redirect()->back()->withErrors($response->error ?? 'Failed to create relation');
         }
-
-        Log::info('Successfully created MeterTransformerRel:', [
-            'data' => $request->toArray(),
-            'grpcResponse' => $response,
-        ]);
 
         return redirect()->route('meters.show', $response->data['meter_id'])->with('success', 'Relation created successfully.');
     }
@@ -93,8 +77,6 @@ class MeterTransformerRelController extends Controller
     {
         $response = $this->relService->getRelation($id);
 
-        \Log::info('Show relation data:', ['data' => $response->data]);
-
         return Inertia::render('MeterTransformerRel/MeterTransformerRelShow', [
             'relation' => $response->data,
         ]);
@@ -103,10 +85,14 @@ class MeterTransformerRelController extends Controller
     public function edit(int $id): Response
     {
         $response = $this->relService->getRelation($id);
-        $ctpts = $this->meterTransformerService->listTransformersWithNoRelation();
-        $meter = $this->meterService->getMeter($response->data['meter_id']);
-        $currentCtpt = $this->meterTransformerService->getTransformer($response->data['ctpt_id']);
+        $ctpts = $this->meterTransformerService->listUnassignedTransformers();
         $ctptsData = $ctpts->data;
+        $currentCtpt = null;
+        $meter = null;
+        if ($response->data !== null) {
+            $meter = $this->meterService->getMeter($response->data['meter_id'])->data;
+            $currentCtpt = $this->meterTransformerService->getTransformer($response->data['ctpt_id']);
+        }
 
         if ($currentCtpt && ! collect($ctptsData)->contains('meter_ctpt_id', $currentCtpt->data['meter_ctpt_id'])) {
             $ctptsData[] = $currentCtpt->data;
@@ -121,7 +107,8 @@ class MeterTransformerRelController extends Controller
         return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [
             'relation' => $response->data,
             'ctpts' => $ctptsData,
-            'meter' => $meter->data,
+            'meter' => $meter,
+            'currentCtpt' => $currentCtpt,
             ...$parameterRequests,
         ]);
     }
@@ -130,20 +117,13 @@ class MeterTransformerRelController extends Controller
     {
         $data = $request->toArray();
         $data['updated_by'] = auth()->id(); // Use updated_by, not created_by
-        \Log::debug('Update request data:', $data); // Add this line
 
         // Call updateRelation instead of createRelation
         $response = $this->relService->updateRelation($data, $id);
 
         if ($response->hasError()) {
-            return $response->error;
+            return redirect()->back()->withErrors($response->error ?? 'Failed to update relation');
         }
-
-        \Log::info('Successfully updated MeterTransformerRel:', [
-            'id' => $id,
-            'data' => $data,
-            'grpcResponse' => $response,
-        ]);
 
         return redirect()->route('meters.show', $response->data['meter_id'])->with('success', 'Relation updated successfully.');
     }
@@ -156,7 +136,7 @@ class MeterTransformerRelController extends Controller
         $response = $this->relService->deleteRelation($id);
 
         if ($response->hasError()) {
-            return redirect()->back()->withErrors($response->error);
+            return redirect()->back()->withErrors($response->error ?? 'Failed to delete relation');
         }
 
         return redirect()->back()->with('success', 'Relation deleted successfully.');
