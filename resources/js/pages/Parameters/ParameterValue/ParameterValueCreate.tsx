@@ -1,4 +1,4 @@
-import { settingsReferenceData } from '@/components/Navbar/navitems'
+import { metadataNavItems, settingsReferenceData } from '@/components/Navbar/navitems'
 import capitalSnakeCase from '@/formaters/capitalcase'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
@@ -90,7 +90,8 @@ export default function ParameterValueCreate({ parameter_value, definitions, dom
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={settingsReferenceData}
+      navItems={metadataNavItems}
+      selectedItem='Values'
       title={parameter_value ? 'Edit Parameter Value' : 'Create Parameter Value'}
     >
       <form

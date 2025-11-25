@@ -4,7 +4,6 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import SubHeading from '@/typography/SubHeading'
 import Button from '@/ui/button/Button'
-import DynamicSelectList from '@/ui/form/DynamicSelectList'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
@@ -14,8 +13,6 @@ import { useCallback, useEffect } from 'react'
 interface Props {
   title: string
   setShowModal: (value: boolean) => unknown
-  show: boolean
-  children?: React.ReactNode
   parameterDomain?: ParameterDomain
   modules: SystemModule[]
 }
@@ -23,7 +20,6 @@ interface Props {
 export default function ParameterDomainForm({
   title,
   setShowModal,
-  show,
   parameterDomain,
   modules,
 }: Readonly<Props>) {

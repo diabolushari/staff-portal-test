@@ -1,4 +1,4 @@
-import { tariffNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import TariffConfigEditForm from '@/components/Tariff/TariffConfig/TariffConfigEditForm'
 import { TariffConfig, TariffOrder } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
@@ -34,8 +34,9 @@ export default function TariffConfigEditPage({
   ]
   return (
     <MainLayout
-      navItems={tariffNavItems}
+      navItems={meteringBillingNavItems}
       breadcrumb={breadcrumb}
+      selectedItem='Tariffs'
     >
       <TariffConfigEditForm
         tariff_config={tariff_config}

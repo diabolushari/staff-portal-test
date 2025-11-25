@@ -10,8 +10,8 @@ import { route } from 'ziggy-js'
 import Card from '@/ui/Card/Card'
 import MainLayout from '@/layouts/main-layout'
 import type { BreadcrumbItem } from '@/types'
-import { meterTimezoneNavItems } from '@/components/Navbar/navitems'
-import { Save, ArrowLeft } from 'lucide-react'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
+import { ArrowLeft } from 'lucide-react'
 import { router } from '@inertiajs/react'
 import dayjs from 'dayjs'
 
@@ -119,7 +119,8 @@ export default function MeteringTimezoneFormPage({
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={meterTimezoneNavItems}
+      navItems={meteringBillingNavItems}
+      selectedItem='Metering Timezones'
     >
       <div className='container mx-auto py-8'>
         {/* Header */}

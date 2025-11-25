@@ -1,4 +1,4 @@
-import { settingsOffices } from '@/components/Navbar/navitems'
+import { metadataNavItems, settingsOffices } from '@/components/Navbar/navitems'
 import AddRelationModal from '@/components/Offices/AddRelationModal'
 import ContactFolioCard from '@/components/Offices/ContactFolioCard'
 import { Card } from '@/components/ui/card'
@@ -83,14 +83,10 @@ export default function OfficeShow({
   }
 
   return (
-    <OfficeLayout
-      breadcrumbs={breadcrumbs}
-      officeNavItems={settingsOffices}
-      office={office}
-      value='details'
-      heading={office.office_code}
-      subHeading={office.office_name}
-      onEdit={() => router.visit(route('offices.edit', office.office_id))}
+    <MainLayout
+      breadcrumb={breadcrumbs}
+      selectedItem='Office Details'
+      navItems={metadataNavItems}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header Section */}

@@ -1,4 +1,4 @@
-import { settingsReferenceData } from '@/components/Navbar/navitems'
+import { metadataNavItems } from '@/components/Navbar/navitems'
 import ParameterDefinitionForm from '@/components/Parameter/ParameterDefinition/ParameterDefinitionForm'
 import ParameterDefinitionList from '@/components/Parameter/ParameterDefinition/ParameterDefinitionList'
 import ParameterDefinitionSearchForm from '@/components/Parameter/ParameterDefinition/ParameterDefinitionSearchForm'
@@ -57,10 +57,12 @@ export default function ParameterDefinitionIndex({
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={settingsReferenceData}
+      navItems={metadataNavItems}
+      selectedItem='Definitions'
     >
       <div className='mb-4 flex items-center justify-between'>
-        <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Definitions</h2>
+        {/* <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Definitions</h2> */}
+        <div></div>
         <button
           onClick={handleCreateClick}
           className='rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'

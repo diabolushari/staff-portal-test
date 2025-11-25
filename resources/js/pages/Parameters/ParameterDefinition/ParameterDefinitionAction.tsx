@@ -1,4 +1,4 @@
-import { settingsReferenceData } from '@/components/Navbar/navitems'
+import { metadataNavItems, settingsReferenceData } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { ParameterDefinition } from '@/interfaces/parameter_types'
@@ -50,7 +50,8 @@ export default function ParameterDefinitionAction({ data }: { data: ParameterDef
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={settingsReferenceData}
+      navItems={metadataNavItems}
+      selectedItem='Definitions'
     >
       <div className='flex items-center justify-center'>
         <div className='w-3/4 items-center justify-center rounded-xl bg-white p-8 py-8 shadow-md'>

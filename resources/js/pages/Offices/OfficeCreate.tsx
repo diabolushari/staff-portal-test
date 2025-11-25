@@ -1,4 +1,4 @@
-import { settingsOffices } from '@/components/Navbar/navitems'
+import { metadataNavItems, settingsOffices } from '@/components/Navbar/navitems'
 import OfficeForm from '@/components/Offices/OfficeForm'
 import { Office, OfficeHierarchy } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
@@ -44,7 +44,8 @@ export default function OfficeCreate({
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={settingsOffices}
+      selectedItem='Office Details'
+      navItems={metadataNavItems}
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
         <div className='flex items-center gap-2'>

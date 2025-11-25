@@ -1,6 +1,5 @@
-import { tariffNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import TariffConfigForm from '@/components/Tariff/TariffConfigForm'
-import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
 import { TariffOrder } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
@@ -20,11 +19,7 @@ interface Props {
   consumption_tariff?: ParameterValues[]
 }
 
-export default function TariffConfigCreatePage({
-  tariff_order,
-  connection_purpose,
-  consumption_tariff,
-}: Props) {
+export default function TariffConfigCreatePage({ tariff_order, consumption_tariff }: Props) {
   const breadcrumb: BreadcrumbItem[] = [
     {
       title: 'Tariff Order',
@@ -41,7 +36,8 @@ export default function TariffConfigCreatePage({
   ]
   return (
     <MainLayout
-      navItems={tariffNavItems}
+      navItems={meteringBillingNavItems}
+      selectedItem='Tariffs'
       breadcrumb={breadcrumb}
       leftBarTitle='Tariff Management'
     >

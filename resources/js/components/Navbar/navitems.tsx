@@ -1,4 +1,4 @@
-import { Contact2Icon, HomeIcon, ListIcon, PlusIcon } from 'lucide-react'
+import { HomeIcon, ListIcon } from 'lucide-react'
 import React from 'react'
 
 export interface navItem {
@@ -59,11 +59,15 @@ export const settingsReferenceData: navItem[] = [
 ]
 
 export const consumerNavItems: navItem[] = [
-  { title: 'Parties', href: '/parties', icon: <Contact2Icon className='h-4 w-4' /> },
   {
     title: 'Connections',
     href: '/connections',
-    icon: <ListIcon className='h-4 w-4' />,
+    icon: '',
+  },
+  {
+    title: 'Parties',
+    href: '/parties',
+    icon: '',
   },
 ]
 
@@ -93,5 +97,65 @@ export const billingNavItems: navItem[] = [
     title: 'Billing Groups',
     href: '/billing-groups',
     icon: <ListIcon className='h-4 w-4' />,
+  },
+]
+
+export const metadataNavItems: navItem[] = [
+  {
+    title: 'Parameters',
+    href: '/parameter-domain',
+    icon: '',
+    children: [
+      {
+        title: 'System Module',
+        href: '/system-module',
+        icon: '',
+      },
+      {
+        title: 'Domains',
+        href: '/parameter-domain',
+        icon: '',
+      },
+      {
+        title: 'Definitions',
+        href: '/parameter-definition',
+        icon: '',
+      },
+      {
+        title: 'Values',
+        href: '/parameter-value',
+        icon: '',
+      },
+    ],
+  },
+  {
+    title: 'Offices',
+    href: '/offices',
+    icon: '',
+    children: [
+      {
+        title: 'Office Details',
+        href: '/offices',
+        icon: '',
+      },
+    ],
+  },
+]
+
+export const meteringBillingNavItems: navItem[] = [
+  {
+    title: 'Metering Timezones',
+    href: '/metering-timezone',
+    icon: '',
+  },
+  {
+    title: 'Tariffs',
+    href: '/tariff-orders',
+    icon: '',
+  },
+  {
+    title: 'Billing Rule',
+    href: '/billing-rules',
+    icon: '',
   },
 ]

@@ -1,7 +1,7 @@
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
-import type { Connection, Meter, MeterAssignment } from '@/interfaces/data_interfaces'
+import type { Connection } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import { router } from '@inertiajs/react'
 import { PencilIcon } from 'lucide-react'
@@ -16,30 +16,6 @@ interface Props {
 export default function ConnectionsShow({ connection, consumerExist }: Readonly<Props>) {
   const formatDate = (dateStr?: string | null) =>
     dateStr ? new Date(dateStr).toLocaleDateString() : '-'
-
-  const tabs = useMemo(
-    () => [
-      {
-        value: 'details',
-        label: 'Connection Details',
-        href: connection?.connection_id
-          ? route('connections.show', connection?.connection_id)
-          : '#',
-      },
-      {
-        value: 'consumer',
-        label: 'Consumer',
-        href: connection?.connection_id
-          ? route('connection.consumer', connection?.connection_id)
-          : '#',
-      },
-      {
-        value: 'meter',
-        label: 'Meter',
-      },
-    ],
-    [connection]
-  )
 
   const breadcrumbs = useMemo(
     () => [
@@ -58,7 +34,8 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
     <ConnectionsLayout
       connection={connection}
       connectionId={connection?.connection_id ?? 0}
-      value={'details'}
+      value={'connection'}
+      subTabValue='connection'
       heading='Connection Details'
       subHeading='Connection Details'
       breadcrumbs={breadcrumbs}

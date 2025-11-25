@@ -1,7 +1,7 @@
 import MainLayout from '@/layouts/main-layout'
 import BillingForm from '@/components/Billing/BillingForm'
 import { BreadcrumbItem } from '@/types'
-import { billingNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import StrongText from '@/typography/StrongText'
 import { BillingRule } from '@/interfaces/data_interfaces'
 
@@ -13,7 +13,8 @@ export default function BillingRuleCreatePage({ billingRule }: { billingRule?: B
   return (
     <MainLayout
       breadcrumb={breadcrumb}
-      navItems={billingNavItems}
+      navItems={meteringBillingNavItems}
+      selectedItem='Billing Rule'
     >
       {' '}
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>

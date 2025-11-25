@@ -1,27 +1,16 @@
-import {
-  Connection,
-  Meter,
-  MeterAssignment,
-  MeterConnectionMapping,
-} from '@/interfaces/data_interfaces'
-import MainLayout from '@/layouts/main-layout'
+import { Connection, MeterConnectionMapping } from '@/interfaces/data_interfaces'
 import { consumerNavItems } from '../../components/Navbar/navitems'
-import { TabGroup } from '@/ui/Tabs/TabGroup'
-import { TabsContent } from '@radix-ui/react-tabs'
-import { MeterTab } from '@/pages/Connections/MeterTab'
 import StrongText from '@/typography/StrongText'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import {
   Barcode,
   Calendar,
   Cpu,
-  Edit,
   Factory,
   Hash,
   Plus,
   Settings,
   Shield,
-  Trash2,
   Wrench,
   Zap,
 } from 'lucide-react'
@@ -105,7 +94,8 @@ export default function ConnectionMeterList({
       connectionId={connectionId}
       heading={heading || 'Meters'}
       subHeading={subHeading || 'Meters assigned to this connection'}
-      value='meter'
+      value='meter-reading'
+      subTabValue='meter'
       connection={connection}
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
@@ -117,7 +107,7 @@ export default function ConnectionMeterList({
           <StrongText className='text-lg font-semibold text-gray-900'>Meter Information</StrongText>
           <button
             onClick={handleAddMeter}
-            className='inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
+            className='inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
           >
             <Plus className='h-4 w-4' />
             Add Meter

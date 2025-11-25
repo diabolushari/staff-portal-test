@@ -54,7 +54,8 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
     <ConnectionsLayout
       connection={connection}
       connectionId={connection?.connection_id}
-      value='consumer'
+      value='connection'
+      subTabValue='consumer'
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
       heading={`Connection #${connection?.consumer_number}`}
