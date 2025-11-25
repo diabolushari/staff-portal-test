@@ -91,6 +91,13 @@ export default function ConnectMeter({
 
     post(formData)
   }
+  const getCtptSerial = (id: number) =>
+    availableCtpts.find((ct) => ct.meter_ctpt_id == id)?.ctpt_serial ?? '-'
+
+  const getStatusValue = (id: number) => statuses.find((st) => st.id == id)?.parameter_value ?? '-'
+
+  const getReasonValue = (id: number) =>
+    changeReasons.find((rs) => rs.id == id)?.parameter_value ?? '-'
 
   useEffect(() => {
     const meterStatusValue: ParameterValues | undefined = meterStatus.find(
@@ -117,6 +124,9 @@ export default function ConnectMeter({
       href: route('connection.meter.create', connection?.connection_id),
     },
   ]
+  const availableCtpts = ctpts.filter(
+    (ct) => !meterTransformers.some((m) => m.ctpt_id == ct.meter_ctpt_id)
+  )
 
   return (
     <ConnectionsLayout
@@ -245,13 +255,15 @@ export default function ConnectMeter({
           <div className='flex items-center justify-between border-b-2 border-gray-200 py-3'>
             <StrongText className='text-base font-semibold'>Connect CTPT</StrongText>
             <div>
-              <Button
-                type='button'
-                label='Connect CTPT'
-                variant='primary'
-                onClick={() => setShowModal(true)}
-                disabled={loading}
-              />
+              {availableCtpts.length > 0 && (
+                <Button
+                  type='button'
+                  label='Connect CTPT'
+                  variant='primary'
+                  onClick={() => setShowModal(true)}
+                  disabled={loading}
+                />
+              )}
             </div>
           </div>
           {meterTransformers.length > 0 && (
@@ -259,29 +271,42 @@ export default function ConnectMeter({
               <strong className='text-base font-semibold'>Added CTPTs</strong>
 
               <div className='mt-4 space-y-4'>
-                {meterTransformers.map((item: MeterTransformerAssignment, idx) => (
+                {meterTransformers.map((item, idx) => (
                   <div
-                    key={idx}
+                    key={item.ctpt_id}
                     className='rounded border bg-gray-50 p-4 dark:bg-gray-800'
                   >
                     <p>
-                      <strong>CTPT ID:</strong> {item.ctpt_id}
+                      <strong>CTPT Serial:</strong> {getCtptSerial(item.ctpt_id)}
                     </p>
                     <p>
-                      <strong>Status:</strong> {item.status_id}
+                      <strong>Status:</strong> {getStatusValue(item.status_id)}
                     </p>
                     <p>
-                      <strong>Reason:</strong> {item.change_reason_id}
+                      <strong>Reason:</strong> {getReasonValue(item.change_reason_id)}
                     </p>
                     <p>
-                      <strong>Faulty Date:</strong> {item.faulty_date}
+                      <strong>Faulty Date:</strong> {item.faulty_date || '-'}
                     </p>
                     <p>
-                      <strong>Energise:</strong> {item.ctpt_energise_date}
+                      <strong>Energise:</strong> {item.ctpt_energise_date || '-'}
                     </p>
                     <p>
-                      <strong>Change:</strong> {item.ctpt_change_date}
+                      <strong>Change:</strong> {item.ctpt_change_date || '-'}
                     </p>
+
+                    <div className='mt-3 flex justify-end'>
+                      <Button
+                        type='button'
+                        label='Remove'
+                        variant='danger'
+                        onClick={() => {
+                          setMeterTransformers((prev) =>
+                            prev.filter((t) => t.ctpt_id !== item.ctpt_id)
+                          )
+                        }}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -296,7 +321,7 @@ export default function ConnectMeter({
           relation={relation}
           statuses={statuses}
           changeReasons={changeReasons}
-          ctpts={ctpts}
+          ctpts={availableCtpts}
           onAdd={(item) => {
             setMeterTransformers((prev) => [...prev, item])
           }}
