@@ -102,6 +102,11 @@ export const metadataNavItems: navItem[] = [
     icon: '',
     children: [
       {
+        title: 'System Module',
+        href: '/system-module',
+        icon: '',
+      },
+      {
         title: 'Domains',
         href: '/parameter-domain',
         icon: '',
