@@ -72,7 +72,7 @@ class MeterTransformerRelController extends Controller
     public function store(MeterTransformerRelFormRequest $request): RedirectResponse
     {
         $request->createdBy = auth()->id();
-        $response = $this->relService->createRelation($request); 
+        $response = $this->relService->createRelation($request);
 
         if ($response->hasError()) {
             return $response->error;
@@ -159,6 +159,6 @@ class MeterTransformerRelController extends Controller
             return redirect()->back()->withErrors($response->error);
         }
 
-        return redirect()->route('meters.index')->with('success', 'Relation deleted successfully.');
+        return redirect()->back()->with('success', 'Relation deleted successfully.');
     }
 }

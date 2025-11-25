@@ -13,7 +13,7 @@ class DateTimeConverter
             return null;
         }
 
-        if ($date !== null) {
+        if ($date != null) {
             $seconds = strtotime($date);
             if ($seconds !== false) {
                 // strtotime() succeeded — set the value
