@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\SystemModuleApiController;
 use App\Http\Controllers\Api\Tariff\TariffOrderDownloadApiController;
 use App\Http\Controllers\Billing\BillingRuleController;
 use App\Http\Controllers\BillingGroup\BillingGroupController;
+use App\Http\Controllers\BillingGroup\BillingGroupConnectionRelController;
 use App\Http\Controllers\Connection\ConnectionController;
 use App\Http\Controllers\Connection\ConnectionsPartyController;
 use App\Http\Controllers\Connection\ConsumerController;
@@ -47,6 +48,7 @@ use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
 use App\Http\Controllers\Tariff\TariffConfigController;
 use App\Http\Controllers\Tariff\TariffOrderController;
+use App\Http\Controllers\BillingGroup\ConsumerNumberApiController;
 use App\Http\Requests\SystemModule\SystemModuleFormRequest;
 use App\Services\SystemModule\SystemModuleService;
 use Illuminate\Support\Facades\Route;
@@ -116,6 +118,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('billing-rules', BillingRuleController::class);
     Route::resource('billing-groups', BillingGroupController::class);
+    Route::resource('billing-group-connection-rel', BillingGroupConnectionRelController::class);
 
 });
 
@@ -124,6 +127,7 @@ Route::get('api/parameter-domains', ParameterDomainListApiController::class);
 Route::get('api/parameter-definitions', ParameterDefinitionListApiController::class);
 Route::get('api/parameter-definitions/{id}', ParameterDefinitionItemApiController::class);
 Route::get('api/offices', OfficeListApiController::class);
+Route::get('api/consumer-number', ConsumerNumberApiController::class);
 Route::get('api/office/{id}', GetOfficeByIdApiController::class);
 Route::get('api/parameter-values', ListParameterValuesApiController::class);
 Route::get('api/office/code/{office_code}', GetOfficeByCodeApiController::class);
