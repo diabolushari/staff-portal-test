@@ -7,6 +7,10 @@ use Proto\Consumers\PartiesConnectionRelMessage;
 
 class ConnectionPartiesConverter
 {
+    public function __construct(
+        private PartyService $partyService
+    ) {}
+
     /**
      * Convert ConnectionMessage proto to array.
      *
@@ -24,14 +28,13 @@ class ConnectionPartiesConverter
      *    party: array
      * } | null
      */
-    public static function convertToArray(?PartiesConnectionRelMessage $message): ?array
+    public function convertToArray(?PartiesConnectionRelMessage $message): ?array
     {
         if ($message === null) {
             return null;
         }
         $party = $message->getParty();
-        $partyService = new PartyService;
-        $partyArray = $partyService->transformPartyToArray($party);
+        $partyArray = $this->partyService->transformPartyToArray($party);
 
         return [
             'version_id' => $message->getVersionId(),
