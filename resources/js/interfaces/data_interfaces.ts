@@ -1,4 +1,5 @@
 import { ParameterValues } from './parameter_types'
+import { Party } from './parties'
 
 export interface Office {
   office_id: number
@@ -71,6 +72,38 @@ export interface MeterConnectionMapping {
   updated_by: number
   meter: Meter
 }
+export interface DateTimeField {
+  date: string;           // "2025-11-11 00:00:00.000000"
+  timezone_type: number;
+  timezone: string;       // "+00:00"
+}
+
+
+export interface ConnectionPartyMapping {
+  version_id: number;
+  rel_id?: number;               // not visible in your response, keep optional if exists
+  connection_id: number;
+  party_id: number;
+
+  effective_start: DateTimeField;  // convert to model below
+  effective_end: DateTimeField | null;
+
+  is_active: boolean;
+
+  created_by?: number;
+  updated_by?: number;
+  deleted_by?: number | null;
+  deleted_ts?: DateTimeField | null;
+
+  party_type_id?: number;          
+  party_type?: {
+    id: number;
+    parameter_value: string;
+  };    
+
+  party: Party;                  
+}
+
 
 export interface Connection {
   version_id: number

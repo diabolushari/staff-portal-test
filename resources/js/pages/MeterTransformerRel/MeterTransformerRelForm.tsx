@@ -1,7 +1,6 @@
 import { router } from '@inertiajs/react'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import MainLayout from '@/layouts/main-layout'
 import Button from '@/ui/button/Button'
 import Card from '@/ui/Card/Card'
 import Input from '@/ui/form/Input'

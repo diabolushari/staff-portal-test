@@ -1,5 +1,7 @@
 import ConnectionPartiesFormModal from '@/components/Connections/ConnectionPartiesFormModal'
-import { Connection } from '@/interfaces/data_interfaces'
+import ConnectionPartiesList from '@/components/Connections/ConnectionPartiesList'
+import { consumerNavItems } from '@/components/Navbar/navitems'
+import { Connection, ConnectionPartyMapping } from '@/interfaces/data_interfaces'
 import { Party } from '@/interfaces/parties'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import AddButton from '@/ui/button/AddButton'
@@ -8,15 +10,20 @@ import { useState } from 'react'
 interface ConnectionPartiesProps {
   connection: Connection
   parties: Party[]
+  connectionParties: ConnectionPartyMapping[]
 }
 
-export default function ConnectionParties({ connection, parties }: ConnectionPartiesProps) {
+export default function ConnectionParties({
+  connection,
+  parties,
+  connectionParties,
+}: ConnectionPartiesProps) {
   const [addPartiesModal, setAddPartiesModal] = useState(false)
-
+  console.log(connectionParties)
   return (
     <ConnectionsLayout
       breadcrumbs={[]}
-      connectionsNavItems={[]}
+      connectionsNavItems={consumerNavItems}
       connectionId={connection?.connection_id}
       connection={connection}
       value='connection'
@@ -32,6 +39,11 @@ export default function ConnectionParties({ connection, parties }: ConnectionPar
           }}
         />
       </div>
+      <ConnectionPartiesList
+        connectionParties={connectionParties}
+        parties={parties}
+        connection={connection}
+      />
       {addPartiesModal && (
         <ConnectionPartiesFormModal
           connection={connection}

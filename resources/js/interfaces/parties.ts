@@ -16,4 +16,8 @@ export interface Party {
   email_address?: string | null
   address?: string | null
   fax_number?: number | string | null
+  party_type?: {
+    id: number;
+    parameter_value: string;
+  };    
 }

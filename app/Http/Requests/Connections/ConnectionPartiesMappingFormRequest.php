@@ -10,6 +10,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class ConnectionPartiesMappingFormRequest extends Data
 {
     public function __construct(
+        public ?int $versionId,
         public int $partyId,
         public int $connectionId,
         public string $effectiveStart,

@@ -353,6 +353,6 @@ export default function OfficeShow({
           url={`/office-hierarchy-rel/${officeHierarchyRelId}`}
         />
       )}
-    </OfficeLayout>
+    </MainLayout>
   )
 }
