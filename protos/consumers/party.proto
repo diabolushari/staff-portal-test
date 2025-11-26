@@ -22,7 +22,7 @@ service PartyService {
   rpc GetPartyByVersionId(GetPartyByVersionIdRequest) returns (PartyResponse);
   rpc GetPartyHistory(GetPartyHistoryRequest) returns (PartyListResponse);
   rpc ListCurrentParties(google.protobuf.Empty) returns (PartyListResponse);
-  rpc SearchPartiesByName(SearchPartiesByNameRequest) returns (PartyListResponse);
+  rpc SearchParties(SearchPartiesRequest) returns (PartyListResponse);
 
 }
 
@@ -97,8 +97,8 @@ message GetPartyHistoryRequest {
   int32 party_id = 1;
 }
 
-message SearchPartiesByNameRequest {
-  optional string name = 1;
+message SearchPartiesRequest {
+  optional string search = 1;
 }
 
 message PartyResponse {
@@ -108,3 +108,5 @@ message PartyResponse {
 message PartyListResponse {
   repeated PartyMessage parties = 1;
 }
+
+
