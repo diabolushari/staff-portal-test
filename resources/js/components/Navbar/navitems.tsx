@@ -90,7 +90,12 @@ export const tariffNavItems: navItem[] = [
 export const billingNavItems: navItem[] = [
   {
     title: 'Billing',
-    href: '/billing-rule',
+    href: '/billing-rules',
+    icon: <ListIcon className='h-4 w-4' />,
+  },
+  {
+    title: 'Billing Groups',
+    href: '/billing-groups',
     icon: <ListIcon className='h-4 w-4' />,
   },
 ]
@@ -101,6 +106,11 @@ export const metadataNavItems: navItem[] = [
     href: '/parameter-domain',
     icon: '',
     children: [
+      {
+        title: 'System Module',
+        href: '/system-module',
+        icon: '',
+      },
       {
         title: 'Domains',
         href: '/parameter-domain',

@@ -59,7 +59,12 @@ class ConnectionService
         return GrpcServiceResponse::success($connectionArray, $response, $status->code, $status->details);
     }
 
-    public function listPaginatedConnections(?int $pageNumber = 1, ?int $pageSize = 10, ?string $consumerNumber = null): GrpcServiceResponse
+    public function listPaginatedConnections(?int $pageNumber = 1,
+        ?int $pageSize = 10,
+        ?string $consumerNumber = null,
+        ?int $officeCode = null,
+        ?int $connectionPurposeId = null,
+        ?int $consumerTypeId = null): GrpcServiceResponse
     {
         $request = new ListConnectionsPaginatedRequest;
 
@@ -71,6 +76,15 @@ class ConnectionService
         }
         if ($consumerNumber) {
             $request->setConsumerNumber($consumerNumber);
+        }
+        if ($officeCode) {
+            $request->setOfficeCode($officeCode);
+        }
+        if ($connectionPurposeId) {
+            $request->setPrimaryPurposeId($connectionPurposeId);
+        }
+        if ($consumerTypeId) {
+            $request->setConsumerTypeId($consumerTypeId);
         }
 
         [$response, $status] = $this->client->ListConnectionsPaginated($request)->wait();

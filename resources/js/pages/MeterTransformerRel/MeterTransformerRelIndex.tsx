@@ -79,8 +79,8 @@ export default function MeterTransformerRelIndex({ relations }: Props) {
         {showDeleteModal && selectedRel && (
           <DeleteModal
             setShowModal={setShowDeleteModal}
-            title={`Delete Relation ${selectedRel.version_id}`}
-            url={`/meter-ctpt-rel/${selectedRel.version_id}`}
+            title={`Delete Relation ${selectedRel?.version_id}`}
+            url={`/meter-ctpt-rel/${selectedRel?.version_id}`}
           />
         )}
       </div>

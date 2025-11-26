@@ -46,7 +46,9 @@ const connectionTabs = (connection?: Connection) => [
       {
         subValue: 'parties',
         subLabel: 'Parties',
-        subLink: '#',
+        subLink: connection?.connection_id
+          ? route('connection.parties', connection?.connection_id)
+          : '#',
       },
     ],
   },
@@ -62,6 +64,13 @@ const connectionTabs = (connection?: Connection) => [
         subLabel: 'Meter',
         subLink: connection?.connection_id
           ? route('connection.meters', connection?.connection_id)
+          : '#',
+      },
+      {
+        subValue: 'meter-ctpts',
+        subLabel: 'CTPTs',
+        subLink: connection?.connection_id
+          ? route('connections.meters.ctpts', connection?.connection_id)
           : '#',
       },
       {
