@@ -15,8 +15,8 @@ use Proto\Consumers\GetCurrentPartyRequest;
 use Proto\Consumers\GetPartyByVersionIdRequest;
 use Proto\Consumers\GetPartyHistoryRequest;
 use Proto\Consumers\PartyServiceClient;
+use Proto\Consumers\SearchPartiesRequest;
 use Proto\Consumers\UpdatePartyRequest;
-use Proto\Consumers\SearchPartiesByNameRequest;
 
 class PartyService
 {
@@ -37,21 +37,18 @@ class PartyService
     {
         $request = new GPBEmpty;
         if ($search !== null) {
-            $request = new SearchPartiesByNameRequest;
-            $request->setName($search);
-            [$response, $status] = $this->client->SearchPartiesByName($request)->wait();
-    
+            $request = new SearchPartiesRequest;
+            $request->setSearch($search);
+            [$response, $status] = $this->client->SearchParties($request)->wait();
+
+        } else {
+
+            $request = new GPBEmpty;
+            [$response, $status] = $this->client->ListCurrentParties($request)->wait();
         }
 
-        else {
-        
-        $request = new GPBEmpty;
-        [$response, $status] = $this->client->ListCurrentParties($request)->wait();
-    }
-        
-        
         // Updated gRPC method call
-       // [$response, $status] = $this->client->ListCurrentParties($request)->wait();
+        // [$response, $status] = $this->client->ListCurrentParties($request)->wait();
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -156,7 +153,6 @@ class PartyService
         }
 
         [$response, $status] = $this->client->CreateParty($grpcRequest)->wait();
-
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -330,7 +326,7 @@ class PartyService
     /**
      * Transform PartyMessage protobuf to PHP array
      */
-    private function transformPartyToArray($party): array
+    public function transformPartyToArray($party): array
     {
         return [
             'version_id' => $party->getVersionId(),

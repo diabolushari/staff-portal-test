@@ -7,7 +7,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useCallback, useState } from 'react'
 import { route } from 'ziggy-js'
 import SystemModuleForm from './components/SystemModuleForm'
-import { settingsReferenceData } from '@/components/Navbar/navitems'
+import { metadataNavItems, settingsReferenceData } from '@/components/Navbar/navitems'
 import { Pencil, Trash2 } from 'lucide-react'
 
 interface Props {
@@ -55,7 +55,8 @@ export default function SystemModuleIndex({ systemModules }: Readonly<Props>) {
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={settingsReferenceData}
+      navItems={metadataNavItems}
+      selectedItem='System Module'
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <div className='mb-4 flex items-center justify-between'>

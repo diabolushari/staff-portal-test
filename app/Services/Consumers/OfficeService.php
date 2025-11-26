@@ -75,11 +75,15 @@ class OfficeService
         ?string $sortDirection = null,
         ?string $search = null,
         ?string $officeType = null,
-        ?string $officeName = null): GrpcServiceResponse
+        ?string $officeName = null,
+        ?int $officeCode = null): GrpcServiceResponse
     {
         $request = new OfficePaginatedListRequest;
         $request->setPageNumber($pageNumber);
         $request->setPageSize($pageSize);
+        if ($officeCode !== null) {
+            $request->setOfficeCode($officeCode);
+        }
         if ($sortBy !== null) {
             $request->setSortBy($sortBy);
         }

@@ -92,11 +92,7 @@ message OfficeListResponse {
     repeated OfficeMessage offices = 1;
 }
 
-message OfficeListRequest {
-    optional string office_type = 1;
-    optional string search = 2;        
-    optional string office_name = 3;
-}
+
 
 message OfficeIdRequest {
     optional int32 office_id = 1;
@@ -108,14 +104,23 @@ message OfficeUpdateContactFolioRequest {
     google.protobuf.Struct contact_folio = 2;
     optional int32 updated_by = 3;
 }
+message OfficeListRequest {
+  optional string office_type = 1;
+  optional string search = 2;
+  optional string office_name = 3;
+  optional int32 office_code = 4;
+}
+
+// Paginated list request with optional filters, page number, page size, and sorting/filtering parameters
 message OfficePaginatedListRequest {
   optional string office_type = 1;
   optional string search = 2;
   optional string office_name = 3;
-  int32 page_number = 4;
-  int32 page_size = 5;
-  optional string sort_by = 6;     // optional sorting field like "office_name", "office_code"
-  optional string sort_direction = 7; // "asc" or "desc"
+  optional int32 office_code = 4;
+  int32 page_number = 5;
+  int32 page_size = 6;
+  optional string sort_by = 7;     // optional sorting field like "office_name", "office_code"
+  optional string sort_direction = 8; // "asc" or "desc"
 }
 
 // Paginated list response with offices and metadata

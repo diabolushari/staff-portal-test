@@ -1,17 +1,17 @@
 import { router } from '@inertiajs/react'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import MainLayout from '@/layouts/main-layout'
 import Button from '@/ui/button/Button'
 import Card from '@/ui/Card/Card'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import DatePicker from '@/ui/form/DatePicker'
-import { meterNavItems } from '@/components/Navbar/navitems'
+import { consumerNavItems, meterNavItems } from '@/components/Navbar/navitems'
 import StrongText from '@/typography/StrongText'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import React from 'react'
-import { Meter } from '@/interfaces/data_interfaces'
+import { Connection, Meter } from '@/interfaces/data_interfaces'
+import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 
 interface MeterTransformerRelFormProps {
   ctpts: any[]
@@ -19,6 +19,7 @@ interface MeterTransformerRelFormProps {
   statuses: ParameterValues[]
   changeReasons: ParameterValues[]
   relation?: any
+  connection: Connection
 }
 
 const toYMD = (iso?: string | null): string => {
@@ -27,24 +28,35 @@ const toYMD = (iso?: string | null): string => {
   return !Number.isNaN(d.getTime()) ? d.toISOString().split('T')[0] : ''
 }
 
-const toISOorNull = (ymd: string) => (ymd ? new Date(ymd).toISOString() : null)
-
 export default function MeterTransformerRelForm({
   ctpts,
   meter,
   statuses,
   changeReasons,
   relation,
+  connection,
 }: MeterTransformerRelFormProps) {
   const isEditing = Boolean(relation)
 
   const breadcrumbs = [
-    { title: 'Meters', href: '/meters' },
-    { title: 'Meter CTPT', href: '/meters/' + meter.meter_id},
-  //  { title: meter.meter_serial, href: '/meters/' + meter.meter_id },
+    {
+      title: 'Connections',
+      href: route('connections.index'),
+    },
+    {
+      title: connection?.consumer_number.toString(),
+      href: route('connections.show', connection?.connection_id),
+    },
+    {
+      title: 'Transformers',
+      href: route('connections.meters.ctpts', connection?.connection_id),
+    },
     {
       title: isEditing ? 'Modify CTPT' : 'Connect CTPT',
-      href: route('meters.ctpt.create', { id: meter.meter_id }),
+      href: route('connections.meters.ctpt.create', {
+        connection_id: connection.connection_id,
+        id: meter.meter_id,
+      }),
     },
   ]
 
@@ -75,9 +87,15 @@ export default function MeterTransformerRelForm({
   }
 
   return (
-    <MainLayout
-      breadcrumb={breadcrumbs}
-      navItems={meterNavItems}
+    <ConnectionsLayout
+      connectionsNavItems={consumerNavItems}
+      value='meter-reading'
+      subTabValue='meter-ctpts'
+      heading='Meter and CTPTs'
+      subHeading='CTPTs connected with meters'
+      breadcrumbs={breadcrumbs}
+      connectionId={connection.connection_id}
+      connection={connection}
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
         <div className='flex flex-col gap-2'>
@@ -179,6 +197,6 @@ export default function MeterTransformerRelForm({
           </div>
         </form>
       </div>
-    </MainLayout>
+    </ConnectionsLayout>
   )
 }
