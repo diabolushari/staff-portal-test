@@ -20,6 +20,7 @@ class ConnectionPartiesMappingService
     private PartiesConnectionRelServiceClient $client;
 
     public function __construct(
+        private readonly ConnectionPartiesConverter $connectionPartiesConverter
     ) {
         $this->client = new PartiesConnectionRelServiceClient(
             config('app.consumer_service_grpc_host'),
@@ -80,7 +81,7 @@ class ConnectionPartiesMappingService
         $parties = $response->getItems();
         $partiesArray = [];
         foreach ($parties as $party) {
-            $partiesArray[] = ConnectionPartiesConverter::convertToArray($party);
+            $partiesArray[] = $this->connectionPartiesConverter->convertToArray($party);
         }
 
         return GrpcServiceResponse::success(

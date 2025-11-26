@@ -45,38 +45,38 @@ class BillingGroupProtoConvertor
             : null;
 
         $connections = [];
-        foreach ($g->getBillingGroupConnectionsList() as $conn) {
+        foreach ($g->getConnections() as $conn) {
             $connections[] = [
                 'billing_group_connection_rel_id' => $conn->getBillingGroupConnectionRelId(),
-                'connection_id'                    => $conn->getConnectionId(),
-                'consumer_number'                  => $conn->getConsumerNumber(),
-                'consumer_name'                    => $conn->getConsumerName(),
-                'connection_type'                  => $conn->getConnectionType(),
-                'purpose'                          => $conn->getPurpose(),
-                'bill_amount'                      => $conn->getBillAmount(),
-                'bill_date'                        => $conn->getBillDate(),
-                'active_from'                      => $conn->getActiveFrom(),
-                'active_till'                      => $conn->getActiveTill(),
+                'connection_id' => $conn->getConnectionId(),
+                'consumer_number' => $conn->getConsumerNumber(),
+                'consumer_name' => $conn->getConsumerName(),
+                'connection_type' => $conn->getConnectionType(),
+                'purpose' => $conn->getPurpose(),
+                'bill_amount' => $conn->getBillAmount(),
+                'bill_date' => $conn->getBillDate(),
+                'active_from' => $conn->getActiveFrom(),
+                'active_till' => $conn->getActiveTill(),
             ];
         }
 
         return [
-            'version_id'       => $g->getVersionId(),
+            'version_id' => $g->getVersionId(),
             'billing_group_id' => $g->getBillingGroupId(),
-            'name'             => $g->getName(),
-            'description'      => $g->hasDescription() ? $g->getDescription() : null,
+            'name' => $g->getName(),
+            'description' => $g->hasDescription() ? $g->getDescription() : null,
 
-            'effective_start'  => $effectiveStart,
-            'effective_end'    => $effectiveEnd,
+            'effective_start' => $effectiveStart,
+            'effective_end' => $effectiveEnd,
 
-            'is_active'        => $g->getIsActive(),
+            'is_active' => $g->getIsActive(),
 
-            'created_by'       => $g->getCreatedBy(),
-            'updated_by'       => $g->getUpdatedBy(),
+            'created_by' => $g->getCreatedBy(),
+            'updated_by' => $g->getUpdatedBy(),
 
-            'deleted_ts'       => $deletedTs,
-            'deleted_by'       => $g->getDeletedBy(),
-            'connections'      => $connections,
+            'deleted_ts' => $deletedTs,
+            'deleted_by' => $g->getDeletedBy(),
+            'connections' => $connections,
         ];
     }
 }
