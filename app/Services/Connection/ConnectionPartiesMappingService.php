@@ -82,6 +82,7 @@ class ConnectionPartiesMappingService
         $partiesArray = [];
         foreach ($parties as $party) {
             $partiesArray[] = $this->connectionPartiesConverter->convertToArray($party);
+            $partiesArray[] = $this->connectionPartiesConverter->convertToArray($party);
         }
 
         return GrpcServiceResponse::success(

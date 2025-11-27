@@ -1,3 +1,4 @@
+import useCustomForm from '@/hooks/useCustomForm'
 import Modal from '@/ui/Modal/Modal'
 
 interface BillInitializeModalProps {
@@ -6,11 +7,14 @@ interface BillInitializeModalProps {
 }
 
 export default function BillInitializeModal({ setShowModal, showModal }: BillInitializeModalProps) {
+  const { formData, setFormValue } = useCustomForm({})
   return (
     <Modal
       title='Initialize Bill'
       setShowModal={setShowModal}
       showClosButton={true}
-    ></Modal>
+    >
+      <form action=''></form>
+    </Modal>
   )
 }
