@@ -36,7 +36,9 @@ export function NestedTabGroup({
  
   useEffect(() => {
     if (subTabs.length > 0) {
+        if (!defaultSubValue) {
       setActiveSub(subTabs[0].subValue);
+    }
     }
   }, [activeTab]);
 
@@ -54,12 +56,10 @@ export function NestedTabGroup({
               data-[state=active]:text-blue-400 
               data-[state=active]:bg-blue-50"
               onClick={() => {
-                if (tab.href) {
-                  router.visit(tab.href);     
-                } else {
-                  setActiveTab(tab.value);
-                }
-              }}
+              if (tab.href) {
+                router.visit(tab.href)
+              }
+            }}
             >
               {tab.label}
             </TabsTrigger>
@@ -80,12 +80,11 @@ export function NestedTabGroup({
                   data-[state=active]:text-blue-400 
                   data-[state=active]:bg-blue-50"
                   onClick={() => {
-                    if (st.subLink) {
-                      router.visit(st.subLink);   
-                    } else {
-                      setActiveSub(st.subValue);
-                    }
-                  }}
+                  if (st.subLink) {
+                    router.visit(st.subLink)
+                  }
+                }}
+
                 >
                   {st.subLabel}
                 </TabsTrigger>

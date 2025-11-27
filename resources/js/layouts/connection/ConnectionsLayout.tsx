@@ -12,7 +12,7 @@ interface ConnectionsLayoutProps {
   children: React.ReactNode
   breadcrumbs: BreadcrumbItem[]
   connectionsNavItems: navItem[]
-  connection?: Connection
+  connection?: Connection | null
   connectionId: number
   value: string
   subTabValue?: string

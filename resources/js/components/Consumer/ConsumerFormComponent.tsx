@@ -1,29 +1,24 @@
-import useCustomForm from '@/hooks/useCustomForm'
-import useInertiaPost from '@/hooks/useInertiaPost'
-import { ConsumerData } from '@/interfaces/data_interfaces'
-import { ParameterValues } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
-import Button from '@/ui/button/Button'
-import CheckBox from '@/ui/form/CheckBox'
-import Input from '@/ui/form/Input'
-import SelectList from '@/ui/form/SelectList'
 import { Card } from '../ui/card'
-import ConsumerContactFolioModal from './ConsumerContactFolioModal'
-import { useState } from 'react'
+import Input from '@/ui/form/Input'
+import useCustomForm from '@/hooks/useCustomForm'
+import { ParameterValues } from '@/interfaces/parameter_types'
+import SelectList from '@/ui/form/SelectList'
+import CheckBox from '@/ui/form/CheckBox'
+import Button from '@/ui/button/Button'
+import useInertiaPost from '@/hooks/useInertiaPost'
+import { Address, ConsumerData, GeoRegion } from '@/interfaces/data_interfaces'
 
 interface Props {
   consumer_types: ParameterValues[]
-  districts: any[]
-  states: any[]
+  districts: GeoRegion[]
+  states: GeoRegion[]
   connection_id: number
   data?: ConsumerData
 }
-interface ContactFolio {
-  email?: string
-  phone?: string
-}
 
-const isSameAddress = (primary?: any, other?: any) => {
+// 🔹 Helper to compare two addresses
+const isSameAddress = (primary?: Address, other?: Address) => {
   return primary?.address_id === other?.address_id
 }
 
@@ -62,10 +57,6 @@ export default function ConsumerFormComponent({
     pincode: primary?.pincode ?? '',
     district_id: primary?.district_id ?? '',
     state_id: primary?.state_id ?? '',
-    consumer_cin: consumer?.consumer_cin ?? '',
-    seasonal_ind: consumer?.seasonal_ind ?? false,
-    license_ind: consumer?.license_ind ?? false,
-    open_access_ind: false,
 
     // Other addresses
     other_addresses: {
@@ -81,10 +72,6 @@ export default function ConsumerFormComponent({
 
     primary_email: contact?.primary_email ?? '',
     primary_phone: contact?.primary_phone?.toString() ?? '',
-
-    // ✅ NEW: Add array for extra contacts
-    contact_folio: contact?.contact_folio ?? [],
-
     _method: consumer ? 'PUT' : undefined,
   })
 
@@ -92,11 +79,25 @@ export default function ConsumerFormComponent({
     consumer ? route('consumers.update', consumer.connection_id) : route('consumers.store')
   )
 
-  const [showContactModal, setShowContactModal] = useState(false)
+  const setOtherAddress = (type: 'billing' | 'premises', value: any) => {
+    setAll({
+      other_addresses: {
+        ...formData.other_addresses,
+        [type]: value,
+      },
+    })
+  }
 
-  const handleRemoveContact = (index: number) => {
-    const updated = formData.contact_folio.filter((_: ContactFolio, i: number) => i !== index)
-    setFormValue('contact_folio')(updated)
+  const updateOtherAddressField = (type: 'billing' | 'premises', field: string, value: any) => {
+    if (!formData.other_addresses[type]) return
+    setOtherAddress(type, {
+      ...formData.other_addresses[type],
+      [field]: value,
+    })
+  }
+
+  const removeOtherAddress = (type: 'billing' | 'premises') => {
+    setOtherAddress(type, null)
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -114,73 +115,63 @@ export default function ConsumerFormComponent({
         <div className='border-b-2 border-gray-200 py-3'>
           <StrongText className='text-base font-semibold'>Basic Information</StrongText>
           <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
-            {consumer_types && (
-              <SelectList
-                label='Consumer Type'
-                list={consumer_types}
-                dataKey='id'
-                displayKey='parameter_value'
-                setValue={setFormValue('consumer_type_id')}
-                value={formData.consumer_type_id}
-                required
-                error={errors?.consumer_type_id}
-              />
-            )}
+            <SelectList
+              label='Consumer Type'
+              list={consumer_types}
+              dataKey='id'
+              displayKey='parameter_value'
+              setValue={setFormValue('consumer_type_id')}
+              value={formData.consumer_type_id}
+              required
+              error={errors?.consumer_type_id}
+            />
             <Input
               label='Organization Name'
               setValue={setFormValue('organization_name')}
               value={formData.organization_name}
+              placeholder='Enter organization name'
               error={errors?.organization_name}
             />
             <Input
               label='Applicant Code'
               setValue={setFormValue('applicant_code')}
               value={formData.applicant_code}
+              placeholder='Enter applicant code'
               error={errors?.applicant_code}
-            />
-            <Input
-              label='Consumer CIN'
-              setValue={setFormValue('consumer_cin')}
-              value={formData.consumer_cin}
-              error={errors?.consumer_cin}
             />
             <Input
               label='Consumer PAN'
               setValue={setFormValue('consumer_pan')}
               value={formData.consumer_pan}
+              placeholder='e.g., ABCDE1234F'
               error={errors?.consumer_pan}
             />
             <Input
               label='Consumer TAN'
               setValue={setFormValue('consumer_tan')}
               value={formData.consumer_tan}
+              placeholder='e.g., ABCD12345E'
               error={errors?.consumer_tan}
             />
             <Input
               label='Consumer GSTIN'
               setValue={setFormValue('consumer_gstin')}
               value={formData.consumer_gstin}
+              placeholder='e.g., 27ABCDE1234F1Z5'
               error={errors?.consumer_gstin}
             />
+
             <CheckBox
               label='TDS on GST'
               toggleValue={toggleBoolean('income_tax_withholding_ind')}
               value={formData.income_tax_withholding_ind}
+              error={errors?.income_tax_withholding_ind}
             />
             <CheckBox
               label='TDS on Income Tax'
               toggleValue={toggleBoolean('gst_withholding_ind')}
               value={formData.gst_withholding_ind}
-            />
-            <CheckBox
-              label='Seasonal'
-              toggleValue={toggleBoolean('seasonal_ind')}
-              value={formData.seasonal_ind}
-            />
-            <CheckBox
-              label='Licensee'
-              toggleValue={toggleBoolean('license_ind')}
-              value={formData.license_ind}
+              error={errors?.gst_withholding_ind}
             />
           </div>
         </div>
@@ -193,18 +184,21 @@ export default function ConsumerFormComponent({
           <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
             <Input
               label='Address Line1'
+              type='text'
               setValue={setFormValue('address_line1')}
               value={formData.address_line1}
               error={errors?.address_line1}
             />
             <Input
               label='Address Line2'
+              type='text'
               setValue={setFormValue('address_line2')}
               value={formData.address_line2}
               error={errors?.address_line2}
             />
             <Input
               label='City / Town / Village'
+              type='text'
               setValue={setFormValue('city_town_village')}
               value={formData.city_town_village}
               error={errors?.city_town_village}
@@ -224,6 +218,7 @@ export default function ConsumerFormComponent({
                 displayKey='region_name'
                 setValue={setFormValue('district_id')}
                 value={formData.district_id}
+                error={errors?.district_id}
               />
             )}
             {states && (
@@ -234,13 +229,188 @@ export default function ConsumerFormComponent({
                 displayKey='region_name'
                 setValue={setFormValue('state_id')}
                 value={formData.state_id}
+                error={errors?.state_id}
               />
             )}
           </div>
         </div>
       </Card>
 
-      {/* Contact Information */}
+      {/* Add Other Addresses Buttons */}
+      <div className='flex gap-4'>
+        {!formData.other_addresses.billing && (
+          <Button
+            type='button'
+            label='Add Billing Address'
+            onClick={() =>
+              setOtherAddress('billing', {
+                address_id: null,
+                address_line1: '',
+                address_line2: '',
+                city_town_village: '',
+                pincode: '',
+                district_id: '',
+                state_id: '',
+              })
+            }
+          />
+        )}
+        {!formData.other_addresses.premises && (
+          <Button
+            type='button'
+            label='Add Premises Address'
+            onClick={() =>
+              setOtherAddress('premises', {
+                address_id: null,
+                address_line1: '',
+                address_line2: '',
+                city_town_village: '',
+                pincode: '',
+                district_id: '',
+                state_id: '',
+              })
+            }
+          />
+        )}
+      </div>
+
+      {/* Billing Address */}
+      {formData.other_addresses.billing && (
+        <Card>
+          <div className='mb-2 flex items-center justify-between border-b-2 border-gray-200 pb-2'>
+            <StrongText className='text-base font-semibold'>Billing Address</StrongText>
+            <button
+              type='button'
+              className='rounded bg-red-500 px-4 py-1 text-white hover:bg-red-600'
+              onClick={() => removeOtherAddress('billing')}
+            >
+              Remove
+            </button>
+          </div>
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+            <Input
+              label='Address Line1'
+              type='text'
+              value={formData.other_addresses.billing.address_line1}
+              setValue={(val) => updateOtherAddressField('billing', 'address_line1', val)}
+              required
+            />
+            <Input
+              label='Address Line2'
+              type='text'
+              value={formData.other_addresses.billing.address_line2}
+              setValue={(val) => updateOtherAddressField('billing', 'address_line2', val)}
+              required
+            />
+            <Input
+              label='City / Town / Village'
+              type='text'
+              value={formData.other_addresses.billing.city_town_village}
+              setValue={(val) => updateOtherAddressField('billing', 'city_town_village', val)}
+              required
+            />
+            <Input
+              label='Pincode'
+              type='number'
+              value={formData.other_addresses.billing.pincode}
+              setValue={(val) => updateOtherAddressField('billing', 'pincode', val)}
+              required
+            />
+            {districts && (
+              <SelectList
+                label='District'
+                list={districts}
+                dataKey='region_id'
+                displayKey='region_name'
+                setValue={(val) => updateOtherAddressField('billing', 'district_id', val)}
+                value={formData.other_addresses.billing.district_id}
+                required
+              />
+            )}
+            {states && (
+              <SelectList
+                label='State'
+                list={states}
+                dataKey='region_id'
+                displayKey='region_name'
+                setValue={(val) => updateOtherAddressField('billing', 'state_id', val)}
+                value={formData.other_addresses.billing.state_id}
+                required
+              />
+            )}
+          </div>
+        </Card>
+      )}
+
+      {/* Premises Address */}
+      {formData.other_addresses.premises && (
+        <Card>
+          <div className='mb-2 flex items-center justify-between border-b-2 border-gray-200 pb-2'>
+            <StrongText className='text-base font-semibold'>Premises Address</StrongText>
+            <button
+              type='button'
+              className='rounded bg-red-500 px-4 py-1 text-white hover:bg-red-600'
+              onClick={() => removeOtherAddress('premises')}
+            >
+              Remove
+            </button>
+          </div>
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+            <Input
+              label='Address Line1'
+              type='text'
+              value={formData.other_addresses.premises.address_line1}
+              setValue={(val) => updateOtherAddressField('premises', 'address_line1', val)}
+              required
+            />
+            <Input
+              label='Address Line2'
+              type='text'
+              value={formData.other_addresses.premises.address_line2}
+              setValue={(val) => updateOtherAddressField('premises', 'address_line2', val)}
+              required
+            />
+            <Input
+              label='City / Town / Village'
+              type='text'
+              value={formData.other_addresses.premises.city_town_village}
+              setValue={(val) => updateOtherAddressField('premises', 'city_town_village', val)}
+              required
+            />
+            <Input
+              label='Pincode'
+              type='number'
+              value={formData.other_addresses.premises.pincode}
+              setValue={(val) => updateOtherAddressField('premises', 'pincode', val)}
+              required
+            />
+            {districts && (
+              <SelectList
+                label='District'
+                list={districts}
+                dataKey='region_id'
+                displayKey='region_name'
+                setValue={(val) => updateOtherAddressField('premises', 'district_id', val)}
+                value={formData.other_addresses.premises.district_id}
+                required
+              />
+            )}
+            {states && (
+              <SelectList
+                label='State'
+                list={states}
+                dataKey='region_id'
+                displayKey='region_name'
+                setValue={(val) => updateOtherAddressField('premises', 'state_id', val)}
+                value={formData.other_addresses.premises.state_id}
+                required
+              />
+            )}
+          </div>
+        </Card>
+      )}
+
+      {/* Contact */}
       <Card>
         <div className='border-b-2 border-gray-200 py-3'>
           <StrongText className='text-base font-semibold'>Contact Information</StrongText>
@@ -254,68 +424,18 @@ export default function ConsumerFormComponent({
             />
             <Input
               label='Primary Phone'
-              type='number'
+              type='text'
               setValue={setFormValue('primary_phone')}
               value={formData.primary_phone}
               error={errors?.primary_phone}
             />
           </div>
-
-          <div className='flex justify-end px-4'>
-            <Button
-              type='button'
-              label='Add More Contact'
-              onClick={() => setShowContactModal(true)}
-            />
-          </div>
-
-          {/* Show added contacts */}
-          {formData.contact_folio.length > 0 && (
-            <div className='mt-4 border-t border-gray-200 p-4'>
-              <StrongText className='mb-2 block font-medium'>Additional Contacts</StrongText>
-              <div className='flex flex-col gap-2'>
-                {formData.contact_folio.map((contact: ContactFolio, index: number) => (
-                  <div
-                    key={index}
-                    className='flex justify-between rounded border border-gray-200 p-2 text-sm'
-                  >
-                    <div>
-                      <div>
-                        <strong>Email:</strong> {contact.email ?? '-'}
-                      </div>
-                      <div>
-                        <strong>Phone:</strong> {contact.phone ?? '-'}
-                      </div>
-                    </div>
-                    <button
-                      type='button'
-                      className='text-red-500 hover:text-red-700'
-                      onClick={() => handleRemoveContact(index)}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </Card>
-
-      {/* Modal */}
-      {showContactModal && (
-        <ConsumerContactFolioModal
-          setShowModal={setShowContactModal}
-          formData={formData}
-          setFormValue={setFormValue}
-        />
-      )}
-
       <div className='flex justify-end'>
         <Button
           type='submit'
           label='Submit'
-          disabled={loading}
         />
       </div>
     </form>

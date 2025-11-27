@@ -1,6 +1,6 @@
 import { consumerNavItems } from '@/components/Navbar/navitems'
-import { Connection, Meter, MeterReading, MeterReadingValue } from '@/interfaces/data_interfaces'
-import MainLayout from '@/layouts/main-layout'
+import { Connection, MeterReading, MeterReadingValue } from '@/interfaces/data_interfaces'
+import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 
@@ -54,9 +54,15 @@ export default function MeterReadingShowPage({
   })
 
   return (
-    <MainLayout
-      breadcrumb={breadcrumb}
-      navItems={consumerNavItems}
+    <ConnectionsLayout
+      connection={connection}
+      breadcrumbs={breadcrumb}
+      connectionsNavItems={consumerNavItems}
+      connectionId={connectionId}
+      heading='Meter Reading'
+      subHeading='Meter Reading'
+      value='meter-reading'
+      subTabValue='reading'
     >
       <div className='flex flex-col gap-6'>
         <StrongText>Consumer Number: {connection.consumer_number}</StrongText>
@@ -107,6 +113,6 @@ export default function MeterReadingShowPage({
           </div>
         ))}
       </div>
-    </MainLayout>
+    </ConnectionsLayout>
   )
 }

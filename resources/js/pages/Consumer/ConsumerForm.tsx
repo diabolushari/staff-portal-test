@@ -6,6 +6,7 @@ import { BreadcrumbItem } from '@/types'
 import { useMemo } from 'react'
 import StrongText from '@/typography/StrongText'
 import { consumerNavItems } from '@/components/Navbar/navitems'
+import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 
 type RegionOption = {
   region_id: number | string
@@ -50,11 +51,15 @@ export default function ConsumerForm({
   }, [connection, connectionId])
 
   return (
-    <MainLayout
-      breadcrumb={breadcrumbs}
-      navItems={consumerNavItems}
-      selectedItem='Connections'
-      selectedTopNav='Consumers'
+    <ConnectionsLayout
+      connection={connection}
+      breadcrumbs={breadcrumbs}
+      connectionsNavItems={consumerNavItems}
+      connectionId={connectionId}
+      heading='Consumer Details'
+      subHeading='Consumer Details'
+      value='connection'
+      subTabValue='consumer'
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header */}
@@ -76,6 +81,6 @@ export default function ConsumerForm({
         connection_id={connectionId}
         data={consumer}
       />
-    </MainLayout>
+    </ConnectionsLayout>
   )
 }
