@@ -1,7 +1,7 @@
 import ConnectionIndexSearch from '@/components/Connections/ConnectionIndexSearch'
 import ConnectionsList from '@/components/Connections/ConnectionsList'
 import { consumerNavItems } from '@/components/Navbar/navitems'
-import { Connection, Office } from '@/interfaces/data_interfaces'
+import { Connection, OfficeWithHierarchy } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Pagination from '@/ui/Pagination/Pagination'
@@ -16,7 +16,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface Props {
   connections: Paginator<Connection>
-  oldOffice?: Office
+  oldOffice?: OfficeWithHierarchy
   oldConsumerNumber?: string
   filters: {
     consumerNumber: string
@@ -34,6 +34,7 @@ export default function ConnectionsIndex({
       selectedItem='Connections'
       addBtnText='Connection'
       addBtnUrl={route('connections.create')}
+      selectedTopNav='Consumers'
     >
       {/* <ListSearch
         title='Connections Search'

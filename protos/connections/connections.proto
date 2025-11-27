@@ -125,6 +125,7 @@ message ListConnectionsRequest {
   int32 page = 1;
   int32 page_size = 2;
   optional string consumer_number = 3;
+  optional int32 office_code = 4;
 }
 message ListConnectionsResponse {
   repeated ConnectionMessage items = 1;

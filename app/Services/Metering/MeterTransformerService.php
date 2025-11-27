@@ -31,6 +31,7 @@ class MeterTransformerService
 
     public function createTransformer(MeterTransformerFormRequest $request): GrpcServiceResponse
     {
+
         $transformer = new CreateMeterTransformerMessage;
         $transformer->setOwnershipTypeId($request->ownership_type_id);
         $transformer->setAccuracyClassId($request->accuracy_class_id);
@@ -47,7 +48,7 @@ class MeterTransformerService
             $transformer->setManufactureDate($timestamp);
         }
 
-        $transformer->setCreatedBy($request->created_by);
+        // $transformer->setCreatedBy($request->created_by);
 
         // Wrap in Create request
         $request = new CreateMeterTransformerRequest;

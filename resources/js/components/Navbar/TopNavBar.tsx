@@ -3,7 +3,10 @@ import { BellIcon, HelpCircle, Search as SearchIcon, SettingsIcon, UserIcon } fr
 import { CustomNavbar } from './CustomNavbar'
 import { MobileNavSheet } from './MobileNavSheet'
 
-export default function TopNavBar() {
+interface Props {
+  selectedTopNav?: string
+}
+export default function TopNavBar({ selectedTopNav }: Props) {
   usePage() // consumed to trigger re-render on navigation (no direct usage)
 
   return (
@@ -17,7 +20,7 @@ export default function TopNavBar() {
       </div>
       {/* Desktop nav */}
       <div className='hidden flex-1 items-stretch xl:flex'>
-        <CustomNavbar />
+        <CustomNavbar selectedTopNav={selectedTopNav} />
       </div>
       <div className='ml-auto flex items-center gap-3'>
         {/* Hamburger on < xl */}

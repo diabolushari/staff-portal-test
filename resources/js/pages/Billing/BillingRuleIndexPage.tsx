@@ -25,6 +25,7 @@ export default function BillingRuleIndexPage({ billingRules, filters }: PageProp
       selectedItem='Billing Rule'
       addBtnText='Billing Rule'
       addBtnUrl='/billing-rules/create'
+      selectedTopNav='Billing'
     >
       <ListSearch
         title='Billing Rule'

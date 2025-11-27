@@ -1,5 +1,5 @@
 import MeterTransformerListItem from '@/components/Meter/MeterTransformer/MeterTransformerListItem'
-import { meterNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems, meterNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import CardHeader from '@/ui/Card/CardHeader'
 import DeleteModal from '@/ui/Modal/DeleteModal'
@@ -33,7 +33,8 @@ export default function MeterTransformerIndex({ filters, transformers }: Readonl
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={meterNavItems}
+      navItems={meteringBillingNavItems}
+      selectedItem='Meter CTPTs'
       addBtnText='Meter CTPT'
       addBtnUrl={route('meter-ctpt.create')}
     >

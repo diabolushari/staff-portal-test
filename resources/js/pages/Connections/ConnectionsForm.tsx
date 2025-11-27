@@ -77,6 +77,7 @@ export default function ConnectionsForm({
       breadcrumb={getBreadcrumb(connection)}
       navItems={consumerNavItems}
       selectedItem='Connections'
+      selectedTopNav='Consumers'
     >
       <div>
         <TabGroup tabs={tabs}>

@@ -56,6 +56,7 @@ export default function MeteringTimezonesIndexPage({ timezones }: Props) {
       selectedItem='Metering Timezones'
       addBtnText='Metering Timezone'
       addBtnUrl={route('metering-timezone.create')}
+      selectedTopNav='Consumers'
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <ListSearch

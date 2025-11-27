@@ -121,6 +121,7 @@ export default function MeteringTimezoneFormPage({
       breadcrumb={breadcrumbs}
       navItems={meteringBillingNavItems}
       selectedItem='Metering Timezones'
+      selectedTopNav='Consumers'
     >
       <div className='container mx-auto py-8'>
         {/* Header */}

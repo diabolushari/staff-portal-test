@@ -29,6 +29,7 @@ interface Properties<
   linkText?: string
   redirectLink?: string
   placeholder?: string
+  className?: string
 }
 
 const ComboBox = <
@@ -50,6 +51,7 @@ const ComboBox = <
   linkText,
   redirectLink,
   placeholder,
+  className,
 }: Properties<K, G, U, V, T>) => {
   const [textFieldValue, setTextFieldValue] = useState<string>('')
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1)
@@ -88,6 +90,7 @@ const ComboBox = <
   const handleSelection = (item: T | null) => {
     setValue(item)
     setList([])
+    setHighlightedIndex(-1)
   }
 
   // navigate through list with arrow keys
@@ -172,10 +175,11 @@ const ComboBox = <
               placeholder={placeholder}
               onChange={(event) => setTextFieldValue(event.target.value)}
               className={cn(
-                'w-full bg-white px-3 py-2 rounded border border-gray-200 text-sm font-normal text-black',
-                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0078d4] focus-visible:border-[#0078d4]',
-                'disabled:bg-gray-50 disabled:text-black disabled:cursor-not-allowed disabled:opacity-100',
-                'placeholder:text-gray-400'
+                'w-full rounded border border-gray-200 bg-white px-3 py-2 text-sm font-normal text-black',
+                'focus-visible:border-[#0078d4] focus-visible:ring-1 focus-visible:ring-[#0078d4] focus-visible:outline-none',
+                'disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-black disabled:opacity-100',
+                'placeholder:text-gray-400',
+                className
               )}
               disabled={disabled}
               readOnly={disabled}
