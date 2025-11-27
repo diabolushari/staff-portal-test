@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\GrpcConverters\BillingGroup;
 
+use App\GrpcConverters\Connection\ConnectionProtoConverter;
 use Proto\BillingGroup\BillingGroupMessage;
 
 class BillingGroupProtoConvertor
@@ -47,16 +48,8 @@ class BillingGroupProtoConvertor
         $connections = [];
         foreach ($g->getConnections() as $conn) {
             $connections[] = [
-                'billing_group_connection_rel_id' => $conn->getBillingGroupConnectionRelId(),
                 'connection_id' => $conn->getConnectionId(),
-                'consumer_number' => $conn->getConsumerNumber(),
-                'consumer_name' => $conn->getConsumerName(),
-                'connection_type' => $conn->getConnectionType(),
-                'purpose' => $conn->getPurpose(),
-                'bill_amount' => $conn->getBillAmount(),
-                'bill_date' => $conn->getBillDate(),
-                'active_from' => $conn->getActiveFrom(),
-                'active_till' => $conn->getActiveTill(),
+                'connection' => ConnectionProtoConverter::convertToArray($conn->getConnection()),
             ];
         }
 

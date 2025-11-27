@@ -4,25 +4,24 @@ import { BreadcrumbItem } from '@/types'
 import { useEffect, useState } from 'react'
 import { BillingGroup } from '@/interfaces/data_interfaces'
 import FormCard from '@/ui/Card/FormCard'
-import Input from '@/ui/form/Input'
 import Button from '@/ui/button/Button'
 import useCustomForm from '@/hooks/useCustomForm'
 import ComboBox from '@/ui/form/ComboBox'
 import { Connection } from '@/interfaces/data_interfaces'
 import useInertiaPost from '@/hooks/useInertiaPost'
+import { Card } from '@/components/ui/card'
+import CheckBox from '@/ui/form/CheckBox'
+import DeleteButton from '@/ui/button/DeleteButton'
+import Input from '@/ui/form/Input'
+import SelectList from '@/ui/form/SelectList'
 
 export interface BillingGroupConnectionRelForm {
   billing_group_id: number
   connection_id: number
+  status: string
 }
 
-export default function BillingGroupShowPage({
-  billingGroup,
-  connectionData,
-}: {
-  billingGroup: BillingGroup
-  connectionData?: Connection
-}) {
+export default function BillingGroupShowPage({ billingGroup }: { billingGroup: BillingGroup }) {
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Billing Groups', href: route('billing-groups.index') },
     {
@@ -43,12 +42,10 @@ export default function BillingGroupShowPage({
 
   const [addedConnection, setAddedConnection] = useState<Connection | null>(null)
 
-  useEffect(() => {
-    if (connectionData) {
-      setAddedConnection(connectionData)
-    }
-  }, [connectionData])
-
+  const { formData: searchFormData, setFormValue: setSearchFormValue } = useCustomForm({
+    search: '',
+    bill_year_month: '',
+  })
   const { formData, setFormValue } = useCustomForm<BillingGroupConnectionRelForm>(payload)
   const { post, errors, loading } = useInertiaPost(route('billing-group-connection-rel.store'))
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -58,7 +55,10 @@ export default function BillingGroupShowPage({
   useEffect(() => {
     setFormValue('connection_id')(selectedConsumer?.connection_id ?? 0)
   }, [selectedConsumer, setSelectedConsumer])
+  console.log(billingGroup)
 
+  const handleDelete = (connectionId: number) => {}
+  const handleBillInitialize = () => {}
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -91,38 +91,98 @@ export default function BillingGroupShowPage({
           />
         </div>
       </form>
-      {billingGroup.connections && billingGroup.connections.length > 0 && (
+      <div className='grid grid-cols-2 gap-4'>
+        <form
+          action=''
+          className='flex gap-4'
+        >
+          <div>
+            <Input
+              label='Consumer Number/Name/Type/Purpose'
+              value={searchFormData.search}
+              setValue={setSearchFormValue('search')}
+            />
+          </div>
+          <div>
+            <Input
+              label='Bill Year Month'
+              value={searchFormData.bill_year_month}
+              setValue={setSearchFormValue('bill_year_month')}
+            />
+          </div>
+          <div className='mt-6'>
+            <Button
+              label='Search'
+              type='submit'
+            />
+          </div>
+        </form>
+        <div className='mt-6 flex justify-end gap-2'>
+          <SelectList
+            list={[
+              { value: 'All', label: 'All' },
+              { value: 'Connected', label: 'Connected' },
+              { value: 'Disconnected', label: 'Disconnected' },
+            ]}
+            value='All'
+            setValue={(value: string) => setSearchFormValue('status')(value)}
+            dataKey='value'
+            displayKey='label'
+          />
+          <div>
+            <Button
+              onClick={handleBillInitialize}
+              label='Initialize Bill'
+            />
+          </div>
+        </div>
+      </div>
+      {billingGroup?.connections && billingGroup?.connections?.length > 0 && (
         <div className='mt-6'>
           <h2 className='mb-4 text-xl font-semibold'>Connected Consumers</h2>
 
-          {billingGroup.connections.map((conn: Connection) => (
-            <div
-              key={conn.connection_id}
-              className='mb-4 rounded-xl border bg-white p-4 shadow-sm'
-            >
-              <div className='grid grid-cols-2 gap-4'>
-                <div>
-                  <h4 className='text-sm text-gray-500'>Consumer Number</h4>
-                  <p className='text-lg font-semibold'>{conn.consumer_number}</p>
-                </div>
+          {billingGroup?.connections?.map(
+            (conn: { connection_id: number; connection: Connection }) => (
+              <div
+                key={conn.connection_id}
+                className='mb-4 rounded-xl border bg-white p-4 shadow-sm'
+              >
+                <div className='grid grid-cols-2 gap-4'>
+                  <div className='flex flex-col gap-4'>
+                    <Card className='grid grid-cols-2 justify-between gap-4 p-4'>
+                      <div>
+                        <h4 className='text-sm text-gray-500'>Consumer Number</h4>
+                        <p className='text-lg font-semibold'>{conn.connection.consumer_number}</p>
+                      </div>
 
-                <div>
-                  <h4 className='text-sm text-gray-500'>Type</h4>
-                  <p className='text-lg'>{conn.connection_type}</p>
-                </div>
+                      <div>
+                        <h4 className='text-sm text-gray-500'>Type</h4>
+                        <p className='text-lg'>{conn.connection.connection_type.parameter_value}</p>
+                      </div>
 
-                <div>
-                  <h4 className='text-sm text-gray-500'>Name</h4>
-                  <p className='text-lg'>{conn.consumer_name}</p>
-                </div>
+                      <div>
+                        <h4 className='text-sm text-gray-500'>Name</h4>
+                        <p className='text-lg'>Name</p>
+                      </div>
 
-                <div>
-                  <h4 className='text-sm text-gray-500'>Purpose</h4>
-                  <p className='text-lg'>{conn.purpose}</p>
+                      <div>
+                        <h4 className='text-sm text-gray-500'>Purpose</h4>
+                        <p className='text-lg'>{conn.connection.primary_purpose.parameter_value}</p>
+                      </div>
+                    </Card>
+                  </div>
+                  <div className='flex items-center justify-end gap-6'>
+                    <DeleteButton onClick={() => handleDelete(conn.connection_id)} />
+                    <CheckBox
+                      label=''
+                      toggleValue={() => conn.connection_id}
+                      value={conn.connection_id ? true : false}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          )}
         </div>
       )}
     </MainLayout>
