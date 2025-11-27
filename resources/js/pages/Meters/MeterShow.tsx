@@ -1,6 +1,6 @@
 import MeterTimezoneCard from '@/components/Meter/MeterTimezoneCard'
 import MeterTransformerTab from '@/components/Meter/MeterTransformer/MeterTransfomerTab'
-import { meterNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems, meterNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
 import { Label } from '@/components/ui/label'
@@ -25,10 +25,6 @@ export const MeterTabs = (meterId: number, ctptId?: number, relId?: number) => [
     value: 'details',
     label: 'Meter Details',
     href: route('meters.show', meterId),
-  },
-  {
-    value: 'meter-ctpt',
-    label: 'Meter CTPT',
   },
 ]
 
@@ -86,7 +82,8 @@ export default function MeterShow({
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={meterNavItems}
+      navItems={meteringBillingNavItems}
+      selectedItem='Meter'
     >
       <TabGroup tabs={tabs}>
         <TabsContent value='details'>
