@@ -27,7 +27,7 @@ class BillingGroupConnectionRelController
     {
         $response = $this->billingGroupConnectionRelService->createBillingGroupConnectionRel($request);
 
-        if (!$response->success) {
+        if (! $response->success) {
             return back()->withErrors($response->errors);
         }
 
@@ -38,12 +38,19 @@ class BillingGroupConnectionRelController
     {
         $response = $this->billingGroupConnectionRelService->getBillingGroupConnectionRel($billingGroupId);
 
-        if (!$response->success) {
+        if (! $response->success) {
             return back()->withErrors($response->errors);
         }
 
         return Inertia::render('BillingGroupConnectionRel/BillingGroupConnectionRelShowPage', [
             'billingGroupConnectionRel' => $response->data,
         ]);
+    }
+
+    public function destroy(int $versionId): RedirectResponse
+    {
+        $this->billingGroupConnectionRelService->deleteBillingGroupConnectionRel($versionId);
+
+        return back()->with('success', 'Connection removed from Billing Group');
     }
 }

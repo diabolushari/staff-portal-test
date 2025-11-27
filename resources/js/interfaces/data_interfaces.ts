@@ -570,8 +570,11 @@ export interface BillingGroup {
     updated_by?: number;
     created_at?: string;
     updated_at?: string;
-    connections: {
-      connection_id: number;
-      connection: Connection;
-    }[]
+    connections: BillingGroupConnection[]
+  
+}
+export interface BillingGroupConnection {
+  version_id: number;
+  connection_id: number;
+  connection: Connection;
 }

@@ -5,9 +5,10 @@ namespace App\Http\Controllers\BillingGroup;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BillingGroup\BillingGroupFormRequest;
 use App\Services\BillingGroup\BillingGroupService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\RedirectResponse;
 
 class BillingGroupController extends Controller
 {
@@ -44,8 +45,9 @@ class BillingGroupController extends Controller
         return redirect()->route('billing-groups.index');
     }
 
-    public function show(int $id): Response
+    public function show(int $id, Request $request): Response
     {
+        $search = $request->get('search');
         $response = $this->billingGroupService->getBillingGroup($id);
 
         return Inertia::render('BillingGroup/BillingGroupShowPage', [
