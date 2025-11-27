@@ -14,6 +14,8 @@ import CheckBox from '@/ui/form/CheckBox'
 import DeleteButton from '@/ui/button/DeleteButton'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
+import BillInitializeModal from '@/components/Billing/BillingGroup/BillInitializeModal'
+import BillingGroupAddConnection from './BillingGroupAddConnection'
 
 export interface BillingGroupConnectionRelForm {
   billing_group_id: number
@@ -33,64 +35,39 @@ export default function BillingGroupShowPage({ billingGroup }: { billingGroup: B
     },
   ]
 
-  const [selectedConsumer, setSelectedConsumer] = useState<Connection | null>(null)
-
-  const payload = {
-    billing_group_id: billingGroup.billing_group_id,
-    connection_id: selectedConsumer?.connection_id ?? 0,
-  }
-
   const [addedConnection, setAddedConnection] = useState<Connection | null>(null)
+  const [showInitializeModal, setShowInitializeModal] = useState(false)
+  const [addConnectionComponent, setAddConnectionComponent] = useState(false)
 
   const { formData: searchFormData, setFormValue: setSearchFormValue } = useCustomForm({
     search: '',
     bill_year_month: '',
+    selectedConnection: [],
   })
-  const { formData, setFormValue } = useCustomForm<BillingGroupConnectionRelForm>(payload)
-  const { post, errors, loading } = useInertiaPost(route('billing-group-connection-rel.store'))
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    post(formData)
-  }
-  useEffect(() => {
-    setFormValue('connection_id')(selectedConsumer?.connection_id ?? 0)
-  }, [selectedConsumer, setSelectedConsumer])
-  console.log(billingGroup)
 
   const handleDelete = (connectionId: number) => {}
-  const handleBillInitialize = () => {}
+  const handleBillInitialize = () => {
+    setShowInitializeModal(true)
+  }
+  const handleSelectConnection = (connectionId: number) => {
+    const updatedConnections = [...searchFormData.selectedConnection]
+    if (updatedConnections.includes(connectionId)) {
+      updatedConnections.splice(updatedConnections.indexOf(connectionId), 1)
+    } else {
+      updatedConnections.push(connectionId)
+    }
+    setSearchFormValue('selectedConnection')(updatedConnections)
+  }
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
       leftBarTitle='Billing Group'
       navItems={billingNavItems}
       title={billingGroup.name}
-      addBtnText='Billing Group'
-      addBtnUrl='/billing-groups/show'
+      addBtnText={addConnectionComponent ? 'Close' : 'Member'}
+      addBtnClick={() => setAddConnectionComponent(!addConnectionComponent)}
     >
-      <form
-        className='flex flex-col gap-6'
-        onSubmit={handleSubmit}
-      >
-        <FormCard title='Search & Add Members'>
-          <ComboBox
-            label='Consumer Number'
-            url={`/api/consumer-number?q=`}
-            setValue={setSelectedConsumer}
-            value={selectedConsumer}
-            dataKey='connection_id'
-            displayKey='consumer_number'
-            displayValue2='connection_type_id'
-            placeholder='Enter Consumer Number'
-          />
-        </FormCard>
-        <div className='flex justify-end'>
-          <Button
-            label='Submit'
-            type='submit'
-          />
-        </div>
-      </form>
+      {addConnectionComponent && <BillingGroupAddConnection billingGroup={billingGroup} />}
       <div className='grid grid-cols-2 gap-4'>
         <form
           action=''
@@ -103,21 +80,21 @@ export default function BillingGroupShowPage({ billingGroup }: { billingGroup: B
               setValue={setSearchFormValue('search')}
             />
           </div>
-          <div>
+          <div className='mt-6'>
             <Input
               label='Bill Year Month'
               value={searchFormData.bill_year_month}
               setValue={setSearchFormValue('bill_year_month')}
             />
           </div>
-          <div className='mt-6'>
+          <div className='mt-12'>
             <Button
               label='Search'
               type='submit'
             />
           </div>
         </form>
-        <div className='mt-6 flex justify-end gap-2'>
+        <div className='mt-12 flex justify-end gap-2'>
           <SelectList
             list={[
               { value: 'All', label: 'All' },
@@ -175,8 +152,8 @@ export default function BillingGroupShowPage({ billingGroup }: { billingGroup: B
                     <DeleteButton onClick={() => handleDelete(conn.connection_id)} />
                     <CheckBox
                       label=''
-                      toggleValue={() => conn.connection_id}
-                      value={conn.connection_id ? true : false}
+                      toggleValue={() => handleSelectConnection(conn.connection_id)}
+                      value={searchFormData?.selectedConnection?.includes(conn?.connection_id)}
                     />
                   </div>
                 </div>
@@ -184,6 +161,13 @@ export default function BillingGroupShowPage({ billingGroup }: { billingGroup: B
             )
           )}
         </div>
+      )}
+      {showInitializeModal && (
+        <BillInitializeModal
+          setShowModal={setShowInitializeModal}
+          showModal={showInitializeModal}
+          selectedConnections={searchFormData.selectedConnection}
+        />
       )}
     </MainLayout>
   )
