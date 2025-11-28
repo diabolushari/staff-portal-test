@@ -28,7 +28,7 @@ export default function MeterReadingTab({
         {meterReadings && meterReadings.length > 0 ? (
           meterReadings?.map((meterReadingData) => {
             const { meterReading, relationship } = meterReadingData
-            return <div>detials here</div>
+            return <div>details here</div>
           })
         ) : (
           <div className='p-8 text-center text-slate-500'>

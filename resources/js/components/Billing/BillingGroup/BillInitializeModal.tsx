@@ -1,8 +1,10 @@
 import useCustomForm from '@/hooks/useCustomForm'
+import useInertiaPost from '@/hooks/useInertiaPost'
 import Button from '@/ui/button/Button'
 import DatePicker from '@/ui/form/DatePicker'
 import MonthPicker from '@/ui/form/MonthPicker'
 import Modal from '@/ui/Modal/Modal'
+import dayjs from 'dayjs'
 
 interface BillInitializeModalProps {
   setShowModal: (show: boolean) => void
@@ -16,16 +18,54 @@ export default function BillInitializeModal({
   selectedConnections,
 }: BillInitializeModalProps) {
   const { formData, setFormValue } = useCustomForm({
-    connections: selectedConnections,
-    reading_month: '',
-    bill_month: '',
+    connection_ids: selectedConnections,
+    bill_month_year: '',
+    reading_month_year: '',
     bill_date: '',
     due_date: '',
     dc_date: '',
   })
+  const addWorkingDays = (startDate: string | dayjs.Dayjs, days: number) => {
+    let date = dayjs(startDate)
+    let added = 0
+
+    while (added < days) {
+      date = date.add(1, 'day')
+      const day = date.day() // 0 = Sunday, 6 = Saturday
+      if (day !== 0 && day !== 6) {
+        added++
+      }
+    }
+
+    return date
+  }
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     console.log(formData)
+  }
+  const handleBillDateChange = (value: string) => {
+    setFormValue('bill_date')(value)
+
+    if (!value) return
+
+    const billDate = dayjs(value)
+
+    // Add 7 business days for Due Date
+    const dueDate = addWorkingDays(billDate, 7).format('YYYY-MM-DD')
+
+    // Add 15 business days from Due Date for DC Date
+    const dcDate = addWorkingDays(dueDate, 15).format('YYYY-MM-DD')
+
+    setFormValue('due_date')(dueDate)
+    setFormValue('dc_date')(dcDate)
+  }
+  const { post, loading, errors } = useInertiaPost(route('billing-group.initialize-bill'))
+
+  const handleSubmitBill = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    console.log(formData)
+    post(formData)
   }
   return (
     <Modal
@@ -36,22 +76,22 @@ export default function BillInitializeModal({
       <form
         action=''
         className='flex flex-col gap-4'
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmitBill}
       >
         <MonthPicker
           label='Reading Year and Month'
-          value={formData.reading_month}
-          setValue={setFormValue('reading_month')}
+          value={formData.reading_month_year}
+          setValue={setFormValue('reading_month_year')}
         />
         <MonthPicker
           label='Bill Year and Month'
-          value={formData.bill_month}
-          setValue={setFormValue('bill_month')}
+          value={formData.bill_month_year}
+          setValue={setFormValue('bill_month_year')}
         />
         <DatePicker
           label='Bill Date'
           value={formData.bill_date}
-          setValue={setFormValue('bill_date')}
+          setValue={handleBillDateChange}
         />
         <DatePicker
           label='Due Date'

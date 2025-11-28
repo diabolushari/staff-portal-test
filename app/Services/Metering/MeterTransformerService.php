@@ -47,8 +47,6 @@ class MeterTransformerService
             $transformer->setManufactureDate($timestamp);
         }
 
-        $transformer->setCreatedBy($request->created_by);
-
         // Wrap in Create request
         $request = new CreateMeterTransformerRequest;
         $request->setTransformer($transformer);

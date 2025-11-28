@@ -58,6 +58,12 @@ export default function BillingGroupShowPage({ billingGroup }: { billingGroup: B
   const handleBillInitialize = () => {
     setShowInitializeModal(true)
   }
+  const handleSelectConnection = (connectionId: number) => {
+    const updatedSelectedConnections = formData.selectedConnections.includes(connectionId)
+      ? formData.selectedConnections.filter((id) => id !== connectionId)
+      : [...formData.selectedConnections, connectionId]
+    setFormValue('selectedConnections')(updatedSelectedConnections)
+  }
 
   return (
     <MainLayout
@@ -161,7 +167,7 @@ export default function BillingGroupShowPage({ billingGroup }: { billingGroup: B
         <BillInitializeModal
           setShowModal={setShowInitializeModal}
           showModal={showInitializeModal}
-          selectedConnections={searchFormData.selectedConnection}
+          selectedConnections={formData.selectedConnections}
         />
       )}
     </MainLayout>
