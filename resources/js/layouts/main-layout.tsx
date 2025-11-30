@@ -43,6 +43,12 @@ export default function MainLayout({
     if (flash?.error) {
       toast.error(flash.error)
     }
+    if (flash?.debug) {
+      console.log(flash.debug)
+      flash.debug.forEach((debug) => {
+        toast.info(debug)
+      })
+    }
   }, [flash])
 
   return (

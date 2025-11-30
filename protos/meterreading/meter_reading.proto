@@ -80,10 +80,10 @@ message MeterReadingMessage {
 
   int32 created_by = 26;
   int32 updated_by = 27;
-  bool is_active = 28;
-  repeated ReadingValueMessage values = 29;
+  int32 deleted_by = 28;
+  bool is_active = 29;
+  repeated ReadingValueMessage values = 30;
 }
-
 // ----------- REQUEST/RESPONSE MESSAGES ----------
 
 message CtptHealthFormMessage {
@@ -194,8 +194,8 @@ message ListMeterReadingPaginatedRequest {
   optional string search = 2;
   int32 page_number = 3;
   int32 page_size = 4;
-  optional string sort_by = 5;       
-  optional string sort_direction = 6; 
+  optional string sort_by = 5;
+  optional string sort_direction = 6;
 }
 
 message ListMeterReadingPaginatedResponse {

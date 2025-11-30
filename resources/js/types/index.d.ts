@@ -50,6 +50,7 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
   flash: {
     message: string | null
     error: string | null
+    debug: string[] | null
   }
   ziggy: Config & { location: string }
 }

@@ -26,13 +26,14 @@ class GetMeterReadingWithConnectionController extends Controller
         $connection = $this->connectionService->getConnection($connectionId);
         $meterReadingResponse = $this->meterReadingService->listPaginatedMeterReadings($pageNumber, $pageSize, $search, $connectionId);
         $paginated = null;
+
         if (! empty($meterReadingResponse->data['data'])) {
             $paginated = new LengthAwarePaginator(
-                $meterReadingResponse->data['data'],                // items for this page
-                $meterReadingResponse->data['total_count'],            // total items count
-                $meterReadingResponse->data['page_size'],              // items per page
-                $meterReadingResponse->data['page_number'],            // current page
-                ['path' => request()->url()]              // so pagination links work properly
+                $meterReadingResponse->data['data'],
+                $meterReadingResponse->data['total_count'],
+                $meterReadingResponse->data['page_size'],
+                $meterReadingResponse->data['page_number'],
+                ['path' => request()->url()]
             );
         }
 
@@ -41,6 +42,5 @@ class GetMeterReadingWithConnectionController extends Controller
             'meters' => $connection->data['meters'] ?? [],
             'meterReadings' => $paginated,
         ]);
-
     }
 }
