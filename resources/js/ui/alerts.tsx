@@ -30,6 +30,21 @@ export function showError(message?: string | null): void {
   })
 }
 
+export function showInfo(message?: string | null): void {
+  if (message == null) {
+    return
+  }
+  toast.info(message, {
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: 'dark',
+  })
+}
+
 export function getHttpError(error: any): string | null {
   if (error == null || error.response == null || error.response.data == null) {
     return null

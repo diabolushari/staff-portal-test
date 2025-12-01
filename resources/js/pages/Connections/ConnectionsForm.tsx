@@ -1,12 +1,12 @@
-import MainLayout from '@/layouts/main-layout'
-import { BreadcrumbItem } from '@/types'
 import ConnectionForm from '@/components/Connections/ConnectionForm'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import MainLayout from '@/layouts/main-layout'
+import { BreadcrumbItem } from '@/types'
 
-import { TabGroup } from '@/ui/Tabs/TabGroup'
-import { TabsContent } from '@/components/ui/tabs'
 import { consumerNavItems } from '@/components/Navbar/navitems'
+import { TabsContent } from '@/components/ui/tabs'
 import { Connection } from '@/interfaces/data_interfaces'
+import { TabGroup } from '@/ui/Tabs/TabGroup'
 
 const getBreadcrumb = (connection?: Connection | null): BreadcrumbItem[] => {
   if (!connection) {
@@ -64,7 +64,7 @@ export default function ConnectionsForm({
   meteringTypes,
   renewableTypes,
   connection,
-}: Props) {
+}: Readonly<Props>) {
   const tabs = [
     {
       value: 'connection',
