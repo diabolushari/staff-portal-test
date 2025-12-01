@@ -31,7 +31,7 @@ class ConnectionService
         );
     }
 
-    public function listConnections(?string $consumerNumber): GrpcServiceResponse
+    public function listConnections(?string $consumerNumber, ?int $officeCode): GrpcServiceResponse
     {
         $request = new ListConnectionsRequest;
 
@@ -39,6 +39,9 @@ class ConnectionService
         $request->setPageSize(10);
         if ($consumerNumber) {
             $request->setConsumerNumber($consumerNumber);
+        }
+        if ($officeCode) {
+            $request->setOfficeCode($officeCode);
         }
 
         [$response, $status] = $this->client->ListConnections($request)->wait();

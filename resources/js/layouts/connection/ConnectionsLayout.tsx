@@ -12,7 +12,7 @@ interface ConnectionsLayoutProps {
   children: React.ReactNode
   breadcrumbs: BreadcrumbItem[]
   connectionsNavItems: navItem[]
-  connection?: Connection
+  connection?: Connection | null
   connectionId: number
   value: string
   subTabValue?: string
@@ -115,6 +115,7 @@ export default function ConnectionsLayout({
     <MainLayout
       navItems={connectionsNavItems}
       selectedItem='Connections'
+      selectedTopNav='Consumers'
     >
       <NestedTabGroup
         tabs={connectionTabs(connection)}

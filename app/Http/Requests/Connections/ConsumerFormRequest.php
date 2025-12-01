@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Connections;
 
 use Spatie\LaravelData\Attributes\MapName;
+use Spatie\LaravelData\Attributes\Validation\Required;
+use Spatie\LaravelData\Attributes\Validation\Rule;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
@@ -26,7 +28,9 @@ class ConsumerFormRequest extends Data
         public int $pincode,
         public int $districtId,
         public int $stateId,
+        #[Required(), Rule('email')]
         public string $primaryEmail,
+        #[Required, Rule('regex:/^(\\+91|91)?[6-9][0-9]{9}$/')]
         public string $primaryPhone,
         /** @var string[]|null */
         public ?array $otherAddresses,

@@ -6,6 +6,7 @@ import { useState } from 'react'
 import ConnectionPartiesFormModal from './ConnectionPartiesFormModal'
 import DeleteButton from '@/ui/button/DeleteButton'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import { getDisplayDate } from '@/utils'
 
 interface Props {
   connectionParties: ConnectionPartyMapping[]
@@ -77,9 +78,10 @@ export default function ConnectionPartiesList({
                   <div className='flex items-center gap-[6px]'>
                     <Calendar className='text-dark-gray h-3.5 w-3.5' />
                     <p className='font-inter text-dark-gray text-sm'>
-                      Active From: {item.effective_start?.date?.split(' ')[0]}
+                      {/* Active From: {item.effective_start?.date?.split(' ')[0]} */}
+                      Active From: {getDisplayDate(item.effective_start?.date)}
                       {'  →  '}
-                      {item.effective_end?.date?.split(' ')[0] ?? 'Present'}
+                      {getDisplayDate(item.effective_end?.date) ?? 'Present'}
                     </p>
                   </div>
 

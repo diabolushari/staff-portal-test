@@ -1,4 +1,4 @@
-import { meterNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems, meterNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { ParameterValues } from '@/interfaces/parameter_types'
@@ -109,7 +109,8 @@ export default function MeterTransformerForm({
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={meterNavItems}
+      navItems={meteringBillingNavItems}
+      selectedItem='Meter CTPTs'
       title={isEditing ? 'Edit CTPT' : 'Create CTPT'}
     >
       <form

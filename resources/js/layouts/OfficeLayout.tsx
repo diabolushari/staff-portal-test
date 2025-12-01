@@ -18,6 +18,7 @@ interface OfficeLayoutProps {
   heading: string
   subHeading: string
   onEdit?: () => void
+  selectedItem?: string
 }
 
 /* -------------------------
@@ -36,10 +37,10 @@ const officeTabs = (office: Office) => [
     href: route('offices.billings', office.office_code),
   },
 
-  // NO href → rendered inside layout
-  { value: 'substations', label: 'Substations' },
-  { value: 'consumers', label: 'Consumers' },
-  { value: 'activity', label: 'Activity' },
+  // // NO href → rendered inside layout
+  // { value: 'substations', label: 'Substations' },
+  // { value: 'consumers', label: 'Consumers' },
+  // { value: 'activity', label: 'Activity' },
 ]
 
 /* -------------------------
@@ -98,6 +99,7 @@ export default function OfficeLayout({
   heading,
   subHeading,
   onEdit,
+  selectedItem,
 }: Readonly<OfficeLayoutProps>) {
   const tabs = officeTabs(office)
 
@@ -105,6 +107,7 @@ export default function OfficeLayout({
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={officeNavItems}
+      selectedItem={selectedItem}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* HEADER */}

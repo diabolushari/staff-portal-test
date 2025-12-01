@@ -3,6 +3,7 @@
 namespace App\Services\Grpc;
 
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class GrpcErrorService
@@ -12,7 +13,7 @@ class GrpcErrorService
     /**
      * Handle gRPC errors and return appropriate redirect response
      *
-     * @param  \stdClass  $status  The gRPC status object
+     * @param  object{code: int, details?: string}  $status  The gRPC status object
      */
     public static function handleErrorResponse($status, ?RedirectResponse $redirectResponse = null, bool $flashError = true): ?RedirectResponse
     {
@@ -29,6 +30,20 @@ class GrpcErrorService
             }
         }
 
+        if (in_array($status->code, [13])) {
+            $errors = GrpcErrorHandler::extractError($status);
+            /** @var string[] $debug */
+            $debug = [];
+            foreach ($errors as $error) {
+                if ($error['type'] === 'ErrorInfo' && isset($error['metadata'])) {
+                    $debug[] = $error['metadata']['operation'] . ': ' . $error['metadata']['cause'];
+                    $debug[] = $error['metadata']['cause_message'];
+                }
+            }
+            session()->flash('debug', $debug);
+            Log::info($errors);
+        }
+
         // For non-validation errors, flash error message to session
         $errorMessage = self::getErrorMessage($status);
 
@@ -42,7 +57,7 @@ class GrpcErrorService
     /**
      * Convert extracted gRPC errors to validation error format
      *
-     * @param  object  $status  The gRPC status object
+     * @param  object{code: int, details?: string}  $status  The gRPC status object
      * @return array<string, string> Associative array of field => error message
      */
     public static function convertToValidationError($status): array

@@ -1,4 +1,4 @@
-import { metadataNavItems, settingsOffices } from '@/components/Navbar/navitems'
+import { metadataNavItems } from '@/components/Navbar/navitems'
 import { Office } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
@@ -7,7 +7,6 @@ import OfficeList from '@/ui/List/OfficeList'
 import Pagination from '@/ui/Pagination/Pagination'
 import ListSearch from '@/ui/Search/ListSearch'
 import { Paginator } from '@/ui/ui_interfaces'
-import { useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -26,8 +25,6 @@ interface Props {
 }
 
 export default function OfficeIndex({ offices, office_types, filters }: Readonly<Props>) {
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [editRow, setEditRow] = useState<Office | null>(null)
   console.log(offices)
   return (
     <MainLayout

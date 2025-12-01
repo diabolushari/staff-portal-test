@@ -20,6 +20,7 @@ interface Props {
   leftBarTitle?: string
   title?: string
   selectedItem?: string
+  selectedTopNav?: string
 }
 
 export default function MainLayout({
@@ -31,6 +32,7 @@ export default function MainLayout({
   addBtnClick,
   title,
   selectedItem,
+  selectedTopNav,
 }: Readonly<Props>) {
   const { flash } = usePage<PageProps>().props
 
@@ -41,6 +43,12 @@ export default function MainLayout({
     if (flash?.error) {
       toast.error(flash.error)
     }
+    if (flash?.debug) {
+      console.log(flash.debug)
+      flash.debug.forEach((debug) => {
+        toast.info(debug)
+      })
+    }
   }, [flash])
 
   return (
@@ -48,7 +56,7 @@ export default function MainLayout({
       <ToastContainer theme='dark' />
       <div className='flex h-screen w-full flex-col'>
         <div className=''>
-          <TopNavBar />
+          <TopNavBar selectedTopNav={selectedTopNav} />
         </div>
 
         <div className='flex flex-1'>
