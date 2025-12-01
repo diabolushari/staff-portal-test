@@ -15,6 +15,7 @@ export default function BillingRuleCreatePage({ billingRule }: { billingRule?: B
       breadcrumb={breadcrumb}
       navItems={meteringBillingNavItems}
       selectedItem='Billing Rule'
+      selectedTopNav='Billing'
     >
       {' '}
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>

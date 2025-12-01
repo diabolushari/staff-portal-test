@@ -154,6 +154,16 @@ export const meteringBillingNavItems: navItem[] = [
     icon: '',
   },
   {
+    title: 'Meters',
+    href: '/meters',
+    icon: '',
+  },
+  {
+    title: 'Meter CTPTs',
+    href: '/meter-ctpt',
+    icon: '',
+  },
+  {
     title: 'Billing Rule',
     href: '/billing-rules',
     icon: '',

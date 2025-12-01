@@ -1,4 +1,4 @@
-import { meterNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems, meterNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { Meter } from '@/interfaces/data_interfaces'
@@ -108,7 +108,8 @@ export default function MeterForm({
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={meterNavItems}
+      navItems={meteringBillingNavItems}
+      selectedItem='Meters'
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
         <div className='flex items-center gap-2'>

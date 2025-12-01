@@ -3,24 +3,34 @@ import Input from '@/ui/form/Input'
 import { router } from '@inertiajs/react'
 import useCustomForm from '@/hooks/useCustomForm'
 import Button from '@/ui/button/Button'
-import { Office } from '@/interfaces/data_interfaces'
+import { Office, OfficeWithHierarchy } from '@/interfaces/data_interfaces'
+import { useEffect, useState } from 'react'
+import ComboBox from '@/ui/form/ComboBox'
 
 interface Props {
   oldConsumerNumber?: string
-  oldOffice?: Office
+  oldOffice?: OfficeWithHierarchy
 }
 
 const ConnectionIndexSearch = ({ oldConsumerNumber, oldOffice }: Readonly<Props>) => {
   const { formData, setFormValue } = useCustomForm({
     consumer_number: oldConsumerNumber ?? '',
-    office_id: oldOffice?.office_code ?? '',
+    office_code: oldOffice?.office_code ?? '',
   })
-
+  console.log(oldOffice)
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     router.get(route('connections.index'), formData)
   }
+  const [selectedOffice, setSelectedOffice] = useState<Office | null>(oldOffice?.office ?? null)
+  useEffect(() => {
+    if (selectedOffice) {
+      setFormValue('office_code')(selectedOffice?.office_code ?? '')
+    } else if (!selectedOffice) {
+      setFormValue('office_code')('')
+    }
+  }, [selectedOffice, setFormValue])
 
   return (
     <div className='relative flex flex-col items-center bg-white p-6 shadow-sm'>
@@ -35,24 +45,28 @@ const ConnectionIndexSearch = ({ oldConsumerNumber, oldOffice }: Readonly<Props>
             className='w-2/3'
             onSubmit={handleSubmit}
           >
-            <div className='relative flex w-full items-center justify-center gap-3'>
+            <div className='grid grid-cols-3 items-end gap-3'>
               <Input
                 label='Consumer Number'
                 setValue={setFormValue('consumer_number')}
                 value={formData.consumer_number}
                 showClearButton={true}
                 placeholder='Search by consumer number'
-                style='google'
+                className='w-full'
               />
-              <Input
+
+              <ComboBox
                 label='Office'
-                setValue={setFormValue('office_id')}
-                value={formData.office_id}
-                showClearButton={true}
-                placeholder='Search by office'
-                style='google'
+                url={`/api/offices?q=`}
+                setValue={setSelectedOffice}
+                value={selectedOffice}
+                dataKey='office_code'
+                displayKey='office_name'
+                displayValue2='office_code'
+                placeholder='Search by Office'
+                className='w-full'
               />
-              <div className='mt-6 flex items-center justify-center'>
+              <div className='flex w-1/4 items-center justify-center'>
                 <Button
                   label='Search'
                   type='submit'

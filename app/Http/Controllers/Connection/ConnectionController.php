@@ -7,6 +7,7 @@ use App\Http\Requests\Connections\CreateConnectionFormRequest;
 use App\Services\Connection\ConnectionFormItemService;
 use App\Services\Connection\ConnectionService;
 use App\Services\Connection\ConsumerService;
+use App\Services\Consumers\OfficeService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,8 @@ class ConnectionController extends Controller
     public function __construct(
         private readonly ConnectionService $connectionService,
         private readonly ParameterValueService $parameterValueService,
-        private readonly ConsumerService $consumerService
+        private readonly ConsumerService $consumerService,
+        private readonly OfficeService $officeService
 
     ) {}
 
@@ -28,7 +30,8 @@ class ConnectionController extends Controller
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 5;
         $consumerNumber = $request->input('consumer_number') ?? null;
-        $connections = $this->connectionService->listPaginatedConnections($pageNumber, $pageSize, $consumerNumber);
+        $officeCode = $request->input('office_code') ?? null;
+        $connections = $this->connectionService->listPaginatedConnections($pageNumber, $pageSize, $consumerNumber, $officeCode);
         $paginated = null;
         if (! empty($connections->data)) {
             $paginated = new LengthAwarePaginator(
@@ -39,10 +42,14 @@ class ConnectionController extends Controller
                 ['path' => request()->url()]              // so pagination links work properly
             );
         }
+        if ($officeCode) {
+            $office = $this->officeService->getOffice(null, $officeCode)->data;
+        }
 
         return Inertia::render('Connections/ConnectionsIndex', [
             'connections' => $paginated,
             'oldConsumerNumber' => $consumerNumber,
+            'oldOffice' => $office ?? null,
             'filters' => [
                 'consumerNumber' => $consumerNumber,
             ],
@@ -66,7 +73,7 @@ class ConnectionController extends Controller
         }
         $connection = $response->data;
 
-        return redirect()->route('connection.consumer.create', $connection['connection_id']);
+        return redirect()->route('connections.show', $connection['connection_id']);
     }
 
     public function show(int $id): Response|RedirectResponse
@@ -110,7 +117,7 @@ class ConnectionController extends Controller
             ]);
         }
 
-        return redirect()->route('connections.index')->with('success', 'Connection updated successfully.');
+        return redirect()->route('connections.show', $id)->with('success', 'Connection updated successfully.');
     }
 
     public function destroy(int $id): RedirectResponse

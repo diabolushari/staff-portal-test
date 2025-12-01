@@ -1,4 +1,4 @@
-import { meterNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems, meterNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import CardHeader from '@/ui/Card/CardHeader'
 import ListSearch from '@/ui/Search/ListSearch'
@@ -26,7 +26,8 @@ export default function MeterIndex({ filters, meters }: Readonly<Props>) {
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={meterNavItems}
+      navItems={meteringBillingNavItems}
+      selectedItem='Meters'
       addBtnText='Meter'
       addBtnUrl={route('meters.create')}
     >
