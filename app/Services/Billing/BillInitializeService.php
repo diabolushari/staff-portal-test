@@ -35,6 +35,9 @@ class BillInitializeService
             $proto->setReadingMonthYear($readingMonth);
         }
         [$response, $status] = $this->client->InitializeBill($proto)->wait();
+
+        $json = $response->getBill()->serializeToJsonString(); // correct method
+        dd(json_decode($json, true));
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
