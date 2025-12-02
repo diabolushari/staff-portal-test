@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Http\Controllers\BillingGroup;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Services\Connection\ConnectionService;
+
 class ConsumerNumberApiController extends Controller
 {
     public function __construct(private ConnectionService $connectionService) {}
@@ -17,7 +19,7 @@ class ConsumerNumberApiController extends Controller
         }
 
         $connections = $this->connectionService
-            ->listConnections($query)
+            ->listConnections($query, null)
             ->data;
 
         $consumerArray = [];
