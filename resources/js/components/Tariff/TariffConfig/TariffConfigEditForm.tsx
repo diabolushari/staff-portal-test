@@ -27,7 +27,7 @@ export default function TariffConfigEditForm({
   consumptionTariffs,
   connectionPurposes,
 }: Props) {
-  const { formData, setFormValue, setAll } = useCustomForm({
+  const { formData, setFormValue } = useCustomForm({
     tariff_config_id: tariff_config.tariff_config_id,
     tariff_order_id: tariff_config.tariff_order_id.toString() ?? '',
     connection_tariff_id: tariff_config.connection_tariff?.id?.toString() ?? '',

@@ -1,6 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { SystemModule } from '@/interfaces/paramater_service'
+import { SystemModule } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
 import Modal from '@/ui/Modal/Modal'

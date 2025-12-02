@@ -1,4 +1,4 @@
-import { settingsOffices } from '@/components/Navbar/navitems'
+import { metadataNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import {
   Table,
@@ -62,7 +62,7 @@ export default function OfficeBillingIndex({
   return (
     <OfficeLayout
       breadcrumbs={breadcrumbs}
-      officeNavItems={settingsOffices}
+      officeNavItems={metadataNavItems}
       office={office.office}
       value='billing'
       heading='Office Billing'

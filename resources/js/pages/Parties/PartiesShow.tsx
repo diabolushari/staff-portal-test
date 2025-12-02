@@ -39,34 +39,12 @@ interface Props {
 }
 
 // Hash-based color for avatar bg for consistency
-const hashColor = (str: string) => {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash)
-  const hue = Math.abs(hash) % 360
-  return `hsl(${hue} 85% 45%)`
-}
-
-const getInitials = (name: string) =>
-  name
-    .trim()
-    .split(/\s+/)
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 3)
 
 const fmtLocal = (iso?: string | null) => {
   if (!iso) return '-'
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return '-'
   return d.toLocaleString() // local time/date
-}
-
-const fmtDate = (iso?: string | null) => {
-  if (!iso) return '-'
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return '-'
-  return d.toLocaleDateString()
 }
 
 const safe = (v: unknown, fallback = '-') =>
@@ -99,34 +77,12 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: route('parties.index'),
   },
 ]
-const Pill = ({
-  ok,
-  trueText = 'Current',
-  falseText = 'Archived',
-}: {
-  ok: boolean
-  trueText?: string
-  falseText?: string
-}) => {
-  return ok ? (
-    <span className='inline-flex items-center gap-1 text-green-700'>
-      <span className='h-2 w-2 rounded-full bg-green-500' />
-      {trueText}
-    </span>
-  ) : (
-    <span className='inline-flex items-center gap-1 text-slate-600'>
-      <span className='h-2 w-2 rounded-full bg-slate-400' />
-      {falseText}
-    </span>
-  )
-}
 
 export default function PartiesShow({ party }: Props) {
   const statusText =
     party?.status?.parameter_value ?? (party.status_id === 1 ? 'Active' : 'Inactive')
   const typeText =
     party?.party_type?.parameter_value ?? (party.party_type_id === 1 ? 'Individual' : 'Company')
-  const avatarBg = hashColor(party?.name ?? 'P')
 
   const onEdit = () => router.visit(route('parties.edit', party.version_id))
   const onBack = () => router.visit(route('parties.index'))

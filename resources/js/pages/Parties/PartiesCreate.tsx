@@ -17,6 +17,23 @@ interface PartiesFormProps {
   party?: Party // provided in edit mode
 }
 
+interface PartiesFormData {
+  party_code: string
+  party_legacy_code: string
+  name: string
+  party_type_id: number
+  status_id: number
+  effective_start: string
+  effective_end: string
+  mobile_number: string
+  telephone_number: string
+  email_address: string
+  address: string
+  fax_number: string
+  __party_id?: number
+  __version_id?: number
+}
+
 const breadcrumbs = [
   {
     title: 'Parties',
@@ -39,10 +56,10 @@ const toNumberOrUndef = (v: unknown) => {
 }
 
 //TODO name the component PartyCreate to match with rest of application
-export default function PartiesForm({ partyTypes, partyStatus, party }: PartiesFormProps) {
+export default function PartiesCreate({ partyTypes, partyStatus, party }: PartiesFormProps) {
   const isEditing = Boolean(party)
 
-  const { formData, setFormValue } = useCustomForm({
+  const { formData, setFormValue } = useCustomForm<PartiesFormData>({
     party_code: party?.party_code?.toString() ?? '',
     party_legacy_code: party?.party_legacy_code ?? '',
     name: party?.name ?? '',

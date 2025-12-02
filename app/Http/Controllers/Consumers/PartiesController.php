@@ -157,7 +157,7 @@ class PartiesController extends Controller
             ->toArray();
 
         // Finally, render the view with all the necessary data
-        return Inertia::render('Parties/PartiesForm', [
+        return Inertia::render('Parties/PartiesCreate', [
             'party' => $party,
             'partyTypes' => $partyTypes,
             'partyStatus' => $partyStatus,

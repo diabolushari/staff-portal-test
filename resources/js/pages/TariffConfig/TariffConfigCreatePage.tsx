@@ -1,7 +1,7 @@
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import TariffConfigForm from '@/components/Tariff/TariffConfigForm'
 import Field from '@/components/ui/field'
-import { TariffOrder } from '@/interfaces/data_interfaces'
+import { TariffConfig, TariffOrder } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
@@ -13,7 +13,7 @@ const dateToString = (date: string | null) => {
 }
 
 interface Props {
-  tariff_config?: any
+  tariff_config?: TariffConfig
   tariff_order?: TariffOrder
   connection_purpose?: ParameterValues[]
   consumption_tariff?: ParameterValues[]

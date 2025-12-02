@@ -1,6 +1,5 @@
-import { Download } from 'lucide-react'
 import { router } from '@inertiajs/react'
-import { TariffConfig, TariffOrder } from '@/interfaces/data_interfaces'
+import { TariffConfig } from '@/interfaces/data_interfaces'
 import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import { useState } from 'react'

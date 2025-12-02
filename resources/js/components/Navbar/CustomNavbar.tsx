@@ -5,7 +5,7 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
-import { Link, usePage } from '@inertiajs/react'
+import { Link } from '@inertiajs/react'
 // Using local wrapped NavigationMenu (supports viewport prop)
 
 interface Props {
@@ -73,8 +73,6 @@ export const NAV_ITEMS = [
 ]
 
 export function CustomNavbar({ selectedTopNav }: Props) {
-  const { url } = usePage()
-
   return (
     <NavigationMenu
       viewport={false}

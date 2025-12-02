@@ -5,8 +5,6 @@ import useCustomForm from '@/hooks/useCustomForm'
 import Input from '@/ui/form/Input'
 import EditButton from '@/ui/button/EditButton'
 import { router } from '@inertiajs/react'
-import { useState } from 'react'
-import OfficeBasicInfoForm from './OfficeBasicInfoForm'
 
 export default function OfficeDetails({ office }: { office: Office }) {
   const {
@@ -35,7 +33,6 @@ export default function OfficeDetails({ office }: { office: Office }) {
     office_type,
     is_current,
   })
-  const [showBasicInfoEditModal, setShowBasicInfoEditModal] = useState(false)
   return (
     <div className='flex w-full flex-col gap-4'>
       <Card>
@@ -88,7 +85,6 @@ export default function OfficeDetails({ office }: { office: Office }) {
           />
         </div>
       </Card>
-      {showBasicInfoEditModal && <OfficeBasicInfoForm />}
     </div>
   )
 }
