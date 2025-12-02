@@ -5,6 +5,7 @@ import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import CardHeader from '@/ui/Card/CardHeader'
 import ListSearch from '@/ui/Search/ListSearch'
+import { ParameterValues } from '@/interfaces/parameter_types'
 
 interface TimezoneGroup {
   timezone_type: { id: number; parameter_value: string }
@@ -36,11 +37,16 @@ interface Props {
         data?: TimezoneGroup[]
       }
     | TimezoneGroup[]
+  timezone_types: ParameterValues[]
 }
 
-export default function MeteringTimezonesIndexPage({ timezones }: Props) {
+export default function MeteringTimezonesIndexPage({ timezones, timezone_types }: Props) {
   const timezonesData = Array.isArray(timezones) ? timezones : timezones?.data || []
   const [groups] = useState<TimezoneGroup[]>(timezonesData)
+
+  const timezoneTypesWithoutTimezones = timezone_types.filter(
+    (type) => !groups.some((group) => group.timezone_type.id === type.id)
+  )
 
   function handleShow(id: number) {
     router.get(`/metering-timezone/${id}`)
@@ -49,7 +55,6 @@ export default function MeteringTimezonesIndexPage({ timezones }: Props) {
   function formatTime(hrs: number, mins: number): string {
     return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
   }
-
   return (
     <MainLayout
       navItems={meteringBillingNavItems}
@@ -65,8 +70,6 @@ export default function MeteringTimezonesIndexPage({ timezones }: Props) {
         />
 
         <div className='relative w-full rounded-lg bg-white'>
-          <CardHeader title='Metering Timezones' />
-
           <div className='flex flex-col gap-6 px-7 pb-7'>
             {groups && groups.length > 0 ? (
               groups.map((group) => (
@@ -104,6 +107,30 @@ export default function MeteringTimezonesIndexPage({ timezones }: Props) {
               <div className='p-6 text-center text-slate-500'>
                 <p>No metering timezones found.</p>
               </div>
+            )}
+
+            {/* Display timezone types without any metering timezones */}
+            {timezoneTypesWithoutTimezones.length > 0 && (
+              <>
+                <div className='mt-4 border-t border-gray-200 pt-4'>
+                  <h3 className='mb-3 text-sm font-semibold text-slate-700'>
+                    Timezone Types don't have any metering timezones
+                  </h3>
+                </div>
+                {timezoneTypesWithoutTimezones.map((type) => (
+                  <div
+                    key={type.id}
+                    className='rounded-lg border border-gray-200 bg-white shadow-sm'
+                  >
+                    <div className='font-inter border-b border-gray-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800'>
+                      {type.parameter_value}
+                    </div>
+                    <div className='px-4 py-3 text-sm text-slate-500'>
+                      No metering timezones configured
+                    </div>
+                  </div>
+                ))}
+              </>
             )}
           </div>
         </div>
