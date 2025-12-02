@@ -1,4 +1,4 @@
-import { metadataNavItems, settingsOffices } from '@/components/Navbar/navitems'
+import { metadataNavItems } from '@/components/Navbar/navitems'
 import OfficeForm from '@/components/Offices/OfficeForm'
 import { Office, OfficeHierarchy } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'

@@ -1,7 +1,6 @@
 import MeterTransformerListItem from '@/components/Meter/MeterTransformer/MeterTransformerListItem'
-import { meteringBillingNavItems, meterNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
-import CardHeader from '@/ui/Card/CardHeader'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import ListSearch from '@/ui/Search/ListSearch'
 import { useState } from 'react'
@@ -21,7 +20,7 @@ interface Props {
 const breadcrumbs = [{ title: 'Meter CTPT', href: '/meter-ctpt' }]
 
 export default function MeterTransformerIndex({ filters, transformers }: Readonly<Props>) {
-  const [items, setItems] = useState(transformers?.data ?? [])
+  const items = transformers?.data ?? []
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedTransformer, setSelectedTransformer] = useState<MeterTransformer | null>(null)
 

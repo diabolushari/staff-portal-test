@@ -7,10 +7,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { MeterReadingValue } from '@/interfaces/data_interfaces'
 
 interface Props {
   meterId: number
-  readingsByMeter: any[]
+  readingsByMeter: MeterReadingValue[]
   parameterId: number // ✅ pass the specific parameter
 }
 

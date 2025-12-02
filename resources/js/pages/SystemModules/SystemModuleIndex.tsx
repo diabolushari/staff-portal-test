@@ -7,7 +7,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useCallback, useState } from 'react'
 import { route } from 'ziggy-js'
 import SystemModuleForm from './components/SystemModuleForm'
-import { metadataNavItems, settingsReferenceData } from '@/components/Navbar/navitems'
+import { metadataNavItems } from '@/components/Navbar/navitems'
 import { Pencil, Trash2 } from 'lucide-react'
 
 interface Props {

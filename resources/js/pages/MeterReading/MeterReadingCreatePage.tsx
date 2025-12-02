@@ -1,7 +1,7 @@
 import MeterReadingGeneralStep from '@/components/Meter/MeterReading/MeterReadingGeneralStep'
 import MeterReadingObservationStep from '@/components/Meter/MeterReading/MeterReadingObservationStep'
 import MeterReadingsStep from '@/components/Meter/MeterReading/MeterReadingsStep'
-import { consumerNavItems, metadataNavItems } from '@/components/Navbar/navitems'
+import { consumerNavItems } from '@/components/Navbar/navitems'
 import Stepper from '@/components/Stepper'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'

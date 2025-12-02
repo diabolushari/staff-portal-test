@@ -1,6 +1,5 @@
 import { TariffConfig } from '@/interfaces/data_interfaces'
 import { Paginator } from '@/ui/ui_interfaces'
-import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import {
   Table,
   TableBody,

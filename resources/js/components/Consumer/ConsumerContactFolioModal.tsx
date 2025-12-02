@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import Modal from '@/ui/Modal/Modal'
 import Input from '@/ui/form/Input'
 import Button from '@/ui/button/Button'
 
 interface Props {
-  setShowModal: (value: boolean) => void
+  setShowModal: Dispatch<SetStateAction<boolean>>
   setFormValue: (field: string) => (value: any) => void
   formData: any
 }

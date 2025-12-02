@@ -1,11 +1,9 @@
 import { Card } from '@/components/ui/card'
-import Field from '@/components/ui/field'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
-import CheckBox from '@/ui/form/CheckBox'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import RadioGroup from '@/ui/form/RadioGroup'
@@ -25,7 +23,7 @@ export default function MeterReadingForm({
   ctptHealthTypes,
   anomalyTypes,
 }: Props) {
-  const { formData, setFormValue, toggleBoolean } = useCustomForm({
+  const { formData, setFormValue } = useCustomForm({
     connection_id: connection_id,
     normal_pf: '',
     peak_pf: '',

@@ -1,7 +1,7 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useFetchRecord from '@/hooks/useFetchRecord'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { Connection, Office, OfficeWithHierarchy } from '@/interfaces/data_interfaces'
+import { Connection, OfficeWithHierarchy } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
@@ -51,9 +51,7 @@ export default function ConnectionForm({
   openAccessTypes,
   meteringTypes,
   renewableTypes,
-}: Readonly<Props>) {
-  const [adminOfficeData, setAdminOfficeData] = useState<Office | null>(null)
-  const [serviceOfficeData, setServiceOfficeData] = useState<Office | null>(null)
+}: Props) {
   const [subCategories, setSubCategories] = useState<ParameterValues[]>([])
   const [category, setCategory] = useState<string>('')
 
@@ -112,14 +110,6 @@ export default function ConnectionForm({
     formData.service_office_code ? '/api/office/code/' + formData.service_office_code : ''
   )
 
-  useEffect(() => {
-    if (adminOfficeApiData?.office) {
-      setAdminOfficeData(adminOfficeApiData.office)
-    }
-    if (serviceOfficeApiData?.office) {
-      setServiceOfficeData(serviceOfficeApiData.office)
-    }
-  }, [adminOfficeApiData, serviceOfficeApiData])
   const handleConnectionCategoryChange = (parameterValueId: string) => {
     setFormValue('connection_category_id')(parameterValueId)
     const category = connectionCategory.find((item) => item.id === Number(parameterValueId))

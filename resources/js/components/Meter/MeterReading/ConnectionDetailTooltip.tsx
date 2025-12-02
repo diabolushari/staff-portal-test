@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button'
 import Field from '@/components/ui/field'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { ConsumerData } from '@/interfaces/data_interfaces'

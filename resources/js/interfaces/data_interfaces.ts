@@ -73,37 +73,35 @@ export interface MeterConnectionMapping {
   meter: Meter
 }
 export interface DateTimeField {
-  date: string;           // "2025-11-11 00:00:00.000000"
-  timezone_type: number;
-  timezone: string;       // "+00:00"
+  date: string // "2025-11-11 00:00:00.000000"
+  timezone_type: number
+  timezone: string // "+00:00"
 }
-
 
 export interface ConnectionPartyMapping {
-  version_id: number;
-  rel_id?: number;               // not visible in your response, keep optional if exists
-  connection_id: number;
-  party_id: number;
+  version_id: number
+  rel_id?: number // not visible in your response, keep optional if exists
+  connection_id: number
+  party_id: number
 
-  effective_start: DateTimeField;  // convert to model below
-  effective_end: DateTimeField | null;
+  effective_start: DateTimeField // convert to model below
+  effective_end: DateTimeField | null
 
-  is_active: boolean;
+  is_active: boolean
 
-  created_by?: number;
-  updated_by?: number;
-  deleted_by?: number | null;
-  deleted_ts?: DateTimeField | null;
+  created_by?: number
+  updated_by?: number
+  deleted_by?: number | null
+  deleted_ts?: DateTimeField | null
 
-  party_type_id?: number;          
+  party_type_id?: number
   party_type?: {
-    id: number;
-    parameter_value: string;
-  };    
+    id: number
+    parameter_value: string
+  }
 
-  party: Party;                  
+  party: Party
 }
-
 
 export interface Connection {
   version_id: number
@@ -233,7 +231,6 @@ export interface Address {
   state: GeoRegion
   state_id: number
 }
-
 
 export interface GeoRegion {
   id: number
@@ -552,22 +549,28 @@ export interface BillingRuleJson {
 }
 
 export interface meterWithTimezoneAndProfile {
-    meter_id: number;
-    meter: Meter;
-    timezones: MeterTimezoneType[];
-    meter_profiles: MeterProfileParameter[];
+  meter_id: number
+  meter: Meter
+  timezones: MeterTimezoneType[]
+  meter_profiles: MeterProfileParameter[]
 }
 
 export interface BillingGroup {
-    version_id: number;
-    billing_group_id: number;
-    name: string;
-    description: string;
-    effective_start: string;
-    effective_end: string;
-    deleted_at?: string;
-    created_by?: number;
-    updated_by?: number;
-    created_at?: string;
-    updated_at?: string;
+  version_id: number
+  billing_group_id: number
+  name: string
+  description: string
+  effective_start: string
+  effective_end: string
+  deleted_at?: string
+  created_by?: number
+  updated_by?: number
+  created_at?: string
+  updated_at?: string
+}
+
+export interface RegionOption {
+  region_id: number | string
+  region_name: string
+  [key: string]: unknown
 }
