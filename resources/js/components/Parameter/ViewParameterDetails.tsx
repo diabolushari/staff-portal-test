@@ -12,7 +12,6 @@ interface ViewParameterDetailProps {
 }
 
 const ViewParameterDetail: React.FC<ViewParameterDetailProps> = ({ title, data, fields }) => {
-  console.log(data)
   return (
     <div className='flex min-h-screen justify-center bg-gray-50 px-4 py-8'>
       <div className='w-full max-w-3xl rounded-2xl border border-gray-200 bg-white p-8 shadow-lg'>

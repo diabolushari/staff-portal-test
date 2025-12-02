@@ -101,14 +101,12 @@ export default function ParameterValueShow({
           value={parameter_value?.sort_priority}
         />
 
-        {parameter_value?.notes && parameter_value.notes.trim() !== '' && (
-          <div className='col-span-2'>
-            <Field
-              label='Notes'
-              value={parameter_value?.notes}
-            />
-          </div>
-        )}
+        <div className='col-span-2'>
+          <Field
+            label='Notes'
+            value={parameter_value?.notes}
+          />
+        </div>
       </FormCard>
     </MainLayout>
   )
