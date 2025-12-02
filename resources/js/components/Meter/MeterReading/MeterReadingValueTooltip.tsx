@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { MeterReading, MeterReadingValue } from '@/interfaces/data_interfaces'
+import { MeterReadingValue } from '@/interfaces/data_interfaces'
 
 interface Props {
   meterId: number
