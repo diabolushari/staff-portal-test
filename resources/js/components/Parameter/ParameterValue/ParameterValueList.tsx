@@ -34,11 +34,11 @@ export default function ParameterValuesList({
                 <div className='flex flex-col gap-1'>
                   <div className='flex items-center gap-2'>
                     <div className='font-inter text-base leading-normal font-semibold text-black'>
-                      {param.parameter_value}
+                      {param?.parameter_value}
                     </div>
                     <div className='rounded-[50px] bg-blue-100 px-2.5 py-px'>
                       <div className='font-inter text-xs leading-6 font-normal tracking-[-0.072px] text-blue-800'>
-                        {param.parameter_code}
+                        {param?.parameter_code}
                       </div>
                     </div>
                   </div>
@@ -51,19 +51,19 @@ export default function ParameterValuesList({
                     </div>
                   )}
                   <div className='flex w-full items-center gap-5'>
-                    {param.domain?.domain_name && (
-                      <div className='flex items-center gap-[3px]'>
-                        <Layers className='text-dark-gray h-3.5 w-3.5' />
-                        <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          <StrongText>Domain:</StrongText> {param.domain.domain_name}
-                        </div>
+                    <div className='flex items-center gap-[3px]'>
+                      <Layers className='text-dark-gray h-3.5 w-3.5' />
+                      <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                        <StrongText>Domain:</StrongText> {param.definition?.domain?.domain_name}
                       </div>
-                    )}
-                    {param.system_module?.name && (
+                    </div>
+
+                    {param.definition?.domain?.system_module?.name && (
                       <div className='flex items-center gap-[3px]'>
                         <Package className='text-dark-gray h-3.5 w-3.5' />
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          <StrongText>Module:</StrongText> {param.system_module?.name}
+                          <StrongText>Module:</StrongText>{' '}
+                          {param.definition?.domain?.system_module?.name}
                         </div>
                       </div>
                     )}

@@ -30,7 +30,13 @@ class MeteringTimezoneController extends Controller
     public function index(): Response|RedirectResponse
     {
         $response = $this->meteringTimezoneService->listTimezoneGroupByMeteringType();
-
+        $timezoneTypesResponse = $this->parameterValueService->getParameterValues(
+            page: 1,
+            pageSize: 100,
+            search: null,
+            domainName: 'Meter',
+            parameterName: 'Timezone Type'
+        );
         if ($response->hasError()) {
             return redirect()->back()->withErrors([
                 'grpc_error' => 'Error fetching timezones: '.($response->statusDetails ?? 'Unknown error'),
@@ -39,6 +45,7 @@ class MeteringTimezoneController extends Controller
 
         return Inertia::render('MeteringTimezones/MeteringTimezoneIndexPage', [
             'timezones' => $response->data,
+            'timezone_types' => $timezoneTypesResponse->data,
         ]);
     }
 

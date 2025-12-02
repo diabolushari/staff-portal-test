@@ -3,6 +3,8 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { metadataNavItems } from '@/components/Navbar/navitems'
 import { BreadcrumbItem } from '@/types'
+import FormCard from '@/ui/Card/FormCard'
+import Field from '@/components/ui/field'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -20,36 +22,92 @@ export default function ParameterValueShow({
     { label: 'Id', key: 'id' },
     { label: 'Parameter Code', key: 'parameter_code' },
     { label: 'Parameter Value', key: 'parameter_value' },
-    { label: 'Attribute 1 Value', key: 'attribute_1_value' },
-    { label: 'Attribute 2 Value', key: 'attribute_2_value' },
-    { label: 'Attribute 3 Value', key: 'attribute_3_value' },
-    { label: 'Attribute 4 Value', key: 'attribute_4_value' },
-    { label: 'Attribute 5 Value', key: 'attribute_5_value' },
-    { label: 'Effective Start Date', key: 'effective_start_date' },
-    { label: 'Effective End Date', key: 'effective_end_date' },
+    { label: 'Attribute 1 Value', key: 'attribute1_value' },
+    { label: 'Attribute 2 Value', key: 'attribute2_value' },
+    { label: 'Attribute 3 Value', key: 'attribute3_value' },
+    { label: 'Attribute 4 Value', key: 'attribute4_value' },
+    { label: 'Attribute 5 Value', key: 'attribute5_value' },
     { label: 'Sort Priority', key: 'sort_priority' },
     { label: 'Notes', key: 'notes' },
   ]
 
+  // Filter dynamic attribute values only when they exist or contain text
   const filteredFields = allFields.filter((field) => {
-    const isAttributeField = field.key.startsWith('attribute')
+    const isAttribute = field.key.startsWith('attribute')
     const value = parameter_value?.[field.key as keyof ParameterValues]
-    if (isAttributeField) {
+
+    if (isAttribute) {
       return value !== null && value !== undefined && value.toString().trim() !== ''
     }
+
     return true
   })
+
+  const attributeFields = filteredFields.filter((field) => field.key.startsWith('attribute'))
+
+  const basicFields = filteredFields.filter((field) => !field.key.startsWith('attribute'))
+
+  const showAttributes = attributeFields.length > 0
+
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={metadataNavItems}
       selectedItem='Values'
+      title={`Parameter Value : ${parameter_value?.parameter_value}`}
     >
-      <ViewParameterDetail
-        title='Parameter Value Details'
-        data={parameter_value}
-        fields={filteredFields}
-      />
+      {/* ---- Basic Detail Section ---- */}
+      <FormCard title='Basic Information'>
+        {basicFields.map((field) => (
+          <Field
+            key={field.key}
+            label={field.label}
+            value={parameter_value?.[field.key as keyof ParameterValues] ?? ''}
+          />
+        ))}
+
+        {/* Fixed hierarchical fields */}
+        <Field
+          label='Domain'
+          value={parameter_value?.definition?.domain?.domain_name}
+        />
+        <Field
+          label='Definition'
+          value={parameter_value?.definition?.parameter_name}
+        />
+        <Field
+          label='System Module'
+          value={parameter_value?.definition?.domain?.system_module?.name}
+        />
+      </FormCard>
+
+      {/* ---- Attribute Section (Only If Data Exists) ---- */}
+      {showAttributes && (
+        <FormCard title='Attribute Values'>
+          {attributeFields.map((field) => (
+            <Field
+              key={field.key}
+              label={field.label}
+              value={parameter_value?.[field.key as keyof ParameterValues]}
+            />
+          ))}
+        </FormCard>
+      )}
+
+      {/* ---- Additional Information ---- */}
+      <FormCard title='Additional Information'>
+        <Field
+          label='Sort Priority'
+          value={parameter_value?.sort_priority}
+        />
+
+        <div className='col-span-2'>
+          <Field
+            label='Notes'
+            value={parameter_value?.notes}
+          />
+        </div>
+      </FormCard>
     </MainLayout>
   )
 }
