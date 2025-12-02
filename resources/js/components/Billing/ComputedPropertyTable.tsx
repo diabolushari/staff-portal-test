@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { ComputedProperty } from '@/interfaces/data_interfaces'
 import { Paginator } from '@/ui/ui_interfaces'
 import Pagination from '@/ui/Pagination/Pagination'

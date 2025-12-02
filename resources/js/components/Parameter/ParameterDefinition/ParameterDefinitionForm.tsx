@@ -23,7 +23,6 @@ interface Props {
 export default function ParameterDefinitionForm({
   title,
   setShowModal,
-  show,
   parameterDefinition,
   domains,
 }: Readonly<Props>) {

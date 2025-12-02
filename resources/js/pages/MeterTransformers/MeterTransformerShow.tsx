@@ -3,7 +3,7 @@ import MainLayout from '@/layouts/main-layout'
 import type { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 import Field from '@/components/ui/field'
-import { meteringBillingNavItems, meterNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { MeterTransformer } from '@/interfaces/data_interfaces'
 
 interface Props {

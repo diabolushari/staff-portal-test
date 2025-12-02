@@ -1,7 +1,6 @@
 import { metadataNavItems } from '@/components/Navbar/navitems'
 import ViewParameterDetails from '@/components/Parameter/ViewParameterDetails' // adjust path
 import { ParameterDomain } from '@/interfaces/parameter_types'
-import AppLayout from '@/layouts/app-layout'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Card from '@/ui/Card/Card'

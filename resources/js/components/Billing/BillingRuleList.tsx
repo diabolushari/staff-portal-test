@@ -4,7 +4,7 @@ import DeleteButton from '@/ui/button/DeleteButton'
 import EditButton from '@/ui/button/EditButton'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import { router } from '@inertiajs/react'
-import { Building, CalendarDaysIcon, DownloadIcon } from 'lucide-react'
+import { Building, CalendarDaysIcon } from 'lucide-react'
 import { useState } from 'react'
 
 interface Props {
@@ -15,9 +15,6 @@ export default function BillingRuleList({ billingRules }: Props) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [selectedBillingRule, setSelectedBillingRule] = useState<BillingRule | null>(null)
 
-  const handleBillingRuleClick = (billingRule: BillingRule) => {
-    router.get(route('billing-rules.show', billingRule.id))
-  }
   const handleDownloadJson = (rule: BillingRule) => {
     const dataStr = JSON.stringify(rule, null, 2) // pretty print
     const blob = new Blob([dataStr], { type: 'application/json' })
