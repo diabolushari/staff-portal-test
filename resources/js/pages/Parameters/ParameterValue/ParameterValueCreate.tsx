@@ -236,6 +236,8 @@ export default function ParameterValueCreate({ parameter_value, definitions, dom
             type='submit'
             label='Save'
             disabled={loading}
+            processing={loading}
+            variant={loading ? 'loading' : 'primary'}
           />
         </div>
       </form>
