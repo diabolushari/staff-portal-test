@@ -5,8 +5,6 @@ import { Party } from '@/interfaces/parties'
 import Button from '@/ui/button/Button'
 import ComboBox from '@/ui/form/ComboBox'
 import DatePicker from '@/ui/form/DatePicker'
-import Input from '@/ui/form/Input'
-import SelectList from '@/ui/form/SelectList'
 import Modal from '@/ui/Modal/Modal'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
@@ -14,13 +12,11 @@ import { useEffect, useState } from 'react'
 interface ConnectionPartiesFormModalProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>
   connection: Connection
-  parties: Party[]
   connectionParty?: ConnectionPartyMapping
 }
 export default function ConnectionPartiesFormModal({
   setShowModal,
   connection,
-  parties,
   connectionParty,
 }: ConnectionPartiesFormModalProps) {
   const [partyItem, setPartyItem] = useState<Party | null>(null)

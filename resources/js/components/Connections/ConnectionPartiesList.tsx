@@ -1,5 +1,4 @@
 import { Connection, ConnectionPartyMapping } from '@/interfaces/data_interfaces'
-import { Party } from '@/interfaces/parties'
 import EditButton from '@/ui/button/EditButton'
 import { Calendar, Hash, User, ClipboardList } from 'lucide-react'
 import { useState } from 'react'
@@ -10,13 +9,12 @@ import { getDisplayDate } from '@/utils'
 
 interface Props {
   connectionParties: ConnectionPartyMapping[]
-  parties: Party[]
   connection: Connection
 }
 
 export default function ConnectionPartiesList({
   connectionParties,
-  parties,
+
   connection,
 }: Readonly<Props>) {
   const [editModal, setEditModal] = useState(false)
@@ -122,7 +120,6 @@ export default function ConnectionPartiesList({
       {editModal && editItem && (
         <ConnectionPartiesFormModal
           connection={connection}
-          parties={parties}
           connectionParty={editItem}
           setShowModal={setEditModal}
         />

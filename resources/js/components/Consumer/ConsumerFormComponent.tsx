@@ -7,12 +7,12 @@ import SelectList from '@/ui/form/SelectList'
 import CheckBox from '@/ui/form/CheckBox'
 import Button from '@/ui/button/Button'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { Address, ConsumerData, GeoRegion } from '@/interfaces/data_interfaces'
+import { Address, ConsumerData, RegionOption } from '@/interfaces/data_interfaces'
 
 interface Props {
   consumer_types: ParameterValues[]
-  districts: GeoRegion[]
-  states: GeoRegion[]
+  districts: RegionOption[]
+  states: RegionOption[]
   connection_id: number
   data?: ConsumerData
 }

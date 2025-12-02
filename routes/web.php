@@ -106,7 +106,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('meter-reading', MeterReadingController::class);
     Route::get('connection/{connection_id}/meter-reading', GetMeterReadingWithConnectionController::class)->name('connection.meter-reading');
-    Route::get('connection/{connection_id}/meter-reading/create', GetMeterReadingController::class)->name('meter-reading.create');
+    Route::get('connection/{connection_id}/meter-reading/create', GetMeterReadingController::class)->name('connection-meter-reading.create');
     Route::get('connection/{connection_id}/meter-reading/edit', GetMeterReadingEditController::class)->name('meter-reading.edit');
 
     Route::resource('tariff-orders', TariffOrderController::class);

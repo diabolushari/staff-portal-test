@@ -5,7 +5,7 @@ interface Props {
   meterId: number
 }
 
-export default function PowerFactorBar({ powerFactorsByMeter, meterId }: Props) {
+export default function PowerFactorBar({ powerFactorsByMeter }: Props) {
   if (!powerFactorsByMeter || powerFactorsByMeter.factors === null) return null
   console.log(powerFactorsByMeter)
   return (

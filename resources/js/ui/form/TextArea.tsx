@@ -1,4 +1,3 @@
-import React from 'react'
 import { FormFieldProp } from '../ui_interfaces'
 import ErrorText from '@/typography/ErrorText'
 import { Textarea } from '@/components/ui/textarea'
@@ -8,11 +7,13 @@ export default function TextArea({
   label,
   value,
   error,
+  rows,
+  maxLength,
   setValue,
   placeholder,
   disabled = false,
   className = '',
-}: FormFieldProp & { className?: string }) {
+}: FormFieldProp & { className?: string; rows?: number; maxLength?: number }) {
   // Figma-based styling as default - clean white background with subtle border
   const figmaTextareaClasses = cn(
     'w-full bg-white px-3 py-2 rounded border border-gray-200 text-sm font-normal text-black min-h-[80px]',
@@ -34,6 +35,8 @@ export default function TextArea({
         placeholder={placeholder}
         disabled={disabled}
         className={figmaTextareaClasses}
+        rows={rows}
+        maxLength={maxLength}
       />
 
       {error && <ErrorText>{error}</ErrorText>}

@@ -35,7 +35,7 @@ export default function ConnectionMeterReadingPage({
   ]
 
   const handleAddMeterReading = () => {
-    router.visit(route('meter-reading.create', { id: connection?.connection_id }))
+    router.visit(route('connection-meter-reading.create', { id: connection?.connection_id }))
   }
 
   return (
