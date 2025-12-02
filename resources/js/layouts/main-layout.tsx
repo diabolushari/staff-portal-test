@@ -4,11 +4,12 @@ import TopNavBar from '@/components/Navbar/TopNavBar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { BreadcrumbItem, PageProps } from '@/types'
 import StrongText from '@/typography/StrongText'
+import { showError, showInfo, showSuccess } from '@/ui/alerts'
 import CustomBreadcrumb from '@/ui/BreadCrumb'
 import AddButton from '@/ui/button/AddButton'
 import { router, usePage } from '@inertiajs/react'
 import React, { useEffect } from 'react'
-import { toast, ToastContainer } from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
 
 interface Props {
   children: React.ReactNode
@@ -38,15 +39,15 @@ export default function MainLayout({
 
   useEffect(() => {
     if (flash?.message) {
-      toast.success(flash.message)
+      showSuccess(flash.message)
     }
     if (flash?.error) {
-      toast.error(flash.error)
+      showError(flash.error)
     }
     if (flash?.debug) {
       console.log(flash.debug)
       flash.debug.forEach((debug) => {
-        toast.info(debug)
+        showInfo(debug)
       })
     }
   }, [flash])
