@@ -1,3 +1,4 @@
+import { ParameterValue } from 'vendor/tightenco/ziggy/src/js'
 import { ParameterValues } from './parameter_types'
 import { Party } from './parties'
 
@@ -448,27 +449,31 @@ export interface MeterReading {
   is_active: boolean
   values: MeterReadingValue[]
 }
+
 export interface MeterReadingValue {
   id: number
   meter_reading_id: number
   meter_id: number
-  meter_profile_parameter_id: number
+  parameter_id: number
   meter_profile_parameter?: MeterProfileParameter
-  time_zone_id: number
+  timezone_id: number
   time_zone?: Partial<ParameterValues> | null
   final_reading: number
   initial_reading: number
   difference: number
   meter?: Meter
 }
+
 export interface MeterProfileParameter {
   version_id: number
   meter_parameter_id: number
   profile_id: number
+  profile: ParameterValue | null
   name: string
   display_name: string
   is_export: boolean
 }
+
 export interface MeterReadingPowerFactor {
   id: number
   meter_reading_id: number
@@ -548,10 +553,13 @@ export interface BillingRuleJson {
   charge_heads: ChargeHead[]
 }
 
-export interface meterWithTimezoneAndProfile {
+export interface MeterWithTimezoneAndProfile {
   meter_id: number
   meter: Meter
-  timezones: MeterTimezoneType[]
+  timezones: {
+    timezone_id: number
+    timezone_name: string
+  }[]
   meter_profiles: MeterProfileParameter[]
 }
 

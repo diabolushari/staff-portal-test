@@ -1,13 +1,13 @@
-import { Meter, MeterTransformer, meterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
-import StrongText from '@/typography/StrongText'
+import { Meter, MeterTransformer, MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import StrongText from '@/typography/StrongText'
 import SelectList from '@/ui/form/SelectList'
 import { useMemo } from 'react'
 import MeterProfileList from './MeterProfileList'
 
 interface Props {
   meterIdx: number
-  meterWithTimezoneAndProfile: meterWithTimezoneAndProfile
+  meterWithTimezoneAndProfile: MeterWithTimezoneAndProfile
   formData: any
   updateMeterHealth: (value: number, meter: Meter) => void
   updateCTPTHealth: (meterId: number, ctptId: number, healthId: number, meter: Meter) => void

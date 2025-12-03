@@ -1,18 +1,20 @@
-import { Meter, MeterTransformer, meterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { Info } from 'lucide-react'
-import MeterReadingValueTooltip from './MeterReadingValueTooltip'
-import StrongText from '@/typography/StrongText'
-import { Card } from '@/components/ui/card'
+import { Meter, MeterTransformer, MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
+import StrongText from '@/typography/StrongText'
 import SelectList from '@/ui/form/SelectList'
+import ReadingParameterPreviewCard from './ReadingForm/ReadingParameterPreviewCard'
+import { MeterHealth } from './ReadingForm/useMeterHealthForm'
+import { MeterReadingFormState } from './ReadingForm/useMeterReadingForm'
 
 interface Props {
   meterIdx: number
-  meterWithTimezoneAndProfile: meterWithTimezoneAndProfile
-  formData: any
-  updateMeterHealth: (value: number, meter: Meter) => void
-  updateCTPTHealth: (meterId: number, ctptId: number, healthId: number, meter: Meter) => void
+  meterWithTimezoneAndProfile: MeterWithTimezoneAndProfile
+  formData: MeterReadingForm
+  readingValues: MeterReadingFormState[]
+  healthData: MeterHealth[]
+  updateMeterHealth: (statusId: number, meter: Meter) => void
+  updateCTPTHealth: (meterId: number, ctptId: number, statusId: number) => void
   setActiveProfile: (
     profile: {
       meterIdx: number
@@ -28,13 +30,14 @@ interface Props {
 export default function MeterWithProfile({
   meterIdx,
   meterWithTimezoneAndProfile,
-  formData,
+  healthData,
+  readingValues,
   updateMeterHealth,
   updateCTPTHealth,
   setActiveProfile,
   meterHealthTypes,
   ctHealthTypes,
-}: Props) {
+}: Readonly<Props>) {
   return (
     <div
       key={meterWithTimezoneAndProfile.meter_id}
@@ -48,9 +51,8 @@ export default function MeterWithProfile({
           <SelectList
             label='Meter Health'
             value={
-              formData.meter_health.find(
-                (m: any) => m.meter_id === meterWithTimezoneAndProfile.meter_id
-              )?.meter_health_id ?? ''
+              healthData.find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
+                ?.meter_health_id ?? ''
             }
             setValue={(value) =>
               updateMeterHealth(Number(value), meterWithTimezoneAndProfile.meter)
@@ -69,16 +71,15 @@ export default function MeterWithProfile({
             <SelectList
               label={`CT/PT Health ${ctpt.ctpt_serial}`}
               value={
-                formData.meter_health
-                  .find((m: any) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
-                  ?.ctpts?.find((c: any) => c.ctpt_id === ctpt.meter_ctpt_id)?.health ?? ''
+                healthData
+                  .find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
+                  ?.ctpts?.find((c) => c.ctpt_id === ctpt.meter_ctpt_id)?.health ?? ''
               }
               setValue={(value) =>
                 updateCTPTHealth(
                   meterWithTimezoneAndProfile.meter_id,
                   ctpt.meter_ctpt_id,
-                  Number(value),
-                  meterWithTimezoneAndProfile.meter
+                  Number(value)
                 )
               }
               list={ctHealthTypes}
@@ -90,69 +91,17 @@ export default function MeterWithProfile({
       </div>
 
       <div className='grid gap-4 md:grid-cols-2'>
-        {meterWithTimezoneAndProfile?.meter_profiles?.map((profile: any, pIdx: number) => {
-          const meterData = formData.readings_by_meter?.find(
-            (m: any) => m.meter_id === meterWithTimezoneAndProfile.meter_id
-          )
-          const paramData = meterData?.parameters?.find(
-            (p: any) => p.meter_parameter_id === profile.meter_parameter_id
-          )
-          const hasData = paramData?.readings?.some((r: any) => r.values?.final || r.values?.diff)
-
-          return (
-            <Card
-              key={profile.meter_parameter_id}
-              className={`hover:ring-primary relative cursor-pointer p-4 transition-all hover:ring-2 ${
-                hasData ? 'border-green-500 shadow-md' : ''
-              }`}
-              onClick={() => setActiveProfile({ meterIdx, profileIdx: pIdx })}
-            >
-              <StrongText>
-                {profile.display_name} {profile.is_export ? '(Export)' : ''}
-              </StrongText>
-
-              <div
-                className={`mt-2 space-y-1 text-sm text-gray-600 ${
-                  meterWithTimezoneAndProfile?.timezones?.length > 2
-                    ? 'scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent max-h-[60px] overflow-y-auto pr-1'
-                    : ''
-                }`}
-                style={{ scrollBehavior: 'smooth' }}
-              >
-                {paramData?.readings?.map((r: any) => {
-                  const diff = r.values?.diff
-                  return (
-                    diff && (
-                      <div
-                        key={r.timezone_id}
-                        className='flex justify-between border-b border-gray-100 py-1 last:border-0'
-                      >
-                        <span>{r.timezone_name}</span>
-                        <span className='font-medium text-gray-800'>{diff}</span>
-                      </div>
-                    )
-                  )
-                })}
-              </div>
-
-              <Tooltip>
-                <TooltipTrigger>
-                  <Info className='absolute top-2 right-2 h-5 w-5 text-gray-400 hover:text-gray-600' />
-                </TooltipTrigger>
-                <TooltipContent
-                  side='top'
-                  className='bg-white'
-                >
-                  <MeterReadingValueTooltip
-                    meterId={meterWithTimezoneAndProfile.meter_id}
-                    readingsByMeter={formData.readings_by_meter}
-                    parameterId={profile.meter_parameter_id}
-                  />
-                </TooltipContent>
-              </Tooltip>
-            </Card>
-          )
-        })}
+        {meterWithTimezoneAndProfile?.meter_profiles?.map((profile, pIdx: number) => (
+          <ReadingParameterPreviewCard
+            key={profile.meter_parameter_id}
+            meterWithTimezoneAndProfile={meterWithTimezoneAndProfile}
+            readingValues={readingValues}
+            profile={profile}
+            profileIndex={pIdx}
+            meterIndex={meterIdx}
+            setActiveProfile={setActiveProfile}
+          />
+        ))}
       </div>
     </div>
   )

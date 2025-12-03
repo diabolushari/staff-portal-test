@@ -1,98 +1,87 @@
 import { Card } from '@/components/ui/card'
-import { Meter, meterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
+import { MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
-import MeterReadingValueForm from './MeterReadingValueForm'
 import Button from '@/ui/button/Button'
+import { useMemo } from 'react'
+import MeterReadingValueForm from './MeterReadingValueForm'
+import { MeterReadingFormState } from './ReadingForm/useMeterReadingForm'
 
-export default function ProfileReadingForm({
-  activeProfile,
-  metersWithTimezonesAndProfiles,
-  formData,
-  updateReading,
-  setActiveProfile,
-}: {
+interface Props {
   activeProfile: {
     meterIdx: number
     profileIdx: number
   } | null
-  metersWithTimezonesAndProfiles: meterWithTimezoneAndProfile[]
-  formData: any
-  updateReading: (
-    meterId: number,
-    meterParameterId: number,
-    timezoneId: number,
-    rowKey: string,
-    value: any,
-    meter: Meter
-  ) => void
-  setActiveProfile: (
-    profile: {
-      meterIdx: number
-      profileIdx: number
-    } | null
-  ) => void
-}) {
-  if (activeProfile !== null) {
+  readingValues: MeterReadingFormState[]
+  metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
+  updateReading: (meterId: number, parameterId: number, timezoneId: number, value: string) => void
+  setActiveProfile: (profile: { meterIdx: number; profileIdx: number } | null) => void
+}
+
+export default function ProfileReadingForm({
+  activeProfile,
+  readingValues,
+  metersWithTimezonesAndProfiles,
+  updateReading,
+  setActiveProfile,
+}: Readonly<Props>) {
+  const { meter, profile, parameterData } = useMemo(() => {
+    if (activeProfile == null) {
+      return {
+        meter: null,
+        profile: null,
+        parameterData: null,
+      }
+    }
+
     const meter = metersWithTimezonesAndProfiles[activeProfile.meterIdx]
     const profile = meter.meter_profiles[activeProfile.profileIdx]
-    const meterData = formData.readings_by_meter.find((m: any) => m.meter_id === meter.meter_id)
-    const paramData = meterData?.parameters.find(
-      (p: any) => p.meter_parameter_id === profile.meter_parameter_id
+
+    const meterReadingData = readingValues.find((m) => m.meter_id === meter.meter_id)
+    const parameterData = meterReadingData?.parameters.find(
+      (p) => p.meter_parameter_id === profile.meter_parameter_id
     )
 
-    return (
-      <div className='flex flex-col gap-4'>
-        <Card className='p-4'>
-          <StrongText>{profile?.display_name}</StrongText>
-          <div
-            className={`mt-2 ${
-              paramData?.readings?.length > 2 ? 'max-h-64 overflow-y-auto pr-2' : ''
-            }`}
-          >
-            <MeterReadingValueForm
-              timeZoneNames={meter?.timezones?.map((tz: any) => ({
-                id: tz.timezone_id,
-                name: tz.timezone_name,
-              }))}
-              values={paramData?.readings || []}
-              onChange={(rowKey, tzId, val) =>
-                updateReading(
-                  meter.meter_id,
-                  profile.meter_parameter_id,
-                  tzId,
-                  rowKey,
-                  val,
-                  meter.meter
-                )
-              }
-              onMultiplierChange={(tzId, val) =>
-                updateReading(
-                  meter.meter_id,
-                  profile.meter_parameter_id,
-                  tzId,
-                  'mf',
-                  val,
-                  meter.meter
-                )
-              }
-              meter={meter.meter}
-            />
-          </div>
+    return {
+      meter,
+      profile,
+      parameterData,
+    }
+  }, [activeProfile, readingValues, metersWithTimezonesAndProfiles])
 
-          <div className='mt-4 flex justify-end gap-2'>
-            <Button
-              variant='outline'
-              onClick={() => setActiveProfile(null)}
-              label='Cancel'
-            />
-            <Button
-              onClick={() => setActiveProfile(null)}
-              label='Save'
-            />
-          </div>
-        </Card>
-      </div>
-    )
-  }
-  return null
+  return (
+    <>
+      {meter == null || profile == null || parameterData == null ? null : (
+        <div className='flex flex-col gap-4'>
+          <Card className='p-4'>
+            <StrongText>{profile?.display_name}</StrongText>
+            <div
+              className={`mt-2 ${
+                parameterData?.readings?.length > 2 ? 'max-h-64 overflow-y-auto pr-2' : ''
+              }`}
+            >
+              <MeterReadingValueForm
+                values={parameterData?.readings || []}
+                onChange={(tzId, val) =>
+                  updateReading(meter.meter_id, profile.meter_parameter_id, tzId, val)
+                }
+                meter={meter.meter}
+              />
+            </div>
+
+            <div className='mt-4 flex justify-end gap-2'>
+              <Button
+                variant='outline'
+                onClick={() => setActiveProfile(null)}
+                label='Cancel'
+              />
+              <Button
+                onClick={() => setActiveProfile(null)}
+                label='Save'
+              />
+            </div>
+          </Card>
+        </div>
+      )}
+    </>
+  )
 }

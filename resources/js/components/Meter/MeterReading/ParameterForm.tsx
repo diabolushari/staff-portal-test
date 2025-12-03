@@ -1,8 +1,8 @@
 import { Card } from '@/components/ui/card'
-import { Meter, meterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
+import { Meter, MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
-import MeterReadingValueForm from './MeterReadingValueForm'
 import Button from '@/ui/button/Button'
+import MeterReadingValueForm from './MeterReadingValueForm'
 
 export default function ParameterForm({
   activeProfile,
@@ -15,7 +15,7 @@ export default function ParameterForm({
     meterIdx: number
     profileIdx: number
   } | null
-  metersWithTimezonesAndProfiles: meterWithTimezoneAndProfile[]
+  metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
   formData: any
   updateReading: (
     meterId: number,
