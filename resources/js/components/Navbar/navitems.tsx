@@ -89,13 +89,13 @@ export const tariffNavItems: navItem[] = [
 
 export const billingNavItems: navItem[] = [
   {
-    title: 'Billing',
-    href: '/billing-rules',
+    title: 'Billing Groups',
+    href: '/billing-groups',
     icon: <ListIcon className='h-4 w-4' />,
   },
   {
-    title: 'Billing Groups',
-    href: '/billing-groups',
+    title: 'Billing Cycles',
+    href: '/billing-cycles',
     icon: <ListIcon className='h-4 w-4' />,
   },
 ]

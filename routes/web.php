@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\SystemModuleApiController;
 use App\Http\Controllers\Api\Tariff\TariffOrderDownloadApiController;
 use App\Http\Controllers\Billing\BillingRuleController;
 use App\Http\Controllers\Billing\BillInitializeController;
+use App\Http\Controllers\BillingGroup\BillingGroupBillController;
 use App\Http\Controllers\BillingGroup\BillingGroupConnectionRelController;
 use App\Http\Controllers\BillingGroup\BillingGroupController;
 use App\Http\Controllers\BillingGroup\ConsumerNumberApiController;
@@ -119,6 +120,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('billing-rules', BillingRuleController::class);
     Route::resource('billing-groups', BillingGroupController::class);
+    Route::get('billing-groups/{billingGroupId}/bills', BillingGroupBillController::class)->name('billing-group.bills');
     Route::resource('billing-group-connection-rel', BillingGroupConnectionRelController::class);
     Route::post('initialize-bill', BillInitializeController::class)->name('billing-group.initialize-bill');
 

@@ -578,3 +578,20 @@ export interface BillingGroupConnection {
   connection_id: number;
   connection: Connection;
 }
+export interface Bill {
+  bill_id: number,
+  connection_id: number,
+  reading_year_month: string,
+  bill_year_month: string,
+  bill_date: string,
+  due_date: string,
+  dc_date: string,
+  bill_amount: number,
+  charge_heads: ChargeHead[],
+  computed_properties: ComputedProperty[],
+  remarks: string,
+  created_ts: string,
+  created_by: number,
+  deleted_ts?: string,
+  deleted_by?: number,
+}

@@ -11,13 +11,14 @@ option java_outer_classname = "BillProto";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
 
 // ---------------- ENTITY MESSAGE ----------------
 
 message BillMessage {
   int64 bill_id = 1;
 
-  int32 billing_group_id = 2;
+  int32 connection_id = 2;
 
   string reading_year_month = 3;  // YYYY-MM
   string bill_year_month = 4;     // YYYY-MM
@@ -25,21 +26,24 @@ message BillMessage {
   google.protobuf.Timestamp bill_date = 5;
   google.protobuf.Timestamp due_date = 6;
   google.protobuf.Timestamp dc_date = 7;
+  double bill_amount = 8;
+  repeated google.protobuf.Struct charge_heads = 9;
+  repeated google.protobuf.Struct computed_properties = 10;
 
-  string remarks = 8;
+  string remarks = 11;
 
-  google.protobuf.Timestamp created_ts = 9;
-  int32 created_by = 10;
+  google.protobuf.Timestamp created_ts = 12;
+  int32 created_by = 13;
 
-  google.protobuf.Timestamp deleted_ts = 11;
-  int32 deleted_by = 12;
+  google.protobuf.Timestamp deleted_ts = 14;
+  int32 deleted_by = 15;
 }
 
 // ---------------- REQUEST / RESPONSE ----------------
 
 // Create
 message CreateBillRequest {
-  int32 billing_group_id = 1;
+  int32 connection_id = 1;
 
   string reading_year_month = 2;  // YYYY-MM
   string bill_year_month = 3;     // YYYY-MM
@@ -47,10 +51,13 @@ message CreateBillRequest {
   google.protobuf.Timestamp bill_date = 4;
   google.protobuf.Timestamp due_date = 5;
   google.protobuf.Timestamp dc_date = 6;
+  double bill_amount = 7;
+  repeated google.protobuf.Struct charge_heads = 8;
+  repeated google.protobuf.Struct computed_properties = 9;
 
-  string remarks = 7;
+  string remarks = 10;
 
-  int32 created_by = 8;
+  int32 created_by = 11;
 }
 
 message CreateBillResponse {
@@ -61,7 +68,7 @@ message CreateBillResponse {
 message UpdateBillRequest {
   int64 bill_id = 1;
 
-  int32 billing_group_id = 2;
+  int32 connection_id = 2;
 
   string reading_year_month = 3;
   string bill_year_month = 4;
@@ -69,8 +76,11 @@ message UpdateBillRequest {
   google.protobuf.Timestamp bill_date = 5;
   google.protobuf.Timestamp due_date = 6;
   google.protobuf.Timestamp dc_date = 7;
+  double bill_amount = 8;
+  repeated google.protobuf.Struct charge_heads = 9;
+  repeated google.protobuf.Struct computed_properties = 10;
 
-  string remarks = 8;
+  string remarks = 11;
 }
 
 message UpdateBillResponse {
@@ -103,7 +113,7 @@ message ListBillRequest {
   int32 page_size = 2;
 
   // Optional filters
-  optional int32 billing_group_id = 3;
+  optional int32 connection_id = 3;
   optional string reading_year_month = 4;
   optional string bill_year_month = 5;
 }
