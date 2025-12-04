@@ -17,7 +17,8 @@ export default function BillingGroupIndexPage({ billingGroups, filters }: PagePr
   return (
     <MainLayout
       breadcrumb={breadcrumb}
-      leftBarTitle='Billing Group'
+      leftBarTitle='Billing'
+      selectedItem='Billing Groups'
       navItems={billingNavItems}
       addBtnText='Billing Group'
       addBtnUrl='/billing-groups/create'

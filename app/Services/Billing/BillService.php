@@ -7,6 +7,7 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Proto\Bill\BillServiceClient;
 use Grpc\ChannelCredentials;
+use Proto\Bill\GetBillRequest;
 use Proto\Bill\ListBillRequest;
 
 class BillService
@@ -43,5 +44,26 @@ class BillService
         }
 
         return GrpcServiceResponse::success($billsArray, $response, $status->code, $status->details);
+    }
+
+    public function getBill(int $id):GrpcServiceResponse
+    {
+        $proto = new GetBillRequest();
+        $proto->setBillId($id);
+
+        [$response, $status] = $this->client->getBill($proto)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+        $bill = $response->getBill();
+        $bill = BillProtoConverter::convertToProto($bill);
+
+        return GrpcServiceResponse::success($bill, $response, $status->code, $status->details);
     }
 }

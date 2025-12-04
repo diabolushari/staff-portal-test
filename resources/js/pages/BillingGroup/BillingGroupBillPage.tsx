@@ -4,10 +4,9 @@ import useCustomForm from '@/hooks/useCustomForm'
 import { Bill, BillingGroup } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
-import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
-import MonthPicker from '@/ui/form/MonthPicker'
+import { router } from '@inertiajs/react'
 
 interface Props {
   bills: Bill[]
@@ -33,7 +32,9 @@ export default function BillingGroupBillPage({ bills, billing_group }: Props) {
     e.preventDefault()
     console.log(formData)
   }
-  console.log(bills)
+  const handleViewBillClick = (bill: Bill) => {
+    router.get(route('bills.show', bill?.bill_id))
+  }
   return (
     <MainLayout
       breadcrumb={breadcrumb}
@@ -134,7 +135,10 @@ export default function BillingGroupBillPage({ bills, billing_group }: Props) {
 
             {/* Footer */}
             <div className='flex justify-end border-t px-6 py-4'>
-              <Button label='View Bill' />
+              <Button
+                label='View Bill'
+                onClick={() => handleViewBillClick(bill)}
+              />
             </div>
           </Card>
         ))}

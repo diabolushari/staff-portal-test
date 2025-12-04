@@ -22,7 +22,7 @@ export default function BillingGroupForm({
     description: billing_group?.description ?? '',
     _method: billing_group ? 'PUT' : 'POST',
   })
-  const { post, errors } = useInertiaPost<typeof formData>(route('billing-groups.store'))
+  const { post, errors, loading } = useInertiaPost<typeof formData>(route('billing-groups.store'))
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     post(formData)
@@ -49,6 +49,9 @@ export default function BillingGroupForm({
         <Button
           label='Submit'
           type='submit'
+          disabled={loading}
+          processing={loading}
+          variant={loading ? 'loading' : 'primary'}
         />
       </div>
     </form>

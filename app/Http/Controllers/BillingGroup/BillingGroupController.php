@@ -42,7 +42,7 @@ class BillingGroupController extends Controller
             return redirect()->back()->with('error', 'Failed to create billing group');
         }
 
-        return redirect()->route('billing-groups.index');
+        return redirect()->route('billing-groups.index')->with('message', 'Billing group created successfully');
     }
 
     public function show(int $id, Request $request): Response

@@ -12,31 +12,28 @@ option java_outer_classname = "BillProto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
-
+import "connections/connections.proto";
+import "connections/consumer.proto";
 // ---------------- ENTITY MESSAGE ----------------
 
 message BillMessage {
   int64 bill_id = 1;
-
   int32 connection_id = 2;
-
   string reading_year_month = 3;  // YYYY-MM
   string bill_year_month = 4;     // YYYY-MM
-
   google.protobuf.Timestamp bill_date = 5;
   google.protobuf.Timestamp due_date = 6;
   google.protobuf.Timestamp dc_date = 7;
   double bill_amount = 8;
   repeated google.protobuf.Struct charge_heads = 9;
   repeated google.protobuf.Struct computed_properties = 10;
-
   string remarks = 11;
-
   google.protobuf.Timestamp created_ts = 12;
   int32 created_by = 13;
-
   google.protobuf.Timestamp deleted_ts = 14;
   int32 deleted_by = 15;
+  optional com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 16;
+  optional com.kseb.consumerservice.grpc.connections.ConsumerMessage consumer = 17;
 }
 
 // ---------------- REQUEST / RESPONSE ----------------
