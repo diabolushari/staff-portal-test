@@ -23,7 +23,7 @@ class ConsumerFormRequest extends Data
         public bool $incomeTaxWithholdingInd,
         public bool $gstWithholdingInd,
         public string $addressLine1,
-        public string $addressLine2,
+        public ?string $addressLine2,
         public string $cityTownVillage,
         public int $pincode,
         public int $districtId,
@@ -35,7 +35,7 @@ class ConsumerFormRequest extends Data
         /** @var string[]|null */
         public ?array $otherAddresses,
         public ?array $contactFolio,
-        public string $consumerCin,
+        public ?string $consumerCin,
         public bool $seasonalInd,
         public bool $licenseInd,
         public bool $openAccessInd,
