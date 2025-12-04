@@ -595,3 +595,11 @@ export interface Bill {
   deleted_ts?: string,
   deleted_by?: number,
 }
+
+export interface BillJobStatus {
+  billing_group: BillingGroup,
+  reading_month: string,
+  billing_month: string,
+  bills: Bill[],
+  connections: Connection[],
+}

@@ -98,8 +98,8 @@ export const billingNavItems: navItem[] = [
         href: '/billing-groups',
       },
       {
-        title: 'Billing Cycles',
-        href: '/billing-cycles',
+        title: 'Jobs',
+        href: '/bills/job-status',
       },
     ],
   },

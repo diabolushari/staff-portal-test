@@ -8,7 +8,7 @@ interface Props {
   billingGroups: BillingGroup[]
 }
 
-export default function BillingCycleList({ billingGroups }: Props) {
+export default function BillingJobStatusList({ billingGroups }: Props) {
   if (!billingGroups || billingGroups.length === 0) {
     return (
       <div className='flex h-full items-center justify-center text-gray-500'>

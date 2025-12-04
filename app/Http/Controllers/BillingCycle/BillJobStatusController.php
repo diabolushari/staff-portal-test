@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class BillingCycleController extends Controller
+class BillJobStatusController extends Controller
 {
 
     public function __construct(
@@ -19,13 +19,13 @@ class BillingCycleController extends Controller
     public function index(): Response
     {
         $billingGroups = $this->billingGroupService->listBillingGroups();
-        return Inertia::render('BillingCycle/BillingCycleIndexPage', [
+        return Inertia::render('BillingCycle/BillJobStatusIndexPage', [
             'billing_groups' => $billingGroups->data
         ]);
     }
     public function show(int $id): Response
     {
         $billingGroup = $this->billingGroupService->getBillingGroup($id);
-        return Inertia::render('BillingCycle/BillingCycleShowPage');
+        return Inertia::render('BillingCycle/BillJobStatusShowPage');
     }
 }
