@@ -78,7 +78,7 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
               <div className='grid grid-cols-2 gap-4 bg-gray-200 px-6 py-4'>
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <p className='font-medium text-gray-700'>{bill?.connection_id}</p>
+                    <p className='font-medium text-gray-700'>{bill?.consumer?.organization_name}</p>
                     <p className='text-xs text-gray-500'>Name</p>
                   </div>
 
@@ -88,11 +88,13 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
                   </div>
 
                   <div>
-                    <p className='font-medium text-gray-700'>{bill?.connection_id}</p>
+                    <p className='font-medium text-gray-700'>{bill?.connection?.consumer_number}</p>
                     <p className='text-xs text-gray-500'>Consumer Number</p>
                   </div>
                   <div>
-                    <p className='font-medium text-gray-700'>{bill?.connection_id}</p>
+                    <p className='font-medium text-gray-700'>
+                      {bill?.connection?.connection_type?.parameter_value}
+                    </p>
                     <p className='text-xs text-gray-500'>Type</p>
                   </div>
                 </div>

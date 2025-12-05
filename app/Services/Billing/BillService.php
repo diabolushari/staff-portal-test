@@ -51,7 +51,7 @@ class BillService
         $bills = $response->getBills();
         $billsArray = [];
         foreach ($bills as $bill) {
-            $bill = BillProtoConverter::convertToProto($bill);
+            $bill = BillProtoConverter::convertToArray($bill);
             $billsArray[] = $bill;
         }
 

@@ -600,6 +600,8 @@ export interface Bill {
   created_by: number,
   deleted_ts?: string,
   deleted_by?: number,
+  connection: Connection,
+  consumer: Consumer,
 }
 
 export interface BillJobStatus {

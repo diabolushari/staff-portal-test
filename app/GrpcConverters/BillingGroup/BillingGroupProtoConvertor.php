@@ -55,15 +55,11 @@ class BillingGroupProtoConvertor
             'billing_group_id' => $g->getBillingGroupId(),
             'name' => $g->getName(),
             'description' => $g->hasDescription() ? $g->getDescription() : null,
-
             'effective_start' => $effectiveStart,
             'effective_end' => $effectiveEnd,
-
             'is_active' => $g->getIsActive(),
-
             'created_by' => $g->getCreatedBy(),
             'updated_by' => $g->getUpdatedBy(),
-
             'deleted_ts' => $deletedTs,
             'deleted_by' => $g->getDeletedBy(),
             'connections' => $connections,
