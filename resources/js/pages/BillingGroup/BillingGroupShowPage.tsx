@@ -144,7 +144,7 @@ export default function BillingGroupShowPage({
 
                     <div>
                       <h4 className='text-sm text-gray-500'>Name</h4>
-                      <p className='text-lg'>Name</p>
+                      <p className='text-lg'>{conn?.consumer?.organization_name}</p>
                     </div>
 
                     <div>

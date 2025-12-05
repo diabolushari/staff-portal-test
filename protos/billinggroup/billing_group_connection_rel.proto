@@ -10,6 +10,7 @@ option java_package = "com.kseb.consumerservice.proto.billinggroup";
 option java_outer_classname = "BillingGroupConnectionRelProto";
 
 import "connections/connections.proto";
+import "connections/consumer.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
@@ -32,6 +33,7 @@ message BillingGroupConnectionRelMessage {
   google.protobuf.Timestamp deleted_ts = 9;
   int32 deleted_by = 10;
 com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 11;
+com.kseb.consumerservice.grpc.connections.ConsumerMessage consumer = 12;
 
 }
 

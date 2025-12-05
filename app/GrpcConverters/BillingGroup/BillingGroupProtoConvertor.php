@@ -47,11 +47,7 @@ class BillingGroupProtoConvertor
 
         $connections = [];
         foreach ($g->getConnections() as $conn) {
-            $connections[] = [
-                'version_id' => $conn->getVersionId(),
-                'connection_id' => $conn->getConnectionId(),
-                'connection' => ConnectionProtoConverter::convertToArray($conn->getConnection()),
-            ];
+            $connections[] = BillingGroupConnectionRelConverter::convert($conn);
         }
 
         return [

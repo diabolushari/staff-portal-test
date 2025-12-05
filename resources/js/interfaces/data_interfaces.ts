@@ -582,6 +582,7 @@ export interface BillingGroupConnection {
   version_id: number;
   connection_id: number;
   connection: Connection;
+  consumer: Consumer;
 }
 export interface Bill {
   bill_id: number,
