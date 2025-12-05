@@ -2,7 +2,7 @@ import { billingNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import { useState } from 'react'
-import { BillingGroup, BillingGroupConnection } from '@/interfaces/data_interfaces'
+import { BillingGroup, BillingGroupConnection, BillJobStatus } from '@/interfaces/data_interfaces'
 import Button from '@/ui/button/Button'
 import useCustomForm from '@/hooks/useCustomForm'
 import { Connection } from '@/interfaces/data_interfaces'
@@ -15,6 +15,8 @@ import BillingGroupAddConnection from './BillingGroupAddConnection'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import MonthPicker from '@/ui/form/MonthPicker'
 import NormalText from '@/typography/NormalText'
+import BillingJobStatusList from '@/components/Billing/BillingCycle/BillJobStatusList'
+import BillingJobList from '@/components/Billing/BillingCycle/BillingJobList'
 
 export interface BillingGroupConnectionRelForm {
   billing_group_id: number
@@ -22,7 +24,15 @@ export interface BillingGroupConnectionRelForm {
   status: string
 }
 
-export default function BillingGroupShowPage({ billingGroup }: { billingGroup: BillingGroup }) {
+export interface PageProps {
+  billingGroup: BillingGroup
+  billingGenerateJobStatus: BillJobStatus[]
+}
+
+export default function BillingGroupShowPage({
+  billingGroup,
+  billingGenerateJobStatus,
+}: PageProps) {
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Billing Groups', href: route('billing-groups.index') },
     {
@@ -155,6 +165,12 @@ export default function BillingGroupShowPage({ billingGroup }: { billingGroup: B
             </div>
           ))}
         </div>
+      )}
+      {billingGenerateJobStatus?.length > 0 && (
+        <BillingJobList
+          isGroupNameVisible={false}
+          billGenerationJobStatus={billingGenerateJobStatus}
+        />
       )}
       {deleteConnection && deleteConnectionItem && (
         <DeleteModal

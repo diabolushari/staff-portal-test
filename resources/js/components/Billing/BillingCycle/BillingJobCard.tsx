@@ -5,7 +5,7 @@ import { CalendarDaysIcon } from 'lucide-react'
 
 interface BillingJobCardProps {
   month: string // e.g., "Nov 2025"
-  groupName: string // e.g., "Group 1"
+  groupName?: string // e.g., "Group 1"
   completed: number
   total: number
   exceptions: number
@@ -30,7 +30,7 @@ export default function BillingJobCard({
       <div className='flex items-center justify-between'>
         <div>
           <div className='text-lg font-semibold text-gray-900'>
-            {dayjs(month).format('MMM YYYY')} | {groupName}
+            {dayjs(month).format('MMM YYYY')} | {groupName ? groupName : ''}
           </div>
 
           {/* Status Info */}

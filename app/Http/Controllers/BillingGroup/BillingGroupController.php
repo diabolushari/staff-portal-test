@@ -4,17 +4,20 @@ namespace App\Http\Controllers\BillingGroup;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BillingGroup\BillingGroupFormRequest;
+use App\Services\BillingGroup\BillingGenerateJobService;
 use App\Services\BillingGroup\BillingGroupService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
+use Proto\Bill\BillGenerationJobStatusServiceClient;
 
 class BillingGroupController extends Controller
 {
     public function __construct(
-        private readonly BillingGroupService $billingGroupService
+        private readonly BillingGroupService $billingGroupService,
+        private readonly BillingGenerateJobService $billingGenerateJobService
     ) {}
 
     public function index(Request $request): Response
@@ -85,9 +88,11 @@ class BillingGroupController extends Controller
     {
         $search = $request->get('search');
         $response = $this->billingGroupService->getBillingGroup(null, $id);
+        $billingGenerateJobServiceResponse = $this->billingGenerateJobService->listBillGenerationJobStatus($id, null);
 
         return Inertia::render('BillingGroup/BillingGroupShowPage', [
             'billingGroup' => $response->data ?? null,
+            'billingGenerateJobStatus' => $billingGenerateJobServiceResponse->data ?? null,
         ]);
     }
 

@@ -4,11 +4,11 @@ import { router } from '@inertiajs/react'
 
 interface Props {
   billGenerationJobStatus: BillJobStatus[]
+  isGroupNameVisible?: boolean
 }
 
-export default function BillingJobList({ billGenerationJobStatus }: Props) {
+export default function BillingJobList({ billGenerationJobStatus, isGroupNameVisible }: Props) {
   const handleView = (item: BillJobStatus) => {
-    console.log(item)
     router.get(`/bills/job-status/${item.billing_group.billing_group_id}`, {
       reading_year_month: item.reading_year_month,
     })
@@ -19,7 +19,7 @@ export default function BillingJobList({ billGenerationJobStatus }: Props) {
         <BillingJobCard
           key={index}
           month={job.reading_year_month}
-          groupName={job.billing_group.name}
+          groupName={isGroupNameVisible ? job.billing_group.name : undefined}
           completed={job.total_bills}
           total={job.total_bills}
           exceptions={0}
