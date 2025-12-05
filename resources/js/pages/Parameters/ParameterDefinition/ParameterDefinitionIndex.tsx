@@ -37,12 +37,7 @@ export default function ParameterDefinitionIndex({
     useState<ParameterDefinition | null>(null)
   const [parameterFormModal, setParameterFormModal] = useState(false)
   const [parameterDeleteModal, setParameterDeleteModal] = useState(false)
-  const [items, setItems] = useState<ParameterDefinition[]>(parameter_definitions)
-
-  const handleEditClick = useCallback((item: ParameterDefinition) => {
-    setParameterDefinitionToEdit(item)
-    setParameterFormModal(true)
-  }, [])
+  const items = parameter_definitions
 
   const handleDeleteClick = useCallback((item: ParameterDefinition) => {
     setParameterDefinitionToDelete(item)

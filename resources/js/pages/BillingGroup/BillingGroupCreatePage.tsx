@@ -3,8 +3,13 @@ import BillingGroupForm from '@/components/Billing/BillingGroup/BillingGroupForm
 import { billingNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
+import { BillingGroup } from '@/interfaces/data_interfaces'
 
-export default function BillingGroupCreatePage() {
+export default function BillingGroupCreatePage({
+  billingGroup,
+}: {
+  billingGroup: BillingGroup | null
+}) {
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Billing Groups', href: route('billing-groups.index') },
     {
@@ -23,7 +28,7 @@ export default function BillingGroupCreatePage() {
       addBtnUrl='/billing-groups/create'
     >
       <div className='flex flex-col gap-4'>
-        <BillingGroupForm billing_group={null} />
+        <BillingGroupForm billing_group={billingGroup} />
         <BillingGroupMembersList />
       </div>
     </MainLayout>

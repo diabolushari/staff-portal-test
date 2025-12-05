@@ -60,7 +60,7 @@ class ConsumerController extends Controller
             ]);
         }
 
-        return redirect()->route('connections.index');
+        return redirect()->route('connections.index')->with('message', 'Consumer created successfully');
     }
 
     public function edit(int $connectionId): InertiaResponse

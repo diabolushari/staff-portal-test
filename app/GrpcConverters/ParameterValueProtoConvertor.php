@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\GrpcConverters;
 
+use App\GrpcConverters\MetaData\ParameterDefinitionGrpcConverter;
 use Proto\Parameters\ParameterValueProto;
 
 class ParameterValueProtoConvertor
@@ -21,12 +22,24 @@ class ParameterValueProtoConvertor
      *     is_active: bool,
      *     sort_priority: int,
      *     notes: string,
+     *     definition: array{
+     *         id: int|string,
+     *         parameter_name: string,
+     *         domain: array{
+     *             id: int|string,
+     *             domain_name: string,
+     *         }|null,
+     *     }|null,
      * }|null
      */
     public static function convertToArray(?ParameterValueProto $parameterValue): ?array
     {
         if ($parameterValue === null) {
             return null;
+        }
+        $definition = $parameterValue->getDefinition();
+        if ($definition != null) {
+            $definition = ParameterDefinitionGrpcConverter::convertToArray($definition);
         }
 
         return [
@@ -41,6 +54,7 @@ class ParameterValueProtoConvertor
             'is_active' => $parameterValue->getIsActive(),
             'sort_priority' => $parameterValue->getSortPriority(),
             'notes' => $parameterValue->getNotes(),
+            'definition' => $definition,
         ];
     }
 }

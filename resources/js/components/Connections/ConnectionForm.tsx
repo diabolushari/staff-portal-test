@@ -1,19 +1,19 @@
 import useCustomForm from '@/hooks/useCustomForm'
+import useFetchRecord from '@/hooks/useFetchRecord'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { Connection, Office, OfficeWithHierarchy } from '@/interfaces/data_interfaces'
+import { Connection, OfficeWithHierarchy } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
 import ComboBox from '@/ui/form/ComboBox'
+import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
-import StrongText from '@/typography/StrongText'
-import { route } from 'ziggy-js'
-import { useEffect, useState } from 'react'
-import { Card } from '../ui/card'
-import DatePicker from '@/ui/form/DatePicker'
 import { router } from '@inertiajs/react'
-import useFetchRecord from '@/hooks/useFetchRecord'
+import { useEffect, useState } from 'react'
+import { route } from 'ziggy-js'
+import { Card } from '../ui/card'
 
 interface Props {
   connection?: Connection
@@ -52,8 +52,6 @@ export default function ConnectionForm({
   meteringTypes,
   renewableTypes,
 }: Props) {
-  const [adminOfficeData, setAdminOfficeData] = useState<Office | null>(null)
-  const [serviceOfficeData, setServiceOfficeData] = useState<Office | null>(null)
   const [subCategories, setSubCategories] = useState<ParameterValues[]>([])
   const [category, setCategory] = useState<string>('')
 
@@ -97,7 +95,6 @@ export default function ConnectionForm({
       onComplete: () => {
         router.visit(route('consumer.create'))
       },
-      showErrorToast: true,
     }
   )
 
@@ -113,14 +110,6 @@ export default function ConnectionForm({
     formData.service_office_code ? '/api/office/code/' + formData.service_office_code : ''
   )
 
-  useEffect(() => {
-    if (adminOfficeApiData?.office) {
-      setAdminOfficeData(adminOfficeApiData.office)
-    }
-    if (serviceOfficeApiData?.office) {
-      setServiceOfficeData(serviceOfficeApiData.office)
-    }
-  }, [adminOfficeApiData, serviceOfficeApiData])
   const handleConnectionCategoryChange = (parameterValueId: string) => {
     setFormValue('connection_category_id')(parameterValueId)
     const category = connectionCategory.find((item) => item.id === Number(parameterValueId))
@@ -425,6 +414,7 @@ export default function ConnectionForm({
           label='Submit'
           type='submit'
           disabled={loading}
+          processing={loading}
           variant={loading ? 'loading' : 'primary'}
         />
       </div>

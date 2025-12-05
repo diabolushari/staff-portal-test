@@ -60,7 +60,14 @@ export default function BillInitializeModal({
     setFormValue('due_date')(dueDate)
     setFormValue('dc_date')(dcDate)
   }
-  const { post, loading, errors } = useInertiaPost(route('billing-group.initialize-bill'))
+  const { post, loading, errors } = useInertiaPost<typeof formData>(
+    route('billing-group.initialize-bill'),
+    {
+      onComplete: () => {
+        setShowModal(false)
+      },
+    }
+  )
 
   const handleSubmitBill = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -82,31 +89,39 @@ export default function BillInitializeModal({
           label='Reading Year and Month'
           value={formData.reading_month_year}
           setValue={setFormValue('reading_month_year')}
+          error={errors?.reading_month_year}
         />
         <MonthPicker
           label='Bill Year and Month'
           value={formData.bill_month_year}
           setValue={setFormValue('bill_month_year')}
+          error={errors?.bill_month_year}
         />
         <DatePicker
           label='Bill Date'
           value={formData.bill_date}
           setValue={handleBillDateChange}
+          error={errors?.bill_date}
         />
         <DatePicker
           label='Due Date'
           value={formData.due_date}
           setValue={setFormValue('due_date')}
+          error={errors?.due_date}
         />
         <DatePicker
           label='DC Date'
           value={formData.dc_date}
           setValue={setFormValue('dc_date')}
+          error={errors?.dc_date}
         />
         <div className='flex justify-end gap-2'>
           <Button
             label='Initialize'
             type='submit'
+            disabled={loading}
+            processing={loading}
+            variant={loading ? 'loading' : 'primary'}
           />
         </div>
       </form>

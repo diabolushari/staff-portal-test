@@ -269,7 +269,7 @@ class MeterReadingService
                     $initial = $values['initial'] ?? null;
                     $final = $values['final'] ?? null;
                     $diff = $values['diff'] ?? null;
-                    $value = $values['mf'] ?? null;
+                    $value = $values['value'] ?? null;
 
                     // ensure required values exist (initial/final/diff/value at least one must be non-null)
                     if ($initial === null && $final === null && $diff === null && $value === null) {
@@ -403,7 +403,7 @@ class MeterReadingService
                     $initial = $values['initial'] ?? null;
                     $final = $values['final'] ?? null;
                     $diff = $values['diff'] ?? null;
-                    $value = $values['mf'] ?? null;
+                    $value = $values['value'] ?? null;
 
                     // ensure required values exist (initial/final/diff/value at least one must be non-null)
                     if ($initial === null && $final === null && $diff === null && $value === null) {

@@ -27,7 +27,11 @@ class BillingGroupConnectionRelController
     {
         $response = $this->billingGroupConnectionRelService->createBillingGroupConnectionRel($request);
 
-        return redirect()->route('billing-group-connection-rel.index')->with('success', 'Connection added to Billing Group');
+        if ($response->data === null) {
+            return redirect()->back()->with('error', 'Failed to add connection to Billing Group');
+        }
+
+        return redirect()->back()->with('message', 'Connection added to Billing Group');
     }
 
     public function show(int $billingGroupId)

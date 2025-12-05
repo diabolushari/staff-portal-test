@@ -22,6 +22,7 @@ interface Props {
     consumerNumber: string
   }
 }
+
 export default function ConnectionsIndex({
   connections,
   oldOffice,

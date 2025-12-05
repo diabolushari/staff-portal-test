@@ -7,14 +7,14 @@ import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
-import { Card } from '../ui/card'
-import ConsumerContactFolioModal from './ConsumerContactFolioModal'
+import { Address, RegionOption } from '@/interfaces/data_interfaces'
 import { useState } from 'react'
+import { Card } from '../ui/card'
 
 interface Props {
   consumer_types: ParameterValues[]
-  districts: any[]
-  states: any[]
+  districts: RegionOption[]
+  states: RegionOption[]
   connection_id: number
   data?: ConsumerData
 }

@@ -16,8 +16,10 @@ import "billinggroup/bill.proto";
 
 message BillGenerationJobStatusMessage {
   BillingGroupMessage billing_group = 1;
-  BillMessage bill = 2;
-  BillingGroupConnectionRelMessage connection_rel = 3;
+  int64 total_connections = 2;
+  int64 total_bills = 3;
+  string reading_year_month = 4;
+  string bill_year_month = 5;
 }
 
 
@@ -37,19 +39,35 @@ message GetBillGenerationJobStatusResponse {
 // --------------------- LIST REQUEST ---------------------
 
 message ListBillGenerationJobStatusRequest {
-  int32 billing_group_id = 1;
+  optional int32 billing_group_id = 1;
   optional string reading_year_month = 2;     // YYYY-MM
   optional string bill_year_month = 3;        // YYYY-MM
 
-  int32 page = 4;
-  int32 page_size = 5;
 }
 
 message ListBillGenerationJobStatusResponse {
   repeated BillGenerationJobStatusMessage data = 1;
   int64 total_count = 2;
-  int32 page = 3;
+}
+
+message PaginatedBillGenerationJobStatusRequest {
+  optional int32 billing_group_id = 1;
+  optional string reading_year_month = 2;     // YYYY-MM
+  optional string bill_year_month = 3;
+  optional string billing_group_name = 4;
+
+  int32 page_number = 5;
+  int32 page_size = 6;
+  optional string sort_by = 7;          // optional sort field
+  optional string sort_direction = 8;   // "asc" / "desc"
+}
+
+message PaginatedBillGenerationJobStatusResponse {
+  repeated BillGenerationJobStatusMessage data = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
   int32 page_size = 4;
+  int32 total_pages = 5;
 }
 
 
@@ -61,4 +79,7 @@ service BillGenerationJobStatusService {
 
   rpc ListBillGenerationJobStatus (ListBillGenerationJobStatusRequest)
       returns (ListBillGenerationJobStatusResponse);
+
+  rpc PaginatedListBillGenerationJobStatus (PaginatedBillGenerationJobStatusRequest)
+      returns (PaginatedBillGenerationJobStatusResponse);
 }

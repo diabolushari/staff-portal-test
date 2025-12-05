@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Billing;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Billing\BillInitializeFormRequest;
 use App\Services\Billing\BillInitializeService;
+use Illuminate\Http\RedirectResponse;
 
 class BillInitializeController extends Controller
 {
@@ -12,10 +13,13 @@ class BillInitializeController extends Controller
         private readonly BillInitializeService $billInitializeService
     ) {}
 
-    public function __invoke(BillInitializeFormRequest $request)
+    public function __invoke(BillInitializeFormRequest $request): RedirectResponse
     {
         $response = $this->billInitializeService->initializeBill($request);
-
-        return response()->json($response);
+        if($response->data == null){
+            return redirect()->back()->with('error', "Failed to initialize bill");
+        }
+        return redirect()->back()->with('message', "Bill initialized successfully");
+        
     }
 }

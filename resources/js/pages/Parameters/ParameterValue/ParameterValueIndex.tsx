@@ -1,11 +1,9 @@
-import { metadataNavItems, settingsReferenceData } from '@/components/Navbar/navitems'
+import { metadataNavItems } from '@/components/Navbar/navitems'
 import ParameterValuesList from '@/components/Parameter/ParameterValue/ParameterValueList'
 import ParameterValueSearchForm from '@/components/Parameter/ParameterValue/ParameterValueSearchForm'
-import useCustomForm from '@/hooks/useCustomForm'
 import { ParameterDefinition, ParameterDomain, ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
-import Button from '@/ui/button/Button'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import Pagination from '@/ui/Pagination/Pagination'
 import ListSearch from '@/ui/Search/ListSearch'
@@ -33,11 +31,6 @@ interface Props {
 }
 
 export default function ParameterValueIndex({ values, domains, definitions, filters }: Props) {
-  const { formData, setFormValue } = useCustomForm({
-    domain_name: filters.domain_name ?? '',
-    parameter_name: filters.parameter_name ?? '',
-    search: filters.search ?? '',
-  })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [editRow, setEditRow] = useState<ParameterValues | null>(null)
   const handleDeleteClick = (item: ParameterValues) => {

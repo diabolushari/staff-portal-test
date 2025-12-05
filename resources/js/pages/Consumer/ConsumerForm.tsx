@@ -1,18 +1,11 @@
 import ConsumerFormComponent from '@/components/Consumer/ConsumerFormComponent'
-import { Connection, ConsumerData } from '@/interfaces/data_interfaces'
+import { Connection, ConsumerData, RegionOption } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
-import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import { useMemo } from 'react'
 import StrongText from '@/typography/StrongText'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
-
-type RegionOption = {
-  region_id: number | string
-  region_name: string
-  [key: string]: unknown
-}
 
 interface Props {
   consumerTypes: ParameterValues[]

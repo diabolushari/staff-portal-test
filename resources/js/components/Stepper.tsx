@@ -25,7 +25,7 @@ export default function Stepper({
   activeStep: activeStepProp,
   onStepChange,
   children,
-}: StepperProps) {
+}: Readonly<StepperProps>) {
   const [activeStep, setActiveStep] = useState(activeStepProp || 0)
   const currentStep = activeStepProp ?? activeStep
 

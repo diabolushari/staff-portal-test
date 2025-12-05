@@ -42,7 +42,9 @@ class BillingGroupConnectionRelService
         }
 
         return GrpcServiceResponse::success(
-            [],
+            [
+                'version_id' => $response->getVersionId(),
+            ],
             $response,
             $status->code,
             $status->details

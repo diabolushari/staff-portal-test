@@ -7,6 +7,8 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 import FormCard from '@/ui/Card/FormCard'
 
 export interface BillingGroupForm {
+  billing_group_id?: number
+  version_id?: number
   name: string
   description: string
   _method?: 'PUT' | 'POST'
@@ -18,11 +20,17 @@ export default function BillingGroupForm({
   billing_group: BillingGroup | null
 }) {
   const { formData, setFormValue } = useCustomForm<BillingGroupForm>({
+    billing_group_id: billing_group?.billing_group_id ?? undefined,
+    version_id: billing_group?.version_id ?? undefined,
     name: billing_group?.name ?? '',
     description: billing_group?.description ?? '',
     _method: billing_group ? 'PUT' : 'POST',
   })
-  const { post, errors, loading } = useInertiaPost<typeof formData>(route('billing-groups.store'))
+  const { post, errors, loading } = useInertiaPost<typeof formData>(
+    billing_group
+      ? route('billing-groups.update', billing_group?.billing_group_id)
+      : route('billing-groups.store')
+  )
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     post(formData)
@@ -37,11 +45,13 @@ export default function BillingGroupForm({
           label='Name'
           value={formData.name}
           setValue={setFormValue('name')}
+          error={errors.name}
         />
         <TextArea
           label='Description'
           value={formData.description}
           setValue={setFormValue('description')}
+          error={errors.description}
         />
       </FormCard>
 

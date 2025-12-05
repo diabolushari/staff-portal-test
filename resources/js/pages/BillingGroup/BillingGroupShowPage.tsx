@@ -14,6 +14,7 @@ import BillInitializeModal from '@/components/Billing/BillingGroup/BillInitializ
 import BillingGroupAddConnection from './BillingGroupAddConnection'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import MonthPicker from '@/ui/form/MonthPicker'
+import NormalText from '@/typography/NormalText'
 
 export interface BillingGroupConnectionRelForm {
   billing_group_id: number
@@ -25,15 +26,13 @@ export default function BillingGroupShowPage({ billingGroup }: { billingGroup: B
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Billing Groups', href: route('billing-groups.index') },
     {
-      title: 'Billing Group Show',
+      title: `Group ${billingGroup?.name}`,
       href: route('billing-groups.show', {
-        versionId: billingGroup.version_id,
-        id: billingGroup.billing_group_id,
+        versionId: billingGroup?.version_id,
+        id: billingGroup?.billing_group_id,
       }),
     },
   ]
-
-  const [addedConnection, setAddedConnection] = useState<Connection | null>(null)
   const [deleteConnection, setDeleteConnection] = useState<boolean>(false)
   const [deleteConnectionItem, setDeleteConnectionItem] = useState<BillingGroupConnection | null>(
     null
@@ -69,6 +68,7 @@ export default function BillingGroupShowPage({ billingGroup }: { billingGroup: B
     <MainLayout
       breadcrumb={breadcrumbs}
       leftBarTitle='Billing Group'
+      selectedItem='Billing Groups'
       navItems={billingNavItems}
       title={billingGroup.name}
       addBtnText={addConnectionComponent ? 'Close' : 'Member'}

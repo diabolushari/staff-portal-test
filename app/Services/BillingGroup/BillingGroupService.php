@@ -9,6 +9,7 @@ use Grpc\ChannelCredentials;
 use App\GrpcConverters\BillingGroup\BillingGroupProtoConvertor;
 use Proto\BillingGroup\BillingGroupMessage;
 use App\Http\Requests\BillingGroup\BillingGroupFormRequest;
+use Proto\BillingGroup\BillingGroupPaginatedListRequest;
 use Proto\BillingGroup\BillingGroupServiceClient;
 use Proto\BillingGroup\CreateBillingGroupRequest;
 use Proto\BillingGroup\UpdateBillingGroupRequest;
@@ -28,6 +29,55 @@ class BillingGroupService
         );
     }
 
+    public function listPaginatedBillingGroups(?int $page = 1, ?int $pageSize = 10, ?string $search = null, ?int $billingGroupId = null,
+    ?string $sortBy = null, ?string $sortDirection = null): GrpcServiceResponse
+    {
+        $req = new BillingGroupPaginatedListRequest();
+        if($page !== null) {
+            $req->setPageNumber($page);
+        }
+        if($pageSize !== null) {
+            $req->setPageSize($pageSize);
+        }
+        if($search !== null) {
+            $req->setSearch($search);
+        }
+        if($billingGroupId !== null) {
+            $req->setBillingGroupId($billingGroupId);
+        }
+        if($sortBy !== null) {
+            $req->setSortBy($sortBy);
+        }
+        if($sortDirection !== null) {
+            $req->setSortDirection($sortDirection);
+        }
+
+        [$response, $status] = $this->client->ListBillingGroupPaginated($req)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $groups = [];
+        foreach ($response->getGroups() as $group) {
+            $groups[] = BillingGroupProtoConvertor::convertToArray($group);
+        }
+        $data = [
+            'groups' => $groups,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ];
+
+        return GrpcServiceResponse::success($data, $response, $status->code, $status->details);
+    }
+
 
     public function createBillingGroup(BillingGroupFormRequest $request): GrpcServiceResponse
     {
@@ -37,8 +87,6 @@ class BillingGroupService
         if (!empty($request->description)) {
             $req->setDescription($request->description);
         }
-
-
         $req->setIsActive(true);
 
         [$response, $status] = $this->client->CreateBillingGroup($req)->wait();
@@ -60,35 +108,21 @@ class BillingGroupService
         );
     }
 
-    public function updateBillingGroup(array $input): GrpcServiceResponse
+    public function updateBillingGroup(BillingGroupFormRequest $input): GrpcServiceResponse
     {
         $req = new UpdateBillingGroupRequest;
 
-        $req->setVersionId($input['version_id']);
-        $req->setBillingGroupId($input['billing_group_id']);
-        $req->setName($input['name']);
-
-        if (!empty($input['description'])) {
-            $req->setDescription($input['description']);
+        if($input->versionId !== null) {
+            $req->setVersionId($input->versionId);
         }
-
-        if (!empty($input['effective_start'])) {
-            $ts = new Timestamp();
-            $ts->fromDateTime(new \DateTime($input['effective_start']));
-            $req->setEffectiveStart($ts);
+        if($input->billingGroupId !== null) {
+            $req->setBillingGroupId($input->billingGroupId);
         }
-
-        if (!empty($input['effective_end'])) {
-            $ts = new Timestamp();
-            $ts->fromDateTime(new \DateTime($input['effective_end']));
-            $req->setEffectiveEnd($ts);
+        $req->setName($input->name);
+        if (!empty($input->description)) {
+            $req->setDescription($input->description);
         }
-
-        $req->setIsActive($input['is_active']);
-        $req->setUpdatedBy($input['updated_by']);
-
-
-
+        $req->setIsActive(true);
         [$response, $status] = $this->client->UpdateBillingGroup($req)->wait();
 
         if ($status->code !== 0) {
@@ -108,12 +142,13 @@ class BillingGroupService
         );
     }
 
-    public function getBillingGroup(int $versionId, ?int $billingGroupId = null): GrpcServiceResponse
+    public function getBillingGroup(?int $versionId = null, ?int $billingGroupId = null): GrpcServiceResponse
     {
         $req = new GetBillingGroupRequest;
-        $req->setVersionId($versionId);
-
-        if ($billingGroupId !== null) {
+        if($versionId !== null) {
+            $req->setVersionId($versionId);
+        }
+        if($billingGroupId !== null) {
             $req->setBillingGroupId($billingGroupId);
         }
 

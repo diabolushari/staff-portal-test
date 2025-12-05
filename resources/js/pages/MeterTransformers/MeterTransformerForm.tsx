@@ -1,6 +1,7 @@
-import { meteringBillingNavItems, meterNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
+import { MeterTransformer } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import Button from '@/ui/button/Button'
@@ -17,7 +18,7 @@ export interface MeterTransformerFormProps {
   burdens: ParameterValues[]
   makes: ParameterValues[]
   types: ParameterValues[]
-  transformer?: any // for edit mode
+  transformer?: MeterTransformer // for edit mode
 }
 
 const breadcrumbs = [
@@ -208,6 +209,8 @@ export default function MeterTransformerForm({
             type='submit'
             label={isEditing ? 'Update CTPT' : 'Create CTPT'}
             disabled={loading}
+            processing={loading}
+            variant={loading ? 'loading' : 'primary'}
           />
         </div>
       </form>

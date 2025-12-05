@@ -24,7 +24,7 @@ interface Props {
   }
 }
 
-export default function OfficeIndex({ offices, office_types, filters }: Readonly<Props>) {
+export default function OfficeIndex({ offices, filters }: Readonly<Props>) {
   console.log(offices)
   return (
     <MainLayout

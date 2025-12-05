@@ -22,7 +22,7 @@ export interface ParameterDefinition {
   attribute3_name?: string
   attribute4_name?: string
   attribute5_name?: string
-  domain?: {id: number, domain_name: string}
+  domain?: {id: number, domain_name: string, system_module?: Partial<SystemModule> | null}
   system_module?: Partial<SystemModule> | null
 
 }

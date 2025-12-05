@@ -22,10 +22,22 @@ class BillService
         );
     }
 
-    public function listBills():GrpcServiceResponse
+    public function listBills(
+        ?int $billingGroupId,
+        ?string $readingYearMonth,
+        ?string $billYearMonth
+    ):GrpcServiceResponse
     {
         $proto = new ListBillRequest();
-        
+        if ($billingGroupId) {
+            $proto->setBillingGroupId($billingGroupId);
+        }
+        if ($readingYearMonth) {
+            $proto->setReadingYearMonth($readingYearMonth);
+        }
+        if ($billYearMonth) {
+            $proto->setBillYearMonth($billYearMonth);
+        }
         [$response, $status] = $this->client->listBill($proto)->wait();
 
         if ($status->code !== 0) {

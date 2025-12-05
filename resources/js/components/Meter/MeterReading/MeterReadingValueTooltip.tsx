@@ -1,4 +1,3 @@
-import * as React from 'react'
 import {
   Table,
   TableBody,
@@ -7,10 +6,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { MeterReadingFormState } from './ReadingForm/useMeterReadingForm'
 
 interface Props {
   meterId: number
-  readingsByMeter: any[]
+  readingsByMeter: MeterReadingFormState[]
   parameterId: number // ✅ pass the specific parameter
 }
 

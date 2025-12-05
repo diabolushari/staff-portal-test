@@ -2,7 +2,6 @@ import { BillingGroup } from '@/interfaces/data_interfaces'
 import Button from '@/ui/button/Button'
 import { router } from '@inertiajs/react'
 import { Building, CalendarDaysIcon } from 'lucide-react'
-import { useState } from 'react'
 
 interface Props {
   billingGroups: BillingGroup[]
@@ -65,11 +64,7 @@ export default function BillingJobStatusList({ billingGroups }: Props) {
                     variant='link'
                     label='View'
                     onClick={() =>
-                      router.get(
-                        route('billing-cycles.show', {
-                          id: billingGroup?.billing_group_id,
-                        })
-                      )
+                      router.get(`/bills/job-status/${billingGroup?.billing_group_id}`)
                     }
                   />
                 </div>

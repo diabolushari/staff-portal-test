@@ -1,4 +1,4 @@
-import { metadataNavItems, settingsReferenceData } from '@/components/Navbar/navitems'
+import { metadataNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { ParameterDefinition } from '@/interfaces/parameter_types'

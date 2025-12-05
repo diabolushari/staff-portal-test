@@ -33,15 +33,17 @@ class ConnectionController extends Controller
         $officeCode = $request->input('office_code') ?? null;
         $connections = $this->connectionService->listPaginatedConnections($pageNumber, $pageSize, $consumerNumber, $officeCode);
         $paginated = null;
+
         if (! empty($connections->data)) {
             $paginated = new LengthAwarePaginator(
-                $connections->data['connections'],                // items for this page
-                $connections->data['total_count'],            // total items count
-                $connections->data['page_size'],              // items per page
-                $connections->data['page_number'],            // current page
-                ['path' => request()->url()]              // so pagination links work properly
+                $connections->data['connections'],
+                $connections->data['total_count'],
+                $connections->data['page_size'],
+                $connections->data['page_number'],
+                ['path' => request()->url()]
             );
         }
+
         if ($officeCode) {
             $office = $this->officeService->getOffice(null, $officeCode)->data;
         }
@@ -73,7 +75,7 @@ class ConnectionController extends Controller
         }
         $connection = $response->data;
 
-        return redirect()->route('connections.show', $connection['connection_id']);
+        return redirect()->route('connections.show', $connection['connection_id'])->with('message', 'Connection created successfully');
     }
 
     public function show(int $id): Response|RedirectResponse

@@ -46,4 +46,25 @@ class BillProtoConverter
             'deleted_by' => $bill->getDeletedBy(),
         ];
     }
+
+    public static function convertToBill(BillMessage $bill)
+    {
+        return [
+            'bill_id' => $bill->getBillId(),
+            'connection_id' => $bill->getConnectionId(),
+            'reading_year_month' => $bill->getReadingYearMonth(),
+            'bill_year_month' => $bill->getBillYearMonth(),
+            'bill_date' => $bill->getBillDate() ? DateTimeConverter::convertTimestampToString($bill->getBillDate()) : null,
+            'due_date' => $bill->getDueDate() ? DateTimeConverter::convertTimestampToString($bill->getDueDate()) : null,
+            'dc_date' => $bill->getDcDate() ? DateTimeConverter::convertTimestampToString($bill->getDcDate()) : null,
+            'bill_amount' => $bill->getBillAmount(),
+            'charge_heads' => $bill->getChargeHeads(),
+            'computed_properties' => $bill->getComputedProperties(),
+            'remarks' => $bill->getRemarks(),
+            'created_ts' => $bill->getCreatedTs(),
+            'created_by' => $bill->getCreatedBy(),
+            'deleted_ts' => $bill->getDeletedTs(),
+            'deleted_by' => $bill->getDeletedBy(),
+        ];
+    }
 }

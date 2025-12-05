@@ -1,16 +1,16 @@
 import { Card } from '@/components/ui/card'
 import useCustomForm from '@/hooks/useCustomForm'
-import useInertiaPost from '@/hooks/useInertiaPost'
+import { MeterTransformer } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
 import DatePicker from '@/ui/form/DatePicker'
 import SelectList from '@/ui/form/SelectList'
 import Modal from '@/ui/Modal/Modal'
-import { router } from '@inertiajs/react'
 import dayjs from 'dayjs'
+
 interface ConnectMeterTransformerModalProps {
-  ctpts: any[]
+  ctpts: MeterTransformer[]
   statuses: ParameterValues[]
   changeReasons: ParameterValues[]
   relation?: any

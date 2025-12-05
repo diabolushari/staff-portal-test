@@ -2,6 +2,7 @@
 
 namespace App\Services\Billing;
 
+use App\GrpcConverters\Billing\BillProtoConverter;
 use App\Http\Requests\Billing\BillInitializeFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\DateTimeConverter;
@@ -36,6 +37,12 @@ class BillInitializeService
         }
         [$response, $status] = $this->client->InitializeBill($proto)->wait();
 
+        $bills = $response->getBills();
+        $billsArray = [];
+        foreach ($bills as $bill) {
+            $billsArray[] = BillProtoConverter::convertToBill($bill);
+        }
+
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -45,6 +52,6 @@ class BillInitializeService
             );
         }
 
-        return GrpcServiceResponse::success([], $response, $status->code, $status->details);
+        return GrpcServiceResponse::success($billsArray, $response, $status->code, $status->details);
     }
 }

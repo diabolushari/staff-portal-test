@@ -18,7 +18,6 @@ export default function BillingGroupList({ billingGroups }: Props) {
   const handleBillingGroupClick = (billingGroup: BillingGroup) => {
     router.get(
       route('billing-groups.show', {
-        versionId: billingGroup.version_id,
         id: billingGroup.billing_group_id,
       })
     )
@@ -93,7 +92,6 @@ export default function BillingGroupList({ billingGroups }: Props) {
                     onClick={() =>
                       router.get(
                         route('billing-groups.show', {
-                          versionId: billingGroup?.version_id,
                           id: billingGroup?.billing_group_id,
                         })
                       )

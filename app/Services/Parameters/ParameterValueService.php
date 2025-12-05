@@ -2,6 +2,8 @@
 
 namespace App\Services\Parameters;
 
+use App\GrpcConverters\MetaData\ParameterDefinitionGrpcConverter;
+use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Http\Requests\Parameters\ParameterValueFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
@@ -269,30 +271,7 @@ class ParameterValueService
                 $status->details
             );
         }
-        $definition = [
-            'id' => $response->getDefinition()->getId(),
-            'parameter_name' => $response->getDefinition()->getParameterName(),
-            'domain_id' => $response->getDefinition()->getDomainId(),
-            'parameter_domain' => $response->getDefinition()->getDomain()->getDomainName(),
-        ];
-        $parameterValueArray = [
-            'id' => $response->getId(),
-            'definition_id' => $response->getDefinitionId(),
-            'parameter_value' => $response->getParameterValue(),
-            'parameter_code' => $response->getParameterCode(),
-            'attribute1_value' => $response->getAttribute1Value(),
-            'attribute2_value' => $response->getAttribute2Value(),
-            'attribute3_value' => $response->getAttribute3Value(),
-            'attribute4_value' => $response->getAttribute4Value(),
-            'attribute5_value' => $response->getAttribute5Value(),
-            'is_active' => $response->getIsActive(),
-            'sort_priority' => $response->getSortPriority(),
-            'notes' => $response->getNotes(),
-            'definition' => $definition,
-            'effective_start_date' => $response->getEffectiveStartDate(),
-            'effective_end_date' => $response->getEffectiveEndDate(),
-
-        ];
+        $parameterValueArray = ParameterValueProtoConvertor::convertToArray($response);
 
         return GrpcServiceResponse::success($parameterValueArray, $response, $status->code, $status->details);
     }
@@ -324,7 +303,10 @@ class ParameterValueService
         if ($value === null) {
             return [];
         }
-
+        $definition = $value->getDefinition();
+        if ($definition != null) {
+            $definition = ParameterDefinitionGrpcConverter::convertToArray($definition);
+        }
         return [
             'id' => $value->getId(),
             'parameter_value' => $value->getParameterValue(),
@@ -337,7 +319,7 @@ class ParameterValueService
             'is_active' => $value->getIsActive(),
             'sort_priority' => $value->getSortPriority(),
             'notes' => $value->getNotes(),
-            'definition' => $value->getDefinition(),
+            'definition' => $definition,
             'effective_start_date' => $value->getEffectiveStartDate(),
             'effective_end_date' => $value->getEffectiveEndDate(),
         ];

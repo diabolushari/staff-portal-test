@@ -63,6 +63,7 @@ class GetMeterReadingController extends Controller
             'Meter',
             'Anomalies',
         );
+
         $connection = $this->connectionService->getConnection($connectionId);
         $consumer = $this->consumerService->getConsumer($connectionId);
         $meterConnectionRel = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($connectionId);
@@ -70,6 +71,7 @@ class GetMeterReadingController extends Controller
         $meterTimezoneTypeRel = [];
         $timeZoneNames = [];
         $latestMeterReading = $this->meterReadingService->latestMeterReading($connectionId);
+
         if ($meterConnectionRel->data) {
             $meterWithTimezoneAndProfile = [];
 

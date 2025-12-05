@@ -1,5 +1,3 @@
-import StrongText from '@/typography/StrongText'
-import { Card } from '../ui/card'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import Input from '@/ui/form/Input'

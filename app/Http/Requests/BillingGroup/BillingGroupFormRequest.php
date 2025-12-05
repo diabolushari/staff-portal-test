@@ -12,6 +12,8 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class BillingGroupFormRequest extends Data
 {
     public function __construct(
+        public ?int $versionId,
+        public ?int $billingGroupId,
         #[Max(255)]
         public string $name,
         public string $description,

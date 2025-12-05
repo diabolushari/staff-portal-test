@@ -91,7 +91,7 @@ class MeterTransformerController extends Controller
         }
 
         return redirect()->route('meter-ctpt.index')
-            ->with('success', 'Meter Transformer created successfully.');
+            ->with('message', 'Meter Transformer created successfully.');
     }
 
     /**
