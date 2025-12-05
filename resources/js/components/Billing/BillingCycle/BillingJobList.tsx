@@ -7,7 +7,10 @@ interface Props {
   isGroupNameVisible?: boolean
 }
 
-export default function BillingJobList({ billGenerationJobStatus, isGroupNameVisible }: Props) {
+export default function BillingJobList({
+  billGenerationJobStatus,
+  isGroupNameVisible = true,
+}: Props) {
   const handleView = (item: BillJobStatus) => {
     router.get(`/bills/job-status/${item.billing_group.billing_group_id}`, {
       reading_year_month: item.reading_year_month,
