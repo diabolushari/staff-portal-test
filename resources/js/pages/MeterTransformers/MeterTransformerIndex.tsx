@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { MeterTransformer } from '@/interfaces/data_interfaces'
 import { Paginator } from '@/ui/ui_interfaces'
 import Pagination from '@/ui/Pagination/Pagination'
+import { title } from 'process'
 
 interface Props {
   filters: {
@@ -17,7 +18,10 @@ interface Props {
   transformers: Paginator<MeterTransformer>
 }
 
-const breadcrumbs = [{ title: 'Meter CTPT', href: '/meter-ctpt' }]
+const breadcrumbs = [
+  { title: 'Settings', href: '/settings-page' },
+  { title: 'CTPTs', href: '/meter-ctpt' },
+]
 
 export default function MeterTransformerIndex({ filters, transformers }: Readonly<Props>) {
   const items = transformers?.data ?? []
@@ -33,7 +37,7 @@ export default function MeterTransformerIndex({ filters, transformers }: Readonl
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={meteringBillingNavItems}
-      selectedItem='Meter CTPTs'
+      selectedItem='CTPTs'
       addBtnText='Meter CTPT'
       addBtnUrl={route('meter-ctpt.create')}
     >

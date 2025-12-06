@@ -71,6 +71,12 @@ export default function MainLayout({
 
           <main className='flex-1 p-4'>
             <div>
+              {title && (
+                <div className='px-2 pt-2'>
+                  <StrongText className='text-2xl font-semibold'>{title}</StrongText>
+                </div>
+              )}
+
               <div className='flex justify-between p-2'>
                 <CustomBreadcrumb list={breadcrumb ?? []} />
                 <div>
@@ -88,16 +94,8 @@ export default function MainLayout({
                   )}
                 </div>
               </div>
-              {title ? (
-                <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
-                  <div className='flex items-center gap-2'>
-                    <StrongText className='text-2xl font-semibold'>{title}</StrongText>
-                  </div>
-                  {children}
-                </div>
-              ) : (
-                children
-              )}
+
+              <div className='flex flex-col gap-4 overflow-x-auto p-2'>{children}</div>
             </div>
           </main>
         </div>

@@ -5,7 +5,6 @@ import { Connection } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import React from 'react'
 import { NestedTabGroup } from '@/components/ui/nestedTab'
-import { Breadcrumb } from '@/components/ui/breadcrumb'
 import CustomBreadcrumb from '@/ui/BreadCrumb'
 
 interface ConnectionsLayoutProps {
@@ -54,10 +53,24 @@ const connectionTabs = (connection?: Connection) => [
   },
   {
     value: 'meter-reading',
-    label: 'Meter & Readings',
+    label: 'Meter Readings',
     href: connection?.connection_id
       ? route('connection.meter-reading', connection.connection_id)
       : '#',
+    item: [
+      {
+        subValue: 'reading',
+        subLabel: 'Readings',
+        subLink: connection?.connection_id
+          ? route('connection.meter-reading', connection?.connection_id)
+          : '#',
+      },
+    ],
+  },
+  {
+    value: 'configuration',
+    label: 'Configuration',
+    href: connection?.connection_id ? route('connection.meters', connection.connection_id) : '#',
     item: [
       {
         subValue: 'meter',
@@ -71,13 +84,6 @@ const connectionTabs = (connection?: Connection) => [
         subLabel: 'CTPTs',
         subLink: connection?.connection_id
           ? route('connections.meters.ctpts', connection?.connection_id)
-          : '#',
-      },
-      {
-        subValue: 'reading',
-        subLabel: 'Readings',
-        subLink: connection?.connection_id
-          ? route('connection.meter-reading', connection?.connection_id)
           : '#',
       },
     ],
