@@ -107,12 +107,7 @@ class MeterService
         if (array_key_exists('decimal_digit_count', $data)) {
             $request->setDecimalDigitCount($data['decimal_digit_count']);
         }
-        if (array_key_exists('programmable_pt_ratio', $data)) {
-            $request->setProgrammablePtRatio((float) $data['programmable_pt_ratio']);
-        }
-        if (array_key_exists('programmable_ct_ratio', $data)) {
-            $request->setProgrammableCtRatio($data['programmable_ct_ratio']);
-        }
+
         if (array_key_exists('meter_mf', $data)) {
             $request->setMeterMf((float) $data['meter_mf']);
         }
@@ -141,6 +136,12 @@ class MeterService
         }
         if (array_key_exists('timezone_type_id', $data)) {
             $request->setTimezoneTypeId($data['timezone_type_id']);
+        }
+        if (array_key_exists('ct_count', $data)) {
+            $request->setCtCount($data['ct_count']);
+        }
+        if (array_key_exists('pt_count', $data)) {
+            $request->setPtCount($data['pt_count']);
         }
 
         [$response, $status] = $this->client->CreateMeter($request)->wait();

@@ -17,7 +17,7 @@ class MeterFormRequest extends Data
         public int $meterProfileId,
         public int $meterMakeId,
         public int $meterTypeId,
-        public int $meterCategoryId,
+        // public int $meterCategoryId,
         public int $accuracyClassId,
         public int $dialingFactorId,
         public string $companySealNum,
@@ -46,10 +46,13 @@ class MeterFormRequest extends Data
         public int $decimalDigitCount,
         public float $programmablePtRatio,
         public int $programmableCtRatio,
-        public float $meterMf,
+        // public float $meterMf,
         public int $warrantyPeriod,
-        public int $meterConstant,
+        public ?int $meterConstant,
         public string $batchCode,
         public int $timezoneTypeId,
+
+        public int $ctCount,
+        public int $ptCount,
     ) {}
 }
