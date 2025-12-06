@@ -54,11 +54,11 @@ message CreateMeterRequest {
   int32 created_by = 16;
   int32 meter_phase_id = 17;
   int32 decimal_digit_count = 18;
-  float programmable_pt_ratio = 19;
-  int32 programmable_ct_ratio = 20;
+  int32 ct_count = 19;
+  int32 pt_count = 20;
   float meter_mf = 21;
   int32 warranty_period = 22;
-  int32 meter_constant = 23;
+  optional int32 meter_constant = 23;
   string batch_code = 24;
 
   // New nullable internal CT/PT ratios (use optional for presence)
@@ -70,6 +70,8 @@ message CreateMeterRequest {
   int64 profile_id = 29;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 30;
   optional int32 timezone_type_id = 31;
+
+
 }
 
 message UpdateMeterRequest {
@@ -92,11 +94,11 @@ message UpdateMeterRequest {
   int32 updated_by = 17;
   int32 meter_phase_id = 18;
   int32 decimal_digit_count = 19;
-  float programmable_pt_ratio = 20;
-  int32 programmable_ct_ratio = 21;
+  int32 ct_count = 20;
+  int32 pt_count = 21;
   float meter_mf = 22;
   int32 warranty_period = 23;
-  int32 meter_constant = 24;
+  optional int32 meter_constant = 24;
   string batch_code = 25;
 
   // New nullable internal CT/PT ratios (use optional for presence)
@@ -110,6 +112,8 @@ message UpdateMeterRequest {
 
   int64 profile_id = 31;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 32;
+
+  
 }
 
 message DeleteMeterRequest {
@@ -153,9 +157,14 @@ message MeterResponse {
   optional int32 internal_pt_primary = 32;
   optional int32 internal_pt_secondary = 33;
 
+
+
   int64 profile_id = 34;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 35;
   repeated com.kseb.consumerservice.proto.metering.MeterTransformerMessage transformers = 36;
+
+  int32 ct_count = 37;
+  int32 pt_count = 38;
 
 }
 
