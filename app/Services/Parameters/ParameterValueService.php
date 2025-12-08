@@ -307,6 +307,7 @@ class ParameterValueService
         if ($definition != null) {
             $definition = ParameterDefinitionGrpcConverter::convertToArray($definition);
         }
+
         return [
             'id' => $value->getId(),
             'parameter_value' => $value->getParameterValue(),

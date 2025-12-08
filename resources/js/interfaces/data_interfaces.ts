@@ -71,36 +71,33 @@ export interface MeterConnectionMapping {
   updated_ts?: string
   created_by: number
   updated_by: number
-  meter: Meter
+  meter?: Meter | null
+  transformers?: MeterTransformerAssignment[]
 }
+
 export interface DateTimeField {
-  date: string // "2025-11-11 00:00:00.000000"
+  date: string
   timezone_type: number
-  timezone: string // "+00:00"
+  timezone: string
 }
 
 export interface ConnectionPartyMapping {
   version_id: number
-  rel_id?: number // not visible in your response, keep optional if exists
+  rel_id?: number
   connection_id: number
   party_id: number
-
-  effective_start: DateTimeField // convert to model below
+  effective_start: DateTimeField
   effective_end: DateTimeField | null
-
   is_active: boolean
-
   created_by?: number
   updated_by?: number
   deleted_by?: number | null
   deleted_ts?: DateTimeField | null
-
   party_type_id?: number
   party_type?: {
     id: number
     parameter_value: string
   }
-
   party: Party
 }
 
@@ -159,6 +156,8 @@ export interface Connection {
   cpp_flag: boolean
   admin_office: Office | null
   service_office: Office | null
+  meter_count?: number
+  meter_mappings: MeterConnectionMapping[]
   meters: [
     {
       priority: number
@@ -337,12 +336,12 @@ export interface Meter {
   internal_ct_secondary: number | null
   internal_pt_primary: number | null
   internal_pt_secondary: number | null
-
   created_ts: string | null
   updated_ts: string | null
   created_by: number
   updated_by: number
   transformers: MeterTransformer[]
+  is_active: boolean
 }
 
 export interface MeterTransformer {
@@ -373,19 +372,18 @@ export interface MeterTransformerAssignment {
   ctpt_id: number
   meter_id: number
   meter_serial?: string | null
+  status?: Partial<ParameterValues> | null
   faulty_date?: string | null
   ctpt_energise_date?: string | null
   ctpt_change_date?: string | null
   status_id: number
-  status_label?: string | null
   change_reason_id: number
-  change_reason_label?: string | null
+  change_reason?: Partial<ParameterValues> | null
   created_ts?: string | null
   updated_ts?: string | null
   created_by: number
   updated_by?: number | null
-  ctpt_type?: string | null
-  ratio?: string | number | null
+  ctpt?: MeterTransformer | null
 }
 
 export interface MeteringTimezoneSlot {

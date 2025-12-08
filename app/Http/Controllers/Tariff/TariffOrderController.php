@@ -29,20 +29,20 @@ class TariffOrderController extends Controller
         $orderDirection = $request->input('order_direction') ?? null;
 
         $response = $this->tariffOrderService->listTariffOrders(
-            pageNumber: $pageNumber,
-            pageSize: $pageSize,
-            orderDescriptor: $orderDescriptor,
-            orderBy: $orderBy,
-            orderDirection: $orderDirection
+            $pageNumber,
+            $pageSize,
+            $orderBy,
+            $orderDescriptor,
+            $orderDirection
         );
         $paginated = null;
         if (! empty($response->data)) {
             $paginated = new LengthAwarePaginator(
-                $response->data['tariff_orders'],                // items for this page
-                $response->data['total_count'],            // total items count
-                $response->data['page_size'],              // items per page
-                $response->data['page_number'],            // current page
-                ['path' => request()->url()]              // so pagination links work properly
+                $response->data['tariff_orders'],
+                $response->data['total_count'],
+                $response->data['page_size'],
+                $response->data['page_number'],
+                ['path' => request()->url()]
             );
         }
 

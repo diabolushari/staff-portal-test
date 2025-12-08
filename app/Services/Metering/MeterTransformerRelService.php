@@ -2,6 +2,7 @@
 
 namespace App\Services\Metering;
 
+use App\GrpcConverters\Metering\MeterTransformerRelProtoConvertor;
 use App\Http\Requests\Metering\MeterTransformerRelFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
@@ -11,9 +12,9 @@ use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
 use Proto\Metering\GetMeterTransformerRelByCtptIdRequest;
 use Proto\Metering\GetMeterTransformerRelByMeterIdRequest;
+use Proto\Metering\ListAssignedToMetersRequest;
 use Proto\Metering\MeterTransformerRelCreateRequest;
 use Proto\Metering\MeterTransformerRelIdRequest;
-use Proto\Metering\MeterTransformerRelMessage;
 use Proto\Metering\MeterTransformerRelServiceClient;
 use Proto\Metering\MeterTransformerRelUpdateRequest;
 
@@ -54,12 +55,11 @@ class MeterTransformerRelService
                 $status->code,
                 $status->details
             );
-            dd(GrpcErrorService::handleErrorResponse($status));
         }
 
         $relsArray = [];
         foreach ($response->getRels() as $rel) {
-            $relsArray[] = self::relProtoToArray($rel);
+            $relsArray[] = MeterTransformerRelProtoConvertor::relProtoToArray($rel);
         }
 
         return GrpcServiceResponse::success($relsArray, $response, $status->code, $status->details);
@@ -93,11 +93,10 @@ class MeterTransformerRelService
                 $status->code,
                 $status->details
             );
-
         }
 
         return GrpcServiceResponse::success(
-            self::relProtoToArray($response->getRel()),
+            MeterTransformerRelProtoConvertor::relProtoToArray($response->getRel()),
             $response,
             $status->code,
             $status->details
@@ -110,7 +109,6 @@ class MeterTransformerRelService
         $request->setVersionId($id);
 
         [$response, $status] = $this->client->GetMeterTransformerRelById($request)->wait();
-        // dd($response, $status);
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -121,7 +119,7 @@ class MeterTransformerRelService
         }
 
         return GrpcServiceResponse::success(
-            self::relProtoToArray($response->getRel()),
+            MeterTransformerRelProtoConvertor::relProtoToArray($response->getRel()),
             $response,
             $status->code,
             $status->details
@@ -145,7 +143,7 @@ class MeterTransformerRelService
         }
         $relations = [];
         foreach ($response->getRelations() as $rel) {
-            $relations[] = self::relProtoToArray($rel);
+            $relations[] = MeterTransformerRelProtoConvertor::relProtoToArray($rel);
         }
 
         return GrpcServiceResponse::success(
@@ -173,13 +171,55 @@ class MeterTransformerRelService
         }
 
         return GrpcServiceResponse::success(
-            self::relProtoToArray($response->getRel()),
+            MeterTransformerRelProtoConvertor::relProtoToArray($response->getRel()),
             $response,
             $status->code,
             $status->details
         );
     }
 
+    /**
+     * Get CTPTs assigned to multiple meters
+     *
+     * @param  array<int>  $meterIds
+     */
+    public function listAssignedToMeters(array $meterIds): GrpcServiceResponse
+    {
+        $request = new ListAssignedToMetersRequest;
+        foreach ($meterIds as $meterId) {
+            $request->getMeterIds()[] = $meterId;
+        }
+
+        [$response, $status] = $this->client->ListAssignedToMeters($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status, $response, false),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $relations = [];
+        foreach ($response->getRels() as $rel) {
+            $relations[] = MeterTransformerRelProtoConvertor::relProtoToArray($rel);
+        }
+
+        return GrpcServiceResponse::success(
+            $relations,
+            $response,
+            $status->code,
+            $status->details
+        );
+    }
+
+    /**
+     * Update a meter transformer relation
+     *
+     * @param  array<string, mixed>  $data
+     * @param  int  $id
+     */
     public function updateRelation(array $data, $id): GrpcServiceResponse
     {
         $request = new MeterTransformerRelUpdateRequest;
@@ -213,7 +253,7 @@ class MeterTransformerRelService
         }
 
         return GrpcServiceResponse::success(
-            self::relProtoToArray($response->getRel()),
+            MeterTransformerRelProtoConvertor::relProtoToArray($response->getRel()),
             $response,
             $status->code,
             $status->details
@@ -236,43 +276,5 @@ class MeterTransformerRelService
         }
 
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
-    }
-
-    /**
-     * Convert MeterTransformerRelMessage to array
-     */
-    public static function relProtoToArray(MeterTransformerRelMessage $rel): array
-    {
-        $ctpt = $rel->getCtpt();
-        $ctptType = null;
-        if ($ctpt && method_exists($ctpt, 'getType') && $ctpt->getType()) {
-            $ctptType = $ctpt->getType()->getParameterValue();
-        }
-
-        $ctRatio = ($ctpt && method_exists($ctpt, 'getCtRatio')) ? $ctpt->getCtRatio() : null;
-        $ptRatio = ($ctpt && method_exists($ctpt, 'getPtRatio')) ? $ctpt->getPtRatio() : null;
-        $ratio = $ctRatio ?: $ptRatio;
-
-        return [
-            'version_id' => $rel->getVersionId(),
-            'ctpt_id' => $rel->getCtptId(),
-            'meter_id' => $rel->getMeterId(),
-            'meter_serial' => ($rel->getMeter() && method_exists($rel->getMeter(), 'getMeterSerial'))
-            ? $rel->getMeter()->getMeterSerial()
-            : null,
-            'faulty_date' => $rel->hasFaultyDate() ? $rel->getFaultyDate()->toDateTime()->format('Y-m-d') : null,
-            'ctpt_energise_date' => $rel->hasCtptEnergiseDate() ? $rel->getCtptEnergiseDate()->toDateTime()->format('Y-m-d') : null,
-            'ctpt_change_date' => $rel->hasCtptChangeDate() ? $rel->getCtptChangeDate()->toDateTime()->format('Y-m-d') : null,
-            'status_id' => $rel->getStatusId(),
-            'status_label' => $rel->getStatus() ? $rel->getStatus()->getParameterValue() : null,
-            'change_reason_id' => $rel->getChangeReasonId(),
-            'change_reason_label' => $rel->getChangeReason() ? $rel->getChangeReason()->getParameterValue() : null,
-            'created_ts' => $rel->hasCreatedTs() ? $rel->getCreatedTs()->toDateTime()->format('Y-m-d') : null,
-            'updated_ts' => $rel->hasUpdatedTs() ? $rel->getUpdatedTs()->toDateTime()->format('Y-m-d') : null,
-            'created_by' => $rel->getCreatedBy(),
-            'updated_by' => $rel->getUpdatedBy(),
-            'ctpt_type' => $ctptType,
-            'ratio' => $ratio,
-        ];
     }
 }

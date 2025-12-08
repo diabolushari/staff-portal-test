@@ -2,11 +2,11 @@ import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
 import type { Connection } from '@/interfaces/data_interfaces'
+import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import StrongText from '@/typography/StrongText'
 import { router } from '@inertiajs/react'
 import { PencilIcon } from 'lucide-react'
 import { useMemo } from 'react'
-import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 
 interface Props {
   connection: Connection
@@ -41,7 +41,7 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
       consumerExist={consumerExist}
-      meterExist={connection?.meters?.length > 0}
+      meterExist={connection?.meter_mappings?.length > 0}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header */}

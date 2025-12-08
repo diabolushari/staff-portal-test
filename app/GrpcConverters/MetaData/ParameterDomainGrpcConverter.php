@@ -17,6 +17,7 @@ class ParameterDomainGrpcConverter
                 'name' => $systemModule->getName(),
             ];
         }
+
         return [
             'id' => $parameterDomain->getId(),
             'domain_name' => $parameterDomain->getDomainName(),

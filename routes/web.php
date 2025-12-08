@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Connections\PartiesListApiController;
 use App\Http\Controllers\Api\GetOfficeByCodeApiController;
 use App\Http\Controllers\Api\GetOfficeByIdApiController;
+use App\Http\Controllers\Api\Metering\UnassignedTransformersApiController;
 use App\Http\Controllers\Api\OfficeListApiController;
 use App\Http\Controllers\Api\Parameter\ListParameterValuesApiController;
 use App\Http\Controllers\Api\ParameterDefinitionItemApiController;
@@ -116,7 +117,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('billing-rules', BillingRuleController::class);
     Route::resource('billing-groups', BillingGroupController::class);
-
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
@@ -128,6 +128,7 @@ Route::get('api/office/{id}', GetOfficeByIdApiController::class);
 Route::get('api/parameter-values', ListParameterValuesApiController::class);
 Route::get('api/office/code/{office_code}', GetOfficeByCodeApiController::class);
 Route::get('api/parties', PartiesListApiController::class);
+Route::get('api/unassigned-transformers', UnassignedTransformersApiController::class);
 Route::get('api/tariff-order/{id}/download', TariffOrderDownloadApiController::class)->name('tariff-order.download');
 
 Route::get('consumer-test', function (SystemModuleService $service) {

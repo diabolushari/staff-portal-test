@@ -64,10 +64,11 @@ class MeterTransformerRelController extends Controller
         $response = $this->relService->createRelation($request);
 
         if ($response->hasError()) {
-            return redirect()->back()->withErrors($response->error ?? 'Failed to create relation');
+            return $response->error ?? redirect()->back()->withErrors(['message' => 'Failed to create relation']);
         }
 
-        return redirect()->route('meters.show', $response->data['meter_id'])->with('success', 'Relation created successfully.');
+        return redirect()->route('connection.meters', $request->connectionId)
+            ->with(['message' => 'Relation created successfully.']);
     }
 
     /**
