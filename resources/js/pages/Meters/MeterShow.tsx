@@ -1,24 +1,24 @@
 import MeterTimezoneCard from '@/components/Meter/MeterTimezoneCard'
 import MeterTransformerTab from '@/components/Meter/MeterTransformer/MeterTransfomerTab'
-import { meteringBillingNavItems, meterNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
-import { Label } from '@/components/ui/label'
-import useCustomForm from '@/hooks/useCustomForm'
-import useInertiaPost from '@/hooks/useInertiaPost'
-import { Meter, MeterTimezoneType, MeterTransformerAssignment } from '@/interfaces/data_interfaces'
+import {
+  Meter,
+  MeterTimezoneType,
+  MeterTransformer,
+  MeterTransformerAssignment,
+} from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
-import { MeterTransformer } from '@/pages/MeterTransformers/MeterTransformerShow'
 import type { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
-import Button from '@/ui/button/Button'
 import DeleteButton from '@/ui/button/DeleteButton'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
+import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 import { TabsContent } from '@radix-ui/react-tabs'
-import { Edit } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 export const MeterTabs = (meterId: number, ctptId?: number, relId?: number) => [
   {
@@ -53,8 +53,18 @@ export default function MeterShow({
 
   // --- BREADCRUMBS AND FORMATTERS ---
   const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Meters', href: route('meters.index') },
-    { title: meter.meter_serial, href: route('meters.show', meter.meter_id) },
+    {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
+      title: 'Meters',
+      href: route('meters.index'),
+    },
+    {
+      title: meter.meter_serial,
+      href: route('meters.show', meter.meter_id),
+    },
   ]
 
   const formatDate = (dateStr?: string) => {
@@ -116,33 +126,47 @@ export default function MeterShow({
                   value={meter.version_id}
                 />
                 <Field
+                  label='Smart Meter'
+                  value={meter.smart_meter_ind ? 'Yes' : 'No'}
+                />
+                <Field
+                  label='Bidirectional'
+                  value={meter.bidirectional_ind ? 'Yes' : 'No'}
+                />
+                <Field
                   label='Meter Serial'
                   value={meter.meter_serial}
                 />
                 <Field
-                  label='Ownership'
-                  value={meter?.ownership_type?.parameter_value}
+                  label='Company Seal Number'
+                  value={meter.company_seal_num}
                 />
                 <Field
-                  label='Make'
-                  value={meter?.meter_make?.parameter_value}
-                />
-                <Field
-                  label='Type'
+                  label='Meter Type'
                   value={meter?.meter_type?.parameter_value}
                 />
                 <Field
+                  label='Timezone Type'
+                  value={meter?.timezone_type?.parameter_value}
+                />
+                <Field
+                  label='Meter Profile'
+                  value={meter?.meter_profile?.parameter_value}
+                />
+                <Field
+                  label='Ownership Type'
+                  value={meter?.ownership_type?.parameter_value}
+                />
+                <Field
+                  label='Meter Make'
+                  value={meter?.meter_make?.parameter_value}
+                />
+
+                {/* <Field
                   label='Category'
                   value={meter?.meter_category?.parameter_value}
-                />
-                <Field
-                  label='Unit'
-                  value={meter?.meter_unit?.parameter_value}
-                />
-                <Field
-                  label='Phase'
-                  value={meter?.meter_phase?.parameter_value}
-                />
+                /> */}
+
                 <Field
                   label='Batch Code'
                   value={meter.batch_code}
@@ -165,6 +189,19 @@ export default function MeterShow({
                   value={meter?.dialing_factor?.parameter_value}
                 />
                 <Field
+                  label='Unit'
+                  value={meter?.meter_unit?.parameter_value}
+                />
+                <Field
+                  label='Reset Type'
+                  value={meter?.meter_reset_type?.parameter_value}
+                />
+                <Field
+                  label='Phase'
+                  value={meter?.meter_phase?.parameter_value}
+                />
+                <div></div>
+                <Field
                   label='Digit Count'
                   value={meter?.digit_count}
                 />
@@ -176,26 +213,11 @@ export default function MeterShow({
                   label='Meter Constant'
                   value={meter?.meter_constant}
                 />
-                <Field
+                {/* <Field
                   label='Meter MF'
                   value={meter?.meter_mf}
-                />
-                <Field
-                  label='Company Seal No.'
-                  value={meter?.company_seal_num}
-                />
-                <Field
-                  label='Reset Type'
-                  value={meter?.meter_reset_type?.parameter_value}
-                />
-                <Field
-                  label='Smart Meter'
-                  value={meter.smart_meter_ind ? 'Yes' : 'No'}
-                />
-                <Field
-                  label='Bidirectional'
-                  value={meter.bidirectional_ind ? 'Yes' : 'No'}
-                />
+                /> */}
+
                 <Field
                   label='Warranty Period (Months)'
                   value={meter?.warranty_period}
@@ -209,14 +231,14 @@ export default function MeterShow({
                 CT/PT Specifications
               </StrongText>
               <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                <Field
+                {/* <Field
                   label='Programmable PT Ratio'
                   value={meter?.programmable_pt_ratio}
                 />
                 <Field
                   label='Programmable CT Ratio'
                   value={meter?.programmable_ct_ratio}
-                />
+                /> */}
                 <Field
                   label='Internal CT Ratio'
                   value={
@@ -251,19 +273,19 @@ export default function MeterShow({
               <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                 <Field
                   label='Manufacture Date'
-                  value={formatDate(meter.manufacture_date)}
+                  value={getDisplayDate(meter.manufacture_date)}
                 />
                 <Field
                   label='Supply Date'
-                  value={formatDate(meter.supply_date)}
+                  value={getDisplayDate(meter.supply_date)}
                 />
                 <Field
                   label='Created At'
-                  value={formatDate(meter.created_ts)}
+                  value={getDisplayDate(meter.created_ts)}
                 />
                 <Field
                   label='Last Updated At'
-                  value={formatDate(meter.updated_ts)}
+                  value={getDisplayDate(meter.updated_ts)}
                 />
                 <Field
                   label='Created By'

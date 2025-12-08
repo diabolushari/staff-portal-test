@@ -10,6 +10,10 @@ import { TabsContent } from '@/components/ui/tabs'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
+    title: 'Settings',
+    href: '/settings-page',
+  },
+  {
     title: 'Offices',
     href: '/offices',
   },

@@ -40,10 +40,11 @@ export default function MeterTransformerIndex({ filters, transformers }: Readonl
       selectedItem='CTPTs'
       addBtnText='Meter CTPT'
       addBtnUrl={route('meter-ctpt.create')}
+      title='CTPTS'
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <ListSearch
-          title='Meter CTPT Search'
+          title=''
           placeholder='Enter CTPT Serial'
           url={route('meter-ctpt.index')}
           search={filters?.search}

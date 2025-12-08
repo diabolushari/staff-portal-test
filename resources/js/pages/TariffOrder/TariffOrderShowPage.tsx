@@ -16,7 +16,14 @@ export default function TariffOrderShowPage({
   tariff_configs: Paginator<TariffConfig>
 }) {
   const breadcrumb: BreadcrumbItem[] = [
-    { title: 'Tariff Order', href: '/tariff-orders' },
+    {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
+      title: 'Tariff Order',
+      href: '/tariff-orders',
+    },
     {
       title: tariff_order.order_descriptor,
       href: `/tariff-orders/${tariff_order?.tariff_order_id}`,
@@ -29,11 +36,12 @@ export default function TariffOrderShowPage({
       navItems={meteringBillingNavItems}
       selectedItem='Tariffs'
       breadcrumb={breadcrumb}
+      title={tariff_order?.order_descriptor}
     >
       {/* ---- Tariff Order Card ---- */}
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         <CustomCard
-          title={tariff_order?.order_descriptor}
+          title=' '
           editButton={{
             title: 'Edit',
             url: `/tariff-orders/${tariff_order?.tariff_order_id}/edit`,

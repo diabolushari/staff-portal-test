@@ -4,16 +4,16 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 import { Meter } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
-import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
 import Card from '@/ui/Card/Card'
 import FormCard from '@/ui/Card/FormCard'
 import CheckBox from '@/ui/form/CheckBox'
+import ComboBox from '@/ui/form/ComboBox'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 export interface MeterFormProps {
   ownershipTypes: ParameterValues[]
@@ -37,6 +37,10 @@ interface MeterForm extends Meter {
 }
 
 const breadcrumbs = [
+  {
+    title: 'Settings',
+    href: '/settings-page',
+  },
   { title: 'Meters', href: '/meters' },
   {
     title: 'Add Meter',
@@ -132,18 +136,22 @@ export default function MeterForm({
     formData.programmable_pt_ratio,
   ])
 
+  const [selectedMeterMake, setSelectedMeterMake] = useState<ParameterValues | null>(null)
+
+  useEffect(() => {
+    if (selectedMeterMake) {
+      setFormValue('meter_make_id')(selectedMeterMake?.id ?? '')
+    }
+  }, [selectedMeterMake, setFormValue])
+
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={meteringBillingNavItems}
       selectedItem='Meters'
+      title={isEditing ? 'Edit Meter' : 'Add Meter'}
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
-        <div className='flex items-center gap-2'>
-          <StrongText className='text-2xl font-semibold'>
-            {isEditing ? 'Edit Meter' : 'Add Meter'}
-          </StrongText>
-        </div>
         <Card>
           <form
             onSubmit={handleSubmit}
@@ -227,7 +235,7 @@ export default function MeterForm({
                 displayKey='parameter_value'
                 error={errors.meter_category_id}
               /> */}
-              <SelectList
+              {/* <SelectList
                 label='Meter Make'
                 value={formData.meter_make_id}
                 setValue={setFormValue('meter_make_id')}
@@ -235,6 +243,17 @@ export default function MeterForm({
                 dataKey='id'
                 displayKey='parameter_value'
                 error={errors.meter_make_id}
+              /> */}
+
+              <ComboBox
+                label='Meter Make'
+                value={selectedMeterMake}
+                setValue={setSelectedMeterMake}
+                dataKey='id'
+                displayKey='parameter_value'
+                displayValue2='parameter_value'
+                error={errors.meter_make_id}
+                url='/api/parameter-values?domain_name=Meter&parameter_name=Make&attribute_value='
               />
               <Input
                 label='Batch Code'

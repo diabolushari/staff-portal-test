@@ -11,6 +11,10 @@ import { useCallback, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
+    title: 'Settings',
+    href: '/settings-page',
+  },
+  {
     title: 'Parameter Definition',
     href: '/parameter-definition',
   },
@@ -54,6 +58,7 @@ export default function ParameterDefinitionIndex({
       breadcrumb={breadcrumbs}
       navItems={metadataNavItems}
       selectedItem='Definitions'
+      title='Parameter Definitions'
     >
       <div className='mb-4 flex items-center justify-between'>
         {/* <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Definitions</h2> */}
@@ -67,7 +72,7 @@ export default function ParameterDefinitionIndex({
       </div>
       <div className='p-4'>
         <ListSearch
-          title='Parameter Definition'
+          title=''
           url={route('parameter-definition.index')}
           search={filters.search}
           filters={filters}
