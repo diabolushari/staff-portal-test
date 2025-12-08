@@ -9,6 +9,7 @@ use Proto\Bill\BillGenerationJobStatusMessage;
 use Proto\Bill\BillGenerationJobStatusServiceClient;
 use Proto\Bill\ListBillGenerationJobStatusRequest;
 use Grpc\ChannelCredentials;
+use Proto\Bill\PaginatedBillGenerationJobStatusRequest;
 
 class BillingGenerateJobService
 {
@@ -51,6 +52,60 @@ class BillingGenerateJobService
 
         return GrpcServiceResponse::success(
             $data,
+            $response,
+            $status->code,
+            $status->details
+        );
+    }
+
+    public function listPaginatedBillGenerationJobStatus(
+        ?int $pageNumber = 1,
+        ?int $pageSize = 5,
+        ?string $search = null,
+        ?string $sortBy = null,
+        ?string $sortDirection = null
+    ): GrpcServiceResponse
+    {
+        $request = new PaginatedBillGenerationJobStatusRequest();
+        if ($pageNumber) {
+            $request->setPageNumber($pageNumber);
+        }
+        if ($pageSize) {
+            $request->setPageSize($pageSize);
+        }
+        if ($search) {
+            $request->setSearch($search);
+        }
+        if ($sortBy) {
+            $request->setSortBy($sortBy);
+        }
+        if ($sortDirection) {
+            $request->setSortDirection($sortDirection);
+        }
+        [$response, $status] = $this->client->PaginatedListBillGenerationJobStatus($request)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $data = [];
+        foreach ($response->getData() as $message) {
+            $data[] = $this->BillGenerateMessageToArray($message);
+        }
+        $pagination = [
+            'bill_generation_job_status' => $data,
+            'total' => $response->getTotalCount(),
+            'page' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ];
+
+        return GrpcServiceResponse::success(
+            $pagination,
             $response,
             $status->code,
             $status->details

@@ -41,9 +41,9 @@ export default function BillingGroupList({ billingGroups }: Props) {
         Billing Group Info
       </div>
       <div className='flex flex-col px-7 pb-7'>
-        {billingGroups.map((billingGroup, index) => (
+        {billingGroups?.map((billingGroup, index) => (
           <div
-            key={billingGroup.billing_group_id ?? index} // unique key fallback
+            key={billingGroup?.billing_group_id ?? index} // unique key fallback
             className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
           >
             <div className='flex items-start justify-between'>

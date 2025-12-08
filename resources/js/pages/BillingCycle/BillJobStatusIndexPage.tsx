@@ -6,10 +6,12 @@ import { billingNavItems } from '@/components/Navbar/navitems'
 import { BillingGroup, BillJobStatus } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
+import Pagination from '@/ui/Pagination/Pagination'
 import ListSearch from '@/ui/Search/ListSearch'
+import { Paginator } from '@/ui/ui_interfaces'
 
 interface Props {
-  bill_generation_job_status: BillJobStatus[]
+  bill_generation_job_status: Paginator<BillJobStatus>
   filters: {
     search: string
   }
@@ -33,10 +35,14 @@ export default function BillJobStatusIndexPage({ bill_generation_job_status, fil
       leftBarTitle='Billing'
       selectedItem='Jobs'
     >
-      <BillingJobStatusSearchForm />
-      {bill_generation_job_status && bill_generation_job_status.length > 0 ? (
+      <BillingJobStatusSearchForm filters={filters} />
+      {bill_generation_job_status && bill_generation_job_status.data.length > 0 ? (
         <>
-          <BillingJobList billGenerationJobStatus={bill_generation_job_status} />
+          <BillingJobList billGenerationJobStatus={bill_generation_job_status?.data} />
+          <Pagination
+            pagination={bill_generation_job_status}
+            filters={filters}
+          />
         </>
       ) : (
         <div className='flex h-full items-center justify-center'>No Billing Groups Found</div>

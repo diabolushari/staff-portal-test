@@ -31,7 +31,7 @@ export default function BillingGroupIndexPage({ billingGroups, filters }: PagePr
         url='/billing-groups'
         filters={filters}
       />
-      {billingGroups && billingGroups.data.length > 0 ? (
+      {billingGroups && billingGroups?.data?.length > 0 ? (
         <>
           <BillingGroupList billingGroups={billingGroups.data} />
           <Pagination

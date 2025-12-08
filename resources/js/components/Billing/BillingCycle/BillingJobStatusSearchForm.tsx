@@ -2,16 +2,27 @@ import useCustomForm from '@/hooks/useCustomForm'
 import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
 import MonthPicker from '@/ui/form/MonthPicker'
+import { router } from '@inertiajs/react'
 
-export default function BillingJobStatusSearchForm() {
+export default function BillingJobStatusSearchForm({
+  filters,
+}: {
+  filters: {
+    search: string
+  }
+}) {
   const { formData, setFormValue } = useCustomForm({
+    search: filters?.search ?? '',
     group: '',
     billing_month_from: '',
     billing_month_to: '',
   })
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(formData)
+    router.get('/bills/job-status', formData, {
+      preserveState: true,
+      replace: true,
+    })
   }
   return (
     <div>
@@ -22,8 +33,9 @@ export default function BillingJobStatusSearchForm() {
         <div className='grid grid-cols-3 gap-4'>
           <Input
             label='Group'
-            value={formData.group}
-            setValue={setFormValue('group')}
+            value={formData.search}
+            setValue={setFormValue('search')}
+            showClearButton={true}
           />
           <div className='mt-1'>
             <MonthPicker
