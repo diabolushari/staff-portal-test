@@ -22,10 +22,10 @@ export interface MeterTransformerFormProps {
 }
 
 const breadcrumbs = [
-  { title: 'Meters', href: '/meters' },
-  { title: 'Meter CTPT', href: '/meter-ctpt' },
+  { title: 'Settings', href: '/settings-page' },
+  { title: 'CTPTs', href: '/meter-ctpt' },
   {
-    title: 'Add Meter CTPT',
+    title: 'Create',
     href: '/meter-ctpt/create',
   },
 ]
@@ -111,7 +111,7 @@ export default function MeterTransformerForm({
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={meteringBillingNavItems}
-      selectedItem='Meter CTPTs'
+      selectedItem='CTPTs'
       title={isEditing ? 'Edit CTPT' : 'Create CTPT'}
     >
       <form
@@ -119,6 +119,15 @@ export default function MeterTransformerForm({
         className='flex flex-col gap-4'
       >
         <FormCard title='Basic Information'>
+          <SelectList
+            label='Type'
+            value={formData.type_id}
+            setValue={handletypeChange}
+            list={types}
+            dataKey='id'
+            displayKey='parameter_value'
+            error={errors.type_id}
+          />
           <Input
             label='CT/PT Serial'
             required
@@ -143,15 +152,6 @@ export default function MeterTransformerForm({
             dataKey='id'
             displayKey='parameter_value'
             error={errors.make_id}
-          />
-          <SelectList
-            label='Type'
-            value={formData.type_id}
-            setValue={handletypeChange}
-            list={types}
-            dataKey='id'
-            displayKey='parameter_value'
-            error={errors.type_id}
           />
         </FormCard>
         <FormCard title='Technical Specifications'>

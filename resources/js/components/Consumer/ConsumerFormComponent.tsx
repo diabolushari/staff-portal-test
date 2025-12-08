@@ -51,7 +51,7 @@ export default function ConsumerFormComponent({
     consumer_gstin: consumer?.consumer_gstin ?? '',
     income_tax_withholding_ind: consumer?.income_tax_withholding_ind ?? false,
     gst_withholding_ind: consumer?.gst_withholding_ind ?? false,
-
+    consumer_cin: consumer?.consumer_cin ?? '',
     address_line1: primary?.address_line1 ?? '',
     address_line2: primary?.address_line2 ?? '',
     city_town_village: primary?.city_town_village ?? '',
@@ -178,6 +178,12 @@ export default function ConsumerFormComponent({
               setValue={setFormValue('consumer_gstin')}
               value={formData.consumer_gstin}
               error={errors?.consumer_gstin}
+            />
+            <Input
+              label='Consumer CIN'
+              setValue={setFormValue('consumer_cin')}
+              value={formData.consumer_cin}
+              error={errors?.consumer_cin}
             />
             <CheckBox
               label='TDS on GST'

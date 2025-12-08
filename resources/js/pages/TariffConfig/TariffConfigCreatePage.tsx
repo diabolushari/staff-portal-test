@@ -22,6 +22,10 @@ interface Props {
 export default function TariffConfigCreatePage({ tariff_order, consumption_tariff }: Props) {
   const breadcrumb: BreadcrumbItem[] = [
     {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
       title: 'Tariff Order',
       href: '/tariff-orders',
     },

@@ -9,6 +9,10 @@ import { Paginator } from '@/ui/ui_interfaces'
 
 const breadcrumb: BreadcrumbItem[] = [
   {
+    title: 'Settings',
+    href: '/settings-page',
+  },
+  {
     title: 'Tariff Order',
     href: '/tariff-orders',
   },
@@ -32,9 +36,10 @@ export default function TariffOrderIndexPage({ filters, tariffOrders }: Props) {
       addBtnUrl={route('tariff-orders.create')}
       selectedItem='Tariffs'
       addBtnText='Tariff Order'
+      title='Tariff Order'
     >
       <ListSearch
-        title='Tariff Order search'
+        title=''
         placeholder='Enter tariff order name'
         url={route('tariff-orders.index')}
         search={filters?.search}

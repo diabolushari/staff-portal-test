@@ -7,6 +7,10 @@ import { BillingRule } from '@/interfaces/data_interfaces'
 
 export default function BillingRuleCreatePage({ billingRule }: { billingRule?: BillingRule }) {
   const breadcrumb: BreadcrumbItem[] = [
+    {
+      title: 'Settings',
+      href: '/settings-page',
+    },
     { title: 'Billing', href: '/billing-rules' },
     { title: 'Create', href: '/billing-rules/create' },
   ]

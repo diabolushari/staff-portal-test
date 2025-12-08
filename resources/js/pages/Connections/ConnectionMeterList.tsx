@@ -65,7 +65,7 @@ export default function ConnectionMeterList({
       connectionId={connectionId}
       heading={heading || 'Meters'}
       subHeading={subHeading || 'Meters assigned to this connection'}
-      value='meter-reading'
+      value='configuration'
       subTabValue='meter'
       connection={connection}
       breadcrumbs={breadcrumbs}

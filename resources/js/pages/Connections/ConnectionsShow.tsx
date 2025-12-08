@@ -36,8 +36,8 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
       connectionId={connection?.connection_id ?? 0}
       value={'connection'}
       subTabValue='connection'
-      heading='Connection Details'
-      subHeading='Connection Details'
+      heading='Connection'
+      subHeading=''
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
       consumerExist={consumerExist}
@@ -45,14 +45,14 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header */}
-        <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+        {/* <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
           <div className='flex flex-col gap-2'>
             <StrongText className='text-2xl font-semibold text-[#252c32]'>Connection</StrongText>
             <span className='text-sm text-gray-600'>
               Consumer No: {connection?.consumer_number}
             </span>
           </div>
-        </div>
+        </div> */}
 
         {/* Tabs */}
 

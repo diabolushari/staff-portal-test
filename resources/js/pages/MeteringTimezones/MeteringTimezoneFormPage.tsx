@@ -46,7 +46,14 @@ export default function MeteringTimezoneFormPage({
   const [timeSummary, setTimeSummary] = useState<string>('')
 
   const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Metering Timezones', href: route('metering-timezone.index') },
+    {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
+      title: 'Metering Timezones',
+      href: route('metering-timezone.index'),
+    },
     {
       title: isEdit ? 'Edit Timezone' : 'Create Timezone',
       href: isEdit

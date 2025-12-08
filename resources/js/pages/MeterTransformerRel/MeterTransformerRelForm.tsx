@@ -103,7 +103,7 @@ export default function MeterTransformerRelForm({
   return (
     <ConnectionsLayout
       connectionsNavItems={consumerNavItems}
-      value='meter-reading'
+      value='configuration'
       subTabValue='meter-ctpts'
       heading='Meter and CTPTs'
       subHeading='CTPTs connected with meters'

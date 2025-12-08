@@ -1,19 +1,19 @@
-import { meteringBillingNavItems, meterNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { Meter } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
-import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
 import Card from '@/ui/Card/Card'
 import FormCard from '@/ui/Card/FormCard'
 import CheckBox from '@/ui/form/CheckBox'
+import ComboBox from '@/ui/form/ComboBox'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 export interface MeterFormProps {
   ownershipTypes: ParameterValues[]
@@ -37,6 +37,10 @@ interface MeterForm extends Meter {
 }
 
 const breadcrumbs = [
+  {
+    title: 'Settings',
+    href: '/settings-page',
+  },
   { title: 'Meters', href: '/meters' },
   {
     title: 'Add Meter',
@@ -49,7 +53,6 @@ export default function MeterForm({
   meterProfiles,
   makes,
   types,
-  categories,
   accuracyClasses,
   phases,
   dialingFactors,
@@ -89,6 +92,8 @@ export default function MeterForm({
     internal_ct_secondary: meter?.internal_ct_secondary ?? '',
     internal_pt_primary: meter?.internal_pt_primary ?? '',
     internal_pt_secondary: meter?.internal_pt_secondary ?? '',
+    ct_count: meter?.ct_count ?? '',
+    pt_count: meter?.pt_count ?? '',
   })
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     isEditing ? `/meters/${meter?.meter_id}` : '/meters'
@@ -104,25 +109,71 @@ export default function MeterForm({
       ...basePayload,
     })
   }
+  console.log(formData)
+  useEffect(() => {
+    const ctp = Number(formData.internal_ct_primary)
+    const cts = Number(formData.internal_ct_secondary)
+
+    const ptp = Number(formData.internal_pt_primary)
+    const pts = Number(formData.internal_pt_secondary)
+
+    const newCtRatio = (ctp / cts).toFixed(2)
+    const newPtRatio = (ptp / pts).toFixed(2)
+
+    if (newCtRatio !== formData.programmable_ct_ratio) {
+      setFormValue('programmable_ct_ratio')(newCtRatio)
+    }
+
+    if (newPtRatio !== formData.programmable_pt_ratio) {
+      setFormValue('programmable_pt_ratio')(newPtRatio)
+    }
+  }, [
+    formData.internal_ct_primary,
+    formData.internal_ct_secondary,
+    formData.internal_pt_primary,
+    formData.internal_pt_secondary,
+    formData.programmable_ct_ratio,
+    formData.programmable_pt_ratio,
+  ])
+
+  const [selectedMeterMake, setSelectedMeterMake] = useState<ParameterValues | null>(null)
+
+  useEffect(() => {
+    if (selectedMeterMake) {
+      setFormValue('meter_make_id')(selectedMeterMake?.id ?? '')
+    }
+  }, [selectedMeterMake, setFormValue])
 
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={meteringBillingNavItems}
       selectedItem='Meters'
+      title={isEditing ? 'Edit Meter' : 'Add Meter'}
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
-        <div className='flex items-center gap-2'>
-          <StrongText className='text-2xl font-semibold'>
-            {isEditing ? 'Edit Meter' : 'Add Meter'}
-          </StrongText>
-        </div>
         <Card>
           <form
             onSubmit={handleSubmit}
             className='flex flex-col gap-4'
           >
             <FormCard title='Basic Information'>
+              <div className='flex items-center space-x-4 pt-6'>
+                <CheckBox
+                  label='Smart Meter'
+                  value={formData.smart_meter_ind}
+                  toggleValue={() => setFormValue('smart_meter_ind')(!formData.smart_meter_ind)}
+                  error={errors.smart_meter_ind}
+                />
+              </div>
+              <div className='flex items-center space-x-4 pt-6'>
+                <CheckBox
+                  label='Bidirectional'
+                  value={formData.bidirectional_ind}
+                  toggleValue={() => setFormValue('bidirectional_ind')(!formData.bidirectional_ind)}
+                  error={errors.bidirectional_ind}
+                />
+              </div>
               <Input
                 label='Meter Serial'
                 required
@@ -130,15 +181,13 @@ export default function MeterForm({
                 setValue={setFormValue('meter_serial')}
                 error={errors.meter_serial}
               />
-              <SelectList
-                label='Meter Make'
-                value={formData.meter_make_id}
-                setValue={setFormValue('meter_make_id')}
-                list={makes}
-                dataKey='id'
-                displayKey='parameter_value'
-                error={errors.meter_make_id}
+              <Input
+                label='Company Seal Number'
+                value={formData.company_seal_num}
+                setValue={setFormValue('company_seal_num')}
+                error={errors.company_seal_num}
               />
+
               <SelectList
                 label='Meter Type'
                 value={formData.meter_type_id}
@@ -177,7 +226,7 @@ export default function MeterForm({
                 displayKey='parameter_value'
                 error={errors.ownership_type_id}
               />
-              <SelectList
+              {/* <SelectList
                 label='Category'
                 value={formData.meter_category_id}
                 setValue={setFormValue('meter_category_id')}
@@ -185,12 +234,26 @@ export default function MeterForm({
                 dataKey='id'
                 displayKey='parameter_value'
                 error={errors.meter_category_id}
-              />
-              <Input
-                label='Company Seal Number'
-                value={formData.company_seal_num}
-                setValue={setFormValue('company_seal_num')}
-                error={errors.company_seal_num}
+              /> */}
+              {/* <SelectList
+                label='Meter Make'
+                value={formData.meter_make_id}
+                setValue={setFormValue('meter_make_id')}
+                list={makes}
+                dataKey='id'
+                displayKey='parameter_value'
+                error={errors.meter_make_id}
+              /> */}
+
+              <ComboBox
+                label='Meter Make'
+                value={selectedMeterMake}
+                setValue={setSelectedMeterMake}
+                dataKey='id'
+                displayKey='parameter_value'
+                displayValue2='parameter_value'
+                error={errors.meter_make_id}
+                url='/api/parameter-values?domain_name=Meter&parameter_name=Make&attribute_value='
               />
               <Input
                 label='Batch Code'
@@ -245,6 +308,7 @@ export default function MeterForm({
                 displayKey='parameter_value'
                 error={errors.meter_phase_id}
               />
+              <div></div>
               <Input
                 label='Digit Count'
                 type='number'
@@ -258,41 +322,6 @@ export default function MeterForm({
                 value={formData.decimal_digit_count}
                 setValue={setFormValue('decimal_digit_count')}
                 error={errors.decimal_digit_count}
-              />
-              <Input
-                label='Programmable PT Ratio'
-                type='number'
-                value={formData.programmable_pt_ratio}
-                setValue={setFormValue('programmable_pt_ratio')}
-                error={errors.programmable_pt_ratio}
-              />
-              <Input
-                label='Programmable CT Ratio'
-                type='number'
-                value={formData.programmable_ct_ratio}
-                setValue={setFormValue('programmable_ct_ratio')}
-                error={errors.programmable_ct_ratio}
-              />
-              <Input
-                label='Meter MF'
-                type='number'
-                value={formData.meter_mf}
-                setValue={setFormValue('meter_mf')}
-                error={errors.meter_mf}
-              />
-              <Input
-                label='Warranty Period'
-                type='number'
-                value={formData.warranty_period}
-                setValue={setFormValue('warranty_period')}
-                error={errors.warranty_period}
-              />
-              <Input
-                label='Meter Constant'
-                type='number'
-                value={formData.meter_constant}
-                setValue={setFormValue('meter_constant')}
-                error={errors.meter_constant}
               />
               <Input
                 label='Internal CT Primary'
@@ -322,30 +351,71 @@ export default function MeterForm({
                 setValue={setFormValue('internal_pt_secondary')}
                 error={errors.internal_pt_secondary}
               />
-              <div className='flex items-center space-x-4 pt-6'>
-                <CheckBox
-                  label='Smart Meter'
-                  value={formData.smart_meter_ind}
-                  toggleValue={() => setFormValue('smart_meter_ind')(!formData.smart_meter_ind)}
-                  error={errors.smart_meter_ind}
-                />
-              </div>
-            </FormCard>
-            <FormCard title='Dates'>
-              <div className='grid grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-3'>
-                <DatePicker
-                  label='Manufacture Date'
-                  value={formData.manufacture_date}
-                  setValue={setFormValue('manufacture_date')}
-                  error={errors.manufacture_date}
-                />
-                <DatePicker
-                  label='Supply Date'
-                  value={formData.supply_date}
-                  setValue={setFormValue('supply_date')}
-                  error={errors.supply_date}
-                />
-              </div>
+
+              <Input
+                label='Meter CT Ratio'
+                type='number'
+                value={formData.programmable_ct_ratio}
+                setValue={setFormValue('programmable_ct_ratio')}
+                error={errors.programmable_ct_ratio}
+                disabled
+              />
+              <Input
+                label='Meter PT Ratio'
+                type='number'
+                value={formData.programmable_pt_ratio}
+                setValue={setFormValue('programmable_pt_ratio')}
+                error={errors.programmable_pt_ratio}
+                disabled
+              />
+              {/* <Input
+                label='Meter MF'
+                type='number'
+                value={formData.meter_mf}
+                setValue={setFormValue('meter_mf')}
+                error={errors.meter_mf}
+              /> */}
+              <Input
+                label='CT Count'
+                type='number'
+                value={formData.ct_count}
+                setValue={setFormValue('ct_count')}
+                error={errors.ct_count}
+              />
+              <Input
+                label='PT Count'
+                type='number'
+                value={formData.pt_count}
+                setValue={setFormValue('pt_count')}
+                error={errors.pt_count}
+              />
+              <Input
+                label='Meter Constant'
+                type='number'
+                value={formData.meter_constant}
+                setValue={setFormValue('meter_constant')}
+                error={errors.meter_constant}
+              />
+              <Input
+                label='Warranty Period (Months)'
+                type='number'
+                value={formData.warranty_period}
+                setValue={setFormValue('warranty_period')}
+                error={errors.warranty_period}
+              />
+
+              <DatePicker
+                label='Manufacture Date'
+                value={formData.manufacture_date}
+                setValue={setFormValue('manufacture_date')}
+                error={errors.manufacture_date}
+              />
+              <DatePicker
+                label='Supply Date'
+                value={formData.supply_date}
+                setValue={setFormValue('supply_date')}
+                error={errors.supply_date}
+              />
             </FormCard>
             <div className='flex justify-end gap-3 border-t pt-6'>
               <Button

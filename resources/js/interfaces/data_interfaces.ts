@@ -329,6 +329,10 @@ export interface Meter {
   internal_ct_secondary: number | null
   internal_pt_primary: number | null
   internal_pt_secondary: number | null
+
+  ct_count: number | null
+  pt_count: number | null
+
   created_ts: string | null
   updated_ts: string | null
   created_by: number

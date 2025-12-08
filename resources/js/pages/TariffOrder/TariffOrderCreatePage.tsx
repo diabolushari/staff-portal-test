@@ -11,6 +11,10 @@ interface PageProps {
 export default function TariffOrderCreatePage({ tariff_order }: Readonly<PageProps>) {
   const breadcrumb: BreadcrumbItem[] = [
     {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
       title: 'Tariff Order',
       href: '/tariff-orders',
     },

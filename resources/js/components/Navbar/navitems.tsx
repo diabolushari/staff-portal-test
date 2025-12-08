@@ -107,15 +107,10 @@ export const billingNavItems: navItem[] = [
 
 export const metadataNavItems: navItem[] = [
   {
-    title: 'Parameters',
+    title: 'System Parameters',
     href: '/parameter-domain',
     icon: '',
     children: [
-      {
-        title: 'System Module',
-        href: '/system-module',
-        icon: '',
-      },
       {
         title: 'Domains',
         href: '/parameter-domain',
@@ -127,7 +122,7 @@ export const metadataNavItems: navItem[] = [
         icon: '',
       },
       {
-        title: 'Values',
+        title: 'Parameter Values',
         href: '/parameter-value',
         icon: '',
       },
@@ -141,6 +136,18 @@ export const metadataNavItems: navItem[] = [
       {
         title: 'Office Details',
         href: '/offices',
+        icon: '',
+      },
+    ],
+  },
+  {
+    title: 'Configuration',
+    href: '/system-modules',
+    icon: '',
+    children: [
+      {
+        title: 'System Module',
+        href: '/system-module',
         icon: '',
       },
     ],
@@ -164,7 +171,7 @@ export const meteringBillingNavItems: navItem[] = [
     icon: '',
   },
   {
-    title: 'Meter CTPTs',
+    title: 'CTPTs',
     href: '/meter-ctpt',
     icon: '',
   },

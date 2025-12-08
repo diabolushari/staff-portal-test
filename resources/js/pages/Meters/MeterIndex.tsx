@@ -1,4 +1,4 @@
-import { meteringBillingNavItems, meterNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import CardHeader from '@/ui/Card/CardHeader'
 import ListSearch from '@/ui/Search/ListSearch'
@@ -7,6 +7,7 @@ import { Barcode, Calendar, Cpu, Factory, Shield } from 'lucide-react'
 import { Meter } from '@/interfaces/data_interfaces'
 import { Paginator } from '@/ui/ui_interfaces'
 import Pagination from '@/ui/Pagination/Pagination'
+import { BreadcrumbItem } from '@/types'
 
 interface Props {
   filters: {
@@ -16,7 +17,16 @@ interface Props {
   }
   meters: Paginator<Meter>
 }
-const breadcrumbs = [{ title: 'Meters', href: '/meters' }]
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Settings',
+    href: '/settings-page',
+  },
+  {
+    title: 'Meters',
+    href: '/meters',
+  },
+]
 
 const handleShow = (id: number) => {
   router.get(`/meters/${id}`)
@@ -30,10 +40,11 @@ export default function MeterIndex({ filters, meters }: Readonly<Props>) {
       selectedItem='Meters'
       addBtnText='Meter'
       addBtnUrl={route('meters.create')}
+      title='Meters'
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <ListSearch
-          title='Meters search'
+          title=''
           placeholder='Enter meter serial'
           url={route('meters.index')}
           search={filters?.search}

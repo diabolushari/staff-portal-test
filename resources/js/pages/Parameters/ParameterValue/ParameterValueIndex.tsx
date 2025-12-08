@@ -14,6 +14,10 @@ import { route } from 'ziggy-js'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
+    title: 'Settings',
+    href: '/settings-page',
+  },
+  {
     title: 'Parameter Values',
     href: '/parameter-value',
   },
@@ -45,13 +49,14 @@ export default function ParameterValueIndex({ values, domains, definitions, filt
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={metadataNavItems}
-      selectedItem='Values'
+      selectedItem='Parameter Values'
       addBtnClick={handleCreateClick}
-      addBtnText='Value'
+      addBtnText='Parameter Value'
+      title='Parameter Values'
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <ListSearch
-          title='Parameter Value'
+          title=''
           url={route('parameter-value.index')}
           search={filters.search}
           filters={filters}

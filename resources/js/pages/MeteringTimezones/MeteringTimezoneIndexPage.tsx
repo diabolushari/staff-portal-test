@@ -6,6 +6,7 @@ import MainLayout from '@/layouts/main-layout'
 import CardHeader from '@/ui/Card/CardHeader'
 import ListSearch from '@/ui/Search/ListSearch'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import { BreadcrumbItem } from '@/types'
 
 interface TimezoneGroup {
   timezone_type: { id: number; parameter_value: string }
@@ -40,6 +41,17 @@ interface Props {
   timezone_types: ParameterValues[]
 }
 
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Settings',
+    href: '/settings-page',
+  },
+  {
+    title: 'Metering Timezones',
+    href: '/metering-timezones',
+  },
+]
+
 export default function MeteringTimezonesIndexPage({ timezones, timezone_types }: Props) {
   const timezonesData = Array.isArray(timezones) ? timezones : timezones?.data || []
   const [groups] = useState<TimezoneGroup[]>(timezonesData)
@@ -62,10 +74,12 @@ export default function MeteringTimezonesIndexPage({ timezones, timezone_types }
       addBtnText='Metering Timezone'
       addBtnUrl={route('metering-timezone.create')}
       selectedTopNav='Consumers'
+      title='Metering Timezones'
+      breadcrumb={breadcrumbs}
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <ListSearch
-          title='Metering Timezones search'
+          title=''
           placeholder='Enter timezone name'
         />
 

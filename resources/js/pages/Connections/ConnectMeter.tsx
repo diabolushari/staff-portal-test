@@ -130,7 +130,7 @@ export default function ConnectMeter({
     <ConnectionsLayout
       connectionsNavItems={consumerNavItems}
       breadcrumbs={breadcrumbs}
-      value='meter-reading'
+      value='configuration'
       subTabValue='meter'
       heading='Connect Meter'
       subHeading=''
