@@ -16,6 +16,7 @@ use Proto\Consumers\CreateMeterRequest;
 use Proto\Consumers\DeleteMeterRequest;
 use Proto\Consumers\GetMeterRequest;
 use Proto\Consumers\ListMetersRequest;
+use Proto\Consumers\ListUnassignedMetersRequest;
 use Proto\Consumers\MeterPaginatedListRequest;
 use Proto\Consumers\MeterServiceClient;
 use Proto\Consumers\UpdateMeterRequest;
@@ -241,6 +242,38 @@ class MeterService
             'page_size' => $response->getPageSize(),
             'total_pages' => $response->getTotalPages(),
         ], $response, $status->code, $status->details);
+    }
+
+    public function listUnassignedMeters(int $pageNumber = 1, int $pageSize = 10): GrpcServiceResponse
+    {
+        $request = new ListUnassignedMetersRequest();
+        $request->setPageNumber($pageNumber);
+        $request->setPageSize($pageSize);
+
+        [$response, $status] = $this->client->ListUnassignedMeters($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $meters = array_map(
+            fn ($o) => MeterProtoConvertor::convertToArray($o),
+            iterator_to_array($response->getMeters())
+        );
+        $data = [
+            'meters' => $meters,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ];
+
+        return GrpcServiceResponse::success($data, $response, $status->code, $status->details);
     }
 
     /**

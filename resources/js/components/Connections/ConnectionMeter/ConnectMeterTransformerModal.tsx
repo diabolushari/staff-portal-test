@@ -12,7 +12,6 @@ import dayjs from 'dayjs'
 interface ConnectMeterTransformerModalProps {
   ctpts: MeterTransformer[]
   statuses: ParameterValues[]
-  changeReasons: ParameterValues[]
   relation?: any
   setShowModal: (value: boolean) => unknown
   onAdd: (item: any) => void
@@ -20,7 +19,6 @@ interface ConnectMeterTransformerModalProps {
 export default function ConnectMeterTransformerModal({
   ctpts,
   statuses,
-  changeReasons,
   relation,
   setShowModal,
   onAdd,
@@ -84,16 +82,6 @@ export default function ConnectMeterTransformerModal({
                 value={formData.status_id}
                 setValue={setFormValue('status_id')}
                 list={statuses}
-                dataKey='id'
-                displayKey='parameter_value'
-              />
-            )}
-            {changeReasons && (
-              <SelectList
-                label='Change Reason'
-                value={formData.change_reason_id}
-                setValue={setFormValue('change_reason_id')}
-                list={changeReasons}
                 dataKey='id'
                 displayKey='parameter_value'
               />
