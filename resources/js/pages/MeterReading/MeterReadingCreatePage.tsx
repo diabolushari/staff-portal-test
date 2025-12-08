@@ -123,7 +123,7 @@ export default function MeterReadingCreatePage({
     _method: editMode ? 'PUT' : undefined,
   })
 
-  const { post, errors } = useInertiaPost(
+  const { post, errors, loading } = useInertiaPost(
     editMode ? route('meter-reading.update', formData.id) : route('meter-reading.store'),
     {
       showErrorToast: true,
@@ -265,6 +265,9 @@ export default function MeterReadingCreatePage({
               <Button
                 type='submit'
                 label='Submit'
+                disabled={loading}
+                processing={loading}
+                variant={loading ? 'loading' : 'primary'}
               />
             )}
           </div>

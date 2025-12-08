@@ -39,7 +39,7 @@ class BillingRuleService
     public function createBillingRule(BillingRuleRequest $request): GrpcServiceResponse
     {
         $proto = new CreateBillingRuleRequest;
-        $request->validateJsonStructure();
+        // $request->validateJsonStructure();
         $jsonContents = $request->billingRule->get();
         $decoded = json_decode($jsonContents ?? '', true);
 

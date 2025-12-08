@@ -69,10 +69,10 @@ class MeterReadingController extends Controller
         }
 
         if ($request->multipleReading) {
-            return redirect()->route('meter-reading.create', $request->connectionId);
+            return redirect()->route('meter-reading.create', $request->connectionId)->with('message', 'Meter reading created successfully.');
         }
 
-        return redirect()->route('connections.index');
+        return redirect()->route('connections.index')->with('message', 'Meter reading created successfully.');
     }
 
     public function show(int $meterReadingId, Request $request): Response

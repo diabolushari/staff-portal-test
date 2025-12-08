@@ -8,7 +8,7 @@ use Proto\Consumers\PartiesConnectionRelMessage;
 class ConnectionPartiesConverter
 {
     public function __construct(
-        private PartyService $partyService
+        private readonly PartyService $partyService
     ) {}
 
     /**

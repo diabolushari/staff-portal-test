@@ -564,19 +564,54 @@ export interface MeterWithTimezoneAndProfile {
 }
 
 export interface BillingGroup {
-  version_id: number
-  billing_group_id: number
-  name: string
-  description: string
-  effective_start: string
-  effective_end: string
-  deleted_at?: string
-  created_by?: number
-  updated_by?: number
-  created_at?: string
-  updated_at?: string
+    version_id: number;
+    billing_group_id: number;
+    name: string;
+    description: string;
+    effective_start: string;
+    effective_end: string;
+    deleted_at?: string;
+    created_by?: number;
+    updated_by?: number;
+    created_at?: string;
+    updated_at?: string;
+    connections: BillingGroupConnection[]
+  
+}
+export interface BillingGroupConnection {
+  version_id: number;
+  connection_id: number;
+  connection: Connection;
+  consumer: Consumer;
+}
+export interface Bill {
+  bill_id: number,
+  connection_id: number,
+  reading_year_month: string,
+  bill_year_month: string,
+  bill_date: string,
+  due_date: string,
+  dc_date: string,
+  bill_amount: number,
+  charge_heads: ChargeHead[],
+  computed_properties: ComputedProperty[],
+  remarks: string,
+  created_ts: string,
+  created_by: number,
+  deleted_ts?: string,
+  deleted_by?: number,
+  connection: Connection,
+  consumer: Consumer,
 }
 
+export interface BillJobStatus {
+  billing_group: BillingGroup,
+  reading_year_month: string,
+  bill_year_month: string,
+  total_connections: number,
+  total_bills: number,
+}
+ 
 export interface RegionOption {
   region_id: number | string
   region_name: string
