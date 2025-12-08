@@ -306,6 +306,7 @@ export default function ConnectMeter({
           onClose={() => setShowMeterModal(false)}
           onSelect={(item) => {
             setSelectedMeter(item)
+            setFormValue('meter_id')(item.meter_id.toString())
           }}
           currentSelection={selectedMeter}
         />

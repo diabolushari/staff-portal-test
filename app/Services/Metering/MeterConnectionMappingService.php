@@ -5,6 +5,7 @@ namespace App\Services\Metering;
 use App\GrpcConverters\MeterProtoConvertor;
 use App\Http\Requests\Metering\MeterConnectionRelFormRequest;
 use App\Services\Grpc\GrpcErrorService;
+use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
 use DateTime;
 use Google\Protobuf\Timestamp;
@@ -39,41 +40,19 @@ class MeterConnectionMappingService
         $request->setMeterId($data->meterId);
         $request->setConnectionId($data->connectionId);
         $request->setMeterUseCategory($data->meterUseCategory);
-        $request->setBidirectionalInd($data->bidirectionalInd);
         $request->setMeterStatusId($data->meterStatusId);
-        $request->setChangeReason($data->changeReason);
         if (isset($data->sortPriority)) {
             $request->setSortPriority($data->sortPriority);
+        }
+        $energiseDate = DateTimeConverter::convertStringToTimestamp($data->energiseDate);
+        if ($energiseDate !== null) {
+            $request->setEnergiseDate($energiseDate);
         }
         $request->setIsMeterReadingMandatory($data->isMeterReadingMandatory);
 
         $effectiveStartTs = new Timestamp;
         $request->setEffectiveStartTs($effectiveStartTs);
 
-        if (isset($data->meterBillingMode)) {
-            $request->setMeterBillingMode($data->meterBillingMode);
-        }
-        if (isset($data->faultyDate)) {
-            $faultyDate = new Timestamp;
-            $faultyDate->fromDateTime(new DateTime($data->faultyDate));
-            $request->setFaultyDate($faultyDate);
-        }
-        if (isset($data->rectificationDate)) {
-            $rectificationDate = new Timestamp;
-            $rectificationDate->fromDateTime(new DateTime($data->rectificationDate));
-            $request->setRectificationDate($rectificationDate);
-        }
-        if (isset($data->effectiveEndTs)) {
-            $effectiveEndTs = new Timestamp;
-            $effectiveEndTs->fromDateTime(new DateTime($data->effectiveEndTs));
-            $request->setEffectiveEndTs($effectiveEndTs);
-        }
-        if (isset($data->isActive)) {
-            $request->setIsActive($data->isActive);
-        }
-        if (isset($data->createdBy)) {
-            $request->setCreatedBy($data->createdBy);
-        }
         if ($data->meterTransformers !== null) {
             foreach ($data->meterTransformers as $transformer) {
 
@@ -107,10 +86,6 @@ class MeterConnectionMappingService
                     $transformer_proto->setCtptChangeDate($change);
                 }
 
-                // created_by → map from parent created_by
-                if ($data->createdBy !== null) {
-                    $transformer_proto->setCreatedBy($data->createdBy);
-                }
 
                 // Add to main request
                 $request->getMeterTransformers()[] = $transformer_proto;
@@ -166,7 +141,6 @@ class MeterConnectionMappingService
             );
         }
 
-        // Expecting a repeated field: meter_connection_mappings
         $items = [];
         foreach ($response->getMeterConnectionMappings() as $mapping) {
             $items[] = self::meterConnectionMappingProtoToArray($mapping);
@@ -207,9 +181,9 @@ class MeterConnectionMappingService
         $request->setMeterId($data->meterId);
         $request->setConnectionId($data->connectionId);
         $request->setMeterUseCategory($data->meterUseCategory);
-        $request->setBidirectionalInd($data->bidirectionalInd);
+      
         $request->setMeterStatusId($data->meterStatusId);
-        $request->setChangeReason($data->changeReason);
+       
 
         if (isset($data->sortPriority)) {
             $request->setSortPriority($data->sortPriority);
@@ -218,33 +192,7 @@ class MeterConnectionMappingService
 
         if (isset($data->effectiveStartTs)) {
             $effectiveStartTs = new Timestamp;
-            $effectiveStartTs->fromDateTime(new DateTime($data->effectiveStartTs));
             $request->setEffectiveStartTs($effectiveStartTs);
-        }
-
-        if (isset($data->meterBillingMode)) {
-            $request->setMeterBillingMode($data->meterBillingMode);
-        }
-        if (isset($data->faultyDate)) {
-            $faultyDate = new Timestamp;
-            $faultyDate->fromDateTime(new DateTime($data->faultyDate));
-            $request->setFaultyDate($faultyDate);
-        }
-        if (isset($data->rectificationDate)) {
-            $rectificationDate = new Timestamp;
-            $rectificationDate->fromDateTime(new DateTime($data->rectificationDate));
-            $request->setRectificationDate($rectificationDate);
-        }
-        if (isset($data->effectiveEndTs)) {
-            $effectiveEndTs = new Timestamp;
-            $effectiveEndTs->fromDateTime(new DateTime($data->effectiveEndTs));
-            $request->setEffectiveEndTs($effectiveEndTs);
-        }
-        if (isset($data->isActive)) {
-            $request->setIsActive($data->isActive);
-        }
-        if (isset($data->updatedBy)) {
-            $request->setUpdatedBy($data->updatedBy);
         }
 
         [$response, $status] = $this->client->UpdateMeterConnectionMapping($request)->wait();
@@ -299,8 +247,6 @@ class MeterConnectionMappingService
             'meter_id' => $rel->getMeterId(),
             'connection_id' => $rel->getConnectionId(),
             'meter_use_category' => self::transformParameterValueToArray($rel->getMeterUseCategory()),
-            'bidirectional_ind' => $rel->getBidirectionalInd(),
-            'meter_billing_mode' => $rel->getMeterBillingMode(),
             'meter_status' => self::transformParameterValueToArray($rel->getMeterStatus()),
             'faulty_date' => $faultyDate,
             'rectification_date' => $rectificationDate,

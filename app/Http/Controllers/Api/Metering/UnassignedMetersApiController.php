@@ -25,7 +25,8 @@ class UnassignedMetersApiController extends Controller
 
         $response = $this->meterService->listUnassignedMeters(
             $page,
-            $pageSize
+            $pageSize,
+            $search
         );
 
         if ($response->hasError()) {

@@ -50,6 +50,6 @@ class MeterConnectionMappingController extends Controller
             return back()->withErrors(['grpc_error' => $response->error]);
         }
 
-        return redirect()->back()->with('success', 'Meter connection deleted successfully.');
+        return redirect()->back()->with('message', 'Meter connection deleted successfully.');
     }
 }

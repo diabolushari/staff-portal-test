@@ -244,11 +244,15 @@ class MeterService
         ], $response, $status->code, $status->details);
     }
 
-    public function listUnassignedMeters(int $pageNumber = 1, int $pageSize = 10): GrpcServiceResponse
+    public function listUnassignedMeters(int $pageNumber = 1, int $pageSize = 10, ?string $search = null): GrpcServiceResponse
     {
         $request = new ListUnassignedMetersRequest();
         $request->setPageNumber($pageNumber);
         $request->setPageSize($pageSize);
+
+        if ($search) {
+            $request->setSearch($search);
+        }
 
         [$response, $status] = $this->client->ListUnassignedMeters($request)->wait();
 
