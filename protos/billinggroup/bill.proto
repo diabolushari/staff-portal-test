@@ -1,0 +1,137 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.billinggroup;
+
+option php_namespace = "Proto\\Bill";
+option php_metadata_namespace = "GPBMetadata";
+
+option java_multiple_files = true;
+option java_package = "com.kseb.consumerservice.proto.billinggroup";
+option java_outer_classname = "BillProto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+import "connections/connections.proto";
+import "connections/consumer.proto";
+// ---------------- ENTITY MESSAGE ----------------
+
+message BillMessage {
+  int64 bill_id = 1;
+  int32 connection_id = 2;
+  string reading_year_month = 3;  // YYYY-MM
+  string bill_year_month = 4;     // YYYY-MM
+  google.protobuf.Timestamp bill_date = 5;
+  google.protobuf.Timestamp due_date = 6;
+  google.protobuf.Timestamp dc_date = 7;
+  double bill_amount = 8;
+  repeated google.protobuf.Struct charge_heads = 9;
+  repeated google.protobuf.Struct computed_properties = 10;
+  string remarks = 11;
+  google.protobuf.Timestamp created_ts = 12;
+  int32 created_by = 13;
+  google.protobuf.Timestamp deleted_ts = 14;
+  int32 deleted_by = 15;
+  optional com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 16;
+  optional com.kseb.consumerservice.grpc.connections.ConsumerMessage consumer = 17;
+}
+
+// ---------------- REQUEST / RESPONSE ----------------
+
+// Create
+message CreateBillRequest {
+  int32 connection_id = 1;
+
+  string reading_year_month = 2;  // YYYY-MM
+  string bill_year_month = 3;     // YYYY-MM
+
+  google.protobuf.Timestamp bill_date = 4;
+  google.protobuf.Timestamp due_date = 5;
+  google.protobuf.Timestamp dc_date = 6;
+  double bill_amount = 7;
+  repeated google.protobuf.Struct charge_heads = 8;
+  repeated google.protobuf.Struct computed_properties = 9;
+
+  string remarks = 10;
+
+  int32 created_by = 11;
+}
+
+message CreateBillResponse {
+  BillMessage bill = 1;
+}
+
+// Update
+message UpdateBillRequest {
+  int64 bill_id = 1;
+
+  int32 connection_id = 2;
+
+  string reading_year_month = 3;
+  string bill_year_month = 4;
+
+  google.protobuf.Timestamp bill_date = 5;
+  google.protobuf.Timestamp due_date = 6;
+  google.protobuf.Timestamp dc_date = 7;
+  double bill_amount = 8;
+  repeated google.protobuf.Struct charge_heads = 9;
+  repeated google.protobuf.Struct computed_properties = 10;
+
+  string remarks = 11;
+}
+
+message UpdateBillResponse {
+  BillMessage bill = 1;
+}
+
+// Get
+message GetBillRequest {
+  int64 bill_id = 1;
+}
+
+message GetBillResponse {
+  BillMessage bill = 1;
+}
+
+// Delete (soft delete)
+message DeleteBillRequest {
+  int64 bill_id = 1;
+  int32 deleted_by = 2;
+}
+
+message DeleteBillResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// List
+message ListBillRequest {
+
+  optional int32 connection_id = 1;
+  optional int32 billing_group_id = 2;
+  optional string reading_year_month = 3;
+  optional string bill_year_month = 4;
+}
+
+message ListBillResponse {
+  repeated BillMessage bills = 1;
+}
+
+// ---------------- SERVICE ----------------
+
+service BillService {
+  rpc CreateBill (CreateBillRequest)
+      returns (CreateBillResponse);
+
+  rpc UpdateBill (UpdateBillRequest)
+      returns (UpdateBillResponse);
+
+  rpc GetBill (GetBillRequest)
+      returns (GetBillResponse);
+
+  rpc DeleteBill (DeleteBillRequest)
+      returns (DeleteBillResponse);
+
+  rpc ListBill (ListBillRequest)
+      returns (ListBillResponse);
+}
