@@ -26,7 +26,7 @@ export const NAV_ITEMS = [
   {
     title: 'Billing',
     value: 'Billing',
-    href: '/billing',
+    href: '/billing-groups',
     description: 'Invoices and payments',
     // children: [
     //   {
