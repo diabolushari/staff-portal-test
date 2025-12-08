@@ -55,8 +55,8 @@ message PaginatedBillGenerationJobStatusRequest {
   int32 page_number = 1;
   int32 page_size = 2;
   optional string search = 3;
-  optional string sort_by = 7;          // optional sort field
-  optional string sort_direction = 8;   // "asc" / "desc"
+  optional string sort_by = 4;          // optional sort field
+  optional string sort_direction = 5;   // "asc" / "desc"
 }
 
 message PaginatedBillGenerationJobStatusResponse {
