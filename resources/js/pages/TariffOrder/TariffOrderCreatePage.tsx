@@ -39,7 +39,6 @@ export default function TariffOrderCreatePage({ tariff_order }: Readonly<PagePro
             {tariff_order ? 'Edit Tariff Order' : 'Add Tariff Order'}
           </StrongText>
         </div>
-
         <TariffOrderForm tariffOrder={tariff_order} />
       </div>
     </MainLayout>

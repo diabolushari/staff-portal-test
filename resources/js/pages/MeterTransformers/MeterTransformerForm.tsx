@@ -209,6 +209,8 @@ export default function MeterTransformerForm({
             type='submit'
             label={isEditing ? 'Update CTPT' : 'Create CTPT'}
             disabled={loading}
+            processing={loading}
+            variant={loading ? 'loading' : 'primary'}
           />
         </div>
       </form>

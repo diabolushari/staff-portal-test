@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Proto\Parameters\ParameterDefinitionServiceClient;
 use Illuminate\Http\JsonResponse;
 use Proto\Parameters\GetParameterDefinitionRequest;
-
+use Proto\Parameters\ParameterDefinitionServiceClient;
 
 class ParameterDefinitionItemApiController extends Controller
 {
@@ -16,7 +15,7 @@ class ParameterDefinitionItemApiController extends Controller
 
     public function __invoke(int $id): JsonResponse
     {
-        $req = new GetParameterDefinitionRequest();
+        $req = new GetParameterDefinitionRequest;
         $req->setId($id);
 
         [$res, $status] = $this->client->GetParameterDefinition($req)->wait();
@@ -26,7 +25,6 @@ class ParameterDefinitionItemApiController extends Controller
         }
 
         $parameter = $res;
-
 
         return response()->json([
             'id' => $parameter->getId(),

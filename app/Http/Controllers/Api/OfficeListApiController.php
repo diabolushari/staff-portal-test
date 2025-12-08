@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\Consumers\OfficeService;
 use App\Services\Parameters\ParameterValueService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Proto\Consumers\OfficeListRequest;
+use Illuminate\Http\Request;
 
 class OfficeListApiController extends Controller
 {
@@ -17,7 +16,7 @@ class OfficeListApiController extends Controller
     {
         $sortPriority = $request->query('sortPriority');
         if ($sortPriority !== null) {
-            $sortPriority = (int)$sortPriority - 1;
+            $sortPriority = (int) $sortPriority - 1;
         }
 
         $officeType = null;
@@ -50,6 +49,7 @@ class OfficeListApiController extends Controller
                 ];
             }
         }
+
         return response()->json($officeArray);
     }
 }

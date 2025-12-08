@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Log;
 class GrpcErrorHandler
 {
     /**
-     *
-     * @param mixed  $status  The gRPC status object
-     *
+     * @param  mixed  $status  The gRPC status object
      * @return array<int, array{
      *  type: string,
      *  reason?: string,

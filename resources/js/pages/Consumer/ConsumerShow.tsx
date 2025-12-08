@@ -1,11 +1,11 @@
-import { router } from '@inertiajs/react'
 import { consumerNavItems } from '@/components/Navbar/navitems'
-import { BreadcrumbItem } from '@/types'
-import StrongText from '@/typography/StrongText'
 import { Card } from '@/components/ui/card'
-import { Info, PencilIcon } from 'lucide-react'
 import { Connection, ConsumerData, MeterAssignment } from '@/interfaces/data_interfaces'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
+import { BreadcrumbItem } from '@/types'
+import StrongText from '@/typography/StrongText'
+import { router } from '@inertiajs/react'
+import { PencilIcon } from 'lucide-react'
 
 interface ConsumerShowProps {
   consumer: ConsumerData
@@ -62,7 +62,7 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
       onEdit={() => router.visit(route('connection.consumer', connection?.connection_id))}
       subHeading='Consumer'
       consumerExist={true}
-      meterExist={connection?.meters?.length > 0}
+      meterExist={connection?.meter_mappings?.length > 0}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto'>
         {/* --- Basic Information --- */}

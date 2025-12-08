@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Connection\ConnectionService;
 use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterService;
+use App\Services\Metering\MeterTransformerRelService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -16,23 +17,33 @@ class GetConnectionMeterController extends Controller
         protected MeterConnectionMappingService $meterConnectionMappingService,
         protected MeterService $meterService,
         protected ConnectionService $connectionService,
+        protected MeterTransformerRelService $meterTransformerRelService,
     ) {}
 
     public function __invoke(int $id): Response|RedirectResponse
     {
-        $response = $this->meterConnectionMappingService->getMeterConnectionMapping($id);
         $connectionResponse = $this->connectionService->getConnection($id);
-        if ($response->hasError()) {
-            return back()->withErrors(['grpc_error' => $response->error]);
+
+        if ($connectionResponse->hasError()) {
+            return back()->withErrors(['grpc_error' => $connectionResponse->error]);
         }
-        $meterConnectionRelResponse = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($id);
-        $meterConnectionRels = $meterConnectionRelResponse->data;
+
+        $meterConnectionMappingsResponse = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($id);
+
+        $ctptRelations = [];
+        if (! $meterConnectionMappingsResponse->hasError() && ! empty($meterConnectionMappingsResponse->data)) {
+            $meterIds = array_map(fn($mapping) => $mapping['meter_id'], $meterConnectionMappingsResponse->data);
+
+            $ctptResponse = $this->meterTransformerRelService->listAssignedToMeters($meterIds);
+            if (! $ctptResponse->hasError()) {
+                $ctptRelations = $ctptResponse->data;
+            }
+        }
 
         return Inertia::render('Connections/ConnectionMeterList', [
             'connectionId' => $id,
             'connection' => $connectionResponse->data,
-            'meterConnectionRels' => $meterConnectionRels,
-
+            'ctptRelations' => $ctptRelations,
         ]);
     }
 }

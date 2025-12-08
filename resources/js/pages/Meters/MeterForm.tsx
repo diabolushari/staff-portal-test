@@ -429,6 +429,8 @@ export default function MeterForm({
                 type='submit'
                 label={isEditing ? 'Update Meter' : 'Create Meter'}
                 disabled={loading}
+                processing={loading}
+                variant={loading ? 'loading' : 'primary'}
               />
             </div>
           </form>

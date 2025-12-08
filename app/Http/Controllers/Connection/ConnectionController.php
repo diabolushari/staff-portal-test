@@ -75,7 +75,7 @@ class ConnectionController extends Controller
         }
         $connection = $response->data;
 
-        return redirect()->route('connections.show', $connection['connection_id']);
+        return redirect()->route('connections.show', $connection['connection_id'])->with('message', 'Connection created successfully');
     }
 
     public function show(int $id): Response|RedirectResponse

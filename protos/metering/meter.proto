@@ -172,7 +172,7 @@ message MeterPaginatedListRequest {
   optional string meter_serial = 1; // search filter
   int32 page_number = 2;
   int32 page_size = 3;
-  optional string sort_by = 4;       
+  optional string sort_by = 4;
   optional string sort_direction = 5;
 }
 
