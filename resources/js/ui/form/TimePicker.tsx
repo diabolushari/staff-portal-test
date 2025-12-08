@@ -18,7 +18,7 @@ export default function TimePicker({
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
-        className='rounded-lg border border-gray-300 bg-accent-light py-3 pl-3 text-sm text-gray-800 shadow-xs focus:border-indigo-700 focus:outline-hidden disabled:bg-gray-100'
+        className='bg-accent-light rounded-lg border border-gray-300 py-3 pl-3 text-sm text-gray-800 shadow-xs focus:border-indigo-700 focus:outline-hidden disabled:bg-gray-100'
         disabled={disabled}
         readOnly={readonly}
       />

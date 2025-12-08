@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 namespace App\GrpcConverters\Metering;
-use App\GrpcConverters\ParameterValueProtoConvertor;
 
+use App\GrpcConverters\ParameterValueProtoConvertor;
 use Proto\Metering\MeterTransformerMessage;
 
 class MeterTransformerProtoConvertor
@@ -59,13 +59,11 @@ class MeterTransformerProtoConvertor
             'burden_id' => $t->getBurdenId(),
             'make_id' => $t->getMakeId(),
             'type_id' => $t->getTypeId(),
-
             'ownership_type' => ParameterValueProtoConvertor::convertToArray($t->getOwnershipType()),
             'accuracy_class' => ParameterValueProtoConvertor::convertToArray($t->getAccuracyClass()),
             'burden' => ParameterValueProtoConvertor::convertToArray($t->getBurden()),
             'make' => ParameterValueProtoConvertor::convertToArray($t->getMake()),
             'type' => ParameterValueProtoConvertor::convertToArray($t->getType()),
-
             'ctpt_serial' => $t->getCtptSerial(),
             'ratio_primary_value' => $t->getRatioPrimaryValue(),
             'ratio_secondary_value' => $t->getRatioSecondaryValue(),
