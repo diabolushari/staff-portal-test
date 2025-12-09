@@ -9,7 +9,6 @@ use App\Services\Parameters\ParameterDomainService;
 use App\Services\SystemModule\SystemModuleService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -32,12 +31,6 @@ class ParameterDefinitionController extends Controller
         $domainsResponse = $this->parameterDomainService->getParameterDomains($page, $pageSize, null, null);
         $systemModulesResponse = $this->systemModuleService->getSystemModules($page, $pageSize);
         $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, $domainName, $moduleName, $search);
-
-        return [
-            'domain_error' => $domainsResponse->hasError(),
-            'system_modules_error' => $systemModulesResponse->hasError(),
-            'response_error' => $response->hasError(),
-        ];
 
         if ($domainsResponse->hasError()) {
             return $domainsResponse->error ?? redirect()->back()->with([
@@ -69,22 +62,20 @@ class ParameterDefinitionController extends Controller
             ]);
         }
 
-        Log::info('response data');
-
-        return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionIndex', [
-            'parameter_definitions' => $response->data ?? [],
-            'domains' => $domainsResponse->data ?? [],
-            'system_modules' => $systemModulesResponse->data ?? [],
-            'grpcStatus' => [
-                'code' => $response->statusCode,
-                'details' => $response->statusDetails,
-            ],
-            'filters' => [
-                'module_name' => $request->input('module_name'),
-                'domain_name' => $request->input('domain_name'),
-                'search' => $request->input('search'),
-            ],
-        ]);
+        try {
+            return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionIndex', [
+                'parameter_definitions' => $response->data ?? [],
+                'domains' => $domainsResponse->data ?? [],
+                'system_modules' => $systemModulesResponse->data ?? [],
+                'filters' => [
+                    'module_name' => $request->input('module_name'),
+                    'domain_name' => $request->input('domain_name'),
+                    'search' => $request->input('search'),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
     }
 
     public function show(int|string $id): InertiaResponse|RedirectResponse
