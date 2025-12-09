@@ -6,35 +6,41 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { MeterProfileParameter } from '@/interfaces/data_interfaces'
 import { MeterReadingFormState } from './ReadingForm/useMeterReadingForm'
 
 interface Props {
   meterId: number
   readingsByMeter: MeterReadingFormState[]
-  parameterId: number // ✅ pass the specific parameter
+  profile: MeterProfileParameter
 }
 
 const rowLabels = ['initial', 'final', 'diff']
 
-export default function MeterReadingValueTooltip({ meterId, readingsByMeter, parameterId }: Props) {
+export default function MeterReadingValueTooltip({
+  meterId,
+  readingsByMeter,
+  profile,
+}: Readonly<Props>) {
   const meterData = readingsByMeter?.find((m) => m.meter_id === meterId)
   if (!meterData) {
     return <div className='p-2 text-xs text-gray-500'>No data available</div>
   }
 
-  const paramData = meterData?.parameters?.find((p: any) => p.meter_parameter_id === parameterId)
+  const paramData = meterData?.parameters?.find(
+    (p) => p.meter_parameter_id === profile.meter_parameter_id
+  )
   if (!paramData) {
     return <div className='p-2 text-xs text-gray-500'>No data available</div>
   }
 
   return (
     <div className='max-h-64 overflow-auto rounded-md bg-blue-100 p-2'>
-      <div className='mb-1 text-xs font-semibold text-gray-700'>{paramData.display_name}</div>
       <Table className='text-xs'>
         <TableHeader>
           <TableRow>
             <TableHead></TableHead>
-            {paramData?.readings?.map((tz: any) => (
+            {paramData?.readings?.map((tz) => (
               <TableHead
                 key={tz?.timezone_id}
                 className='text-center'
@@ -50,7 +56,7 @@ export default function MeterReadingValueTooltip({ meterId, readingsByMeter, par
               <TableCell className='text-center font-medium text-black'>
                 {rowKey.charAt(0).toUpperCase() + rowKey.slice(1)}
               </TableCell>
-              {paramData?.readings?.map((tz: any) => (
+              {paramData?.readings?.map((tz) => (
                 <TableCell
                   key={tz?.timezone_id}
                   className='text-center text-gray-800'

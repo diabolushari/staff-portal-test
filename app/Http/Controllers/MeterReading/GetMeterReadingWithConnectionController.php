@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MeterReading;
 
 use App\Http\Controllers\Controller;
 use App\Services\Connection\ConnectionService;
+use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterReadingService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -15,6 +16,7 @@ class GetMeterReadingWithConnectionController extends Controller
     public function __construct(
         private ConnectionService $connectionService,
         private MeterReadingService $meterReadingService,
+        private MeterConnectionMappingService $meterConnectionMappingService,
     ) {}
 
     public function __invoke(Request $request, int $connectionId): Response
@@ -39,7 +41,6 @@ class GetMeterReadingWithConnectionController extends Controller
 
         return Inertia::render('MeterReading/ConnectionMeterReadingPage', [
             'connection' => $connection->data,
-            'meters' => $connection->data['meters'] ?? [],
             'meterReadings' => $paginated,
         ]);
     }
