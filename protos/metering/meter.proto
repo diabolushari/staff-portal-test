@@ -23,8 +23,23 @@ service MeterService {
   rpc UpdateMeter(UpdateMeterRequest) returns (MeterResponse);
   rpc DeleteMeter(DeleteMeterRequest) returns (google.protobuf.Empty);
   rpc ListMetersPaginated(MeterPaginatedListRequest) returns (MeterPaginatedListResponse);
+  rpc ListUnassignedMeters(ListUnassignedMetersRequest) returns (ListUnassignedMetersResponse);
 }
 
+message ListUnassignedMetersRequest {
+  int32 page_number = 1;
+  int32 page_size = 2;
+  optional string search = 3;
+}
+
+message ListUnassignedMetersResponse {
+  repeated MeterResponse meters = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+
+}
 message ListMetersResponse {
   repeated MeterResponse meters = 1;
 }

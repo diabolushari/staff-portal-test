@@ -19,21 +19,10 @@ class MeterConnectionRelFormRequest extends Data
         public int $meterId,
         public int $connectionId,
         public int $meterUseCategory,
-        public bool $bidirectionalInd,
-        public ?string $meterBillingMode,
         public int $meterStatusId,
-        public ?string $faultyDate, // Dates are received as strings
-        public ?string $rectificationDate,
-        public int $changeReason,
-        public ?string $effectiveStartTs,
-        public ?string $effectiveEndTs,
-        public ?bool $isActive,
         public ?int $sortPriority,
         public bool $isMeterReadingMandatory,
-
-        // Fields to be set by the system (e.g., from auth user)
-        public ?int $createdBy,
-        public ?int $updatedBy,
+        public string $energiseDate,
         #[DataCollectionOf(MeterTransformerForm::class)]
         public ?DataCollection $meterTransformers = null
 

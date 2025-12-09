@@ -1,6 +1,7 @@
 import ConnectionCardSection from '@/components/Connections/ConnectionMeter/ConnectionCardSection'
 import {
   Connection,
+  Meter,
   MeterConnectionMapping,
   MeterTransformerAssignment,
 } from '@/interfaces/data_interfaces'
@@ -11,26 +12,29 @@ import { router } from '@inertiajs/react'
 import { Cpu, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { consumerNavItems } from '../../components/Navbar/navitems'
+import ConnectionMeterUpdateModal from '@/components/Connections/ConnectionMeter/ConnectionMeterUpdateModal'
+import { ParameterValues } from '@/interfaces/parameter_types'
 
 interface ConnectionMeterListProps {
-  connectionId: number
+  connection_id: number
   connection: Connection
-  heading?: string
-  subHeading?: string
-  onEdit?: () => void
-  value?: string
-  ctptRelations: MeterTransformerAssignment[]
+  ctpt_relations: MeterTransformerAssignment[]
+  status: ParameterValues[]
+  change_reason: ParameterValues[]
 }
 
 export default function ConnectionMeterList({
-  connectionId,
+  connection_id,
   connection,
-  heading,
-  subHeading,
-  ctptRelations,
+  ctpt_relations,
+  status,
+  change_reason,
 }: Readonly<ConnectionMeterListProps>) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [deleteRelationId, setDeleteRelation] = useState<MeterConnectionMapping | null>(null)
+  const [updateModalOpen, setUpdateModalOpen] = useState(false)
+  const [isStatusChange, setIsStatusChange] = useState(false)
+  const [meter, setMeter] = useState<MeterConnectionMapping | null>(null)
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -39,16 +43,16 @@ export default function ConnectionMeterList({
     },
     {
       title: connection?.consumer_number.toString(),
-      href: route('connections.show', connectionId),
+      href: route('connections.show', connection_id),
     },
     {
       title: 'Meters',
-      href: route('connection.meters', connectionId),
+      href: route('connection.meters', connection_id),
     },
   ]
 
   function handleAddMeter() {
-    router.visit(route('connection.meter.create', { id: connectionId }))
+    router.visit(route('connection.meter.create', { id: connection_id }))
   }
 
   function handleDeleteMeter(mapping: MeterConnectionMapping) {
@@ -60,11 +64,29 @@ export default function ConnectionMeterList({
     router.visit(route('connection.meter.edit', mappingId))
   }
 
+  function handleMeterStatusChange(meter: MeterConnectionMapping) {
+    setIsStatusChange(true)
+    setUpdateModalOpen(true)
+    setMeter(meter)
+  }
+
+  function handleMeterChange(meter: MeterConnectionMapping) {
+    setIsStatusChange(false)
+    setUpdateModalOpen(true)
+    setMeter(meter)
+  }
+
+  function handleCloseModal() {
+    setUpdateModalOpen(false)
+    setMeter(null)
+    setIsStatusChange(false)
+  }
+
   return (
     <ConnectionsLayout
-      connectionId={connectionId}
-      heading={heading || 'Meters'}
-      subHeading={subHeading || 'Meters assigned to this connection'}
+      connectionId={connection_id}
+      heading={'Meters'}
+      subHeading={'Meters assigned to this connection'}
       value='configuration'
       subTabValue='meter'
       connection={connection}
@@ -90,10 +112,12 @@ export default function ConnectionMeterList({
               <ConnectionCardSection
                 key={mapping.rel_id}
                 meterMapping={mapping}
-                ctptRelations={ctptRelations}
-                connectionId={connectionId}
+                ctptRelations={ctpt_relations}
+                connectionId={connection_id}
                 onDelete={handleDeleteMeter}
                 onEdit={handleEditMeter}
+                onMeterStatusChange={handleMeterStatusChange}
+                onMeterChange={handleMeterChange}
               />
             ))
           ) : (
@@ -111,6 +135,15 @@ export default function ConnectionMeterList({
             setShowModal={setDeleteModalOpen}
             url={route('meter-connection-rel.destroy', deleteRelationId?.rel_id)}
             title='Delete Meter'
+          />
+        )}
+        {updateModalOpen && meter && (
+          <ConnectionMeterUpdateModal
+            setShowModal={handleCloseModal}
+            isStatusChange={isStatusChange}
+            status={status}
+            changeReason={change_reason}
+            meter={meter}
           />
         )}
       </div>

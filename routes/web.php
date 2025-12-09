@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Connections\PartiesListApiController;
 use App\Http\Controllers\Api\GetOfficeByCodeApiController;
 use App\Http\Controllers\Api\GetOfficeByIdApiController;
+use App\Http\Controllers\Api\Metering\UnassignedMetersApiController;
 use App\Http\Controllers\Api\Metering\UnassignedTransformersApiController;
 use App\Http\Controllers\Api\OfficeListApiController;
 use App\Http\Controllers\Api\Parameter\ListParameterValuesApiController;
@@ -28,6 +29,8 @@ use App\Http\Controllers\Connection\GetConnectionMeterController;
 use App\Http\Controllers\Connection\GetConnectionMeterTransformerController;
 use App\Http\Controllers\Connection\GetConnectionPartyController;
 use App\Http\Controllers\Connection\GetConsumerController;
+use App\Http\Controllers\Connection\MeterConnectionMappingUpdateChangeController;
+use App\Http\Controllers\Connection\MeterConnectionMappingUpdateStatusController;
 use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
@@ -96,6 +99,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('connection.meters');
     Route::get('connections/{id}/meters/ctpts', GetConnectionMeterTransformerController::class)
         ->name('connections.meters.ctpts');
+    Route::put('connections/{id}/meter-status', MeterConnectionMappingUpdateStatusController::class)
+        ->name('connection.meter-status.update');
+    Route::put('connections/{id}/meter-change', MeterConnectionMappingUpdateChangeController::class)
+        ->name('connection.meter-change.update');
     Route::get('connection/{id}/meter/create', MeterConnectionMappingCreateController::class)
         ->name('connection.meter.create');
     Route::resource('meter-connection-rel', MeterConnectionMappingController::class);
@@ -142,6 +149,7 @@ Route::get('api/parameter-values', ListParameterValuesApiController::class);
 Route::get('api/office/code/{office_code}', GetOfficeByCodeApiController::class);
 Route::get('api/parties', PartiesListApiController::class);
 Route::get('api/unassigned-transformers', UnassignedTransformersApiController::class);
+Route::get('api/unassigned-meters', UnassignedMetersApiController::class);
 Route::get('api/tariff-order/{id}/download', TariffOrderDownloadApiController::class)->name('tariff-order.download');
 
 Route::get('consumer-test', function (SystemModuleService $service) {
