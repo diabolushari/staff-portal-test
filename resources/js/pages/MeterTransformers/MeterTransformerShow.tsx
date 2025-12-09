@@ -12,7 +12,8 @@ interface Props {
 
 export default function MeterTransformerShow({ transformer }: Readonly<Props>) {
   const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Meter CTPT', href: '/meter-ctpt' },
+    { title: 'Settings', href: '/settings-page' },
+    { title: 'CTPTs', href: '/meter-ctpt' },
     { title: 'Detail', href: `/meter-ctpt/${transformer.meter_ctpt_id}` },
   ]
 
@@ -29,7 +30,7 @@ export default function MeterTransformerShow({ transformer }: Readonly<Props>) {
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={meteringBillingNavItems}
-      selectedItem='Meter CTPTs'
+      selectedItem='CTPTs'
       title={transformer.ctpt_serial}
     >
       {/* Main Content Card */}
@@ -39,20 +40,20 @@ export default function MeterTransformerShow({ transformer }: Readonly<Props>) {
         </StrongText>
         <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
           <Field
+            label='Type'
+            value={transformer.type?.parameter_value}
+          />
+          <Field
             label='CTPT Serial'
             value={transformer.ctpt_serial}
           />
           <Field
-            label='Ownership'
+            label='Ownership Type'
             value={transformer.ownership_type?.parameter_value}
           />
           <Field
             label='Make'
             value={transformer.make?.parameter_value}
-          />
-          <Field
-            label='Type'
-            value={transformer.type?.parameter_value}
           />
         </div>
       </Card>

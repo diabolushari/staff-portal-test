@@ -9,6 +9,7 @@ import Button from '@/ui/button/Button'
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { InfoItem } from '@/components/meteringtimezones/InfoItem'
 import { Section } from '@/components/meteringtimezones/Section'
+import { title } from 'process'
 
 // --- TYPES AND INTERFACES ---
 export interface MeteringTimezone {
@@ -43,7 +44,14 @@ export default function MeteringTimezoneShowPage({ timezone }: Readonly<Props>) 
 
   // --- BREADCRUMBS AND FORMATTERS ---
   const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Metering Timezones', href: route('metering-timezone.index') },
+    {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
+      title: 'Metering Timezones',
+      href: route('metering-timezone.index'),
+    },
     {
       title: timezone.timezone_name.parameter_value,
       href: route('metering-timezone.show', timezone.metering_timezone_id),

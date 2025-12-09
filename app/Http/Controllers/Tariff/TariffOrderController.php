@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tariff;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tariff\TariffOrderFormRequest;
 use App\Http\Requests\Tariff\TariffOrderUpdateFormRequest;
+use App\Services\Parameters\ParameterValueService;
 use App\Services\Tariff\TariffConfigService;
 use App\Services\Tariff\TariffOrderService;
 use Illuminate\Http\RedirectResponse;
@@ -29,20 +30,20 @@ class TariffOrderController extends Controller
         $orderDirection = $request->input('order_direction') ?? null;
 
         $response = $this->tariffOrderService->listTariffOrders(
-            pageNumber: $pageNumber,
-            pageSize: $pageSize,
-            orderDescriptor: $orderDescriptor,
-            orderBy: $orderBy,
-            orderDirection: $orderDirection
+            $pageNumber,
+            $pageSize,
+            $orderBy,
+            $orderDescriptor,
+            $orderDirection
         );
         $paginated = null;
         if (! empty($response->data)) {
             $paginated = new LengthAwarePaginator(
-                $response->data['tariff_orders'],                // items for this page
-                $response->data['total_count'],            // total items count
-                $response->data['page_size'],              // items per page
-                $response->data['page_number'],            // current page
-                ['path' => request()->url()]              // so pagination links work properly
+                $response->data['tariff_orders'],
+                $response->data['total_count'],
+                $response->data['page_size'],
+                $response->data['page_number'],
+                ['path' => request()->url()]
             );
         }
 
@@ -78,7 +79,7 @@ class TariffOrderController extends Controller
         return redirect()->route('tariff-orders.index');
     }
 
-    public function show(int $id, Request $request): Response|RedirectResponse
+    public function show(int $id, Request $request, ParameterValueService $parameterValueService): Response|RedirectResponse
     {
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 5;
@@ -104,9 +105,18 @@ class TariffOrderController extends Controller
             );
         }
 
+          $consumptionTariff = $parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Tariff'
+        );
+
         return Inertia::render('TariffOrder/TariffOrderShowPage', [
             'tariff_order' => $response->data,
             'tariff_configs' => $paginated ?? [],
+            'consumption_tariff' => $consumptionTariff->data,
         ]);
     }
 

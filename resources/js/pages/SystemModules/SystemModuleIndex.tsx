@@ -22,6 +22,10 @@ export default function SystemModuleIndex({ systemModules }: Readonly<Props>) {
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
       title: 'System Modules',
       href: '/system-module',
     },
@@ -57,10 +61,12 @@ export default function SystemModuleIndex({ systemModules }: Readonly<Props>) {
       breadcrumb={breadcrumbs}
       navItems={metadataNavItems}
       selectedItem='System Module'
+      title='System Modules'
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <div className='mb-4 flex items-center justify-between'>
-          <h2 className='text-lg font-semibold text-[#252c32]'>System Modules</h2>
+          <div></div>
+
           <button
             onClick={handleCreateClick}
             className='rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'

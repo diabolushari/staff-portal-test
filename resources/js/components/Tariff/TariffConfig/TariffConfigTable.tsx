@@ -1,4 +1,4 @@
-import { TariffConfig } from '@/interfaces/data_interfaces'
+import { TariffConfig, TariffOrder } from '@/interfaces/data_interfaces'
 import { Paginator } from '@/ui/ui_interfaces'
 import {
   Table,
@@ -14,26 +14,36 @@ import EditButton from '@/ui/button/EditButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import { useState } from 'react'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import TariffConfigForm from '../TariffConfigForm'
+import { ParameterValues } from '@/interfaces/parameter_types'
 
 export default function TariffConfigTable({
   tariff_configs,
-  tariffOrderId,
+  tariffOrder,
+  consumption_tariff,
 }: {
   tariff_configs: Paginator<TariffConfig>
-  tariffOrderId: number
-}) {
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [selectedTariffConfigId, setSelectedTariffConfigId] = useState<number | null>(null)
 
-  const handleDelete = (id: number) => {
-    setSelectedTariffConfigId(id)
+  tariffOrder: TariffOrder
+  consumption_tariff: ParameterValues[]
+}) {
+  const [addTariffConfig, setAddTariffConfig] = useState<boolean>(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [selectedTariffConfig, setSelectedTariffConfig] = useState<TariffConfig | null>(null)
+
+  const handleDelete = (tariffConfig: TariffConfig) => {
+    setSelectedTariffConfig(tariffConfig)
     setIsDeleteModalOpen(true)
   }
-  console.log(tariff_configs)
+
   return (
     <CustomCard
       title='Tariff Configurations'
-      addButton={{ title: 'Add Tariff Config', url: route('tariff-config.create', tariffOrderId) }}
+      // addButton={{
+      //   title: 'Add Tariff Config',
+      //   url: route('tariff-config.create', tariffOrder.tariff_order_id),
+      // }}
+      onAddClick={() => setAddTariffConfig(true)}
     >
       <Table>
         <TableHeader>
@@ -59,16 +69,19 @@ export default function TariffConfigTable({
               <TableCell>{config.energy_charge_kwh}</TableCell>
               <TableCell className='flex gap-2'>
                 <EditButton link={route('tariff-configs.edit', config.tariff_config_id)} />
-                <DeleteButton onClick={() => handleDelete(config.tariff_config_id)} />
+                <DeleteButton onClick={() => handleDelete(config)} />
               </TableCell>
+              TariffConfigTable
             </TableRow>
           ))}
-          {isDeleteModalOpen && selectedTariffConfigId && (
+          {isDeleteModalOpen && selectedTariffConfig && (
             <DeleteModal
               title='Delete Tariff Config'
-              url={route('tariff-configs.destroy', selectedTariffConfigId)}
+              url={route('tariff-configs.destroy', selectedTariffConfig.tariff_config_id)}
               setShowModal={() => setIsDeleteModalOpen(false)}
-            />
+            >
+              Are you sure to delete {selectedTariffConfig.connection_tariff?.parameter_value}
+            </DeleteModal>
           )}
         </TableBody>
       </Table>
@@ -77,6 +90,12 @@ export default function TariffConfigTable({
       <div className='mt-4'>
         <Pagination pagination={tariff_configs} />
       </div>
+      {addTariffConfig && (
+        <TariffConfigForm
+          tariffOrder={tariffOrder}
+          consumptionTariff={consumption_tariff ?? []}
+        />
+      )}
     </CustomCard>
   )
 }

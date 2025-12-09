@@ -7,16 +7,26 @@ import Field from '@/components/ui/field'
 import StrongText from '@/typography/StrongText'
 import TariffConfigTable from '@/components/Tariff/TariffConfig/TariffConfigTable'
 import CustomCard from '@/ui/Card/CustomCard'
+import { ParameterValues } from '@/interfaces/parameter_types'
 
 export default function TariffOrderShowPage({
   tariff_order,
   tariff_configs,
+  consumption_tariff,
 }: {
   tariff_order: TariffOrder
   tariff_configs: Paginator<TariffConfig>
+  consumption_tariff: ParameterValues[]
 }) {
   const breadcrumb: BreadcrumbItem[] = [
-    { title: 'Tariff Order', href: '/tariff-orders' },
+    {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
+      title: 'Tariff Order',
+      href: '/tariff-orders',
+    },
     {
       title: tariff_order.order_descriptor,
       href: `/tariff-orders/${tariff_order?.tariff_order_id}`,
@@ -29,11 +39,12 @@ export default function TariffOrderShowPage({
       navItems={meteringBillingNavItems}
       selectedItem='Tariffs'
       breadcrumb={breadcrumb}
+      title={tariff_order?.order_descriptor}
     >
       {/* ---- Tariff Order Card ---- */}
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         <CustomCard
-          title={tariff_order?.order_descriptor}
+          title=' '
           editButton={{
             title: 'Edit',
             url: `/tariff-orders/${tariff_order?.tariff_order_id}/edit`,
@@ -83,7 +94,8 @@ export default function TariffOrderShowPage({
         {/* ---- Tariff Config Table ---- */}
         <TariffConfigTable
           tariff_configs={tariff_configs}
-          tariffOrderId={tariff_order.tariff_order_id}
+          tariffOrder={tariff_order}
+          consumption_tariff={consumption_tariff}
         />
       </div>
     </MainLayout>

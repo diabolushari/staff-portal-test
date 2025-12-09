@@ -3,7 +3,6 @@
 namespace App\Services\Connection;
 
 use App\GrpcConverters\Connection\ConnectionProtoConverter;
-use App\GrpcConverters\MeterProtoConvertor;
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Metering\MeterConnectionMappingService;
@@ -62,13 +61,14 @@ class ConnectionService
         return GrpcServiceResponse::success($connectionArray, $response, $status->code, $status->details);
     }
 
-    public function listPaginatedConnections(?int $pageNumber = 1,
+    public function listPaginatedConnections(
+        ?int $pageNumber = 1,
         ?int $pageSize = 10,
         ?string $consumerNumber = null,
         ?int $officeCode = null,
         ?int $connectionPurposeId = null,
-        ?int $consumerTypeId = null): GrpcServiceResponse
-    {
+        ?int $consumerTypeId = null
+    ): GrpcServiceResponse {
         $request = new ListConnectionsPaginatedRequest;
 
         if ($pageNumber) {
@@ -183,16 +183,10 @@ class ConnectionService
         $connection = $response->getConnection();
         $meterRelations = $response->getMeters();
         $connectionArray = ConnectionProtoConverter::convertToArray($connection);
-        $meters = [];
+        $connectionArray['meter_mappings'] = [];
         foreach ($meterRelations as $meterRelation) {
-            $priority = $meterRelation->getSortPriority();
-            $meters[] = [
-                'priority' => $priority,
-                'meter' => MeterProtoConvertor::convertToArray($meterRelation->getMeter()),
-                'relationship' => $this->meterConnectionMappingService->meterConnectionMappingProtoToArray($meterRelation),
-            ];
+            $connectionArray['meter_mappings'][] = $this->meterConnectionMappingService->meterConnectionMappingProtoToArray($meterRelation);
         }
-        $connectionArray['meters'] = $meters;
 
         return GrpcServiceResponse::success($connectionArray, $response, $status->code, $status->details);
     }

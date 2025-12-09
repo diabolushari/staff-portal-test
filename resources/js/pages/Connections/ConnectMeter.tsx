@@ -122,15 +122,15 @@ export default function ConnectMeter({
       href: route('connection.meter.create', connection?.connection_id),
     },
   ]
-  const availableCtpts = ctpts.filter(
-    (ct) => !meterTransformers.some((m) => m.ctpt_id == ct.meter_ctpt_id)
-  )
+  const availableCtpts = ctpts
+    ? ctpts.filter((ct) => !meterTransformers.some((m) => m.ctpt_id == ct.meter_ctpt_id))
+    : []
 
   return (
     <ConnectionsLayout
       connectionsNavItems={consumerNavItems}
       breadcrumbs={breadcrumbs}
-      value='meter-reading'
+      value='configuration'
       subTabValue='meter'
       heading='Connect Meter'
       subHeading=''

@@ -1,7 +1,6 @@
 import { Card } from '@/components/ui/card'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import {
-  Meter,
   MeterConnectionMapping,
   MeterReading,
   MeterReadingValue,
@@ -13,15 +12,9 @@ import Button from '@/ui/button/Button'
 import { router } from '@inertiajs/react'
 import { useMemo } from 'react'
 
-interface MeterWithConnection {
-  meter: Meter
-  priority: number
-  relationship: MeterConnectionMapping
-}
-
 interface Props {
   meterReading: MeterReading
-  meters: MeterWithConnection[]
+  meters: MeterConnectionMapping[]
 }
 
 export default function MeterReadingCard({ meterReading, meters }: Readonly<Props>) {

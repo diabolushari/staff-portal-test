@@ -123,6 +123,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
-    'consumer_service_grpc_host' => env('GRPC_HOST')
+    'consumer_service_grpc_host' => env('GRPC_HOST'),
 
 ];

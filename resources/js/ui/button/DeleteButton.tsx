@@ -23,7 +23,7 @@ export default function DeleteButton({ link, onClick }: Props) {
     <Button
       variant='destructive'
       size='icon'
-      className='transition-transform hover:scale-105'
+      className='cursor-pointer transition-transform hover:scale-105'
       onClick={handleClick}
     >
       <Trash className='h-6 w-6' />

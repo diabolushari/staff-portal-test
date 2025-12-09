@@ -2,11 +2,11 @@ import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
 import type { Connection } from '@/interfaces/data_interfaces'
+import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import StrongText from '@/typography/StrongText'
 import { router } from '@inertiajs/react'
 import { PencilIcon } from 'lucide-react'
 import { useMemo } from 'react'
-import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 
 interface Props {
   connection: Connection
@@ -36,23 +36,23 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
       connectionId={connection?.connection_id ?? 0}
       value={'connection'}
       subTabValue='connection'
-      heading='Connection Details'
-      subHeading='Connection Details'
+      heading='Connection'
+      subHeading=''
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
       consumerExist={consumerExist}
-      meterExist={connection?.meters?.length > 0}
+      meterExist={connection?.meter_mappings?.length > 0}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header */}
-        <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+        {/* <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
           <div className='flex flex-col gap-2'>
             <StrongText className='text-2xl font-semibold text-[#252c32]'>Connection</StrongText>
             <span className='text-sm text-gray-600'>
               Consumer No: {connection?.consumer_number}
             </span>
           </div>
-        </div>
+        </div> */}
 
         {/* Tabs */}
 

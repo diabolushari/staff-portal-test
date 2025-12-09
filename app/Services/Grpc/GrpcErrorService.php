@@ -36,7 +36,7 @@ class GrpcErrorService
             $debug = [];
             foreach ($errors as $error) {
                 if ($error['type'] === 'ErrorInfo' && isset($error['metadata'])) {
-                    $debug[] = $error['metadata']['operation'] . ': ' . $error['metadata']['cause'];
+                    $debug[] = $error['metadata']['operation'].': '.$error['metadata']['cause'];
                     $debug[] = $error['metadata']['cause_message'];
                 }
             }

@@ -102,6 +102,10 @@ message GetMeterTransformerRelByCtptIdRequest {
   int64 ctpt_id = 1;
 }
 
+message ListAssignedToMetersRequest {
+  repeated int64 meter_ids = 1;
+}
+
 // =========================
 // Service definition
 // =========================
@@ -113,4 +117,5 @@ service MeterTransformerRelService {
   rpc DeleteMeterTransformerRel(MeterTransformerRelIdRequest) returns (google.protobuf.Empty);
   rpc GetMeterTransformerRelByMeterId(GetMeterTransformerRelByMeterIdRequest) returns (GetMeterTransformerRelByMeterIdResponse);
   rpc GetMeterTransformerRelByCtptId(GetMeterTransformerRelByCtptIdRequest) returns (MeterTransformerRelResponse);
+  rpc ListAssignedToMeters(ListAssignedToMetersRequest) returns (MeterTransformerRelListResponse);
 }

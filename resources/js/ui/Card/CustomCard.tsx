@@ -1,7 +1,6 @@
 import { ReactNode } from 'react'
 import { Card } from '@/components/ui/card'
 import StrongText from '@/typography/StrongText'
-import { router } from '@inertiajs/react'
 import AddButton from '../button/AddButton'
 import EditButton from '../button/EditButton'
 
@@ -16,6 +15,8 @@ interface CustomCardProps {
   editButton?: CardButton
   children?: ReactNode
   className?: string
+  onAddClick?: () => void
+  onEditClick?: () => void
 }
 
 export default function CustomCard({
@@ -24,6 +25,8 @@ export default function CustomCard({
   editButton,
   children,
   className = '',
+  onAddClick,
+  onEditClick,
 }: CustomCardProps) {
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
@@ -33,15 +36,21 @@ export default function CustomCard({
             <StrongText className='text-2xl font-semibold text-[#252c32]'>{title}</StrongText>
           )}
 
-          <div className='flex gap-2'>
-            {addButton && (
+          <div className='flex cursor-pointer gap-2'>
+            {(addButton || onAddClick) && (
               <AddButton
-                buttonText={addButton.title}
-                link={addButton.url}
+                buttonText={addButton?.title}
+                link={addButton?.url}
+                onClick={onAddClick}
               />
             )}
 
-            {editButton && <EditButton link={editButton.url} />}
+            {(editButton || onEditClick) && (
+              <EditButton
+                link={editButton?.url}
+                onClick={onEditClick}
+              />
+            )}
           </div>
         </div>
       )}

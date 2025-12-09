@@ -10,6 +10,10 @@ import { Paginator } from '@/ui/ui_interfaces'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
+    title: 'Settings',
+    href: '/settings-page',
+  },
+  {
     title: 'Offices',
     href: '/offices',
   },
@@ -33,10 +37,11 @@ export default function OfficeIndex({ offices, filters }: Readonly<Props>) {
       addBtnUrl={route('offices.create')}
       selectedItem='Office Details'
       addBtnText='Office'
+      title='Offices'
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <ListSearch
-          title='Offices search'
+          title=''
           placeholder='Enter office name'
           url={route('offices.index')}
           search={filters.office_name}

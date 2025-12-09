@@ -50,6 +50,10 @@ export default function OfficeShow({
   const [hierarchyData, setHierarchyData] = useState<OfficeHierarchyRel | undefined>(undefined)
   const breadcrumbs: BreadcrumbItem[] = [
     {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
       title: 'Offices',
       href: '/offices',
     },

@@ -13,7 +13,8 @@ interface Props {
 }
 export const NAV_ITEMS = [
   {
-    title: 'Consumers',
+    title: 'Consumers & Services',
+    value: 'Consumers',
     href: '/connections',
     description: 'Customer data and tools',
     // children: [
@@ -24,6 +25,7 @@ export const NAV_ITEMS = [
   },
   {
     title: 'Billing',
+    value: 'Billing',
     href: '/billing-groups',
     description: 'Invoices and payments',
     // children: [
@@ -80,7 +82,7 @@ export function CustomNavbar({ selectedTopNav }: Props) {
     >
       <NavigationMenuList className='flex gap-4 border-b border-gray-200 bg-white px-4 dark:border-gray-700 dark:bg-gray-900'>
         {NAV_ITEMS.map((item) => {
-          const isActive = selectedTopNav === item.title
+          const isActive = selectedTopNav === item.value
 
           return (
             <NavigationMenuItem key={item.title}>

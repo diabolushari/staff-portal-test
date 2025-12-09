@@ -1,42 +1,44 @@
-import { router } from '@inertiajs/react'
+import SelectUnassignedTransformerModal from '@/components/Meter/MeterTransformer/SelectUnassignedTransformerModal'
+import { consumerNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
+import {
+  Connection,
+  Meter,
+  MeterTransformer,
+  MeterTransformerAssignment,
+} from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
+import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
+import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
 import Card from '@/ui/Card/Card'
+import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
-import DatePicker from '@/ui/form/DatePicker'
-import { consumerNavItems, meterNavItems } from '@/components/Navbar/navitems'
-import StrongText from '@/typography/StrongText'
-import { ParameterValues } from '@/interfaces/parameter_types'
-import React from 'react'
-import { Connection, Meter } from '@/interfaces/data_interfaces'
-import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
+import { router } from '@inertiajs/react'
+import React, { useMemo, useState } from 'react'
 
 interface MeterTransformerRelFormProps {
-  ctpts: any[]
   meter: Meter
   statuses: ParameterValues[]
   changeReasons: ParameterValues[]
-  relation?: any
+  relation?: MeterTransformerAssignment
   connection: Connection
-}
-
-const toYMD = (iso?: string | null): string => {
-  if (!iso) return ''
-  const d = new Date(iso)
-  return !Number.isNaN(d.getTime()) ? d.toISOString().split('T')[0] : ''
+  transformerTypes: ParameterValues[]
 }
 
 export default function MeterTransformerRelForm({
-  ctpts,
   meter,
   statuses,
   changeReasons,
   relation,
   connection,
-}: MeterTransformerRelFormProps) {
+  transformerTypes,
+}: Readonly<MeterTransformerRelFormProps>) {
   const isEditing = Boolean(relation)
+  const [showModal, setShowModal] = useState(false)
+  const [selectedTransformer, setSelectedTransformer] = useState<MeterTransformer | null>(null)
 
   const breadcrumbs = [
     {
@@ -60,36 +62,50 @@ export default function MeterTransformerRelForm({
     },
   ]
 
-  const { formData, setFormValue, setAll } = useCustomForm({
-    version_id: relation?.version_id ?? null,
-    ctpt_id: relation?.ctpt_id ?? null,
-    meter_id: meter?.meter_id ?? null,
-    status_id: relation?.status_id ?? null,
-    change_reason_id: relation?.change_reason_id ?? null,
-    faulty_date: toYMD(relation?.faulty_date) ?? '',
-    ctpt_energise_date: toYMD(relation?.ctpt_energise_date) ?? '',
-    ctpt_change_date: toYMD(relation?.ctpt_change_date) ?? '',
+  const { formData, setFormValue } = useCustomForm({
+    version_id: relation?.version_id ?? '',
+    ctpt_id: relation?.ctpt_id.toString() ?? '',
+    meter_id: meter?.meter_id.toString() ?? '',
+    status_id: relation?.status_id ?? '',
+    change_reason_id: relation?.change_reason_id ?? '',
+    faulty_date: relation?.faulty_date ?? '',
+    ctpt_energise_date: relation?.ctpt_energise_date ?? '',
+    ctpt_change_date: relation?.ctpt_change_date ?? '',
     _method: isEditing ? 'PUT' : undefined,
+    connection_id: connection.connection_id.toString() ?? '',
   })
 
   const { post, loading, errors } = useInertiaPost<typeof formData>(
-    isEditing ? `/meter-ctpt-rel/${relation.version_id}` : '/meter-ctpt-rel'
+    isEditing ? `/meter-ctpt-rel/${relation?.version_id}` : '/meter-ctpt-rel'
   )
 
-  const mergedctpts = ctpts?.map((ctpt) => ({
-    ...ctpt,
-    mergedValue: `#${ctpt?.meter_ctpt_id} - ${ctpt?.type?.parameter_value ?? ''}`,
-  }))
+  const handleTransformerSelect = (transformer: MeterTransformer) => {
+    setSelectedTransformer(transformer)
+    setFormValue('ctpt_id')(transformer.meter_ctpt_id.toString())
+  }
+
+  const handleClearSelection = () => {
+    setSelectedTransformer(null)
+    setFormValue('ctpt_id')('')
+  }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    post(formData)
+    post({
+      ...formData,
+    })
   }
+
+  const selectedStatusRecord = useMemo(() => {
+    return statuses?.find((status) => status.id === formData.status_id)
+  }, [statuses, formData.status_id])
+
+  console.log(meter)
 
   return (
     <ConnectionsLayout
       connectionsNavItems={consumerNavItems}
-      value='meter-reading'
+      value='configuration'
       subTabValue='meter-ctpts'
       heading='Meter and CTPTs'
       subHeading='CTPTs connected with meters'
@@ -98,13 +114,6 @@ export default function MeterTransformerRelForm({
       connection={connection}
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
-        <div className='flex flex-col gap-2'>
-          <StrongText className='text-2xl font-semibold text-[#252c32]'>
-            {isEditing ? 'Edit CTPT' : 'Connect CTPT'}
-          </StrongText>
-          <span className='text-sm text-gray-600'>Serial: {meter.meter_serial}</span>
-        </div>
-
         <form
           onSubmit={handleSubmit}
           className='space-y-8'
@@ -114,25 +123,55 @@ export default function MeterTransformerRelForm({
               <StrongText className='text-base font-semibold'>CTPT Information</StrongText>
             </div>
             <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
-              {ctpts && (
-                <SelectList
-                  label='CT/PT'
-                  value={formData.ctpt_id}
-                  setValue={setFormValue('ctpt_id')}
-                  list={mergedctpts}
-                  dataKey='meter_ctpt_id'
-                  displayKey='mergedValue'
-                  error={errors.ctpt_id}
-                />
-              )}
+              <div>
+                <label className='mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300'>
+                  CT/PT
+                </label>
+                <div className='flex gap-2'>
+                  <Input
+                    value={
+                      selectedTransformer
+                        ? `#${selectedTransformer.meter_ctpt_id} - ${selectedTransformer.type?.parameter_value ?? ''} - ${selectedTransformer.ctpt_serial}`
+                        : ''
+                    }
+                    setValue={() => {}}
+                    disabled
+                    error={errors.ctpt_id}
+                  />
+                  <Button
+                    type='button'
+                    label='Select'
+                    onClick={() => setShowModal(true)}
+                    variant='secondary'
+                    disabled={loading}
+                  />
+                  {selectedTransformer && (
+                    <Button
+                      type='button'
+                      label='Clear'
+                      onClick={handleClearSelection}
+                      variant='secondary'
+                      disabled={loading}
+                    />
+                  )}
+                </div>
+              </div>
               <Input
-                label='Meter'
+                label='Meter Serial'
                 value={meter.meter_serial}
                 setValue={setFormValue('meter_id')}
                 error={errors.meter_id}
                 disabled
               />
-              {statuses && (
+              <div className='grid grid-cols-1 md:col-span-2 md:grid-cols-2'>
+                <DatePicker
+                  label='CT/PT Energise Date'
+                  value={formData.ctpt_energise_date}
+                  setValue={setFormValue('ctpt_energise_date')}
+                  error={errors.ctpt_energise_date}
+                />
+              </div>
+              {statuses != null && (
                 <SelectList
                   label='Status'
                   value={formData.status_id}
@@ -143,7 +182,14 @@ export default function MeterTransformerRelForm({
                   error={errors.status_id}
                 />
               )}
-              {changeReasons && (
+              {/* <DatePicker
+                label='Faulty Date'
+                value={formData.faulty_date}
+                setValue={setFormValue('faulty_date')}
+                error={errors.faulty_date}
+                disabled={selectedStatusRecord?.parameter_value.toLocaleLowerCase() !== 'faulty'}
+              />
+              {changeReasons != null && (
                 <SelectList
                   label='Change Reason'
                   value={formData.change_reason_id}
@@ -154,31 +200,13 @@ export default function MeterTransformerRelForm({
                   error={errors.change_reason_id}
                 />
               )}
-            </div>
-          </Card>
-          <Card>
-            <div className='border-b-2 border-gray-200 py-3'>
-              <StrongText className='text-base font-semibold'>Dates</StrongText>
-            </div>
-            <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
-              <DatePicker
-                label='Faulty Date'
-                value={formData.faulty_date}
-                setValue={setFormValue('faulty_date')}
-                error={errors.faulty_date}
-              />
-              <DatePicker
-                label='CT/PT Energise Date'
-                value={formData.ctpt_energise_date}
-                setValue={setFormValue('ctpt_energise_date')}
-                error={errors.ctpt_energise_date}
-              />
               <DatePicker
                 label='CT/PT Change Date'
                 value={formData.ctpt_change_date}
                 setValue={setFormValue('ctpt_change_date')}
                 error={errors.ctpt_change_date}
-              />
+                disabled
+              /> */}
             </div>
           </Card>
           <div className='flex justify-end gap-3 border-t pt-6'>
@@ -197,6 +225,15 @@ export default function MeterTransformerRelForm({
           </div>
         </form>
       </div>
+
+      {showModal && (
+        <SelectUnassignedTransformerModal
+          onClose={() => setShowModal(false)}
+          onSelect={handleTransformerSelect}
+          currentSelection={selectedTransformer}
+          transformerTypes={transformerTypes}
+        />
+      )}
     </ConnectionsLayout>
   )
 }

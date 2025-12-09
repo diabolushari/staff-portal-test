@@ -32,6 +32,10 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
       title: 'Parameter Domains',
       href: '/parameter-domain',
     },
@@ -62,6 +66,7 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
       breadcrumb={breadcrumbs}
       navItems={metadataNavItems}
       selectedItem='Domains'
+      title='Parameter Domains'
     >
       {/* <Head title='Parameter Domains' /> */}
 
@@ -78,7 +83,7 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
         </div>
 
         <ListSearch
-          title='Parameter Domains'
+          title=''
           url={route('parameter-domain.index')}
           search={filters.search}
           filters={filters}

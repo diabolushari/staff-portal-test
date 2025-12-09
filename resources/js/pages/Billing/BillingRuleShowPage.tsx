@@ -24,8 +24,18 @@ export default function BillingRuleShowPage({
   paginatedChargeHeads,
 }: Props) {
   const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Billing Rules', href: route('billing-rules.index') },
-    { title: 'Billing Rule Show', href: route('billing-rules.show', billingRule.id) },
+    {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
+      title: 'Billing',
+      href: '/billing-rules',
+    },
+    {
+      title: 'Billing Rule Show',
+      href: route('billing-rules.show', billingRule.id),
+    },
   ]
 
   return (

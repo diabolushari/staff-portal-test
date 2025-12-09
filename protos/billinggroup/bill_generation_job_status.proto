@@ -51,15 +51,12 @@ message ListBillGenerationJobStatusResponse {
 }
 
 message PaginatedBillGenerationJobStatusRequest {
-  optional int32 billing_group_id = 1;
-  optional string reading_year_month = 2;     // YYYY-MM
-  optional string bill_year_month = 3;
-  optional string billing_group_name = 4;
 
-  int32 page_number = 5;
-  int32 page_size = 6;
-  optional string sort_by = 7;          // optional sort field
-  optional string sort_direction = 8;   // "asc" / "desc"
+  int32 page_number = 1;
+  int32 page_size = 2;
+  optional string search = 3;
+  optional string sort_by = 4;          // optional sort field
+  optional string sort_direction = 5;   // "asc" / "desc"
 }
 
 message PaginatedBillGenerationJobStatusResponse {

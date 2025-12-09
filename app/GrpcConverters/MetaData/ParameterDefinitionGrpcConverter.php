@@ -15,6 +15,7 @@ class ParameterDefinitionGrpcConverter
         if ($domain != null) {
             $domain = ParameterDomainGrpcConverter::convertToArray($domain);
         }
+
         return [
             'id' => $parameterDefinition->getId(),
             'parameter_name' => $parameterDefinition->getParameterName(),
