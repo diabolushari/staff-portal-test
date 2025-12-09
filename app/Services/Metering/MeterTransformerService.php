@@ -8,6 +8,7 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
+use Illuminate\Support\Facades\Log;
 use Proto\Metering\CreateMeterTransformerMessage;
 use Proto\Metering\CreateMeterTransformerRequest;
 use Proto\Metering\DeleteMeterTransformerRequest;

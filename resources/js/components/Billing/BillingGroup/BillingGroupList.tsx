@@ -45,6 +45,13 @@ export default function BillingGroupList({ billingGroups }: Props) {
           <div
             key={billingGroup?.billing_group_id ?? index} // unique key fallback
             className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
+            onClick={() =>
+              router.get(
+                route('billing-groups.show', {
+                  id: billingGroup?.billing_group_id,
+                })
+              )
+            }
           >
             <div className='flex items-start justify-between'>
               <div className='flex flex-1 flex-col gap-2.5 p-[10px]'>
@@ -78,7 +85,10 @@ export default function BillingGroupList({ billingGroups }: Props) {
               </div>
 
               <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
-                <div className='flex flex-row gap-2'>
+                <div
+                  className='flex flex-row gap-2'
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <EditButton
                     link={route('billing-groups.edit', {
                       versionId: billingGroup?.version_id,
@@ -86,7 +96,7 @@ export default function BillingGroupList({ billingGroups }: Props) {
                     })}
                   />
                   <DeleteButton onClick={() => handleDeleteClick(billingGroup)} />
-                  <Button
+                  {/* <Button
                     variant='link'
                     label='View'
                     onClick={() =>
@@ -96,7 +106,7 @@ export default function BillingGroupList({ billingGroups }: Props) {
                         })
                       )
                     }
-                  />
+                  /> */}
                 </div>
                 <div
                   className={`rounded-[50px] px-2.5 py-px ${
@@ -124,7 +134,11 @@ export default function BillingGroupList({ billingGroups }: Props) {
             versionId: selectedBillingGroup?.version_id,
             id: selectedBillingGroup?.billing_group_id,
           })}
-        />
+        >
+          <span>
+            Are you sure to delete <b>{selectedBillingGroup?.name}</b>?
+          </span>
+        </DeleteModal>
       )}
     </div>
   )
