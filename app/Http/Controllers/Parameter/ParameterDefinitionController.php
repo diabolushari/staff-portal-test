@@ -24,18 +24,19 @@ class ParameterDefinitionController extends Controller
     public function index(Request $request)
     {
 
-        return 'test';
-
         $page = $request->input('page', 1);
         $pageSize = $request->input('page_size', 10);
         $domainName = $request->input('domain_name');
         $moduleName = $request->input('module_name');
         $search = $request->input('search');
         $domainsResponse = $this->parameterDomainService->getParameterDomains($page, $pageSize, null, null);
+
+        return [
+            'domainsResponse' => $domainsResponse->statusCode,
+            'domainResponseData' => $domainsResponse->data,
+        ];
         $systemModulesResponse = $this->systemModuleService->getSystemModules($page, $pageSize);
         $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, $domainName, $moduleName, $search);
-
-        Log::info('domainsResponse');
 
         if ($domainsResponse->hasError()) {
             return $domainsResponse->error ?? redirect()->back()->with([
