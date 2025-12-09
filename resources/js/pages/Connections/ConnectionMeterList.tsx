@@ -1,6 +1,7 @@
 import ConnectionCardSection from '@/components/Connections/ConnectionMeter/ConnectionCardSection'
 import {
   Connection,
+  Meter,
   MeterConnectionMapping,
   MeterTransformerAssignment,
 } from '@/interfaces/data_interfaces'
@@ -60,6 +61,14 @@ export default function ConnectionMeterList({
     router.visit(route('connection.meter.edit', mappingId))
   }
 
+  function handleMeterStatusChange(meter: Meter) {
+    console.log(meter)
+  }
+
+  function handleMeterChange(meter: Meter) {
+    console.log(meter)
+  }
+
   return (
     <ConnectionsLayout
       connectionId={connectionId}
@@ -94,6 +103,8 @@ export default function ConnectionMeterList({
                 connectionId={connectionId}
                 onDelete={handleDeleteMeter}
                 onEdit={handleEditMeter}
+                onMeterStatusChange={handleMeterStatusChange}
+                onMeterChange={handleMeterChange}
               />
             ))
           ) : (

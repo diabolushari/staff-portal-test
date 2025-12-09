@@ -1,5 +1,9 @@
 import { Button } from '@/components/ui/button'
-import { MeterConnectionMapping, MeterTransformerAssignment } from '@/interfaces/data_interfaces'
+import {
+  Meter,
+  MeterConnectionMapping,
+  MeterTransformerAssignment,
+} from '@/interfaces/data_interfaces'
 import { router } from '@inertiajs/react'
 import {
   Activity,
@@ -20,6 +24,8 @@ interface Props {
   connectionId: number
   onDelete: (mapping: MeterConnectionMapping) => void
   onEdit: (mappingId: number) => void
+  onMeterStatusChange: (meter: Meter) => void
+  onMeterChange: (meter: Meter) => void
 }
 
 export default function ConnectionCardSection({
@@ -28,6 +34,8 @@ export default function ConnectionCardSection({
   connectionId,
   onDelete,
   onEdit,
+  onMeterStatusChange,
+  onMeterChange,
 }: Readonly<Props>) {
   const meterTransformers = ctptRelations.filter((ctpt) => ctpt.meter_id === meterMapping.meter_id)
 
@@ -91,14 +99,28 @@ export default function ConnectionCardSection({
         </div>
 
         <div className='flex gap-2'>
-          <Button
-            variant='outline'
-            size='icon'
-            className='transition-transform hover:scale-105'
-            onClick={() => onEdit(meterMapping.rel_id)}
-          >
-            <Edit2 className='h-5 w-5' />
-          </Button>
+          {meterMapping?.meter && meterMapping?.meter != undefined && (
+            <div className='flex shrink-0 gap-2'>
+              <Button
+                variant='outline'
+                size='sm'
+                className='h-8 gap-1.5 text-xs'
+                onClick={() => onMeterStatusChange(meterMapping?.meter)}
+              >
+                <Activity className='h-3.5 w-3.5' />
+                Update Status
+              </Button>
+              <Button
+                variant='outline'
+                size='sm'
+                className='h-8 gap-1.5 text-xs'
+                onClick={() => onMeterChange(meterMapping?.meter)}
+              >
+                <ArrowLeftRight className='h-3.5 w-3.5' />
+                Change
+              </Button>
+            </div>
+          )}
           <Button
             variant='destructive'
             size='icon'
