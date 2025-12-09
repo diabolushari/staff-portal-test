@@ -6,19 +6,18 @@ use App\Http\Requests\BillingGroup\BillingGroupConnectionRelFormRequest;
 use App\Services\BillingGroup\BillingGroupConnectionRelService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class BillingGroupConnectionRelController
 {
     public function __construct(private BillingGroupConnectionRelService $billingGroupConnectionRelService) {}
 
-    public function index()
+    public function index(): Response
     {
-        return Inertia::render('BillingGroupConnectionRel/BillingGroupConnectionRelIndexPage', [
-            'billingGroupConnectionRel' => $response->data,
-        ]);
+        return Inertia::render('BillingGroupConnectionRel/BillingGroupConnectionRelIndexPage');
     }
 
-    public function create()
+    public function create(): Response
     {
         return Inertia::render('BillingGroupConnectionRel/BillingGroupConnectionRelCreatePage');
     }
@@ -34,18 +33,6 @@ class BillingGroupConnectionRelController
         return redirect()->back()->with('message', 'Connection added to Billing Group');
     }
 
-    public function show(int $billingGroupId)
-    {
-        $response = $this->billingGroupConnectionRelService->getBillingGroupConnectionRel($billingGroupId);
-
-        if (! $response->success) {
-            return back()->withErrors($response->errors);
-        }
-
-        return Inertia::render('BillingGroupConnectionRel/BillingGroupConnectionRelShowPage', [
-            'billingGroupConnectionRel' => $response->data,
-        ]);
-    }
 
     public function destroy(int $versionId): RedirectResponse
     {
