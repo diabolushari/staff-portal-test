@@ -75,6 +75,7 @@ class MeteringParameterProfileService
             'created_by' => $detail->getCreatedBy(),
             'updated_by' => $detail->getUpdatedBy(),
             'is_active' => $detail->getIsActive(),
+            'is_cumulative' => $detail->getIsCumulative(),
             'profile' => $this->parameterValueService->toArray($detail->getProfile()),
         ];
     }

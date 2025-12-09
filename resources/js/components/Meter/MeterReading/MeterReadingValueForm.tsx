@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Meter } from '@/interfaces/data_interfaces'
+import { Meter, MeterProfileParameter } from '@/interfaces/data_interfaces'
 import Input from '@/ui/form/Input'
 import React from 'react'
 import { TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
@@ -15,9 +15,15 @@ interface Props {
   values: TimezoneReadingState[]
   onChange: (tzId: number, value: string) => void
   meter: Meter
+  profileParameter: MeterProfileParameter
 }
 
-export default function MeterReadingValueForm({ values, onChange, meter }: Readonly<Props>) {
+export default function MeterReadingValueForm({
+  values,
+  onChange,
+  meter,
+  profileParameter,
+}: Readonly<Props>) {
   return (
     <div className='rounded border bg-white p-4'>
       <Table>
@@ -28,23 +34,27 @@ export default function MeterReadingValueForm({ values, onChange, meter }: Reado
           </TableRow>
         </TableHeader>
         <TableBody>
+          {profileParameter.is_cumulative && (
+            <TableRow>
+              <TableCell className='font-medium'>Initial</TableCell>
+              {values?.map((tz) => (
+                <React.Fragment key={tz.timezone_id}>
+                  <TableCell>
+                    <Input
+                      type='number'
+                      value={tz.values.initial}
+                      setValue={() => {}}
+                      disabled
+                    />
+                  </TableCell>
+                </React.Fragment>
+              ))}
+            </TableRow>
+          )}
           <TableRow>
-            <TableCell className='font-medium'>Initial</TableCell>
-            {values?.map((tz) => (
-              <React.Fragment key={tz.timezone_id}>
-                <TableCell>
-                  <Input
-                    type='number'
-                    value={tz.values.initial}
-                    setValue={() => {}}
-                    disabled
-                  />
-                </TableCell>
-              </React.Fragment>
-            ))}
-          </TableRow>
-          <TableRow>
-            <TableCell className='font-medium'>Final</TableCell>
+            <TableCell className='font-medium'>
+              {profileParameter.is_cumulative ? 'Final' : 'Reading'}
+            </TableCell>
             {values?.map((tz) => (
               <React.Fragment key={tz.timezone_id}>
                 <TableCell>
@@ -57,23 +67,27 @@ export default function MeterReadingValueForm({ values, onChange, meter }: Reado
               </React.Fragment>
             ))}
           </TableRow>
+          {profileParameter.is_cumulative && (
+            <TableRow>
+              <TableCell className='font-medium'>Diff</TableCell>
+              {values?.map((tz) => (
+                <React.Fragment key={tz.timezone_id}>
+                  <TableCell>
+                    <Input
+                      type='number'
+                      value={tz.values.diff}
+                      setValue={() => {}}
+                      disabled
+                    />
+                  </TableCell>
+                </React.Fragment>
+              ))}
+            </TableRow>
+          )}
           <TableRow>
-            <TableCell className='font-medium'>Diff</TableCell>
-            {values?.map((tz) => (
-              <React.Fragment key={tz.timezone_id}>
-                <TableCell>
-                  <Input
-                    type='number'
-                    value={tz.values.diff}
-                    setValue={() => {}}
-                    disabled
-                  />
-                </TableCell>
-              </React.Fragment>
-            ))}
-          </TableRow>
-          <TableRow>
-            <TableCell className='font-medium'>Reading (MF: {meter.meter_mf})</TableCell>
+            <TableCell className='font-medium'>
+              {profileParameter.is_export ? 'Export' : 'Import'} (MF: {meter.meter_mf})
+            </TableCell>
             {values?.map((tz) => (
               <React.Fragment key={tz.timezone_id}>
                 <TableCell>

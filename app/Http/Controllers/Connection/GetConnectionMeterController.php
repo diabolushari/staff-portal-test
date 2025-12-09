@@ -32,7 +32,7 @@ class GetConnectionMeterController extends Controller
 
         $ctptRelations = [];
         if (! $meterConnectionMappingsResponse->hasError() && ! empty($meterConnectionMappingsResponse->data)) {
-            $meterIds = array_map(fn($mapping) => $mapping['meter_id'], $meterConnectionMappingsResponse->data);
+            $meterIds = array_map(fn ($mapping) => $mapping['meter_id'], $meterConnectionMappingsResponse->data);
 
             $ctptResponse = $this->meterTransformerRelService->listAssignedToMeters($meterIds);
             if (! $ctptResponse->hasError()) {
