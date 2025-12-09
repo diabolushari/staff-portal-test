@@ -21,7 +21,6 @@ class UnassignedMetersApiController extends Controller
         $page = (int) $request->query('page', 1);
         $pageSize = (int) $request->query('page_size', 10);
         $search = $request->query('search');
-        $typeId = $request->query('type_id') ? (int) $request->query('type_id') : null;
 
         $response = $this->meterService->listUnassignedMeters(
             $page,
@@ -47,7 +46,7 @@ class UnassignedMetersApiController extends Controller
         return response()->json([
             'success' => true,
             'data' => $paginated ?? null,
-            'message' => 'Transformers fetched successfully',
+            'message' => 'Meters fetched successfully',
         ]);
     }
 }

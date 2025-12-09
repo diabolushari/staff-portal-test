@@ -36,7 +36,7 @@ export default function SelectUnassignedMeterModal({
     return () => clearTimeout(timer)
   }, [searchQuery])
 
-  const fetchTransformers = useCallback(async () => {
+  const fetchMeters = useCallback(async () => {
     setLoading(true)
     setPagination(null)
     setSelectedMeter(null)
@@ -57,7 +57,7 @@ export default function SelectUnassignedMeterModal({
           '/api/unassigned-meters',
           { params }
         )
-      console.log(data)
+
       if (data.success) {
         setPagination(data.data)
       } else {
@@ -72,10 +72,10 @@ export default function SelectUnassignedMeterModal({
   }, [currentPage, debouncedSearch])
 
   useEffect(() => {
-    fetchTransformers()
-  }, [fetchTransformers])
+    fetchMeters()
+  }, [fetchMeters])
 
-  const selectTransformer = (meter: Meter) => {
+  const selectMeter = (meter: Meter) => {
     onSelect(meter)
     onClose()
   }
@@ -89,7 +89,7 @@ export default function SelectUnassignedMeterModal({
   return (
     <Modal
       setShowModal={handleClose}
-      title='Select CT/PT Transformer'
+      title='Select Meter'
       large
     >
       <div className='space-y-4'>
@@ -118,7 +118,7 @@ export default function SelectUnassignedMeterModal({
                 <div
                   key={meter.meter_id}
                   className='rounded-lg border border-slate-200 bg-slate-50 p-3 shadow-sm'
-                  onClick={() => selectTransformer(meter)}
+                  onClick={() => selectMeter(meter)}
                 >
                   <div className='flex flex-wrap items-center gap-4 text-sm'>
                     <div className='flex items-center gap-1'>
