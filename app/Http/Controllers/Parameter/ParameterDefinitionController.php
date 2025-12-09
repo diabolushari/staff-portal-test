@@ -31,6 +31,26 @@ class ParameterDefinitionController extends Controller
         $systemModulesResponse = $this->systemModuleService->getSystemModules($page, $pageSize);
         $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, $domainName, $moduleName, $search);
 
+        if ($domainsResponse->hasError()) {
+            return $domainsResponse->error ?? redirect()->back()->with([
+                'message' => 'Failed to fetch parameter domains.',
+                'grpcStatus' => [
+                    'code' => $domainsResponse->statusCode,
+                    'details' => $domainsResponse->statusDetails,
+                ],
+            ]);
+        }
+
+        if ($systemModulesResponse->hasError()) {
+            return $systemModulesResponse->error ?? redirect()->back()->with([
+                'message' => 'Failed to fetch system modules.',
+                'grpcStatus' => [
+                    'code' => $systemModulesResponse->statusCode,
+                    'details' => $systemModulesResponse->statusDetails,
+                ],
+            ]);
+        }
+
         if ($response->hasError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch parameter definitions.',
@@ -42,9 +62,9 @@ class ParameterDefinitionController extends Controller
         }
 
         return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionIndex', [
-            'parameter_definitions' => $response->data,
-            'domains' => $domainsResponse->data,
-            'system_modules' => $systemModulesResponse->data,
+            'parameter_definitions' => $response->data ?? [],
+            'domains' => $domainsResponse->data ?? [],
+            'system_modules' => $systemModulesResponse->data ?? [],
             'grpcStatus' => [
                 'code' => $response->statusCode,
                 'details' => $response->statusDetails,
