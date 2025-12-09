@@ -9,6 +9,7 @@ use App\Services\Parameters\ParameterDomainService;
 use App\Services\SystemModule\SystemModuleService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -20,8 +21,11 @@ class ParameterDefinitionController extends Controller
         private SystemModuleService $systemModuleService
     ) {}
 
-    public function index(Request $request): InertiaResponse|RedirectResponse
+    public function index(Request $request)
     {
+
+        return 'test';
+
         $page = $request->input('page', 1);
         $pageSize = $request->input('page_size', 10);
         $domainName = $request->input('domain_name');
@@ -30,6 +34,8 @@ class ParameterDefinitionController extends Controller
         $domainsResponse = $this->parameterDomainService->getParameterDomains($page, $pageSize, null, null);
         $systemModulesResponse = $this->systemModuleService->getSystemModules($page, $pageSize);
         $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, $domainName, $moduleName, $search);
+
+        Log::info('domainsResponse');
 
         if ($domainsResponse->hasError()) {
             return $domainsResponse->error ?? redirect()->back()->with([
@@ -41,6 +47,8 @@ class ParameterDefinitionController extends Controller
             ]);
         }
 
+        Log::info('systemModulesResponse');
+
         if ($systemModulesResponse->hasError()) {
             return $systemModulesResponse->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch system modules.',
@@ -51,6 +59,8 @@ class ParameterDefinitionController extends Controller
             ]);
         }
 
+        Log::info('response');
+
         if ($response->hasError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch parameter definitions.',
@@ -60,6 +70,8 @@ class ParameterDefinitionController extends Controller
                 ],
             ]);
         }
+
+        Log::info('response data');
 
         return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionIndex', [
             'parameter_definitions' => $response->data ?? [],
