@@ -9,6 +9,7 @@ use App\Services\Parameters\ParameterDomainService;
 use App\Services\SystemModule\SystemModuleService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -63,18 +64,47 @@ class ParameterDefinitionController extends Controller
         }
 
         try {
+            // Prepare data for Inertia - ensure everything is JSON-serializable
+            $parameterDefinitions = $response->data ?? [];
+            $domains = $domainsResponse->data ?? [];
+            $systemModules = $systemModulesResponse->data ?? [];
+
+            // Validate data is JSON-serializable before passing to Inertia
+            $testEncode = json_encode([
+                'parameter_definitions' => $parameterDefinitions,
+                'domains' => $domains,
+                'system_modules' => $systemModules,
+            ]);
+
+            if ($testEncode === false) {
+                Log::error('JSON encoding failed in ParameterDefinitionController::index', [
+                    'json_error' => json_last_error_msg(),
+                ]);
+
+                return redirect()->back()->with([
+                    'message' => 'Failed to encode data: '.json_last_error_msg(),
+                ]);
+            }
+
             return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionIndex', [
-                'parameter_definitions' => $response->data ?? [],
-                'domains' => $domainsResponse->data ?? [],
-                'system_modules' => $systemModulesResponse->data ?? [],
+                'parameter_definitions' => $parameterDefinitions,
+                'domains' => $domains,
+                'system_modules' => $systemModules,
                 'filters' => [
                     'module_name' => $request->input('module_name'),
                     'domain_name' => $request->input('domain_name'),
                     'search' => $request->input('search'),
                 ],
             ]);
-        } catch (\Exception $e) {
-            return $e->getMessage();
+        } catch (\Throwable $e) {
+            Log::error('Exception in ParameterDefinitionController::index', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()->with([
+                'message' => 'Error: '.$e->getMessage(),
+            ]);
         }
     }
 
