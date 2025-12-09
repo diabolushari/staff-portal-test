@@ -86,6 +86,17 @@ class ParameterDefinitionController extends Controller
                 ]);
             }
 
+            return [
+                'parameter_definitions' => $parameterDefinitions,
+                'domains' => $domains,
+                'system_modules' => $systemModules,
+                'filters' => [
+                    'module_name' => $request->input('module_name'),
+                    'domain_name' => $request->input('domain_name'),
+                    'search' => $request->input('search'),
+                ],
+            ];
+
             return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionIndex', [
                 'parameter_definitions' => $parameterDefinitions,
                 'domains' => $domains,
@@ -102,9 +113,7 @@ class ParameterDefinitionController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return redirect()->back()->with([
-                'message' => 'Error: '.$e->getMessage(),
-            ]);
+            return 'Error: '.$e->getMessage();
         }
     }
 
