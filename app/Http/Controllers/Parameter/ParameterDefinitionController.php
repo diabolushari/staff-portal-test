@@ -35,6 +35,7 @@ class ParameterDefinitionController extends Controller
 
         return [
             'response' => $response->statusCode,
+            'responseDetails' => $response->data,
         ];
 
         if ($domainsResponse->hasError()) {
