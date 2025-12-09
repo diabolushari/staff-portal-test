@@ -2,7 +2,10 @@
 
 namespace App\Services\Metering;
 
+use App\GrpcConverters\Connection\MeterConnectionMappingConverter;
 use App\GrpcConverters\MeterProtoConvertor;
+use App\Http\Requests\Connections\ConnectionMeterChangeReasonFormRequest;
+use App\Http\Requests\Connections\ConnectionMeterStatusFormRequest;
 use App\Http\Requests\Metering\MeterConnectionRelFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\DateTimeConverter;
@@ -10,6 +13,7 @@ use App\Services\utils\GrpcServiceResponse;
 use DateTime;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
+use Illuminate\Http\Request;
 use Proto\Metering\CreateMeterConnectionMappingRequest;
 use Proto\Metering\DeleteMeterConnectionMappingRequest;
 use Proto\Metering\GetMeterConnectionMappingByConnectionIdRequest;
@@ -19,6 +23,7 @@ use Proto\Metering\MeterConnectionMappingResponse;
 use Proto\Metering\MeterConnectionMappingServiceClient;
 use Proto\Metering\MeterTransformerRelFormRequest;
 use Proto\Metering\UpdateMeterConnectionMappingRequest;
+use Proto\Metering\UpdateMeterConnectionStatusRequest;
 use Proto\Parameters\ParameterValueProto;
 
 class MeterConnectionMappingService
@@ -170,6 +175,41 @@ class MeterConnectionMappingService
         }
 
         return GrpcServiceResponse::success($relsArray, $response, $status->code, $status->details);
+    }
+    public function updateMeterConnectionStatus(ConnectionMeterStatusFormRequest $data): GrpcServiceResponse
+    {
+        $request = MeterConnectionMappingConverter::arrayToUpdateMeterConnectionStatusRequest($data);
+
+        [$response, $status] = $this->client->UpdateMeterConnectionStatus($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status, null, false),
+                $response,
+                $status->code,
+                $status->details,
+            );
+        }
+
+        return GrpcServiceResponse::success(self::meterConnectionMappingProtoToArray($response), $response, $status->code, $status->details);
+    }
+
+    public function updateMeterConnectionChangeReason(ConnectionMeterChangeReasonFormRequest $data): GrpcServiceResponse
+    {
+        $request = MeterConnectionMappingConverter::arrayToUpdateMeterConnectionChangeRequest($data);
+
+        [$response, $status] = $this->client->UpdateMeterConnectionChangeReason($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status, null, false),
+                $response,
+                $status->code,
+                $status->details,
+            );
+        }
+
+        return GrpcServiceResponse::success(self::meterConnectionMappingProtoToArray($response), $response, $status->code, $status->details);
     }
 
     public function updateMeterConnectionMapping(MeterConnectionRelFormRequest $data): GrpcServiceResponse

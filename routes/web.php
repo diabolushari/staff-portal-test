@@ -29,6 +29,8 @@ use App\Http\Controllers\Connection\GetConnectionMeterController;
 use App\Http\Controllers\Connection\GetConnectionMeterTransformerController;
 use App\Http\Controllers\Connection\GetConnectionPartyController;
 use App\Http\Controllers\Connection\GetConsumerController;
+use App\Http\Controllers\Connection\MeterConnectionMappingUpdateChangeController;
+use App\Http\Controllers\Connection\MeterConnectionMappingUpdateStatusController;
 use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
@@ -97,6 +99,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('connection.meters');
     Route::get('connections/{id}/meters/ctpts', GetConnectionMeterTransformerController::class)
         ->name('connections.meters.ctpts');
+    Route::put('connections/{id}/meter-status', MeterConnectionMappingUpdateStatusController::class)
+        ->name('connection.meter-status.update');
+    Route::put('connections/{id}/meter-change', MeterConnectionMappingUpdateChangeController::class)
+        ->name('connection.meter-change.update');
     Route::get('connection/{id}/meter/create', MeterConnectionMappingCreateController::class)
         ->name('connection.meter.create');
     Route::resource('meter-connection-rel', MeterConnectionMappingController::class);

@@ -108,8 +108,8 @@ export default function ConnectMeter({
       href: route('connection.meter.create', connection?.connection_id),
     },
   ]
-  const availableCtpts = ctpts.filter(
-    (ct) => !meterTransformers.some((m) => m.ctpt_id == ct.meter_ctpt_id)
+  const availableCtpts = ctpts?.filter(
+    (ct) => !meterTransformers?.some((m) => m.ctpt_id == ct.meter_ctpt_id)
   )
   const handleClearSelection = () => {
     setSelectedMeter(null)
@@ -232,7 +232,7 @@ export default function ConnectMeter({
           <div className='flex items-center justify-between border-b-2 border-gray-200 py-3'>
             <StrongText className='text-base font-semibold'>Connect CTPT</StrongText>
             <div>
-              {availableCtpts.length > 0 && (
+              {availableCtpts?.length > 0 && (
                 <Button
                   type='button'
                   label='Connect CTPT'

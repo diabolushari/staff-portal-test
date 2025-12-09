@@ -24,8 +24,8 @@ interface Props {
   connectionId: number
   onDelete: (mapping: MeterConnectionMapping) => void
   onEdit: (mappingId: number) => void
-  onMeterStatusChange: (meter: Meter) => void
-  onMeterChange: (meter: Meter) => void
+  onMeterStatusChange: (meter: MeterConnectionMapping) => void
+  onMeterChange: (meter: MeterConnectionMapping) => void
 }
 
 export default function ConnectionCardSection({
@@ -105,19 +105,18 @@ export default function ConnectionCardSection({
                 variant='outline'
                 size='sm'
                 className='h-8 gap-1.5 text-xs'
-                onClick={() => onMeterStatusChange(meterMapping?.meter)}
+                onClick={() => onMeterStatusChange(meterMapping)}
               >
-                <Activity className='h-3.5 w-3.5' />
-                Update Status
+                Update Meter Status
               </Button>
               <Button
                 variant='outline'
                 size='sm'
                 className='h-8 gap-1.5 text-xs'
-                onClick={() => onMeterChange(meterMapping?.meter)}
+                onClick={() => onMeterChange(meterMapping)}
               >
                 <ArrowLeftRight className='h-3.5 w-3.5' />
-                Change
+                Change Meter
               </Button>
             </div>
           )}
