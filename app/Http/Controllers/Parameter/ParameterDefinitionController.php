@@ -34,8 +34,9 @@ class ParameterDefinitionController extends Controller
         $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, $domainName, $moduleName, $search);
 
         return [
-            'response' => $response->statusCode,
-            'responseDetails' => $response->data,
+            'domain_error' => $domainsResponse->hasError(),
+            'system_modules_error' => $systemModulesResponse->hasError(),
+            'response_error' => $response->hasError(),
         ];
 
         if ($domainsResponse->hasError()) {
@@ -48,8 +49,6 @@ class ParameterDefinitionController extends Controller
             ]);
         }
 
-        Log::info('systemModulesResponse');
-
         if ($systemModulesResponse->hasError()) {
             return $systemModulesResponse->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch system modules.',
@@ -59,8 +58,6 @@ class ParameterDefinitionController extends Controller
                 ],
             ]);
         }
-
-        Log::info('response');
 
         if ($response->hasError()) {
             return $response->error ?? redirect()->back()->with([
