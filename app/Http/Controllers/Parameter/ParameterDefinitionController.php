@@ -31,11 +31,13 @@ class ParameterDefinitionController extends Controller
         $search = $request->input('search');
         $domainsResponse = $this->parameterDomainService->getParameterDomains($page, $pageSize, null, null);
 
-        return [
-            'domainsResponse' => $domainsResponse->statusCode,
-            'domainResponseData' => $domainsResponse->data,
-        ];
         $systemModulesResponse = $this->systemModuleService->getSystemModules($page, $pageSize);
+
+        return [
+            'systemModulesResponse' => $systemModulesResponse->statusCode,
+            'systemModulesResponseData' => $systemModulesResponse->data,
+        ];
+
         $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, $domainName, $moduleName, $search);
 
         if ($domainsResponse->hasError()) {
