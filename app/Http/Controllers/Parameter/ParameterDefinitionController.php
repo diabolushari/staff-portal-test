@@ -30,15 +30,12 @@ class ParameterDefinitionController extends Controller
         $moduleName = $request->input('module_name');
         $search = $request->input('search');
         $domainsResponse = $this->parameterDomainService->getParameterDomains($page, $pageSize, null, null);
-
         $systemModulesResponse = $this->systemModuleService->getSystemModules($page, $pageSize);
+        $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, $domainName, $moduleName, $search);
 
         return [
-            'systemModulesResponse' => $systemModulesResponse->statusCode,
-            'systemModulesResponseData' => $systemModulesResponse->data,
+            'response' => $response->statusCode,
         ];
-
-        $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, $domainName, $moduleName, $search);
 
         if ($domainsResponse->hasError()) {
             return $domainsResponse->error ?? redirect()->back()->with([
