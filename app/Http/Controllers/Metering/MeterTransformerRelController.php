@@ -140,6 +140,6 @@ class MeterTransformerRelController extends Controller
             return redirect()->back()->withErrors($response->error ?? 'Failed to delete relation');
         }
 
-        return redirect()->back()->with('success', 'Relation deleted successfully.');
+        return redirect()->back()->with('message', 'Relation deleted successfully.');
     }
 }
