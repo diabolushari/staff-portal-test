@@ -10,8 +10,7 @@ use Illuminate\Http\RedirectResponse;
 class MeterConnectionMappingUpdateStatusController extends Controller
 {
     public function __construct( private readonly MeterConnectionMappingService $meterConnectionMappingService)
-    {
-    }
+    {}
 
     public function __invoke(ConnectionMeterStatusFormRequest $request): RedirectResponse
     {

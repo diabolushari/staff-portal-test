@@ -45,7 +45,6 @@ export default function ConnectionMeterUpdateModal({
   const handleClose = () => {
     setShowModal(false)
   }
-  console.log(meter)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
