@@ -31,7 +31,6 @@ interface MeterTransformerRelFormProps {
 export default function MeterTransformerRelForm({
   meter,
   statuses,
-  changeReasons,
   relation,
   connection,
   transformerTypes,

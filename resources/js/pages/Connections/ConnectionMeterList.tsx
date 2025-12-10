@@ -10,7 +10,7 @@ import { BreadcrumbItem } from '@/types'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import { router } from '@inertiajs/react'
 import { Cpu, Plus } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { consumerNavItems } from '../../components/Navbar/navitems'
 import ConnectionMeterUpdateModal from '@/components/Connections/ConnectionMeter/ConnectionMeterUpdateModal'
 import { ParameterValues } from '@/interfaces/parameter_types'
@@ -118,6 +118,8 @@ export default function ConnectionMeterList({
                 onEdit={handleEditMeter}
                 onMeterStatusChange={handleMeterStatusChange}
                 onMeterChange={handleMeterChange}
+                changeReasons={change_reason}
+                statuses={status}
               />
             ))
           ) : (

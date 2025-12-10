@@ -1,22 +1,21 @@
 import { Button } from '@/components/ui/button'
-import {
-  Meter,
-  MeterConnectionMapping,
-  MeterTransformerAssignment,
-} from '@/interfaces/data_interfaces'
+import { MeterConnectionMapping, MeterTransformerAssignment } from '@/interfaces/data_interfaces'
 import { router } from '@inertiajs/react'
 import {
   Activity,
   ArrowLeftRight,
   Calendar,
   Cpu,
-  Edit2,
   Link2,
   Plug,
   Settings,
   Trash,
   Wrench,
 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import ChangeMeterTransformerAssignment from './ChangeMeterTransformerAssignment'
+import { ParameterValues } from '@/interfaces/parameter_types'
+import UpdateMeterTransformerAssignmentStatus from './UpdateMeterTransformerAssignmentStatus'
 
 interface Props {
   meterMapping: MeterConnectionMapping
@@ -26,18 +25,35 @@ interface Props {
   onEdit: (mappingId: number) => void
   onMeterStatusChange: (meter: MeterConnectionMapping) => void
   onMeterChange: (meter: MeterConnectionMapping) => void
+  changeReasons: ParameterValues[]
+  statuses: ParameterValues[]
 }
 
 export default function ConnectionCardSection({
   meterMapping,
   ctptRelations,
   connectionId,
+  changeReasons,
   onDelete,
   onEdit,
   onMeterStatusChange,
   onMeterChange,
+  statuses,
 }: Readonly<Props>) {
   const meterTransformers = ctptRelations.filter((ctpt) => ctpt.meter_id === meterMapping.meter_id)
+
+  const [change, setChange] = useState<boolean>(false)
+
+  const [updateStatus, setUpdateStatus] = useState<boolean>(false)
+
+  const [selectedCtpt, setSelectedCtpt] = useState<MeterTransformerAssignment | null>(null)
+
+  useEffect(() => {
+    if (!change && !updateStatus) {
+      setSelectedCtpt(null)
+    }
+  }, [change, updateStatus])
+  console.log(selectedCtpt)
 
   return (
     <div
@@ -139,8 +155,8 @@ export default function ConnectionCardSection({
             </span>
           </div>
           <Button
-            variant='secondary'
-            className='transition-transform hover:scale-105'
+            variant='outline'
+            className='cursor-pointer transition-transform hover:scale-105'
             onClick={() =>
               router.get(`/connections/${connectionId}/meters/${meterMapping.meter_id}/ctpt/create`)
             }
@@ -201,7 +217,11 @@ export default function ConnectionCardSection({
                     <Button
                       variant='outline'
                       size='sm'
-                      className='h-8 gap-1.5 text-xs'
+                      onClick={() => {
+                        setUpdateStatus(true)
+                        setSelectedCtpt(ctpt)
+                      }}
+                      className='h-8 cursor-pointer gap-1.5 text-xs'
                     >
                       <Activity className='h-3.5 w-3.5' />
                       Update Status
@@ -209,7 +229,11 @@ export default function ConnectionCardSection({
                     <Button
                       variant='outline'
                       size='sm'
-                      className='h-8 gap-1.5 text-xs'
+                      onClick={() => {
+                        setChange(true)
+                        setSelectedCtpt(ctpt)
+                      }}
+                      className='h-8 cursor-pointer gap-1.5 text-xs'
                     >
                       <ArrowLeftRight className='h-3.5 w-3.5' />
                       Change
@@ -220,6 +244,22 @@ export default function ConnectionCardSection({
             ))}
           </div>
         </div>
+      )}
+      {updateStatus && selectedCtpt && (
+        <UpdateMeterTransformerAssignmentStatus
+          setUpdate={setUpdateStatus}
+          setSelectedCtpt={setSelectedCtpt}
+          ctpt={selectedCtpt}
+          statuses={statuses}
+        />
+      )}
+      {change && selectedCtpt && (
+        <ChangeMeterTransformerAssignment
+          ctpt={selectedCtpt}
+          changeReasons={changeReasons}
+          setSelectedCtpt={setSelectedCtpt}
+          setChange={setChange}
+        />
       )}
     </div>
   )

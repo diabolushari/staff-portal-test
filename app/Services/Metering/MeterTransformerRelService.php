@@ -239,8 +239,13 @@ class MeterTransformerRelService
         if (! empty($data['ctpt_change_date'])) {
             $request->setCtptChangeDate($this->toProtoTimestamp($data['ctpt_change_date']));
         }
+        if (! empty($data['status_id'])) {
         $request->setStatusId($data['status_id']);
-        $request->setChangeReasonId($data['change_reason_id']);
+         }
+         if (! empty($data['change_reason_id'])) {
+            $request->setChangeReasonId($data['change_reason_id']);
+         }
+       
         $request->setUpdatedBy($data['updated_by'] ?? auth()->id());
 
         [$response, $status] = $this->client->UpdateMeterTransformerRel($request)->wait();
