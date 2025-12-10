@@ -17,7 +17,7 @@ class UpdateMeterTransformerAssignmentStatusController extends Controller
             'ctpt_version_id'=> 'required',
         ]);
 
-        $response = $meterTransformerRelService->updateRelation($request->all(), $request->ctpt_version_id);
+        $response = $meterTransformerRelService->updateChangeReason($request->all(), $request->ctpt_version_id);
 
         if ($response->hasError()) {
             return redirect()->back()->with('error', $response->error ?? 'Something went wrong');
