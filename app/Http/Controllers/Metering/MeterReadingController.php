@@ -72,7 +72,7 @@ class MeterReadingController extends Controller
             return redirect()->route('meter-reading.create', $request->connectionId)->with('message', 'Meter reading created successfully.');
         }
 
-        return redirect()->route('connections.index')->with('message', 'Meter reading created successfully.');
+        return redirect()->route('connection.meter-reading', $request->connectionId)->with('message', 'Meter reading created successfully.');
     }
 
     public function show(int $meterReadingId, Request $request): Response
