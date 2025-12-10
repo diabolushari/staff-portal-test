@@ -238,6 +238,14 @@ export default function MeterShow({
                       : '-'
                   }
                 />
+                <Field
+                  label='CT Count'
+                  value={meter?.ct_count}
+                />
+                <Field
+                  label='PT Count'
+                  value={meter?.pt_count}
+                />
               </div>
             </Card>
 
