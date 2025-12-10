@@ -89,13 +89,13 @@ class GetMeterReadingController extends Controller
                 $meter = $this->meterService->getMeter($meterConnectionRel['meter_id']);
                 $meterWithTimezoneAndProfile['meter'] = $meter->data;
 
-                if ($meterWithTimezoneAndProfile['meter'] != null && ! empty($ctptRelations)) {
-                    foreach ($ctptRelations as $ctptRelation) {
-                        if ($ctptRelation['meter_id'] == $meterWithTimezoneAndProfile['meter']['meter_id'] && isset($ctptRelation['ctpt'])) {
-                            $meterWithTimezoneAndProfile['meter']['transformers'][] = $ctptRelation['ctpt'];
-                        }
-                    }
-                }
+                // if ($meterWithTimezoneAndProfile['meter'] != null && ! empty($ctptRelations)) {
+                //     foreach ($ctptRelations as $ctptRelation) {
+                //         if ($ctptRelation['meter_id'] == $meterWithTimezoneAndProfile['meter']['meter_id'] && isset($ctptRelation['ctpt'])) {
+                //             $meterWithTimezoneAndProfile['meter']['transformers'][] = $ctptRelation['ctpt'];
+                //         }
+                //     }
+                // }
 
                 $data = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($meterConnectionRel['meter_id'])->data ?? [];
                 if (! empty($data)) {
