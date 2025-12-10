@@ -172,7 +172,7 @@ export default function MeterReadingPreview({
             className='mb-2 flex items-center gap-4'
           >
             <SelectList
-              label={`CT/PT Health ${ctpt.ctpt_serial}`}
+              label={`CT/PT Health ${ctpt.ctpt_serial} ${ctpt.type?.parameter_value}`}
               value={
                 healthData
                   .find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
