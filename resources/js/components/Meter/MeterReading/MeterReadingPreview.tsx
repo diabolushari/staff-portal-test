@@ -149,48 +149,83 @@ export default function MeterReadingPreview({
       <span className='text-sm text-gray-500'>
         Multiplication Factor: {meterWithTimezoneAndProfile.meter.meter_mf}
       </span>
-      <div className='flex gap-2'>
+      <div className='flex flex-col gap-2'>
         {meterHealthTypes && (
-          <SelectList
-            label='Meter Health'
-            value={
-              healthData.find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
-                ?.meter_health_id ?? ''
-            }
-            setValue={(value) =>
-              updateMeterHealth(Number(value), meterWithTimezoneAndProfile.meter)
-            }
-            list={meterHealthTypes}
-            dataKey='id'
-            displayKey='parameter_value'
-          />
-        )}
-
-        {meterWithTimezoneAndProfile.meter.transformers.map((ctpt: MeterTransformer) => (
-          <div
-            key={ctpt.meter_ctpt_id}
-            className='mb-2 flex items-center gap-4'
-          >
+          <div className='flex items-center gap-2'>
             <SelectList
-              label={`CT/PT Health ${ctpt.ctpt_serial} ${ctpt.type?.parameter_value}`}
+              label='Meter Health'
               value={
-                healthData
-                  .find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
-                  ?.ctpts?.find((c) => c.ctpt_id === ctpt.meter_ctpt_id)?.health ?? ''
+                healthData.find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
+                  ?.meter_health_id ?? ''
               }
               setValue={(value) =>
-                updateCTPTHealth(
-                  meterWithTimezoneAndProfile.meter_id,
-                  ctpt.meter_ctpt_id,
-                  Number(value)
-                )
+                updateMeterHealth(Number(value), meterWithTimezoneAndProfile.meter)
               }
-              list={ctHealthTypes}
+              list={meterHealthTypes}
               dataKey='id'
               displayKey='parameter_value'
             />
           </div>
-        ))}
+        )}
+
+        <StrongText className='mt-4 mb-2 block'>CT / PT Transformers</StrongText>
+
+        <div className='grid grid-cols-1 gap-3 md:grid-cols-2'>
+          {meterWithTimezoneAndProfile.meter.transformers.map((ctpt: MeterTransformer) => {
+            const existingHealth = healthData
+              .find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
+              ?.ctpts?.find((c) => c.ctpt_id === ctpt.meter_ctpt_id)?.health
+
+            return (
+              <div
+                key={ctpt.meter_ctpt_id}
+                className='rounded-lg border border-slate-200 bg-slate-50 p-3 shadow-sm'
+              >
+                <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-center'>
+                  {/* LEFT SIDE — Same info layout as ConnectionCardSection */}
+                  <div className='flex flex-wrap items-center gap-4 text-sm'>
+                    <div className='flex items-center gap-1'>
+                      <span className='font-medium text-slate-700'>Serial:</span>
+                      <span className='text-slate-600'>{ctpt.ctpt_serial ?? 'N/A'}</span>
+                    </div>
+
+                    <div className='flex items-center gap-1'>
+                      <span className='font-medium text-slate-700'>Type:</span>
+                      <span className='text-slate-600'>{ctpt.type?.parameter_value ?? 'N/A'}</span>
+                    </div>
+
+                    {ctpt.ratio_primary_value != null && ctpt.ratio_secondary_value != null && (
+                      <div className='flex items-center gap-1'>
+                        <span className='font-medium text-slate-700'>Ratio:</span>
+                        <span className='text-slate-600'>
+                          {ctpt.ratio_primary_value} / {ctpt.ratio_secondary_value}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* RIGHT SIDE — The SelectList for health */}
+                  <div className='flex shrink-0 gap-2'>
+                    <SelectList
+                      label='CT/PT Health'
+                      value={existingHealth ?? ''}
+                      setValue={(value) =>
+                        updateCTPTHealth(
+                          meterWithTimezoneAndProfile.meter_id,
+                          ctpt.meter_ctpt_id,
+                          Number(value)
+                        )
+                      }
+                      list={ctHealthTypes}
+                      dataKey='id'
+                      displayKey='parameter_value'
+                    />
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
 
       <div className='grid gap-4 md:grid-cols-2'>

@@ -22,7 +22,7 @@ class MeterReadingForm extends Data
         public float $currentR,
         public float $currentB,
         public float $currentY,
-        public string $remarks,
+        public ?string $remarks,
         public array $readingsByMeter,
         public array $meterHealth,
         public ?bool $multipleReading,
