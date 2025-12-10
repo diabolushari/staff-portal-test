@@ -26,9 +26,9 @@ export default function ConnectionMeterUpdateModal({
     rel_id: meter.rel_id,
     change_reason_id: meter.change_reason?.id ?? '',
     status_id: meter.meter_status?.id ?? '',
-    change_date: '',
-    notice_date: meter.faulty_date ?? '',
-    intimation_date: '',
+    change_date: meter.change_date ?? '',
+    notice_date: meter.notice_date ?? '',
+    intimation_date: meter.intimation_date ?? '',
     _method: 'PUT',
   })
   const { post, errors, loading } = useInertiaPost(
@@ -36,13 +36,16 @@ export default function ConnectionMeterUpdateModal({
       ? route('connection.meter-status.update', meter.rel_id)
       : route('connection.meter-change.update', meter.rel_id),
     {
-      showErrorToast: true,
+      onComplete: () => {
+        setShowModal(false)
+      },
     }
   )
 
   const handleClose = () => {
     setShowModal(false)
   }
+  console.log(meter)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

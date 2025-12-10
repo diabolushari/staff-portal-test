@@ -73,6 +73,9 @@ export interface MeterConnectionMapping {
   updated_by: number
   meter?: Meter | null
   transformers?: MeterTransformerAssignment[]
+  notice_date?: string
+  intimation_date?: string
+  change_date?: string
 }
 
 export interface DateTimeField {

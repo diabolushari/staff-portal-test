@@ -77,10 +77,14 @@ class GetMeterReadingController extends Controller
 
             foreach ($meterConnectionRel->data as $meterConnectionRel) {
 
-                $bidirectionalInd = $meterConnectionRel['bidirectional_ind'];
+                
                 $meterWithTimezoneAndProfile['meter_id'] = $meterConnectionRel['meter_id'];
                 $meter = $this->meterService->getMeter($meterConnectionRel['meter_id']);
                 $meterWithTimezoneAndProfile['meter'] = $meter->data;
+                $bidirectionalInd = false;
+                if ($meter->data) {
+                    $bidirectionalInd = $meter->data['bidirectional_ind'] ?? false;
+                }
                 $data = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($meterConnectionRel['meter_id'])->data ?? [];
                 if (! empty($data)) {
                     $meterWithTimezoneAndProfile['meter_timezone_type'] = $data['timezone_type']['parameter_value'];
