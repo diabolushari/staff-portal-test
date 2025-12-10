@@ -2,23 +2,24 @@ import ConnectionPartiesFormModal from '@/components/Connections/ConnectionParti
 import ConnectionPartiesList from '@/components/Connections/ConnectionPartiesList'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Connection, ConnectionPartyMapping } from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import AddButton from '@/ui/button/AddButton'
 import { useState } from 'react'
 
 interface ConnectionPartiesProps {
   connection: Connection
-
-  connectionParties: ConnectionPartyMapping[]
+  party_relation_types: ParameterValues[]
+  connection_parties: ConnectionPartyMapping[]
 }
 
 export default function ConnectionParties({
   connection,
-
-  connectionParties,
+  party_relation_types,
+  connection_parties,
 }: ConnectionPartiesProps) {
   const [addPartiesModal, setAddPartiesModal] = useState(false)
-  console.log(connectionParties)
+  console.log(connection_parties)
   return (
     <ConnectionsLayout
       breadcrumbs={[]}
@@ -39,13 +40,15 @@ export default function ConnectionParties({
         />
       </div>
       <ConnectionPartiesList
-        connectionParties={connectionParties}
+        connectionParties={connection_parties}
         connection={connection}
+        partyRelationTypes={party_relation_types}
       />
       {addPartiesModal && (
         <ConnectionPartiesFormModal
           connection={connection}
           setShowModal={setAddPartiesModal}
+          partyRelationTypes={party_relation_types}
         />
       )}
     </ConnectionsLayout>

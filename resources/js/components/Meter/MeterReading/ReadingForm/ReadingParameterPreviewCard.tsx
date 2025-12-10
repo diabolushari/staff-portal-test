@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { MeterProfileParameter, MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
@@ -42,14 +43,19 @@ export default function ReadingParameterPreviewCard({
       }`}
       onClick={() => setActiveProfile({ meterIdx: meterIndex, profileIdx: profileIndex })}
     >
-      <StrongText>
-        {profile.display_name} {profile.is_export ? '(Export)' : ''}
-      </StrongText>
-
+      <div className='flex items-center gap-2'>
+        <StrongText>{profile.display_name}</StrongText>
+        <Badge
+          variant='secondary'
+          className='text-xs'
+        >
+          {profile.is_export ? 'Export' : 'Import'}
+        </Badge>
+      </div>
       <div
         className={`mt-2 space-y-1 text-sm text-gray-600 ${
           meterWithTimezoneAndProfile?.timezones?.length > 2
-            ? 'scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent max-h-[60px] overflow-y-auto pr-1'
+            ? 'scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent pr-1'
             : ''
         }`}
         style={{ scrollBehavior: 'smooth' }}
@@ -57,19 +63,16 @@ export default function ReadingParameterPreviewCard({
         {paramData?.readings?.map((r) => {
           const diff = r.values?.diff
           return (
-            diff && (
-              <div
-                key={r.timezone_id}
-                className='flex justify-between border-b border-gray-100 py-1 last:border-0'
-              >
-                <span>{r.timezone_name}</span>
-                <span className='font-medium text-gray-800'>{diff}</span>
-              </div>
-            )
+            <div
+              key={r.timezone_id}
+              className='flex justify-between border-b border-gray-100 py-1 last:border-0'
+            >
+              <span>{r.timezone_name}</span>
+              <span className='font-medium text-gray-800'>{diff}</span>
+            </div>
           )
         })}
       </div>
-
       <Tooltip>
         <TooltipTrigger>
           <Info className='absolute top-2 right-2 h-5 w-5 text-gray-400 hover:text-gray-600' />
@@ -81,7 +84,7 @@ export default function ReadingParameterPreviewCard({
           <MeterReadingValueTooltip
             meterId={meterWithTimezoneAndProfile.meter_id}
             readingsByMeter={readingValues}
-            parameterId={profile.meter_parameter_id}
+            profile={profile}
           />
         </TooltipContent>
       </Tooltip>

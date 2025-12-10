@@ -186,28 +186,23 @@ const ComboBox = <
             />
             {error && <ErrorText>{error}</ErrorText>}
           </div>
-          <div className='absolute top-full z-10 w-full overflow-auto rounded-sm bg-white shadow-xl'>
-            {list.length > 0 && (
-              <>
-                {list.map((item, index) => {
-                  return (
-                    <div
-                      key={item[dataKey]}
-                      className={`flex cursor-pointer flex-col px-2 py-3 text-sm ${highlightedIndex === index ? 'subheader-sm-1stop bg-gray-200' : ''}`}
-                      onClick={() => handleSelection(item)}
-                      onMouseEnter={() => setHighlightedIndex(index)}
-                    >
-                      <SubHeading>{item[displayKey]}</SubHeading>
-                      {displayValue2 != null && (
-                        <NormalText className='text-xs text-gray-500'>
-                          {item[displayValue2]}
-                        </NormalText>
-                      )}
-                    </div>
-                  )
-                })}
-              </>
-            )}
+          <div className='absolute top-full z-10 max-h-60 w-full overflow-y-auto rounded-sm bg-white shadow-xl'>
+            {list.length > 0 &&
+              list.map((item, index) => (
+                <div
+                  key={`${item[dataKey]}-${index}`}
+                  className={`flex cursor-pointer flex-col px-2 py-3 text-sm ${
+                    highlightedIndex === index ? 'subheader-sm-1stop bg-gray-200' : ''
+                  }`}
+                  onClick={() => handleSelection(item)}
+                  onMouseEnter={() => setHighlightedIndex(index)}
+                >
+                  <SubHeading>{item[displayKey]}</SubHeading>
+                  {displayValue2 != null && (
+                    <NormalText className='text-xs text-gray-500'>{item[displayValue2]}</NormalText>
+                  )}
+                </div>
+              ))}
           </div>
         </div>
       )}

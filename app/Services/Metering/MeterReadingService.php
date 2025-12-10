@@ -228,7 +228,9 @@ class MeterReadingService
         $protoRequest->setCurrentR($request->currentR);
         $protoRequest->setCurrentY($request->currentY);
         $protoRequest->setCurrentB($request->currentB);
-        $protoRequest->setRemarks($request->remarks);
+        if ($request->remarks) {
+            $protoRequest->setRemarks($request->remarks);
+        }
         $protoRequest->setCreatedBy(1);
         $protoRequest->setIsActive(true);
 
@@ -363,7 +365,9 @@ class MeterReadingService
         $protoRequest->setCurrentR($request->currentR);
         $protoRequest->setCurrentY($request->currentY);
         $protoRequest->setCurrentB($request->currentB);
-        $protoRequest->setRemarks($request->remarks);
+        if ($request->remarks) {
+            $protoRequest->setRemarks($request->remarks);
+        }
         $protoRequest->setIsActive(true);
         $protoRequest->setUpdatedBy(1);
 

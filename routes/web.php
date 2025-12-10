@@ -15,7 +15,6 @@ use App\Http\Controllers\Api\Tariff\TariffOrderDownloadApiController;
 use App\Http\Controllers\Billing\BillController;
 use App\Http\Controllers\Billing\BillingRuleController;
 use App\Http\Controllers\Billing\BillInitializeController;
-use App\Http\Controllers\BillingCycle\BillingCycleController;
 use App\Http\Controllers\BillingCycle\BillJobStatusController;
 use App\Http\Controllers\BillingGroup\BillingGroupBillController;
 use App\Http\Controllers\BillingGroup\BillingGroupConnectionRelController;
@@ -29,6 +28,8 @@ use App\Http\Controllers\Connection\GetConnectionMeterController;
 use App\Http\Controllers\Connection\GetConnectionMeterTransformerController;
 use App\Http\Controllers\Connection\GetConnectionPartyController;
 use App\Http\Controllers\Connection\GetConsumerController;
+use App\Http\Controllers\Connection\MeterConnectionMappingUpdateChangeController;
+use App\Http\Controllers\Connection\MeterConnectionMappingUpdateStatusController;
 use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
@@ -97,6 +98,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('connection.meters');
     Route::get('connections/{id}/meters/ctpts', GetConnectionMeterTransformerController::class)
         ->name('connections.meters.ctpts');
+    Route::put('connections/{id}/meter-status', MeterConnectionMappingUpdateStatusController::class)
+        ->name('connection.meter-status.update');
+    Route::put('connections/{id}/meter-change', MeterConnectionMappingUpdateChangeController::class)
+        ->name('connection.meter-change.update');
     Route::get('connection/{id}/meter/create', MeterConnectionMappingCreateController::class)
         ->name('connection.meter.create');
     Route::resource('meter-connection-rel', MeterConnectionMappingController::class);
@@ -163,5 +168,5 @@ Route::get('page-ui', function () {
 Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
     ->name('settings-page');
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

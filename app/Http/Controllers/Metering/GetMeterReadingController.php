@@ -10,6 +10,7 @@ use App\Services\Metering\MeteringParameterProfileService;
 use App\Services\Metering\MeterReadingService;
 use App\Services\Metering\MeterService;
 use App\Services\Metering\MeterTimezoneTypeRelService;
+use App\Services\Metering\MeterTransformerRelService;
 use App\Services\MeteringTimezone\MeteringTimezoneService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\Request;
@@ -27,7 +28,8 @@ class GetMeterReadingController extends Controller
         private MeteringTimezoneService $meteringTimezoneService,
         private MeteringParameterProfileService $meteringParameterProfileService,
         private MeterService $meterService,
-        private MeterReadingService $meterReadingService
+        private MeterReadingService $meterReadingService,
+        private MeterTransformerRelService $meterTransformerRelService
     ) {}
 
     public function __invoke(Request $request, int $connectionId): Response
@@ -72,15 +74,29 @@ class GetMeterReadingController extends Controller
         $timeZoneNames = [];
         $latestMeterReading = $this->meterReadingService->latestMeterReading($connectionId);
 
+        $meterIds = array_map(fn ($mapping) => $mapping['meter_id'], $meterConnectionRel->data);
+        $ctptRelations = [];
+        $ctptResponse = $this->meterTransformerRelService->listAssignedToMeters($meterIds);
+        if (! $ctptResponse->hasError()) {
+            $ctptRelations = $ctptResponse->data;
+        }
+
         if ($meterConnectionRel->data) {
             $meterWithTimezoneAndProfile = [];
 
             foreach ($meterConnectionRel->data as $meterConnectionRel) {
-
-                $bidirectionalInd = $meterConnectionRel['bidirectional_ind'];
                 $meterWithTimezoneAndProfile['meter_id'] = $meterConnectionRel['meter_id'];
                 $meter = $this->meterService->getMeter($meterConnectionRel['meter_id']);
                 $meterWithTimezoneAndProfile['meter'] = $meter->data;
+
+                // if ($meterWithTimezoneAndProfile['meter'] != null && ! empty($ctptRelations)) {
+                //     foreach ($ctptRelations as $ctptRelation) {
+                //         if ($ctptRelation['meter_id'] == $meterWithTimezoneAndProfile['meter']['meter_id'] && isset($ctptRelation['ctpt'])) {
+                //             $meterWithTimezoneAndProfile['meter']['transformers'][] = $ctptRelation['ctpt'];
+                //         }
+                //     }
+                // }
+
                 $data = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($meterConnectionRel['meter_id'])->data ?? [];
                 if (! empty($data)) {
                     $meterWithTimezoneAndProfile['meter_timezone_type'] = $data['timezone_type']['parameter_value'];
@@ -102,9 +118,6 @@ class GetMeterReadingController extends Controller
                 $meterProfiles = [];
                 if ($meterProfilesResponse) {
                     foreach ($meterProfilesResponse as $meterProfile) {
-                        if ($meter->data != null && $bidirectionalInd == false && $meterProfile['is_export'] == true) {
-                            continue;
-                        }
                         $meterProfiles[] = $meterProfile;
                     }
                 }

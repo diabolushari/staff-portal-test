@@ -88,9 +88,6 @@ export default function SystemModuleIndex({ systemModules }: Readonly<Props>) {
                     <div className='font-inter text-base font-semibold text-black'>
                       {module.name}
                     </div>
-                    <div className='rounded-[50px] bg-blue-100 px-2.5 py-px'>
-                      <div className='font-inter text-xs text-blue-800'>ID: {module.id}</div>
-                    </div>
                   </div>
                 </div>
 

@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { router } from '@inertiajs/react'
-import { Edit2Icon, EditIcon } from 'lucide-react'
+import { Edit2Icon } from 'lucide-react'
 import React from 'react'
 
 interface Props {
@@ -21,7 +21,7 @@ export default function EditButton({ link, onClick }: Props) {
 
   return (
     <Button
-      className='flex items-center gap-2 transition-transform'
+      className='flex cursor-pointer items-center gap-2 transition-transform'
       onClick={handleClick}
       variant='highlight'
     >

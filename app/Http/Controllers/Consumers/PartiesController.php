@@ -4,26 +4,19 @@ namespace App\Http\Controllers\Consumers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Parties\PartiesFormRequest;
+use App\Services\Parameters\ParameterValueService;
 use App\Services\Parties\PartyService;
-use Grpc\ChannelCredentials;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
-use Proto\Parameters\ListParameterValuesRequest;
-use Proto\Parameters\ParameterValueServiceClient;
 
 class PartiesController extends Controller
 {
-    private ParameterValueServiceClient $parameterValueClient;
-
-    public function __construct(private PartyService $partyService)
+    public function __construct(private PartyService $partyService,
+    private ParameterValueService $parameterValueService)
     {
-        // TODO use party service
-        $this->parameterValueClient = new ParameterValueServiceClient(
-            config('app.consumer_service_grpc_host'),
-            ['credentials' => ChannelCredentials::createInsecure()]
-        );
     }
 
     /**
@@ -35,7 +28,7 @@ class PartiesController extends Controller
         $partiesResponse = $this->partyService->getParties($search);
 
         if ($partiesResponse->hasError()) {
-            return $partiesResponse->error;
+            return redirect()->back()->with('error', $partiesResponse->error ?? 'Failed to get parties.');
         }
 
         return Inertia::render('Parties/PartiesIndex', [
@@ -48,36 +41,11 @@ class PartiesController extends Controller
      */
     public function create(): Response|RedirectResponse
     {
-        $request = new ListParameterValuesRequest;
-        $statusRequest = new ListParameterValuesRequest;
-        $request->setDomainName('Parties');
-        $request->setParameterName('Party Type');
-        $statusRequest->setDomainName('Parties');
-        $statusRequest->setParameterName('Status');
-        [$partyTypes, $partyTypeStatus] = $this->parameterValueClient->ListParameterValues($request)->wait();
-        [$partyStatus, $partyStatusStatus] = $this->parameterValueClient->ListParameterValues($statusRequest)->wait();
+        $partyTypes = $this->parameterValueService->getParameterValues(null,null,null,'Parties','Party Type');
+        $partyStatus = $this->parameterValueService->getParameterValues(null,null,null,'Parties','Status');
 
-        if ($partyTypeStatus->code !== 0 || $partyStatusStatus->code !== 0) {
-            return redirect()->back()->withErrors([
-                'grpc_error' => $partyTypeStatus->details ?: $partyStatusStatus->details,
-            ]);
-        }
 
-        $partyTypes = collect($partyTypes->getValues())
-            ->map(fn ($item) => [
-                'id' => $item->getId(),
-                'parameterValue' => $item->getParameterValue(),
-            ])
-            ->toArray();
-
-        $partyStatus = collect($partyStatus->getValues())
-            ->map(fn ($item) => [
-                'id' => $item->getId(),
-                'parameterValue' => $item->getParameterValue(),
-            ])
-            ->toArray();
-
-        return Inertia::render('Parties/PartiesForm', [
+        return Inertia::render('Parties/PartiesCreate', [
             'partyTypes' => $partyTypes,
             'partyStatus' => $partyStatus,
         ]);
@@ -88,11 +56,14 @@ class PartiesController extends Controller
      */
     public function store(PartiesFormRequest $request): RedirectResponse
     {
-        $request->createdBy = auth()->id();
+        $user = Auth::user();
+        if($user){
+            $request->createdBy = $user->id;
+        }
         $response = $this->partyService->createParty($request);
 
         if ($response->hasError()) {
-            return $response->error;
+            return redirect()->back()->with('error', $response->error ?? 'Failed to create party.');
         }
 
         return redirect()->route('parties.index')->with('success', 'Party created successfully.');
@@ -106,7 +77,7 @@ class PartiesController extends Controller
         $partyResponse = $this->partyService->getParty($id);
 
         if ($partyResponse->hasError()) {
-            return $partyResponse->error;
+            return redirect()->back()->with('error', $partyResponse->error ?? 'Failed to get party.');
         }
 
         return Inertia::render('Parties/PartiesShow', [
@@ -122,41 +93,13 @@ class PartiesController extends Controller
         // First, get the specific party to edit
         $partyResponse = $this->partyService->getParty($id);
         if ($partyResponse->hasError()) {
-            return $partyResponse->error;
+            return redirect()->back()->with('error', $partyResponse->error ?? 'Failed to get party.');
         }
         $party = $partyResponse->data;
 
-        // Second, get the dropdown data using the original, duplicated logic
-        $request = new ListParameterValuesRequest;
-        $statusRequest = new ListParameterValuesRequest;
-        $request->setDomainName('Parties');
-        $request->setParameterName('Party Type');
-        $statusRequest->setDomainName('Parties');
-        $statusRequest->setParameterName('Status');
-        [$partyTypes, $partyTypeStatus] = $this->parameterValueClient->ListParameterValues($request)->wait();
-        [$partyStatus, $partyStatusStatus] = $this->parameterValueClient->ListParameterValues($statusRequest)->wait();
+        $partyTypes = $this->parameterValueService->getParameterValues(null,null,null,'Parties','Party Type');
+        $partyStatus = $this->parameterValueService->getParameterValues(null,null,null,'Parties','Status');
 
-        if ($partyTypeStatus->code !== 0 || $partyStatusStatus->code !== 0) {
-            return redirect()->back()->withErrors([
-                'grpc_error' => $partyTypeStatus->details ?: $partyStatusStatus->details,
-            ]);
-        }
-
-        $partyTypes = collect($partyTypes->getValues())
-            ->map(fn ($item) => [
-                'id' => $item->getId(),
-                'parameterValue' => $item->getParameterValue(),
-            ])
-            ->toArray();
-
-        $partyStatus = collect($partyStatus->getValues())
-            ->map(fn ($item) => [
-                'id' => $item->getId(),
-                'parameterValue' => $item->getParameterValue(),
-            ])
-            ->toArray();
-
-        // Finally, render the view with all the necessary data
         return Inertia::render('Parties/PartiesCreate', [
             'party' => $party,
             'partyTypes' => $partyTypes,
@@ -170,11 +113,14 @@ class PartiesController extends Controller
     public function update(PartiesFormRequest $request, int $id): RedirectResponse
     {
         $request->versionId = $id;
-        $request->updatedBy = auth()->id();
+        $user = Auth::user();
+        if($user){
+            $request->updatedBy = $user->id;
+        }
         $response = $this->partyService->updateParty($request);
 
         if ($response->hasError()) {
-            return $response->error;
+            return redirect()->back()->with('error', $response->error ?? 'Failed to update party.');
         }
 
         return redirect()->route('parties.index')->with('success', 'Party updated successfully.');
@@ -188,7 +134,7 @@ class PartiesController extends Controller
         $response = $this->partyService->deleteParty($id);
 
         if ($response->hasError()) {
-            return $response->error;
+            return redirect()->back()->with('error', $response->error ?? 'Failed to delete party.');
         }
 
         return redirect()->route('parties.index')->with('success', 'Party deleted successfully.');

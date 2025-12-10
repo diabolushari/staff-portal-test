@@ -73,6 +73,9 @@ export interface MeterConnectionMapping {
   updated_by: number
   meter?: Meter | null
   transformers?: MeterTransformerAssignment[]
+  notice_date?: string
+  intimation_date?: string
+  change_date?: string
 }
 
 export interface DateTimeField {
@@ -86,6 +89,7 @@ export interface ConnectionPartyMapping {
   rel_id?: number
   connection_id: number
   party_id: number
+  party_relation_type_id: number
   effective_start: DateTimeField
   effective_end: DateTimeField | null
   is_active: boolean
@@ -467,6 +471,7 @@ export interface MeterProfileParameter {
   name: string
   display_name: string
   is_export: boolean
+  is_cumulative: boolean
 }
 
 export interface MeterReadingPowerFactor {

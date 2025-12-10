@@ -24,8 +24,8 @@ interface Props {
   connectionId: number
   onDelete: (mapping: MeterConnectionMapping) => void
   onEdit: (mappingId: number) => void
-  onMeterStatusChange: (meter: Meter) => void
-  onMeterChange: (meter: Meter) => void
+  onMeterStatusChange: (meter: MeterConnectionMapping) => void
+  onMeterChange: (meter: MeterConnectionMapping) => void
 }
 
 export default function ConnectionCardSection({
@@ -47,7 +47,12 @@ export default function ConnectionCardSection({
       <div className='flex items-start justify-between pb-4'>
         <div className='flex flex-1 flex-col gap-2'>
           <div className='flex flex-wrap items-center gap-3'>
-            <h3 className='text-lg font-semibold text-black'>{meterMapping.meter?.meter_serial}</h3>
+            <h3
+              className='cursor-pointer text-lg font-semibold text-black'
+              onClick={() => router.get(`/meters/${meterMapping.meter_id}`)}
+            >
+              {meterMapping.meter?.meter_serial}
+            </h3>
             {meterMapping.meter_status && (
               <div
                 className={`rounded-full px-3 py-1 ${
@@ -105,19 +110,18 @@ export default function ConnectionCardSection({
                 variant='outline'
                 size='sm'
                 className='h-8 gap-1.5 text-xs'
-                onClick={() => onMeterStatusChange(meterMapping?.meter)}
+                onClick={() => onMeterStatusChange(meterMapping)}
               >
-                <Activity className='h-3.5 w-3.5' />
-                Update Status
+                Update Meter Status
               </Button>
               <Button
                 variant='outline'
                 size='sm'
                 className='h-8 gap-1.5 text-xs'
-                onClick={() => onMeterChange(meterMapping?.meter)}
+                onClick={() => onMeterChange(meterMapping)}
               >
                 <ArrowLeftRight className='h-3.5 w-3.5' />
-                Change
+                Change Meter
               </Button>
             </div>
           )}

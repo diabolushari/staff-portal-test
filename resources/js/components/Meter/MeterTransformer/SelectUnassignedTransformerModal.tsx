@@ -101,6 +101,8 @@ export default function SelectUnassignedTransformerModal({
     onClose()
   }
 
+  console.log(typeFilter)
+
   return (
     <Modal
       setShowModal={handleClose}

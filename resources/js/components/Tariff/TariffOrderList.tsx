@@ -33,7 +33,8 @@ export default function TariffOrderList({ tariff_orders }: Readonly<Props>) {
         {tariff_orders?.map((order) => (
           <div
             key={order.tariff_order_id}
-            className='mb-4 rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
+            className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
+            onClick={() => router.get(route('tariff-orders.show', order.tariff_order_id))}
           >
             <div className='flex items-start justify-between'>
               <div className='flex flex-1 flex-col gap-2.5 p-[10px]'>
@@ -66,11 +67,6 @@ export default function TariffOrderList({ tariff_orders }: Readonly<Props>) {
                   <DeleteButton onClick={() => handleDelete(order)} />
                 </div>
                 <div className='flex items-center gap-2'>
-                  <Button
-                    onClick={() => router.visit(route('tariff-orders.show', order.tariff_order_id))}
-                    label='View'
-                    variant='link'
-                  />
                   <button
                     onClick={() => handleDownload(order)}
                     className='flex items-center gap-2 rounded-md bg-blue-100 px-3 py-1.5 text-sm font-medium text-blue-800 hover:bg-blue-200'

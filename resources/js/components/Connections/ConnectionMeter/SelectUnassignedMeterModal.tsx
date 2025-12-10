@@ -131,6 +131,14 @@ export default function SelectUnassignedMeterModal({
                         {meter?.meter_type?.parameter_value ?? 'N/A'}
                       </span>
                     </div>
+                    <div className='flex items-center gap-1'>
+                      <span className='font-medium text-slate-700'>Programmable PT Ratio:</span>
+                      <span className='text-slate-600'>{meter?.programmable_pt_ratio}</span>
+                    </div>
+                    <div className='flex items-center gap-1'>
+                      <span className='font-medium text-slate-700'>Programmable CT Ratio:</span>
+                      <span className='text-slate-600'>{meter?.programmable_ct_ratio}</span>
+                    </div>
                   </div>
                 </div>
               ))}

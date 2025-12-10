@@ -83,19 +83,13 @@ export default function MeterShow({
     }
   }
 
-  const tabs = MeterTabs(
-    meter.meter_id,
-    transformers.length > 0 ? transformers[0].ctpt_id : null,
-    transformers.length > 0 ? transformers[0].version_id : null
-  )
-
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={meteringBillingNavItems}
       selectedItem='Meter'
     >
-      <TabGroup tabs={tabs}>
+      <TabGroup tabs={MeterTabs(meter.meter_id)}>
         <TabsContent value='details'>
           <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
             {/* Header */}
@@ -118,14 +112,6 @@ export default function MeterShow({
               </StrongText>
               <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                 <Field
-                  label='Meter ID'
-                  value={meter.meter_id}
-                />
-                <Field
-                  label='Version ID'
-                  value={meter.version_id}
-                />
-                <Field
                   label='Smart Meter'
                   value={meter.smart_meter_ind ? 'Yes' : 'No'}
                 />
@@ -145,10 +131,7 @@ export default function MeterShow({
                   label='Meter Type'
                   value={meter?.meter_type?.parameter_value}
                 />
-                <Field
-                  label='Timezone Type'
-                  value={meter?.timezone_type?.parameter_value}
-                />
+
                 <Field
                   label='Meter Profile'
                   value={meter?.meter_profile?.parameter_value}
@@ -254,6 +237,14 @@ export default function MeterShow({
                       ? `${meter.internal_pt_primary} / ${meter.internal_pt_secondary}`
                       : '-'
                   }
+                />
+                <Field
+                  label='CT Count'
+                  value={meter?.ct_count}
+                />
+                <Field
+                  label='PT Count'
+                  value={meter?.pt_count}
                 />
               </div>
             </Card>

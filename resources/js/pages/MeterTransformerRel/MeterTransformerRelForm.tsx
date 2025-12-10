@@ -100,6 +100,8 @@ export default function MeterTransformerRelForm({
     return statuses?.find((status) => status.id === formData.status_id)
   }, [statuses, formData.status_id])
 
+  console.log(meter)
+
   return (
     <ConnectionsLayout
       connectionsNavItems={consumerNavItems}
@@ -112,13 +114,6 @@ export default function MeterTransformerRelForm({
       connection={connection}
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
-        <div className='flex flex-col gap-2'>
-          <StrongText className='text-2xl font-semibold text-[#252c32]'>
-            {isEditing ? 'Edit CTPT' : 'Connect CTPT'}
-          </StrongText>
-          <span className='text-sm text-gray-600'>Serial: {meter.meter_serial}</span>
-        </div>
-
         <form
           onSubmit={handleSubmit}
           className='space-y-8'
@@ -162,7 +157,7 @@ export default function MeterTransformerRelForm({
                 </div>
               </div>
               <Input
-                label='Meter'
+                label='Meter Serial'
                 value={meter.meter_serial}
                 setValue={setFormValue('meter_id')}
                 error={errors.meter_id}
@@ -187,7 +182,7 @@ export default function MeterTransformerRelForm({
                   error={errors.status_id}
                 />
               )}
-              <DatePicker
+              {/* <DatePicker
                 label='Faulty Date'
                 value={formData.faulty_date}
                 setValue={setFormValue('faulty_date')}
@@ -211,7 +206,7 @@ export default function MeterTransformerRelForm({
                 setValue={setFormValue('ctpt_change_date')}
                 error={errors.ctpt_change_date}
                 disabled
-              />
+              /> */}
             </div>
           </Card>
           <div className='flex justify-end gap-3 border-t pt-6'>

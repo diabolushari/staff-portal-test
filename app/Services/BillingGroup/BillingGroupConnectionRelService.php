@@ -2,6 +2,7 @@
 
 namespace App\Services\BillingGroup;
 
+use App\GrpcConverters\BillingGroup\BillingGroupConnectionRelConverter;
 use App\Http\Requests\BillingGroup\BillingGroupConnectionRelFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
@@ -42,9 +43,7 @@ class BillingGroupConnectionRelService
         }
 
         return GrpcServiceResponse::success(
-            [
-                'version_id' => $response->getVersionId(),
-            ],
+            BillingGroupConnectionRelConverter::convert($response->getRel()),
             $response,
             $status->code,
             $status->details
@@ -70,7 +69,7 @@ class BillingGroupConnectionRelService
         }
 
         return GrpcServiceResponse::success(
-            [],
+            BillingGroupConnectionRelConverter::convert($response->getRel()),
             $response,
             $status->code,
             $status->details
