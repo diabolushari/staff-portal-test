@@ -89,6 +89,7 @@ export interface ConnectionPartyMapping {
   rel_id?: number
   connection_id: number
   party_id: number
+  party_relation_type_id: number
   effective_start: DateTimeField
   effective_end: DateTimeField | null
   is_active: boolean
