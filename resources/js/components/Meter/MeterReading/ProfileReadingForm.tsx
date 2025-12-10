@@ -56,7 +56,7 @@ export default function ProfileReadingForm({
             <StrongText>{profile?.display_name}</StrongText>
             <div
               className={`mt-2 ${
-                parameterData?.readings?.length > 2 ? 'max-h-64 overflow-y-auto pr-2' : ''
+                parameterData?.readings?.length > 2 ? 'overflow-y-auto pr-2' : ''
               }`}
             >
               <MeterReadingValueForm
@@ -65,6 +65,7 @@ export default function ProfileReadingForm({
                   updateReading(meter.meter_id, profile.meter_parameter_id, tzId, val)
                 }
                 meter={meter.meter}
+                profileParameter={profile}
               />
             </div>
 

@@ -20,6 +20,6 @@ class MeterConnectionMappingUpdateChangeController extends Controller
         if ($response->hasError()) {
             return redirect()->back()->with('error', $response->error ?? 'Something went wrong');
         }
-        return redirect()->back()->with('success', 'Meter change updated successfully');
+        return redirect()->back()->with('message', 'Meter change updated successfully');
     }
 }

@@ -280,7 +280,9 @@ class MeterConnectionMappingService
         $createdTs = $rel->getCreatedTs() ? $rel->getCreatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
         $updatedTs = $rel->getUpdatedTs() ? $rel->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
         $meter = MeterProtoConvertor::convertToArray($rel->getMeter());
-
+        $noticeDate = $rel->getNoticeDate() ? $rel->getNoticeDate()->toDateTime()->format('Y-m-d') : null;
+        $intimationDate = $rel->getIntimationDate() ? $rel->getIntimationDate()->toDateTime()->format('Y-m-d') : null;
+        $changeDate = $rel->getChangeDate() ? $rel->getChangeDate()->toDateTime()->format('Y-m-d') : null;
         return [
             'version_id' => $rel->getVersionId(),
             'rel_id' => $rel->getRelId(),
@@ -301,6 +303,9 @@ class MeterConnectionMappingService
             'created_by' => $rel->getCreatedBy(),
             'updated_by' => $rel->getUpdatedBy(),
             'meter' => $meter,
+            'notice_date' => $noticeDate,
+            'intimation_date' => $intimationDate,
+            'change_date' => $changeDate,
         ];
     }
 

@@ -135,6 +135,12 @@ class MeterService
         if (array_key_exists('internal_pt_secondary', $data)) {
             $request->setInternalPtSecondary($data['internal_pt_secondary']);
         }
+        if (array_key_exists('programmable_ct_ratio', $data)) {
+            $request->setProgrammableCtRatio($data['programmable_ct_ratio']);
+        }
+        if (array_key_exists('programmable_pt_ratio', $data)) {
+            $request->setProgrammablePtRatio($data['programmable_pt_ratio']);
+        }
         if (array_key_exists('timezone_type_id', $data)) {
             $request->setTimezoneTypeId($data['timezone_type_id']);
         }

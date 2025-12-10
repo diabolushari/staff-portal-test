@@ -3,11 +3,11 @@ import { Card } from '@/components/ui/card'
 interface Props {
   powerFactorsByMeter: any
   meterId: number
+  averagePF?: string | null
 }
 
-export default function PowerFactorBar({ powerFactorsByMeter }: Props) {
+export default function PowerFactorBar({ powerFactorsByMeter, averagePF }: Props) {
   if (!powerFactorsByMeter || powerFactorsByMeter.factors === null) return null
-  console.log(powerFactorsByMeter)
   return (
     <div className='mb-4 flex space-x-4 overflow-x-auto pb-2'>
       {powerFactorsByMeter.factors.map((pf: any) => (
@@ -19,6 +19,12 @@ export default function PowerFactorBar({ powerFactorsByMeter }: Props) {
           <div className='text-lg font-bold text-blue-700'>{pf.pf}</div>
         </Card>
       ))}
+      {averagePF && (
+        <Card className='min-w-[140px] flex-shrink-0 border-2 border-blue-500 bg-gradient-to-b from-blue-50 to-blue-100 p-3 text-center shadow-md'>
+          <strong className='text-blue-800'>Average</strong>
+          <div className='text-lg font-bold text-blue-700'>{averagePF}</div>
+        </Card>
+      )}
     </div>
   )
 }

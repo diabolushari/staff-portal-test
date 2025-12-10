@@ -60,15 +60,23 @@ class ParameterDefinitionService
         $definitionsArray = [];
         foreach ($response->getDefinitions() as $def) {
             $domain = $def->getDomain();
-            $domainArray = [
-                'id' => $domain->getId(),
-                'domain_name' => $domain->getDomainName(),
-            ];
-            $systemModule = $domain->getSystemModule();
-            $systemModuleArray = [
-                'id' => $systemModule->getId(),
-                'name' => $systemModule->getName(),
-            ];
+            $domainArray = null;
+            $systemModuleArray = null;
+
+            if ($domain !== null) {
+                $domainArray = [
+                    'id' => $domain->getId(),
+                    'domain_name' => $domain->getDomainName(),
+                ];
+                $systemModule = $domain->getSystemModule();
+                if ($systemModule !== null) {
+                    $systemModuleArray = [
+                        'id' => $systemModule->getId(),
+                        'name' => $systemModule->getName(),
+                    ];
+                }
+            }
+
             $definitionsArray[] = [
                 'id' => $def->getId(),
                 'parameter_name' => $def->getParameterName(),

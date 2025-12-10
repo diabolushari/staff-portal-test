@@ -258,6 +258,37 @@ class MeterTransformerRelService
         );
     }
 
+    public function updateStatus(array $data, $id): GrpcServiceResponse
+    {
+        $request = new MeterTransformerRelUpdateRequest();
+        $request->setVersionId($id);
+        $request->setStatusId($data['status_id']);
+        $user = Auth::user();
+        if ($user) {
+            $request->setUpdatedBy($user->id);
+        }
+
+        [$response, $status] = $this->client->UpdateMeterTransformerRel($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success(
+            MeterTransformerRelProtoConvertor::relProtoToArray($response->getRel()),
+            $response,
+            $status->code,
+            $status->details
+        );
+    }
+
+ 
+
     public function updateRelation(array $data, $id): GrpcServiceResponse
     {
         $request = new MeterTransformerRelUpdateRequest();
@@ -276,7 +307,13 @@ class MeterTransformerRelService
             $request->setCtptChangeDate($this->toProtoTimestamp($data['ctpt_change_date']));
         }
         if (! empty($data['status_id'])) {
+        if (! empty($data['status_id'])) {
         $request->setStatusId($data['status_id']);
+         }
+         if (! empty($data['change_reason_id'])) {
+            $request->setChangeReasonId($data['change_reason_id']);
+         }
+       
          }
          if (! empty($data['change_reason_id'])) {
             $request->setChangeReasonId($data['change_reason_id']);

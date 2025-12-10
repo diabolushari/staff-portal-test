@@ -1,8 +1,8 @@
 import { Meter, MeterReading, MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
-import React, { useState } from 'react'
-import MeterWithProfile from './MeterWithProfile'
+import React, { useEffect, useState } from 'react'
+import MeterReadingPreview from './MeterReadingPreview'
 import ProfileReadingForm from './ProfileReadingForm'
 import { MeterHealth } from './ReadingForm/useMeterHealthForm'
 import { MeterReadingFormState } from './ReadingForm/useMeterReadingForm'
@@ -14,6 +14,7 @@ interface Props {
   setFormValue: (
     key: keyof MeterReadingForm
   ) => (value: MeterReadingForm[keyof MeterReadingForm]) => void
+  setIsOnParameterForm: (value: boolean) => void
   latestMeterReading: MeterReading
   meterHealthTypes: ParameterValues[]
   ctptHealthTypes: ParameterValues[]
@@ -37,18 +38,27 @@ export default function MeterReadingsStep({
   readingValues,
   updateReading,
   healthData,
+  setIsOnParameterForm,
 }: Readonly<Props>) {
   const [activeProfile, setActiveProfile] = useState<{
     meterIdx: number
     profileIdx: number
   } | null>(null)
 
+  useEffect(() => {
+    if (activeProfile == null) {
+      setIsOnParameterForm(false)
+    } else {
+      setIsOnParameterForm(true)
+    }
+  }, [activeProfile, setIsOnParameterForm])
+
   return (
     <div className='flex flex-col gap-6'>
       {metersWithTimezonesAndProfiles.map((meter, mIdx) => (
         <React.Fragment key={meter.meter_id}>
           {(!activeProfile || activeProfile.meterIdx !== mIdx) && (
-            <MeterWithProfile
+            <MeterReadingPreview
               healthData={healthData}
               meterHealthTypes={meterHealthTypes}
               ctptHealthTypes={ctptHealthTypes}
