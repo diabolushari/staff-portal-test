@@ -59,11 +59,6 @@ export default function BillingRuleList({ billingRules }: Props) {
                     <div className='font-inter cursor-pointer text-base leading-normal font-semibold text-black underline'>
                       {billingRule?.name ?? 'Unnamed Rule'}
                     </div>
-                    <div className='rounded-[50px] bg-blue-100 px-2.5 py-px'>
-                      <div className='font-inter text-xs leading-6 font-normal tracking-[-0.072px] text-blue-800'>
-                        {billingRule?.id ?? 'N/A'}
-                      </div>
-                    </div>
                   </div>
 
                   <div className='flex w-full items-center gap-5'>

@@ -75,11 +75,7 @@ export default function ParameterDomainList({ domains, onEdit, onDelete }: Reado
 
               {/* Actions */}
               <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
-                <div className='mb-2 rounded-[50px] bg-slate-100 px-2.5 py-px'>
-                  <div className='font-inter text-xs leading-6 font-normal tracking-[-0.072px] text-slate-700'>
-                    ID: {domain.id}
-                  </div>
-                </div>
+                <div className='mb-2 rounded-[50px] bg-slate-100 px-2.5 py-px'></div>
                 <div className='flex items-center gap-3'>
                   {onEdit && (
                     <button

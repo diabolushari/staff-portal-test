@@ -23,11 +23,19 @@ class MeterConnectionMappingController extends Controller
 
         $response = $this->meterConnectionMappingService->createMeterConnectionMapping($request);
 
-        if ($response->hasError()) {
-            return back()->withErrors(['grpc_error' => $response->error])->withInput();
+        if ($response->data == null) {
+            return redirect()->back()->with(['error' => 'Meter not found']);
         }
-
-        return redirect()->route('connections.show', $request->connectionId)->with('message', 'Meter assigned to connection successfully.');
+        if ($response->data['meter_id'] === null) {
+            return redirect()->back()->with(['error' => 'Meter not found']);
+        }
+        return redirect()->route(
+            'connections.meters.ctpt.create',
+            [
+                'connection_id' => $request->connectionId,
+                'id' => $response->data['meter_id'],
+            ]
+        )->with('message', 'Meter assigned to connection successfully.');
     }
 
     public function update(MeterConnectionRelFormRequest $request): RedirectResponse

@@ -60,11 +60,6 @@ export default function BillingGroupList({ billingGroups }: Props) {
                     <div className='font-inter cursor-pointer text-base leading-normal font-semibold text-black underline'>
                       {billingGroup?.name ?? 'Unnamed Group'}
                     </div>
-                    <div className='rounded-[50px] bg-blue-100 px-2.5 py-px'>
-                      <div className='font-inter text-xs leading-6 font-normal tracking-[-0.072px] text-blue-800'>
-                        {billingGroup?.billing_group_id ?? 'N/A'}
-                      </div>
-                    </div>
                   </div>
 
                   <div className='font-inter text-sm leading-[20px] text-gray-600'>
