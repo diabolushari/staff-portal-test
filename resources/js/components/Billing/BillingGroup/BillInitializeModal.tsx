@@ -25,25 +25,7 @@ export default function BillInitializeModal({
     due_date: '',
     dc_date: '',
   })
-  const addWorkingDays = (startDate: string | dayjs.Dayjs, days: number) => {
-    let date = dayjs(startDate)
-    let added = 0
 
-    while (added < days) {
-      date = date.add(1, 'day')
-      const day = date.day() // 0 = Sunday, 6 = Saturday
-      if (day !== 0 && day !== 6) {
-        added++
-      }
-    }
-
-    return date
-  }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    console.log(formData)
-  }
   const handleBillDateChange = (value: string) => {
     setFormValue('bill_date')(value)
 
@@ -52,10 +34,10 @@ export default function BillInitializeModal({
     const billDate = dayjs(value)
 
     // Add 7 business days for Due Date
-    const dueDate = addWorkingDays(billDate, 7).format('YYYY-MM-DD')
+    const dueDate = billDate.add(7, 'day').format('YYYY-MM-DD')
 
     // Add 15 business days from Due Date for DC Date
-    const dcDate = addWorkingDays(dueDate, 15).format('YYYY-MM-DD')
+    const dcDate = dayjs(dueDate).add(15, 'day').format('YYYY-MM-DD')
 
     setFormValue('due_date')(dueDate)
     setFormValue('dc_date')(dcDate)
