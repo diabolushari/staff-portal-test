@@ -57,7 +57,6 @@ export default function BillingGroupShowPage({
   })
   const handleSearchClick = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(formData)
   }
 
   const handleDelete = (connectionMapping: BillingGroupConnection) => {
@@ -81,10 +80,16 @@ export default function BillingGroupShowPage({
       selectedItem='Billing Groups'
       navItems={billingNavItems}
       title={billingGroup.name}
-      addBtnText={addConnectionComponent ? 'Close' : 'Member'}
-      addBtnClick={() => setAddConnectionComponent(!addConnectionComponent)}
     >
+      <div className='flex justify-end gap-2'>
+        <Button
+          variant={addConnectionComponent ? 'danger' : 'default'}
+          label={addConnectionComponent ? 'Close' : 'Add Member'}
+          onClick={() => setAddConnectionComponent(!addConnectionComponent)}
+        />
+      </div>
       {addConnectionComponent && <BillingGroupAddConnection billingGroup={billingGroup} />}
+
       <div className='grid grid-cols-2 gap-4'>
         <form
           onSubmit={handleSearchClick}

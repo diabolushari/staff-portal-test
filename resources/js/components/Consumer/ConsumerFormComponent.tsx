@@ -10,6 +10,7 @@ import SelectList from '@/ui/form/SelectList'
 import { Address, RegionOption } from '@/interfaces/data_interfaces'
 import { useState } from 'react'
 import { Card } from '../ui/card'
+import ConsumerContactFolioModal from './ConsumerContactFolioModal'
 
 interface Props {
   consumer_types: ParameterValues[]

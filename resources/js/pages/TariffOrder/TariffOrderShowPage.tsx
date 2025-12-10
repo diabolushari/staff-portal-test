@@ -7,13 +7,16 @@ import Field from '@/components/ui/field'
 import StrongText from '@/typography/StrongText'
 import TariffConfigTable from '@/components/Tariff/TariffConfig/TariffConfigTable'
 import CustomCard from '@/ui/Card/CustomCard'
+import { ParameterValues } from '@/interfaces/parameter_types'
 
 export default function TariffOrderShowPage({
   tariff_order,
   tariff_configs,
+  consumption_tariff,
 }: {
   tariff_order: TariffOrder
   tariff_configs: Paginator<TariffConfig>
+  consumption_tariff: ParameterValues[]
 }) {
   const breadcrumb: BreadcrumbItem[] = [
     {
@@ -91,7 +94,8 @@ export default function TariffOrderShowPage({
         {/* ---- Tariff Config Table ---- */}
         <TariffConfigTable
           tariff_configs={tariff_configs}
-          tariffOrderId={tariff_order.tariff_order_id}
+          tariffOrder={tariff_order}
+          consumption_tariff={consumption_tariff}
         />
       </div>
     </MainLayout>

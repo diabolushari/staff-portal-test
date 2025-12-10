@@ -10,11 +10,6 @@ import "metering/meter.proto";
 option php_namespace = "Proto\\Metering";
 option php_metadata_namespace = "GPBMetadata";
 
-
-option java_package = "com.kseb.consumerservice.proto.metering";
-option java_multiple_files = true;
-option java_outer_classname = "MeterConnectionMappingProto";
-
 service MeterConnectionMappingService {
   rpc CreateMeterConnectionMapping(CreateMeterConnectionMappingRequest) returns (MeterConnectionMappingResponse);
   rpc GetMeterConnectionMapping(GetMeterConnectionMappingRequest) returns (MeterConnectionMappingResponse);
@@ -22,6 +17,10 @@ service MeterConnectionMappingService {
   rpc GetMeterConnectionMappingByConnectionId(GetMeterConnectionMappingByConnectionIdRequest) returns (ListMeterConnectionMappingsResponse);
   rpc ListMeterConnectionMappings(ListMeterConnectionMappingsRequest) returns (ListMeterConnectionMappingsResponse);
   rpc UpdateMeterConnectionMapping(UpdateMeterConnectionMappingRequest) returns (MeterConnectionMappingResponse);
+  rpc UpdateMeterConnectionStatus(UpdateMeterConnectionStatusRequest)
+      returns (MeterConnectionMappingResponse);
+  rpc UpdateMeterConnectionChangeReason(UpdateMeterConnectionChangeReasonRequest)
+      returns (MeterConnectionMappingResponse);
   rpc DeleteMeterConnectionMapping(DeleteMeterConnectionMappingRequest) returns (google.protobuf.Empty);
 }
 message MeterTransformerRelFormRequest { 
@@ -46,14 +45,15 @@ message CreateMeterConnectionMappingRequest {
   optional google.protobuf.Timestamp energise_date = 8;
   optional google.protobuf.Timestamp notice_date = 9;
   optional google.protobuf.Timestamp intimation_date = 10;
-  optional int32 change_reason = 11;
-  google.protobuf.Timestamp effective_start_ts = 12;
-  optional google.protobuf.Timestamp effective_end_ts = 13;
-  optional bool is_active = 14;
-  optional int32 created_by = 15;
-  optional int32 sort_priority = 16;
-  optional bool is_meter_reading_mandatory = 17;
-  repeated MeterTransformerRelFormRequest meter_transformers = 18;
+  optional google.protobuf.Timestamp change_date = 11;
+  optional int32 change_reason = 12;
+  google.protobuf.Timestamp effective_start_ts = 13;
+  optional google.protobuf.Timestamp effective_end_ts = 14;
+  optional bool is_active = 15;
+  optional int32 created_by = 16;
+  optional int32 sort_priority = 17;
+  optional bool is_meter_reading_mandatory = 18;
+  repeated MeterTransformerRelFormRequest meter_transformers = 19;
 }
 
 message UpdateMeterConnectionMappingRequest {
@@ -67,14 +67,34 @@ message UpdateMeterConnectionMappingRequest {
   optional google.protobuf.Timestamp energise_date = 8;
   optional google.protobuf.Timestamp notice_date = 9;
   optional google.protobuf.Timestamp intimation_date = 10;
-  optional int32 change_reason = 11;
-  google.protobuf.Timestamp effective_start_ts = 12;
-  optional google.protobuf.Timestamp effective_end_ts = 13;
-  optional bool is_active = 14;
-  optional int32 updated_by = 15;
-  optional int32 sort_priority = 16;
-  optional bool is_meter_reading_mandatory = 17;
+  optional google.protobuf.Timestamp change_date = 11;
+  optional int32 change_reason = 12;
+  google.protobuf.Timestamp effective_start_ts = 13;
+  optional google.protobuf.Timestamp effective_end_ts = 14;
+  optional bool is_active = 15;
+  optional int32 updated_by = 16;
+  optional int32 sort_priority = 17;
+  optional bool is_meter_reading_mandatory = 18;
 }
+
+
+message UpdateMeterConnectionStatusRequest {
+  int32 rel_id = 1;  
+  optional int32 meter_status_id = 2;
+  optional google.protobuf.Timestamp faulty_date = 3;
+  optional google.protobuf.Timestamp notice_date = 4;
+  optional google.protobuf.Timestamp intimation_date = 5;
+  optional int32 updated_by = 6;
+}
+
+
+message UpdateMeterConnectionChangeReasonRequest {
+  int32 rel_id = 1;  
+  optional int32 change_reason = 2;
+  optional google.protobuf.Timestamp change_date = 3;
+  optional int32 updated_by = 4;
+}
+
 
 message GetMeterConnectionMappingRequest {
   int32 rel_id = 1;
@@ -106,15 +126,18 @@ message MeterConnectionMappingResponse {
   optional google.protobuf.Timestamp energise_date = 9;
   optional google.protobuf.Timestamp notice_date = 10;
   optional google.protobuf.Timestamp intimation_date = 11;
-  optional parameters.ParameterValueProto change_reason = 12;
-  google.protobuf.Timestamp effective_start_ts = 13;
-  optional google.protobuf.Timestamp effective_end_ts = 14;
-  optional bool is_active = 15;
-  google.protobuf.Timestamp created_ts = 16;
-  optional google.protobuf.Timestamp updated_ts = 17;
-  optional int32 created_by = 18;
-  optional int32 updated_by = 19;
-  optional int32 sort_priority = 20;
-  optional bool is_meter_reading_mandatory = 21;
-  optional MeterResponse meter = 22;
+  optional google.protobuf.Timestamp change_date = 12;
+  optional parameters.ParameterValueProto change_reason = 13;
+  google.protobuf.Timestamp effective_start_ts = 14;
+  optional google.protobuf.Timestamp effective_end_ts = 15;
+  optional bool is_active = 16;
+  google.protobuf.Timestamp created_ts = 17;
+  optional google.protobuf.Timestamp updated_ts = 18;
+  optional int32 created_by = 19;
+  optional int32 updated_by = 20;
+  optional int32 sort_priority = 21;
+  optional bool is_meter_reading_mandatory = 22;
+  optional MeterResponse meter = 23;
 }
+
+

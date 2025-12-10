@@ -79,10 +79,12 @@ class MeterTransformerRelService
         if ($data->ctptChangeDate) {
             $request->setCtptChangeDate($this->toProtoTimestamp($data->ctptChangeDate));
         }
-
-        $request->setStatusId($data->statusId);
-
-        $request->setChangeReasonId($data->changeReasonId);
+        if ($data->statusId) {
+            $request->setStatusId($data->statusId);
+        }
+        if ($data->changeReasonId) {
+            $request->setChangeReasonId($data->changeReasonId);
+        }
         $request->setCreatedBy(1);
         [$response, $status] = $this->client->CreateMeterTransformerRel($request)->wait();
 

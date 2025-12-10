@@ -146,7 +146,7 @@ export const metadataNavItems: navItem[] = [
     icon: '',
     children: [
       {
-        title: 'System Module',
+        title: 'System Modules',
         href: '/system-module',
         icon: '',
       },

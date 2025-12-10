@@ -18,7 +18,7 @@ export default function TariffOrderForm({ tariffOrder }: Readonly<PageProps>) {
   const { formData, setFormValue } = useCustomForm({
     tariff_order_id: tariffOrder?.tariff_order_id ?? '',
     order_descriptor: tariffOrder?.order_descriptor ?? '',
-    reference_document: tariffOrder?.reference_document ?? '',
+    reference_document: null,
     published_date: formatDateForInput(tariffOrder?.published_date) ?? '',
     effective_start: formatDateForInput(tariffOrder?.effective_start) ?? '',
     effective_end: formatDateForInput(tariffOrder?.effective_end) ?? '',

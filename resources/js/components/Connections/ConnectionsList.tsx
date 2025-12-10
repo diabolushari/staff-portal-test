@@ -40,11 +40,7 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
                       <div className='font-inter text-base leading-normal font-semibold text-black'>
                         Consumer Number: #{connection.consumer_number}
                       </div>
-                      <div className='rounded-[50px] bg-blue-100 px-2.5 py-px'>
-                        <div className='font-inter text-xs leading-6 font-normal tracking-[-0.072px] text-blue-800'>
-                          ID: {connection.connection_id}
-                        </div>
-                      </div>
+                      <div className='rounded-[50px] bg-blue-100 px-2.5 py-px'></div>
                     </div>
 
                     <div className='flex w-full items-center gap-5'>

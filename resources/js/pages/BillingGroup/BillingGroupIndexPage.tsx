@@ -24,9 +24,10 @@ export default function BillingGroupIndexPage({ billingGroups, filters }: PagePr
       navItems={billingNavItems}
       addBtnText='Billing Group'
       addBtnUrl='/billing-groups/create'
+      title='Billing Group'
     >
       <ListSearch
-        title='Billing Group'
+        title=''
         placeholder='Search Billing Group'
         url='/billing-groups'
         filters={filters}

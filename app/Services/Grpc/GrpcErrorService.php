@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class GrpcErrorService
 {
-    public const VALIDATION_CODES = [3, 6, 9, 11, 13];
+    public const VALIDATION_CODES = [3, 6, 9, 11, 13,5];
 
     /**
      * Handle gRPC errors and return appropriate redirect response

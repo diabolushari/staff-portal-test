@@ -13,7 +13,7 @@ interface Props {
 }
 export const NAV_ITEMS = [
   {
-    title: 'Consumers & Service',
+    title: 'Consumers & Services',
     value: 'Consumers',
     href: '/connections',
     description: 'Customer data and tools',

@@ -7,6 +7,7 @@ use App\Services\Connection\ConnectionService;
 use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterService;
 use App\Services\Metering\MeterTransformerRelService;
+use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -18,6 +19,7 @@ class GetConnectionMeterController extends Controller
         protected MeterService $meterService,
         protected ConnectionService $connectionService,
         protected MeterTransformerRelService $meterTransformerRelService,
+        protected ParameterValueService $parameterValueService,
     ) {}
 
     public function __invoke(int $id): Response|RedirectResponse
@@ -39,11 +41,15 @@ class GetConnectionMeterController extends Controller
                 $ctptRelations = $ctptResponse->data;
             }
         }
+        $status = $this->parameterValueService->getParameterValues(null,null,null,'Meter','Status');
+        $changeReason = $this->parameterValueService->getParameterValues(null,null,null,'Meter','Change Reason');
 
         return Inertia::render('Connections/ConnectionMeterList', [
-            'connectionId' => $id,
+            'connection_id' => $id,
             'connection' => $connectionResponse->data,
-            'ctptRelations' => $ctptRelations,
+            'ctpt_relations' => $ctptRelations,
+            'status' => $status->data,
+            'change_reason' => $changeReason->data,
         ]);
     }
 }

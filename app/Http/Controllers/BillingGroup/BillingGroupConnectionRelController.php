@@ -27,8 +27,8 @@ class BillingGroupConnectionRelController
     {
         $response = $this->billingGroupConnectionRelService->createBillingGroupConnectionRel($request);
 
-        if ($response->data === null) {
-            return redirect()->back()->with('error', 'Failed to add connection to Billing Group');
+        if ($response->statusCode !== 0) {
+            return redirect()->back()->with('error', $response->statusDetails);
         }
 
         return redirect()->back()->with('message', 'Connection added to Billing Group');
