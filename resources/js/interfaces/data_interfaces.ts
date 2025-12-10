@@ -470,6 +470,7 @@ export interface MeterProfileParameter {
   name: string
   display_name: string
   is_export: boolean
+  is_cumulative: boolean
 }
 
 export interface MeterReadingPowerFactor {

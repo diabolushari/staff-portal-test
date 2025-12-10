@@ -20,8 +20,9 @@ class ParameterDefinitionController extends Controller
         private SystemModuleService $systemModuleService
     ) {}
 
-    public function index(Request $request): InertiaResponse|RedirectResponse
+    public function index(Request $request)
     {
+
         $page = $request->input('page', 1);
         $pageSize = $request->input('page_size', 10);
         $domainName = $request->input('domain_name');
@@ -30,6 +31,26 @@ class ParameterDefinitionController extends Controller
         $domainsResponse = $this->parameterDomainService->getParameterDomains($page, $pageSize, null, null);
         $systemModulesResponse = $this->systemModuleService->getSystemModules($page, $pageSize);
         $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, $domainName, $moduleName, $search);
+
+        if ($domainsResponse->hasError()) {
+            return $domainsResponse->error ?? redirect()->back()->with([
+                'message' => 'Failed to fetch parameter domains.',
+                'grpcStatus' => [
+                    'code' => $domainsResponse->statusCode,
+                    'details' => $domainsResponse->statusDetails,
+                ],
+            ]);
+        }
+
+        if ($systemModulesResponse->hasError()) {
+            return $systemModulesResponse->error ?? redirect()->back()->with([
+                'message' => 'Failed to fetch system modules.',
+                'grpcStatus' => [
+                    'code' => $systemModulesResponse->statusCode,
+                    'details' => $systemModulesResponse->statusDetails,
+                ],
+            ]);
+        }
 
         if ($response->hasError()) {
             return $response->error ?? redirect()->back()->with([
@@ -42,13 +63,9 @@ class ParameterDefinitionController extends Controller
         }
 
         return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionIndex', [
-            'parameter_definitions' => $response->data,
-            'domains' => $domainsResponse->data,
-            'system_modules' => $systemModulesResponse->data,
-            'grpcStatus' => [
-                'code' => $response->statusCode,
-                'details' => $response->statusDetails,
-            ],
+            'parameter_definitions' => $response->data ?? [],
+            'domains' => $domainsResponse->data ?? [],
+            'system_modules' => $systemModulesResponse->data ?? [],
             'filters' => [
                 'module_name' => $request->input('module_name'),
                 'domain_name' => $request->input('domain_name'),
