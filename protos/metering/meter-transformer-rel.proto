@@ -13,60 +13,76 @@ import "metering/meter.proto";
 import "metering/meter-transformer.proto";
 
 
+// --------------------------
+// MeterTransformerRelMessage
+// --------------------------
 message MeterTransformerRelMessage {
   int32 version_id = 1;
   int64 ctpt_id = 2;
   com.kseb.consumerservice.proto.metering.MeterTransformerMessage ctpt = 3;
+
   int64 meter_id = 4;
   com.kseb.consumerservice.proto.metering.MeterResponse meter = 5;
+
   optional google.protobuf.Timestamp faulty_date = 6;
   optional google.protobuf.Timestamp ctpt_energise_date = 7;
   optional google.protobuf.Timestamp ctpt_change_date = 8;
+
   int64 status_id = 9;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto status = 10;
+
   optional int64 change_reason_id = 11;
   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto change_reason = 12;
-  optional int64 change_reason_id = 11;
-  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto change_reason = 12;
+
   google.protobuf.Timestamp created_ts = 15;
   google.protobuf.Timestamp updated_ts = 16;
+
   int64 created_by = 17;
   int64 updated_by = 18;
-
-
 }
 
 
-message MeterTransformerRelCreateRequest {
-
+// --------------------------------
+// MeterTransformerRelCreateRequest
+// --------------------------------
 message MeterTransformerRelCreateRequest {
   int64 ctpt_id = 1;
   int64 meter_id = 2;
+
   optional google.protobuf.Timestamp faulty_date = 3;
   optional google.protobuf.Timestamp ctpt_energise_date = 4;
   optional google.protobuf.Timestamp ctpt_change_date = 5;
+
   int64 status_id = 6;
   optional int64 change_reason_id = 7;
-  optional int64 change_reason_id = 7;
+
   int64 created_by = 9;
-
-
 }
 
 
+// --------------------------------
+// MeterTransformerRelUpdateRequest
+// --------------------------------
 message MeterTransformerRelUpdateRequest {
   int32 version_id = 1;
-  int32 version_id = 1;
+
   int64 ctpt_id = 2;
   int64 meter_id = 3;
+
   optional google.protobuf.Timestamp faulty_date = 4;
   optional google.protobuf.Timestamp ctpt_energise_date = 5;
   optional google.protobuf.Timestamp ctpt_change_date = 6;
+
   int64 status_id = 7;
   optional int64 change_reason_id = 9;
-  optional int64 change_reason_id = 9;
+
   int64 updated_by = 12;
 }
+
+
+// ----------------------------------------
+// MeterTransformerRelUpdateStatusRequest
+// ----------------------------------------
 message MeterTransformerRelUpdateStatusRequest {
   int32 version_id = 1;
   optional int64 status_id = 2;
@@ -74,6 +90,10 @@ message MeterTransformerRelUpdateStatusRequest {
   int64 updated_by = 4;
 }
 
+
+// -----------------------------------------
+// MeterTransformerRelUpdateChangeReasonRequest
+// -----------------------------------------
 message MeterTransformerRelUpdateChangeReasonRequest {
   int32 version_id = 1;
   optional int64 change_reason_id = 2;
@@ -82,6 +102,9 @@ message MeterTransformerRelUpdateChangeReasonRequest {
 }
 
 
+// --------------------
+// Response Structures
+// --------------------
 message MeterTransformerRelResponse {
   MeterTransformerRelMessage rel = 1;
 }
@@ -106,25 +129,27 @@ message GetMeterTransformerRelByMeterIdResponse {
   repeated MeterTransformerRelMessage relations = 1;
 }
 
-message GetMeterTransformerRelByMeterIdResponse {
-  repeated MeterTransformerRelMessage relations = 1;
-}
-
 message ListAssignedToMetersRequest {
   repeated int64 meter_ids = 1;
 }
 
 
-
+// ----------------
+// Service
+// ----------------
 service MeterTransformerRelService {
   rpc CreateMeterTransformerRel(MeterTransformerRelCreateRequest) returns (MeterTransformerRelResponse);
   rpc GetMeterTransformerRelById(MeterTransformerRelIdRequest) returns (MeterTransformerRelResponse);
   rpc ListMeterTransformerRels(google.protobuf.Empty) returns (MeterTransformerRelListResponse);
+
   rpc UpdateMeterTransformerRel(MeterTransformerRelUpdateRequest) returns (MeterTransformerRelResponse);
   rpc UpdateMeterTransformerRelStatus(MeterTransformerRelUpdateStatusRequest) returns (MeterTransformerRelResponse);
   rpc UpdateMeterTransformerRelChangeReason(MeterTransformerRelUpdateChangeReasonRequest) returns (MeterTransformerRelResponse);
+
   rpc DeleteMeterTransformerRel(MeterTransformerRelIdRequest) returns (google.protobuf.Empty);
+
   rpc GetMeterTransformerRelByMeterId(GetMeterTransformerRelByMeterIdRequest) returns (GetMeterTransformerRelByMeterIdResponse);
   rpc GetMeterTransformerRelByCtptId(GetMeterTransformerRelByCtptIdRequest) returns (MeterTransformerRelResponse);
+
   rpc ListAssignedToMeters(ListAssignedToMetersRequest) returns (MeterTransformerRelListResponse);
 }
