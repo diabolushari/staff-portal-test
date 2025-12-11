@@ -130,7 +130,7 @@ export default function MeterTransformerRelForm({
                   <Input
                     value={
                       selectedTransformer
-                        ? `#${selectedTransformer.meter_ctpt_id} - ${selectedTransformer.type?.parameter_value ?? ''} - ${selectedTransformer.ctpt_serial}`
+                        ? `${selectedTransformer.type?.parameter_value ?? ''} - ${selectedTransformer.ctpt_serial}`
                         : ''
                     }
                     setValue={() => {}}

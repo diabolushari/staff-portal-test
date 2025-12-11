@@ -59,7 +59,6 @@ export default function ConsumerFormComponent({
     pincode: primary?.pincode ?? '',
     district_id: primary?.district_id ?? '',
     state_id: primary?.state_id ?? '',
-    consumer_cin: consumer?.consumer_cin ?? '',
     seasonal_ind: consumer?.seasonal_ind ?? false,
     license_ind: consumer?.license_ind ?? false,
     open_access_ind: consumer?.open_access_ind ?? false,
