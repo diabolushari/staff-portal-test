@@ -14,11 +14,11 @@ class UpdateMeterTransformerAssignmentStatusController extends Controller
     {
         $request->validate([
             'status_id' => 'required',
-            'faulty_date' => 'required',
+            'faulty_date' => 'nullable|date',
             'ctpt_version_id'=> 'required',
         ]);
 
-        $response = $meterTransformerRelService->updateChangeReason($request->all(), $request->ctpt_version_id);
+        $response = $meterTransformerRelService->updateRelationStatus($request->all());
 
         if ($response->hasError()) {
             return redirect()->back()->with('error', $response->error ?? 'Something went wrong');
