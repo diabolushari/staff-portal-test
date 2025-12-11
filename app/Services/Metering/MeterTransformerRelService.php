@@ -5,6 +5,7 @@ namespace App\Services\Metering;
 use App\GrpcConverters\Metering\MeterTransformerRelProtoConvertor;
 use App\Http\Requests\Metering\MeterTransformerRelFormRequest;
 use App\Services\Grpc\GrpcErrorService;
+use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
 use Carbon\Carbon;
 use Google\Protobuf\GPBEmpty;
@@ -17,10 +18,12 @@ use Proto\Metering\MeterTransformerRelCreateRequest;
 use Proto\Metering\MeterTransformerRelIdRequest;
 use Proto\Metering\MeterTransformerRelServiceClient;
 use Proto\Metering\MeterTransformerRelUpdateRequest;
+use Proto\Metering\MeterTransformerRelUpdateStatusRequest;
 
 class MeterTransformerRelService
 {
     private MeterTransformerRelServiceClient $client;
+    private DateTimeConverter $dateTimeConverter;
 
     public function __construct()
     {
@@ -283,5 +286,33 @@ class MeterTransformerRelService
         }
 
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
+    }
+
+
+    public function updateRelationStatus(array $data):GrpcServiceResponse
+    {
+        $request = new MeterTransformerRelUpdateStatusRequest();
+        $request->setVersionId($data['ctpt_version_id']);
+        $request->setStatusId($data['status_id']);
+        $request->setFaultyDate($this->dateTimeConverter->convertStringToTimestamp($data['faulty_date']));
+      
+
+        [$response, $status] = $this->client->UpdateMeterTransformerRelStatus($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success(
+            MeterTransformerRelProtoConvertor::relProtoToArray($response->getRel()),
+            $response,
+            $status->code,
+            $status->details
+        );
     }
 }
