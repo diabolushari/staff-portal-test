@@ -10,8 +10,7 @@ use Illuminate\Http\RedirectResponse;
 class MeterConnectionMappingUpdateStatusController extends Controller
 {
     public function __construct( private readonly MeterConnectionMappingService $meterConnectionMappingService)
-    {
-    }
+    {}
 
     public function __invoke(ConnectionMeterStatusFormRequest $request): RedirectResponse
     {
@@ -19,6 +18,6 @@ class MeterConnectionMappingUpdateStatusController extends Controller
         if ($response->hasError()) {
             return redirect()->back()->with('error', $response->error ?? 'Something went wrong');
         }
-        return redirect()->back()->with('success', 'Meter status updated successfully');
+        return redirect()->back()->with('message', 'Meter status updated successfully');
     }
 }

@@ -13,6 +13,7 @@ class ConnectionPartiesMappingFormRequest extends Data
         public ?int $versionId,
         public int $partyId,
         public int $connectionId,
+        public int $partyRelationTypeId,
         public string $effectiveStart,
         public ?string $effectiveEnd,
 

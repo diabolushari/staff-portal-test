@@ -26,13 +26,18 @@ message MeterTransformerRelMessage {
   com.kseb.consumerservice.proto.parameters.ParameterValueProto status = 10;
   optional int64 change_reason_id = 11;
   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto change_reason = 12;
+  optional int64 change_reason_id = 11;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto change_reason = 12;
   google.protobuf.Timestamp created_ts = 15;
   google.protobuf.Timestamp updated_ts = 16;
   int64 created_by = 17;
   int64 updated_by = 18;
 
+
 }
 
+
+message MeterTransformerRelCreateRequest {
 
 message MeterTransformerRelCreateRequest {
   int64 ctpt_id = 1;
@@ -42,12 +47,15 @@ message MeterTransformerRelCreateRequest {
   optional google.protobuf.Timestamp ctpt_change_date = 5;
   int64 status_id = 6;
   optional int64 change_reason_id = 7;
+  optional int64 change_reason_id = 7;
   int64 created_by = 9;
+
 
 }
 
 
 message MeterTransformerRelUpdateRequest {
+  int32 version_id = 1;
   int32 version_id = 1;
   int64 ctpt_id = 2;
   int64 meter_id = 3;
@@ -55,6 +63,7 @@ message MeterTransformerRelUpdateRequest {
   optional google.protobuf.Timestamp ctpt_energise_date = 5;
   optional google.protobuf.Timestamp ctpt_change_date = 6;
   int64 status_id = 7;
+  optional int64 change_reason_id = 9;
   optional int64 change_reason_id = 9;
   int64 updated_by = 12;
 }
@@ -97,9 +106,14 @@ message GetMeterTransformerRelByMeterIdResponse {
   repeated MeterTransformerRelMessage relations = 1;
 }
 
+message GetMeterTransformerRelByMeterIdResponse {
+  repeated MeterTransformerRelMessage relations = 1;
+}
+
 message ListAssignedToMetersRequest {
   repeated int64 meter_ids = 1;
 }
+
 
 
 service MeterTransformerRelService {

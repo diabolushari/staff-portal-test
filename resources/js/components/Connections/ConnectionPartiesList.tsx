@@ -6,15 +6,17 @@ import ConnectionPartiesFormModal from './ConnectionPartiesFormModal'
 import DeleteButton from '@/ui/button/DeleteButton'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import { getDisplayDate } from '@/utils'
+import { ParameterValues } from '@/interfaces/parameter_types'
 
 interface Props {
   connectionParties: ConnectionPartyMapping[]
   connection: Connection
+  partyRelationTypes: ParameterValues[]
 }
 
 export default function ConnectionPartiesList({
   connectionParties,
-
+  partyRelationTypes,
   connection,
 }: Readonly<Props>) {
   const [editModal, setEditModal] = useState(false)
@@ -122,6 +124,7 @@ export default function ConnectionPartiesList({
           connection={connection}
           connectionParty={editItem}
           setShowModal={setEditModal}
+          partyRelationTypes={partyRelationTypes}
         />
       )}
     </div>

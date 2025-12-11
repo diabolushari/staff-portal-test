@@ -249,6 +249,7 @@ export default function MeterForm({
                 label='Meter Make'
                 value={selectedMeterMake}
                 setValue={setSelectedMeterMake}
+                placeholder='Search Meter Make'
                 dataKey='id'
                 displayKey='parameter_value'
                 displayValue2='parameter_value'

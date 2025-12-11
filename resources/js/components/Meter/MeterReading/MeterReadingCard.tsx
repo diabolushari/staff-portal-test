@@ -1,5 +1,4 @@
 import { Card } from '@/components/ui/card'
-import useInertiaPost from '@/hooks/useInertiaPost'
 import {
   MeterConnectionMapping,
   MeterReading,
@@ -23,7 +22,7 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
       const meter = meterWithConn.meter
 
       const filteredValues =
-        meterReading?.values?.filter((v: MeterReadingValue) => v.meter_id === meter?.meter_id) || []
+        meterReading?.values?.filter((v: MeterReadingValue) => v.meter_id === meter?.meter_id) ?? []
 
       const kvaValues = filteredValues.filter(
         (v) => v.meter_profile_parameter?.name.toLowerCase() == DEMAND_PARAMETER_NAME.toLowerCase()

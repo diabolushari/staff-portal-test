@@ -103,6 +103,8 @@ export default function MeterReadingCreatePage({
     metersWithTimezonesAndProfiles
   )
 
+  const [isOnParamaterForm, setIsOnParameterForm] = useState(false)
+
   const { formData, setFormValue } = useCustomForm<MeterReadingForm>({
     id: editMode ? latestMeterReading?.id : 0,
     connection_id: connectionWithConsumer?.connection?.connection_id ?? 0,
@@ -233,6 +235,7 @@ export default function MeterReadingCreatePage({
                 ptHealthTypes={ptHealthTypes}
                 updateMeterHealth={updateMeterHealth}
                 updateCTPTHealth={updateCTPTHealth}
+                setIsOnParameterForm={setIsOnParameterForm}
               />
             )}
           </Stepper>
@@ -261,7 +264,7 @@ export default function MeterReadingCreatePage({
                 onClick={() => handleSubmit(null, true)}
               />
             )}
-            {activeStep === steps.length - 1 && (
+            {activeStep === steps.length - 1 && !isOnParamaterForm && (
               <Button
                 type='submit'
                 label='Submit'

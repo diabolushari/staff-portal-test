@@ -14,9 +14,9 @@ import "parameters/parameter-value.proto";
 
 // ----------- ENTITY MESSAGE ------------
 message MeteringProfileParameterMessage {
-  int64 version_id = 1;                      
-  int64 profile_id = 2;              
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 3; 
+  int64 version_id = 1;
+  int64 profile_id = 2;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 3;
 
   string name = 4;
   string display_name = 5;
@@ -27,13 +27,14 @@ message MeteringProfileParameterMessage {
   int32 updated_by = 10;
   bool is_active = 11;
   int64 meter_parameter_id = 12;
+  bool is_cumulative = 13;
 }
 
 // ----------- REQUEST/RESPONSE MESSAGES ----------
 
 // Create
 message CreateMeteringProfileParameterRequest {
-  int64 profile_id = 1;              
+  int64 profile_id = 1;
   string name = 2;
   string display_name = 3;
   bool is_export = 4;
@@ -44,8 +45,8 @@ message CreateMeteringProfileParameterResponse {
 }
 
 message UpdateMeteringProfileParameterRequest {
-  int64 version_id = 1;                      
-  int64 profile_id = 2;              
+  int64 version_id = 1;
+  int64 profile_id = 2;
   string name = 3;
   string display_name = 4;
   bool is_export = 5;
@@ -56,14 +57,14 @@ message UpdateMeteringProfileParameterResponse {
 }
 
 message GetMeteringProfileParameterRequest {
-  int64 id = 1;                      
+  int64 id = 1;
 }
 message GetMeteringProfileParameterResponse {
   MeteringProfileParameterMessage profile = 1;
 }
 
 message DeleteMeteringProfileParameterRequest {
-  int64 id = 1;                      
+  int64 id = 1;
 }
 message DeleteMeteringProfileParameterResponse {
   bool success = 1;

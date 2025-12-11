@@ -12,6 +12,8 @@ export interface MeterReadingFormState {
   parameters: {
     meter_parameter_id: number
     display_name: string
+    is_cumulative: boolean
+    is_export: boolean
     readings: TimezoneReadingState[]
   }[]
 }
@@ -56,6 +58,8 @@ function transformToFormData(
       return {
         meter_parameter_id: profile.meter_parameter_id,
         display_name: profile.display_name,
+        is_cumulative: profile.is_cumulative,
+        is_export: profile.is_export,
         readings,
       }
     })
@@ -98,8 +102,6 @@ export default function useMeterReadingForm(
       return
     }
 
-    console.log('lastMeterReading', lastMeterReading)
-
     if (oldReading != null && oldReading?.values?.length > 0) {
       const transformed = transformToFormData(oldReading.values, metersWithTimezonesAndProfiles)
       setReadingValues(transformed)
@@ -110,16 +112,20 @@ export default function useMeterReadingForm(
       parameters: meter.meter_profiles.map((profile) => ({
         meter_parameter_id: profile.meter_parameter_id,
         display_name: profile.display_name,
+        is_cumulative: profile.is_cumulative,
+        is_export: profile.is_export,
         readings: meter?.timezones?.map((tz) => ({
           timezone_id: tz.timezone_id,
           timezone_name: tz.timezone_name,
           values: {
-            initial: getPreviousFinalReading(
-              lastMeterReading,
-              meter.meter_id,
-              profile.meter_parameter_id,
-              tz.timezone_id
-            ),
+            initial: !profile.is_cumulative
+              ? 0
+              : getPreviousFinalReading(
+                  lastMeterReading,
+                  meter.meter_id,
+                  profile.meter_parameter_id,
+                  tz.timezone_id
+                ),
             final: '',
             diff: '',
             value: 0,
