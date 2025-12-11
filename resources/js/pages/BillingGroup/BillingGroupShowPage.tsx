@@ -90,41 +90,43 @@ export default function BillingGroupShowPage({
       </div>
       {addConnectionComponent && <BillingGroupAddConnection billingGroup={billingGroup} />}
 
-      <div className='grid grid-cols-2 gap-4'>
-        <form
-          onSubmit={handleSearchClick}
-          className='flex gap-4'
-        >
-          <div>
-            <Input
-              label='Consumer Number/Name/Type/Purpose'
-              value={formData.search}
-              setValue={setFormValue('search')}
-            />
-          </div>
-          <div className='mt-1'>
-            <MonthPicker
-              label='Bill Year Month'
-              value={formData.bill_year_month}
-              setValue={setFormValue('bill_year_month')}
-            />
-          </div>
-          <div className='mt-6'>
-            <Button
-              label='Search'
-              type='submit'
-            />
-          </div>
-        </form>
-        <div className='mt-6 flex justify-end gap-2'>
-          <div>
-            <Button
-              onClick={handleBillInitialize}
-              label='Initialize Bill'
-            />
+      {!addConnectionComponent && (
+        <div className='grid grid-cols-2 gap-4'>
+          <form
+            onSubmit={handleSearchClick}
+            className='flex gap-4'
+          >
+            <div>
+              <Input
+                label='Consumer Number/Name/Type/Purpose'
+                value={formData.search}
+                setValue={setFormValue('search')}
+              />
+            </div>
+            <div className='mt-1'>
+              <MonthPicker
+                label='Bill Year Month'
+                value={formData.bill_year_month}
+                setValue={setFormValue('bill_year_month')}
+              />
+            </div>
+            <div className='mt-6'>
+              <Button
+                label='Search'
+                type='submit'
+              />
+            </div>
+          </form>
+          <div className='mt-6 flex justify-end gap-2'>
+            <div>
+              <Button
+                onClick={handleBillInitialize}
+                label='Initialize Bill'
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
       {billingGroup?.connections && billingGroup?.connections?.length > 0 && (
         <div className='mt-6'>
           <h2 className='mb-4 text-xl font-semibold'>Connected Consumers</h2>

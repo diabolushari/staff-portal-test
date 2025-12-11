@@ -44,13 +44,13 @@ export default function BillingGroupAddConnection({
             displayValue2='connection_type_id'
             placeholder='Enter Consumer Number'
           />
+          <div className='mt-6'>
+            <Button
+              label='Submit'
+              type='submit'
+            />
+          </div>
         </FormCard>
-        <div className='flex justify-end'>
-          <Button
-            label='Submit'
-            type='submit'
-          />
-        </div>
       </form>
     </div>
   )

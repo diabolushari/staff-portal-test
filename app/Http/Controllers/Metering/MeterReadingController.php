@@ -24,7 +24,7 @@ class MeterReadingController extends Controller
     public function index(Request $request): Response
     {
         $consumerNumber = $request->input('search') ?? null;
-        $connections = $this->connectionService->listConnections($consumerNumber)->data;
+        $connections = $this->connectionService->listConnections($consumerNumber,null)->data;
 
         $search = $request->input('search') ?? null;
         $connectionId = $request->input('connection_id') ?? null;
@@ -72,7 +72,7 @@ class MeterReadingController extends Controller
             return redirect()->route('meter-reading.create', $request->connectionId)->with('message', 'Meter reading created successfully.');
         }
 
-        return redirect()->route('connections.index')->with('message', 'Meter reading created successfully.');
+        return redirect()->route('connection.meter-reading', $request->connectionId)->with('message', 'Meter reading created successfully.');
     }
 
     public function show(int $meterReadingId, Request $request): Response

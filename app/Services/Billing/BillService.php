@@ -13,8 +13,8 @@ use Proto\Bill\ListBillRequest;
 class BillService
 {
     private BillServiceClient $client;
-    public function __construct(
-    ) {
+    public function __construct()
+    {
 
         $this->client = new BillServiceClient(
             config('app.consumer_service_grpc_host'),
@@ -26,8 +26,7 @@ class BillService
         ?int $billingGroupId,
         ?string $readingYearMonth,
         ?string $billYearMonth
-    ):GrpcServiceResponse
-    {
+    ): GrpcServiceResponse {
         $proto = new ListBillRequest();
         if ($billingGroupId) {
             $proto->setBillingGroupId($billingGroupId);
@@ -58,7 +57,7 @@ class BillService
         return GrpcServiceResponse::success($billsArray, $response, $status->code, $status->details);
     }
 
-    public function getBill(int $id):GrpcServiceResponse
+    public function getBill(int $id): GrpcServiceResponse
     {
         $proto = new GetBillRequest();
         $proto->setBillId($id);
@@ -74,7 +73,7 @@ class BillService
             );
         }
         $bill = $response->getBill();
-        $bill = BillProtoConverter::convertToProto($bill);
+        $bill = BillProtoConverter::convertToArray($bill);
 
         return GrpcServiceResponse::success($bill, $response, $status->code, $status->details);
     }

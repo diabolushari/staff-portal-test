@@ -15,8 +15,8 @@ class BillInitializeService
 {
     private BillInitializeServiceClient $client;
 
-    public function __construct(
-    ) {
+    public function __construct()
+    {
         $this->client = new BillInitializeServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
@@ -37,12 +37,6 @@ class BillInitializeService
         }
         [$response, $status] = $this->client->InitializeBill($proto)->wait();
 
-        $bills = $response->getBills();
-        $billsArray = [];
-        foreach ($bills as $bill) {
-            $billsArray[] = BillProtoConverter::convertToBill($bill);
-        }
-
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -50,6 +44,12 @@ class BillInitializeService
                 $status->code,
                 $status->details
             );
+        }
+
+        $bills = $response->getBills();
+        $billsArray = [];
+        foreach ($bills as $bill) {
+            $billsArray[] = BillProtoConverter::convertToBill($bill);
         }
 
         return GrpcServiceResponse::success($billsArray, $response, $status->code, $status->details);
