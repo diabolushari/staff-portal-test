@@ -47,6 +47,8 @@ use App\Http\Controllers\Metering\MeterTransformerRelController;
 use App\Http\Controllers\MeteringTimezone\MeteringTimezoneController;
 use App\Http\Controllers\MeterReading\GetMeterReadingEditController;
 use App\Http\Controllers\MeterReading\GetMeterReadingWithConnectionController;
+use App\Http\Controllers\MeterTransformer\ChangeMeterTransformerAssignmentController;
+use App\Http\Controllers\MeterTransformer\UpdateMeterTransformerAssignmentStatusController;
 use App\Http\Controllers\Offices\OfficeBillingController;
 use App\Http\Controllers\Offices\OfficeHierarchyRelController;
 use App\Http\Controllers\Offices\OfficesCreateWithCsvController;
@@ -135,6 +137,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('billing-group-connection-rel', BillingGroupConnectionRelController::class);
     Route::resource('bills', BillController::class);
     Route::post('initialize-bill', BillInitializeController::class)->name('billing-group.initialize-bill');
+
+    Route::post('change-meter-transformer-assignment', ChangeMeterTransformerAssignmentController::class)
+    ->name('change-meter-transformer-assignment');
+
+    Route::post('update-meter-transformer-assignment-status', UpdateMeterTransformerAssignmentStatusController::class)
+    ->name('update-meter-transformer-assignment-status');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
