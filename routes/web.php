@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\ParameterDomainListApiController;
 use App\Http\Controllers\Api\SystemModuleApiController;
 use App\Http\Controllers\Api\Tariff\TariffOrderDownloadApiController;
 use App\Http\Controllers\Billing\BillController;
+use App\Http\Controllers\Billing\BillingPdfController;
 use App\Http\Controllers\Billing\BillingRuleController;
 use App\Http\Controllers\Billing\BillInitializeController;
 use App\Http\Controllers\BillingCycle\BillJobStatusController;
@@ -176,5 +177,7 @@ Route::get('page-ui', function () {
 Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
     ->name('settings-page');
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+//pdf download
+Route::get('pdf-download', [BillingPdfController::class, 'index'])->name('pdf-download');
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
