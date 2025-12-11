@@ -179,12 +179,7 @@ export default function ConsumerFormComponent({
               value={formData.consumer_gstin}
               error={errors?.consumer_gstin}
             />
-            <Input
-              label='Consumer CIN'
-              setValue={setFormValue('consumer_cin')}
-              value={formData.consumer_cin}
-              error={errors?.consumer_cin}
-            />
+
             <CheckBox
               label='TDS on GST'
               toggleValue={toggleBoolean('income_tax_withholding_ind')}

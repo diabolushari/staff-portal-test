@@ -7,6 +7,7 @@ use App\Services\Connection\ConnectionService;
 use App\Services\Connection\ConsumerService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -17,15 +18,17 @@ class GetConsumerController extends Controller
         private ConnectionService $connectionService,
     ) {}
 
-    public function __invoke(Request $request, int $connectionId): InertiaResponse|RedirectResponse
+    public function __invoke(Request $request, int $Id): InertiaResponse|RedirectResponse
     {
 
-        $response = $this->consumerService->getConsumer($connectionId);
-        $connection = $this->connectionService->getConnection($connectionId);
+        $response = $this->consumerService->getConsumer($Id);
+        $connection = $this->connectionService->getConnection($Id);
 
         if ($response->data === null) {
-            return redirect()->route('connection.consumer.create', $connectionId);
+            Log::info('reached here');
+            return redirect()->route('connection.consumer.create', $Id);
         }
+
 
         return Inertia::render('Consumer/ConsumerShow', [
             'consumer' => $response->data,

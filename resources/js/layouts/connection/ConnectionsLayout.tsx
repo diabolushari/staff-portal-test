@@ -117,6 +117,7 @@ export default function ConnectionsLayout({
   subHeading,
   onEdit,
 }: Readonly<ConnectionsLayoutProps>) {
+  console.log(route('connection.consumer', connection?.connection_id))
   return (
     <MainLayout
       navItems={connectionsNavItems}
