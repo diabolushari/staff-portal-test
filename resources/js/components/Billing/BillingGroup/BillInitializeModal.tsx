@@ -42,7 +42,6 @@ export default function BillInitializeModal({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(formData)
   }
   const handleBillDateChange = (value: string) => {
     setFormValue('bill_date')(value)
@@ -71,7 +70,6 @@ export default function BillInitializeModal({
 
   const handleSubmitBill = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(formData)
     post(formData)
   }
   return (

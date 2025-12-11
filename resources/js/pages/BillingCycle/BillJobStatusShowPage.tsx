@@ -30,7 +30,6 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
 
   const handleSearchClick = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(formData)
   }
   const handleViewBillClick = (bill: Bill) => {
     router.get(route('bills.show', bill?.bill_id))

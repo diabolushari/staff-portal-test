@@ -53,7 +53,6 @@ export default function ConnectionCardSection({
       setSelectedCtpt(null)
     }
   }, [change, updateStatus])
-  console.log(selectedCtpt)
 
   return (
     <div

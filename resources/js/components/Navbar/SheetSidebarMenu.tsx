@@ -18,7 +18,6 @@ export function SheetSidebarMenu() {
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
-    console.log(activePath)
     NAV_ITEMS.forEach((item) => {
       if (item.children?.some((c) => c.href === activePath)) {
         setOpenMap((prev) => ({ ...prev, [item.title]: true }))

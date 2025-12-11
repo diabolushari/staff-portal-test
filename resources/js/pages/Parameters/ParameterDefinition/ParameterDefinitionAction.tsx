@@ -43,7 +43,6 @@ export default function ParameterDefinitionAction({ data }: { data: ParameterDef
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log(formData)
     post(data ? { ...formData, _method: 'PUT' } : formData)
   }
 

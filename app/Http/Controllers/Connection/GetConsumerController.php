@@ -25,7 +25,6 @@ class GetConsumerController extends Controller
         $connection = $this->connectionService->getConnection($Id);
 
         if ($response->data === null) {
-            Log::info('reached here');
             return redirect()->route('connection.consumer.create', $Id);
         }
 

@@ -28,11 +28,6 @@ export default function SystemModuleForm({
     onSuccess?.()
   }, [onSuccess, setFormValue])
 
-  useEffect(() => {
-    console.log('here')
-    console.log(handleComplete)
-  }, [handleComplete])
-
   const { post, errors, loading } = useInertiaPost(
     isEditing
       ? route('system-module.update', selectedSystemModule.id)

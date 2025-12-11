@@ -37,8 +37,6 @@ interface Props {
 
 // --- MAIN COMPONENT: MeteringTimezoneShowPage ---
 export default function MeteringTimezoneShowPage({ timezone }: Readonly<Props>) {
-  console.log(timezone)
-
   // --- STATE ---
   const [loading, setLoading] = useState(false)
 

@@ -52,7 +52,7 @@ export default function ParameterDefinitionIndex({
     setParameterDefinitionToEdit(null)
     setParameterFormModal(true)
   }, [])
-  console.log(parameter_definitions)
+
   return (
     <MainLayout
       breadcrumb={breadcrumbs}

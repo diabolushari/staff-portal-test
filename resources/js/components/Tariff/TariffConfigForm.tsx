@@ -40,7 +40,6 @@ interface PageProps {
 }
 
 export default function TariffConfigForm({ tariffOrder, consumptionTariff }: Readonly<PageProps>) {
-  console.log(tariffOrder)
   const { formData } = useCustomForm({
     tariff_order_id: tariffOrder.tariff_order_id,
   })
