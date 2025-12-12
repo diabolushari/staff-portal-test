@@ -4,21 +4,13 @@ package com.kseb.consumerservice.proto.meterreading;
 
 option php_namespace = "Proto\\MeterReading";
 option php_metadata_namespace = "GPBMetadata";
-option java_multiple_files = true;
-option java_package = "com.kseb.consumerservice.proto.meterreading";
-option java_outer_classname = "MeterReadingProto";
+
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "parameters/parameter-value.proto";
 import "metering/meter.proto";
 import "meterreading/metering_profile_parameters.proto";
-
-
-
-
-// Nested messages for JSON-like structure
-
 
 message ReadingValueMessage{
   int64 meter_reading_values_id = 1;
@@ -175,6 +167,7 @@ message ListMeterReadingRequest {
   int64 connection_id = 3;
   string search = 4;
   int64 meter_reading_id = 5;
+  optional google.protobuf.Timestamp reading_month_year = 6;
 }
 message ListMeterReadingResponse {
   repeated MeterReadingMessage readings = 1;

@@ -6,6 +6,7 @@ use App\GrpcConverters\MeterProtoConvertor;
 use App\Http\Requests\Metering\MeterReadingForm;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
+use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
 use Illuminate\Validation\ValidationException;
@@ -36,7 +37,10 @@ class MeterReadingService
         );
     }
 
-    public function listMeterReadings(?int $page = 1, ?int $pageSize = 10, ?string $search = null, ?int $connectionId = null): GrpcServiceResponse
+    public function listMeterReadings(?int $page = 1, ?int $pageSize = 10,
+     ?string $search = null,
+      ?int $connectionId = null,
+      ?string $readingMonthYear = null): GrpcServiceResponse
     {
         $protoRequest = new ListMeterReadingRequest;
         if ($page) {
@@ -50,6 +54,9 @@ class MeterReadingService
         }
         if ($connectionId) {
             $protoRequest->setConnectionId($connectionId);
+        }
+        if(DateTimeConverter::convertStringToTimestamp($readingMonthYear)) {
+            $protoRequest->setReadingMonthYear(DateTimeConverter::convertStringToTimestamp($readingMonthYear));
         }
         [$response, $status] = $this->client->ListMeterReading($protoRequest)->wait();
         if ($status->code !== 0) {
@@ -180,10 +187,11 @@ class MeterReadingService
         return GrpcServiceResponse::success([], $response, $status->code, $status->details);
     }
 
-    public function latestMeterReading(int $connectionId): GrpcServiceResponse
+    public function latestMeterReading(int $connectionId, ?string $readingMonthYear = null): GrpcServiceResponse
     {
-        $protoRequest = new LatestMeterReadingRequest;
+        $protoRequest = new LatestMeterReadingRequest();
         $protoRequest->setConnectionId($connectionId);
+        
         [$response, $status] = $this->client->LatestMeterReading($protoRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
