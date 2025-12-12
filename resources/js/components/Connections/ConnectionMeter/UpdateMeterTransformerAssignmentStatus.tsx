@@ -21,8 +21,8 @@ const UpdateMeterTransformerAssignmentStatus = ({
   statuses,
 }: Props) => {
   const { formData, setFormValue } = useCustomForm({
-    status_id: '',
-    faulty_date: '',
+    status_id: ctpt.status_id,
+    faulty_date: ctpt.faulty_date,
     ctpt_version_id: ctpt.version_id,
     ctpt_id: ctpt.ctpt_id,
     meter_id: ctpt.meter_id,
@@ -36,6 +36,8 @@ const UpdateMeterTransformerAssignmentStatus = ({
     setSelectedCtpt(null)
     setUpdate(false)
   }
+
+  console.log(ctpt)
 
   return (
     <Modal setShowModal={setUpdate}>

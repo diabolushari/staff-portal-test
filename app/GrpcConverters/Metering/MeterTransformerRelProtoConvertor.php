@@ -3,6 +3,7 @@
 namespace App\GrpcConverters\Metering;
 
 use App\GrpcConverters\ParameterValueProtoConvertor;
+use App\Services\utils\DateTimeConverter;
 use Proto\Metering\MeterTransformerRelMessage;
 
 class MeterTransformerRelProtoConvertor
@@ -20,13 +21,13 @@ class MeterTransformerRelProtoConvertor
             'version_id' => $rel->getVersionId(),
             'ctpt_id' => $rel->getCtptId(),
             'meter_id' => $rel->getMeterId(),
-            'faulty_date' => $rel->hasFaultyDate() ? $rel->getFaultyDate() : null,
-            'ctpt_energise_date' => $rel->hasCtptEnergiseDate() ? $rel->getCtptEnergiseDate()->toDateTime()->format('Y-m-d') : null,
-            'ctpt_change_date' => $rel->hasCtptChangeDate() ? $rel->getCtptChangeDate()->toDateTime()->format('Y-m-d') : null,
+            'faulty_date' => $rel->hasFaultyDate() ? DateTimeConverter::converTimeStampToDate($rel->getFaultyDate()) : null,
+            'ctpt_energise_date' => $rel->hasCtptEnergiseDate() ? DateTimeConverter::converTimeStampToDate($rel->getCtptEnergiseDate()) : null,
+            'ctpt_change_date' => $rel->hasCtptChangeDate() ? DateTimeConverter::converTimeStampToDate($rel->getCtptChangeDate()) : null,
             'status_id' => $rel->getStatusId(),
             'change_reason_id' => $rel->getChangeReasonId(),
-            'created_ts' => $rel->hasCreatedTs() ? $rel->getCreatedTs() : null,
-            'updated_ts' => $rel->hasUpdatedTs() ? $rel->getUpdatedTs() : null,
+            'created_ts' => $rel->hasCreatedTs() ? DateTimeConverter::converTimeStampToDate($rel->getCreatedTs()) : null,
+            'updated_ts' => $rel->hasUpdatedTs() ? DateTimeConverter::converTimeStampToDate($rel->getUpdatedTs()) : null,
             'created_by' => $rel->getCreatedBy(),
             'updated_by' => $rel->getUpdatedBy(),
             'status' => $rel->hasStatus() ? ParameterValueProtoConvertor::convertToArray($rel->getStatus()) : null,

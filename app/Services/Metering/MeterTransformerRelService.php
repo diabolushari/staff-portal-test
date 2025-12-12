@@ -20,10 +20,12 @@ use Proto\Metering\MeterTransformerRelIdRequest;
 use Proto\Metering\MeterTransformerRelServiceClient;
 use Proto\Metering\MeterTransformerRelUpdateChangeReasonRequest;
 use Proto\Metering\MeterTransformerRelUpdateRequest;
+use Proto\Metering\MeterTransformerRelUpdateStatusRequest;
 
 class MeterTransformerRelService
 {
     private MeterTransformerRelServiceClient $client;
+  
 
     public function __construct()
     {
@@ -258,35 +260,6 @@ class MeterTransformerRelService
         );
     }
 
-    public function updateStatus(array $data, $id): GrpcServiceResponse
-    {
-        $request = new MeterTransformerRelUpdateRequest();
-        $request->setVersionId($id);
-        $request->setStatusId($data['status_id']);
-        $user = Auth::user();
-        if ($user) {
-            $request->setUpdatedBy($user->id);
-        }
-
-        [$response, $status] = $this->client->UpdateMeterTransformerRel($request)->wait();
-
-        if ($status->code !== 0) {
-            return GrpcServiceResponse::error(
-                GrpcErrorService::handleErrorResponse($status),
-                $response,
-                $status->code,
-                $status->details
-            );
-        }
-
-        return GrpcServiceResponse::success(
-            MeterTransformerRelProtoConvertor::relProtoToArray($response->getRel()),
-            $response,
-            $status->code,
-            $status->details
-        );
-    }
-
  
 
     public function updateRelation(array $data, $id): GrpcServiceResponse
@@ -356,5 +329,33 @@ class MeterTransformerRelService
         }
 
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
+    }
+
+
+    public function updateRelationStatus(array $data):GrpcServiceResponse
+    {
+        $request = new MeterTransformerRelUpdateStatusRequest();
+        $request->setVersionId($data['ctpt_version_id']);
+        $request->setStatusId($data['status_id']);
+        $request->setFaultyDate(DateTimeConverter::convertStringToTimestamp($data['faulty_date']));
+      
+
+        [$response, $status] = $this->client->UpdateMeterTransformerRelStatus($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success(
+            MeterTransformerRelProtoConvertor::relProtoToArray($response->getRel()),
+            $response,
+            $status->code,
+            $status->details
+        );
     }
 }

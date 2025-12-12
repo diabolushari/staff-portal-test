@@ -21,8 +21,8 @@ const ChangeMeterTransformerAssignment = ({
   setChange,
 }: Props) => {
   const { formData, setFormValue } = useCustomForm({
-    change_reason_id: '',
-    ctpt_change_date: '',
+    change_reason_id: ctpt.change_reason_id,
+    ctpt_change_date: ctpt.ctpt_change_date,
     ctpt_version_id: ctpt.version_id,
     ctpt_id: ctpt.ctpt_id,
     meter_id: ctpt.meter_id,
@@ -38,7 +38,7 @@ const ChangeMeterTransformerAssignment = ({
     setSelectedCtpt(null)
     setChange(false)
   }
-  console.log(formData)
+
   return (
     <Modal setShowModal={setChange}>
       <form

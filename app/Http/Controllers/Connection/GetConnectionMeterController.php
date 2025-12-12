@@ -44,12 +44,17 @@ class GetConnectionMeterController extends Controller
         $status = $this->parameterValueService->getParameterValues(null,null,null,'Meter','Status');
         $changeReason = $this->parameterValueService->getParameterValues(null,null,null,'Meter','Change Reason');
 
+        $ctptStatus = $this->parameterValueService->getParameterValues(null,null,null,'Meter CTPT','Status');
+        $ctptChangeReason = $this->parameterValueService->getParameterValues(null,null,null,'Meter CTPT','Change Reason');
+
         return Inertia::render('Connections/ConnectionMeterList', [
             'connection_id' => $id,
             'connection' => $connectionResponse->data,
             'ctpt_relations' => $ctptRelations,
             'status' => $status->data,
             'change_reason' => $changeReason->data,
+            'ctpt_status' => $ctptStatus->data,
+            'ctpt_change_reason' => $ctptChangeReason->data,
         ]);
     }
 }
