@@ -10,7 +10,7 @@ import { BreadcrumbItem } from '@/types'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import { router } from '@inertiajs/react'
 import { Cpu, Plus } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { consumerNavItems } from '../../components/Navbar/navitems'
 import ConnectionMeterUpdateModal from '@/components/Connections/ConnectionMeter/ConnectionMeterUpdateModal'
 import { ParameterValues } from '@/interfaces/parameter_types'
@@ -21,6 +21,8 @@ interface ConnectionMeterListProps {
   ctpt_relations: MeterTransformerAssignment[]
   status: ParameterValues[]
   change_reason: ParameterValues[]
+  ctpt_status: ParameterValues[]
+  ctpt_change_reason: ParameterValues[]
 }
 
 export default function ConnectionMeterList({
@@ -29,6 +31,8 @@ export default function ConnectionMeterList({
   ctpt_relations,
   status,
   change_reason,
+  ctpt_status,
+  ctpt_change_reason,
 }: Readonly<ConnectionMeterListProps>) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [deleteRelationId, setDeleteRelation] = useState<MeterConnectionMapping | null>(null)
@@ -81,6 +85,8 @@ export default function ConnectionMeterList({
     setMeter(null)
     setIsStatusChange(false)
   }
+  console.log(ctpt_change_reason)
+  console.log(ctpt_status)
 
   return (
     <ConnectionsLayout
@@ -118,6 +124,8 @@ export default function ConnectionMeterList({
                 onEdit={handleEditMeter}
                 onMeterStatusChange={handleMeterStatusChange}
                 onMeterChange={handleMeterChange}
+                changeReasons={ctpt_change_reason}
+                statuses={ctpt_status}
               />
             ))
           ) : (
