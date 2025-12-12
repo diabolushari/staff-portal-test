@@ -124,7 +124,7 @@ export default function ConnectionCardSection({
               <Button
                 variant='outline'
                 size='sm'
-                className='h-8 gap-1.5 text-xs'
+                className='h-8 cursor-pointer gap-1.5 text-xs'
                 onClick={() => onMeterStatusChange(meterMapping)}
               >
                 Update Meter Status
@@ -132,7 +132,7 @@ export default function ConnectionCardSection({
               <Button
                 variant='outline'
                 size='sm'
-                className='h-8 gap-1.5 text-xs'
+                className='h-8 cursor-pointer gap-1.5 text-xs'
                 onClick={() => onMeterChange(meterMapping)}
               >
                 <ArrowLeftRight className='h-3.5 w-3.5' />
@@ -143,7 +143,7 @@ export default function ConnectionCardSection({
           <Button
             variant='destructive'
             size='icon'
-            className='transition-transform hover:scale-105'
+            className='cursor-pointer transition-transform hover:scale-105'
             onClick={() => onDelete(meterMapping)}
           >
             <Trash className='h-5 w-5' />

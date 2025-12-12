@@ -15,6 +15,7 @@ interface CustomCardProps {
   editButton?: CardButton
   children?: ReactNode
   className?: string
+  addButtonText?: string
   onAddClick?: () => void
   onEditClick?: () => void
 }
@@ -22,6 +23,7 @@ interface CustomCardProps {
 export default function CustomCard({
   title,
   addButton,
+  addButtonText,
   editButton,
   children,
   className = '',
@@ -39,7 +41,7 @@ export default function CustomCard({
           <div className='flex cursor-pointer gap-2'>
             {(addButton || onAddClick) && (
               <AddButton
-                buttonText={addButton?.title}
+                buttonText={addButtonText ?? addButton?.title}
                 link={addButton?.url}
                 onClick={onAddClick}
               />

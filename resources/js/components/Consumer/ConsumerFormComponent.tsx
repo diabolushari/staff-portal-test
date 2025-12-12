@@ -7,7 +7,7 @@ import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
-import { Address, RegionOption } from '@/interfaces/data_interfaces'
+import { RegionOption } from '@/interfaces/data_interfaces'
 import { useState } from 'react'
 import { Card } from '../ui/card'
 import ConsumerContactFolioModal from './ConsumerContactFolioModal'
@@ -195,11 +195,11 @@ export default function ConsumerFormComponent({
               toggleValue={toggleBoolean('seasonal_ind')}
               value={formData.seasonal_ind}
             />
-            <CheckBox
+            {/* <CheckBox
               label='License'
               toggleValue={toggleBoolean('license_ind')}
               value={formData.license_ind}
-            />
+            /> */}
             <CheckBox
               label='Open Access'
               toggleValue={toggleBoolean('open_access_ind')}
