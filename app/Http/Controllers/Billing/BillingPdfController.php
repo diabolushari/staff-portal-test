@@ -5,29 +5,27 @@ namespace App\Http\Controllers\Billing;
 use App\Http\Controllers\Controller;
 use App\Services\Billing\BillExportService;
 use App\Services\Billing\BillService;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Response;
 
-class BillController extends Controller
+class BillingPdfController extends Controller
 {
     public function __construct(
         private readonly BillService $billService,
         private readonly BillExportService $billExportService
-    )
-    {}
+    ) {}
 
-    public function show(int $id): Response
-    {   
+    public function index(int $billId): Response
+    {
 
-        $bill = $this->billService->getBill($id);
+        $bill = $this->billService->getBill($billId);
         $meter = null;
-        if ($bill?->data['connection_id']){
+        if ($bill?->data['connection_id']) {
             $meter = $this->billExportService->getMainMeter($bill->data['connection_id']);
         }
         $meterReading = null;
-        
-        if ($bill?->data['connection_id']){
+
+        if ($bill?->data['connection_id']) {
             $meterReading = $this->billExportService->getMeterReading($bill->data['connection_id'], $bill->data['reading_year_month']);
         }
         $kvaValues   = $this->billExportService->filterReadingByParameter($meterReading, 'kva');
@@ -40,25 +38,27 @@ class BillController extends Controller
         $energyChargeRows = $this->billExportService->getEnergyChargeRows($meter, $computedProperties, $kwhValues);
         $averageAndTotalKva = $this->billExportService->getAverageAndTotalKva($kvaValues);
         $averageAndTotalKwh = $this->billExportService->getAverageAndTotalKwh($kwhValues);
-        $demand = $this->billExportService->calculateDemand($kvaValues, $bill->data['connection']['contract_demand_kva_val']);
-
-
-        return Inertia::render('Bill/BillShowPage', [
-            'bill' => $bill->data,
-            'meter' => $meter,
-            'meterReading' => $meterReading,
-            'kvaValues' => $kvaValues,
-            'kvahValues' => $kvahValues,
-            'kwhValues' => $kwhValues,
-            'lagValues' => $lagValues,
-            'leadValues' => $leadValues,
+        $demand = $this->billExportService->calculateDemand($kvaValues, $bill->data['connection']['contract_demand_kva_val'] ?? null);
+        $pdf = Pdf::loadView('billing/bill-template', [
+            'filteredkVAs' => $kvaValues ?? [],
+            'filteredKVAhs' => $kvahValues ?? [],
+            'filteredkWhs' => $kwhValues ?? [],
+            'filteredLags' => $lagValues ?? [],
+            'filteredLeads' => $leadValues ?? [],
+            'bill' => $bill->data ?? [],
+            'connection' => $bill->data['connection'] ?? [],
+            'consumer' => $bill->data['consumer'] ?? [],
+            'meter' => $meter ?? [],
             'chargeHeads' => $chargeHeads,
             'computedProperties' => $computedProperties,
             'energyChargeRows' => $energyChargeRows,
-            'connection' => $bill->data['connection'] ?? null,
-            'consumer' => $bill->data['consumer'] ?? null,
             'averageAndTotalKva' => $averageAndTotalKva,
             'averageAndTotalKwh' => $averageAndTotalKwh,
+            'demand' => $demand,
         ]);
+
+
+        return $pdf->stream('bill.pdf');
+        // return view('billing/bill-template');
     }
 }

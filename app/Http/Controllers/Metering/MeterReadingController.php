@@ -24,7 +24,7 @@ class MeterReadingController extends Controller
     public function index(Request $request): Response
     {
         $consumerNumber = $request->input('search') ?? null;
-        $connections = $this->connectionService->listConnections($consumerNumber)->data;
+        $connections = $this->connectionService->listConnections($consumerNumber,null)->data;
 
         $search = $request->input('search') ?? null;
         $connectionId = $request->input('connection_id') ?? null;
