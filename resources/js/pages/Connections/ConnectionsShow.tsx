@@ -29,6 +29,7 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
     ],
     [connection]
   )
+  console.log(connection)
 
   return (
     <ConnectionsLayout

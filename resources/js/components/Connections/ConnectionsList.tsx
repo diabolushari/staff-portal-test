@@ -17,12 +17,10 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
     setSelectedDeleteConnection(connection)
     setShowDeleteModal(true)
   }
+  console.log(connections)
 
   return (
     <div className='relative w-full rounded-lg bg-white'>
-      <div className='font-inter text-dark-gray px-7 pt-[21px] pb-3 text-[15px] leading-[23px] font-semibold tracking-[-0.0924px]'>
-        Connection Info
-      </div>
       <div className='flex flex-col px-7 pb-7'>
         {connections &&
           connections.map((connection) => (

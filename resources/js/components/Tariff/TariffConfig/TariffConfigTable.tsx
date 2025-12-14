@@ -72,7 +72,6 @@ export default function TariffConfigTable({
                 <EditButton link={route('tariff-configs.edit', config.tariff_config_id)} />
                 <DeleteButton onClick={() => handleDelete(config)} />
               </TableCell>
-              TariffConfigTable
             </TableRow>
           ))}
           {isDeleteModalOpen && selectedTariffConfig && (
