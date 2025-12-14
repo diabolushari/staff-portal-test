@@ -460,6 +460,7 @@ export interface MeterReadingValue {
   final_reading: number
   initial_reading: number
   difference: number
+  value: number
   meter?: Meter
 }
 

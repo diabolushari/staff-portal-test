@@ -1,18 +1,30 @@
+import MeterReadingTable from '@/components/Meter/MeterReading/MeterReadingTable/MeterReadingTable'
 import { consumerNavItems } from '@/components/Navbar/navitems'
-import { Connection, MeterReading, MeterReadingValue } from '@/interfaces/data_interfaces'
+import { Connection, Meter, MeterReading, MeterReadingValue } from '@/interfaces/data_interfaces'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
+import { useMemo } from 'react'
+
+interface ReadingsByMeter {
+  meterId: number
+  meter: Meter | null
+  serial: string | undefined
+  profile: string | undefined
+  readings: MeterReadingValue[]
+}
+
+interface Props {
+  meterReading: MeterReading
+  connectionId: number
+  connection: Connection
+}
 
 export default function MeterReadingShowPage({
   meterReading,
   connectionId,
   connection,
-}: {
-  meterReading: MeterReading
-  connectionId: number
-  connection: Connection
-}) {
+}: Readonly<Props>) {
   const breadcrumb: BreadcrumbItem[] = [
     { title: 'Connections', href: `/connections/${Number(connectionId)}` },
     { title: 'Connection', href: `/connections/${Number(connectionId)}` },
@@ -23,35 +35,26 @@ export default function MeterReadingShowPage({
     },
   ]
 
-  const readingsByMeter = Object.values(
-    meterReading.values?.reduce((acc: any, reading: MeterReadingValue) => {
+  const readingsByMeter = useMemo(() => {
+    const result: {
+      [meterId: number]: ReadingsByMeter
+    } = {}
+
+    meterReading.values?.forEach((reading: MeterReadingValue) => {
       const meterId = reading.meter_id
-      if (!acc[meterId]) {
-        acc[meterId] = {
+      if (!result[meterId]) {
+        result[meterId] = {
           meterId,
+          meter: reading.meter ?? null,
           serial: reading.meter?.meter_serial,
           profile: reading.meter?.meter_profile?.parameter_value,
           readings: [] as MeterReadingValue[],
         }
       }
-      acc[meterId].readings.push(reading)
-      return acc
-    }, {}) || {}
-  )
-
-  const groupedByMeterAndParam = readingsByMeter.map((meter: any) => {
-    const grouped = meter.readings.reduce((acc: any, reading: any) => {
-      const paramId = reading.parameter_id
-      const paramName = reading.meter_profile_parameter?.display_name || `Parameter ${paramId}`
-      if (!acc[paramId]) acc[paramId] = { name: paramName, readings: [] }
-      acc[paramId].readings.push(reading)
-      return acc
-    }, {})
-    return {
-      ...meter,
-      grouped,
-    }
-  })
+      result[meterId].readings.push(reading)
+    })
+    return Object.values(result)
+  }, [meterReading])
 
   return (
     <ConnectionsLayout
@@ -71,45 +74,16 @@ export default function MeterReadingShowPage({
           Date: {meterReading.metering_date} (From {meterReading.reading_start_date} to{' '}
           {meterReading.reading_end_date})
         </p>
-
-        {groupedByMeterAndParam.map((meter: any) => (
+        {readingsByMeter.map((meter) => (
           <div
             key={meter.meterId}
-            className='rounded-lg border p-4 shadow'
+            className='flex flex-col gap-4 rounded-lg border p-4 shadow'
           >
             <h2 className='mb-2 text-xl font-bold'>
               Meter: {meter.serial} ({meter.profile})
             </h2>
-
-            {Object.entries(meter.grouped).map(([paramId, param]: any) => (
-              <div
-                key={paramId}
-                className='mb-4'
-              >
-                <h3 className='mb-2 text-lg font-semibold'>{param.name}</h3>
-
-                <table className='w-full table-auto border-collapse border border-gray-300'>
-                  <thead>
-                    <tr className='bg-gray-100'>
-                      <th className='border px-4 py-2 text-left'>Timezone</th>
-                      <th className='border px-4 py-2 text-left'>Initial</th>
-                      <th className='border px-4 py-2 text-left'>Final</th>
-                      <th className='border px-4 py-2 text-left'>Diff</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {param.readings.map((reading: MeterReadingValue, i: number) => (
-                      <tr key={i}>
-                        <td className='border px-4 py-2'>{reading.time_zone?.parameter_value}</td>
-                        <td className='border px-4 py-2'>{reading.initial_reading}</td>
-                        <td className='border px-4 py-2'>{reading.final_reading}</td>
-                        <td className='border px-4 py-2'>{reading.difference}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ))}
+            <h3 className='text-sm font-semibold'>MF: {meter.meter?.meter_mf}</h3>
+            <MeterReadingTable readings={meter.readings} />
           </div>
         ))}
       </div>

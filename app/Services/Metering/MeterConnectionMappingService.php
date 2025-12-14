@@ -10,7 +10,6 @@ use App\Http\Requests\Metering\MeterConnectionRelFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
-use DateTime;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
 use Illuminate\Http\Request;
@@ -23,7 +22,6 @@ use Proto\Metering\MeterConnectionMappingResponse;
 use Proto\Metering\MeterConnectionMappingServiceClient;
 use Proto\Metering\MeterTransformerRelFormRequest;
 use Proto\Metering\UpdateMeterConnectionMappingRequest;
-use Proto\Metering\UpdateMeterConnectionStatusRequest;
 use Proto\Parameters\ParameterValueProto;
 
 class MeterConnectionMappingService
@@ -90,7 +88,6 @@ class MeterConnectionMappingService
                     $change->fromDateTime(new \DateTime($transformer->ctptChangeDate));
                     $transformer_proto->setCtptChangeDate($change);
                 }
-
 
                 // Add to main request
                 $request->getMeterTransformers()[] = $transformer_proto;
@@ -176,6 +173,7 @@ class MeterConnectionMappingService
 
         return GrpcServiceResponse::success($relsArray, $response, $status->code, $status->details);
     }
+
     public function updateMeterConnectionStatus(ConnectionMeterStatusFormRequest $data): GrpcServiceResponse
     {
         $request = MeterConnectionMappingConverter::arrayToUpdateMeterConnectionStatusRequest($data);
@@ -221,9 +219,8 @@ class MeterConnectionMappingService
         $request->setMeterId($data->meterId);
         $request->setConnectionId($data->connectionId);
         $request->setMeterUseCategory($data->meterUseCategory);
-      
+
         $request->setMeterStatusId($data->meterStatusId);
-       
 
         if (isset($data->sortPriority)) {
             $request->setSortPriority($data->sortPriority);
@@ -283,6 +280,7 @@ class MeterConnectionMappingService
         $noticeDate = $rel->getNoticeDate() ? $rel->getNoticeDate()->toDateTime()->format('Y-m-d') : null;
         $intimationDate = $rel->getIntimationDate() ? $rel->getIntimationDate()->toDateTime()->format('Y-m-d') : null;
         $changeDate = $rel->getChangeDate() ? $rel->getChangeDate()->toDateTime()->format('Y-m-d') : null;
+
         return [
             'version_id' => $rel->getVersionId(),
             'rel_id' => $rel->getRelId(),
