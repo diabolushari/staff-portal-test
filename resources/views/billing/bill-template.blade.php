@@ -551,7 +551,7 @@
                      <tr>
                         <td>b. Excess Demand Charge</td>
                         <td class="center">{{ 0 }}</td>
-                        <td class="right">{{ $computedProperties['KVA RATE']['result'] }}</td>
+                        <td class="right">{{ $computedProperties['KVA RATE']['result'] ?? '-'}}</td>
                         <td class="right">{{ $computedProperties['EXCESS DEMAND CHARGE']['result'] ?? 0 }}</td>
                     </tr>
 
@@ -570,7 +570,7 @@
                         <tr>
                             <td>{{ $label }}. Demand Charge - {{ $zone['timezone'] }}</td>
                             <td class="center">{{ $unit }}</td>
-                            <td class="right">{{ $computedProperties['KVA RATE']['result'] }}</td>
+                            <td class="right">{{ $computedProperties['KVA RATE']['result'] ?? '-' }}</td>
                             <td class="right">{{ number_format($amount, 2) }}</td>
                         </tr>
                         
@@ -579,7 +579,7 @@
                             <td>d. Excess Demand Charge</td>
                             <td class="center">{{ 0 }}</td>
                             <td class="right">{{ $kvaRate }}</td>
-                            <td class="right">{{ $computedProperties['EXCESS DEMAND CHARGE']['result'] ?? 0 }}</td>
+                            <td class="right">{{ $computedProperties['EXCESS DEMAND CHARGE']['result'] ?? '-' }}</td>
                         </tr>
 
                 @endif
@@ -590,7 +590,7 @@
                     <td>Sub Total</td>
                     <td></td>
                     <td></td>
-                <td class="right">{{ $chargeHeads['TOTAL DEMAND CHARGE']['result'] ?? 0 }}</td>
+                <td class="right">{{ $chargeHeads['TOTAL DEMAND CHARGE']['result'] ?? '-' }}</td>
                 </tr>
 
                 <tr><td colspan="4"></td></tr>
@@ -631,7 +631,7 @@
               <td class="right">{{$chargeHeads['Power Factor Incentive and Disincentive']['result'] ?? 0}}</td>
             </tr>
             @php
-            $totalEnergyCharge = $chargeHeads['ENERGY CHARGE']['result'] + $chargeHeads['Power Factor Incentive and Disincentive']['result'] + $chargeHeads['TOTAL DEMAND CHARGE']['result'];
+            $totalEnergyCharge = $chargeHeads['ENERGY CHARGE']['result'] ?? 0 + $chargeHeads['Power Factor Incentive and Disincentive']['result'] ?? 0 + $chargeHeads['TOTAL DEMAND CHARGE']['result'] ?? 0;
             @endphp
             <tr class="total-row">
               <td>Total Energy Charge</td>
