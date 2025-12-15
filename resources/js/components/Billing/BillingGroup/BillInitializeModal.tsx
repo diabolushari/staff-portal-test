@@ -53,7 +53,6 @@ export default function BillInitializeModal({
 
   const handleSubmitBill = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(formData)
     post(formData)
   }
   return (

@@ -20,7 +20,6 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
 
   const handleSearchClick = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(formData)
   }
   const handleViewBillClick = (bill: Bill) => {
     router.get(route('bills.show', bill?.bill_id))
@@ -132,8 +131,12 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
                       <p className='text-xs text-gray-500'>DC Date</p>
                     </div>
                     <div>
-                      <p className='font-medium text-gray-700'>{bill?.remarks}</p>
-                      <p className='text-xs text-gray-500'>Remarks</p>
+                      {bill?.remarks && (
+                        <>
+                          <p className='font-medium text-gray-700'>{bill?.remarks}</p>
+                          <p className='text-xs text-gray-500'>Remarks</p>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>

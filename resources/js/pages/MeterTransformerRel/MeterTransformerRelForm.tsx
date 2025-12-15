@@ -99,8 +99,6 @@ export default function MeterTransformerRelForm({
     return statuses?.find((status) => status.id === formData.status_id)
   }, [statuses, formData.status_id])
 
-  console.log(meter)
-
   return (
     <ConnectionsLayout
       connectionsNavItems={consumerNavItems}
@@ -130,7 +128,7 @@ export default function MeterTransformerRelForm({
                   <Input
                     value={
                       selectedTransformer
-                        ? `#${selectedTransformer.meter_ctpt_id} - ${selectedTransformer.type?.parameter_value ?? ''} - ${selectedTransformer.ctpt_serial}`
+                        ? `${selectedTransformer.type?.parameter_value ?? ''} - ${selectedTransformer.ctpt_serial}`
                         : ''
                     }
                     setValue={() => {}}

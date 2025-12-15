@@ -376,18 +376,18 @@ export default function ConnectionForm({
         </div>
         <div className='mt-6 grid grid-cols-1 gap-4 p-4 md:grid-cols-3'>
           <CheckBox
-            label='Solar Indicator'
+            label='Solar'
             toggleValue={toggleBoolean('solar_indicator')}
             value={formData.solar_indicator}
             error={errors?.solar_indicator}
           />
           <CheckBox
-            label='Multi Source Indicator'
+            label='Multi Source'
             toggleValue={toggleBoolean('multi_source_indicator')}
             value={formData.multi_source_indicator}
             error={errors?.multi_source_indicator}
           />
-          <CheckBox
+          {/* <CheckBox
             label='Live Indicator'
             toggleValue={toggleBoolean('live_indicator')}
             value={formData.live_indicator}
@@ -398,7 +398,7 @@ export default function ConnectionForm({
             toggleValue={toggleBoolean('othercons_flag')}
             value={formData.othercons_flag}
             error={errors?.othercons_flag}
-          />
+          /> */}
           <CheckBox
             label='CPP'
             toggleValue={toggleBoolean('cpp_flag')}

@@ -20,9 +20,6 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
 
   return (
     <div className='relative w-full rounded-lg bg-white'>
-      <div className='font-inter text-dark-gray px-7 pt-[21px] pb-3 text-[15px] leading-[23px] font-semibold tracking-[-0.0924px]'>
-        Connection Info
-      </div>
       <div className='flex flex-col px-7 pb-7'>
         {connections &&
           connections.map((connection) => (
@@ -38,7 +35,14 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
                       <div className='font-inter text-base leading-normal font-semibold text-black'>
                         Consumer Number: #{connection.consumer_number}
                       </div>
-                      <div className='rounded-[50px] bg-blue-100 px-2.5 py-px'></div>
+                      <div></div>
+                    </div>
+                    <div>
+                      {connection.consumer_profiles?.[0]?.organization_name && (
+                        <span className='font-inter text-base leading-normal font-semibold text-black'>
+                          Industry Name: {connection.consumer_profiles?.[0]?.organization_name}
+                        </span>
+                      )}
                     </div>
 
                     <div className='flex w-full items-center gap-5'>

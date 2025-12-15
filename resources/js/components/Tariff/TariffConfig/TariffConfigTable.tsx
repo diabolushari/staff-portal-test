@@ -44,6 +44,7 @@ export default function TariffConfigTable({
       //   url: route('tariff-config.create', tariffOrder.tariff_order_id),
       // }}
       onAddClick={() => setAddTariffConfig(true)}
+      addButtonText='Add Tariff Config'
     >
       <Table>
         <TableHeader>
@@ -71,7 +72,6 @@ export default function TariffConfigTable({
                 <EditButton link={route('tariff-configs.edit', config.tariff_config_id)} />
                 <DeleteButton onClick={() => handleDelete(config)} />
               </TableCell>
-              TariffConfigTable
             </TableRow>
           ))}
           {isDeleteModalOpen && selectedTariffConfig && (
@@ -94,6 +94,7 @@ export default function TariffConfigTable({
         <TariffConfigForm
           tariffOrder={tariffOrder}
           consumptionTariff={consumption_tariff ?? []}
+          setModalOpen={setAddTariffConfig}
         />
       )}
     </CustomCard>

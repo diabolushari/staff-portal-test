@@ -4,10 +4,13 @@ namespace App\GrpcConverters\Connection;
 
 use App\GrpcConverters\Office\OfficeProtoConvertor;
 use App\GrpcConverters\ParameterValueProtoConvertor;
+use App\Services\Connection\ConsumerService;
 use Proto\Connections\ConnectionMessage;
 
 class ConnectionProtoConverter
 {
+
+
     /**
      * Convert ConnectionMessage proto to array.
      *
@@ -133,6 +136,15 @@ class ConnectionProtoConverter
             return null;
         }
 
+        $consumerProfiles = $connection->getConsumerProfile();
+        $consumerProfilesArray = [];
+        $converter = app(ConsumerService::class);
+        foreach ($consumerProfiles as $consumerProfile) {
+            $consumerProfileArray = $converter->transformConsumerToArray($consumerProfile);
+            $consumerProfilesArray[] = $consumerProfileArray;
+        }
+
+
         return [
             'version_id' => $connection->getVersionId(),
             'connection_id' => $connection->getConnectionId(),
@@ -188,6 +200,7 @@ class ConnectionProtoConverter
             'updated_by' => $connection->getUpdatedBy() ? $connection->getUpdatedBy() : null,
             'effective_start' => $connection->getEffectiveStart() ? $connection->getEffectiveStart()->toDateTime()->format('Y-m-d') : null,
             'effective_end' => $connection->getEffectiveEnd() ? $connection->getEffectiveEnd()->toDateTime()->format('Y-m-d') : null,
+            'consumer_profiles' => $consumerProfilesArray,
         ];
     }
 }

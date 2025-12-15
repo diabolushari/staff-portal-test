@@ -23,7 +23,6 @@ export default function ParameterDomainShow({ domain }: { domain: ParameterDomai
     { label: 'Domain Code', key: 'domainCode' },
     { label: 'Managed By Module', key: 'managedByModuleName' },
   ]
-  console.log(domain)
 
   return (
     <MainLayout
