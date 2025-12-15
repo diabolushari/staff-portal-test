@@ -17,6 +17,7 @@ import MonthPicker from '@/ui/form/MonthPicker'
 import NormalText from '@/typography/NormalText'
 import BillingJobStatusList from '@/components/Billing/BillingCycle/BillJobStatusList'
 import BillingJobList from '@/components/Billing/BillingCycle/BillingJobList'
+import { router } from '@inertiajs/react'
 
 export interface BillingGroupConnectionRelForm {
   billing_group_id: number
@@ -71,6 +72,14 @@ export default function BillingGroupShowPage({
       ? formData.selectedConnections.filter((id) => id !== connectionId)
       : [...formData.selectedConnections, connectionId]
     setFormValue('selectedConnections')(updatedSelectedConnections)
+  }
+
+  const handleOnClickConnection = (connectionId: number) => {
+    router.get(
+      route('connection.meter-reading', {
+        id: connectionId,
+      })
+    )
   }
 
   return (
@@ -138,15 +147,20 @@ export default function BillingGroupShowPage({
             >
               <div className='grid grid-cols-2 gap-4'>
                 <div className='flex flex-col gap-4'>
-                  <Card className='grid grid-cols-2 justify-between gap-4 p-4'>
+                  <Card
+                    className='grid cursor-pointer grid-cols-2 justify-between gap-4 p-4 transition-all duration-150 ease-in-out hover:scale-101'
+                    onClick={() => handleOnClickConnection(conn?.connection_id)}
+                  >
                     <div>
                       <h4 className='text-sm text-gray-500'>Consumer Number</h4>
-                      <p className='text-lg font-semibold'>{conn.connection.consumer_number}</p>
+                      <p className='text-lg font-semibold'>{conn?.connection?.consumer_number}</p>
                     </div>
 
                     <div>
                       <h4 className='text-sm text-gray-500'>Type</h4>
-                      <p className='text-lg'>{conn.connection.connection_type.parameter_value}</p>
+                      <p className='text-lg'>
+                        {conn?.connection?.connection_type?.parameter_value}
+                      </p>
                     </div>
 
                     <div>
@@ -156,7 +170,9 @@ export default function BillingGroupShowPage({
 
                     <div>
                       <h4 className='text-sm text-gray-500'>Purpose</h4>
-                      <p className='text-lg'>{conn.connection.primary_purpose.parameter_value}</p>
+                      <p className='text-lg'>
+                        {conn?.connection?.primary_purpose?.parameter_value}
+                      </p>
                     </div>
                   </Card>
                 </div>
@@ -164,7 +180,7 @@ export default function BillingGroupShowPage({
                   <DeleteButton onClick={() => handleDelete(conn)} />
                   <CheckBox
                     label=''
-                    toggleValue={() => handleSelectConnection(conn.connection_id)}
+                    toggleValue={() => handleSelectConnection(conn?.connection_id)}
                     value={formData?.selectedConnection?.includes(conn?.connection_id)}
                   />
                 </div>
@@ -173,12 +189,12 @@ export default function BillingGroupShowPage({
           ))}
         </div>
       )}
-      {billingGenerateJobStatus?.length > 0 && (
+      {/* {billingGenerateJobStatus?.length > 0 && (
         <BillingJobList
           isGroupNameVisible={false}
           billGenerationJobStatus={billingGenerateJobStatus}
         />
-      )}
+      )} */}
       {deleteConnection && deleteConnectionItem && (
         <DeleteModal
           setShowModal={setDeleteConnection}

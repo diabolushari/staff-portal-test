@@ -4,7 +4,7 @@ import Input from '@/ui/form/Input'
 import MonthPicker from '@/ui/form/MonthPicker'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 export default function BillingJobStatusSearchForm({
   filters,
@@ -13,62 +13,61 @@ export default function BillingJobStatusSearchForm({
     search: string
   }
 }) {
-  const { formData, setFormValue } = useCustomForm({
+  const { formData, setFormValue, setAll } = useCustomForm({
     search: filters?.search ?? '',
     group: '',
     billing_month_from: '',
     billing_month_to: '',
     sort_by: 'reading_year_month',
-    sort_direction: 'asc',
+    sort_direction: 'desc',
   })
+
+  // 👇 Prevent useEffect from firing on first render
+  const isFirstRender = useRef(true)
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
     router.get('/bills/job-status', formData, {
       preserveState: true,
       replace: true,
     })
   }
+
+  // 👇 Auto submit when sort changes (NOT on first load)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+
+    router.get(
+      '/bills/job-status',
+      {
+        search: formData.search,
+        billing_month_from: formData.billing_month_from,
+        billing_month_to: formData.billing_month_to,
+        sort_by: formData.sort_by,
+        sort_direction: formData.sort_direction,
+      },
+      {
+        preserveState: true,
+        replace: true,
+      }
+    )
+  }, [formData.sort_by, formData.sort_direction])
+
   const sortList = [
-    {
-      id: 1,
-      label: 'Group',
-      value: 'group_name',
-    },
-    {
-      id: 2,
-      label: 'Billing Month Year',
-      value: 'bill_year_month',
-    },
-    {
-      id: 3,
-      label: 'Reading Month Year',
-      value: 'reading_year_month',
-    },
-    {
-      id: 4,
-      label: 'Initiated At',
-      value: 'initilized_date',
-    },
+    { id: 1, label: 'Group', value: 'group_name' },
+    { id: 2, label: 'Billing Month Year', value: 'bill_year_month' },
+    { id: 3, label: 'Reading Month Year', value: 'reading_year_month' },
   ]
 
   const sortOrderList = [
-    {
-      id: 1,
-      label: 'Ascending',
-      value: 'asc',
-    },
-    {
-      id: 2,
-      label: 'Descending',
-      value: 'desc',
-    },
+    { id: 1, label: 'Ascending', value: 'asc' },
+    { id: 2, label: 'Descending', value: 'desc' },
   ]
-  useEffect(() => {
-    router.get('/bills/job-status', formData, {
-      preserveState: true,
-      replace: true,
-    })
-  }, [formData.sort_by, formData.sort_direction])
+
   return (
     <div>
       <form
@@ -80,9 +79,10 @@ export default function BillingJobStatusSearchForm({
             label='Group'
             value={formData.search}
             setValue={setFormValue('search')}
-            showClearButton={true}
-            placeholder='eg: Commericial'
+            showClearButton
+            placeholder='eg: Commercial'
           />
+
           <div className='mt-1'>
             <MonthPicker
               label='Billing Month From'
@@ -90,6 +90,7 @@ export default function BillingJobStatusSearchForm({
               setValue={setFormValue('billing_month_from')}
             />
           </div>
+
           <div className='mt-1'>
             <MonthPicker
               label='Billing Month To'
@@ -98,11 +99,22 @@ export default function BillingJobStatusSearchForm({
             />
           </div>
         </div>
+
         <div className='flex items-center gap-2'>
           <Button
             label='Reset'
             type='button'
             variant='secondary'
+            onClick={() =>
+              setAll({
+                search: '',
+                group: '',
+                billing_month_from: '',
+                billing_month_to: '',
+                sort_by: 'reading_year_month',
+                sort_direction: 'desc',
+              })
+            }
           />
           <Button
             label='Search'
@@ -110,7 +122,8 @@ export default function BillingJobStatusSearchForm({
           />
         </div>
       </form>
-      <div className='flex items-center justify-end gap-2'>
+
+      <div className='mt-4 flex items-center justify-end gap-2'>
         <SelectList
           label='Sort By'
           list={sortList}

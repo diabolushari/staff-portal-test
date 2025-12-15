@@ -86,3 +86,20 @@ export const formatDate = (date: Date | null) => {
   }
   return date.getFullYear() + '-' + month + '-' + day
 }
+
+export const getDisplayMonthYear = (date?: string | null) => {
+  if (!date) {
+    return ''
+  }
+  const splitTime = splitDateTime(date)
+  const datePart = splitTime.length === 2 ? splitTime[0] : date
+  const splitUpdDate = datePart.split('-')
+  if (splitUpdDate.length !== 3) {
+    return ''
+  }
+  const month = Number(splitUpdDate[1])
+  if (isNaN(month) || month < 1 || month > 12) {
+    return ''
+  }
+  return shortMonthNames[month - 1] + ' ' + splitUpdDate[0]
+}

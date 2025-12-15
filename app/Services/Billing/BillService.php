@@ -24,8 +24,9 @@ class BillService
 
     public function listBills(
         ?int $billingGroupId,
-        ?string $readingYearMonth,
-        ?string $billYearMonth
+        ?string $initializedDate,
+        ?string $billYearMonth,
+        ?string $readingYearMonth
     ): GrpcServiceResponse {
         $proto = new ListBillRequest();
         if ($billingGroupId) {
@@ -33,6 +34,9 @@ class BillService
         }
         if ($readingYearMonth) {
             $proto->setReadingYearMonth($readingYearMonth);
+        }
+        if ($initializedDate) {
+            $proto->setInitializedDate($initializedDate);
         }
         if ($billYearMonth) {
             $proto->setBillYearMonth($billYearMonth);

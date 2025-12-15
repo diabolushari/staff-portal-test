@@ -13,7 +13,9 @@ export default function BillingJobList({
 }: Props) {
   const handleView = (item: BillJobStatus) => {
     router.get(`/bills/job-status/${item.billing_group.billing_group_id}`, {
-      reading_year_month: item.reading_year_month,
+      initialized_date: item?.initilized_date,
+      bill_year_month: item?.bill_year_month,
+      reading_year_month: item?.reading_year_month,
     })
   }
   return (
@@ -24,10 +26,11 @@ export default function BillingJobList({
           month={job.reading_year_month}
           groupName={isGroupNameVisible ? job.billing_group.name : undefined}
           completed={job.total_bills}
-          total={job.total_bills}
-          exceptions={0}
+          total={job.total_connections}
           billYearMonth={job.bill_year_month}
           onView={() => handleView(job)}
+          initializedDate={job?.initilized_date}
+          exceptions={job.total_connections - job.total_bills}
         />
       ))}
     </div>

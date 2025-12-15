@@ -10,20 +10,20 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Mcp\Server\Methods\Initialize;
 
 class BillJobStatusController extends Controller
 {
 
     public function __construct(
-        
+
         private readonly BillingGenerateJobService $billingGenerateJobService,
         private readonly BillService $billService,
         private readonly BillingGroupService $billingGroupService,
-    )
-    {}
+    ) {}
 
     public function index(Request $request): Response
-    {   
+    {
         $pageNumber = $request->input('page', 1);
         $pageSize = $request->input('page_size', 5);
         $search = $request->input('search', null);
@@ -51,10 +51,34 @@ class BillJobStatusController extends Controller
     }
     public function show(int $billingGroupId, Request $request): Response
     {
-        $readingYearMonth = $request->input('reading_year_month') ?? null;
+        $initializedDate = $request->input('initialized_date') ?? null;
         $billingGroup = $this->billingGroupService->getBillingGroup($billingGroupId);
+        $readingYearMonth = $request->input('reading_year_month') ?? null;
+        $billYearMonth = $request->input('bill_year_month') ?? null;
 
-        $response = $this->billService->listBills($billingGroupId, $readingYearMonth, null);
+        if ($initializedDate == null && $readingYearMonth == null && $billYearMonth == null) {
+            $billGenerationJobStatus = $this->billingGenerateJobService->listPaginatedBillGenerationJobStatus(null, null, null, null, null, $billingGroupId, null);
+            $paginatedData = [];
+            if ($billGenerationJobStatus->data) {
+                $paginatedData = new LengthAwarePaginator(
+                    $billGenerationJobStatus->data['bill_generation_job_status'],
+                    $billGenerationJobStatus->data['total'],
+                    $billGenerationJobStatus->data['page_size'],
+                    $billGenerationJobStatus->data['page'],
+                    ['path' => request()->url()]
+                );
+            }
+            return Inertia::render('BillingCycle/BillJobStatusIndexPage', [
+                'bill_generation_job_status' => $paginatedData,
+                'filters' => [
+                    'search' => "",
+                    'sort_by' => "",
+                    'sort_direction' => "",
+                ],
+            ]);
+        }
+
+        $response = $this->billService->listBills($billingGroupId, $initializedDate, $billYearMonth, $readingYearMonth);
         return Inertia::render('BillingCycle/BillJobStatusShowPage', [
             'bills' => $response->data ?? [],
             'billing_group' => $billingGroup->data ?? [],

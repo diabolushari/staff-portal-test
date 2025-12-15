@@ -20,15 +20,16 @@ message BillGenerationJobStatusMessage {
   int64 total_bills = 3;
   string reading_year_month = 4;
   string bill_year_month = 5;
+  string initilized_date = 6;
 }
-
 
 // --------------------- GET REQUEST ---------------------
 
 message GetBillGenerationJobStatusRequest {
   int32 billing_group_id = 1;
-  optional string reading_year_month = 2;    // YYYY-MM
-  optional string bill_year_month = 3;       // YYYY-MM
+  optional string reading_year_month = 2;
+  optional string bill_year_month = 3;
+  optional string initilized_date = 4;
 }
 
 message GetBillGenerationJobStatusResponse {
@@ -56,7 +57,9 @@ message PaginatedBillGenerationJobStatusRequest {
   int32 page_size = 2;
   optional string search = 3;
   optional string sort_by = 4;          // optional sort field
-  optional string sort_direction = 5;   // "asc" / "desc"
+  optional string sort_direction = 5; 
+  optional int32 billing_group_id = 6;
+  optional string reading_year_month = 7;
 }
 
 message PaginatedBillGenerationJobStatusResponse {
