@@ -162,6 +162,7 @@ export interface Connection {
   service_office: Office | null
   meter_count?: number
   meter_mappings: MeterConnectionMapping[]
+consumer_profiles?:Consumer[]
 }
 
 export interface OfficeHierarchy {

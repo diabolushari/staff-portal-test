@@ -27,7 +27,6 @@ interface Props {
 }
 
 export default function TariffOrderIndexPage({ filters, tariffOrders }: Props) {
-  console.log(tariffOrders)
   return (
     <MainLayout
       breadcrumb={breadcrumb}

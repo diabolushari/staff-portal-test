@@ -113,7 +113,7 @@ export default function MeterReadingCreatePage({
     reading_end_date: editMode
       ? latestMeterReading?.reading_end_date
       : (getMonthEnd(getNextDay(latestMeterReading?.reading_end_date)) ?? ''),
-    reading_type: editMode ? latestMeterReading?.single_reading : '',
+    reading_type: editMode ? latestMeterReading?.single_reading : 'single_reading',
     anomaly_id: editMode ? latestMeterReading?.anomaly_id : 0,
     voltage_r: editMode ? latestMeterReading?.voltage_r : 0,
     voltage_y: editMode ? latestMeterReading?.voltage_y : 0,
@@ -125,6 +125,7 @@ export default function MeterReadingCreatePage({
     _method: editMode ? 'PUT' : undefined,
   })
 
+  console.log(formData)
   const { post, errors, loading } = useInertiaPost(
     editMode ? route('meter-reading.update', formData.id) : route('meter-reading.store'),
     {

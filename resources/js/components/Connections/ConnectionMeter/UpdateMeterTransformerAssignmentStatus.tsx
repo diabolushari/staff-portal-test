@@ -37,8 +37,6 @@ const UpdateMeterTransformerAssignmentStatus = ({
     setUpdate(false)
   }
 
-  console.log(ctpt)
-
   return (
     <Modal setShowModal={setUpdate}>
       <form
