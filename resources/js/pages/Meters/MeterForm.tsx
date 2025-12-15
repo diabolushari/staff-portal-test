@@ -109,7 +109,7 @@ export default function MeterForm({
       ...basePayload,
     })
   }
-  console.log(formData)
+
   useEffect(() => {
     const ctp = Number(formData.internal_ct_primary)
     const cts = Number(formData.internal_ct_secondary)

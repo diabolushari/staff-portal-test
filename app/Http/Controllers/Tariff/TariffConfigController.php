@@ -62,7 +62,7 @@ class TariffConfigController extends Controller
             1,
             10,
             null,
-            'Connections',
+            'Connection',
             'Tariff'
         );
 

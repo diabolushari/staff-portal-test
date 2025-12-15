@@ -117,8 +117,7 @@ export default function PartiesCreate({ partyTypes, partyStatus, party }: Partie
       <div className='grid grid-cols-1 items-start gap-4 md:grid-cols-2'>{children}</div>
     </div>
   )
-  console.log(partyTypes)
-  console.log(partyStatus)
+
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
