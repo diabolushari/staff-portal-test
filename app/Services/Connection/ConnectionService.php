@@ -104,6 +104,8 @@ class ConnectionService
         foreach ($connections as $connection) {
             $connectionArray[] = ConnectionProtoConverter::convertToArray($connection);
         }
+
+        
         $paginatedData = [
             'connections' => $connectionArray,
             'total_count' => $response->getTotalCount(),
