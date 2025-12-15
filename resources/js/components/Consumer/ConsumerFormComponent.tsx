@@ -31,6 +31,7 @@ export default function ConsumerFormComponent({
   connection_id,
   data,
 }: Props) {
+  console.log(consumer_types)
   let consumer = null
   let contact = null
   if (data) {

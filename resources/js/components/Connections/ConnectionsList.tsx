@@ -17,7 +17,6 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
     setSelectedDeleteConnection(connection)
     setShowDeleteModal(true)
   }
-  console.log(connections)
 
   return (
     <div className='relative w-full rounded-lg bg-white'>
@@ -36,7 +35,14 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
                       <div className='font-inter text-base leading-normal font-semibold text-black'>
                         Consumer Number: #{connection.consumer_number}
                       </div>
-                      <div className='rounded-[50px] bg-blue-100 px-2.5 py-px'></div>
+                      <div></div>
+                    </div>
+                    <div>
+                      {connection.consumer_profiles?.[0]?.organization_name && (
+                        <span className='font-inter text-base leading-normal font-semibold text-black'>
+                          Industry Name: {connection.consumer_profiles?.[0]?.organization_name}
+                        </span>
+                      )}
                     </div>
 
                     <div className='flex w-full items-center gap-5'>

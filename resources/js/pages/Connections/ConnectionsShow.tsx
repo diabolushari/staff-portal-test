@@ -29,7 +29,6 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
     ],
     [connection]
   )
-  console.log(connection)
 
   return (
     <ConnectionsLayout
@@ -78,6 +77,12 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                 label='Consumer Number'
                 value={connection?.consumer_number}
               />
+              {connection?.consumer_profiles?.[0]?.organization_name && (
+                <Field
+                  label='Industry Name'
+                  value={connection?.consumer_profiles?.[0]?.organization_name}
+                />
+              )}
               {connection?.consumer_legacy_code && (
                 <Field
                   label='Consumer Legacy Code'
