@@ -612,6 +612,22 @@ export interface BillJobStatus {
   total_connections: number
   total_bills: number
 }
+export interface BillJobGenerationStatus {
+  bill_job_generation_status_id: number
+  connection_id: number
+  reading_year_month: string
+  bill_year_month: string
+  bill_date: string
+  due_date: string
+  dc_date: string
+  initialized_date: string
+  exception: string
+  connection: Connection
+}
+export interface BillWithException {
+  bills: Bill[]
+  exceptions: BillJobGenerationStatus[]
+}
 
 export interface RegionOption {
   region_id: number | string
