@@ -607,6 +607,7 @@ export interface BillJobStatus {
   billing_group: BillingGroup
   reading_year_month: string
   bill_year_month: string
+  initilized_date: string
   total_connections: number
   total_bills: number
 }

@@ -1,13 +1,10 @@
-import BillingJobStatusList from '@/components/Billing/BillingCycle/BillJobStatusList'
-import BillingCycleList from '@/components/Billing/BillingCycle/BillJobStatusList'
 import BillingJobList from '@/components/Billing/BillingCycle/BillingJobList'
 import BillingJobStatusSearchForm from '@/components/Billing/BillingCycle/BillingJobStatusSearchForm'
 import { billingNavItems } from '@/components/Navbar/navitems'
-import { BillingGroup, BillJobStatus } from '@/interfaces/data_interfaces'
+import { BillJobStatus } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Pagination from '@/ui/Pagination/Pagination'
-import ListSearch from '@/ui/Search/ListSearch'
 import { Paginator } from '@/ui/ui_interfaces'
 
 interface Props {
@@ -27,6 +24,7 @@ export default function BillJobStatusIndexPage({ bill_generation_job_status, fil
       href: '/bills/job-status',
     },
   ]
+  console.log(bill_generation_job_status)
   return (
     <MainLayout
       breadcrumb={breadcrumb}
@@ -36,7 +34,7 @@ export default function BillJobStatusIndexPage({ bill_generation_job_status, fil
       selectedItem='Jobs'
     >
       <BillingJobStatusSearchForm filters={filters} />
-      {bill_generation_job_status && bill_generation_job_status.data.length > 0 ? (
+      {bill_generation_job_status && bill_generation_job_status?.data?.length > 0 ? (
         <>
           <BillingJobList billGenerationJobStatus={bill_generation_job_status?.data} />
           <Pagination

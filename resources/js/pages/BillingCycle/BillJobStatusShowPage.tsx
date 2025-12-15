@@ -14,16 +14,6 @@ interface Props {
 }
 
 export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
-  const breadcrumb: BreadcrumbItem[] = [
-    {
-      title: 'Billing Groups',
-      href: '/billing-groups',
-    },
-    {
-      title: 'Billing Group Bills',
-      href: '/billing-groups/bills',
-    },
-  ]
   const { formData, setFormValue } = useCustomForm({
     search: '',
   })
@@ -35,6 +25,17 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
   const handleViewBillClick = (bill: Bill) => {
     router.get(route('bills.show', bill?.bill_id))
   }
+  const breadcrumb: BreadcrumbItem[] = [
+    {
+      title: 'Billing Jobs',
+      href: '/bills/job-status',
+    },
+    {
+      title: `Bill Group ${billing_group?.name} Bills`,
+      href: `/bills/job-status/${billing_group?.billing_group_id}`,
+    },
+  ]
+
   return (
     <MainLayout
       breadcrumb={breadcrumb}

@@ -4,6 +4,7 @@ namespace App\Services\BillingGroup;
 
 use App\GrpcConverters\BillingGroup\BillingGroupProtoConvertor;
 use App\Services\Grpc\GrpcErrorService;
+use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
 use Proto\Bill\BillGenerationJobStatusMessage;
 use Proto\Bill\BillGenerationJobStatusServiceClient;
@@ -26,8 +27,7 @@ class BillingGenerateJobService
     public function listBillGenerationJobStatus(
         ?int $billingGroupId,
         ?string $readingYearMonth
-    ): GrpcServiceResponse
-    {
+    ): GrpcServiceResponse {
         $request = new ListBillGenerationJobStatusRequest();
         if ($billingGroupId) {
             $request->setBillingGroupId($billingGroupId);
@@ -63,9 +63,10 @@ class BillingGenerateJobService
         ?int $pageSize = 5,
         ?string $search = null,
         ?string $sortBy = null,
-        ?string $sortDirection = null
-    ): GrpcServiceResponse
-    {
+        ?string $sortDirection = null,
+        ?int $billingGroupId = null,
+        ?string $readingYearMonth = null,
+    ): GrpcServiceResponse {
         $request = new PaginatedBillGenerationJobStatusRequest();
         if ($pageNumber) {
             $request->setPageNumber($pageNumber);
@@ -81,6 +82,12 @@ class BillingGenerateJobService
         }
         if ($sortDirection) {
             $request->setSortDirection($sortDirection);
+        }
+        if ($billingGroupId) {
+            $request->setBillingGroupId($billingGroupId);
+        }
+        if ($readingYearMonth) {
+            $request->setReadingYearMonth($readingYearMonth);
         }
         [$response, $status] = $this->client->PaginatedListBillGenerationJobStatus($request)->wait();
         if ($status->code !== 0) {
@@ -124,8 +131,7 @@ class BillingGenerateJobService
             'total_bills' => $message->getTotalBills(),
             'reading_year_month' => $message->getReadingYearMonth(),
             'bill_year_month' => $message->getBillYearMonth(),
+            'initilized_date' => $message->getInitilizedDate(),
         ];
     }
-
-    
 }
