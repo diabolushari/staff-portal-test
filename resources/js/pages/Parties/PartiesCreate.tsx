@@ -21,8 +21,8 @@ interface PartiesFormData {
   party_code: string
   party_legacy_code: string
   name: string
-  party_type_id: number
-  status_id: number
+  party_type_id?: number
+  status_id?: number
   effective_start: string
   effective_end: string
   mobile_number: string
@@ -63,8 +63,8 @@ export default function PartiesCreate({ partyTypes, partyStatus, party }: Partie
     party_code: party?.party_code?.toString() ?? '',
     party_legacy_code: party?.party_legacy_code ?? '',
     name: party?.name ?? '',
-    party_type_id: party?.party_type_id ?? 1,
-    status_id: party?.status_id ?? 1,
+    party_type_id: party?.party_type_id,
+    status_id: party?.status_id,
     effective_start: toYMD(party?.effective_start),
     effective_end: toYMD(party?.effective_end),
     mobile_number: party?.mobile_number?.toString() ?? '',
@@ -75,7 +75,7 @@ export default function PartiesCreate({ partyTypes, partyStatus, party }: Partie
     __party_id: party?.party_id,
     __version_id: party?.version_id,
   })
-
+  console.log(formData)
   const { post, loading, errors } = useInertiaPost(
     isEditing ? `/parties/${formData.__version_id}` : '/parties'
   )
@@ -122,6 +122,7 @@ export default function PartiesCreate({ partyTypes, partyStatus, party }: Partie
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={consumerNavItems}
+      selectedItem='Parties'
     >
       <div className='p-6'>
         <Card>
@@ -153,6 +154,7 @@ export default function PartiesCreate({ partyTypes, partyStatus, party }: Partie
                   setValue={setFormValue('name')}
                   error={errors.name}
                 />
+
                 <SelectList
                   label='Party Type'
                   value={formData.party_type_id}
@@ -161,6 +163,7 @@ export default function PartiesCreate({ partyTypes, partyStatus, party }: Partie
                   dataKey='id'
                   displayKey='parameterValue'
                 />
+
                 <SelectList
                   label='Status'
                   value={formData.status_id}
