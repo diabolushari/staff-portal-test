@@ -16,12 +16,16 @@ class BillInitializeController extends Controller
     public function __invoke(BillInitializeFormRequest $request): RedirectResponse
     {
         $response = $this->billInitializeService->initializeBill($request);
+
         if ($response->hasError()) {
-            return $response->error ?? redirect()->back()->with(['error', "Something went wrong"]);
+            return $response->error ?? redirect()->back()->with(['error' => 'Something went wrong']);
         }
-        if ($response->data == null) {
-            return redirect()->back()->with(['error', "Failed to initialize bill"]);
-        }
-        return redirect()->back()->with(['message', "Bill initialized successfully"]);
+
+        return redirect()->route('job-status.show', [
+            'job_status' => $request->billingGroupId ?? null,
+            'bill_year_month' => $request->billMonthYear . '-01',
+            'reading_year_month' => $request->readingMonthYear . '-01',
+            'initialized_date' => now()->format('Y-m-d'),
+        ])->with(['message' => 'Bill initialized successfully']);
     }
 }
