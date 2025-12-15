@@ -46,8 +46,8 @@ class PartiesController extends Controller
 
 
         return Inertia::render('Parties/PartiesCreate', [
-            'partyTypes' => $partyTypes,
-            'partyStatus' => $partyStatus,
+            'partyTypes' => $partyTypes->data,
+            'partyStatus' => $partyStatus->data,
         ]);
     }
 
