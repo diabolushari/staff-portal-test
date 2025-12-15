@@ -146,25 +146,25 @@
           <table class="small-table">
             <tr>
               <td><strong>Cons#</strong></td>
-              <td class="mono">{{ $connection['consumer_number'] ?? '' }}</td>
+              <td class="mono">{{ $connection['consumer_number'] ?? '-' }}</td>
               <td><strong>Bill Date</strong></td>
-              <td>{{ $bill['bill_date'] ?? '' }}</td>
+              <td>{{ $bill['bill_date'] ?? '-' }}</td>
             </tr>
             <tr>
               <td><strong>Due Date</strong></td>
-              <td>{{ $bill['due_date'] ?? '' }}</td>
+              <td>{{ $bill['due_date'] ?? '-' }}</td>
               <td><strong>DC Date</strong></td>
-              <td>{{ $bill['dc_date'] ?? '' }}</td>
+              <td>{{ $bill['dc_date'] ?? '-' }}</td>
             </tr>
             <tr>
               <td><strong>LCN</strong></td>
-              <td>{{ $connection['consumer_legacy_code'] ?? '' }}</td>
+              <td>{{ $connection['consumer_legacy_code'] ?? '-' }}</td>
               <td><strong>Tariff</strong></td>
-              <td>{{ $connection['tariff']['parameter_value'] ?? '' }}</td>
+              <td>{{ $connection['tariff']['parameter_value'] ?? '-' }}</td>
             </tr>
             <tr>
               <td rowspan="4" style="width:55%">
-                <strong>{{ $consumer['organization_name'] }}</strong><br>
+                <strong>{{ $consumer['organization_name'] ?? '-' }}</strong><br>
                 KTDC Corporate Office, KTDC, Mascot square,<br>
                 THIRUVANANTHAPURAM<br>
                 Mobile: 9447556981
@@ -211,11 +211,11 @@
             </tr>
             <tr>
               <td><strong>Supply Voltage</strong></td>
-              <td>{{ $connection['voltage']['parameter_value'] ?? '' }}</td>
+              <td>{{ $connection['voltage']['parameter_value'] ?? '-' }}</td>
             </tr>
             <tr>
               <td><strong>Billing Type</strong></td>
-              <td>{{ $connection['billing_process']['parameter_value'] ?? '' }}</td>
+              <td>{{ $connection['billing_process']['parameter_value'] ?? '-' }}</td>
             </tr>
           </table>
         </td>
@@ -488,8 +488,8 @@
           <tr>
             {{-- Energy Consumption KVAh --}}
             <td>{{ $index + 1 }}</td> {{-- Zone number --}}
-            <td>{{ $kVAhRow['initial_reading'] }}</td>
-            <td>{{ $kVAhRow['final_reading'] }}</td>
+            <td>{{ $kVAhRow['initial_reading'] ?? '-' }}</td>
+            <td>{{ $kVAhRow['final_reading'] ?? '-' }}</td>
             <td>{{ $meter['meter_mf'] ?? 1 }}</td> {{-- MF, adjust if needed --}}
             <td class="right">{{ $kVAhRow['difference'] * ($meter['meter_mf'] ?? 1) }}</td>
             <td></td>
@@ -544,15 +544,15 @@
 
                     <tr>
                         <td>a. Contract Demand</td>
-                        <td class="center">{{ $demand['result']['value'] }}</td>
-                        <td class="right">{{ $computedProperties['KVA RATE']['result'] }}</td>
-                        <td class="right">{{ $computedProperties['Demand Charge']['result'] ?? 0 }}</td>
+                        <td class="center">{{ $demand['result']['value'] ?? '-' }}</td>
+                        <td class="right">{{ $computedProperties['KVA RATE']['result'] ?? '-' }}</td>
+                        <td class="right">{{ $computedProperties['Demand Charge']['result'] ?? '-' }}</td>
                     </tr>
                      <tr>
                         <td>b. Excess Demand Charge</td>
                         <td class="center">{{ 0 }}</td>
-                        <td class="right">{{ $computedProperties['KVA RATE']['result'] }}</td>
-                        <td class="right">{{ $computedProperties['EXCESS DEMAND CHARGE']['result'] ?? 0 }}</td>
+                        <td class="right">{{ $computedProperties['KVA RATE']['result'] ?? '-'}}</td>
+                        <td class="right">{{ $computedProperties['EXCESS DEMAND CHARGE']['result'] ?? '-' }}</td>
                     </tr>
 
 
@@ -568,9 +568,9 @@
                         @endphp
 
                         <tr>
-                            <td>{{ $label }}. Demand Charge - {{ $zone['timezone'] }}</td>
-                            <td class="center">{{ $unit }}</td>
-                            <td class="right">{{ $computedProperties['KVA RATE']['result'] }}</td>
+                            <td>{{ $label }}. Demand Charge - {{ $zone['timezone'] ?? '-' }}</td>
+                            <td class="center">{{ $unit ?? '-' }}</td>
+                            <td class="right">{{ $computedProperties['KVA RATE']['result'] ?? '-' }}</td>
                             <td class="right">{{ number_format($amount, 2) }}</td>
                         </tr>
                         
@@ -578,8 +578,8 @@
                     <tr>
                             <td>d. Excess Demand Charge</td>
                             <td class="center">{{ 0 }}</td>
-                            <td class="right">{{ $kvaRate }}</td>
-                            <td class="right">{{ $computedProperties['EXCESS DEMAND CHARGE']['result'] ?? 0 }}</td>
+                            <td class="right">{{ $kvaRate ?? '-' }}</td>
+                            <td class="right">{{ $computedProperties['EXCESS DEMAND CHARGE']['result'] ?? '-' }}</td>
                         </tr>
 
                 @endif
@@ -590,7 +590,7 @@
                     <td>Sub Total</td>
                     <td></td>
                     <td></td>
-                <td class="right">{{ $chargeHeads['TOTAL DEMAND CHARGE']['result'] ?? 0 }}</td>
+                <td class="right">{{ $chargeHeads['TOTAL DEMAND CHARGE']['result'] ?? '-' }}</td>
                 </tr>
 
                 <tr><td colspan="4"></td></tr>
@@ -631,7 +631,7 @@
               <td class="right">{{$chargeHeads['Power Factor Incentive and Disincentive']['result'] ?? 0}}</td>
             </tr>
             @php
-            $totalEnergyCharge = $chargeHeads['ENERGY CHARGE']['result'] + $chargeHeads['Power Factor Incentive and Disincentive']['result'] + $chargeHeads['TOTAL DEMAND CHARGE']['result'];
+            $totalEnergyCharge = $chargeHeads['ENERGY CHARGE']['result'] ?? 0 + $chargeHeads['Power Factor Incentive and Disincentive']['result'] ?? 0 + $chargeHeads['TOTAL DEMAND CHARGE']['result'] ?? 0;
             @endphp
             <tr class="total-row">
               <td>Total Energy Charge</td>
@@ -677,7 +677,7 @@
             </tr>
             <tr>
               <td>Monthly Fuel Surcharge</td>
-              <td class="right">{{ $chargeHeads['Monthly Fuel Surcharge']['result'] }}</td>
+              <td class="right">{{ $chargeHeads['Monthly Fuel Surcharge']['result'] ?? '-' }}</td>
             </tr>
             <tr>
               <td>Green Energy Charge</td>
@@ -691,11 +691,11 @@
 
             <tr>
               <td>Electricity Duty</td>
-              <td class="right">{{ $chargeHeads['Electricity Duty']['result'] }}</td>
+              <td class="right">{{ $chargeHeads['Electricity Duty']['result'] ?? '-' }}</td>
             </tr>
             <tr>
               <td>Ele. Surcharge</td>
-              <td class="right">{{ $chargeHeads['Electricity Surcharge']['result'] }}</td>
+              <td class="right">{{ $chargeHeads['Electricity Surcharge']['result'] ?? '-' }}</td>
             </tr>
 
             <tr class="total-row">

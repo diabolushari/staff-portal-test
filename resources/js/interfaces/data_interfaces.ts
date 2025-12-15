@@ -163,6 +163,7 @@ export interface Connection {
   meter_count?: number
   meter_mappings: MeterConnectionMapping[]
 consumer_profiles?:Consumer[]
+latest_meter_reading?: MeterReading
 }
 
 export interface OfficeHierarchy {
@@ -612,6 +613,22 @@ export interface BillJobStatus {
   initilized_date: string
   total_connections: number
   total_bills: number
+}
+export interface BillJobGenerationStatus {
+  bill_job_generation_status_id: number
+  connection_id: number
+  reading_year_month: string
+  bill_year_month: string
+  bill_date: string
+  due_date: string
+  dc_date: string
+  initialized_date: string
+  exception: string
+  connection: Connection
+}
+export interface BillWithException {
+  bills: Bill[]
+  exceptions: BillJobGenerationStatus[]
 }
 
 export interface RegionOption {

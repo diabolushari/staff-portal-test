@@ -2,6 +2,7 @@
 
 namespace App\Services\Billing;
 
+use App\GrpcConverters\Billing\BillJobGenerationStatusGrpcConverter;
 use App\GrpcConverters\Billing\BillProtoConverter;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
@@ -57,8 +58,17 @@ class BillService
             $bill = BillProtoConverter::convertToArray($bill);
             $billsArray[] = $bill;
         }
+        $billJobGenerationStatus = $response->getExceptions();
+        $billJobGenerationStatusArray = [];
+        foreach ($billJobGenerationStatus as $billJobGenerationStatus) {
+            $billJobGenerationStatus = BillJobGenerationStatusGrpcConverter::convertToArray($billJobGenerationStatus);
+            $billJobGenerationStatusArray[] = $billJobGenerationStatus;
+        }
 
-        return GrpcServiceResponse::success($billsArray, $response, $status->code, $status->details);
+        return GrpcServiceResponse::success([
+            'bills' => $billsArray,
+            'exceptions' => $billJobGenerationStatusArray,
+        ], $response, $status->code, $status->details);
     }
 
     public function getBill(int $id): GrpcServiceResponse
