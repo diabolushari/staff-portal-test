@@ -123,6 +123,7 @@ export default function PartiesCreate({ partyTypes, partyStatus, party }: Partie
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={consumerNavItems}
+      selectedItem='Parties'
     >
       <div className='p-6'>
         <Card>
