@@ -14,6 +14,7 @@
         "dompdf/dompdf": "^3.1",
         "google/common-protos": "^4.12",
         "google/protobuf": "^4.33",
+        "grpc/grpc": "^1.74",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
