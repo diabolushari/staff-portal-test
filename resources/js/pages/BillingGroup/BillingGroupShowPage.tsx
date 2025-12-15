@@ -18,6 +18,7 @@ import NormalText from '@/typography/NormalText'
 import BillingJobStatusList from '@/components/Billing/BillingCycle/BillJobStatusList'
 import BillingJobList from '@/components/Billing/BillingCycle/BillingJobList'
 import { router } from '@inertiajs/react'
+import { formatMeterReadingMonth } from '@/utils'
 
 export interface BillingGroupConnectionRelForm {
   billing_group_id: number
@@ -172,6 +173,17 @@ export default function BillingGroupShowPage({
                       <h4 className='text-sm text-gray-500'>Purpose</h4>
                       <p className='text-lg'>
                         {conn?.connection?.primary_purpose?.parameter_value}
+                      </p>
+                    </div>
+                  </Card>
+                  <Card>
+                    <div>
+                      <h4 className='text-sm text-gray-500'>Latest Meter Reading</h4>
+                      <p className='text-lg font-semibold'>
+                        {formatMeterReadingMonth(
+                          conn?.connection?.latest_meter_reading?.reading_start_date,
+                          conn?.connection?.latest_meter_reading?.reading_end_date
+                        )}
                       </p>
                     </div>
                   </Card>

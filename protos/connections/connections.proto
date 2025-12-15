@@ -14,6 +14,7 @@ import "parameters/parameter-value.proto";
 import "consumers/office.proto";
 import "metering/meter_connection_mapping.proto";
 import "connections/consumer.proto";
+import "meterreading/meter_reading.proto";
 
 // Connection table
 message ConnectionMessage {
@@ -71,7 +72,8 @@ message ConnectionMessage {
   com.kseb.consumerservice.proto.parameters.ParameterValueProto billing_process = 52;
   optional com.kseb.consumerservice.grpc.consumers.OfficeMessage admin_office = 53;
   optional com.kseb.consumerservice.grpc.consumers.OfficeMessage service_office = 54;
-  repeated com.kseb.consumerservice.grpc.connections.ConsumerMessage consumer_profile = 55;
+ repeated com.kseb.consumerservice.grpc.connections.ConsumerMessage consumer_profile = 55;
+  optional com.kseb.consumerservice.proto.meterreading.MeterReadingMessage latest_meter_reading = 56;
 
 }
 

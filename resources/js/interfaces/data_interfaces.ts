@@ -163,6 +163,7 @@ export interface Connection {
   meter_count?: number
   meter_mappings: MeterConnectionMapping[]
 consumer_profiles?:Consumer[]
+latest_meter_reading?: MeterReading
 }
 
 export interface OfficeHierarchy {

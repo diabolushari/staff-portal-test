@@ -103,3 +103,16 @@ export const getDisplayMonthYear = (date?: string | null) => {
   }
   return shortMonthNames[month - 1] + ' ' + splitUpdDate[0]
 }
+import dayjs from 'dayjs'
+
+export const formatMeterReadingMonth = (
+  startDate?: string,
+  endDate?: string
+) => {
+  if (!startDate || !endDate) return '-'
+
+  const start = dayjs(startDate)
+  const end = dayjs(endDate)
+
+  return start.format('MMMM YYYY')
+}
