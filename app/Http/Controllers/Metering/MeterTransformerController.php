@@ -68,8 +68,8 @@ class MeterTransformerController extends Controller
     public function create(): Response|RedirectResponse
     {
         $parameterRequests = [
-            'ownershipTypes' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Ownership Type')->data,
-            'accuracyClasses' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Accuracy Class')->data,
+            'ownershipTypes' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Ownership Type')->data,
+            'accuracyClasses' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Accuracy Class')->data,
             'burdens' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Burden')->data,
             'makes' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Make')->data,
             'types' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Type')->data,
