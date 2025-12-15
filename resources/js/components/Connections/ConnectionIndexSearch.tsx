@@ -17,7 +17,7 @@ const ConnectionIndexSearch = ({ oldConsumerNumber, oldOffice }: Readonly<Props>
     consumer_number: oldConsumerNumber ?? '',
     office_code: oldOffice?.office_code ?? '',
   })
-  console.log(oldOffice)
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 

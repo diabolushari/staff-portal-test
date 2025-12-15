@@ -49,7 +49,7 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
       href: route('connection.consumer', connection?.connection_id),
     },
   ]
-  console.log(consumer)
+
   return (
     <ConnectionsLayout
       connection={connection}

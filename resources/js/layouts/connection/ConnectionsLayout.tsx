@@ -22,7 +22,7 @@ interface ConnectionsLayoutProps {
   meterExist?: boolean
 }
 
-const connectionTabs = (connection?: Connection) => [
+const connectionTabs = (connection?: Connection | null) => [
   {
     value: 'connection',
     label: 'Connection Details',
@@ -114,7 +114,6 @@ export default function ConnectionsLayout({
   value,
   subTabValue,
   heading,
-  subHeading,
   onEdit,
 }: Readonly<ConnectionsLayoutProps>) {
   return (

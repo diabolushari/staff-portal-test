@@ -19,7 +19,7 @@ export default function ConnectionParties({
   connection_parties,
 }: ConnectionPartiesProps) {
   const [addPartiesModal, setAddPartiesModal] = useState(false)
-  console.log(connection_parties)
+
   return (
     <ConnectionsLayout
       breadcrumbs={[]}

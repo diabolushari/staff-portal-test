@@ -1,7 +1,6 @@
 import ConnectionCardSection from '@/components/Connections/ConnectionMeter/ConnectionCardSection'
 import {
   Connection,
-  Meter,
   MeterConnectionMapping,
   MeterTransformerAssignment,
 } from '@/interfaces/data_interfaces'
@@ -10,7 +9,7 @@ import { BreadcrumbItem } from '@/types'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import { router } from '@inertiajs/react'
 import { Cpu, Plus } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { consumerNavItems } from '../../components/Navbar/navitems'
 import ConnectionMeterUpdateModal from '@/components/Connections/ConnectionMeter/ConnectionMeterUpdateModal'
 import { ParameterValues } from '@/interfaces/parameter_types'
@@ -85,8 +84,6 @@ export default function ConnectionMeterList({
     setMeter(null)
     setIsStatusChange(false)
   }
-  console.log(ctpt_change_reason)
-  console.log(ctpt_status)
 
   return (
     <ConnectionsLayout

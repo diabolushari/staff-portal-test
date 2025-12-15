@@ -80,7 +80,7 @@ class TariffConfigController extends Controller
             return redirect()->back()->with('error', $response->error);
         }
 
-        return redirect()->route('tariff-orders.show', $request->tariffOrderId);
+        return redirect()->route('tariff-orders.show', $request->tariffOrderId)->with('message', 'Tariff config added successfully');
     }
 
     public function show(Request $request): Response
@@ -117,7 +117,8 @@ class TariffConfigController extends Controller
             return redirect()->back()->with('error', $response->error);
         }
 
-        return redirect()->route('tariff-orders.show', $request->tariffOrderId);
+        return redirect()->route('tariff-orders.show', $request->tariffOrderId)
+            ->with('message', 'Tariff config updated successfully');
     }
 
     public function destroy(Request $request, int $id): RedirectResponse

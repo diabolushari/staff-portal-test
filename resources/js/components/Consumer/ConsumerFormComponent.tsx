@@ -7,7 +7,7 @@ import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
-import { Address, RegionOption } from '@/interfaces/data_interfaces'
+import { RegionOption } from '@/interfaces/data_interfaces'
 import { useState } from 'react'
 import { Card } from '../ui/card'
 import ConsumerContactFolioModal from './ConsumerContactFolioModal'
@@ -59,7 +59,6 @@ export default function ConsumerFormComponent({
     pincode: primary?.pincode ?? '',
     district_id: primary?.district_id ?? '',
     state_id: primary?.state_id ?? '',
-    consumer_cin: consumer?.consumer_cin ?? '',
     seasonal_ind: consumer?.seasonal_ind ?? false,
     license_ind: consumer?.license_ind ?? false,
     open_access_ind: consumer?.open_access_ind ?? false,
@@ -180,12 +179,7 @@ export default function ConsumerFormComponent({
               value={formData.consumer_gstin}
               error={errors?.consumer_gstin}
             />
-            <Input
-              label='Consumer CIN'
-              setValue={setFormValue('consumer_cin')}
-              value={formData.consumer_cin}
-              error={errors?.consumer_cin}
-            />
+
             <CheckBox
               label='TDS on GST'
               toggleValue={toggleBoolean('income_tax_withholding_ind')}
@@ -201,11 +195,11 @@ export default function ConsumerFormComponent({
               toggleValue={toggleBoolean('seasonal_ind')}
               value={formData.seasonal_ind}
             />
-            <CheckBox
+            {/* <CheckBox
               label='License'
               toggleValue={toggleBoolean('license_ind')}
               value={formData.license_ind}
-            />
+            /> */}
             <CheckBox
               label='Open Access'
               toggleValue={toggleBoolean('open_access_ind')}
