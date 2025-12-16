@@ -1,6 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { showSuccess } from '@/ui/alerts'
+import { BillingGroup } from '@/interfaces/data_interfaces'
 import Button from '@/ui/button/Button'
 import DatePicker from '@/ui/form/DatePicker'
 import MonthPicker from '@/ui/form/MonthPicker'
@@ -11,14 +11,17 @@ interface BillInitializeModalProps {
   setShowModal: (show: boolean) => void
   showModal: boolean
   selectedConnections: number[]
+  billingGroup: BillingGroup
 }
 
 export default function BillInitializeModal({
   setShowModal,
   showModal,
   selectedConnections,
+  billingGroup,
 }: BillInitializeModalProps) {
   const { formData, setFormValue } = useCustomForm({
+    billing_group_id: billingGroup.billing_group_id,
     connection_ids: selectedConnections,
     bill_month_year: '',
     reading_month_year: '',
@@ -46,6 +49,7 @@ export default function BillInitializeModal({
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     route('billing-group.initialize-bill'),
     {
+      showErrorToast: true,
       onComplete: () => {
         setShowModal(false)
       },
@@ -53,8 +57,10 @@ export default function BillInitializeModal({
   )
 
   const handleSubmitBill = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     post(formData)
   }
+
   return (
     <Modal
       title='Initialize Bill'

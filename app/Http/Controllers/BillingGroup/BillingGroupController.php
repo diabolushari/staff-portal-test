@@ -28,7 +28,7 @@ class BillingGroupController extends Controller
         $sortBy = $request->input('sort_by') ?? null;
         $sortDirection = $request->input('sort_direction') ?? null;
         $response = $this->billingGroupService->listPaginatedBillingGroups($pageNumber, $pageSize, $search, $sortBy, $sortDirection);
-        
+
         $paginated = null;
         if (! empty($response->data)) {
             $paginated = new LengthAwarePaginator(
@@ -89,6 +89,11 @@ class BillingGroupController extends Controller
         $search = $request->get('search');
         $response = $this->billingGroupService->getBillingGroup(null, $id);
         $billingGenerateJobServiceResponse = $this->billingGenerateJobService->listBillGenerationJobStatus($id, null);
+
+        if ($response->hasError()) {
+            return $response->error ?? redirect()->back()->with(['error' => 'Failed to get billing group']);
+        }
+
 
         return Inertia::render('BillingGroup/BillingGroupShowPage', [
             'billingGroup' => $response->data ?? null,

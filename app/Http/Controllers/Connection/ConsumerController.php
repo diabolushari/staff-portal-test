@@ -32,7 +32,7 @@ class ConsumerController extends Controller
             1,
             10,
             null,
-            'Connections',
+            'Connection',
             'Consumer Type'
         );
         $districts = $this->geoRegionsService->getGeoRegions(
@@ -43,7 +43,7 @@ class ConsumerController extends Controller
             'Administrative',
             'State'
         );
-        Log::info('consumer types', $consumerTypes);
+
         return Inertia::render('Consumer/ConsumerForm', [
             'consumer_types' => $consumerTypes->data,
             'districts' => $districts->data,
@@ -71,7 +71,7 @@ class ConsumerController extends Controller
             1,
             10,
             null,
-            'Connections',
+            'Connection',
             'Consumer Type'
         );
         $districts = $this->geoRegionsService->getGeoRegions(
