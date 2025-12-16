@@ -34,7 +34,7 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
       href: `/bills/job-status/${billing_group?.billing_group_id}`,
     },
   ]
-
+  console.log(bills)
   return (
     <MainLayout
       breadcrumb={breadcrumb}
@@ -78,7 +78,9 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
               <div className='grid grid-cols-2 gap-4 bg-gray-200 px-6 py-4'>
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <p className='font-medium text-gray-700'>{bill?.consumer?.organization_name}</p>
+                    <p className='font-medium text-gray-700'>
+                      {bill?.connection?.consumer_profiles?.[0]?.organization_name ?? '-'}
+                    </p>
                     <p className='text-xs text-gray-500'>Name</p>
                   </div>
 
@@ -173,7 +175,7 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
 
                     <div>
                       <p className='font-medium text-gray-800'>
-                        {ex.connection?.consumer?.organization_name}
+                        {ex.connection?.consumer_profiles?.[0]?.organization_name}
                       </p>
                       <p className='text-xs text-gray-500'>Consumer Name</p>
                     </div>
