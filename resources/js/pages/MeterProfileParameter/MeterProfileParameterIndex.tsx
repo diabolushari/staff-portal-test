@@ -1,14 +1,15 @@
+import MeterProfileParameterList from '@/components/MeterProfileParameter/MeterProfileParameterList'
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
-import { Card } from '@/components/ui/card'
 import { MeterProfileParameter } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
+import Pagination from '@/ui/Pagination/Pagination'
 import ListSearch from '@/ui/Search/ListSearch'
-import { router } from '@inertiajs/react'
+import { Paginator } from '@/ui/ui_interfaces'
 
 interface Props {
   oldSearch: string
-  meterProfileParameters: MeterProfileParameter[]
+  meterProfileParameters: Paginator<MeterProfileParameter>
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -40,19 +41,15 @@ const MeterProfileParameterIndex = ({ oldSearch, meterProfileParameters }: Props
           url={route('meter-profile-parameter.index')}
           search={oldSearch}
         />
-        {meterProfileParameters.map((meterProfileParameter) => (
-          <Card
-            className='gap-3 p-4'
-            key={meterProfileParameter.id}
-            onClick={() => {
-              router.get(
-                route('meter-profile-parameter.edit', meterProfileParameter.meter_parameter_id)
-              )
-            }}
-          >
-            <p className='font-semibold'>{meterProfileParameter.name}</p>
-          </Card>
-        ))}
+        {meterProfileParameters && (
+          <>
+            <MeterProfileParameterList meterProfileParameters={meterProfileParameters.data} />
+            <Pagination
+              pagination={meterProfileParameters}
+              filters={{ search: oldSearch }}
+            />
+          </>
+        )}
       </div>
     </MainLayout>
   )

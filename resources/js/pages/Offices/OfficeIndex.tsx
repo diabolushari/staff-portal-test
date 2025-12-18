@@ -29,7 +29,6 @@ interface Props {
 }
 
 export default function OfficeIndex({ offices, filters }: Readonly<Props>) {
-  console.log(offices)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}

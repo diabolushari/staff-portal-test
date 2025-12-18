@@ -7,7 +7,9 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
+use Proto\MeteringProfile\DeleteMeteringProfileParameterRequest;
 use Proto\MeteringProfile\GetMeteringProfileParameterRequest;
+use Proto\MeteringProfile\ListMeteringProfileParametersPaginatedRequest;
 use Proto\MeteringProfile\ListMeteringProfileParametersRequest;
 use Proto\MeteringProfile\MeteringProfileParameterFormRequest;
 use Proto\MeteringProfile\MeteringProfileParameterMessage;
@@ -24,6 +26,52 @@ class MeteringParameterProfileService
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
         );
+    }
+
+       public function listPaginatedMeteringProfileParameters(
+        int $pageNumber = 1,
+        int $pageSize = 10,
+        ?string $sortBy = null,
+        ?string $sortDirection = null,
+        ?string $search = null,
+    ): GrpcServiceResponse {
+        $request = new ListMeteringProfileParametersPaginatedRequest();
+        $request->setPageNumber($pageNumber);
+        $request->setPageSize($pageSize);
+        
+        if ($sortBy !== null) {
+            $request->setSortBy($sortBy);
+        }
+        
+        if ($search !== null) {
+            $request->setSearch($search);
+        }
+        
+        
+       
+        [$response, $status] = $this->client->ListMeteringProfileParametersPaginated($request)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $meteringParameterProfilesArray = [];
+        foreach ($response->getProfiles() as $detail) {
+            $meteringParameterProfilesArray[] = self::toArray($detail);
+        }
+        $meteringParameterProfilesData = [
+            'metering_parameter_profiles' => $meteringParameterProfilesArray,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ];
+
+        return GrpcServiceResponse::success($meteringParameterProfilesData, $response, $status->code, $status->details);
     }
 
     public function listMeteringProfileParameters(int $page = 1, int $pageSize = 10, ?string $search = null, ?int $profileId = null): GrpcServiceResponse
@@ -134,6 +182,25 @@ class MeteringParameterProfileService
         }
 
 
+
+        return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
+    }
+
+    public function deleteMeterProfileParameter(int $id): GrpcServiceResponse
+    {
+        $request = new DeleteMeteringProfileParameterRequest();
+        $request->setId($id);
+
+        [$response, $status] = $this->client->DeleteMeteringProfileParameter($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
 
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
     }

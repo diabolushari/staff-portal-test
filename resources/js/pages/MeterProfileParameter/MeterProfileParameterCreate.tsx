@@ -49,7 +49,6 @@ const MeterProfileParameterCreate = ({ profiles, meterProfileParameter }: Props)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(formData, meterProfileParameter)
     meterProfileParameter ? post({ ...formData, _method: 'PUT' }) : post(formData)
   }
 
