@@ -636,3 +636,16 @@ export interface RegionOption {
   region_name: string
   [key: string]: unknown
 }
+
+
+export interface MeterProfileParameter{
+  display_name:string
+  id:number
+  is_active:boolean
+  is_cumulative:boolean
+  is_export:boolean
+  meter_parameter_id:number
+  name:string
+  profile:ParameterValue|null
+  profile_id:number
+}

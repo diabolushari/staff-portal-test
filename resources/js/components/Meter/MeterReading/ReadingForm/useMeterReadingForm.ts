@@ -7,6 +7,23 @@ import {
 import { showError } from '@/ui/alerts'
 import { useCallback, useEffect, useState } from 'react'
 
+
+const isValidMeterReading = (
+  value: string,
+  intDigits: number,
+  decDigits: number
+) => {
+  if (value === '') return true
+
+  const regex =
+    decDigits > 0
+      ? new RegExp(`^\\d{0,${intDigits}}(\\.\\d{0,${decDigits}})?$`)
+      : new RegExp(`^\\d{0,${intDigits}}$`)
+
+  return regex.test(value)
+}
+
+
 export interface MeterReadingFormState {
   meter_id: number
   parameters: {
@@ -149,6 +166,17 @@ export default function useMeterReadingForm(
         showError('Meter not found')
         return
       }
+
+    const digit_count = meterInfo.meter.digit_count ?? 0
+    const decimal_digit_count = meterInfo.meter.decimal_digit_count ?? 0
+
+    // HARD validation (final authority)
+    if (!isValidMeterReading(value, digit_count, decimal_digit_count)) {
+      showError(
+        `Max ${digit_count} digits and ${decimal_digit_count} decimals allowed`
+      )
+      return
+    }
       setReadingValues((prev) => {
         return prev.map((meterReading) => {
           if (meterReading.meter_id !== meterId) {

@@ -244,7 +244,7 @@ export default function MeterReadingCreatePage({
             {activeStep >= 0 && (
               <Button
                 type='button'
-                variant='outline'
+                variant='secondary'
                 onClick={() => setActiveStep(activeStep - 1)}
                 label='Back'
                 disabled={activeStep === 0}

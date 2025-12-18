@@ -161,6 +161,11 @@ export const meteringBillingNavItems: navItem[] = [
     icon: '',
   },
   {
+    title: 'Meter Profile Parameters',
+    href: '/meter-profile-parameter',
+    icon: '',
+  },
+  {
     title: 'Tariffs',
     href: '/tariff-orders',
     icon: '',

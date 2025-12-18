@@ -45,7 +45,9 @@ use App\Http\Controllers\Metering\MeterTimezoneTypeRelController;
 use App\Http\Controllers\Metering\MeterTransfomerCreateController;
 use App\Http\Controllers\Metering\MeterTransformerController;
 use App\Http\Controllers\Metering\MeterTransformerRelController;
+use App\Http\Controllers\MeteringProfileParameter\MeteringProfileParameterController;
 use App\Http\Controllers\MeteringTimezone\MeteringTimezoneController;
+use App\Http\Controllers\MeterProfileParameter\MeterProfileParameterController;
 use App\Http\Controllers\MeterReading\GetMeterReadingEditController;
 use App\Http\Controllers\MeterReading\GetMeterReadingWithConnectionController;
 use App\Http\Controllers\MeterTransformer\ChangeMeterTransformerAssignmentController;
@@ -144,6 +146,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('update-meter-transformer-assignment-status', UpdateMeterTransformerAssignmentStatusController::class)
         ->name('update-meter-transformer-assignment-status');
+
+
+    Route::resource('meter-profile-parameter',MeterProfileParameterController::class);
+
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
