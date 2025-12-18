@@ -16,42 +16,35 @@ import "parameters/parameter-value.proto";
 message MeteringProfileParameterMessage {
   int64 version_id = 1;
   int64 profile_id = 2;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 3;
+  string name = 3;
+  string display_name = 4;
+  bool is_export = 5;
+  google.protobuf.Timestamp effective_start_date = 6;
+  google.protobuf.Timestamp effective_end_date = 7;
+  int32 created_by = 8;
+  int32 updated_by = 9;
+  bool is_active = 10;
+  int64 meter_parameter_id = 11;
+  bool is_cumulative = 12;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 13;
+}
 
+// Create
+message MeteringProfileParameterFormRequest {
+  optional int64 version_id = 1; // (not required for creating,updating)
+  optional int64 meter_parameter_id = 2; // (required this for updating)
+  int64 profile_id = 3;
   string name = 4;
   string display_name = 5;
   bool is_export = 6;
-  google.protobuf.Timestamp effective_start_date = 7;
-  google.protobuf.Timestamp effective_end_date = 8;
-  int32 created_by = 9;
-  int32 updated_by = 10;
-  bool is_active = 11;
-  int64 meter_parameter_id = 12;
-  bool is_cumulative = 13;
-}
-
-// ----------- REQUEST/RESPONSE MESSAGES ----------
-
-// Create
-message CreateMeteringProfileParameterRequest {
-  int64 profile_id = 1;
-  string name = 2;
-  string display_name = 3;
-  bool is_export = 4;
-  int32 created_by = 5;
+  bool is_cumulative = 7; // (if single reading needed. in this case we dont need to calculate inital and final values)
+  optional int32 created_by = 8; //(user id)
+  optional int32 updated_by = 9; //(user id)
 }
 message CreateMeteringProfileParameterResponse {
   MeteringProfileParameterMessage profile = 1;
 }
 
-message UpdateMeteringProfileParameterRequest {
-  int64 version_id = 1;
-  int64 profile_id = 2;
-  string name = 3;
-  string display_name = 4;
-  bool is_export = 5;
-  int32 updated_by = 6;
-}
 message UpdateMeteringProfileParameterResponse {
   MeteringProfileParameterMessage profile = 1;
 }
@@ -65,6 +58,7 @@ message GetMeteringProfileParameterResponse {
 
 message DeleteMeteringProfileParameterRequest {
   int64 id = 1;
+  optional int32 deleted_by = 2;
 }
 message DeleteMeteringProfileParameterResponse {
   bool success = 1;
@@ -81,11 +75,29 @@ message ListMeteringProfileParametersResponse {
   repeated MeteringProfileParameterMessage profiles = 1;
 }
 
+message ListMeteringProfileParametersPaginatedRequest {
+  int32 page_number = 1;
+  int32 page_size = 2;
+  optional string search = 3;
+  optional string sort_by = 4;// "name" , "display_name" , "created_ts"       
+  optional string sort_direction = 5; // "asc" , "desc"
+  optional int64 profile_id = 6; 
+}
+
+message ListMeteringProfileParametersPaginatedResponse {
+  repeated MeteringProfileParameterMessage profiles = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
 // ----------- SERVICE ------------
 service MeteringProfileParameterService {
-  rpc CreateMeteringProfileParameter (CreateMeteringProfileParameterRequest) returns (CreateMeteringProfileParameterResponse);
-  rpc UpdateMeteringProfileParameter (UpdateMeteringProfileParameterRequest) returns (UpdateMeteringProfileParameterResponse);
+  rpc CreateMeteringProfileParameter (MeteringProfileParameterFormRequest) returns (CreateMeteringProfileParameterResponse);
+  rpc UpdateMeteringProfileParameter (MeteringProfileParameterFormRequest) returns (UpdateMeteringProfileParameterResponse);
   rpc GetMeteringProfileParameter    (GetMeteringProfileParameterRequest)    returns (GetMeteringProfileParameterResponse);
   rpc DeleteMeteringProfileParameter (DeleteMeteringProfileParameterRequest) returns (DeleteMeteringProfileParameterResponse);
   rpc ListMeteringProfileParameters  (ListMeteringProfileParametersRequest)  returns (ListMeteringProfileParametersResponse);
+  rpc ListMeteringProfileParametersPaginated      (ListMeteringProfileParametersPaginatedRequest)      returns (ListMeteringProfileParametersPaginatedResponse);
 }

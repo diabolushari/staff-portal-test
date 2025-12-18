@@ -2,11 +2,14 @@
 
 namespace App\Services\Metering;
 
+use App\Http\Requests\MeterProfileParameter\MeterProfileParameterFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
+use Proto\MeteringProfile\GetMeteringProfileParameterRequest;
 use Proto\MeteringProfile\ListMeteringProfileParametersRequest;
+use Proto\MeteringProfile\MeteringProfileParameterFormRequest;
 use Proto\MeteringProfile\MeteringProfileParameterMessage;
 use Proto\MeteringProfile\MeteringProfileParameterServiceClient;
 
@@ -54,6 +57,79 @@ class MeteringParameterProfileService
         }
 
         return GrpcServiceResponse::success($meteringParameterProfilesArray, $response, $status->code, $status->details);
+    }
+
+    public function createMeterProfileParameter(MeterProfileParameterFormRequest $meterProfileParameterFormRequest): GrpcServiceResponse
+    {
+        $request = new MeteringProfileParameterFormRequest();
+
+        
+        $request->setProfileId($meterProfileParameterFormRequest->profileId);
+        $request->setName($meterProfileParameterFormRequest->name);
+        $request->setDisplayName($meterProfileParameterFormRequest->displayName);
+        $request->setIsExport($meterProfileParameterFormRequest->isExport);
+        $request->setIsCumulative($meterProfileParameterFormRequest->isCumulative);
+        
+
+        [$response, $status] = $this->client->CreateMeteringProfileParameter($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response, $status->code, $status->details
+            );
+        }
+
+      
+
+        return GrpcServiceResponse::success(null,$response, $status->code, $status->details);
+    }
+
+    public function getMeterProfileParameter(int $id): GrpcServiceResponse
+    {
+        $request = new GetMeteringProfileParameterRequest();
+        $request->setId($id);
+
+        [$response, $status] = $this->client->GetMeteringProfileParameter($request)->wait();
+     
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response, $status->code, $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success(self::toArray($response->getProfile()), $response, $status->code, $status->details);
+    }
+
+    public function updateMeterProfileParameter(MeterProfileParameterFormRequest $meterProfileParameterFormRequest, int $id): GrpcServiceResponse
+    {
+        $request = new MeteringProfileParameterFormRequest();
+
+        
+        $request->setProfileId($meterProfileParameterFormRequest->profileId);
+        $request->setName($meterProfileParameterFormRequest->name);
+        $request->setDisplayName($meterProfileParameterFormRequest->displayName);
+        $request->setIsExport($meterProfileParameterFormRequest->isExport);
+        $request->setIsCumulative($meterProfileParameterFormRequest->isCumulative);
+        $request->setMeterParameterId($id);
+       
+        
+
+        [$response, $status] = $this->client->UpdateMeteringProfileParameter($request)->wait();
+        dd($response);
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response, $status->code, $status->details
+            );
+        }
+
+      
+
+        return GrpcServiceResponse::success(null,$response, $status->code, $status->details);
     }
 
     /**

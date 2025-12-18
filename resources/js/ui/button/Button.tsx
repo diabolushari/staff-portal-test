@@ -97,7 +97,7 @@ export default function Button({
           disabled={disabled}
           className={cn(
             'lgButtonText flex items-center justify-center px-10 py-2 tracking-wider capitalize transition duration-150' +
-              ' ease-in-out focus:ring-4 focus:outline-hidden',
+              ' cursor-pointer ease-in-out focus:ring-4 focus:outline-hidden',
             buttonStyle
           )}
           type={type}

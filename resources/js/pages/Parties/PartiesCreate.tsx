@@ -161,7 +161,7 @@ export default function PartiesCreate({ partyTypes, partyStatus, party }: Partie
                   setValue={setFormValue('party_type_id')}
                   list={partyTypes}
                   dataKey='id'
-                  displayKey='parameterValue'
+                  displayKey='parameter_value'
                 />
 
                 <SelectList
@@ -170,7 +170,7 @@ export default function PartiesCreate({ partyTypes, partyStatus, party }: Partie
                   setValue={setFormValue('status_id')}
                   list={partyStatus}
                   dataKey='id'
-                  displayKey='parameterValue'
+                  displayKey='parameter_value'
                 />
               </>
             )}
