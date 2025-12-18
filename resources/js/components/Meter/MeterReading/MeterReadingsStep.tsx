@@ -53,6 +53,7 @@ export default function MeterReadingsStep({
     }
   }, [activeProfile, setIsOnParameterForm])
 
+  console.log(metersWithTimezonesAndProfiles)
   return (
     <div className='flex flex-col gap-6'>
       {metersWithTimezonesAndProfiles.map((meter, mIdx) => (

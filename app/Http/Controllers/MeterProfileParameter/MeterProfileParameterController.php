@@ -22,9 +22,9 @@ class MeterProfileParameterController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request):Response|RedirectResponse
+    public function index(Request $request): Response|RedirectResponse
     {
-       
+
         $search = $request->input('search') ?? null;
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 10;
@@ -35,6 +35,8 @@ class MeterProfileParameterController extends Controller
         $response = $this->meterProfileParameterService->listPaginatedMeteringProfileParameters(
             $pageNumber,
             $pageSize,
+            null,
+            null,
             $search,
         );
 
@@ -59,7 +61,7 @@ class MeterProfileParameterController extends Controller
             ]);
         }
 
-       
+
 
         return Inertia::render('MeterProfileParameter/MeterProfileParameterIndex', [
             'meterProfileParameters' => $paginated ?? [],
@@ -67,17 +69,17 @@ class MeterProfileParameterController extends Controller
                 'code' => $response->statusCode,
                 'details' => $response->statusDetails,
             ],
-            'oldSearch'=>$request->input('search'),
+            'oldSearch' => $request->input('search'),
         ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create():Response
+    public function create(): Response
     {
 
-        $profiles= $this->parameterValueService->getParameterValues(null,null,null,'Meter','Meter Profile');
+        $profiles = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile');
 
         return Inertia::render('MeterProfileParameter/MeterProfileParameterCreate', [
             'profiles' => $profiles->data,
@@ -105,7 +107,7 @@ class MeterProfileParameterController extends Controller
             'message' => 'Meter profile parameter created successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,
-                'details' => $response->statusDetails,  
+                'details' => $response->statusDetails,
             ],
         ]);
     }
@@ -113,7 +115,7 @@ class MeterProfileParameterController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(int $id):Response|RedirectResponse
+    public function edit(int $id): Response|RedirectResponse
     {
         $response = $this->meterProfileParameterService->getMeterProfileParameter($id);
 
@@ -127,7 +129,7 @@ class MeterProfileParameterController extends Controller
             ]);
         }
 
-        $profiles= $this->parameterValueService->getParameterValues(null,null,null,'Meter','Meter Profile');
+        $profiles = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile');
 
         return Inertia::render('MeterProfileParameter/MeterProfileParameterCreate', [
             'profiles' => $profiles->data,
@@ -156,7 +158,7 @@ class MeterProfileParameterController extends Controller
             'message' => 'Meter profile parameter updated successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,
-                'details' => $response->statusDetails,  
+                'details' => $response->statusDetails,
             ],
         ]);
     }
@@ -164,7 +166,7 @@ class MeterProfileParameterController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $id):RedirectResponse
+    public function destroy(int $id): RedirectResponse
     {
         $response = $this->meterProfileParameterService->deleteMeterProfileParameter($id);
 
@@ -182,7 +184,7 @@ class MeterProfileParameterController extends Controller
             'message' => 'Meter profile parameter deleted successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,
-                'details' => $response->statusDetails,  
+                'details' => $response->statusDetails,
             ],
         ]);
     }

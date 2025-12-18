@@ -71,7 +71,7 @@ export default function ProfileReadingForm({
 
             <div className='mt-4 flex justify-end gap-2'>
               <Button
-                variant='outline'
+                variant='secondary'
                 onClick={() => setActiveProfile(null)}
                 label='Cancel'
               />

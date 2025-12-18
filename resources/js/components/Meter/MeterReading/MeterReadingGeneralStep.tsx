@@ -4,6 +4,7 @@ import StrongText from '@/typography/StrongText'
 import DatePicker from '@/ui/form/DatePicker'
 import RadioGroup from '@/ui/form/RadioGroup'
 import { ConnectionDetailTooltip } from './ConnectionDetailTooltip'
+import dayjs from 'dayjs'
 
 interface Props {
   connectionWithConsumer: ConsumerData
@@ -20,6 +21,8 @@ export default function MeterReadingGeneralStep({
   errors,
   latestMeterReading,
 }: Props) {
+  const maxDate = dayjs().format('YYYY-MM-DD')
+  const maxDateForReadingStartDate = dayjs(maxDate).subtract(1, 'day').format('YYYY-MM-DD')
   return (
     <>
       <div className='mb-6 flex items-center justify-between'>
@@ -59,6 +62,7 @@ export default function MeterReadingGeneralStep({
                 value={formData.metering_date}
                 setValue={setFormValue('metering_date')}
                 error={errors?.metering_date}
+                max={maxDate}
               />
             </div>
 
@@ -68,12 +72,14 @@ export default function MeterReadingGeneralStep({
               setValue={setFormValue('reading_start_date')}
               error={errors?.reading_start_date}
               disabled={latestMeterReading?.reading_end_date}
+              max={maxDateForReadingStartDate}
             />
             <DatePicker
               label='Billing Period End'
               value={formData.reading_end_date}
               setValue={setFormValue('reading_end_date')}
               error={errors?.reading_end_date}
+              max={maxDate}
             />
           </div>
         </div>

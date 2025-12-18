@@ -24,6 +24,15 @@ export default function MeterReadingValueForm({
   meter,
   profileParameter,
 }: Readonly<Props>) {
+  const integerDigits = meter.digit_count ?? 0
+  const decimalDigits = meter.decimal_digit_count ?? 0
+
+  const maxValue =
+    Number('9'.repeat(integerDigits)) +
+    (decimalDigits > 0 ? Number(`0.${'9'.repeat(decimalDigits)}`) : 0)
+
+  const stepValue = decimalDigits > 0 ? Number(`0.${'0'.repeat(decimalDigits - 1)}1`) : 1
+
   return (
     <div className='rounded border bg-white p-4'>
       <Table>
@@ -62,6 +71,7 @@ export default function MeterReadingValueForm({
                     type='number'
                     value={tz.values.final}
                     setValue={(val) => onChange(tz.timezone_id, val)}
+                    max={maxValue}
                   />
                 </TableCell>
               </React.Fragment>

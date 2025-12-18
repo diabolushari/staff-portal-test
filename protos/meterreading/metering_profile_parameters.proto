@@ -78,7 +78,7 @@ message ListMeteringProfileParametersResponse {
 message ListMeteringProfileParametersPaginatedRequest {
   int32 page_number = 1;
   int32 page_size = 2;
-  optional string search = 3;
+  optional string search = 3; // (optional, name, display_name)
   optional string sort_by = 4;// "name" , "display_name" , "created_ts"       
   optional string sort_direction = 5; // "asc" , "desc"
   optional int64 profile_id = 6; 
