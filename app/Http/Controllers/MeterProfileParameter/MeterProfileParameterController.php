@@ -9,6 +9,7 @@ use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -39,6 +40,7 @@ class MeterProfileParameterController extends Controller
             null,
             $search,
         );
+        Log::info($search);
 
         $paginated = null;
         if (! empty($response->data)) {

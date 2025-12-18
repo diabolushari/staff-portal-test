@@ -10,6 +10,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class BillInitializeFormRequest extends Data
 {
     public function __construct(
+        public int $billingGroupId,
         public array $connectionIds,
         public string $billMonthYear,
         public string $readingMonthYear,

@@ -105,7 +105,7 @@ class TariffOrderController extends Controller
             );
         }
 
-          $consumptionTariff = $parameterValueService->getParameterValues(
+        $consumptionTariff = $parameterValueService->getParameterValues(
             1,
             10,
             null,

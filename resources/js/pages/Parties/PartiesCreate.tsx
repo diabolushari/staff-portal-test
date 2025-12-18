@@ -57,6 +57,10 @@ const toNumberOrUndef = (v: unknown) => {
 
 //TODO name the component PartyCreate to match with rest of application
 export default function PartiesCreate({ partyTypes, partyStatus, party }: PartiesFormProps) {
+  console.log(party)
+  console.log(partyTypes)
+  console.log(partyStatus)
+
   const isEditing = Boolean(party)
 
   const { formData, setFormValue } = useCustomForm<PartiesFormData>({

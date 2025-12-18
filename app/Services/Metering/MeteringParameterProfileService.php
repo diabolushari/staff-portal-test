@@ -7,6 +7,7 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
+use Illuminate\Support\Facades\Log;
 use Proto\MeteringProfile\DeleteMeteringProfileParameterRequest;
 use Proto\MeteringProfile\GetMeteringProfileParameterRequest;
 use Proto\MeteringProfile\ListMeteringProfileParametersPaginatedRequest;
@@ -31,9 +32,10 @@ class MeteringParameterProfileService
        public function listPaginatedMeteringProfileParameters(
         int $pageNumber = 1,
         int $pageSize = 10,
+        ?string $search = null,
         ?string $sortBy = null,
         ?string $sortDirection = null,
-        ?string $search = null,
+       
     ): GrpcServiceResponse {
         $request = new ListMeteringProfileParametersPaginatedRequest();
         $request->setPageNumber($pageNumber);
@@ -46,7 +48,6 @@ class MeteringParameterProfileService
         if ($search !== null) {
             $request->setSearch($search);
         }
-        
         
        
         [$response, $status] = $this->client->ListMeteringProfileParametersPaginated($request)->wait();

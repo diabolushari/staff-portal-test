@@ -1,23 +1,20 @@
+import BillInitializeModal from '@/components/Billing/BillingGroup/BillInitializeModal'
 import { billingNavItems } from '@/components/Navbar/navitems'
+import { Card } from '@/components/ui/card'
+import useCustomForm from '@/hooks/useCustomForm'
+import { BillingGroup, BillingGroupConnection, BillJobStatus } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
-import { useState } from 'react'
-import { BillingGroup, BillingGroupConnection, BillJobStatus } from '@/interfaces/data_interfaces'
-import Button from '@/ui/button/Button'
-import useCustomForm from '@/hooks/useCustomForm'
-import { Connection } from '@/interfaces/data_interfaces'
-import { Card } from '@/components/ui/card'
-import CheckBox from '@/ui/form/CheckBox'
-import DeleteButton from '@/ui/button/DeleteButton'
-import Input from '@/ui/form/Input'
-import BillInitializeModal from '@/components/Billing/BillingGroup/BillInitializeModal'
-import BillingGroupAddConnection from './BillingGroupAddConnection'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import Button from '@/ui/button/Button'
+import DeleteButton from '@/ui/button/DeleteButton'
+import CheckBox from '@/ui/form/CheckBox'
+import Input from '@/ui/form/Input'
 import MonthPicker from '@/ui/form/MonthPicker'
-import NormalText from '@/typography/NormalText'
-import BillingJobStatusList from '@/components/Billing/BillingCycle/BillJobStatusList'
-import BillingJobList from '@/components/Billing/BillingCycle/BillingJobList'
+import { formatMeterReadingMonth } from '@/utils'
 import { router } from '@inertiajs/react'
+import { useState } from 'react'
+import BillingGroupAddConnection from './BillingGroupAddConnection'
 
 export interface BillingGroupConnectionRelForm {
   billing_group_id: number
@@ -39,7 +36,6 @@ export default function BillingGroupShowPage({
     {
       title: `Group ${billingGroup?.name}`,
       href: route('billing-groups.show', {
-        versionId: billingGroup?.version_id,
         id: billingGroup?.billing_group_id,
       }),
     },
@@ -165,13 +161,26 @@ export default function BillingGroupShowPage({
 
                     <div>
                       <h4 className='text-sm text-gray-500'>Name</h4>
-                      <p className='text-lg'>{conn?.consumer?.organization_name}</p>
+                      <p className='text-lg'>
+                        {conn?.connection?.consumer_profiles?.[0]?.organization_name ?? '-'}
+                      </p>
                     </div>
 
                     <div>
                       <h4 className='text-sm text-gray-500'>Purpose</h4>
                       <p className='text-lg'>
                         {conn?.connection?.primary_purpose?.parameter_value}
+                      </p>
+                    </div>
+                  </Card>
+                  <Card>
+                    <div>
+                      <h4 className='text-sm text-gray-500'>Latest Meter Reading</h4>
+                      <p className='text-lg font-semibold'>
+                        {formatMeterReadingMonth(
+                          conn?.connection?.latest_meter_reading?.reading_start_date,
+                          conn?.connection?.latest_meter_reading?.reading_end_date
+                        )}
                       </p>
                     </div>
                   </Card>
@@ -207,6 +216,7 @@ export default function BillingGroupShowPage({
           setShowModal={setShowInitializeModal}
           showModal={showInitializeModal}
           selectedConnections={formData.selectedConnections}
+          billingGroup={billingGroup}
         />
       )}
     </MainLayout>
