@@ -5,6 +5,7 @@ namespace App\GrpcConverters\Connection;
 use App\GrpcConverters\Office\OfficeProtoConvertor;
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Services\Connection\ConsumerService;
+use App\Services\Metering\MeterReadingService;
 use Proto\Connections\ConnectionMessage;
 
 class ConnectionProtoConverter
@@ -143,6 +144,12 @@ class ConnectionProtoConverter
             $consumerProfileArray = $converter->transformConsumerToArray($consumerProfile);
             $consumerProfilesArray[] = $consumerProfileArray;
         }
+        $meterreadingConverter = app(MeterReadingService::class);
+        $latestMeterReading = $connection->getLatestMeterReading();
+        $latestMeterReadingArray = null;
+        if ($latestMeterReading !== null) {
+            $latestMeterReadingArray = $meterreadingConverter->toArray($latestMeterReading);
+        }
 
 
         return [
@@ -201,6 +208,7 @@ class ConnectionProtoConverter
             'effective_start' => $connection->getEffectiveStart() ? $connection->getEffectiveStart()->toDateTime()->format('Y-m-d') : null,
             'effective_end' => $connection->getEffectiveEnd() ? $connection->getEffectiveEnd()->toDateTime()->format('Y-m-d') : null,
             'consumer_profiles' => $consumerProfilesArray,
+            'latest_meter_reading' => $latestMeterReadingArray,
         ];
     }
 }

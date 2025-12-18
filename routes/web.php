@@ -142,10 +142,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('initialize-bill', BillInitializeController::class)->name('billing-group.initialize-bill');
 
     Route::post('change-meter-transformer-assignment', ChangeMeterTransformerAssignmentController::class)
-    ->name('change-meter-transformer-assignment');
+        ->name('change-meter-transformer-assignment');
 
     Route::post('update-meter-transformer-assignment-status', UpdateMeterTransformerAssignmentStatusController::class)
-    ->name('update-meter-transformer-assignment-status');
+        ->name('update-meter-transformer-assignment-status');
 
 
     Route::resource('meter-profile-parameter',MeterProfileParameterController::class);

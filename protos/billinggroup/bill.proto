@@ -36,6 +36,19 @@ message BillMessage {
   optional com.kseb.consumerservice.grpc.connections.ConsumerMessage consumer = 17;
 }
 
+message BillJobGenerationStatusMessage {
+  int64 bill_job_generation_status_id = 1;
+  int32 connection_id = 2;
+  string reading_year_month = 3;  // YYYY-MM
+  string bill_year_month = 4;     // YYYY-MM
+  google.protobuf.Timestamp bill_date = 5;
+  google.protobuf.Timestamp due_date = 6;
+  google.protobuf.Timestamp dc_date = 7;
+  string exception = 8;
+  google.protobuf.Timestamp initialized_date = 9;
+  optional com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 10;
+}
+
 // ---------------- REQUEST / RESPONSE ----------------
 
 // Create
@@ -107,6 +120,7 @@ message DeleteBillResponse {
 // List
 message ListBillRequest {
 
+  // Optional filters
   optional int32 connection_id = 1;
   optional int32 billing_group_id = 2;
   optional string reading_year_month = 3;
@@ -116,6 +130,7 @@ message ListBillRequest {
 
 message ListBillResponse {
   repeated BillMessage bills = 1;
+  repeated BillJobGenerationStatusMessage exceptions = 2;
 }
 
 // ---------------- SERVICE ----------------

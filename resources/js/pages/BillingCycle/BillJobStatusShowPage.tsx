@@ -1,7 +1,7 @@
 import { billingNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import useCustomForm from '@/hooks/useCustomForm'
-import { Bill, BillingGroup } from '@/interfaces/data_interfaces'
+import { Bill, BillingGroup, BillWithException } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
@@ -9,7 +9,7 @@ import Input from '@/ui/form/Input'
 import { router } from '@inertiajs/react'
 
 interface Props {
-  bills: Bill[]
+  bills: BillWithException
   billing_group: BillingGroup
 }
 
@@ -34,7 +34,7 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
       href: `/bills/job-status/${billing_group?.billing_group_id}`,
     },
   ]
-
+  console.log(bills)
   return (
     <MainLayout
       breadcrumb={breadcrumb}
@@ -71,14 +71,16 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
             </div>
           </div>
         </div>
-        {bills.length > 0 &&
-          bills.map((bill: Bill) => (
+        {bills?.bills?.length > 0 &&
+          bills?.bills?.map((bill: Bill) => (
             <Card className='mb-6 overflow-hidden rounded-lg border p-0 shadow-sm'>
               {/* Top Gray Header */}
               <div className='grid grid-cols-2 gap-4 bg-gray-200 px-6 py-4'>
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <p className='font-medium text-gray-700'>{bill?.consumer?.organization_name}</p>
+                    <p className='font-medium text-gray-700'>
+                      {bill?.connection?.consumer_profiles?.[0]?.organization_name ?? '-'}
+                    </p>
                     <p className='text-xs text-gray-500'>Name</p>
                   </div>
 
@@ -151,6 +153,68 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
               </div>
             </Card>
           ))}
+        {/* ================= EXCEPTIONS SECTION ================= */}
+        {bills?.exceptions?.length > 0 && (
+          <div className='mt-8'>
+            <h2 className='mb-4 text-lg font-semibold'>
+              Billing Exceptions ({bills.exceptions.length})
+            </h2>
+
+            <div className='flex flex-col gap-4'>
+              {bills.exceptions.map((ex) => (
+                <Card
+                  key={ex.bill_job_generation_status_id}
+                  className='border border-red-200'
+                >
+                  {/* Header */}
+                  <div className='grid grid-cols-3 gap-4 px-6 py-3'>
+                    <div>
+                      <p className='font-medium text-gray-800'>{ex.connection?.consumer_number}</p>
+                      <p className='text-xs text-gray-500'>Consumer Number</p>
+                    </div>
+
+                    <div>
+                      <p className='font-medium text-gray-800'>
+                        {ex.connection?.consumer_profiles?.[0]?.organization_name}
+                      </p>
+                      <p className='text-xs text-gray-500'>Consumer Name</p>
+                    </div>
+
+                    <div>
+                      <p className='font-medium text-red-700'>Exception</p>
+                      <p className='text-xs text-gray-500'>{ex?.exception}</p>
+                    </div>
+                  </div>
+
+                  {/* Body */}
+                  <div className='grid grid-cols-3 gap-4 px-6 py-4'>
+                    <div>
+                      <p className='font-medium text-gray-700'>{ex.reading_year_month}</p>
+                      <p className='text-xs text-gray-500'>Reading Month</p>
+                    </div>
+
+                    <div>
+                      <p className='font-medium text-gray-700'>{ex.bill_year_month}</p>
+                      <p className='text-xs text-gray-500'>Bill Month</p>
+                    </div>
+
+                    <div>
+                      <p className='font-medium text-gray-700'>{ex.initialized_date}</p>
+                      <p className='text-xs text-gray-500'>Initialized Date</p>
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className='border-t px-6 py-3'>
+                    <p className='text-sm text-red-700'>
+                      ⚠ Bill not generated for this connection
+                    </p>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </MainLayout>
   )
