@@ -32,23 +32,24 @@ const MeterProfileParameterCreate = ({ profiles, meterProfileParameter }: Props)
         : '/meter-profile-parameter/create',
     },
   ]
-  const { formData, setFormValue } = useCustomForm({
+  const { formData, setFormValue, toggleBoolean } = useCustomForm({
     profile_id: meterProfileParameter?.profile_id || '',
     name: meterProfileParameter?.name || '',
     display_name: meterProfileParameter?.display_name || '',
-    is_export: meterProfileParameter?.is_export || false,
-    is_cumulative: meterProfileParameter?.is_cumulative || false,
+    is_export: meterProfileParameter?.is_export ?? false,
+    is_cumulative: meterProfileParameter?.is_cumulative ?? false,
     _method: meterProfileParameter ? 'PUT' : undefined,
   })
 
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     meterProfileParameter
-      ? route('meter-profile-parameter.update', meterProfileParameter.id)
+      ? route('meter-profile-parameter.update', meterProfileParameter.meter_parameter_id)
       : route('meter-profile-parameter.store')
   )
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    console.log(formData, meterProfileParameter)
     meterProfileParameter ? post({ ...formData, _method: 'PUT' }) : post(formData)
   }
 
@@ -96,13 +97,13 @@ const MeterProfileParameterCreate = ({ profiles, meterProfileParameter }: Props)
             <CheckBox
               label='Is Export'
               value={formData.is_export}
-              toggleValue={setFormValue('is_export')}
+              toggleValue={toggleBoolean('is_export')}
             />
 
             <CheckBox
               label='Is Cumulative'
               value={formData.is_cumulative}
-              toggleValue={setFormValue('is_cumulative')}
+              toggleValue={toggleBoolean('is_cumulative')}
             />
           </div>
 
