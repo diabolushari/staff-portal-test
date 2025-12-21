@@ -62,7 +62,6 @@ const MeterProfileParameterIndex = ({
         )}
         <ParameterValueModal
           onClose={() => setShowModal(false)}
-          domain={domain}
           definition={definition}
         />
       </div>

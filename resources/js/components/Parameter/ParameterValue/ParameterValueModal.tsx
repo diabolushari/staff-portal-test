@@ -1,17 +1,16 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ParameterDefinition, ParameterDomain } from '@/interfaces/parameter_types'
+import { ParameterDefinition } from '@/interfaces/parameter_types'
 import FormCard from '@/ui/Card/FormCard'
 import Input from '@/ui/form/Input'
 import Modal from '@/ui/Modal/Modal'
 
 interface PageProps {
   onClose: () => void
-  domain: ParameterDomain
   definition: ParameterDefinition
 }
 
-export default function ParameterValueModal({ onClose, domain, definition }: PageProps) {
+export default function ParameterValueModal({ onClose, definition }: PageProps) {
   const { formData, setFormValue } = useCustomForm({
     definition_id: definition.id,
     parameter_code: '',
