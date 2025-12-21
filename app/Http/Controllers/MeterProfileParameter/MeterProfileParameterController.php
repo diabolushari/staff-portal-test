@@ -33,14 +33,14 @@ class MeterProfileParameterController extends Controller
 
         $search = $request->input('search');
 
-        $response = $this->meterProfileParameterService->listPaginatedMeteringProfileParameters(
+        $response = $this->meterProfileParameterService->listMeteringProfileParameterGroupByMeterProfile(
             $pageNumber,
             $pageSize,
             null,
             null,
             $search,
         );
-        Log::info($search);
+       
 
         $paginated = null;
         if (! empty($response->data)) {
@@ -105,12 +105,37 @@ class MeterProfileParameterController extends Controller
             ]);
         }
 
-        return redirect()->route('meter-profile-parameter.index')->with([
+        return redirect()->route('meter-profile.index')->with([
             'message' => 'Meter profile parameter created successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,
                 'details' => $response->statusDetails,
             ],
+        ]);
+    }
+
+    
+
+    /**
+     
+     * Display the specified resource.
+     */
+    public function show(int $id): Response|RedirectResponse
+    {
+        $response = $this->meterProfileParameterService->getMeterProfileParameter($id);
+
+        if ($response->hasError()) {
+            return $response->error ?? redirect()->back()->with([
+                'message' => 'Failed to fetch meter profile parameter.',
+                'grpcStatus' => [
+                    'code' => $response->statusCode,
+                    'details' => $response->statusDetails,
+                ],
+            ]);
+        }
+
+        return Inertia::render('MeterProfileParameter/MeterProfileParameterShow', [
+            'meterProfileParameter' => $response->data,
         ]);
     }
 
@@ -156,7 +181,7 @@ class MeterProfileParameterController extends Controller
             ]);
         }
 
-        return redirect()->route('meter-profile-parameter.index')->with([
+        return redirect()->route('meter-profile.index')->with([
             'message' => 'Meter profile parameter updated successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,
@@ -182,7 +207,7 @@ class MeterProfileParameterController extends Controller
             ]);
         }
 
-        return redirect()->route('meter-profile-parameter.index')->with([
+        return redirect()->route('meter-profile.index')->with([
             'message' => 'Meter profile parameter deleted successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,

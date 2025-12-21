@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { router } from '@inertiajs/react'
-import { Edit2Icon } from 'lucide-react'
+import { EditIcon } from 'lucide-react'
 import React from 'react'
 
 interface Props {
@@ -21,11 +21,11 @@ export default function EditButton({ link, onClick }: Props) {
 
   return (
     <Button
-      className='flex cursor-pointer items-center gap-2 transition-transform'
+      className='flex cursor-pointer items-center gap-2 border-b-2 border-blue-500 transition-transform hover:border-blue-800'
       onClick={handleClick}
-      variant='highlight'
+      variant='outline'
     >
-      <Edit2Icon className='h-6 w-6 fill-[#0078D4]' /> Edit
+      <EditIcon className='h-6 w-6' />
     </Button>
   )
 }

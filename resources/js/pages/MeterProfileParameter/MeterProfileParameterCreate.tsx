@@ -22,14 +22,14 @@ const MeterProfileParameterCreate = ({ profiles, meterProfileParameter }: Props)
       href: '/settings-page',
     },
     {
-      title: 'Meter Profile Parameter',
-      href: '/meter-profile-parameter',
+      title: 'Metering Profile',
+      href: '/meter-profile',
     },
     {
       title: meterProfileParameter ? 'Edit' : 'Create',
       href: meterProfileParameter
-        ? `/meter-profile-parameter/edit/${meterProfileParameter.id}`
-        : '/meter-profile-parameter/create',
+        ? `/meter-profile/edit/${meterProfileParameter.id}`
+        : '/meter-profile/create',
     },
   ]
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
@@ -43,8 +43,8 @@ const MeterProfileParameterCreate = ({ profiles, meterProfileParameter }: Props)
 
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     meterProfileParameter
-      ? route('meter-profile-parameter.update', meterProfileParameter.meter_parameter_id)
-      : route('meter-profile-parameter.store')
+      ? route('meter-profile.update', meterProfileParameter.meter_parameter_id)
+      : route('meter-profile.store')
   )
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

@@ -148,7 +148,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('update-meter-transformer-assignment-status');
 
 
-    Route::resource('meter-profile-parameter',MeterProfileParameterController::class);
+    Route::resource('meter-profile',MeterProfileParameterController::class);
 
 });
 

@@ -470,11 +470,15 @@ export interface MeterProfileParameter {
   version_id: number
   meter_parameter_id: number
   profile_id: number
-  profile: ParameterValue | null
+  profile: ParameterValues | null
   name: string
   display_name: string
   is_export: boolean
   is_cumulative: boolean
+}
+export interface MeterProfileGroupByProfile{
+  profile: ParameterValues | null;
+  parameters: MeterProfileParameter[];
 }
 
 export interface MeterReadingPowerFactor {
