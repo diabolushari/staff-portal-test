@@ -3,10 +3,11 @@ import { Clock } from 'lucide-react'
 import { useState } from 'react'
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
-import CardHeader from '@/ui/Card/CardHeader'
 import ListSearch from '@/ui/Search/ListSearch'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { BreadcrumbItem } from '@/types'
+import EditButton from '@/ui/button/EditButton'
+import DeleteButton from '@/ui/button/DeleteButton'
 
 interface TimezoneGroup {
   timezone_type: { id: number; parameter_value: string }
@@ -53,6 +54,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function MeteringTimezonesIndexPage({ timezones, timezone_types }: Props) {
+  const [selectedTimeZone, setSelectedTimeZone] = useState<MeteringTimezone | null>(null)
+
+  console.log(selectedTimeZone)
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const timezonesData = Array.isArray(timezones) ? timezones : timezones?.data || []
   const [groups] = useState<TimezoneGroup[]>(timezonesData)
 
@@ -67,6 +72,9 @@ export default function MeteringTimezonesIndexPage({ timezones, timezone_types }
   function formatTime(hrs: number, mins: number): string {
     return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
   }
+
+  console.log('groups:', groups)
+  console.log('timezoneTypesWithoutTimezones:', timezoneTypesWithoutTimezones)
   return (
     <MainLayout
       navItems={meteringBillingNavItems}
@@ -92,8 +100,23 @@ export default function MeteringTimezonesIndexPage({ timezones, timezone_types }
                   className='rounded-lg border border-gray-200 bg-white shadow-sm'
                 >
                   {/* Header */}
-                  <div className='font-inter border-b border-gray-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800'>
+                  <div className='font-inter flex items-center justify-between border-b border-gray-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800'>
                     {group.timezone_type.parameter_value}
+                    <div className='flex items-center gap-2'>
+                      <EditButton
+                        onClick={() =>
+                          router.get(
+                            route(
+                              'metering-timezone.edit',
+                              group.metering_timezones[0].metering_timezone_id
+                            )
+                          )
+                        }
+                      />
+                      <DeleteButton
+                        onClick={() => setSelectedTimeZone(group.metering_timezones[0])}
+                      />
+                    </div>
                   </div>
 
                   {/* Timezones row */}

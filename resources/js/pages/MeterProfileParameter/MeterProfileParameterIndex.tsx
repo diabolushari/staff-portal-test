@@ -1,6 +1,6 @@
 import MeterProfileParameterList from '@/components/MeterProfileParameter/MeterProfileParameterList'
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
-import { MeterProfileParameter } from '@/interfaces/data_interfaces'
+import { MeterProfileGroupByProfile } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Pagination from '@/ui/Pagination/Pagination'
@@ -9,7 +9,7 @@ import { Paginator } from '@/ui/ui_interfaces'
 
 interface Props {
   oldSearch: string
-  meterProfileParameters: Paginator<MeterProfileParameter>
+  meterProfileParameters: Paginator<MeterProfileGroupByProfile>
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -18,27 +18,26 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/settings-page',
   },
   {
-    title: 'Meter Profile Parameter',
-    href: '/meter-profile-parameter',
+    title: 'Metering Profile',
+    href: '/meter-profile',
   },
 ]
 
 const MeterProfileParameterIndex = ({ oldSearch, meterProfileParameters }: Props) => {
-  console.log(meterProfileParameters)
   return (
     <MainLayout
       navItems={meteringBillingNavItems}
-      selectedItem='Meter Profile Parameters'
-      addBtnText='Meter Profile Parameter'
-      addBtnUrl={route('meter-profile-parameter.create')}
-      title='Meter Profile Parameter'
+      selectedItem='Metering Profiles'
+      addBtnText='Meter Profile'
+      addBtnUrl={route('meter-profile.create')}
+      title='Metering Profiles'
       breadcrumb={breadcrumbs}
     >
       <div>
         <ListSearch
           title=''
           placeholder='Search'
-          url={route('meter-profile-parameter.index')}
+          url={route('meter-profile.index')}
           search={oldSearch}
         />
         {meterProfileParameters && (

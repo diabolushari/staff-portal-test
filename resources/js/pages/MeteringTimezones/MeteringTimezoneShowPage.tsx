@@ -9,7 +9,8 @@ import Button from '@/ui/button/Button'
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { InfoItem } from '@/components/meteringtimezones/InfoItem'
 import { Section } from '@/components/meteringtimezones/Section'
-import { title } from 'process'
+import EditButton from '@/ui/button/EditButton'
+import DeleteButton from '@/ui/button/DeleteButton'
 
 // --- TYPES AND INTERFACES ---
 export interface MeteringTimezone {
@@ -105,20 +106,22 @@ export default function MeteringTimezoneShowPage({ timezone }: Readonly<Props>) 
             <p className='text-gray-500'>Metering Timezone Details</p>
           </div>
           <div className='flex gap-2'>
-            <Button
+            <EditButton onClick={handleEdit} />
+            <DeleteButton onClick={handleDelete} />
+            {/* <Button
               label='Edit'
               onClick={handleEdit}
               variant='outline'
               disabled={loading}
               icon={<Edit className='mr-2 h-4 w-4' />}
-            />
-            <Button
+            /> */}
+            {/* <Button
               label='Delete'
               onClick={handleDelete}
               variant='destructive'
               disabled={loading}
               icon={<Trash2 className='mr-2 h-4 w-4' />}
-            />
+            /> */}
           </div>
         </div>
 
