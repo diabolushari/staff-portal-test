@@ -29,10 +29,11 @@ message ParameterDefinitionProto {
 }
 
 // ------------ REQUEST/RESPONSE ------------
-message CreateParameterDefinitionRequest { ParameterDefinitionProto definition = 1; }
-message UpdateParameterDefinitionRequest { ParameterDefinitionProto definition = 1; }
-message GetParameterDefinitionRequest    { int64 id = 1; }
-message DeleteParameterDefinitionRequest { int64 id = 1; }
+message CreateParameterDefinitionRequest  { ParameterDefinitionProto  definition = 1; }
+message UpdateParameterDefinitionRequest  { ParameterDefinitionProto  definition = 1; }
+message GetParameterDefinitionRequest     { optional int64 id = 1; optional string domain_name = 2; optional string parameter_name = 3; optional string system_module_name = 4; }
+message DeleteParameterDefinitionRequest  { int64 id = 1; }
+
 
 message ListParameterDefinitionsRequest {
   int32 page = 1;

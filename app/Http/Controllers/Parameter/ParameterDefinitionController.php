@@ -76,7 +76,7 @@ class ParameterDefinitionController extends Controller
 
     public function show(int|string $id): InertiaResponse|RedirectResponse
     {
-        $response = $this->parameterDefinitionService->getParameterDefinition($id);
+        $response = $this->parameterDefinitionService->getParameterDefinition($id, null, null, null);
 
         if ($response->hasError()) {
             return $response->error ?? redirect()->back()->with([

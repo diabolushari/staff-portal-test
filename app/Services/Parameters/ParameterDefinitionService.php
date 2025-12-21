@@ -95,10 +95,21 @@ class ParameterDefinitionService
         return GrpcServiceResponse::success($definitionsArray, $response, $status->code, $status->details);
     }
 
-    public function getParameterDefinition(string|int $id): GrpcServiceResponse
+    public function getParameterDefinition(string|int|null $id = null, ?string $domainName = null, ?string $parameterName = null, ?string $systemModuleName = null): GrpcServiceResponse
     {
         $request = new GetParameterDefinitionRequest;
-        $request->setId($id);
+        if ($id !== null) {
+            $request->setId($id);
+        }
+        if ($domainName !== null) {
+            $request->setDomainName($domainName);
+        }
+        if ($parameterName !== null) {
+            $request->setParameterName($parameterName);
+        }
+        if ($systemModuleName !== null) {
+            $request->setSystemModuleName($systemModuleName);
+        }
 
         [$response, $status] = $this->client->GetParameterDefinition($request)->wait();
 
