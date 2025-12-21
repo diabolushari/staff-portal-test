@@ -15,6 +15,12 @@ interface Props {
   metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
   updateReading: (meterId: number, parameterId: number, timezoneId: number, value: string) => void
   setActiveProfile: (profile: { meterIdx: number; profileIdx: number } | null) => void
+  toggleRotation: (
+    meterId: number,
+    parameterId: number,
+    timezoneId: number,
+    checked: boolean
+  ) => void
 }
 
 export default function ProfileReadingForm({
@@ -23,6 +29,7 @@ export default function ProfileReadingForm({
   metersWithTimezonesAndProfiles,
   updateReading,
   setActiveProfile,
+  toggleRotation,
 }: Readonly<Props>) {
   const { meter, profile, parameterData } = useMemo(() => {
     if (activeProfile == null) {
@@ -63,6 +70,9 @@ export default function ProfileReadingForm({
                 values={parameterData?.readings || []}
                 onChange={(tzId, val) =>
                   updateReading(meter.meter_id, profile.meter_parameter_id, tzId, val)
+                }
+                onToggleRotation={(tzId, checked) =>
+                  toggleRotation(meter.meter_id, profile.meter_parameter_id, tzId, checked)
                 }
                 meter={meter.meter}
                 profileParameter={profile}

@@ -93,7 +93,7 @@ export default function MeterReadingCreatePage({
     },
   ]
 
-  const { readingValues, updateReading } = useMeterReadingForm(
+  const { readingValues, updateReading, toggleRotation } = useMeterReadingForm(
     metersWithTimezonesAndProfiles,
     latestMeterReading,
     editMode ? latestMeterReading : null
@@ -125,7 +125,6 @@ export default function MeterReadingCreatePage({
     _method: editMode ? 'PUT' : undefined,
   })
 
-  console.log(formData)
   const { post, errors, loading } = useInertiaPost(
     editMode ? route('meter-reading.update', formData.id) : route('meter-reading.store'),
     {
@@ -237,6 +236,7 @@ export default function MeterReadingCreatePage({
                 updateMeterHealth={updateMeterHealth}
                 updateCTPTHealth={updateCTPTHealth}
                 setIsOnParameterForm={setIsOnParameterForm}
+                toggleRotation={toggleRotation}
               />
             )}
           </Stepper>
