@@ -20,11 +20,11 @@ export default function SystemModuleForm({
   const isEditing = selectedSystemModule != null
 
   const { formData, setFormValue } = useCustomForm({
-    system_module_name: '',
+    name: '',
   })
 
   const handleComplete = useCallback(() => {
-    setFormValue('system_module_name')('')
+    setFormValue('name')('')
     onSuccess?.()
   }, [onSuccess, setFormValue])
 
@@ -40,9 +40,9 @@ export default function SystemModuleForm({
   // Set form data when editing
   useEffect(() => {
     if (selectedSystemModule) {
-      setFormValue('system_module_name')(selectedSystemModule.name)
+      setFormValue('name')(selectedSystemModule.name)
     } else {
-      setFormValue('system_module_name')('')
+      setFormValue('name')('')
     }
   }, [selectedSystemModule, setFormValue])
 
@@ -61,10 +61,10 @@ export default function SystemModuleForm({
         <div className='flex flex-col gap-4'>
           <Input
             label={isEditing ? 'Edit System Module Name' : 'Create System Module'}
-            setValue={setFormValue('system_module_name')}
-            value={formData.system_module_name}
+            setValue={setFormValue('name')}
+            value={formData.name}
             placeholder={isEditing ? '' : 'Type your System Module Name'}
-            error={(errors as Record<string, string>)?.system_module_name}
+            error={(errors as Record<string, string>)?.name}
             type='text'
             required
           />

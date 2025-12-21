@@ -1,15 +1,20 @@
 import MeterProfileParameterList from '@/components/MeterProfileParameter/MeterProfileParameterList'
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
+import ParameterValueModal from '@/components/Parameter/ParameterValue/ParameterValueModal'
 import { MeterProfileGroupByProfile } from '@/interfaces/data_interfaces'
+import { ParameterDefinition, ParameterDomain } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Pagination from '@/ui/Pagination/Pagination'
 import ListSearch from '@/ui/Search/ListSearch'
 import { Paginator } from '@/ui/ui_interfaces'
+import { useState } from 'react'
 
 interface Props {
   oldSearch: string
   meterProfileParameters: Paginator<MeterProfileGroupByProfile>
+  domain: ParameterDomain
+  definition: ParameterDefinition
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -23,7 +28,13 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ]
 
-const MeterProfileParameterIndex = ({ oldSearch, meterProfileParameters }: Props) => {
+const MeterProfileParameterIndex = ({
+  oldSearch,
+  meterProfileParameters,
+  domain,
+  definition,
+}: Props) => {
+  const [showModal, setShowModal] = useState(false)
   return (
     <MainLayout
       navItems={meteringBillingNavItems}
@@ -42,13 +53,18 @@ const MeterProfileParameterIndex = ({ oldSearch, meterProfileParameters }: Props
         />
         {meterProfileParameters && (
           <>
-            <MeterProfileParameterList meterProfileParameters={meterProfileParameters.data} />
+            <MeterProfileParameterList meterProfileParameters={meterProfileParameters?.data} />
             <Pagination
               pagination={meterProfileParameters}
               filters={{ search: oldSearch }}
             />
           </>
         )}
+        <ParameterValueModal
+          onClose={() => setShowModal(false)}
+          domain={domain}
+          definition={definition}
+        />
       </div>
     </MainLayout>
   )

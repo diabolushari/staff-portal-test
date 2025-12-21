@@ -32,64 +32,64 @@ class MeteringParameterProfileService
         );
     }
 
-  public function listMeteringProfileParameterGroupByMeterProfile(
-    int $pageNumber = 1,
-    int $pageSize = 10,
-    ?string $search = null,
-    ?string $sortBy = null,
-    ?string $sortDirection = null,
-): GrpcServiceResponse {
-    $request = new PaginatedListMeteringProfileParametersGroupByProfileRequest();
-    $request->setPageNumber($pageNumber);
-    $request->setPageSize($pageSize);
+    public function listMeteringProfileParameterGroupByMeterProfile(
+        int $pageNumber = 1,
+        int $pageSize = 10,
+        ?string $search = null,
+        ?string $sortBy = null,
+        ?string $sortDirection = null,
+    ): GrpcServiceResponse {
+        $request = new PaginatedListMeteringProfileParametersGroupByProfileRequest();
+        $request->setPageNumber($pageNumber);
+        $request->setPageSize($pageSize);
 
-    if ($search !== null) {
-        $request->setSearch($search);
-    }
+        if ($search !== null) {
+            $request->setSearch($search);
+        }
 
-    if ($sortBy !== null) {
-        $request->setSortBy($sortBy);
-    }
+        if ($sortBy !== null) {
+            $request->setSortBy($sortBy);
+        }
 
-    if ($sortDirection !== null) {
-        $request->setSortDirection($sortDirection);
-    }
+        if ($sortDirection !== null) {
+            $request->setSortDirection($sortDirection);
+        }
 
-    [$response, $status] =
-        $this->client
+        [$response, $status] =
+            $this->client
             ->PaginatedListMeteringProfileParametersGroupByProfile($request)
             ->wait();
 
-    if ($status->code !== 0) {
-        return GrpcServiceResponse::error(
-            GrpcErrorService::handleErrorResponse($status),
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $groupedProfiles = [];
+        foreach ($response->getProfiles() as $profileGroup) {
+            $groupedProfiles[] =
+                $this->meterProfileParameterGroupByProfileToArray($profileGroup);
+        }
+
+        $data = [
+            'metering_parameter_profiles' => $groupedProfiles,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ];
+
+        return GrpcServiceResponse::success(
+            $data,
             $response,
             $status->code,
             $status->details
         );
     }
-
-    $groupedProfiles = [];
-    foreach ($response->getProfiles() as $profileGroup) {
-        $groupedProfiles[] =
-            $this->meterProfileParameterGroupByProfileToArray($profileGroup);
-    }
-
-    $data = [
-        'metering_parameter_profiles' => $groupedProfiles,
-        'total_count' => $response->getTotalCount(),
-        'page_number' => $response->getPageNumber(),
-        'page_size' => $response->getPageSize(),
-        'total_pages' => $response->getTotalPages(),
-    ];
-
-    return GrpcServiceResponse::success(
-        $data,
-        $response,
-        $status->code,
-        $status->details
-    );
-}
 
 
     public function listPaginatedMeteringProfileParameters(
@@ -98,21 +98,21 @@ class MeteringParameterProfileService
         ?string $search = null,
         ?string $sortBy = null,
         ?string $sortDirection = null,
-       
+
     ): GrpcServiceResponse {
         $request = new ListMeteringProfileParametersPaginatedRequest();
         $request->setPageNumber($pageNumber);
         $request->setPageSize($pageSize);
-        
+
         if ($sortBy !== null) {
             $request->setSortBy($sortBy);
         }
-        
+
         if ($search !== null) {
             $request->setSearch($search);
         }
-        
-       
+
+
         [$response, $status] = $this->client->ListMeteringProfileParametersPaginated($request)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -294,39 +294,39 @@ class MeteringParameterProfileService
     }
 
 
-/**
- * @return array<string, mixed>
- */
-public function meterProfileParameterGroupByProfileToArray(
-    ProfilesByGroupMessage $group
-): array {
-    $profile = $group->getProfile();
+    /**
+     * @return array<string, mixed>
+     */
+    public function meterProfileParameterGroupByProfileToArray(
+        ProfilesByGroupMessage $group
+    ): array {
+        $profile = $group->getParameterValue();
 
-    $parameters = [];
-    foreach ($group->getProfiles() as $parameter) {
-        $parameters[] = [
-            'version_id' => $parameter->getVersionId(),
-            'profile_id' => $parameter->getProfileId(),
-            'name' => $parameter->getName(),
-            'display_name' => $parameter->getDisplayName(),
-            'is_export' => $parameter->getIsExport(),
-            'is_cumulative' => $parameter->getIsCumulative(),
-            'is_active' => $parameter->getIsActive(),
-            'meter_parameter_id' => $parameter->getMeterParameterId(),
-            'created_by' => $parameter->getCreatedBy(),
-            'updated_by' => $parameter->getUpdatedBy(),
-            'effective_start_date' => $parameter->getEffectiveStartDate()
-                ? $parameter->getEffectiveStartDate()->toDateTime()->format('Y-m-d H:i:s')
-                : null,
-            'effective_end_date' => $parameter->getEffectiveEndDate()
-                ? $parameter->getEffectiveEndDate()->toDateTime()->format('Y-m-d H:i:s')
-                : null,
+        $parameters = [];
+        foreach ($group->getProfiles() as $parameter) {
+            $parameters[] = [
+                'version_id' => $parameter->getVersionId(),
+                'profile_id' => $parameter->getProfileId(),
+                'name' => $parameter->getName(),
+                'display_name' => $parameter->getDisplayName(),
+                'is_export' => $parameter->getIsExport(),
+                'is_cumulative' => $parameter->getIsCumulative(),
+                'is_active' => $parameter->getIsActive(),
+                'meter_parameter_id' => $parameter->getMeterParameterId(),
+                'created_by' => $parameter->getCreatedBy(),
+                'updated_by' => $parameter->getUpdatedBy(),
+                'effective_start_date' => $parameter->getEffectiveStartDate()
+                    ? $parameter->getEffectiveStartDate()->toDateTime()->format('Y-m-d H:i:s')
+                    : null,
+                'effective_end_date' => $parameter->getEffectiveEndDate()
+                    ? $parameter->getEffectiveEndDate()->toDateTime()->format('Y-m-d H:i:s')
+                    : null,
+            ];
+        }
+
+        return [
+            'profile' => $this->parameterValueService->toArray($profile),
+            'parameters' => $parameters,
         ];
     }
-
-    return [
-        'profile' => $this->parameterValueService->toArray($profile),
-        'parameters' => $parameters,
-    ];
-}
 }

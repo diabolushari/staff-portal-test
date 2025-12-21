@@ -98,10 +98,11 @@ message PaginatedListMeteringProfileParametersGroupByProfileRequest {
   optional string search = 3;
   optional string sort_by = 4;// "name" , "display_name" , "created_ts"       
   optional string sort_direction = 5; // "asc" , "desc"
+  optional int64 profile_id = 6; 
 }
 
 message ProfilesByGroupMessage{
-  parameters.ParameterValueProto profile = 1;
+  parameters.ParameterValueProto parameter_value = 1;
   repeated MeteringProfileParameterMessage profiles = 2;
 }
 message PaginatedListMeteringProfileParametersGroupByProfileResponse {
