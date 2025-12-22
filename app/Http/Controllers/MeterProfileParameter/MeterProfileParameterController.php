@@ -31,7 +31,8 @@ class MeterProfileParameterController extends Controller
         $search = $request->input('search') ?? null;
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 10;
-        //$meterProfileParameter = $this->parameterDefinitionService->getParameterDefinition(null, 'Meter', 'Meter Profile', 'Consumer');
+        $meterProfileParameter = $this->parameterDefinitionService->getParameterDefinition(null, 'Meter', 'Meter Profile', 'Consumer');
+
 
 
         $search = $request->input('search');
@@ -41,14 +42,30 @@ class MeterProfileParameterController extends Controller
             $pageSize,
             null,
             null,
-            $search,
+            null,
+
         );
+
+        $meterProfiles = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile');
+
+        $responseData = $response->data['metering_parameter_profiles'] ?? [];
+
+        $profileIds = collect($responseData)
+            ->pluck('profile.id')
+            ->unique()
+            ->values()
+            ->all();
+
+        $profilesWithNoParameterValue = collect($meterProfiles->data)
+            ->whereNotIn('id', $profileIds)
+            ->values()
+            ->all();
 
 
         $paginated = null;
         if (! empty($response->data)) {
             $paginated = new LengthAwarePaginator(
-                $response->data['metering_parameter_profiles'],                // items for this page
+                $responseData,                // items for this page
                 $response->data['total_count'],            // total items count
                 $response->data['page_size'],              // items per page
                 $response->data['page_number'],            // current page
@@ -70,12 +87,13 @@ class MeterProfileParameterController extends Controller
 
         return Inertia::render('MeterProfileParameter/MeterProfileParameterIndex', [
             'meterProfileParameters' => $paginated ?? [],
+            'profilesWithNoParameterValue' => $profilesWithNoParameterValue,
             'grpcStatus' => [
                 'code' => $response->statusCode,
                 'details' => $response->statusDetails,
             ],
             'oldSearch' => $request->input('search'),
-            'definition' => null,
+            'definition' => $meterProfileParameter->data,
         ]);
     }
 
@@ -84,8 +102,8 @@ class MeterProfileParameterController extends Controller
      */
     public function create(Request $request): Response
     {
-        
-    $profileId = (int) $request->query('profileId');
+
+        $profileId = (int) $request->query('profileId');
         $profiles = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile');
         $profileParameters = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Profile Parameter');
 
@@ -128,36 +146,36 @@ class MeterProfileParameterController extends Controller
      
      * Display the specified resource.
      */
-    public function show(Request $request,int $id): Response|RedirectResponse
+    public function show(Request $request, int $id): Response|RedirectResponse
     {
 
-          $search = $request->input('search') ?? null;
+        $search = $request->input('search') ?? null;
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 10;
-        $profileId= $id;
+        $profileId = $id;
         $response = $this->meterProfileParameterService->listMeteringProfileParameters(
-             $pageNumber,
+            $pageNumber,
             $pageSize,
             $search,
             $profileId
         );
-  
 
-         $paginated = null;
-       if (! empty($response->data)) {
-    $currentPage = LengthAwarePaginator::resolveCurrentPage();
-    $perPage = 10; // change if needed
 
-    $collection = collect($response->data);
+        $paginated = null;
+        if (! empty($response->data)) {
+            $currentPage = LengthAwarePaginator::resolveCurrentPage();
+            $perPage = 10; // change if needed
 
-    $paginated = new LengthAwarePaginator(
-        $collection->forPage($currentPage, $perPage)->values(),
-        $collection->count(),
-        $perPage,
-        $currentPage,
-        ['path' => request()->url()]
-    );
-}
+            $collection = collect($response->data);
+
+            $paginated = new LengthAwarePaginator(
+                $collection->forPage($currentPage, $perPage)->values(),
+                $collection->count(),
+                $perPage,
+                $currentPage,
+                ['path' => request()->url()]
+            );
+        }
 
 
         if ($response->hasError()) {
@@ -200,7 +218,7 @@ class MeterProfileParameterController extends Controller
             'profiles' => $profiles->data,
             'profileParameters' => $profileParameters->data,
             'meterProfileParameter' => $response->data,
-            'profileId'=>$response->data['profile_id'],
+            'profileId' => $response->data['profile_id'],
         ]);
     }
 

@@ -16,7 +16,7 @@ const breadCrumbs: BreadcrumbItem[] = [
 ]
 
 interface Props {
-  meterProfileParameter: Paginator<MeterProfileParameter>
+  meterProfileParameter?: Paginator<MeterProfileParameter>
   profileId: number
 }
 
@@ -40,11 +40,15 @@ const MeterProfileParameterShow = ({ meterProfileParameter, profileId }: Props) 
           />
         </div>
 
-        {meterProfileParameter.data.length > 0 && (
+        {meterProfileParameter ? (
           <>
             <ProfileParameterShowList meterProfileParameters={meterProfileParameter.data} />
             <Pagination pagination={meterProfileParameter} />
           </>
+        ) : (
+          <div className='flex items-center justify-center'>
+            No profile parameters are available. Please add a profile parameter to view the details.
+          </div>
         )}
       </div>
     </MainLayout>
