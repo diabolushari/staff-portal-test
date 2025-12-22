@@ -2,6 +2,7 @@
 
 namespace App\Services\Parameters;
 
+use App\GrpcConverters\MetaData\ParameterDomainGrpcConverter;
 use App\Http\Requests\Parameters\ParameterDefinitionFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
@@ -19,12 +20,10 @@ class ParameterDefinitionService
 {
     private ParameterDefinitionServiceClient $client;
 
-    private ParameterDomainService $parameterDomainService;
-
-    public function __construct()
-    {
-        $this->parameterDomainService = new ParameterDomainService;
-
+    public function __construct(
+        private ParameterDomainService $parameterDomainService,
+        private ParameterDomainGrpcConverter $parameterDomainGrpcConverter
+    ) {
         $this->client = new ParameterDefinitionServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
@@ -122,6 +121,12 @@ class ParameterDefinitionService
             );
         }
 
+        $domain = $response->getDomain() ?? null;
+        $domainArray = null;
+        if ($domain !== null) {
+            $domainArray = $this->parameterDomainGrpcConverter->convertToArray($domain);
+        }
+
         $definition = [
             'id' => $response->getId(),
             'parameter_name' => $response->getParameterName(),
@@ -131,7 +136,7 @@ class ParameterDefinitionService
             'attribute4_name' => $response->getAttribute4Name(),
             'attribute5_name' => $response->getAttribute5Name(),
             'is_effective_date_driven' => $response->getIsEffectiveDateDriven(),
-            'domain' => $response->getDomain(),
+            'domain' => $domainArray,
             'domain_id' => $response->getDomainId(),
         ];
 

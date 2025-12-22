@@ -75,7 +75,7 @@ class MeterProfileParameterController extends Controller
                 'details' => $response->statusDetails,
             ],
             'oldSearch' => $request->input('search'),
-            'definition' => $meterProfileParameter,
+            'definition' => $meterProfileParameter->data,
         ]);
     }
 

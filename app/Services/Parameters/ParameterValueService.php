@@ -177,7 +177,7 @@ class ParameterValueService
         [$response, $status] = $this->client->CreateParameterValue($grpcRequest)->wait();
 
         $errorResponse = GrpcErrorService::handleErrorResponse($status);
-        if ($errorResponse !== null) {
+        if ($status->code !== 0) {
             return GrpcServiceResponse::error($errorResponse, $response, $status->code, $status->details);
         }
         $definition = [
