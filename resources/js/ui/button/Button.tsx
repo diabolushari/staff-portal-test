@@ -25,7 +25,12 @@ export const chooseButtonColor = (type: string): [string, string] => {
       return ['bg-gray-200 hover:bg-gray-400 focus:ring-gray-200 text-gray-700', 'text-gray-500']
     }
     case 'tertiary': {
-      return ['bg-white hover:bg-primary-300 focus:ring-gray-200 text-gray-700', 'text-gray-500']
+      return [
+        'rounded-lg border-2 border-gray-300 bg-white text-gray-700 ' +
+          'hover:bg-gray-50 hover:border-gray-400 ' +
+          'focus:ring-2 focus:ring-gray-200',
+        'text-gray-500',
+      ]
     }
     case 'info': {
       return [
@@ -50,7 +55,7 @@ export const chooseButtonColor = (type: string): [string, string] => {
     }
     case 'link': {
       return [
-        'lgButtonText text-blue-500 flex items-center justify-center px-10 py-2 tracking-wider capitalize transition duration-150' +
+        'lgButtonText text-blue-500 flex items-center justify-center px-10 py-2 tracking-wider capitalize transition duration-150 underline' +
           ' ease-in-out focus:ring-4 focus:outline-hidden hover:cursor-pointer',
         '',
       ]

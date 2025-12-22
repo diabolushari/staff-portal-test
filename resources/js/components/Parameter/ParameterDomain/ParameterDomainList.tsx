@@ -1,4 +1,6 @@
 import { ParameterDomain } from '@/interfaces/parameter_types'
+import DeleteButton from '@/ui/button/DeleteButton'
+import EditButton from '@/ui/button/EditButton'
 import { router } from '@inertiajs/react'
 import { Layers, FileText, Pencil, Trash2 } from 'lucide-react'
 
@@ -77,24 +79,8 @@ export default function ParameterDomainList({ domains, onEdit, onDelete }: Reado
               <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
                 <div className='mb-2 rounded-[50px] bg-slate-100 px-2.5 py-px'></div>
                 <div className='flex items-center gap-3'>
-                  {onEdit && (
-                    <button
-                      onClick={() => onEdit(domain)}
-                      className='flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800'
-                    >
-                      <Pencil className='h-4 w-4' />
-                      Edit
-                    </button>
-                  )}
-                  {onDelete && (
-                    <button
-                      onClick={() => onDelete(domain)}
-                      className='flex items-center gap-1 text-sm text-red-600 hover:text-red-800'
-                    >
-                      <Trash2 className='h-4 w-4' />
-                      Delete
-                    </button>
-                  )}
+                  {onEdit && <EditButton onClick={() => onEdit(domain)} />}
+                  {onDelete && <DeleteButton onClick={() => onDelete(domain)} />}
                 </div>
               </div>
             </div>
