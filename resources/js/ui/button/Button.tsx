@@ -22,7 +22,10 @@ export const chooseButtonColor = (type: string): [string, string] => {
       ]
     }
     case 'secondary': {
-      return ['bg-gray-200 hover:bg-gray-400 focus:ring-gray-200 text-gray-700', 'text-gray-500']
+      return [
+        'rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-300',
+        '',
+      ]
     }
     case 'tertiary': {
       return ['bg-white hover:bg-primary-300 focus:ring-gray-200 text-gray-700', 'text-gray-500']
@@ -73,7 +76,7 @@ export default function Button({
   disabled = false,
   type = 'submit',
   link,
-}: Properties) {
+}: Readonly<Properties>) {
   const [buttonStyle, svgStyle] = chooseButtonColor(variant)
 
   return (
