@@ -17,6 +17,12 @@ const MeterProfileParameterList = ({ meterProfileParameters }: Props) => {
     }
   }, [showDeleteModal])
 
+  const handleShow = (profile: MeterProfileGroupByProfile) => {
+    console.log('Showing profile:', profile)
+
+    router.get(route('meter-profile.show', profile.profile?.id))
+  }
+
   return (
     <div className='relative w-full rounded-lg bg-white'>
       <div className='flex flex-col px-7 pb-7'>
@@ -24,7 +30,7 @@ const MeterProfileParameterList = ({ meterProfileParameters }: Props) => {
           <div
             key={group.profile?.id}
             className='mb-4 rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
-            onClick={() => router.get(route(`/meter-profile/${group.profile?.id}`))}
+            onClick={() => handleShow(group)}
           >
             <div className='font-semibold'>{group.profile?.parameter_value}</div>
           </div>

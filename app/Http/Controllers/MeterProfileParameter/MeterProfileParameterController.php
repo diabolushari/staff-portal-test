@@ -124,9 +124,37 @@ class MeterProfileParameterController extends Controller
      
      * Display the specified resource.
      */
-    public function show(int $id): Response|RedirectResponse
+    public function show(Request $request,int $id): Response|RedirectResponse
     {
-        $response = $this->meterProfileParameterService->getMeterProfileParameter($id);
+
+          $search = $request->input('search') ?? null;
+        $pageNumber = $request->input('page') ?? 1;
+        $pageSize = $request->input('page_size') ?? 10;
+        $profileId= $id;
+        $response = $this->meterProfileParameterService->listMeteringProfileParameters(
+             $pageNumber,
+            $pageSize,
+            $search,
+            $profileId
+        );
+  
+
+         $paginated = null;
+       if (! empty($response->data)) {
+    $currentPage = LengthAwarePaginator::resolveCurrentPage();
+    $perPage = 10; // change if needed
+
+    $collection = collect($response->data);
+
+    $paginated = new LengthAwarePaginator(
+        $collection->forPage($currentPage, $perPage)->values(),
+        $collection->count(),
+        $perPage,
+        $currentPage,
+        ['path' => request()->url()]
+    );
+}
+
 
         if ($response->hasError()) {
             return $response->error ?? redirect()->back()->with([
@@ -139,7 +167,7 @@ class MeterProfileParameterController extends Controller
         }
 
         return Inertia::render('MeterProfileParameter/MeterProfileParameterShow', [
-            'meterProfileParameter' => $response->data,
+            'meterProfileParameter' => $paginated,
         ]);
     }
 

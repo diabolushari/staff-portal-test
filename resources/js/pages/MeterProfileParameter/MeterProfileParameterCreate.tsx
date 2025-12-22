@@ -62,7 +62,7 @@ const MeterProfileParameterCreate = ({ profiles, meterProfileParameter }: Props)
         meterProfileParameter ? 'Edit Meter Profile Parameter' : 'Create Meter Profile Parameter'
       }
       navItems={meteringBillingNavItems}
-      selectedItem='Meter Profile Parameters'
+      selectedItem='Metering Profiles'
       breadcrumb={breadcrumbs}
     >
       <div>
