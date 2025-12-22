@@ -12,6 +12,6 @@ class SystemModuleFormRequest extends Data
 {
     public function __construct(
         #[Max(255)]
-        public string $systemModuleName,
+        public string $name,
     ) {}
 }

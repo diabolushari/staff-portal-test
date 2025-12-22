@@ -2,6 +2,7 @@
 
 namespace App\Services\Parameters;
 
+use App\GrpcConverters\MetaData\ParameterDomainGrpcConverter;
 use App\Http\Requests\Parameters\ParameterDefinitionFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
@@ -19,12 +20,10 @@ class ParameterDefinitionService
 {
     private ParameterDefinitionServiceClient $client;
 
-    private ParameterDomainService $parameterDomainService;
-
-    public function __construct()
-    {
-        $this->parameterDomainService = new ParameterDomainService;
-
+    public function __construct(
+        private ParameterDomainService $parameterDomainService,
+        private ParameterDomainGrpcConverter $parameterDomainGrpcConverter
+    ) {
         $this->client = new ParameterDefinitionServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
@@ -95,10 +94,21 @@ class ParameterDefinitionService
         return GrpcServiceResponse::success($definitionsArray, $response, $status->code, $status->details);
     }
 
-    public function getParameterDefinition(string|int $id): GrpcServiceResponse
+    public function getParameterDefinition(string|int|null $id = null, ?string $domainName = null, ?string $parameterName = null, ?string $systemModuleName = null): GrpcServiceResponse
     {
         $request = new GetParameterDefinitionRequest;
-        $request->setId($id);
+        if ($id !== null) {
+            $request->setId($id);
+        }
+        if ($domainName !== null) {
+            $request->setDomainName($domainName);
+        }
+        if ($parameterName !== null) {
+            $request->setParameterName($parameterName);
+        }
+        if ($systemModuleName !== null) {
+            $request->setSystemModuleName($systemModuleName);
+        }
 
         [$response, $status] = $this->client->GetParameterDefinition($request)->wait();
 
@@ -111,6 +121,12 @@ class ParameterDefinitionService
             );
         }
 
+        $domain = $response->getDomain() ?? null;
+        $domainArray = null;
+        if ($domain !== null) {
+            $domainArray = $this->parameterDomainGrpcConverter->convertToArray($domain);
+        }
+
         $definition = [
             'id' => $response->getId(),
             'parameter_name' => $response->getParameterName(),
@@ -120,7 +136,7 @@ class ParameterDefinitionService
             'attribute4_name' => $response->getAttribute4Name(),
             'attribute5_name' => $response->getAttribute5Name(),
             'is_effective_date_driven' => $response->getIsEffectiveDateDriven(),
-            'domain' => $response->getDomain(),
+            'domain' => $domainArray,
             'domain_id' => $response->getDomainId(),
         ];
 

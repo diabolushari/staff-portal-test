@@ -5,6 +5,7 @@ namespace App\Http\Controllers\MeterProfileParameter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MeterProfileParameter\MeterProfileParameterFormRequest;
 use App\Services\Metering\MeteringParameterProfileService;
+use App\Services\Parameters\ParameterDefinitionService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,8 @@ class MeterProfileParameterController extends Controller
 
     public function __construct(
         private MeteringParameterProfileService $meterProfileParameterService,
-        private ParameterValueService $parameterValueService
+        private ParameterValueService $parameterValueService,
+        private ParameterDefinitionService $parameterDefinitionService,
     ) {}
     /**
      * Display a listing of the resource.
@@ -29,18 +31,17 @@ class MeterProfileParameterController extends Controller
         $search = $request->input('search') ?? null;
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 10;
-
+        $meterProfileParameter = $this->parameterDefinitionService->getParameterDefinition(null, 'Meter', 'Meter Profile', 'Consumer');
 
         $search = $request->input('search');
-
-        $response = $this->meterProfileParameterService->listPaginatedMeteringProfileParameters(
+        $response = $this->meterProfileParameterService->listMeteringProfileParameterGroupByMeterProfile(
             $pageNumber,
             $pageSize,
             null,
             null,
             $search,
         );
-        Log::info($search);
+
 
         $paginated = null;
         if (! empty($response->data)) {
@@ -72,6 +73,7 @@ class MeterProfileParameterController extends Controller
                 'details' => $response->statusDetails,
             ],
             'oldSearch' => $request->input('search'),
+            'definition' => $meterProfileParameter->data,
         ]);
     }
 
@@ -105,12 +107,37 @@ class MeterProfileParameterController extends Controller
             ]);
         }
 
-        return redirect()->route('meter-profile-parameter.index')->with([
+        return redirect()->route('meter-profile.index')->with([
             'message' => 'Meter profile parameter created successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,
                 'details' => $response->statusDetails,
             ],
+        ]);
+    }
+
+
+
+    /**
+     
+     * Display the specified resource.
+     */
+    public function show(int $id): Response|RedirectResponse
+    {
+        $response = $this->meterProfileParameterService->getMeterProfileParameter($id);
+
+        if ($response->hasError()) {
+            return $response->error ?? redirect()->back()->with([
+                'message' => 'Failed to fetch meter profile parameter.',
+                'grpcStatus' => [
+                    'code' => $response->statusCode,
+                    'details' => $response->statusDetails,
+                ],
+            ]);
+        }
+
+        return Inertia::render('MeterProfileParameter/MeterProfileParameterShow', [
+            'meterProfileParameter' => $response->data,
         ]);
     }
 
@@ -156,7 +183,7 @@ class MeterProfileParameterController extends Controller
             ]);
         }
 
-        return redirect()->route('meter-profile-parameter.index')->with([
+        return redirect()->route('meter-profile.index')->with([
             'message' => 'Meter profile parameter updated successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,
@@ -182,7 +209,7 @@ class MeterProfileParameterController extends Controller
             ]);
         }
 
-        return redirect()->route('meter-profile-parameter.index')->with([
+        return redirect()->route('meter-profile.index')->with([
             'message' => 'Meter profile parameter deleted successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,

@@ -3,13 +3,18 @@ import { Clock } from 'lucide-react'
 import { useState } from 'react'
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
-import CardHeader from '@/ui/Card/CardHeader'
 import ListSearch from '@/ui/Search/ListSearch'
-import { ParameterValues } from '@/interfaces/parameter_types'
+import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
 import { BreadcrumbItem } from '@/types'
+import EditButton from '@/ui/button/EditButton'
+import DeleteButton from '@/ui/button/DeleteButton'
+import Button from '@/ui/button/Button'
+import ParameterValueModal from '@/components/Parameter/ParameterValue/ParameterValueModal'
+import AddButton from '@/ui/button/AddButton'
+import MeterTimeZoneFormModal from '@/components/meteringtimezones/MeterTimeZoneFormModal'
 
 interface TimezoneGroup {
-  timezone_type: { id: number; parameter_value: string }
+  timezone_type: ParameterValues
   metering_timezones: MeteringTimezone[]
 }
 
@@ -39,6 +44,10 @@ interface Props {
       }
     | TimezoneGroup[]
   timezone_types: ParameterValues[]
+  pricing_types: ParameterValues[]
+  timezone_names: ParameterValues[]
+  timezone_type_parameter: ParameterDefinition
+  timezone_name_parameter: ParameterDefinition
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -52,7 +61,19 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ]
 
-export default function MeteringTimezonesIndexPage({ timezones, timezone_types }: Props) {
+export default function MeteringTimezonesIndexPage({
+  timezones,
+  timezone_types,
+  pricing_types,
+  timezone_names,
+  timezone_type_parameter,
+  timezone_name_parameter,
+}: Props) {
+  const [selectedTimeZone, setSelectedTimeZone] = useState<MeteringTimezone | null>(null)
+  const [showAddModal, setShowAddModal] = useState<boolean>(false)
+  const [selecedDefinition, setSelectedDefinition] = useState<ParameterDefinition | null>(null)
+  const [selectedType, setSelectedType] = useState<ParameterValues | null>(null)
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false)
   const timezonesData = Array.isArray(timezones) ? timezones : timezones?.data || []
   const [groups] = useState<TimezoneGroup[]>(timezonesData)
 
@@ -67,12 +88,11 @@ export default function MeteringTimezonesIndexPage({ timezones, timezone_types }
   function formatTime(hrs: number, mins: number): string {
     return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
   }
+
   return (
     <MainLayout
       navItems={meteringBillingNavItems}
       selectedItem='Metering Timezones'
-      addBtnText='Metering Timezone'
-      addBtnUrl={route('metering-timezone.create')}
       selectedTopNav='Consumers'
       title='Metering Timezones'
       breadcrumb={breadcrumbs}
@@ -89,11 +109,26 @@ export default function MeteringTimezonesIndexPage({ timezones, timezone_types }
               groups.map((group) => (
                 <div
                   key={group.timezone_type.id}
-                  className='rounded-lg border border-gray-200 bg-white shadow-sm'
+                  className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
+                  onClick={() => handleShow(group.timezone_type.id)}
                 >
                   {/* Header */}
-                  <div className='font-inter border-b border-gray-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800'>
+                  <div className='font-inter flex items-center justify-between border-b border-gray-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800'>
                     {group.timezone_type.parameter_value}
+                    <div
+                      className='flex items-center gap-2'
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <DeleteButton
+                        onClick={() => setSelectedTimeZone(group.metering_timezones[0])}
+                      />
+                      <AddButton
+                        onClick={() => {
+                          setSelectedType(group?.timezone_type)
+                          setShowCreateModal(true)
+                        }}
+                      />
+                    </div>
                   </div>
 
                   {/* Timezones row */}
@@ -101,8 +136,7 @@ export default function MeteringTimezonesIndexPage({ timezones, timezone_types }
                     {group.metering_timezones.map((tz) => (
                       <div
                         key={tz.metering_timezone_id}
-                        onClick={() => handleShow(tz.metering_timezone_id)}
-                        className='flex min-w-[220px] cursor-pointer flex-col'
+                        className='flex min-w-[220px] flex-col'
                       >
                         <div className='font-medium text-slate-900'>
                           {tz.timezone_name.parameter_value}
@@ -138,6 +172,12 @@ export default function MeteringTimezonesIndexPage({ timezones, timezone_types }
                   >
                     <div className='font-inter border-b border-gray-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800'>
                       {type.parameter_value}
+                      <AddButton
+                        onClick={() => {
+                          setSelectedType(type)
+                          setShowCreateModal(true)
+                        }}
+                      />
                     </div>
                     <div className='px-4 py-3 text-sm text-slate-500'>
                       No metering timezones configured
@@ -146,8 +186,32 @@ export default function MeteringTimezonesIndexPage({ timezones, timezone_types }
                 ))}
               </>
             )}
+            <Button
+              onClick={() => {
+                setSelectedDefinition(timezone_type_parameter)
+                setShowAddModal(true)
+              }}
+              variant='secondary'
+              label='Create new Timezone Group'
+            />
           </div>
         </div>
+        {showAddModal && selecedDefinition !== null && (
+          <ParameterValueModal
+            onClose={() => setShowAddModal(false)}
+            definition={selecedDefinition}
+            title='Time Zone Group'
+          />
+        )}
+        {showCreateModal && selectedType !== null && (
+          <MeterTimeZoneFormModal
+            onClose={() => setShowCreateModal(false)}
+            timezoneType={selectedType}
+            timezoneNames={timezone_names}
+            pricingTypes={pricing_types}
+            timezoneNameParameter={timezone_name_parameter}
+          />
+        )}
       </div>
     </MainLayout>
   )

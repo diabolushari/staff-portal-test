@@ -78,7 +78,7 @@ message ListMeteringProfileParametersResponse {
 message ListMeteringProfileParametersPaginatedRequest {
   int32 page_number = 1;
   int32 page_size = 2;
-  optional string search = 3; // (optional, name, display_name)
+  optional string search = 3;
   optional string sort_by = 4;// "name" , "display_name" , "created_ts"       
   optional string sort_direction = 5; // "asc" , "desc"
   optional int64 profile_id = 6; 
@@ -86,6 +86,27 @@ message ListMeteringProfileParametersPaginatedRequest {
 
 message ListMeteringProfileParametersPaginatedResponse {
   repeated MeteringProfileParameterMessage profiles = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
+message PaginatedListMeteringProfileParametersGroupByProfileRequest {
+  int32 page_number = 1;
+  int32 page_size = 2;
+  optional string search = 3;
+  optional string sort_by = 4;// "name" , "display_name" , "created_ts"       
+  optional string sort_direction = 5; // "asc" , "desc"
+  optional int64 profile_id = 6; 
+}
+
+message ProfilesByGroupMessage{
+  parameters.ParameterValueProto parameter_value = 1;
+  repeated MeteringProfileParameterMessage profiles = 2;
+}
+message PaginatedListMeteringProfileParametersGroupByProfileResponse {
+  repeated ProfilesByGroupMessage profiles = 1;
   int64 total_count = 2;
   int32 page_number = 3;
   int32 page_size = 4;
@@ -100,4 +121,5 @@ service MeteringProfileParameterService {
   rpc DeleteMeteringProfileParameter (DeleteMeteringProfileParameterRequest) returns (DeleteMeteringProfileParameterResponse);
   rpc ListMeteringProfileParameters  (ListMeteringProfileParametersRequest)  returns (ListMeteringProfileParametersResponse);
   rpc ListMeteringProfileParametersPaginated      (ListMeteringProfileParametersPaginatedRequest)      returns (ListMeteringProfileParametersPaginatedResponse);
+  rpc PaginatedListMeteringProfileParametersGroupByProfile      (PaginatedListMeteringProfileParametersGroupByProfileRequest)      returns (PaginatedListMeteringProfileParametersGroupByProfileResponse);
 }

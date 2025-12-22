@@ -24,6 +24,12 @@ interface Props {
   updateReading: (meterId: number, parameterId: number, timezoneId: number, value: string) => void
   updateMeterHealth: (meterHealthId: number, meter: Meter) => void
   updateCTPTHealth: (meterId: number, ctptId: number, healthId: number) => void
+  toggleRotation: (
+    meterId: number,
+    parameterId: number,
+    timezoneId: number,
+    checked: boolean
+  ) => void
 }
 
 export default function MeterReadingsStep({
@@ -39,6 +45,7 @@ export default function MeterReadingsStep({
   updateReading,
   healthData,
   setIsOnParameterForm,
+  toggleRotation,
 }: Readonly<Props>) {
   const [activeProfile, setActiveProfile] = useState<{
     meterIdx: number
@@ -53,7 +60,6 @@ export default function MeterReadingsStep({
     }
   }, [activeProfile, setIsOnParameterForm])
 
-  console.log(metersWithTimezonesAndProfiles)
   return (
     <div className='flex flex-col gap-6'>
       {metersWithTimezonesAndProfiles.map((meter, mIdx) => (
@@ -81,6 +87,7 @@ export default function MeterReadingsStep({
               updateReading={updateReading}
               readingValues={readingValues}
               setActiveProfile={setActiveProfile}
+              toggleRotation={toggleRotation}
             />
           )}
         </React.Fragment>

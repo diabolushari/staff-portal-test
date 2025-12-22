@@ -22,9 +22,9 @@ export default function AddButton({ link, onClick, buttonText }: Readonly<Props>
 
   return (
     <Button
-      variant='highlight'
+      variant='outline'
       size='default'
-      className='flex items-center gap-2 transition-transform'
+      className='flex cursor-pointer items-center gap-2 border-b-2 border-blue-500 transition-transform hover:border-blue-800'
       onClick={handleClick}
       type='button'
     >

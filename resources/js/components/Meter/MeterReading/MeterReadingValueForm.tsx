@@ -16,6 +16,7 @@ interface Props {
   onChange: (tzId: number, value: string) => void
   meter: Meter
   profileParameter: MeterProfileParameter
+  onToggleRotation: (tzId: number, checked: boolean) => void
 }
 
 export default function MeterReadingValueForm({
@@ -23,6 +24,7 @@ export default function MeterReadingValueForm({
   onChange,
   meter,
   profileParameter,
+  onToggleRotation,
 }: Readonly<Props>) {
   const integerDigits = meter.digit_count ?? 0
   const decimalDigits = meter.decimal_digit_count ?? 0
@@ -60,6 +62,19 @@ export default function MeterReadingValueForm({
               ))}
             </TableRow>
           )}
+          <TableRow>
+            <TableCell className='font-medium'>Rotation</TableCell>
+            {values.map((tz) => (
+              <TableCell key={tz.timezone_id}>
+                <input
+                  type='checkbox'
+                  checked={tz.isRotation}
+                  onChange={(e) => onToggleRotation(tz.timezone_id, e.target.checked)}
+                />
+              </TableCell>
+            ))}
+          </TableRow>
+
           <TableRow>
             <TableCell className='font-medium'>
               {profileParameter.is_cumulative ? 'Final' : 'Reading'}

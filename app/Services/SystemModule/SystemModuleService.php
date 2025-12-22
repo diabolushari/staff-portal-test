@@ -98,7 +98,7 @@ class SystemModuleService
     public function createSystemModule(SystemModuleFormRequest $request): GrpcServiceResponse
     {
         $systemModule = new SystemModule;
-        $systemModule->setName($request->systemModuleName);
+        $systemModule->setName($request->name);
 
         $grpcRequest = new CreateSystemModuleRequest;
         $grpcRequest->setModule($systemModule);
@@ -124,7 +124,7 @@ class SystemModuleService
     public function updateSystemModule(SystemModuleFormRequest $request, string|int $id): GrpcServiceResponse
     {
         $systemModule = new SystemModule;
-        $systemModule->setName($request->systemModuleName);
+        $systemModule->setName($request->name);
         $systemModule->setId($id);
 
         $grpcRequest = new UpdateSystemModuleRequest;
