@@ -18,7 +18,7 @@ interface Props {
   modules: SystemModule[]
   filters: {
     search: string
-    module_id: number
+    module_id: string
   }
 }
 
@@ -85,7 +85,6 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
         <ListSearch
           title=''
           url={route('parameter-domain.index')}
-          search={filters.search}
           filters={filters}
         />
         <div className='flex items-center justify-between'>
@@ -94,6 +93,7 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
             filters={filters}
           />
           <Button
+            variant='secondary'
             onClick={() =>
               router.get(route('parameter-domain.index'), { search: '', module_id: '' })
             }
@@ -113,25 +113,6 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
             <p>No Parameter Domains Found.</p>
           )}
         </div>
-
-        {/* <Table heads={tableHeads}>
-          {domains.map((item, index) => (
-            <TableRow key={item.id}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>{item.id}</TableCell>
-              <TableCell>{item.domain_name}</TableCell>
-              <TableCell>{item.description}</TableCell>
-              <TableCell>{item.domain_code}</TableCell>
-              <TableCell>{item.system_module?.name}</TableCell>
-              <TableCell>
-                <div className='flex space-x-3'>
-                  <EditButton onClick={() => handleEditClick(item)} />
-                  <DeleteButton onClick={() => handleDeleteClick(item)} />
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </Table> */}
 
         {/* Create/Edit Modal */}
         <AnimatePresence>

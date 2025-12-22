@@ -1,4 +1,4 @@
-import { metadataNavItems, settingsReferenceData } from '@/components/Navbar/navitems'
+import { metadataNavItems } from '@/components/Navbar/navitems'
 import capitalSnakeCase from '@/formaters/capitalcase'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
@@ -33,7 +33,8 @@ interface Props {
 }
 
 export default function ParameterValueCreate({ parameter_value, definitions, domains }: Props) {
-  // don't use loose type check values like 0 want be counted
+  console.log('parameter_value', parameter_value)
+
   const attributeValuePresent =
     parameter_value?.attribute1_value ||
     parameter_value?.attribute2_value ||

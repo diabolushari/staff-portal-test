@@ -56,11 +56,11 @@ export default function SystemModuleForm({
   }
 
   return (
-    <div className='p-4'>
+    <div className=''>
       <form onSubmit={handleSubmit}>
         <div className='flex flex-col gap-4'>
           <Input
-            label={isEditing ? 'Edit System Module Name' : 'Create System Module'}
+            label='System Module Name'
             setValue={setFormValue('name')}
             value={formData.name}
             placeholder={isEditing ? '' : 'Type your System Module Name'}
