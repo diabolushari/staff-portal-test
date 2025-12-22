@@ -5,6 +5,7 @@ import ParameterDefinitionSearchForm from '@/components/Parameter/ParameterDefin
 import { ParameterDefinition, ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
+import AddButton from '@/ui/button/AddButton'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import ListSearch from '@/ui/Search/ListSearch'
 import { useCallback, useState } from 'react'
@@ -67,12 +68,10 @@ export default function ParameterDefinitionIndex({
       <div className='mb-4 flex items-center justify-between'>
         {/* <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Definitions</h2> */}
         <div></div>
-        <button
+        <AddButton
           onClick={handleCreateClick}
-          className='rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
-        >
-          + Add Parameter Definition
-        </button>
+          buttonText='Add Parameter Definition'
+        />
       </div>
       <div className='p-4'>
         <ListSearch

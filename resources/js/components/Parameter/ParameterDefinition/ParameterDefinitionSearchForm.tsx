@@ -69,12 +69,14 @@ export default function ParameterDefinitionSearchForm({
               <Button
                 label='Apply'
                 type='submit'
+                variant='tertiary'
               />
             </div>
           </div>
           <div className='mt-6 flex flex-col items-center justify-center'>
             <Button
               label='Clear filters'
+              variant='link'
               type='button'
               onClick={() =>
                 router.get(route('parameter-definition.index'), {

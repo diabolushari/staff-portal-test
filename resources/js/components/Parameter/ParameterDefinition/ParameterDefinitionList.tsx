@@ -1,5 +1,6 @@
 import { ParameterDefinition } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
+import DeleteButton from '@/ui/button/DeleteButton'
 import { Layers, Package, Pencil, Trash2 } from 'lucide-react'
 
 interface Props {
@@ -103,16 +104,12 @@ export default function ParameterDefinitionList({
                     </button>
                   )}
                   {onDelete && (
-                    <button
+                    <DeleteButton
                       onClick={(e) => {
                         e.stopPropagation()
                         onDelete(def)
                       }}
-                      className='flex items-center gap-1 text-sm text-red-600 hover:text-red-800'
-                    >
-                      <Trash2 className='h-4 w-4' />
-                      Delete
-                    </button>
+                    />
                   )}
                 </div>
               </div>

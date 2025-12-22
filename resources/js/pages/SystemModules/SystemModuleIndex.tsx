@@ -9,6 +9,9 @@ import { route } from 'ziggy-js'
 import SystemModuleForm from './components/SystemModuleForm'
 import { metadataNavItems } from '@/components/Navbar/navitems'
 import { Pencil, Trash2 } from 'lucide-react'
+import AddButton from '@/ui/button/AddButton'
+import EditButton from '@/ui/button/EditButton'
+import DeleteButton from '@/ui/button/DeleteButton'
 
 interface Props {
   systemModules: SystemModule[]
@@ -60,19 +63,17 @@ export default function SystemModuleIndex({ systemModules }: Readonly<Props>) {
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={metadataNavItems}
-      selectedItem='System Module'
+      selectedItem='System Modules'
       title='System Modules'
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <div className='mb-4 flex items-center justify-between'>
           <div></div>
 
-          <button
+          <AddButton
             onClick={handleCreateClick}
-            className='rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
-          >
-            + Add Module
-          </button>
+            buttonText='Add Module'
+          />
         </div>
 
         <div className='flex flex-col'>
@@ -93,20 +94,8 @@ export default function SystemModuleIndex({ systemModules }: Readonly<Props>) {
 
                 {/* Right Section: Actions */}
                 <div className='flex items-center gap-3'>
-                  <button
-                    onClick={() => handleEditClick(module)}
-                    className='flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800'
-                  >
-                    <Pencil className='h-4 w-4' />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(module)}
-                    className='flex items-center gap-1 text-sm text-red-600 hover:text-red-800'
-                  >
-                    <Trash2 className='h-4 w-4' />
-                    Delete
-                  </button>
+                  <EditButton onClick={() => handleEditClick(module)} />
+                  <DeleteButton onClick={() => handleDeleteClick(module)} />
                 </div>
               </div>
             </div>
