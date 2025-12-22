@@ -8,6 +8,7 @@ use App\Services\Parameters\ParameterDefinitionService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -158,15 +159,18 @@ class MeteringTimezoneController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->all();
-        $data['created_by'] = auth()->id();
+        $user = Auth::user();
+        if ($user) {
+            $data['created_by'] = $user->id;
+        }
 
         $response = $this->meteringTimezoneService->createMeteringTimezone($data);
 
         if ($response->hasError()) {
-            return redirect()->back()->withErrors($response->error)->withInput();
+            return redirect()->back()->with('error', $response->error ?? 'Unknown error')->withInput();
         }
 
-        return redirect()->route('metering-timezone.index')->with('success', 'Meter timezone created successfully.');
+        return redirect()->back()->with('message', 'Meter timezone created successfully.');
     }
 
     /**
@@ -174,8 +178,40 @@ class MeteringTimezoneController extends Controller
      */
     public function show(int $id): Response|RedirectResponse
     {
-        $timezone = $this->meteringTimezoneService->getMeteringTimezone($id);
-
+        $timezone = $this->meteringTimezoneService->getTimezoneGroupByTimezoneType($id);
+        $timezoneTypesResponse = $this->parameterValueService->getParameterValues(
+            page: 1,
+            pageSize: 100,
+            search: null,
+            domainName: 'Meter',
+            parameterName: 'Timezone Type'
+        );
+        $pricingTypesResponse = $this->parameterValueService->getParameterValues(
+            page: 1,
+            pageSize: 100,
+            search: null,
+            domainName: 'Meter',
+            parameterName: 'Pricing Type'
+        );
+        $timezoneNameParameter = $this->parameterDefinitionService->getParameterDefinition(
+            null,
+            'Meter',
+            'Timezone Name',
+            'Consumer'
+        );
+        $timeZoneTypeParameter = $this->parameterDefinitionService->getParameterDefinition(
+            null,
+            'Meter',
+            'Timezone Type',
+            'Consumer'
+        );
+        $timezoneNamesResponse = $this->parameterValueService->getParameterValues(
+            page: 1,
+            pageSize: 100,
+            search: null,
+            domainName: 'Meter',
+            parameterName: 'Timezone Name'
+        );
         if ($timezone->hasError()) {
             return redirect()->back()->withErrors([
                 'grpc_error' => 'Error fetching timezone: ' . ($timezone->statusDetails ?? 'Unknown error'),
@@ -184,6 +220,11 @@ class MeteringTimezoneController extends Controller
 
         return Inertia::render('MeteringTimezones/MeteringTimezoneShowPage', [
             'timezone' => $timezone->data,
+            'timezoneTypes' => $timezoneTypesResponse->data,
+            'pricingTypes' => $pricingTypesResponse->data,
+            'timezoneNameParameter' => $timezoneNameParameter->data,
+            'timeZoneTypeParameter' => $timeZoneTypeParameter->data,
+            'timezoneNames' => $timezoneNamesResponse->data,
         ]);
     }
 
@@ -302,11 +343,11 @@ class MeteringTimezoneController extends Controller
 
         if ($response->hasError()) {
             return redirect()->back()->withErrors([
-                'grpc_error' => 'Error deleting timezone: ' . ($response->statusDetails ?? 'Unknown error'),
+                'error' => 'Error deleting timezone: ' . ($response->statusDetails ?? 'Unknown error'),
             ]);
         }
 
-        return redirect()->route('metering-timezone.index')->with('success', 'Meter timezone deleted successfully.');
+        return redirect()->back()->with('message', 'Meter timezone deleted successfully.');
     }
 
     /**
