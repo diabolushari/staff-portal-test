@@ -5,6 +5,7 @@ namespace App\Http\Controllers\MeterProfileParameter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MeterProfileParameter\MeterProfileParameterFormRequest;
 use App\Services\Metering\MeteringParameterProfileService;
+use App\Services\Parameters\ParameterDefinitionService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,8 @@ class MeterProfileParameterController extends Controller
 
     public function __construct(
         private MeteringParameterProfileService $meterProfileParameterService,
-        private ParameterValueService $parameterValueService
+        private ParameterValueService $parameterValueService,
+        private ParameterDefinitionService $parameterDefinitionService,
     ) {}
     /**
      * Display a listing of the resource.
@@ -29,6 +31,7 @@ class MeterProfileParameterController extends Controller
         $search = $request->input('search') ?? null;
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 10;
+        $meterProfileParameter = $this->parameterDefinitionService->getParameterDefinition(null, 'Meter', 'Meter Profile', 'Consumer');
 
 
         $search = $request->input('search');
@@ -40,7 +43,7 @@ class MeterProfileParameterController extends Controller
             null,
             $search,
         );
-       
+
 
         $paginated = null;
         if (! empty($response->data)) {
@@ -72,6 +75,7 @@ class MeterProfileParameterController extends Controller
                 'details' => $response->statusDetails,
             ],
             'oldSearch' => $request->input('search'),
+            'definition' => $meterProfileParameter->data,
         ]);
     }
 
@@ -114,7 +118,7 @@ class MeterProfileParameterController extends Controller
         ]);
     }
 
-    
+
 
     /**
      

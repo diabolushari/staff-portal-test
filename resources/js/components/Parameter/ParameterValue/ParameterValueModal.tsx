@@ -1,17 +1,20 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ParameterDefinition, ParameterDomain } from '@/interfaces/parameter_types'
+import { ParameterDefinition } from '@/interfaces/parameter_types'
+import NormalText from '@/typography/NormalText'
+import StrongText from '@/typography/StrongText'
+import Button from '@/ui/button/Button'
 import FormCard from '@/ui/Card/FormCard'
 import Input from '@/ui/form/Input'
+import TextArea from '@/ui/form/TextArea'
 import Modal from '@/ui/Modal/Modal'
 
 interface PageProps {
   onClose: () => void
-  domain: ParameterDomain
   definition: ParameterDefinition
 }
 
-export default function ParameterValueModal({ onClose, domain, definition }: PageProps) {
+export default function ParameterValueModal({ onClose, definition }: PageProps) {
   const { formData, setFormValue } = useCustomForm({
     definition_id: definition.id,
     parameter_code: '',
@@ -40,66 +43,107 @@ export default function ParameterValueModal({ onClose, domain, definition }: Pag
     e.preventDefault()
     post(formData)
   }
+  console.log(definition)
   return (
     <Modal
       title='Parameter Value'
       setShowModal={onClose}
       large={true}
     >
-      <FormCard title='Basic Information'>
-        <Input
-          label='Parameter Code'
-          value={formData.parameter_code}
-          setValue={setFormValue('parameter_code')}
-          error={errors?.parameter_code}
-        />
-        <Input
-          label='Parameter Value'
-          value={formData.parameter_value}
-          setValue={setFormValue('parameter_value')}
-          error={errors?.parameter_value}
-        />
-        {definition.attribute1_name && (
+      <div className='flex flex-col gap-2'>
+        <div className='flex gap-4'>
+          <NormalText>Domain: </NormalText>
+          <StrongText>{definition.domain?.domain_name}</StrongText>
+          <NormalText>Parameter Name: </NormalText>
+          <StrongText>{definition.parameter_name}</StrongText>
+          <NormalText>Module: </NormalText>
+          <StrongText>{definition.domain?.system_module?.name}</StrongText>
+        </div>
+        <FormCard title='Basic Information'>
           <Input
-            label={definition.attribute1_name}
-            value={formData.attribute1_value}
-            setValue={setFormValue('attribute1_value')}
-            error={errors?.attribute1_value}
+            label='Parameter Code'
+            value={formData.parameter_code}
+            setValue={setFormValue('parameter_code')}
+            error={errors?.parameter_code}
           />
-        )}
-        {definition.attribute2_name && (
           <Input
-            label={definition.attribute2_name}
-            value={formData.attribute2_value}
-            setValue={setFormValue('attribute2_value')}
-            error={errors?.attribute2_value}
+            label='Parameter Value'
+            value={formData.parameter_value}
+            setValue={setFormValue('parameter_value')}
+            error={errors?.parameter_value}
           />
-        )}
-        {definition.attribute3_name && (
+          <TextArea
+            label='Notes'
+            value={formData.notes}
+            setValue={setFormValue('notes')}
+            error={errors?.notes}
+          />
           <Input
-            label={definition.attribute3_name}
-            value={formData.attribute3_value}
-            setValue={setFormValue('attribute3_value')}
-            error={errors?.attribute3_value}
+            label='Sort Priority'
+            type='number'
+            value={formData.sort_priority}
+            setValue={setFormValue('sort_priority')}
+            error={errors?.sort_priority}
           />
-        )}
-        {definition.attribute4_name && (
-          <Input
-            label={definition.attribute4_name}
-            value={formData.attribute4_value}
-            setValue={setFormValue('attribute4_value')}
-            error={errors?.attribute4_value}
+        </FormCard>
+        <FormCard title='Attributes'>
+          {definition.attribute1_name && (
+            <Input
+              label={definition.attribute1_name}
+              value={formData.attribute1_value}
+              setValue={setFormValue('attribute1_value')}
+              error={errors?.attribute1_value}
+            />
+          )}
+          {definition.attribute2_name && (
+            <Input
+              label={definition.attribute2_name}
+              value={formData.attribute2_value}
+              setValue={setFormValue('attribute2_value')}
+              error={errors?.attribute2_value}
+            />
+          )}
+          {definition.attribute3_name && (
+            <Input
+              label={definition.attribute3_name}
+              value={formData.attribute3_value}
+              setValue={setFormValue('attribute3_value')}
+              error={errors?.attribute3_value}
+            />
+          )}
+          {definition.attribute4_name && (
+            <Input
+              label={definition.attribute4_name}
+              value={formData.attribute4_value}
+              setValue={setFormValue('attribute4_value')}
+              error={errors?.attribute4_value}
+            />
+          )}
+          {definition.attribute5_name && (
+            <Input
+              label={definition.attribute5_name}
+              value={formData.attribute5_value}
+              setValue={setFormValue('attribute5_value')}
+              error={errors?.attribute5_value}
+            />
+          )}
+        </FormCard>
+        <div className='flex justify-between gap-2'>
+          <Button
+            label='Cancel'
+            onClick={onClose}
+            variant='secondary'
           />
-        )}
-        {definition.attribute5_name && (
-          <Input
-            label={definition.attribute5_name}
-            value={formData.attribute5_value}
-            setValue={setFormValue('attribute5_value')}
-            error={errors?.attribute5_value}
+          <Button
+            label='Submit'
+            onClick={handleSubmit}
+            processing={loading ? true : false}
+            disabled={loading ? true : false}
+            type='submit'
+            variant={loading ? 'loading' : 'default'}
           />
-        )}
-      </FormCard>
+        </div>
+      </div>
     </Modal>
   )
 }
