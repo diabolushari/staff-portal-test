@@ -31,7 +31,7 @@ class MeterProfileParameterController extends Controller
         $search = $request->input('search') ?? null;
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 10;
-        $meterProfileParameter = $this->parameterDefinitionService->getParameterDefinition(null, 'Meter', 'Meter Profile', 'Consumer');
+        //$meterProfileParameter = $this->parameterDefinitionService->getParameterDefinition(null, 'Meter', 'Meter Profile', 'Consumer');
 
 
         $search = $request->input('search');
@@ -75,20 +75,24 @@ class MeterProfileParameterController extends Controller
                 'details' => $response->statusDetails,
             ],
             'oldSearch' => $request->input('search'),
-            'definition' => $meterProfileParameter->data,
+            'definition' => null,
         ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
-
+        
+    $profileId = (int) $request->query('profileId');
         $profiles = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile');
+        $profileParameters = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Profile Parameter');
 
         return Inertia::render('MeterProfileParameter/MeterProfileParameterCreate', [
             'profiles' => $profiles->data,
+            'profileParameters' => $profileParameters->data,
+            'profileId' => $profileId,
         ]);
     }
 
@@ -109,7 +113,7 @@ class MeterProfileParameterController extends Controller
             ]);
         }
 
-        return redirect()->route('meter-profile.index')->with([
+        return redirect()->route('meter-profile.show', $request->profileId)->with([
             'message' => 'Meter profile parameter created successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,
@@ -168,6 +172,7 @@ class MeterProfileParameterController extends Controller
 
         return Inertia::render('MeterProfileParameter/MeterProfileParameterShow', [
             'meterProfileParameter' => $paginated,
+            'profileId' => $profileId,
         ]);
     }
 
@@ -189,10 +194,13 @@ class MeterProfileParameterController extends Controller
         }
 
         $profiles = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile');
+        $profileParameters = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Profile Parameter');
 
         return Inertia::render('MeterProfileParameter/MeterProfileParameterCreate', [
             'profiles' => $profiles->data,
+            'profileParameters' => $profileParameters->data,
             'meterProfileParameter' => $response->data,
+            'profileId'=>$response->data['profile_id'],
         ]);
     }
 
@@ -213,7 +221,7 @@ class MeterProfileParameterController extends Controller
             ]);
         }
 
-        return redirect()->route('meter-profile.index')->with([
+        return redirect()->route('meter-profile.show', $request->profileId)->with([
             'message' => 'Meter profile parameter updated successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,

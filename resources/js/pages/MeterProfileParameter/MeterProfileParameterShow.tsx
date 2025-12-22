@@ -3,8 +3,10 @@ import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { MeterProfileParameter } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
+import AddButton from '@/ui/button/AddButton'
 import Pagination from '@/ui/Pagination/Pagination'
 import { Paginator } from '@/ui/ui_interfaces'
+import { router } from '@inertiajs/react'
 
 const breadCrumbs: BreadcrumbItem[] = [
   { title: 'Home', href: '/' },
@@ -15,9 +17,13 @@ const breadCrumbs: BreadcrumbItem[] = [
 
 interface Props {
   meterProfileParameter: Paginator<MeterProfileParameter>
+  profileId: number
 }
 
-const MeterProfileParameterShow = ({ meterProfileParameter }: Props) => {
+const MeterProfileParameterShow = ({ meterProfileParameter, profileId }: Props) => {
+  const handleAdd = () => {
+    router.get(route('meter-profile.create', { profileId }))
+  }
   return (
     <MainLayout
       title='Meter Profile Parameter Show'
@@ -26,6 +32,14 @@ const MeterProfileParameterShow = ({ meterProfileParameter }: Props) => {
       selectedItem='Metering Profiles'
     >
       <div className='p-4'>
+        <div className='flex items-center justify-between p-4'>
+          <div />
+          <AddButton
+            onClick={handleAdd}
+            buttonText='Add Profile Parameter'
+          />
+        </div>
+
         {meterProfileParameter.data.length > 0 && (
           <>
             <ProfileParameterShowList meterProfileParameters={meterProfileParameter.data} />
