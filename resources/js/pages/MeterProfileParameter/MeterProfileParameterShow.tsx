@@ -1,7 +1,10 @@
+import ProfileParameterShowList from '@/components/MeterProfileParameter/ProfileParameterShowList'
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { MeterProfileParameter } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
+import Pagination from '@/ui/Pagination/Pagination'
+import { Paginator } from '@/ui/ui_interfaces'
 
 const breadCrumbs: BreadcrumbItem[] = [
   { title: 'Home', href: '/' },
@@ -11,11 +14,10 @@ const breadCrumbs: BreadcrumbItem[] = [
 ]
 
 interface Props {
-  meterProfileParameter: MeterProfileParameter[]
+  meterProfileParameter: Paginator<MeterProfileParameter>
 }
 
 const MeterProfileParameterShow = ({ meterProfileParameter }: Props) => {
-  console.log('meterProfileParameter:', meterProfileParameter)
   return (
     <MainLayout
       title='Meter Profile Parameter Show'
@@ -24,7 +26,12 @@ const MeterProfileParameterShow = ({ meterProfileParameter }: Props) => {
       selectedItem='Metering Profiles'
     >
       <div className='p-4'>
-        <div>Meter Profile Parameter Show</div>
+        {meterProfileParameter.data.length > 0 && (
+          <>
+            <ProfileParameterShowList meterProfileParameters={meterProfileParameter.data} />
+            <Pagination pagination={meterProfileParameter} />
+          </>
+        )}
       </div>
     </MainLayout>
   )
