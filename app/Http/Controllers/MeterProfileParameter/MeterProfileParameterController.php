@@ -33,10 +33,7 @@ class MeterProfileParameterController extends Controller
         $pageSize = $request->input('page_size') ?? 10;
         $meterProfileParameter = $this->parameterDefinitionService->getParameterDefinition(null, 'Meter', 'Meter Profile', 'Consumer');
 
-
-
         $search = $request->input('search');
-
         $response = $this->meterProfileParameterService->listMeteringProfileParameterGroupByMeterProfile(
             $pageNumber,
             $pageSize,
@@ -143,7 +140,7 @@ class MeterProfileParameterController extends Controller
 
 
     /**
-     
+
      * Display the specified resource.
      */
     public function show(Request $request, int $id): Response|RedirectResponse

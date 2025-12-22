@@ -7,9 +7,10 @@ import CheckBox from '@/ui/form/CheckBox'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import Modal from '@/ui/Modal/Modal'
+import { router } from '@inertiajs/react'
+import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 import AttributeInput from './AttributeInput'
-import { router } from '@inertiajs/react'
 
 interface Props {
   title: string
@@ -26,7 +27,6 @@ export default function ParameterDefinitionForm({
   parameterDefinition,
   domains,
 }: Readonly<Props>) {
-  // store attributes as dynamic array instead of fixed slots
   const [attributes, setAttributes] = useState<string[]>(() => {
     const initial = [
       parameterDefinition?.attribute1_name ?? '',
@@ -34,9 +34,11 @@ export default function ParameterDefinitionForm({
       parameterDefinition?.attribute3_name ?? '',
       parameterDefinition?.attribute4_name ?? '',
       parameterDefinition?.attribute5_name ?? '',
-    ].filter((a) => a) // remove empty
+    ].filter((a) => a)
     return initial
   })
+
+  console.log('attributes', attributes)
 
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     parameter_name: parameterDefinition?.parameter_name ?? '',
@@ -56,14 +58,12 @@ export default function ParameterDefinitionForm({
     }
   )
 
-  // add new attribute
   const addAttribute = () => {
     if (attributes.length < 5) {
       setAttributes([...attributes, ''])
     }
   }
 
-  // remove and shift attributes
   const removeAttribute = (index: number) => {
     const updated = [...attributes]
     updated.splice(index, 1)
@@ -101,7 +101,7 @@ export default function ParameterDefinitionForm({
         setShowModal={setShowModal}
       >
         <form onSubmit={handleSubmit}>
-          <div className='md:grid md:grid-cols-2 md:gap-4'>
+          <div className='flex flex-col md:gap-4'>
             {/* Domain */}
             <div className='flex flex-col'>
               <SelectList
@@ -142,13 +142,14 @@ export default function ParameterDefinitionForm({
               </div>
             ))}
             {attributes.length < 5 && (
-              <div className='mt-6 flex flex-col'>
-                <Button
-                  type='button'
+              <div className='flex'>
+                <button
+                  className='flex items-center gap-2 text-sm text-blue-500 hover:text-blue-600'
                   onClick={addAttribute}
-                  variant='outline'
-                  label='+ Add Attribute'
-                />
+                >
+                  <PlusIcon className='h-6 w-6 stroke-[2.5]' />
+                  Add Another Attribute
+                </button>
               </div>
             )}
             {/* Effective Date Checkbox */}
@@ -166,8 +167,9 @@ export default function ParameterDefinitionForm({
           <div className='flex justify-end p-4'>
             <Button
               type='submit'
-              label={loading ? 'Saving...' : 'Save'}
+              label='Save'
               disabled={loading}
+              processing={loading}
             />
           </div>
         </form>

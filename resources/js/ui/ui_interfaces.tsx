@@ -19,7 +19,7 @@ export interface Paginator<T> {
 export interface FormFieldProp {
   label?: string
   type?: 'text' | 'email' | 'password' | 'number' | 'tel'
-  value?: string | number | null
+  value?: string | number | undefined
   error?: string
   styles?: string
   placeholder?: string

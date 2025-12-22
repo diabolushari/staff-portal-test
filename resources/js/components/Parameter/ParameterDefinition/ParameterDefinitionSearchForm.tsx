@@ -1,7 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
-import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
 import { route } from 'ziggy-js'
@@ -78,6 +77,7 @@ export default function ParameterDefinitionSearchForm({
               label='Clear filters'
               variant='link'
               type='button'
+              variant='secondary'
               onClick={() =>
                 router.get(route('parameter-definition.index'), {
                   search: '',

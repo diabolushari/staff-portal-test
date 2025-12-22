@@ -10,10 +10,10 @@ import Modal from '@/ui/Modal/Modal'
 interface PageProps {
   onClose: () => void
   definition: ParameterDefinition
-  tittle?: string
+  title?: string
 }
 
-export default function ParameterValueModal({ onClose, definition, tittle }: PageProps) {
+export default function ParameterValueModal({ onClose, definition, title }: PageProps) {
   const { formData, setFormValue } = useCustomForm({
     definition_id: definition?.id,
     parameter_code: '',
@@ -44,7 +44,7 @@ export default function ParameterValueModal({ onClose, definition, tittle }: Pag
   }
   return (
     <Modal
-      title={tittle ?? 'Parameter Value'}
+      title={title ?? 'Parameter Value'}
       setShowModal={onClose}
       large={true}
     >
@@ -63,7 +63,7 @@ export default function ParameterValueModal({ onClose, definition, tittle }: Pag
             error={errors?.parameter_value}
           />
           <TextArea
-            label='Notes'
+            label='Description'
             value={formData.notes}
             setValue={setFormValue('notes')}
             error={errors?.notes}
@@ -133,8 +133,8 @@ export default function ParameterValueModal({ onClose, definition, tittle }: Pag
           <Button
             label='Submit'
             onClick={handleSubmit}
-            processing={loading ? true : false}
-            disabled={loading ? true : false}
+            processing={loading}
+            disabled={loading}
             type='submit'
             variant={loading ? 'loading' : 'default'}
           />
