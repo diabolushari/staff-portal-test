@@ -44,7 +44,7 @@ export default function ParameterValueModal({ onClose, definition, title }: Page
     e.preventDefault()
     post(formData)
   }
-  console.log(definition)
+
   return (
     <Modal
       title={title ?? 'Parameter Value'}
@@ -132,8 +132,8 @@ export default function ParameterValueModal({ onClose, definition, title }: Page
           <Button
             label='Submit'
             onClick={handleSubmit}
-            processing={loading ? true : false}
-            disabled={loading ? true : false}
+            processing={loading}
+            disabled={loading}
             type='submit'
             variant={loading ? 'loading' : 'default'}
           />
