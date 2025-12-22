@@ -54,6 +54,10 @@ export default function MeterShow({
   // --- BREADCRUMBS AND FORMATTERS ---
   const breadcrumbs: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Settings',
       href: '/settings-page',
     },

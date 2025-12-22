@@ -77,6 +77,10 @@ export default function MeterReadingCreatePage({
 }: Readonly<Props>) {
   const breadcrumb: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Connections',
       href: '/connections',
     },

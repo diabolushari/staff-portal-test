@@ -7,6 +7,10 @@ import { Head } from '@inertiajs/react'
 export default function ParameterIndex() {
   const breadcrumbs: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Parameters',
       href: '/parameters',
     },

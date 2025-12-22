@@ -9,6 +9,14 @@ import CardHeader from '@/ui/Card/CardHeader'
 export default function ParameterDomainShow({ domain }: { domain: ParameterDomain }) {
   const breadcrumbs: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
       title: 'Parameter Domains',
       href: '/parameter-domain',
     },

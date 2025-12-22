@@ -17,6 +17,10 @@ interface Props {
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
+    title: 'Home',
+    href: '/',
+  },
+  {
     title: 'Meter Reading',
     href: '/meter-reading',
   },

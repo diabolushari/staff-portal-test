@@ -12,11 +12,24 @@ import SelectList from '@/ui/form/SelectList'
 
 interface Props {
   profiles: ParameterValues[]
-  meterProfileParameter: MeterProfileParameter
+  meterProfileParameter?: MeterProfileParameter
+  profileId?: string
+  profileParameters: ParameterValues[]
 }
 
-const MeterProfileParameterCreate = ({ profiles, meterProfileParameter }: Props) => {
+const MeterProfileParameterCreate = ({
+  profileId,
+  meterProfileParameter,
+  profiles,
+  profileParameters,
+}: Props) => {
+  const selectedProfile = profiles.find((profile) => profile.id === Number(profileId))
+
   const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Home',
+      href: '/',
+    },
     {
       title: 'Settings',
       href: '/settings-page',
@@ -26,6 +39,10 @@ const MeterProfileParameterCreate = ({ profiles, meterProfileParameter }: Props)
       href: '/meter-profile',
     },
     {
+      title: selectedProfile?.parameter_value || ' ',
+      href: `/meter-profile/${selectedProfile?.id}`,
+    },
+    {
       title: meterProfileParameter ? 'Edit' : 'Create',
       href: meterProfileParameter
         ? `/meter-profile/edit/${meterProfileParameter.id}`
@@ -33,13 +50,15 @@ const MeterProfileParameterCreate = ({ profiles, meterProfileParameter }: Props)
     },
   ]
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
-    profile_id: meterProfileParameter?.profile_id || '',
+    profile_id: meterProfileParameter?.profile_id || profileId || '',
     name: meterProfileParameter?.name || '',
     display_name: meterProfileParameter?.display_name || '',
     is_export: meterProfileParameter?.is_export ?? false,
     is_cumulative: meterProfileParameter?.is_cumulative ?? false,
     _method: meterProfileParameter ? 'PUT' : undefined,
   })
+
+  console.log(formData)
 
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     meterProfileParameter
@@ -58,7 +77,7 @@ const MeterProfileParameterCreate = ({ profiles, meterProfileParameter }: Props)
         meterProfileParameter ? 'Edit Meter Profile Parameter' : 'Create Meter Profile Parameter'
       }
       navItems={meteringBillingNavItems}
-      selectedItem='Meter Profile Parameters'
+      selectedItem='Metering Profiles'
       breadcrumb={breadcrumbs}
     >
       <div>
@@ -68,22 +87,28 @@ const MeterProfileParameterCreate = ({ profiles, meterProfileParameter }: Props)
         >
           <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
             <SelectList
-              label='Meter Profile'
-              value={formData.profile_id}
-              setValue={setFormValue('profile_id')}
-              list={profiles}
-              dataKey='id'
-              displayKey='parameter_value'
-            />
-            <div></div>
-
-            <Input
-              label='Name'
+              label='Measured Parameter'
               required
               value={formData.name}
               setValue={setFormValue('name')}
               error={errors.name}
+              list={profileParameters}
+              dataKey='parameter_value'
+              displayKey='parameter_value'
             />
+            <div className='flex gap-5 p-3'>
+              <CheckBox
+                label='Is Export'
+                value={formData.is_export}
+                toggleValue={toggleBoolean('is_export')}
+              />
+
+              <CheckBox
+                label='Is Cumulative'
+                value={formData.is_cumulative}
+                toggleValue={toggleBoolean('is_cumulative')}
+              />
+            </div>
 
             <Input
               label='Display Name'
@@ -92,21 +117,9 @@ const MeterProfileParameterCreate = ({ profiles, meterProfileParameter }: Props)
               setValue={setFormValue('display_name')}
               error={errors.display_name}
             />
-
-            <CheckBox
-              label='Is Export'
-              value={formData.is_export}
-              toggleValue={toggleBoolean('is_export')}
-            />
-
-            <CheckBox
-              label='Is Cumulative'
-              value={formData.is_cumulative}
-              toggleValue={toggleBoolean('is_cumulative')}
-            />
           </div>
 
-          <div className='flex justify-end pt-4'>
+          <div className='flex items-center pt-4'>
             <Button
               label='Submit'
               type='submit'

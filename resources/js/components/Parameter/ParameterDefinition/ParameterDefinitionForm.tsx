@@ -3,7 +3,6 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 import { ParameterDefinition, ParameterDomain } from '@/interfaces/parameter_types'
 import SubHeading from '@/typography/SubHeading'
 import Button from '@/ui/button/Button'
-import CheckBox from '@/ui/form/CheckBox'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import Modal from '@/ui/Modal/Modal'
@@ -146,6 +145,7 @@ export default function ParameterDefinitionForm({
                 <button
                   className='flex items-center gap-2 text-sm text-blue-500 hover:text-blue-600'
                   onClick={addAttribute}
+                  type='button'
                 >
                   <PlusIcon className='h-6 w-6 stroke-[2.5]' />
                   Add Another Attribute
@@ -153,14 +153,14 @@ export default function ParameterDefinitionForm({
               </div>
             )}
             {/* Effective Date Checkbox */}
-            <div className='flex flex-col'>
+            {/* <div className='flex flex-col'>
               <CheckBox
                 label='Effective date'
                 toggleValue={toggleBoolean('is_effective_date_driven')}
                 value={formData.is_effective_date_driven}
                 error={errors?.is_effective_date_driven}
               />
-            </div>
+            </div> */}
           </div>
 
           {/* Submit */}

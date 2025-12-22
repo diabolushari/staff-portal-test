@@ -5,6 +5,7 @@ import ParameterDomainSearchForm from '@/components/Parameter/ParameterDomain/Pa
 import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { type BreadcrumbItem } from '@/types'
+import AddButton from '@/ui/button/AddButton'
 import Button from '@/ui/button/Button'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import ListSearch from '@/ui/Search/ListSearch'
@@ -31,6 +32,10 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
   )
 
   const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Home',
+      href: '/',
+    },
     {
       title: 'Settings',
       href: '/settings-page',
@@ -74,12 +79,10 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
         <div className='mb-4 flex items-center justify-between'>
           {/* <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Domains</h2> */}
           <div></div>
-          <button
+          <AddButton
             onClick={handleCreateClick}
-            className='rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
-          >
-            + Add Domain
-          </button>
+            buttonText='Add Domain'
+          />
         </div>
 
         <ListSearch
@@ -98,6 +101,7 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
               router.get(route('parameter-domain.index'), { search: '', module_id: '' })
             }
             label='Clear Filters'
+            variant='link'
           />
         </div>
 

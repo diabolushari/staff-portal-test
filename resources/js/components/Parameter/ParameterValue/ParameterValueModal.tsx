@@ -1,8 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { ParameterDefinition } from '@/interfaces/parameter_types'
-import NormalText from '@/typography/NormalText'
-import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
 import FormCard from '@/ui/Card/FormCard'
 import Input from '@/ui/form/Input'
@@ -44,7 +42,6 @@ export default function ParameterValueModal({ onClose, definition, title }: Page
     e.preventDefault()
     post(formData)
   }
-
   return (
     <Modal
       title={title ?? 'Parameter Value'}
@@ -79,50 +76,54 @@ export default function ParameterValueModal({ onClose, definition, title }: Page
             error={errors?.sort_priority}
           />
         </FormCard>
-        {definition?.attribute1_name && (
-          <FormCard title='Attributes'>
-            {definition?.attribute1_name && (
-              <Input
-                label={definition.attribute1_name}
-                value={formData.attribute1_value}
-                setValue={setFormValue('attribute1_value')}
-                error={errors?.attribute1_value}
-              />
-            )}
-            {definition?.attribute2_name && (
-              <Input
-                label={definition.attribute2_name}
-                value={formData.attribute2_value}
-                setValue={setFormValue('attribute2_value')}
-                error={errors?.attribute2_value}
-              />
-            )}
-            {definition?.attribute3_name && (
-              <Input
-                label={definition.attribute3_name}
-                value={formData.attribute3_value}
-                setValue={setFormValue('attribute3_value')}
-                error={errors?.attribute3_value}
-              />
-            )}
-            {definition?.attribute4_name && (
-              <Input
-                label={definition.attribute4_name}
-                value={formData.attribute4_value}
-                setValue={setFormValue('attribute4_value')}
-                error={errors?.attribute4_value}
-              />
-            )}
-            {definition?.attribute5_name && (
-              <Input
-                label={definition.attribute5_name}
-                value={formData.attribute5_value}
-                setValue={setFormValue('attribute5_value')}
-                error={errors?.attribute5_value}
-              />
-            )}
-          </FormCard>
-        )}
+        {definition.attribute1_name ||
+          definition.attribute2_name ||
+          definition.attribute3_name ||
+          definition.attribute4_name ||
+          (definition.attribute5_name && (
+            <FormCard title='Attributes'>
+              {definition.attribute1_name && (
+                <Input
+                  label={definition.attribute1_name}
+                  value={formData.attribute1_value}
+                  setValue={setFormValue('attribute1_value')}
+                  error={errors?.attribute1_value}
+                />
+              )}
+              {definition.attribute2_name && (
+                <Input
+                  label={definition.attribute2_name}
+                  value={formData.attribute2_value}
+                  setValue={setFormValue('attribute2_value')}
+                  error={errors?.attribute2_value}
+                />
+              )}
+              {definition.attribute3_name && (
+                <Input
+                  label={definition.attribute3_name}
+                  value={formData.attribute3_value}
+                  setValue={setFormValue('attribute3_value')}
+                  error={errors?.attribute3_value}
+                />
+              )}
+              {definition.attribute4_name && (
+                <Input
+                  label={definition.attribute4_name}
+                  value={formData.attribute4_value}
+                  setValue={setFormValue('attribute4_value')}
+                  error={errors?.attribute4_value}
+                />
+              )}
+              {definition.attribute5_name && (
+                <Input
+                  label={definition.attribute5_name}
+                  value={formData.attribute5_value}
+                  setValue={setFormValue('attribute5_value')}
+                  error={errors?.attribute5_value}
+                />
+              )}
+            </FormCard>
+          ))}
         <div className='flex justify-between gap-2'>
           <Button
             label='Cancel'

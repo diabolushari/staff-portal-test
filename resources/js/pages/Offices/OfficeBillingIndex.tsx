@@ -41,6 +41,10 @@ export default function OfficeBillingIndex({
 }: Props) {
   const breadcrumbs: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Offices',
       href: '/offices',
     },

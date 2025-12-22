@@ -85,12 +85,14 @@ export default function ParameterValueSearchForm({
             <Button
               label='Apply'
               type='submit'
+              variant='tertiary'
             />
           </div>
         </div>
       </form>
       <Button
-        label='Reset'
+        label='Clear Filter'
+        variant='link'
         onClick={() => {
           setFormValue('search')('')
           setFormValue('domain_name')('')

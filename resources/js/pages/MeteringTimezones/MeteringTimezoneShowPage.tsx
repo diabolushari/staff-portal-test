@@ -1,18 +1,17 @@
-import { router } from '@inertiajs/react'
-import { Clock, Calendar, Settings, User } from 'lucide-react'
-import { useState } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import MainLayout from '@/layouts/main-layout'
-import type { BreadcrumbItem } from '@/types'
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { InfoItem } from '@/components/meteringtimezones/InfoItem'
-import { Section } from '@/components/meteringtimezones/Section'
-import EditButton from '@/ui/button/EditButton'
-import DeleteButton from '@/ui/button/DeleteButton'
-import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
 import MeterTimeZoneFormModal from '@/components/meteringtimezones/MeterTimeZoneFormModal'
+import { Section } from '@/components/meteringtimezones/Section'
+import { Card, CardContent } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
+import MainLayout from '@/layouts/main-layout'
+import type { BreadcrumbItem } from '@/types'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import DeleteButton from '@/ui/button/DeleteButton'
+import EditButton from '@/ui/button/EditButton'
+import { Calendar, Clock, Settings, User } from 'lucide-react'
+import { useState } from 'react'
 
 // --- TYPES ---
 export interface MeteringTimezone {
@@ -63,10 +62,22 @@ export default function MeteringTimezoneShowPage({
     undefined
   )
 
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Home',
+      href: '/',
+    },
+    {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
+      title: 'Metering Timezones',
+      href: route('metering-timezone.index'),
+    },
+  ]
   const { timezone_type, metering_timezones } = timezone
-  const firstTimezone = metering_timezones?.[0]
 
-  // --- HELPERS ---
   const formatTime = (hrs: number, mins: number) =>
     `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
 
@@ -87,17 +98,6 @@ export default function MeteringTimezoneShowPage({
     return end >= start ? end - start : 1440 - start + end
   }
 
-  // --- BREADCRUMBS ---
-  const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Settings', href: '/settings-page' },
-    { title: 'Metering Timezones', href: route('metering-timezone.index') },
-    {
-      title: timezone_type?.parameter_value,
-      href: route('metering-timezone.show', firstTimezone?.metering_timezone_id ?? 1),
-    },
-  ]
-
-  // --- ACTIONS ---
   const handleEdit = (tz: MeteringTimezone) => {
     setIsEditing(true)
     setSelectedTimezone(tz)

@@ -26,6 +26,10 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
   }
   const breadcrumb: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Billing Jobs',
       href: '/bills/job-status',
     },

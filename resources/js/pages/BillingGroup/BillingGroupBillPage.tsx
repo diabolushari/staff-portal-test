@@ -16,6 +16,10 @@ interface Props {
 export default function BillingGroupBillPage({ bills, billing_group }: Props) {
   const breadcrumb: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Billing Groups',
       href: '/billing-groups',
     },

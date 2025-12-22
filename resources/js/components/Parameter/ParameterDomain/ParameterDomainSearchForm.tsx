@@ -43,8 +43,9 @@ export default function ParameterDomainSearchForm({ systemModules, filters }: Re
 
           <div className='flex flex-col'>
             <Button
-              label='Search'
+              label='Apply'
               type='submit'
+              variant='tertiary'
             />
           </div>
         </div>

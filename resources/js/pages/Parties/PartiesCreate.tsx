@@ -36,6 +36,10 @@ interface PartiesFormData {
 
 const breadcrumbs = [
   {
+    title: 'Home',
+    href: '/',
+  },
+  {
     title: 'Parties',
     href: '/parties',
   },

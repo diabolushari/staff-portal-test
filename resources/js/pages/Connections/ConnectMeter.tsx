@@ -88,6 +88,10 @@ export default function ConnectMeter({
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Connections',
       href: route('connections.index'),
     },

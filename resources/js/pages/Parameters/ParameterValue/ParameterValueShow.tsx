@@ -8,6 +8,14 @@ import Field from '@/components/ui/field'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
+    title: 'Home',
+    href: '/',
+  },
+  {
+    title: 'Settings',
+    href: '/settings-page',
+  },
+  {
     title: 'Parameter Values',
     href: '/parameter-value',
   },

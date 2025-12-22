@@ -73,6 +73,10 @@ const StatusBadge = ({ text }: { text: string }) => {
 }
 const breadcrumbs: BreadcrumbItem[] = [
   {
+    title: 'Home',
+    href: '/',
+  },
+  {
     title: 'Parties',
     href: route('parties.index'),
   },

@@ -17,6 +17,10 @@ interface PageProps {
 export default function BillingRuleIndexPage({ billingRules, filters }: PageProps) {
   const breadcrumb: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Settings',
       href: '/settings-page',
     },

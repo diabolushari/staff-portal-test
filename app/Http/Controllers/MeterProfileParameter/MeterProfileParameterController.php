@@ -39,14 +39,30 @@ class MeterProfileParameterController extends Controller
             $pageSize,
             null,
             null,
-            $search,
+            null,
+
         );
+
+        $meterProfiles = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile');
+
+        $responseData = $response->data['metering_parameter_profiles'] ?? [];
+
+        $profileIds = collect($responseData)
+            ->pluck('profile.id')
+            ->unique()
+            ->values()
+            ->all();
+
+        $profilesWithNoParameterValue = collect($meterProfiles->data)
+            ->whereNotIn('id', $profileIds)
+            ->values()
+            ->all();
 
 
         $paginated = null;
         if (! empty($response->data)) {
             $paginated = new LengthAwarePaginator(
-                $response->data['metering_parameter_profiles'],                // items for this page
+                $responseData,                // items for this page
                 $response->data['total_count'],            // total items count
                 $response->data['page_size'],              // items per page
                 $response->data['page_number'],            // current page
@@ -68,6 +84,7 @@ class MeterProfileParameterController extends Controller
 
         return Inertia::render('MeterProfileParameter/MeterProfileParameterIndex', [
             'meterProfileParameters' => $paginated ?? [],
+            'profilesWithNoParameterValue' => $profilesWithNoParameterValue,
             'grpcStatus' => [
                 'code' => $response->statusCode,
                 'details' => $response->statusDetails,
@@ -80,13 +97,17 @@ class MeterProfileParameterController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
 
+        $profileId = (int) $request->query('profileId');
         $profiles = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile');
+        $profileParameters = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Profile Parameter');
 
         return Inertia::render('MeterProfileParameter/MeterProfileParameterCreate', [
             'profiles' => $profiles->data,
+            'profileParameters' => $profileParameters->data,
+            'profileId' => $profileId,
         ]);
     }
 
@@ -107,7 +128,7 @@ class MeterProfileParameterController extends Controller
             ]);
         }
 
-        return redirect()->route('meter-profile.index')->with([
+        return redirect()->route('meter-profile.show', $request->profileId)->with([
             'message' => 'Meter profile parameter created successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,
@@ -119,12 +140,40 @@ class MeterProfileParameterController extends Controller
 
 
     /**
-     
+
      * Display the specified resource.
      */
-    public function show(int $id): Response|RedirectResponse
+    public function show(Request $request, int $id): Response|RedirectResponse
     {
-        $response = $this->meterProfileParameterService->getMeterProfileParameter($id);
+
+        $search = $request->input('search') ?? null;
+        $pageNumber = $request->input('page') ?? 1;
+        $pageSize = $request->input('page_size') ?? 10;
+        $profileId = $id;
+        $response = $this->meterProfileParameterService->listMeteringProfileParameters(
+            $pageNumber,
+            $pageSize,
+            $search,
+            $profileId
+        );
+
+
+        $paginated = null;
+        if (! empty($response->data)) {
+            $currentPage = LengthAwarePaginator::resolveCurrentPage();
+            $perPage = 10; // change if needed
+
+            $collection = collect($response->data);
+
+            $paginated = new LengthAwarePaginator(
+                $collection->forPage($currentPage, $perPage)->values(),
+                $collection->count(),
+                $perPage,
+                $currentPage,
+                ['path' => request()->url()]
+            );
+        }
+
 
         if ($response->hasError()) {
             return $response->error ?? redirect()->back()->with([
@@ -137,7 +186,8 @@ class MeterProfileParameterController extends Controller
         }
 
         return Inertia::render('MeterProfileParameter/MeterProfileParameterShow', [
-            'meterProfileParameter' => $response->data,
+            'meterProfileParameter' => $paginated,
+            'profileId' => $profileId,
         ]);
     }
 
@@ -159,10 +209,13 @@ class MeterProfileParameterController extends Controller
         }
 
         $profiles = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile');
+        $profileParameters = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Profile Parameter');
 
         return Inertia::render('MeterProfileParameter/MeterProfileParameterCreate', [
             'profiles' => $profiles->data,
+            'profileParameters' => $profileParameters->data,
             'meterProfileParameter' => $response->data,
+            'profileId' => $response->data['profile_id'],
         ]);
     }
 
@@ -183,7 +236,7 @@ class MeterProfileParameterController extends Controller
             ]);
         }
 
-        return redirect()->route('meter-profile.index')->with([
+        return redirect()->route('meter-profile.show', $request->profileId)->with([
             'message' => 'Meter profile parameter updated successfully.',
             'grpcStatus' => [
                 'code' => $response->statusCode,

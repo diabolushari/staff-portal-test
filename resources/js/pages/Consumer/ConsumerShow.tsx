@@ -37,6 +37,10 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Connections',
       href: '/connections',
     },

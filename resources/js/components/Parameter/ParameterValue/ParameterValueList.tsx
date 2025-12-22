@@ -1,6 +1,8 @@
 import { ParameterValues } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
-import { Layers, Package, Pencil, Trash2 } from 'lucide-react'
+import DeleteButton from '@/ui/button/DeleteButton'
+import EditButton from '@/ui/button/EditButton'
+import { Layers, Package } from 'lucide-react'
 
 interface Props {
   parameterValues: ParameterValues[]
@@ -92,24 +94,8 @@ export default function ParameterValuesList({
 
                 {/* Inline Edit/Delete buttons */}
                 <div className='mt-2 flex items-center gap-3'>
-                  {onEdit && (
-                    <button
-                      onClick={() => onEdit(param)}
-                      className='flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800'
-                    >
-                      <Pencil className='h-4 w-4' />
-                      Edit
-                    </button>
-                  )}
-                  {onDelete && (
-                    <button
-                      onClick={() => onDelete(param)}
-                      className='flex items-center gap-1 text-sm text-red-600 hover:text-red-800'
-                    >
-                      <Trash2 className='h-4 w-4' />
-                      Delete
-                    </button>
-                  )}
+                  {onEdit && <EditButton onClick={() => onEdit(param)} />}
+                  {onDelete && <DeleteButton onClick={() => onDelete(param)} />}
                 </div>
               </div>
             </div>

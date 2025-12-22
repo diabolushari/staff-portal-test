@@ -19,6 +19,10 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
 
   const breadcrumbs = useMemo(
     () => [
+      {
+        title: 'Home',
+        href: '/',
+      },
       { title: 'Connections', href: '/connections' },
       {
         title: connection?.consumer_number?.toString(),
