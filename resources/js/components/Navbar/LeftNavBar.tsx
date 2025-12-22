@@ -7,23 +7,30 @@ import {
   SidebarMenuSubItem,
 } from '../ui/sidebar'
 
+type MenuItem = {
+  title: string
+  href?: string
+  icon?: React.ReactNode
+  children?: MenuItem[]
+}
+
+type ItemsGroup = {
+  label?: string
+  items: MenuItem[]
+}
+
 interface Props {
   title: string
   selectedItem?: string
-  items?: {
-    title: string
-    href?: string
-    icon?: React.ReactNode
-    children?: { title: string; href?: string; icon?: React.ReactNode }[]
-  }[]
+  items?: ItemsGroup
 }
 
-export default function LeftNavBar({ title, items = [], selectedItem }: Props) {
+export default function LeftNavBar({ items = { label: '', items: [] }, selectedItem }: Props) {
   return (
-    <SidebarMenu className='p-4'>
-      <NormalText>{title}</NormalText>
+    <SidebarMenu className='h-full rounded-2xl bg-blue-50 p-4'>
+      <NormalText className='text-xl font-bold'>{items.label}</NormalText>
 
-      {items.map((item) => {
+      {items.items.map((item) => {
         const hasChildren = item.children && item.children.length > 0
 
         return (

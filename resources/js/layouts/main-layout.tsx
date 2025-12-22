@@ -1,5 +1,5 @@
 import LeftNavBar from '@/components/Navbar/LeftNavBar'
-import { navItem } from '@/components/Navbar/navitems'
+import { MainNav } from '@/components/Navbar/navitems'
 import TopNavBar from '@/components/Navbar/TopNavBar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { BreadcrumbItem, PageProps } from '@/types'
@@ -14,7 +14,7 @@ import { ToastContainer } from 'react-toastify'
 interface Props {
   children: React.ReactNode
   breadcrumb?: BreadcrumbItem[]
-  navItems?: navItem[]
+  navItems?: MainNav
   addBtnUrl?: string
   addBtnText?: string
   addBtnClick?: () => void
