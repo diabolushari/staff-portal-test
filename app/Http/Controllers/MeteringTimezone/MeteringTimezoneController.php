@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MeteringTimezone;
 
 use App\Http\Controllers\Controller;
 use App\Services\MeteringTimezone\MeteringTimezoneService;
+use App\Services\Parameters\ParameterDefinitionService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,17 +13,11 @@ use Inertia\Response;
 
 class MeteringTimezoneController extends Controller
 {
-    protected MeteringTimezoneService $meteringTimezoneService;
-
-    protected ParameterValueService $parameterValueService;
-
     public function __construct(
-        MeteringTimezoneService $meteringTimezoneService,
-        ParameterValueService $parameterValueService
-    ) {
-        $this->meteringTimezoneService = $meteringTimezoneService;
-        $this->parameterValueService = $parameterValueService;
-    }
+        private MeteringTimezoneService $meteringTimezoneService,
+        private ParameterValueService $parameterValueService,
+        private ParameterDefinitionService $parameterDefinitionService
+    ) {}
 
     /**
      * Display a listing of the meter timezones.
@@ -37,15 +32,45 @@ class MeteringTimezoneController extends Controller
             domainName: 'Meter',
             parameterName: 'Timezone Type'
         );
+        $pricingTypesResponse = $this->parameterValueService->getParameterValues(
+            page: 1,
+            pageSize: 100,
+            search: null,
+            domainName: 'Meter',
+            parameterName: 'Pricing Type'
+        );
+        $timezoneNameParameter = $this->parameterDefinitionService->getParameterDefinition(
+            null,
+            'Meter',
+            'Timezone Name',
+            'Consumer'
+        );
+        $timeZoneTypeParameter = $this->parameterDefinitionService->getParameterDefinition(
+            null,
+            'Meter',
+            'Timezone Type',
+            'Consumer'
+        );
+        $timezoneNamesResponse = $this->parameterValueService->getParameterValues(
+            page: 1,
+            pageSize: 100,
+            search: null,
+            domainName: 'Meter',
+            parameterName: 'Timezone Name'
+        );
         if ($response->hasError()) {
             return redirect()->back()->withErrors([
-                'grpc_error' => 'Error fetching timezones: '.($response->statusDetails ?? 'Unknown error'),
+                'grpc_error' => 'Error fetching timezones: ' . ($response->statusDetails ?? 'Unknown error'),
             ]);
         }
 
         return Inertia::render('MeteringTimezones/MeteringTimezoneIndexPage', [
             'timezones' => $response->data,
             'timezone_types' => $timezoneTypesResponse->data,
+            'pricing_types' => $pricingTypesResponse->data,
+            'timezone_name_parameter' => $timezoneNameParameter->data,
+            'timezone_type_parameter' => $timeZoneTypeParameter->data,
+            'timezone_names' => $timezoneNamesResponse->data,
         ]);
     }
 
@@ -82,39 +107,39 @@ class MeteringTimezoneController extends Controller
         // Check for errors in any of the responses
         if ($pricingTypesResponse->hasError()) {
             return redirect()->back()->withErrors([
-                'grpc_error' => 'Error fetching Pricing Types: '.($pricingTypesResponse->statusDetails ?? 'Unknown error'),
+                'grpc_error' => 'Error fetching Pricing Types: ' . ($pricingTypesResponse->statusDetails ?? 'Unknown error'),
             ]);
         }
 
         if ($timezoneTypesResponse->hasError()) {
             return redirect()->back()->withErrors([
-                'grpc_error' => 'Error fetching Timezone Types: '.($timezoneTypesResponse->statusDetails ?? 'Unknown error'),
+                'grpc_error' => 'Error fetching Timezone Types: ' . ($timezoneTypesResponse->statusDetails ?? 'Unknown error'),
             ]);
         }
 
         if ($timezoneNamesResponse->hasError()) {
             return redirect()->back()->withErrors([
-                'grpc_error' => 'Error fetching Timezone Names: '.($timezoneNamesResponse->statusDetails ?? 'Unknown error'),
+                'grpc_error' => 'Error fetching Timezone Names: ' . ($timezoneNamesResponse->statusDetails ?? 'Unknown error'),
             ]);
         }
 
         // Transform the responses to the required format
         $pricingTypes = collect($pricingTypesResponse->data)
-            ->map(fn ($item) => [
+            ->map(fn($item) => [
                 'id' => $item['id'],
                 'parameterValue' => $item['parameter_value'],
             ])
             ->toArray();
 
         $timezoneTypes = collect($timezoneTypesResponse->data)
-            ->map(fn ($item) => [
+            ->map(fn($item) => [
                 'id' => $item['id'],
                 'parameterValue' => $item['parameter_value'],
             ])
             ->toArray();
 
         $timezoneNames = collect($timezoneNamesResponse->data)
-            ->map(fn ($item) => [
+            ->map(fn($item) => [
                 'id' => $item['id'],
                 'parameterValue' => $item['parameter_value'],
             ])
@@ -153,7 +178,7 @@ class MeteringTimezoneController extends Controller
 
         if ($timezone->hasError()) {
             return redirect()->back()->withErrors([
-                'grpc_error' => 'Error fetching timezone: '.($timezone->statusDetails ?? 'Unknown error'),
+                'grpc_error' => 'Error fetching timezone: ' . ($timezone->statusDetails ?? 'Unknown error'),
             ]);
         }
 
@@ -171,7 +196,7 @@ class MeteringTimezoneController extends Controller
 
         if ($timezone->hasError()) {
             return redirect()->back()->withErrors([
-                'grpc_error' => 'Error fetching timezone: '.($timezone->statusDetails ?? 'Unknown error'),
+                'grpc_error' => 'Error fetching timezone: ' . ($timezone->statusDetails ?? 'Unknown error'),
             ]);
         }
 
@@ -203,39 +228,39 @@ class MeteringTimezoneController extends Controller
         // Check for errors in any of the responses
         if ($pricingTypesResponse->hasError()) {
             return redirect()->back()->withErrors([
-                'grpc_error' => 'Error fetching Pricing Types: '.($pricingTypesResponse->statusDetails ?? 'Unknown error'),
+                'grpc_error' => 'Error fetching Pricing Types: ' . ($pricingTypesResponse->statusDetails ?? 'Unknown error'),
             ]);
         }
 
         if ($timezoneTypesResponse->hasError()) {
             return redirect()->back()->withErrors([
-                'grpc_error' => 'Error fetching Timezone Types: '.($timezoneTypesResponse->statusDetails ?? 'Unknown error'),
+                'grpc_error' => 'Error fetching Timezone Types: ' . ($timezoneTypesResponse->statusDetails ?? 'Unknown error'),
             ]);
         }
 
         if ($timezoneNamesResponse->hasError()) {
             return redirect()->back()->withErrors([
-                'grpc_error' => 'Error fetching Timezone Names: '.($timezoneNamesResponse->statusDetails ?? 'Unknown error'),
+                'grpc_error' => 'Error fetching Timezone Names: ' . ($timezoneNamesResponse->statusDetails ?? 'Unknown error'),
             ]);
         }
 
         // Transform the responses to the required format
         $pricingTypes = collect($pricingTypesResponse->data)
-            ->map(fn ($item) => [
+            ->map(fn($item) => [
                 'id' => $item['id'],
                 'parameterValue' => $item['parameter_value'],
             ])
             ->toArray();
 
         $timezoneTypes = collect($timezoneTypesResponse->data)
-            ->map(fn ($item) => [
+            ->map(fn($item) => [
                 'id' => $item['id'],
                 'parameterValue' => $item['parameter_value'],
             ])
             ->toArray();
 
         $timezoneNames = collect($timezoneNamesResponse->data)
-            ->map(fn ($item) => [
+            ->map(fn($item) => [
                 'id' => $item['id'],
                 'parameterValue' => $item['parameter_value'],
             ])
@@ -277,7 +302,7 @@ class MeteringTimezoneController extends Controller
 
         if ($response->hasError()) {
             return redirect()->back()->withErrors([
-                'grpc_error' => 'Error deleting timezone: '.($response->statusDetails ?? 'Unknown error'),
+                'grpc_error' => 'Error deleting timezone: ' . ($response->statusDetails ?? 'Unknown error'),
             ]);
         }
 

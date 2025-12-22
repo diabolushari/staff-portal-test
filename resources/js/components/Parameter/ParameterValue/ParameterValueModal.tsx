@@ -16,7 +16,7 @@ interface PageProps {
 
 export default function ParameterValueModal({ onClose, definition }: PageProps) {
   const { formData, setFormValue } = useCustomForm({
-    definition_id: definition.id,
+    definition_id: definition?.id,
     parameter_code: '',
     parameter_value: '',
     attribute1_value: '',
@@ -53,11 +53,11 @@ export default function ParameterValueModal({ onClose, definition }: PageProps) 
       <div className='flex flex-col gap-2'>
         <div className='flex gap-4'>
           <NormalText>Domain: </NormalText>
-          <StrongText>{definition.domain?.domain_name}</StrongText>
+          <StrongText>{definition?.domain?.domain_name}</StrongText>
           <NormalText>Parameter Name: </NormalText>
-          <StrongText>{definition.parameter_name}</StrongText>
+          <StrongText>{definition?.parameter_name}</StrongText>
           <NormalText>Module: </NormalText>
-          <StrongText>{definition.domain?.system_module?.name}</StrongText>
+          <StrongText>{definition?.domain?.system_module?.name}</StrongText>
         </div>
         <FormCard title='Basic Information'>
           <Input
@@ -87,7 +87,7 @@ export default function ParameterValueModal({ onClose, definition }: PageProps) 
           />
         </FormCard>
         <FormCard title='Attributes'>
-          {definition.attribute1_name && (
+          {definition?.attribute1_name && (
             <Input
               label={definition.attribute1_name}
               value={formData.attribute1_value}
@@ -95,7 +95,7 @@ export default function ParameterValueModal({ onClose, definition }: PageProps) 
               error={errors?.attribute1_value}
             />
           )}
-          {definition.attribute2_name && (
+          {definition?.attribute2_name && (
             <Input
               label={definition.attribute2_name}
               value={formData.attribute2_value}
@@ -103,7 +103,7 @@ export default function ParameterValueModal({ onClose, definition }: PageProps) 
               error={errors?.attribute2_value}
             />
           )}
-          {definition.attribute3_name && (
+          {definition?.attribute3_name && (
             <Input
               label={definition.attribute3_name}
               value={formData.attribute3_value}
@@ -111,7 +111,7 @@ export default function ParameterValueModal({ onClose, definition }: PageProps) 
               error={errors?.attribute3_value}
             />
           )}
-          {definition.attribute4_name && (
+          {definition?.attribute4_name && (
             <Input
               label={definition.attribute4_name}
               value={formData.attribute4_value}
@@ -119,7 +119,7 @@ export default function ParameterValueModal({ onClose, definition }: PageProps) 
               error={errors?.attribute4_value}
             />
           )}
-          {definition.attribute5_name && (
+          {definition?.attribute5_name && (
             <Input
               label={definition.attribute5_name}
               value={formData.attribute5_value}
