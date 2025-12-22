@@ -46,6 +46,7 @@ class ParameterValueProtoConvertor
             'id' => $parameterValue->getId(),
             'parameter_value' => $parameterValue->getParameterValue(),
             'parameter_code' => $parameterValue->getParameterCode(),
+            'definition_id' => $parameterValue->getDefinitionId(),
             'attribute1_value' => $parameterValue->getAttribute1Value(),
             'attribute2_value' => $parameterValue->getAttribute2Value(),
             'attribute3_value' => $parameterValue->getAttribute3Value(),

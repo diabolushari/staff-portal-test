@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react'
-import { FormFieldProp as FormFieldProperty } from '../ui_interfaces'
+import { cn } from '@/lib/utils'
 import ErrorText from '@/typography/ErrorText'
+import { useMemo } from 'react'
+import { FormFieldProp as FormFieldProperty } from '../ui_interfaces'
 
 export interface Properties<
   K extends keyof T,
@@ -16,29 +17,9 @@ export interface Properties<
   showAllOption?: boolean
   allOptionText?: string
   showLabel?: boolean
-  style?: 'normal' | 'bottom-border' | 'dark' | 'disabled'
   disabled?: boolean
   required?: boolean
-}
-
-const getStyle = (style: 'normal' | 'bottom-border' | 'dark' | 'disabled') => {
-  switch (style) {
-    case 'normal':
-      return 'w-full rounded border text-sm border-[#8EA6BE] bg-[#F9FAFB]/50 dark:bg-[#F9FAFB]/10 text-[#000000] dark:text-white font-inter font-medium p-2'
-
-    case 'bottom-border':
-      return `mt-0 block w-full border-0 border-b-2 border-gray-200 bg-neutral-50 px-0.5 bodybold text-sm
-        focus:border-black focus:ring-0
-        dark:border-gray-600 dark:text-gray-300 dark:focus:border-indigo-500`
-
-    case 'disabled':
-      return `w-full appearance-none rounded-sm border border-transparent bg-white opacity-50 py-3 pl-3
-        text-sm text-gray-800 focus:border-indigo-700 focus:outline-none
-        dark:bg-gray-800 dark:text-gray-100`
-
-    default:
-      return ''
-  }
+  className?: string
 }
 
 export default function SelectList<
@@ -59,19 +40,28 @@ export default function SelectList<
   showAllOption = false,
   allOptionText,
   showLabel = true,
-  style = 'normal',
   disabled = false,
   required = false,
+  className = '',
 }: Properties<K, G, U, V, T>) {
   const selectedOption = useMemo(() => {
     const index = list.findIndex((item) => item[dataKey] == value)
     return index === -1 ? '' : value
   }, [value, dataKey, list])
 
+  // Figma-based styling matching Input component
+  const selectClasses = cn(
+    'w-full bg-white px-3 py-2 pr-10 rounded border border-gray-200 text-sm font-normal text-black',
+    'appearance-none',
+    'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0078d4] focus-visible:border-[#0078d4]',
+    'disabled:bg-gray-50 disabled:text-black disabled:cursor-not-allowed disabled:opacity-100',
+    className
+  )
+
   return (
-    <div>
+    <div className='space-y-1'>
       {label != null && showLabel && (
-        <label className='font-inter text-left align-top text-sm leading-[1.4] tracking-[-0.006em] text-gray-800 dark:text-gray-200'>
+        <label className='text-sm leading-6 font-normal text-[#252c32]'>
           {required ? `${label} *` : label}
         </label>
       )}
@@ -79,8 +69,9 @@ export default function SelectList<
         name='type'
         value={selectedOption}
         onChange={(e) => setValue(e.target.value)}
-        className={getStyle(style)}
+        className={selectClasses}
         disabled={disabled}
+        required={required}
       >
         {showAllOption && <option value=''>{allOptionText}</option>}
         {!showAllOption && label != null && (
