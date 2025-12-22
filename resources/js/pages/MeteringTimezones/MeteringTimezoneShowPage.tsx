@@ -62,7 +62,6 @@ export default function MeteringTimezoneShowPage({
     undefined
   )
 
-  // --- BREADCRUMBS AND FORMATTERS ---
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Home',
@@ -76,15 +75,9 @@ export default function MeteringTimezoneShowPage({
       title: 'Metering Timezones',
       href: route('metering-timezone.index'),
     },
-    {
-      title: timezone.timezone_name.parameter_value,
-      href: route('metering-timezone.show', timezone.metering_timezone_id),
-    },
   ]
   const { timezone_type, metering_timezones } = timezone
-  const firstTimezone = metering_timezones?.[0]
 
-  // --- HELPERS ---
   const formatTime = (hrs: number, mins: number) =>
     `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
 
@@ -105,17 +98,6 @@ export default function MeteringTimezoneShowPage({
     return end >= start ? end - start : 1440 - start + end
   }
 
-  // --- BREADCRUMBS ---
-  const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Settings', href: '/settings-page' },
-    { title: 'Metering Timezones', href: route('metering-timezone.index') },
-    {
-      title: timezone_type?.parameter_value,
-      href: route('metering-timezone.show', firstTimezone?.metering_timezone_id ?? 1),
-    },
-  ]
-
-  // --- ACTIONS ---
   const handleEdit = (tz: MeteringTimezone) => {
     setIsEditing(true)
     setSelectedTimezone(tz)
