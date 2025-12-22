@@ -145,6 +145,7 @@ export default function ParameterDefinitionForm({
                 <button
                   className='flex items-center gap-2 text-sm text-blue-500 hover:text-blue-600'
                   onClick={addAttribute}
+                  type='button'
                 >
                   <PlusIcon className='h-6 w-6 stroke-[2.5]' />
                   Add Another Attribute
