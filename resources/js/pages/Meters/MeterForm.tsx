@@ -38,6 +38,10 @@ interface MeterForm extends Meter {
 
 const breadcrumbs = [
   {
+    title: 'Home',
+    href: '/',
+  },
+  {
     title: 'Settings',
     href: '/settings-page',
   },

@@ -41,6 +41,10 @@ export default function ConnectionMeterList({
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Connections',
       href: route('connections.index'),
     },

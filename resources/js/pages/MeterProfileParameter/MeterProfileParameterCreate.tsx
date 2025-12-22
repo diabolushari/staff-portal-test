@@ -18,6 +18,10 @@ interface Props {
 const MeterProfileParameterCreate = ({ profiles, meterProfileParameter }: Props) => {
   const breadcrumbs: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Settings',
       href: '/settings-page',
     },

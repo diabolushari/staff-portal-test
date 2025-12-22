@@ -32,6 +32,10 @@ export default function BillingGroupShowPage({
   billingGenerateJobStatus,
 }: PageProps) {
   const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Home',
+      href: '/',
+    },
     { title: 'Billing Groups', href: route('billing-groups.index') },
     {
       title: `Group ${billingGroup?.name}`,

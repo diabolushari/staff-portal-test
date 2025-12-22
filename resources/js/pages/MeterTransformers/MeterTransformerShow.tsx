@@ -12,6 +12,10 @@ interface Props {
 
 export default function MeterTransformerShow({ transformer }: Readonly<Props>) {
   const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Home',
+      href: '/',
+    },
     { title: 'Settings', href: '/settings-page' },
     { title: 'CTPTs', href: '/meter-ctpt' },
     { title: 'Detail', href: `/meter-ctpt/${transformer.meter_ctpt_id}` },

@@ -10,7 +10,14 @@ export default function BillingGroupCreatePage({
   billingGroup: BillingGroup | null
 }) {
   const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Billing Groups', href: route('billing-groups.index') },
+    {
+      title: 'Home',
+      href: '/',
+    },
+    {
+      title: 'Billing Groups',
+      href: route('billing-groups.index'),
+    },
     {
       title: 'Billing Group Create',
       href: route('billing-groups.create'),

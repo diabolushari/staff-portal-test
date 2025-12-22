@@ -21,6 +21,10 @@ export default function ConnectionMeterReadingPage({
   meterReadings,
 }: Readonly<ConnectionMeterReadingPageProps>) {
   const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Home',
+      href: '/',
+    },
     { title: 'Connections', href: route('connections.index') },
     {
       title: connection?.consumer_number.toString() ?? '',

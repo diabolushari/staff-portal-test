@@ -11,6 +11,10 @@ import { useCallback, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
+    title: 'Home',
+    href: '/',
+  },
+  {
     title: 'Settings',
     href: '/settings-page',
   },

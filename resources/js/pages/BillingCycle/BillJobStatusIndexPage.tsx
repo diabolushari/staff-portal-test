@@ -16,6 +16,10 @@ interface Props {
 export default function BillJobStatusIndexPage({ bill_generation_job_status, filters }: Props) {
   const breadcrumb: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Billing',
       href: '/billing-groups',
     },

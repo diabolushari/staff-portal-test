@@ -26,6 +26,10 @@ export default function MeterReadingShowPage({
   connection,
 }: Readonly<Props>) {
   const breadcrumb: BreadcrumbItem[] = [
+    {
+      title: 'Home',
+      href: '/',
+    },
     { title: 'Connections', href: `/connections/${Number(connectionId)}` },
     { title: 'Connection', href: `/connections/${Number(connectionId)}` },
     { title: 'Meter Reading', href: `/connection/${Number(connectionId)}/meter-reading` },

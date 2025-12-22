@@ -25,7 +25,13 @@ export default function ConsumerForm({
   connection,
 }: Readonly<Props>) {
   const breadcrumbs = useMemo<BreadcrumbItem[]>(() => {
-    const items: BreadcrumbItem[] = [{ title: 'Connections', href: '/connections' }]
+    const items: BreadcrumbItem[] = [
+      {
+        title: 'Home',
+        href: '/',
+      },
+      { title: 'Connections', href: '/connections' },
+    ]
 
     if (connection && connectionId) {
       items.push(

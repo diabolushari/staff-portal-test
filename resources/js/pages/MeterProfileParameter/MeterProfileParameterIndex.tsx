@@ -2,14 +2,13 @@ import MeterProfileParameterList from '@/components/MeterProfileParameter/MeterP
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import ParameterValueModal from '@/components/Parameter/ParameterValue/ParameterValueModal'
 import { MeterProfileGroupByProfile } from '@/interfaces/data_interfaces'
-import { ParameterDefinition, ParameterDomain } from '@/interfaces/parameter_types'
+import { ParameterDefinition } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
 import Pagination from '@/ui/Pagination/Pagination'
 import ListSearch from '@/ui/Search/ListSearch'
 import { Paginator } from '@/ui/ui_interfaces'
-import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 
 interface Props {
@@ -19,6 +18,10 @@ interface Props {
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Home',
+    href: '/',
+  },
   {
     title: 'Settings',
     href: '/settings-page',

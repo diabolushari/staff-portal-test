@@ -29,6 +29,10 @@ export default function MeterTransformerTab({ connection, transformers }: Props)
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Connections',
       href: route('connections.index'),
     },

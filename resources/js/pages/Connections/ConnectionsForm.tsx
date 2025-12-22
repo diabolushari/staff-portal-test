@@ -12,6 +12,10 @@ const getBreadcrumb = (connection?: Connection | null): BreadcrumbItem[] => {
   if (!connection) {
     return [
       {
+        title: 'Home',
+        href: '/',
+      },
+      {
         title: 'Connections',
         href: '/connections',
       },
@@ -22,6 +26,10 @@ const getBreadcrumb = (connection?: Connection | null): BreadcrumbItem[] => {
     ]
   }
   return [
+    {
+      title: 'Home',
+      href: '/',
+    },
     {
       title: 'Connections',
       href: '/connections',

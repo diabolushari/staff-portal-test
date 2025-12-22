@@ -13,6 +13,14 @@ import { router } from '@inertiajs/react'
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
+    title: 'Home',
+    href: '/',
+  },
+  {
+    title: 'Settings',
+    href: '/settings-page',
+  },
+  {
     title: 'Parameter Definitions',
     href: '/parameter-definition',
   },

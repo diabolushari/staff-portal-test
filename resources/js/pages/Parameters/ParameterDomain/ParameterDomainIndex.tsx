@@ -32,6 +32,10 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Settings',
       href: '/settings-page',
     },

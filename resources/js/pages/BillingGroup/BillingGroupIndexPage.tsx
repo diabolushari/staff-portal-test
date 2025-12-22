@@ -14,7 +14,16 @@ interface PageProps {
   }
 }
 export default function BillingGroupIndexPage({ billingGroups, filters }: PageProps) {
-  const breadcrumb: BreadcrumbItem[] = [{ title: 'Billing', href: '/billing-groups' }]
+  const breadcrumb: BreadcrumbItem[] = [
+    {
+      title: 'Home',
+      href: '/',
+    },
+    {
+      title: 'Billing',
+      href: '/billing-groups',
+    },
+  ]
 
   return (
     <MainLayout
