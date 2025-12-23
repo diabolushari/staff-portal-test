@@ -52,6 +52,9 @@ const MeterProfileParameterList = ({
                     </span>
                   </div>
                 </div>
+                <div className='mt-2'>
+                  <NormalText>{group?.profile?.notes}</NormalText>
+                </div>
               </div>
             </div>
           </div>

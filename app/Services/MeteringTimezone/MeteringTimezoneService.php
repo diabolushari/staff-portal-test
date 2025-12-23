@@ -308,6 +308,7 @@ class MeteringTimezoneService
         return [
             'id' => $parameterValue->getId(),
             'parameter_value' => $parameterValue->getParameterValue(),
+            'notes' => $parameterValue->getNotes(),
         ];
     }
 
