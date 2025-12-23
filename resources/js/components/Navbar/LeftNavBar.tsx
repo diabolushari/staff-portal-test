@@ -43,7 +43,7 @@ export default function LeftNavBar({ items = { label: '', items: [] }, selectedI
   }, [items])
 
   return (
-    <SidebarMenu className='relative h-full rounded-2xl bg-blue-50 p-4 pt-24'>
+    <SidebarMenu className='relative h-full rounded-2xl bg-blue-50 p-4 pt-8'>
       {/* Loading Overlay */}
       {loading && (
         <div className='absolute inset-0 z-50 flex items-center justify-center rounded-2xl bg-white/60 backdrop-blur-sm'>

@@ -47,7 +47,7 @@ export default function BillingRuleList({ billingRules }: Props) {
         Billing Rule Info
       </div>
       <div className='flex flex-col px-7 pb-7'>
-        {billingRules.map((billingRule, index) => (
+        {billingRules?.map((billingRule, index) => (
           <div
             key={billingRule.id ?? index} // unique key fallback
             className='cursor-pointer rounded-xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md'
@@ -58,7 +58,7 @@ export default function BillingRuleList({ billingRules }: Props) {
                 <div className='flex flex-col gap-1'>
                   <div className='flex items-center gap-2'>
                     <div className='font-inter cursor-pointer text-base leading-normal font-semibold text-black underline'>
-                      {billingRule?.name ?? 'Unnamed Rule'}
+                      {billingRule?.name ?? '-'}
                     </div>
                   </div>
 
@@ -69,7 +69,7 @@ export default function BillingRuleList({ billingRules }: Props) {
 
                     <CalendarDaysIcon className='text-dark-gray h-3.5 w-3.5' />
                     <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                      {billingRule?.effective_start}
+                      {billingRule?.effective_start ?? '-'}
                     </div>
                     <div
                       className='flex items-center gap-[3px]'

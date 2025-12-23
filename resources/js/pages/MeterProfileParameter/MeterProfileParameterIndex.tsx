@@ -49,7 +49,7 @@ const MeterProfileParameterIndex = ({
       title='Metering Profiles'
       breadcrumb={breadcrumbs}
     >
-      <div>
+      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
         <ListSearch
           title=''
           placeholder='Search'
