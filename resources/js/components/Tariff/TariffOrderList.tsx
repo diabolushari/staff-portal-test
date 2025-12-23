@@ -50,10 +50,10 @@ export default function TariffOrderList({ tariff_orders }: Readonly<Props>) {
                     </div>
                   </div>
                   <div className='font-inter text-dark-gray text-sm'>
-                    Published: {new Date(order.published_date).toLocaleDateString()}
+                    Published Date: {new Date(order.published_date).toLocaleDateString()}
                   </div>
                   <div className='font-inter text-dark-gray text-sm'>
-                    Effective: {new Date(order.effective_start).toLocaleDateString()}
+                    Effective Period: {new Date(order.effective_start).toLocaleDateString()}
                     {order.effective_end &&
                       ` → ${new Date(order.effective_end).toLocaleDateString()}`}
                   </div>
