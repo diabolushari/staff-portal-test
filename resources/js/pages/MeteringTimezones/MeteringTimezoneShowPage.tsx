@@ -3,7 +3,6 @@ import { InfoItem } from '@/components/meteringtimezones/InfoItem'
 import MeterTimeZoneFormModal from '@/components/meteringtimezones/MeterTimeZoneFormModal'
 import { Section } from '@/components/meteringtimezones/Section'
 import { Card, CardContent } from '@/components/ui/card'
-import Field from '@/components/ui/field'
 import { Separator } from '@/components/ui/separator'
 import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
@@ -12,7 +11,7 @@ import DeleteModal from '@/ui/Modal/DeleteModal'
 import AddButton from '@/ui/button/AddButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import EditButton from '@/ui/button/EditButton'
-import { Calendar, Clock, Settings, User } from 'lucide-react'
+import { Calendar, Clock, Settings, Tag, Timer, User } from 'lucide-react'
 import { useState } from 'react'
 
 // --- TYPES ---
@@ -145,38 +144,55 @@ export default function MeteringTimezoneShowPage({
             {metering_timezones?.map((tz) => (
               <Card
                 key={tz.version_id}
-                className='mb-6 overflow-hidden rounded-xl border border-gray-200 shadow-sm'
+                className='mb-6 rounded-2xl border border-gray-200 bg-white shadow-sm'
               >
-                <CardContent className='p-4'>
-                  {/* Card Header */}
+                <CardContent className='p-6'>
+                  {/* Header */}
                   <div className='mb-6 flex items-center justify-between'>
-                    <h2 className='text-xl font-semibold text-gray-800'>
+                    <h2 className='text-lg font-semibold text-gray-900'>
                       {tz.timezone_name.parameter_value}
                     </h2>
+
                     <div className='flex gap-2'>
                       <EditButton onClick={() => handleEdit(tz)} />
                       <DeleteButton onClick={() => handleDelete(tz)} />
                     </div>
                   </div>
 
-                  {/* Configuration */}
-                  <Section title=''>
-                    <Field
-                      label='Pricing Type'
-                      value={tz.pricing_type.parameter_value}
-                    />
-                    <Field
-                      label='Time Range'
-                      value={`${formatTime(tz.from_hrs, tz.from_mins)} - ${formatTime(
-                        tz.to_hrs,
-                        tz.to_mins
-                      )}`}
-                    />
-                    <Field
-                      label='Duration'
-                      value={`${calculateDuration(tz)} minutes`}
-                    />
-                  </Section>
+                  {/* Info Grid */}
+                  <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
+                    {/* Time Range */}
+                    <div className='flex items-start gap-3'>
+                      <Clock className='mt-1 h-5 w-5 text-gray-400' />
+                      <div>
+                        <p className='text-sm text-gray-500'>Time Range</p>
+                        <p className='font-medium text-blue-600'>
+                          {formatTime(tz.from_hrs, tz.from_mins)} –{' '}
+                          {formatTime(tz.to_hrs, tz.to_mins)}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Duration */}
+                    <div className='flex items-start gap-3'>
+                      <Timer className='mt-1 h-5 w-5 text-gray-400' />
+                      <div>
+                        <p className='text-sm text-gray-500'>Duration</p>
+                        <p className='font-medium text-blue-600'>{calculateDuration(tz)} minutes</p>
+                      </div>
+                    </div>
+
+                    {/* Pricing Type */}
+                    <div className='flex items-start gap-3'>
+                      <Tag className='mt-1 h-5 w-5 text-gray-400' />
+                      <div>
+                        <p className='text-sm text-gray-500'>Pricing Type</p>
+                        <p className='font-medium text-blue-600'>
+                          {tz.pricing_type.parameter_value}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             ))}

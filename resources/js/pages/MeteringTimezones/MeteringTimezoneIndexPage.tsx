@@ -195,8 +195,8 @@ export default function MeteringTimezonesIndexPage({
             onClose={() => setShowAddModal(false)}
             definition={selecedDefinition}
             title='Time Zone Group'
-            parameterCodeLabel='Code'
-            parameterValueLabel='Group Name'
+            codeLabel='Code'
+            valueLabel='Group Name'
           />
         )}
       </div>

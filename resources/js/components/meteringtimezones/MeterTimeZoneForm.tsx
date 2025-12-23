@@ -45,7 +45,6 @@ export default function MeterTimeZoneForm({
     {
       onComplete: () => {
         onComplete?.()
-        router.visit(route('metering-timezone.index'))
       },
     }
   )
