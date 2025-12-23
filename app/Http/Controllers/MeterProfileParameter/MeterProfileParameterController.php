@@ -37,13 +37,13 @@ class MeterProfileParameterController extends Controller
         $response = $this->meterProfileParameterService->listMeteringProfileParameterGroupByMeterProfile(
             $pageNumber,
             $pageSize,
-            null,
+            $search,
             null,
             null,
 
         );
 
-        $meterProfiles = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile');
+        $meterProfiles = $this->parameterValueService->getParameterValues(null, null, $search, 'Meter', 'Meter Profile');
 
         $responseData = $response->data['metering_parameter_profiles'] ?? [];
 
