@@ -75,7 +75,7 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
     >
       {/* <Head title='Parameter Domains' /> */}
 
-      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
+      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl py-4'>
         <div className='mb-4 flex items-center justify-between'>
           {/* <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Domains</h2> */}
           <div></div>

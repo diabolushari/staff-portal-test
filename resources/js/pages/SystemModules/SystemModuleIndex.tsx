@@ -66,7 +66,7 @@ export default function SystemModuleIndex({ systemModules }: Readonly<Props>) {
       selectedItem='System Modules'
       title='System Modules'
     >
-      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
+      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl py-4'>
         <div className='mb-4 flex items-center justify-between'>
           <div></div>
 

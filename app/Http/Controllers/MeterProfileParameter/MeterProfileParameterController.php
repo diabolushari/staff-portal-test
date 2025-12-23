@@ -184,10 +184,12 @@ class MeterProfileParameterController extends Controller
                 ],
             ]);
         }
+        $profile = $this->parameterValueService->getParameterValue($profileId, null);
 
         return Inertia::render('MeterProfileParameter/MeterProfileParameterShow', [
             'meterProfileParameter' => $paginated,
             'profileId' => $profileId,
+            'profile' => $profile->data,
         ]);
     }
 

@@ -38,6 +38,7 @@ const MeterProfileParameterIndex = ({
   definition,
   profilesWithNoParameterValue,
 }: Props) => {
+  console.log(oldSearch)
   const [showModal, setShowModal] = useState<boolean>(false)
 
   return (
@@ -73,7 +74,10 @@ const MeterProfileParameterIndex = ({
           <ParameterValueModal
             onClose={() => setShowModal(false)}
             definition={definition}
-            tittle='Add Meter Profile'
+            title='Add Meter Profile'
+            codeLabel='Meter Profile Code'
+            valueLabel='Meter Profile Label'
+            descriptionLabel='Meter Profile Description'
           />
         )}
       </div>

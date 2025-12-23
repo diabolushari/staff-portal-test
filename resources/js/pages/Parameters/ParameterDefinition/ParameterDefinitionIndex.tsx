@@ -78,7 +78,7 @@ export default function ParameterDefinitionIndex({
           buttonText='Add Parameter Definition'
         />
       </div>
-      <div className='p-4'>
+      <div className='py-4'>
         <ListSearch
           title=''
           url={route('parameter-definition.index')}

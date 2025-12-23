@@ -42,7 +42,7 @@ export default function OfficeIndex({ offices, filters }: Readonly<Props>) {
       addBtnText='Office'
       title='Offices'
     >
-      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
+      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl py-4'>
         <ListSearch
           title=''
           placeholder='Enter office name'
