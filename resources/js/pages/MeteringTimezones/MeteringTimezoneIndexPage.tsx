@@ -76,8 +76,7 @@ export default function MeteringTimezonesIndexPage({
   const [selectedTimeZone, setSelectedTimeZone] = useState<MeteringTimezone | null>(null)
   const [showAddModal, setShowAddModal] = useState<boolean>(false)
   const [selecedDefinition, setSelectedDefinition] = useState<ParameterDefinition | null>(null)
-  const [selectedType, setSelectedType] = useState<ParameterValues | null>(null)
-  const [showCreateModal, setShowCreateModal] = useState<boolean>(false)
+
   const timezonesData = Array.isArray(timezones) ? timezones : timezones?.data || []
   const [groups] = useState<TimezoneGroup[]>(timezonesData)
 
@@ -126,12 +125,6 @@ export default function MeteringTimezonesIndexPage({
                       <DeleteButton
                         onClick={() => setSelectedTimeZone(group.metering_timezones[0])}
                       />
-                      <AddButton
-                        onClick={() => {
-                          setSelectedType(group?.timezone_type)
-                          setShowCreateModal(true)
-                        }}
-                      />
                     </div>
                   </div>
 
@@ -172,16 +165,13 @@ export default function MeteringTimezonesIndexPage({
                 {timezoneTypesWithoutTimezones.map((type) => (
                   <div
                     key={type.id}
-                    className='rounded-lg border border-gray-200 bg-white shadow-sm'
+                    className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
+                    onClick={() => {
+                      handleShow(type.id)
+                    }}
                   >
                     <div className='font-inter border-b border-gray-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800'>
                       {type.parameter_value}
-                      <AddButton
-                        onClick={() => {
-                          setSelectedType(type)
-                          setShowCreateModal(true)
-                        }}
-                      />
                     </div>
                     <div className='px-4 py-3 text-sm text-slate-500'>
                       No metering timezones configured
@@ -205,15 +195,8 @@ export default function MeteringTimezonesIndexPage({
             onClose={() => setShowAddModal(false)}
             definition={selecedDefinition}
             title='Time Zone Group'
-          />
-        )}
-        {showCreateModal && selectedType !== null && (
-          <MeterTimeZoneFormModal
-            onClose={() => setShowCreateModal(false)}
-            timezoneType={selectedType}
-            timezoneNames={timezone_names}
-            pricingTypes={pricing_types}
-            timezoneNameParameter={timezone_name_parameter}
+            parameterCodeLabel='Code'
+            parameterValueLabel='Group Name'
           />
         )}
       </div>

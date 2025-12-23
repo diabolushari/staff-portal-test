@@ -3,11 +3,13 @@ import { InfoItem } from '@/components/meteringtimezones/InfoItem'
 import MeterTimeZoneFormModal from '@/components/meteringtimezones/MeterTimeZoneFormModal'
 import { Section } from '@/components/meteringtimezones/Section'
 import { Card, CardContent } from '@/components/ui/card'
+import Field from '@/components/ui/field'
 import { Separator } from '@/components/ui/separator'
 import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import type { BreadcrumbItem } from '@/types'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import AddButton from '@/ui/button/AddButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import EditButton from '@/ui/button/EditButton'
 import { Calendar, Clock, Settings, User } from 'lucide-react'
@@ -39,7 +41,7 @@ export interface MeteringTimezoneResponse {
 }
 
 interface Props {
-  timezone: MeteringTimezoneResponse
+  timezone?: MeteringTimezoneResponse
   timezoneTypes: ParameterValues[]
   pricingTypes: ParameterValues[]
   timezoneNameParameter: ParameterDefinition
@@ -61,7 +63,10 @@ export default function MeteringTimezoneShowPage({
   const [selectedTimezone, setSelectedTimezone] = useState<MeteringTimezone | null | undefined>(
     undefined
   )
+  const [selectedType, setSelectedType] = useState<ParameterValues | null>(null)
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false)
 
+  const { timezone_type, metering_timezones } = timezone || {}
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Home',
@@ -75,8 +80,11 @@ export default function MeteringTimezoneShowPage({
       title: 'Metering Timezones',
       href: route('metering-timezone.index'),
     },
+    {
+      title: timezone_type?.parameter_value ?? '-',
+      href: '#',
+    },
   ]
-  const { timezone_type, metering_timezones } = timezone
 
   const formatTime = (hrs: number, mins: number) =>
     `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
@@ -108,6 +116,11 @@ export default function MeteringTimezoneShowPage({
     setDeleteItem(zone)
   }
 
+  const handleAdd = () => {
+    setShowCreateModal(true)
+    setSelectedType(timezone_type ?? null)
+  }
+
   // --- RENDER ---
   return (
     <MainLayout
@@ -115,111 +128,66 @@ export default function MeteringTimezoneShowPage({
       navItems={meteringBillingNavItems}
       selectedItem='Metering Timezones'
       selectedTopNav='Consumers'
+      title={timezone_type?.parameter_value}
     >
-      <div className='container mx-auto py-8'>
-        {/* Header */}
-        <div className='mb-8'>
-          <h1 className='mb-2 text-3xl font-bold text-gray-800'>
-            {timezone_type?.parameter_value}
-          </h1>
-          <p className='text-gray-500'>Metering Timezone Details</p>
+      <div className='p-4'>
+        <div className='flex items-center justify-between p-4'>
+          <div />
+          <AddButton
+            onClick={handleAdd}
+            buttonText='Add Timezone'
+          />
         </div>
 
-        {/* Timezone Cards */}
-        {metering_timezones.map((tz) => (
-          <Card
-            key={tz.version_id}
-            className='mb-6 overflow-hidden rounded-xl border border-gray-200 shadow-sm'
-          >
-            <CardContent className='p-8'>
-              {/* Card Header */}
-              <div className='mb-6 flex items-center justify-between'>
-                <h2 className='text-xl font-semibold text-gray-800'>
-                  {tz.timezone_name.parameter_value}
-                </h2>
-                <div className='flex gap-2'>
-                  <EditButton onClick={() => handleEdit(tz)} />
-                  <DeleteButton onClick={() => handleDelete(tz)} />
-                </div>
-              </div>
+        {timezone ? (
+          <>
+            {' '}
+            {metering_timezones?.map((tz) => (
+              <Card
+                key={tz.version_id}
+                className='mb-6 overflow-hidden rounded-xl border border-gray-200 shadow-sm'
+              >
+                <CardContent className='p-4'>
+                  {/* Card Header */}
+                  <div className='mb-6 flex items-center justify-between'>
+                    <h2 className='text-xl font-semibold text-gray-800'>
+                      {tz.timezone_name.parameter_value}
+                    </h2>
+                    <div className='flex gap-2'>
+                      <EditButton onClick={() => handleEdit(tz)} />
+                      <DeleteButton onClick={() => handleDelete(tz)} />
+                    </div>
+                  </div>
 
-              {/* Configuration */}
-              <Section title='Configuration'>
-                <InfoItem
-                  label='Pricing Type'
-                  value={tz.pricing_type.parameter_value}
-                  icon={<Settings className='h-4 w-4' />}
-                />
-                <InfoItem
-                  label='Timezone Type'
-                  value={tz.timezone_type.parameter_value}
-                  icon={<Settings className='h-4 w-4' />}
-                />
-                <InfoItem
-                  label='Status'
-                  value={tz.is_active ? 'Active' : 'Inactive'}
-                  icon={<Settings className='h-4 w-4' />}
-                />
-              </Section>
-
-              <Separator className='my-6' />
-
-              {/* Time Configuration */}
-              <Section title='Time Configuration'>
-                <InfoItem
-                  label='Start Time'
-                  value={formatTime(tz.from_hrs, tz.from_mins)}
-                  icon={<Clock className='h-4 w-4' />}
-                />
-                <InfoItem
-                  label='End Time'
-                  value={formatTime(tz.to_hrs, tz.to_mins)}
-                  icon={<Clock className='h-4 w-4' />}
-                />
-                <InfoItem
-                  label='Duration'
-                  value={`${calculateDuration(tz)} minutes`}
-                  icon={<Clock className='h-4 w-4' />}
-                />
-                <InfoItem
-                  label='Time Range'
-                  value={`${formatTime(tz.from_hrs, tz.from_mins)} - ${formatTime(
-                    tz.to_hrs,
-                    tz.to_mins
-                  )}`}
-                  icon={<Clock className='h-4 w-4' />}
-                />
-              </Section>
-
-              <Separator className='my-6' />
-
-              {/* History */}
-              <Section title='History'>
-                <InfoItem
-                  label='Created Date'
-                  value={formatDateTime(tz.created_ts)}
-                  icon={<Calendar className='h-4 w-4' />}
-                />
-                <InfoItem
-                  label='Last Updated'
-                  value={formatDateTime(tz.updated_ts)}
-                  icon={<Calendar className='h-4 w-4' />}
-                />
-                <InfoItem
-                  label='Created By'
-                  value={`User ${tz.created_by}`}
-                  icon={<User className='h-4 w-4' />}
-                />
-                <InfoItem
-                  label='Updated By'
-                  value={tz.updated_by ? `User ${tz.updated_by}` : 'Not updated'}
-                  icon={<User className='h-4 w-4' />}
-                />
-              </Section>
-            </CardContent>
-          </Card>
-        ))}
+                  {/* Configuration */}
+                  <Section title=''>
+                    <Field
+                      label='Pricing Type'
+                      value={tz.pricing_type.parameter_value}
+                    />
+                    <Field
+                      label='Time Range'
+                      value={`${formatTime(tz.from_hrs, tz.from_mins)} - ${formatTime(
+                        tz.to_hrs,
+                        tz.to_mins
+                      )}`}
+                    />
+                    <Field
+                      label='Duration'
+                      value={`${calculateDuration(tz)} minutes`}
+                    />
+                  </Section>
+                </CardContent>
+              </Card>
+            ))}
+          </>
+        ) : (
+          <div className='flex items-center justify-center'>
+            No profile parameters are available. Please add a profile parameter to view the details.
+          </div>
+        )}
       </div>
+
       {isEditing && selectedTimezone && (
         <MeterTimeZoneFormModal
           timezone={selectedTimezone}
@@ -228,6 +196,16 @@ export default function MeteringTimezoneShowPage({
           timezoneNames={timezoneNames}
           timezoneNameParameter={timezoneNameParameter}
           onClose={() => setIsEditing(false)}
+        />
+      )}
+
+      {showCreateModal && selectedType !== null && (
+        <MeterTimeZoneFormModal
+          onClose={() => setShowCreateModal(false)}
+          timezoneType={selectedType}
+          timezoneNames={timezoneNames}
+          pricingTypes={pricingTypes}
+          timezoneNameParameter={timezoneNameParameter}
         />
       )}
       {deleteItem && deleteModalOpen && (

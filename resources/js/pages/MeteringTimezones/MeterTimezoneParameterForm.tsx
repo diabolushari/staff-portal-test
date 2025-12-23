@@ -11,6 +11,8 @@ interface Props {
   pricingTypes: ParameterValues[]
   timezoneNames: ParameterValues[]
   switchForm: Dispatch<SetStateAction<boolean>>
+  parameterCodeLabel: string
+  parameterValueLabel: string
 }
 
 export default function MeterTimezoneParameterForm({
@@ -18,6 +20,8 @@ export default function MeterTimezoneParameterForm({
   pricingTypes,
   timezoneNames,
   switchForm,
+  parameterCodeLabel,
+  parameterValueLabel,
 }: Props) {
   const { formData, setFormValue } = useCustomForm({
     definition_id: timezoneNameParameter?.id,
@@ -54,13 +58,13 @@ export default function MeterTimezoneParameterForm({
     >
       <div className='flex flex-col gap-2'>
         <Input
-          label='Parameter Code'
+          label={parameterCodeLabel ?? 'Parameter Code'}
           value={formData.parameter_code}
           setValue={setFormValue('parameter_code')}
           error={errors?.parameter_code}
         />
         <Input
-          label='Parameter Value'
+          label={parameterValueLabel ?? 'Parameter Value'}
           value={formData.parameter_value}
           setValue={setFormValue('parameter_value')}
           error={errors?.parameter_value}

@@ -11,9 +11,17 @@ interface PageProps {
   onClose: () => void
   definition: ParameterDefinition
   title?: string
+  parameterCodeLabel?: string
+  parameterValueLabel?: string
 }
 
-export default function ParameterValueModal({ onClose, definition, title }: PageProps) {
+export default function ParameterValueModal({
+  onClose,
+  definition,
+  title,
+  parameterCodeLabel,
+  parameterValueLabel,
+}: PageProps) {
   const { formData, setFormValue } = useCustomForm({
     definition_id: definition?.id,
     parameter_code: '',
@@ -51,13 +59,13 @@ export default function ParameterValueModal({ onClose, definition, title }: Page
       <div className='flex flex-col gap-2'>
         <FormCard title='Basic Information'>
           <Input
-            label='Parameter Code'
+            label={parameterCodeLabel ?? 'Parameter Code'}
             value={formData.parameter_code}
             setValue={setFormValue('parameter_code')}
             error={errors?.parameter_code}
           />
           <Input
-            label='Parameter Value'
+            label={parameterValueLabel ?? 'Parameter Value'}
             value={formData.parameter_value}
             setValue={setFormValue('parameter_value')}
             error={errors?.parameter_value}

@@ -51,6 +51,8 @@ export default function MeterTimeZoneFormModal({
           pricingTypes={pricingTypes}
           timezoneNames={timezoneNames}
           switchForm={setIsMetertimezoneForm}
+          parameterCodeLabel='Code'
+          parameterValueLabel='Timezone Name'
         />
       )}
     </Modal>
