@@ -48,6 +48,9 @@ interface Props {
   timezone_names: ParameterValues[]
   timezone_type_parameter: ParameterDefinition
   timezone_name_parameter: ParameterDefinition
+  filter: {
+    search: string
+  }
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -72,6 +75,7 @@ export default function MeteringTimezonesIndexPage({
   timezone_names,
   timezone_type_parameter,
   timezone_name_parameter,
+  filter,
 }: Props) {
   const [selectedTimeZone, setSelectedTimeZone] = useState<MeteringTimezone | null>(null)
   const [showAddModal, setShowAddModal] = useState<boolean>(false)
@@ -104,48 +108,55 @@ export default function MeteringTimezonesIndexPage({
         <ListSearch
           title=''
           placeholder='Enter timezone name'
+          search={filter.search}
+          filters={filter}
+          url={`metering-timezone`}
         />
 
         <div className='relative w-full rounded-lg bg-white'>
           <div className='flex flex-col gap-6 px-7 pb-7'>
             {groups && groups.length > 0 ? (
-              groups.map((group) => (
+              groups.map((group, index) => (
                 <div
                   key={group.timezone_type.id}
-                  className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
                   onClick={() => handleShow(group.timezone_type.id)}
+                  className='mb-4 cursor-pointer rounded-xl border border-gray-200 bg-white shadow-sm transition last:mb-0 hover:shadow-md'
                 >
                   {/* Header */}
-                  <div className='font-inter flex items-center justify-between border-b border-gray-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800'>
-                    {group.timezone_type.parameter_value}
+                  <div className='flex items-center justify-between rounded-t-xl border-b border-gray-200 bg-slate-50 px-4 py-2.5'>
+                    <div className='flex items-center gap-3'>
+                      {/* Index */}
+
+                      {/* Timezone type */}
+                      <span className='text-sm font-semibold text-slate-800'>
+                        {group.timezone_type.parameter_value}
+                      </span>
+                    </div>
+
+                    {/* Actions */}
                     <div
                       className='flex items-center gap-2'
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <DeleteButton
+                      {/* Timezone count */}
+                      <span className='rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700'>
+                        {group.metering_timezones.length} Timezones
+                      </span>
+
+                      {/* <DeleteButton
                         onClick={() => setSelectedTimeZone(group.metering_timezones[0])}
-                      />
+                      /> */}
                     </div>
                   </div>
 
-                  {/* Timezones row */}
-                  <div className='flex w-full items-center gap-6 overflow-x-auto px-4 py-3 text-sm text-slate-700'>
-                    {group.metering_timezones.map((tz) => (
-                      <div
-                        key={tz.metering_timezone_id}
-                        className='flex min-w-[220px] flex-col'
-                      >
-                        <div className='font-medium text-slate-900'>
-                          {tz.timezone_name.parameter_value}
-                        </div>
-                        <div className='flex items-center gap-1 text-slate-600'>
-                          <Clock className='h-3.5 w-3.5 text-slate-500' />
-                          {formatTime(tz.from_hrs, tz.from_mins)} -{' '}
-                          {formatTime(tz.to_hrs, tz.to_mins)}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  {/* Description section */}
+                  {group.timezone_type?.notes && (
+                    <div className='px-4 py-3'>
+                      <p className='text-sm text-slate-700'>
+                        {group.timezone_type?.notes || 'No description available'}
+                      </p>
+                    </div>
+                  )}
                 </div>
               ))
             ) : (
@@ -157,11 +168,6 @@ export default function MeteringTimezonesIndexPage({
             {/* Display timezone types without any metering timezones */}
             {timezoneTypesWithoutTimezones.length > 0 && (
               <>
-                <div className='mt-4 border-t border-gray-200 pt-4'>
-                  <h3 className='mb-3 text-sm font-semibold text-slate-700'>
-                    Timezone Types don't have any metering timezones
-                  </h3>
-                </div>
                 {timezoneTypesWithoutTimezones.map((type) => (
                   <div
                     key={type.id}
@@ -172,9 +178,6 @@ export default function MeteringTimezonesIndexPage({
                   >
                     <div className='font-inter border-b border-gray-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800'>
                       {type.parameter_value}
-                    </div>
-                    <div className='px-4 py-3 text-sm text-slate-500'>
-                      No metering timezones configured
                     </div>
                   </div>
                 ))}

@@ -115,9 +115,15 @@ class MeteringTimezoneService
         return GrpcServiceResponse::success($timezonesArray, $response, $status->code, $status->details);
     }
 
-    public function listTimezoneGroupByMeteringType(): GrpcServiceResponse
+    public function listTimezoneGroupByMeteringType(?int $profileId = null, ?string $search = null): GrpcServiceResponse
     {
         $request = new ListTimezoneGroupByMeteringTypeRequest;
+        if ($profileId) {
+            $request->setProfileId($profileId);
+        }
+        if ($search) {
+            $request->setSearch($search);
+        }
 
         [$response, $status] = $this->client->ListTimezoneGroupByMeteringType($request)->wait();
 

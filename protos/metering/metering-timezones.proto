@@ -91,7 +91,8 @@ message MeteringTimezoneResponse {
 }
 
 message ListTimezoneGroupByMeteringTypeRequest {
-  optional int32 pricing_type_id = 1; // filter by pricing type if needed
+   optional int32 profile_id = 1;
+  optional string search = 2;
 }
 
 // Each group contains the timezone_type and the list of timezones in that group
