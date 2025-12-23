@@ -97,7 +97,6 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
             filters={filters}
           />
           <Button
-            variant='secondary'
             onClick={() =>
               router.get(route('parameter-domain.index'), { search: '', module_id: '' })
             }

@@ -95,7 +95,6 @@ export default function ParameterDefinitionSearchForm({
               label='Clear filters'
               variant='link'
               type='button'
-              variant='secondary'
               onClick={() =>
                 router.get(route('parameter-definition.index'), {
                   search: '',
