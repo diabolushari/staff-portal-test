@@ -213,7 +213,7 @@ export default function MeterForm({
                 />
               )}
               <SelectList
-                label='Meter Profile'
+                label='Metering Profile'
                 value={formData.meter_profile_id}
                 setValue={setFormValue('meter_profile_id')}
                 list={meterProfiles}

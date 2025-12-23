@@ -1,9 +1,6 @@
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
-import { InfoItem } from '@/components/meteringtimezones/InfoItem'
 import MeterTimeZoneFormModal from '@/components/meteringtimezones/MeterTimeZoneFormModal'
-import { Section } from '@/components/meteringtimezones/Section'
 import { Card, CardContent } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import type { BreadcrumbItem } from '@/types'
@@ -11,7 +8,7 @@ import DeleteModal from '@/ui/Modal/DeleteModal'
 import AddButton from '@/ui/button/AddButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import EditButton from '@/ui/button/EditButton'
-import { Calendar, Clock, Settings, Tag, Timer, User } from 'lucide-react'
+import { Clock, Tag, Timer } from 'lucide-react'
 import { useState } from 'react'
 
 // --- TYPES ---
@@ -76,7 +73,7 @@ export default function MeteringTimezoneShowPage({
       href: '/settings-page',
     },
     {
-      title: 'Metering Timezones',
+      title: 'Timezone Groups',
       href: route('metering-timezone.index'),
     },
     {

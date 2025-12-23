@@ -128,7 +128,7 @@ export default function MeterShow({
                 />
 
                 <Field
-                  label='Meter Profile'
+                  label='Metering Profile'
                   value={meter?.meter_profile?.parameter_value}
                 />
                 <Field
