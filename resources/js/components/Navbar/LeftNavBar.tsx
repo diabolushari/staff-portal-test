@@ -6,6 +6,9 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from '../ui/sidebar'
+import { useEffect, useState } from 'react'
+import Spinner from '@/ui/Spinner'
+import FullSpinner from '@/ui/FullSpinner'
 
 type MenuItem = {
   title: string
@@ -26,23 +29,42 @@ interface Props {
 }
 
 export default function LeftNavBar({ items = { label: '', items: [] }, selectedItem }: Props) {
+  const [loading, setLoading] = useState(false)
+
+  // Trigger spinner when menu items change
+  useEffect(() => {
+    setLoading(true)
+
+    const timer = setTimeout(() => {
+      setLoading(false)
+    }, 400) // adjust duration if needed
+
+    return () => clearTimeout(timer)
+  }, [items])
+
   return (
-    <SidebarMenu className='h-full rounded-2xl bg-blue-50 p-4'>
-      <NormalText className='text-xl font-bold'>{items.label}</NormalText>
+    <SidebarMenu className='relative h-full rounded-2xl bg-blue-50 p-4 pt-24'>
+      {/* Loading Overlay */}
+      {loading && (
+        <div className='absolute inset-0 z-50 flex items-center justify-center rounded-2xl bg-white/60 backdrop-blur-sm'>
+          <Spinner />
+        </div>
+      )}
+
+      <NormalText className='mb-2 text-lg font-bold'>{items.label}</NormalText>
 
       {items.items.map((item) => {
         const hasChildren = item.children && item.children.length > 0
 
         return (
           <SidebarMenuItem key={item.title}>
-            {/* MAIN HEADING IF CHILDREN */}
+            {/* MAIN HEADING */}
             {hasChildren ? (
               <div className='flex items-center gap-2 py-1'>
                 {item.icon}
-                <NormalText className='font-semibold'>{item.title}</NormalText>
+                <NormalText className='font-semibold italic'>{item.title}</NormalText>
               </div>
             ) : (
-              // LEFT ALIGNED MENU ITEM IF NO CHILDREN
               <SidebarMenuButton asChild>
                 <a
                   href={item.href}
@@ -53,7 +75,7 @@ export default function LeftNavBar({ items = { label: '', items: [] }, selectedI
                   }`}
                 >
                   {item.icon}
-                  <NormalText className='font-normal'>{item.title}</NormalText>
+                  <NormalText>{item.title}</NormalText>
                 </a>
               </SidebarMenuButton>
             )}

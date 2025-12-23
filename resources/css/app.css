@@ -7,6 +7,39 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
+
+/* Highlight line circle spinner */
+
+.highlight-spinner {
+  overflow: visible;
+}
+
+.highlight-spinner-track {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 6;
+  opacity: 0.15;
+}
+
+.highlight-spinner-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 60 220;
+  animation: highlight-move 1.4s ease-in-out infinite;
+}
+
+@keyframes highlight-move {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -280;
+  }
+}
+
 /* Self-hosted Inter variable fonts (normal + italic). Place files in public/fonts/inter/. */
 @font-face {
   font-family: 'Inter';

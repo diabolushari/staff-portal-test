@@ -90,6 +90,7 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
           url={route('parameter-domain.index')}
           search={filters.search}
           filters={filters}
+          placeholder='Search By Parameter Domain'
         />
         <div className='flex items-center justify-between'>
           <ParameterDomainSearchForm
