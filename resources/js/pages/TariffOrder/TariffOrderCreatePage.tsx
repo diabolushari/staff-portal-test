@@ -31,14 +31,10 @@ export default function TariffOrderCreatePage({ tariff_order }: Readonly<PagePro
       navItems={meteringBillingNavItems}
       leftBarTitle='Tariff Management'
       selectedItem='Tariffs'
+      title={tariff_order ? 'Edit Tariff Order' : 'Add Tariff Order'}
     >
       {' '}
-      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
-        <div className='flex items-center gap-2'>
-          <StrongText className='text-2xl font-semibold'>
-            {tariff_order ? 'Edit Tariff Order' : 'Add Tariff Order'}
-          </StrongText>
-        </div>
+      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-6'>
         <TariffOrderForm tariffOrder={tariff_order} />
       </div>
     </MainLayout>
