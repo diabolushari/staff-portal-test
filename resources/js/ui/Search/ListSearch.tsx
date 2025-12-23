@@ -12,12 +12,12 @@ interface Props {
   filters?: Record<string, string | number>
 }
 
-export default function ListSearch({ title, placeholder, url, filters }: Readonly<Props>) {
-  console.log(filters)
+export default function ListSearch({ title, placeholder, url, search, filters }: Readonly<Props>) {
+  console.log(search)
 
   const { formData, setFormValue } = useCustomForm({
     module_id: filters?.module_id ?? '',
-    search: filters?.search ?? '',
+    search: search ? search : (filters?.search ?? ''),
   })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

@@ -29,7 +29,7 @@ const MeterProfileParameterList = ({
   return (
     <div className='relative w-full rounded-lg bg-white'>
       <div className='flex flex-col gap-6 px-7 pb-7'>
-        {meterProfileParameters.length > 0 ? (
+        {meterProfileParameters.length > 0 &&
           meterProfileParameters.map((group) => (
             <div
               key={group.profile.id}
@@ -46,15 +46,25 @@ const MeterProfileParameterList = ({
                     key={param.meter_parameter_id}
                     className='min-w-[220px]'
                   >
-                    <div className='font-medium text-slate-900'>{param.name}</div>
+                    {/* Name + badge on same line */}
+                    <div className='flex items-center gap-2'>
+                      <div className='font-medium text-slate-900'>{param.name}</div>
+
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-normal ${
+                          param.is_export
+                            ? 'text-deep-green bg-green-100'
+                            : 'bg-orange-100 text-orange-800'
+                        }`}
+                      >
+                        {param.is_export ? 'Export' : 'Import'}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
-          ))
-        ) : (
-          <div className='p-6 text-center text-slate-500'>No profile parameters found.</div>
-        )}
+          ))}
 
         {profilesWithNoParameterValue.length > 0 && (
           <>
@@ -72,6 +82,9 @@ const MeterProfileParameterList = ({
               </div>
             ))}
           </>
+        )}
+        {!meterProfileParameters.length && !profilesWithNoParameterValue.length && (
+          <div className='p-6 text-center text-slate-500'>No profile parameters found.</div>
         )}
       </div>
 

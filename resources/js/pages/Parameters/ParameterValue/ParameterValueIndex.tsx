@@ -58,7 +58,7 @@ export default function ParameterValueIndex({ values, domains, definitions, filt
       addBtnText='Parameter Value'
       title='Parameter Values'
     >
-      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
+      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl py-4'>
         <ListSearch
           title=''
           url={route('parameter-value.index')}

@@ -1,6 +1,7 @@
 import { metadataNavItems, meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import MainLayout from '@/layouts/main-layout'
+import { BreadcrumbItem } from '@/types'
 import { Database, Navigation, Newspaper, User } from 'lucide-react'
 import { useState } from 'react'
 
@@ -35,13 +36,19 @@ const settingCardItems = [
   },
 ]
 
+const breadcrumb: BreadcrumbItem[] = [
+  { title: 'Home', href: '/' },
+  { title: 'Settings', href: '/settings-page' },
+]
+
 const SettingsDetail = () => {
   const [selectedItem, setSelectedItem] = useState(settingCardItems[0])
 
   return (
     <MainLayout
-      title=''
+      title='Settings'
       navItems={selectedItem.navItems}
+      breadcrumb={breadcrumb}
     >
       <div className='mt-6 flex gap-6'>
         {settingCardItems.map((item) => {

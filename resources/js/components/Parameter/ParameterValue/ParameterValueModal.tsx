@@ -11,9 +11,19 @@ interface PageProps {
   onClose: () => void
   definition: ParameterDefinition
   title?: string
+  codeLabel?: string
+  valueLabel?: string
+  descriptionLabel?: string
 }
 
-export default function ParameterValueModal({ onClose, definition, title }: PageProps) {
+export default function ParameterValueModal({
+  onClose,
+  definition,
+  title,
+  codeLabel,
+  valueLabel,
+  descriptionLabel,
+}: PageProps) {
   const { formData, setFormValue } = useCustomForm({
     definition_id: definition?.id,
     parameter_code: '',
@@ -49,33 +59,32 @@ export default function ParameterValueModal({ onClose, definition, title }: Page
       large={true}
     >
       <div className='flex flex-col gap-2'>
-        <FormCard title='Basic Information'>
-          <Input
-            label='Parameter Code'
-            value={formData.parameter_code}
-            setValue={setFormValue('parameter_code')}
-            error={errors?.parameter_code}
-          />
-          <Input
-            label='Parameter Value'
-            value={formData.parameter_value}
-            setValue={setFormValue('parameter_value')}
-            error={errors?.parameter_value}
-          />
-          <TextArea
-            label='Description'
-            value={formData.notes}
-            setValue={setFormValue('notes')}
-            error={errors?.notes}
-          />
-          <Input
-            label='Sort Priority'
-            type='number'
-            value={formData.sort_priority}
-            setValue={setFormValue('sort_priority')}
-            error={errors?.sort_priority}
-          />
-        </FormCard>
+        <Input
+          label={codeLabel ?? 'Parameter Code'}
+          value={formData.parameter_code}
+          setValue={setFormValue('parameter_code')}
+          error={errors?.parameter_code}
+        />
+        <Input
+          label={valueLabel ?? 'Parameter Value'}
+          value={formData.parameter_value}
+          setValue={setFormValue('parameter_value')}
+          error={errors?.parameter_value}
+        />
+        <TextArea
+          label={descriptionLabel ?? 'Description'}
+          value={formData.notes}
+          setValue={setFormValue('notes')}
+          error={errors?.notes}
+        />
+        <Input
+          label='Sort Priority'
+          type='number'
+          value={formData.sort_priority}
+          setValue={setFormValue('sort_priority')}
+          error={errors?.sort_priority}
+        />
+
         {definition.attribute1_name ||
           definition.attribute2_name ||
           definition.attribute3_name ||

@@ -2,7 +2,7 @@ import { ParameterDomain } from '@/interfaces/parameter_types'
 import DeleteButton from '@/ui/button/DeleteButton'
 import EditButton from '@/ui/button/EditButton'
 import { router } from '@inertiajs/react'
-import { Layers, FileText, Pencil, Trash2 } from 'lucide-react'
+import { Layers, FileText } from 'lucide-react'
 
 interface Props {
   domains: ParameterDomain[]
@@ -69,7 +69,7 @@ export default function ParameterDomainList({ domains, onEdit, onDelete }: Reado
 
                   {domain.system_module?.name && (
                     <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                      Module: {domain.system_module.name}
+                      Module: <b>{domain.system_module.name}</b>
                     </div>
                   )}
                 </div>

@@ -54,7 +54,7 @@ export default function ParameterDefinitionList({
                       <div className='flex items-center gap-[3px]'>
                         <Layers className='text-dark-gray h-3.5 w-3.5' />
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          <StrongText>Domain:</StrongText> {def.domain.domain_name}
+                          Domain: <StrongText>{def.domain.domain_name}</StrongText>
                         </div>
                       </div>
                     )}
@@ -62,7 +62,7 @@ export default function ParameterDefinitionList({
                       <div className='flex items-center gap-[3px]'>
                         <Package className='text-dark-gray h-3.5 w-3.5' />
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          <StrongText>Module:</StrongText> {def.system_module.name}
+                          Module: <StrongText>{def.system_module.name}</StrongText>
                         </div>
                       </div>
                     )}

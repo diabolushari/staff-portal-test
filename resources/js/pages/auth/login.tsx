@@ -37,8 +37,8 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
   return (
     <AuthLayout
-      title='Log in to your account'
-      description='Enter your email and password below to log in'
+      title=''
+      description=''
     >
       <Head title='Log in' />
 
@@ -102,7 +102,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
           <Button
             type='submit'
-            className='mt-4 w-full'
+            className='mt-4 w-full bg-blue-950 text-white hover:bg-blue-800'
             tabIndex={4}
             disabled={processing}
           >

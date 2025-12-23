@@ -56,7 +56,7 @@ export const meterCTPTNavItems: MainNav = {
 }
 
 export const consumerNavItems: MainNav = {
-  label: 'Consumer',
+  label: 'Consumers',
   items: [
     {
       title: 'Connections',
@@ -72,7 +72,7 @@ export const consumerNavItems: MainNav = {
 }
 
 export const meterReadingNavItems: MainNav = {
-  label: 'Meter Reading',
+  label: 'Meter Readings',
   items: [
     {
       title: 'Meter Readings',
@@ -83,7 +83,7 @@ export const meterReadingNavItems: MainNav = {
 }
 
 export const tariffNavItems: MainNav = {
-  label: 'Tariff',
+  label: 'Tariffs',
   items: [
     {
       title: 'Tariff Order',

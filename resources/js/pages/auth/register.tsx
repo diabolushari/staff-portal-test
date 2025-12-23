@@ -112,7 +112,7 @@ export default function Register() {
 
           <Button
             type='submit'
-            className='mt-2 w-full'
+            className='mt-2 w-full bg-blue-950 hover:bg-blue-800'
             tabIndex={5}
             disabled={processing}
           >
@@ -126,6 +126,7 @@ export default function Register() {
           <TextLink
             href={route('login')}
             tabIndex={6}
+            className=''
           >
             Log in
           </TextLink>
