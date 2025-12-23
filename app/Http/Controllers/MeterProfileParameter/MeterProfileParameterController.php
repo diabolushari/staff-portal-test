@@ -33,20 +33,17 @@ class MeterProfileParameterController extends Controller
         $pageSize = $request->input('page_size') ?? 10;
         $meterProfileParameter = $this->parameterDefinitionService->getParameterDefinition(null, 'Meter', 'Meter Profile', 'Consumer');
 
-
-
         $search = $request->input('search');
-
         $response = $this->meterProfileParameterService->listMeteringProfileParameterGroupByMeterProfile(
             $pageNumber,
             $pageSize,
-            null,
+            $search,
             null,
             null,
 
         );
 
-        $meterProfiles = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile');
+        $meterProfiles = $this->parameterValueService->getParameterValues(null, null, $search, 'Meter', 'Meter Profile');
 
         $responseData = $response->data['metering_parameter_profiles'] ?? [];
 
@@ -143,7 +140,7 @@ class MeterProfileParameterController extends Controller
 
 
     /**
-     
+
      * Display the specified resource.
      */
     public function show(Request $request, int $id): Response|RedirectResponse

@@ -9,7 +9,7 @@ interface Props {
   systemModules: SystemModule[]
   filters: {
     search: string
-    module_id: number
+    module_id: string
   }
 }
 

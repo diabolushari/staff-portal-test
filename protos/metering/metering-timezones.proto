@@ -7,61 +7,58 @@ import "parameters/parameter-value.proto";
 option php_namespace = "Proto\\Metering";
 option php_metadata_namespace = "GPBMetadata";
 
-option java_package = "com.kseb.consumerservice.proto.metering";
-option java_multiple_files = true;
-option java_outer_classname = "MeteringTimezoneProto";
 
 service MeteringTimezoneService {
-    rpc CreateMeteringTimezone(CreateMeteringTimezoneRequest) returns (MeteringTimezoneResponse);
-    rpc GetMeteringTimezone(GetMeteringTimezoneRequest) returns (MeteringTimezoneResponse);
-    rpc GetMeteringTimezonesByPricingType(GetMeteringTimezonesByPricingTypeRequest) returns (ListMeteringTimezonesResponse);
-    rpc ListMeteringTimezones(ListMeteringTimezonesRequest) returns (ListMeteringTimezonesResponse);
-    rpc UpdateMeteringTimezone(UpdateMeteringTimezoneRequest) returns (MeteringTimezoneResponse);
-    rpc DeleteMeteringTimezone(DeleteMeteringTimezoneRequest) returns (google.protobuf.Empty);
-
-    rpc ListTimezoneGroupByMeteringType(ListTimezoneGroupByMeteringTypeRequest) returns (ListTimezoneGroupByMeteringTypeResponse);
+  rpc CreateMeteringTimezone(CreateMeteringTimezoneRequest) returns (MeteringTimezoneResponse);
+  rpc GetMeteringTimezone(GetMeteringTimezoneRequest) returns (MeteringTimezoneResponse);
+  rpc GetMeteringTimezonesByPricingType(GetMeteringTimezonesByPricingTypeRequest) returns (ListMeteringTimezonesResponse);
+  rpc ListMeteringTimezones(ListMeteringTimezonesRequest) returns (ListMeteringTimezonesResponse);
+  rpc UpdateMeteringTimezone(UpdateMeteringTimezoneRequest) returns (MeteringTimezoneResponse);
+  rpc DeleteMeteringTimezone(DeleteMeteringTimezoneRequest) returns (google.protobuf.Empty);
+  rpc ListTimezoneGroupByMeteringType(ListTimezoneGroupByMeteringTypeRequest) returns (ListTimezoneGroupByMeteringTypeResponse);
+  rpc GetTimezoneGroupByTimezoneType(GetTimezoneGroupByTimezoneTypeRequest) returns (GetTimezoneGroupByTimezoneTypeResponse);
 }
 
 message CreateMeteringTimezoneRequest {
-    optional int32 metering_timezone_id = 1;
-    int32 pricing_type_id = 2;
-    int32 timezone_type_id = 3;
-    int32 timezone_name_id = 4;
-    int32 from_hrs = 5;
-    int32 from_mins = 6;
-    int32 to_hrs = 7;
-    int32 to_mins = 8;
-    optional google.protobuf.Timestamp effective_start_ts = 9;
-    optional google.protobuf.Timestamp effective_end_ts = 10;
-    optional bool is_active = 11;
-    int32 created_by = 12;
+  optional int32 metering_timezone_id = 1;
+  int32 pricing_type_id = 2;
+  int32 timezone_type_id = 3;
+  int32 timezone_name_id = 4;
+  int32 from_hrs = 5;
+  int32 from_mins = 6;
+  int32 to_hrs = 7;
+  int32 to_mins = 8;
+  optional google.protobuf.Timestamp effective_start_ts = 9;
+  optional google.protobuf.Timestamp effective_end_ts = 10;
+  optional bool is_active = 11;
+  int32 created_by = 12;
 }
 
 message UpdateMeteringTimezoneRequest {
-    int32 metering_timezone_id = 1;
-    int32 pricing_type_id = 2;
-    int32 timezone_type_id = 3;
-    int32 timezone_name_id = 4;
-    int32 from_hrs = 5;
-    int32 from_mins = 6;
-    int32 to_hrs = 7;
-    int32 to_mins = 8;
-    optional google.protobuf.Timestamp effective_start_ts = 9;
-    optional google.protobuf.Timestamp effective_end_ts = 10;
-    optional bool is_active = 11;
-    optional int32 updated_by = 12;
+  int32 metering_timezone_id = 1;
+  int32 pricing_type_id = 2;
+  int32 timezone_type_id = 3;
+  int32 timezone_name_id = 4;
+  int32 from_hrs = 5;
+  int32 from_mins = 6;
+  int32 to_hrs = 7;
+  int32 to_mins = 8;
+  optional google.protobuf.Timestamp effective_start_ts = 9;
+  optional google.protobuf.Timestamp effective_end_ts = 10;
+  optional bool is_active = 11;
+  optional int32 updated_by = 12;
 }
 
 message GetMeteringTimezoneRequest {
-    int32 metering_timezone_id = 1;
+  int32 metering_timezone_id = 1;
 }
 
 message GetMeteringTimezonesByPricingTypeRequest {
-    int32 pricing_type_id = 1;
+  int32 pricing_type_id = 1;
 }
 
 message DeleteMeteringTimezoneRequest {
-    int32 metering_timezone_id = 1;
+  int32 metering_timezone_id = 1;
 }
 
 message ListMeteringTimezonesRequest {
@@ -71,27 +68,28 @@ message ListMeteringTimezonesRequest {
 }
 
 message ListMeteringTimezonesResponse {
-    repeated MeteringTimezoneResponse metering_timezones = 1;
+  repeated MeteringTimezoneResponse metering_timezones = 1;
 }
 
 message MeteringTimezoneResponse {
-    int32 version_id = 1;
-    int32 metering_timezone_id = 2;
-    com.kseb.consumerservice.proto.parameters.ParameterValueProto pricing_type = 3;
-    com.kseb.consumerservice.proto.parameters.ParameterValueProto timezone_type = 4;
-    com.kseb.consumerservice.proto.parameters.ParameterValueProto timezone_name = 5;
-    int32 from_hrs = 6;
-    int32 from_mins = 7;
-    int32 to_hrs = 8;
-    int32 to_mins = 9;
-    google.protobuf.Timestamp effective_start_ts = 10;
-    optional google.protobuf.Timestamp effective_end_ts = 11;
-    optional bool is_active = 12;
-    google.protobuf.Timestamp created_ts = 13;
-    optional google.protobuf.Timestamp updated_ts = 14;
-    int32 created_by = 15;
-    optional int32 updated_by = 16;
+  int32 version_id = 1;
+  int32 metering_timezone_id = 2;
+  parameters.ParameterValueProto pricing_type = 3;
+  parameters.ParameterValueProto timezone_type = 4;
+  parameters.ParameterValueProto timezone_name = 5;
+  int32 from_hrs = 6;
+  int32 from_mins = 7;
+  int32 to_hrs = 8;
+  int32 to_mins = 9;
+  google.protobuf.Timestamp effective_start_ts = 10;
+  optional google.protobuf.Timestamp effective_end_ts = 11;
+  optional bool is_active = 12;
+  google.protobuf.Timestamp created_ts = 13;
+  optional google.protobuf.Timestamp updated_ts = 14;
+  int32 created_by = 15;
+  optional int32 updated_by = 16;
 }
+
 message ListTimezoneGroupByMeteringTypeRequest {
   optional int32 pricing_type_id = 1; // filter by pricing type if needed
 }
@@ -106,3 +104,14 @@ message TimezoneGroup {
 message ListTimezoneGroupByMeteringTypeResponse {
   repeated TimezoneGroup timezone_groups = 1;
 }
+
+message GetTimezoneGroupByTimezoneTypeRequest {
+  int32 timezone_type_id = 1;
+}
+
+message GetTimezoneGroupByTimezoneTypeResponse {
+  TimezoneGroup timezone_group = 1;
+}
+  
+
+

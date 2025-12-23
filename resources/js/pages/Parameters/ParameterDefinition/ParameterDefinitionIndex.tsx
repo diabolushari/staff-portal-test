@@ -58,6 +58,11 @@ export default function ParameterDefinitionIndex({
     setParameterFormModal(true)
   }, [])
 
+  console.log('parameter_definitions', parameter_definitions)
+  console.log('domains', domains)
+  console.log('system_modules', system_modules)
+  console.log('filters', filters)
+
   return (
     <MainLayout
       breadcrumb={breadcrumbs}

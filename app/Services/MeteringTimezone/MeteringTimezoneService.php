@@ -12,6 +12,7 @@ use Proto\Metering\CreateMeteringTimezoneRequest;
 use Proto\Metering\DeleteMeteringTimezoneRequest;
 use Proto\Metering\GetMeteringTimezoneRequest;
 use Proto\Metering\GetMeteringTimezonesByPricingTypeRequest;
+use Proto\Metering\GetTimezoneGroupByTimezoneTypeRequest;
 use Proto\Metering\ListMeteringTimezonesRequest;
 use Proto\Metering\ListTimezoneGroupByMeteringTypeRequest;
 use Proto\Metering\MeteringTimezoneResponse;
@@ -62,7 +63,9 @@ class MeteringTimezoneService
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
-                $response, $status->code, $status->details
+                $response,
+                $status->code,
+                $status->details
             );
         }
 
@@ -79,7 +82,9 @@ class MeteringTimezoneService
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
-                $response, $status->code, $status->details
+                $response,
+                $status->code,
+                $status->details
             );
         }
 
@@ -96,7 +101,9 @@ class MeteringTimezoneService
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
-                $response, $status->code, $status->details
+                $response,
+                $status->code,
+                $status->details
             );
         }
 
@@ -117,7 +124,9 @@ class MeteringTimezoneService
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
-                $response, $status->code, $status->details
+                $response,
+                $status->code,
+                $status->details
             );
         }
 
@@ -127,6 +136,25 @@ class MeteringTimezoneService
         }
 
         return GrpcServiceResponse::success($timezonesArray, $response, $status->code, $status->details);
+    }
+
+    public function getTimezoneGroupByTimezoneType(int $timezoneTypeId): GrpcServiceResponse
+    {
+        $request = new GetTimezoneGroupByTimezoneTypeRequest();
+        $request->setTimezoneTypeId($timezoneTypeId);
+
+        [$response, $status] = $this->client->GetTimezoneGroupByTimezoneType($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success(self::timezoneByGroupBymessageToArray($response->getTimezoneGroup()), $response, $status->code, $status->details);
     }
 
     public function listMeteringTimezones(
@@ -150,7 +178,9 @@ class MeteringTimezoneService
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
-                $response, $status->code, $status->details
+                $response,
+                $status->code,
+                $status->details
             );
         }
 
@@ -196,7 +226,9 @@ class MeteringTimezoneService
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
-                $response, $status->code, $status->details
+                $response,
+                $status->code,
+                $status->details
             );
         }
 
@@ -211,7 +243,7 @@ class MeteringTimezoneService
         return [
             'timezone_type' => self::transformParameterValueToArray($timezoneGroup->getTimezoneType()),
             'metering_timezones' => array_map(
-                fn (MeteringTimezoneResponse $tz) => self::timezoneProtoToArray($tz),
+                fn(MeteringTimezoneResponse $tz) => self::timezoneProtoToArray($tz),
                 $meteringTimezones
             ),
         ];
@@ -227,7 +259,9 @@ class MeteringTimezoneService
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
-                $response, $status->code, $status->details
+                $response,
+                $status->code,
+                $status->details
             );
         }
 
@@ -277,7 +311,7 @@ class MeteringTimezoneService
             if ($value instanceof \DateTimeInterface) {
                 $dt = $value;
             } elseif (is_int($value)) {
-                $dt = (new \DateTimeImmutable('@'.$value))->setTimezone(new \DateTimeZone('UTC'));
+                $dt = (new \DateTimeImmutable('@' . $value))->setTimezone(new \DateTimeZone('UTC'));
             } else {
                 $dt = new \DateTimeImmutable($value);
             }

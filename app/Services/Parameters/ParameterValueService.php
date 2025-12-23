@@ -65,7 +65,7 @@ class ParameterValueService
         $parameterValues = $response?->getValues();
         $parameterValuesArray = [];
 
-        if ($parameterValues) {
+        if ($parameterValues != null) {
             foreach ($parameterValues as $parameterValue) {
 
                 $definition = $parameterValue->getDefinition();
@@ -74,15 +74,22 @@ class ParameterValueService
                     'parameter_name' => $definition->getParameterName(),
                 ];
                 $domain = $definition->getDomain();
-                $domainArray = [
-                    'id' => $domain->getId(),
-                    'domain_name' => $domain->getDomainName(),
-                ];
-                $system = $domain->getSystemModule();
-                $systemArray = [
-                    'id' => $system->getId(),
-                    'name' => $system->getName(),
-                ];
+
+                if ($domain != null) {
+                    $domainArray = [
+                        'id' => $domain->getId(),
+                        'domain_name' => $domain->getDomainName(),
+                    ];
+
+                    $system = $domain->getSystemModule();
+
+                    if ($system != null) {
+                        $systemArray = [
+                            'id' => $system->getId(),
+                            'name' => $system->getName(),
+                        ];
+                    }
+                }
 
                 $parameterValuesArray[] = [
                     'id' => $parameterValue->getId(),
@@ -97,8 +104,8 @@ class ParameterValueService
                     'sort_priority' => $parameterValue->getSortPriority(),
                     'notes' => $parameterValue->getNotes(),
                     'definition' => $definitionArray,
-                    'domain' => $domainArray,
-                    'system_module' => $systemArray,
+                    'domain' => $domainArray ?? null,
+                    'system_module' => $systemArray ?? null,
                 ];
             }
         }

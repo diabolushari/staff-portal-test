@@ -1,8 +1,8 @@
+import { Input as ShadcnInput } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 import ErrorText from '@/typography/ErrorText'
 import React from 'react'
 import { FormFieldProp } from '../ui_interfaces'
-import { Input as ShadcnInput } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
 
 export default function Input({
   label,
@@ -21,7 +21,7 @@ export default function Input({
   className = '',
   min,
   max,
-}: FormFieldProp) {
+}: Readonly<FormFieldProp>) {
   const handleKeydown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (preventFormSubmit && event.key === 'Enter') {
       event.preventDefault()

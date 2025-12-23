@@ -9,13 +9,15 @@ interface Props {
   placeholder?: string
   url?: string
   search?: string
-  filters?: {}
+  filters?: Record<string, string | number>
 }
 
-export default function ListSearch({ title, placeholder, url, search, filters }: Props) {
+export default function ListSearch({ title, placeholder, url, filters }: Readonly<Props>) {
+  console.log(filters)
+
   const { formData, setFormValue } = useCustomForm({
-    search: search ?? '',
-    ...filters,
+    module_id: filters?.module_id ?? '',
+    search: filters?.search ?? '',
   })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
