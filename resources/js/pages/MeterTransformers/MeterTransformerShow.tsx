@@ -5,6 +5,7 @@ import StrongText from '@/typography/StrongText'
 import Field from '@/components/ui/field'
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { MeterTransformer } from '@/interfaces/data_interfaces'
+import { getDisplayDate } from '@/utils'
 
 interface Props {
   transformer: MeterTransformer
@@ -20,15 +21,6 @@ export default function MeterTransformerShow({ transformer }: Readonly<Props>) {
     { title: 'CTPTs', href: '/meter-ctpt' },
     { title: 'Detail', href: `/meter-ctpt/${transformer.meter_ctpt_id}` },
   ]
-
-  const formatDate = (dateStr?: string | null) => {
-    if (!dateStr) return '-'
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  }
 
   return (
     <MainLayout
@@ -86,24 +78,7 @@ export default function MeterTransformerShow({ transformer }: Readonly<Props>) {
           />
           <Field
             label='Manufacture Date'
-            value={formatDate(transformer.manufacture_date)}
-          />
-        </div>
-      </Card>
-
-      {/* History */}
-      <Card className='rounded-lg p-7'>
-        <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
-          History
-        </StrongText>
-        <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-          <Field
-            label='Created At'
-            value={formatDate(transformer.created_ts)}
-          />
-          <Field
-            label='Last Updated At'
-            value={formatDate(transformer.updated_ts)}
+            value={getDisplayDate(transformer.manufacture_date)}
           />
         </div>
       </Card>

@@ -48,6 +48,7 @@ export default function BillingRuleShowPage({
       breadcrumb={breadcrumbs}
       selectedItem='Billing Rule'
       selectedTopNav='Billing'
+      title={billingRule?.name}
     >
       <div className='flex flex-col gap-6'>
         <Card className='rounded-lg p-7'>

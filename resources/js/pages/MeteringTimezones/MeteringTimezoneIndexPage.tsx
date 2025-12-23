@@ -12,6 +12,7 @@ import Button from '@/ui/button/Button'
 import ParameterValueModal from '@/components/Parameter/ParameterValue/ParameterValueModal'
 import AddButton from '@/ui/button/AddButton'
 import MeterTimeZoneFormModal from '@/components/meteringtimezones/MeterTimeZoneFormModal'
+import NormalText from '@/typography/NormalText'
 
 interface TimezoneGroup {
   timezone_type: ParameterValues
@@ -96,6 +97,10 @@ export default function MeteringTimezonesIndexPage({
     return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
   }
 
+  function handleEdit(id: number) {
+    router.get(`/metering-timezone/${id}`)
+  }
+
   return (
     <MainLayout
       navItems={meteringBillingNavItems}
@@ -114,49 +119,41 @@ export default function MeteringTimezonesIndexPage({
         />
 
         <div className='relative w-full rounded-lg bg-white'>
-          <div className='flex flex-col gap-6 px-7 pb-7'>
+          <div className='flex flex-col px-7 pb-7'>
             {groups && groups.length > 0 ? (
               groups.map((group, index) => (
                 <div
-                  key={group.timezone_type.id}
-                  onClick={() => handleShow(group.timezone_type.id)}
+                  key={group?.timezone_type?.id}
+                  onClick={() => handleShow(group?.timezone_type?.id)}
                   className='mb-4 cursor-pointer rounded-xl border border-gray-200 bg-white shadow-sm transition last:mb-0 hover:shadow-md'
                 >
                   {/* Header */}
-                  <div className='flex items-center justify-between rounded-t-xl border-b border-gray-200 bg-slate-50 px-4 py-2.5'>
-                    <div className='flex items-center gap-3'>
-                      {/* Index */}
-
-                      {/* Timezone type */}
+                  <div className='flex rounded-t-xl border-b border-gray-200 bg-slate-50 px-4 py-2.5'>
+                    <div className='flex flex-col gap-3'>
                       <span className='text-sm font-semibold text-slate-800'>
-                        {group.timezone_type.parameter_value}
+                        {group?.timezone_type?.parameter_value}
                       </span>
+                      <span className='rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700'>
+                        {group?.metering_timezones?.length}{' '}
+                        {group?.metering_timezones?.length > 1 ? 'Timezones' : 'Timezone'}
+                      </span>
+                      <div>
+                        <NormalText>{group?.timezone_type?.notes}</NormalText>
+                      </div>
                     </div>
 
                     {/* Actions */}
-                    <div
+                    {/* <div
                       className='flex items-center gap-2'
                       onClick={(e) => e.stopPropagation()}
                     >
-                      {/* Timezone count */}
-                      <span className='rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700'>
-                        {group.metering_timezones.length} Timezones
-                      </span>
-
-                      {/* <DeleteButton
+                      <DeleteButton
                         onClick={() => setSelectedTimeZone(group.metering_timezones[0])}
-                      /> */}
-                    </div>
+                      />
+                    </div> */}
                   </div>
 
                   {/* Description section */}
-                  {group.timezone_type?.notes && (
-                    <div className='px-4 py-3'>
-                      <p className='text-sm text-slate-700'>
-                        {group.timezone_type?.notes || 'No description available'}
-                      </p>
-                    </div>
-                  )}
                 </div>
               ))
             ) : (

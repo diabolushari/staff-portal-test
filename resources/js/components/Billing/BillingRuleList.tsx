@@ -47,17 +47,18 @@ export default function BillingRuleList({ billingRules }: Props) {
         Billing Rule Info
       </div>
       <div className='flex flex-col px-7 pb-7'>
-        {billingRules.map((billingRule, index) => (
+        {billingRules?.map((billingRule, index) => (
           <div
             key={billingRule.id ?? index} // unique key fallback
-            className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
+            className='cursor-pointer rounded-xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md'
+            onClick={() => router.get(route('billing-rules.show', billingRule?.id))}
           >
             <div className='flex items-start justify-between'>
               <div className='flex flex-1 flex-col gap-2.5 p-[10px]'>
                 <div className='flex flex-col gap-1'>
                   <div className='flex items-center gap-2'>
                     <div className='font-inter cursor-pointer text-base leading-normal font-semibold text-black underline'>
-                      {billingRule?.name ?? 'Unnamed Rule'}
+                      {billingRule?.name ?? '-'}
                     </div>
                   </div>
 
@@ -68,9 +69,12 @@ export default function BillingRuleList({ billingRules }: Props) {
 
                     <CalendarDaysIcon className='text-dark-gray h-3.5 w-3.5' />
                     <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                      {billingRule?.effective_start}
+                      {billingRule?.effective_start ?? '-'}
                     </div>
-                    <div className='flex items-center gap-[3px]'>
+                    <div
+                      className='flex items-center gap-[3px]'
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <Button
                         variant='link'
                         label='Download'
@@ -82,15 +86,12 @@ export default function BillingRuleList({ billingRules }: Props) {
               </div>
 
               <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
-                <div className='flex flex-row gap-2'>
+                <div
+                  className='flex flex-row gap-2'
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <EditButton link={route('billing-rules.edit', billingRule?.id)} />
                   <DeleteButton onClick={() => handleDeleteClick(billingRule)} />
-
-                  <Button
-                    variant='link'
-                    label='View'
-                    onClick={() => router.get(route('billing-rules.show', billingRule?.id))}
-                  />
                 </div>
                 <div
                   className={`rounded-[50px] px-2.5 py-px ${
