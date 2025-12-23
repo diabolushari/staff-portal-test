@@ -71,15 +71,6 @@ export default function MeterShow({
     },
   ]
 
-  const formatDate = (dateStr?: string) => {
-    if (!dateStr) return '-'
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  }
-
   // --- EVENT HANDLERS ---
   const handleDelete = () => {
     if (confirm('Are you sure you want to delete this meter?')) {
@@ -167,6 +158,14 @@ export default function MeterShow({
                 Technical Specifications
               </StrongText>
               <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                <Field
+                  label='Manufacture Date'
+                  value={getDisplayDate(meter.manufacture_date)}
+                />
+                <Field
+                  label='Supply Date'
+                  value={getDisplayDate(meter.supply_date)}
+                />
                 <Field
                   label='Accuracy Class'
                   value={meter?.accuracy_class?.parameter_value}
@@ -259,39 +258,6 @@ export default function MeterShow({
               currentTimezone={currentTimezone}
               timezoneTypes={timezoneTypes}
             />
-
-            {/* --- History --- */}
-            <Card className='rounded-lg p-7'>
-              <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
-                History
-              </StrongText>
-              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                <Field
-                  label='Manufacture Date'
-                  value={getDisplayDate(meter.manufacture_date)}
-                />
-                <Field
-                  label='Supply Date'
-                  value={getDisplayDate(meter.supply_date)}
-                />
-                <Field
-                  label='Created At'
-                  value={getDisplayDate(meter.created_ts)}
-                />
-                <Field
-                  label='Last Updated At'
-                  value={getDisplayDate(meter.updated_ts)}
-                />
-                <Field
-                  label='Created By'
-                  value={meter.created_by}
-                />
-                <Field
-                  label='Updated By'
-                  value={meter.updated_by || '-'}
-                />
-              </div>
-            </Card>
           </div>
         </TabsContent>
         <TabsContent value='meter-ctpt'>
