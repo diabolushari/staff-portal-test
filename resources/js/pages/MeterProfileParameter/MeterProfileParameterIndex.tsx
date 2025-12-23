@@ -38,7 +38,6 @@ const MeterProfileParameterIndex = ({
   definition,
   profilesWithNoParameterValue,
 }: Props) => {
-  console.log(oldSearch)
   const [showModal, setShowModal] = useState<boolean>(false)
 
   return (

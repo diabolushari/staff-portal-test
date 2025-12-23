@@ -29,7 +29,7 @@ const MeterProfileParameterList = ({
     router.get(route('meter-profile.show', profileId))
   }
   const exportImportChecking = (parameters: MeterProfileParameter[]) => {
-    const isExportable = parameters.filter((profile) => profile?.is_export)
+    const isExportable = parameters.filter((profile) => profile?.is_export === true)
     const isImportable = parameters.filter((profile) => profile?.is_export === false)
     return { isExportable, isImportable }
   }
