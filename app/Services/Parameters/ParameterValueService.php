@@ -268,6 +268,7 @@ class ParameterValueService
         if ($parameterValue) {
             $request->setParameterValue($parameterValue);
         }
+
         [$response, $status] = $this->client->getParameterValue($request)->wait();
 
         if ($status->code !== 0) {

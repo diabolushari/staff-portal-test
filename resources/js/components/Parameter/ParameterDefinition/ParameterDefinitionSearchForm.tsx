@@ -3,6 +3,7 @@ import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
+import { useEffect, useState } from 'react'
 import { route } from 'ziggy-js'
 
 interface Props {
@@ -20,6 +21,9 @@ export default function ParameterDefinitionSearchForm({
   systemModules,
   filters,
 }: Readonly<Props>) {
+  const [filteredParameterDomains, setFilteredParameterDomains] =
+    useState<ParameterDomain[]>(parameterDomains)
+
   const { formData, setFormValue } = useCustomForm({
     domain_name: filters.domain_name ?? '',
     module_name: filters.module_name ?? '',
@@ -29,6 +33,20 @@ export default function ParameterDefinitionSearchForm({
     e.preventDefault()
     router.get(route('parameter-definition.index', formData))
   }
+
+  useEffect(() => {
+    const selectedModuleId = formData.module_name
+      ? (systemModules.find((module) => module.name === formData.module_name)?.id ?? null)
+      : null
+
+    if (selectedModuleId) {
+      setFilteredParameterDomains(
+        parameterDomains.filter((domain) => domain.managed_by_module === selectedModuleId)
+      )
+    } else {
+      setFilteredParameterDomains(parameterDomains)
+    }
+  }, [formData.module_name, systemModules, parameterDomains])
 
   return (
     <div>
@@ -52,7 +70,7 @@ export default function ParameterDefinitionSearchForm({
             <div className='flex flex-col'>
               {parameterDomains && (
                 <SelectList
-                  list={parameterDomains}
+                  list={filteredParameterDomains}
                   dataKey='domain_name'
                   displayKey='domain_name'
                   setValue={setFormValue('domain_name')}
@@ -77,7 +95,6 @@ export default function ParameterDefinitionSearchForm({
               label='Clear filters'
               variant='link'
               type='button'
-              variant='secondary'
               onClick={() =>
                 router.get(route('parameter-definition.index'), {
                   search: '',

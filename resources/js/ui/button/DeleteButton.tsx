@@ -21,12 +21,12 @@ export default function DeleteButton({ link, onClick }: Props) {
 
   return (
     <Button
-      variant='destructive'
+      variant='outline'
       size='icon'
-      className='cursor-pointer transition-transform hover:scale-105'
+      className='cursor-pointer border-red-500 transition-transform hover:scale-105'
       onClick={handleClick}
     >
-      <Trash className='h-6 w-6' />
+      <Trash className='h-6 w-6 text-red-500' />
     </Button>
   )
 }
