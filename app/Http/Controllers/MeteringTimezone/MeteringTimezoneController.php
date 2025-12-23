@@ -23,13 +23,16 @@ class MeteringTimezoneController extends Controller
     /**
      * Display a listing of the meter timezones.
      */
-    public function index(): Response|RedirectResponse
+    public function index(Request $request): Response|RedirectResponse
     {
-        $response = $this->meteringTimezoneService->listTimezoneGroupByMeteringType();
+        $search = $request->input('search') ?? null;
+        $profileId = $request->input('profile_id') ?? null;
+        $response = $this->meteringTimezoneService->listTimezoneGroupByMeteringType($profileId, $search);
+
         $timezoneTypesResponse = $this->parameterValueService->getParameterValues(
             page: 1,
             pageSize: 100,
-            search: null,
+            search: $search,
             domainName: 'Meter',
             parameterName: 'Timezone Type'
         );
@@ -72,6 +75,10 @@ class MeteringTimezoneController extends Controller
             'timezone_name_parameter' => $timezoneNameParameter->data,
             'timezone_type_parameter' => $timeZoneTypeParameter->data,
             'timezone_names' => $timezoneNamesResponse->data,
+            'filter' => [
+                'search' => $search,
+                'profile_id' => $profileId,
+            ],
         ]);
     }
 
