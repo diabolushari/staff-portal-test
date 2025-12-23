@@ -24,15 +24,10 @@ export default function BillingRuleCreatePage({ billingRule }: { billingRule?: B
       navItems={meteringBillingNavItems}
       selectedItem='Billing Rule'
       selectedTopNav='Billing'
+      title={billingRule ? 'Edit Billing Rule' : 'Add Billing Rule'}
     >
       {' '}
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
-        <div className='flex items-center gap-2'>
-          <StrongText className='text-2xl font-semibold'>
-            {billingRule ? 'Edit Billing Rule' : 'Add Billing Rule'}
-          </StrongText>
-        </div>
-
         <BillingForm billingRule={billingRule} />
       </div>
     </MainLayout>
