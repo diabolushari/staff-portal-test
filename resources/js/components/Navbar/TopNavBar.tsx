@@ -69,7 +69,7 @@ export default function TopNavBar({ selectedTopNav }: Props) {
 
             <button
               onClick={() => router.get(route('settings-page'))}
-              className='rounded p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'
+              className='cursor-pointer rounded p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'
             >
               <SettingsIcon className='h-5 w-5' />
             </button>
