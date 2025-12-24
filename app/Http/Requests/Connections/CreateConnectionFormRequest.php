@@ -13,6 +13,7 @@ class CreateConnectionFormRequest extends Data
         public int $connectionTypeId,
         public int $connectionStatusId,
         public string $connectedDate,
+        public string $applicationNo,
         public int $serviceOfficeCode,
         public int $adminOfficeCode,
         public int $voltageTypeId,
@@ -23,18 +24,14 @@ class CreateConnectionFormRequest extends Data
         public int $connectionCategoryId,
         public int $connectionSubcategoryId,
         public int $billingProcessId,
-        public bool $solarIndicator,
         public ?int $openAccessTypeId,
         public int $meteringTypeId,
-        public ?int $renewableTypeId,
-        public bool $multiSourceIndicator,
-        public bool $liveIndicator,
         public int $phaseTypeId,
         public ?string $consumerLegacyCode,
         public float $powerLoadKwVal,
         public float $lightLoadKwVal,
         public bool $otherconsFlag,
-        public bool $cppFlag,
+        public ?string $remarks,
 
     ) {}
 }

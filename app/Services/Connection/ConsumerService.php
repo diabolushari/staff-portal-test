@@ -117,7 +117,9 @@ class ConsumerService
         $consumer->setConnectionId($request->connectionId);
         $consumer->setConsumerTypeId($request->consumerTypeId);
         $consumer->setOrganizationName($request->organizationName);
-        $consumer->setApplicantCode($request->applicantCode);
+        $consumer->setVitualAccountNumber($request->vitualAccountNumber);
+        $consumer->setContactPerson($request->contactPerson);
+        $consumer->setDepartmentNameId($request->departmentNameId);
         $consumer->setConsumerPan($request->consumerPan);
         $consumer->setConsumerTan($request->consumerTan);
         $consumer->setConsumerGstin($request->consumerGstin);
@@ -130,7 +132,7 @@ class ConsumerService
         $consumer->setConsumerCin($request->consumerCin);
         $consumer->setSeasonalInd($request->seasonalInd);
         $consumer->setLicenseInd($request->licenseInd);
-        $consumer->setOpenAccessInd($request->openAccessInd);
+       
 
         // Convert billing & premises addresses to Struct
         $pendingAddresses = $request->otherAddresses ?? [];
@@ -180,7 +182,6 @@ class ConsumerService
             'connection_id' => $consumer->getConnectionId(),
             'consumer_type_id' => $consumer->getConsumerTypeId(),
             'organization_name' => $consumer->getOrganizationName(),
-            'applicant_code' => $consumer->getApplicantCode(),
             'consumer_pan' => $consumer->getConsumerPan(),
             'consumer_tan' => $consumer->getConsumerTan(),
             'consumer_gstin' => $consumer->getConsumerGstin(),
@@ -194,7 +195,9 @@ class ConsumerService
             'consumer_cin' => $consumer->getConsumerCin(),
             'seasonal_ind' => $consumer->getSeasonalInd(),
             'license_ind' => $consumer->getLicenseInd(),
-            'open_access_ind' => $consumer->getOpenAccessInd(),
+            'virtual_account_number' => $consumer->getVirtualAccountNumber(),
+            'contact_person' => $consumer->getContactPerson(),
+            'department_name_id' => $consumer->getDepartmentNameId(),
         ];
     }
 

@@ -123,6 +123,7 @@ class ConnectionService
         $grpcRequest->setConnectionTypeId($request->connectionTypeId);
         $grpcRequest->setConnectionStatusId($request->connectionStatusId);
         $grpcRequest->setConnectedDate($request->connectedDate);
+        $grpcRequest->setApplicationNo($request->applicationNo);
         $grpcRequest->setServiceOfficeCode($request->serviceOfficeCode);
         $grpcRequest->setAdminOfficeCode($request->adminOfficeCode);
         $grpcRequest->setVoltageId($request->voltageTypeId);
@@ -139,18 +140,15 @@ class ConnectionService
         $purposesInfo->setFields($request->purposesInfo ?? []);
         $grpcRequest->setPurposesInfo($purposesInfo);
         $grpcRequest->setBillingProcessId($request->billingProcessId);
-        $grpcRequest->setSolarIndicator($request->solarIndicator);
         $grpcRequest->setOpenAccessTypeId($request->openAccessTypeId ?? 0);
         $grpcRequest->setMeteringTypeId($request->meteringTypeId ?? 0);
-        $grpcRequest->setRenewableTypeId($request->renewableTypeId ?? 0);
-        $grpcRequest->setMultiSourceIndicator($request->multiSourceIndicator);
-        $grpcRequest->setLiveIndicator($request->liveIndicator);
         $grpcRequest->setPhaseTypeId($request->phaseTypeId);
         $grpcRequest->setConsumerLegacyCode($request->consumerLegacyCode ?? '');
         $grpcRequest->setPowerLoadKwVal($request->powerLoadKwVal);
         $grpcRequest->setLightLoadKwVal($request->lightLoadKwVal);
         $grpcRequest->setOtherconsFlag($request->otherconsFlag);
-        $grpcRequest->setCppFlag($request->cppFlag);
+        $grpcRequest->setRemarks($request->remarks ?? '');
+       
 
         [$response, $status] = $this->client->CreateConnection($grpcRequest)->wait();
 
@@ -200,6 +198,7 @@ class ConnectionService
         $grpcRequest->setConnectionId($connectionId);
         $grpcRequest->setConnectionStatusId($request->connectionStatusId);
         $grpcRequest->setConnectedDate($request->connectedDate);
+        $grpcRequest->setApplicationNo($request->applicationNo);
         $grpcRequest->setAdminOfficeCode($request->adminOfficeCode);
         $grpcRequest->setVoltageId($request->voltageTypeId);
         $grpcRequest->setContractDemandKvaVal($request->contractDemandKwVal);
@@ -215,18 +214,14 @@ class ConnectionService
         $purposesInfo->setFields($request->purposesInfo ?? []);
         $grpcRequest->setPurposesInfo($purposesInfo);
         $grpcRequest->setBillingProcessId($request->billingProcessId);
-        $grpcRequest->setSolarIndicator($request->solarIndicator);
         $grpcRequest->setOpenAccessTypeId($request->openAccessTypeId ?? 0);
         $grpcRequest->setMeteringTypeId($request->meteringTypeId ?? 0);
-        $grpcRequest->setRenewableTypeId($request->renewableTypeId ?? 0);
-        $grpcRequest->setMultiSourceIndicator($request->multiSourceIndicator);
         $grpcRequest->setPhaseTypeId($request->phaseTypeId);
-        $grpcRequest->setLiveIndicator($request->liveIndicator);
         $grpcRequest->setConsumerLegacyCode($request->consumerLegacyCode ?? '');
         $grpcRequest->setPowerLoadKwVal($request->powerLoadKwVal);
         $grpcRequest->setLightLoadKwVal($request->lightLoadKwVal);
         $grpcRequest->setOtherconsFlag($request->otherconsFlag);
-        $grpcRequest->setCppFlag($request->cppFlag);
+        $grpcRequest->setRemarks($request->remarks ?? '');
 
         [$response, $status] = $this->client->UpdateConnection($grpcRequest)->wait();
         if ($status->code !== 0) {
