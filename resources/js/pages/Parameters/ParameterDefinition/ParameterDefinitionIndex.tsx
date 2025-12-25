@@ -69,15 +69,10 @@ export default function ParameterDefinitionIndex({
       navItems={metadataNavItems}
       selectedItem='Definitions'
       title='Parameter Definitions'
+      description='Set up and manage system variables under a domain.'
+      addBtnClick={handleCreateClick}
+      addBtnText='Parameter Definition'
     >
-      <div className='mb-4 flex items-center justify-between'>
-        {/* <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Definitions</h2> */}
-        <div></div>
-        <AddButton
-          onClick={handleCreateClick}
-          buttonText='Add Parameter Definition'
-        />
-      </div>
       <div className='py-4'>
         <ListSearch
           title=''

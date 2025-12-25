@@ -112,6 +112,10 @@
   /* Custom colors */
   --color-dark-gray: #252c32;
   --color-deep-green: #1c6534;
+
+   --color-kseb-primary: var(--kseb-primary);
+   --color-kseb-bg-blue: var(--kseb-bg-blue);
+   --color-kseb-line: var(--kseb-line);
 }
 
 /*
@@ -166,6 +170,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.87 0 0);
+   --kseb-primary: #1A3B64;
+   --kseb-bg-blue:#F3F8FE;
+   --kseb-line:#DCDADA;
 }
 
 .dark {
@@ -201,7 +208,13 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+   --kseb-primary: #1A3B64;
+   --kseb-bg-blue: #F3F8FE;
+   --kseb-line:#DCDADA;
+
 }
+
+
 
 @layer base {
   * {
@@ -228,6 +241,34 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+
+.normal-font {
+  font-family: 'Geist', sans-serif;
+  font-size: 14px;
+  line-height: 40px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: #000000;
+}
+
+
+.kseb-h1{
+  font-family: 'Geist', sans-serif;
+  font-size:36px;
+  line-height: 40px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: #000000;
+  
+}
+
+.kseb-paragraph{
+  font-family: 'Geist', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 300;
+  letter-spacing: 0;
+}
 /*
   ---break---
 */

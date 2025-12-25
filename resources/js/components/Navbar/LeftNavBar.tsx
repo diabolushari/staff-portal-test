@@ -8,7 +8,6 @@ import {
 } from '../ui/sidebar'
 import { useEffect, useState } from 'react'
 import Spinner from '@/ui/Spinner'
-import FullSpinner from '@/ui/FullSpinner'
 
 type MenuItem = {
   title: string
@@ -43,7 +42,7 @@ export default function LeftNavBar({ items = { label: '', items: [] }, selectedI
   }, [items])
 
   return (
-    <SidebarMenu className='relative h-full rounded-2xl bg-blue-50 p-4 pt-8'>
+    <SidebarMenu className='bg-kseb-bg-blue relative h-full rounded-2xl p-4 pt-20'>
       {/* Loading Overlay */}
       {loading && (
         <div className='absolute inset-0 z-50 flex items-center justify-center rounded-2xl bg-white/60 backdrop-blur-sm'>

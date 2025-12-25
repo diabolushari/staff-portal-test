@@ -3,7 +3,6 @@ import { MainNav } from '@/components/Navbar/navitems'
 import TopNavBar from '@/components/Navbar/TopNavBar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { BreadcrumbItem, PageProps } from '@/types'
-import StrongText from '@/typography/StrongText'
 import { showError, showInfo, showSuccess } from '@/ui/alerts'
 import CustomBreadcrumb from '@/ui/BreadCrumb'
 import AddButton from '@/ui/button/AddButton'
@@ -22,6 +21,7 @@ interface Props {
   title?: string
   selectedItem?: string
   selectedTopNav?: string
+  description?: string
 }
 
 export default function MainLayout({
@@ -34,6 +34,7 @@ export default function MainLayout({
   title,
   selectedItem,
   selectedTopNav,
+  description,
 }: Readonly<Props>) {
   const { flash } = usePage<PageProps>().props
 
@@ -60,8 +61,8 @@ export default function MainLayout({
           <TopNavBar selectedTopNav={selectedTopNav} />
         </div>
 
-        <div className='flex flex-1'>
-          <div className='hidden w-60 border-r lg:block'>
+        <div className='grid flex-1 grid-cols-12'>
+          <div className='col-span-2 hidden lg:block'>
             <LeftNavBar
               title={''}
               selectedItem={selectedItem}
@@ -69,17 +70,22 @@ export default function MainLayout({
             />
           </div>
 
-          <main className='flex-1 p-4'>
+          <main className='col-span-12 p-4 lg:col-span-8'>
             <div>
-              {title && (
-                <div className='px-2 pt-2'>
-                  <StrongText className='text-2xl font-semibold'>{title}</StrongText>
-                </div>
-              )}
-
-              <div className='flex justify-between p-2'>
+              <div className='px-4 pt-2'>
                 <CustomBreadcrumb list={breadcrumb ?? []} />
-                <div>
+              </div>
+
+              <div className='flex items-center justify-between px-4 py-2'>
+                <div className='flex flex-col gap-1'>
+                  {title && <div className='kseb-h1 pt-5'>{title}</div>}
+
+                  {description && (
+                    <p className='kseb-paragraph pt-5 text-gray-600'>{description}</p>
+                  )}
+                </div>
+
+                <div className='flex items-center gap-2'>
                   {addBtnUrl && (
                     <AddButton
                       onClick={() => router.get(addBtnUrl)}
@@ -98,6 +104,8 @@ export default function MainLayout({
               <div className='flex flex-col gap-4 overflow-x-auto p-2'>{children}</div>
             </div>
           </main>
+
+          <div className='col-span-2 hidden lg:block'></div>
         </div>
       </div>
     </SidebarProvider>

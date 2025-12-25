@@ -14,14 +14,26 @@ export default function CustomBreadcrumb({ list }: { list: BreadcrumbItemType[] 
     <Breadcrumb>
       <BreadcrumbList>
         {list.map((item, index) => {
+          const isLast = index === list.length - 1
+
           return (
             <React.Fragment key={item.href}>
               <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href={item.href}>{item.title}</Link>
-                </BreadcrumbLink>
+                {isLast ? (
+                  <span className='text-foreground font-semibold'>{item.title}</span>
+                ) : (
+                  <BreadcrumbLink asChild>
+                    <Link
+                      href={item.href}
+                      className='normal-font'
+                    >
+                      {item.title}
+                    </Link>
+                  </BreadcrumbLink>
+                )}
               </BreadcrumbItem>
-              {index !== list.length - 1 && <BreadcrumbSeparator />}
+
+              {!isLast && <BreadcrumbSeparator />}
             </React.Fragment>
           )
         })}

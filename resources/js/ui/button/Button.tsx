@@ -17,7 +17,7 @@ export const chooseButtonColor = (type: string): [string, string] => {
   switch (type) {
     case 'primary': {
       return [
-        'rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]',
+        'rounded-lg  px-4 py-2 text-sm font-semibold text-white transition-colors bg-kseb-primary',
         '',
       ]
     }
