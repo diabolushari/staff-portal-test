@@ -1,6 +1,7 @@
 import { metadataNavItems } from '@/components/Navbar/navitems'
 import ParameterDomainForm from '@/components/Parameter/ParameterDomain/ParameterDomainForm'
 import ParameterDomainList from '@/components/Parameter/ParameterDomain/ParameterDomainList'
+import ParameterDomainSearchCard from '@/components/Parameter/ParameterDomain/ParameterDomainSearchCard'
 import ParameterDomainSearchForm from '@/components/Parameter/ParameterDomain/ParameterDomainSearchForm'
 import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
@@ -78,25 +79,10 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
       {/* <Head title='Parameter Domains' /> */}
 
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl py-4'>
-        <ListSearch
-          title=''
-          url={route('parameter-domain.index')}
+        <ParameterDomainSearchCard
           filters={filters}
-          placeholder='Search By Parameter Domain'
+          systemModules={modules}
         />
-        <div className='flex items-center justify-between'>
-          <ParameterDomainSearchForm
-            systemModules={modules}
-            filters={filters}
-          />
-          <Button
-            onClick={() =>
-              router.get(route('parameter-domain.index'), { search: '', module_id: '' })
-            }
-            label='Clear Filters'
-            variant='link'
-          />
-        </div>
 
         <div>
           {domains != null && domains.length > 0 ? (

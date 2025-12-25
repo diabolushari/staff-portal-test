@@ -58,7 +58,7 @@ export const chooseButtonColor = (type: string): [string, string] => {
     }
     case 'link': {
       return [
-        'lgButtonText text-blue-500 flex items-center justify-center px-10 py-2 tracking-wider capitalize transition duration-150 underline whitespace-nowrap' +
+        'lgButtonText text-kseb-primary flex items-center justify-center px-10 py-2 tracking-wider capitalize transition duration-150 underline whitespace-nowrap' +
           ' ease-in-out focus:ring-4 focus:outline-hidden hover:cursor-pointer',
         '',
       ]

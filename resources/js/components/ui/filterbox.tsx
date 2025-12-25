@@ -7,7 +7,7 @@ interface Props {
 }
 
 const FilterBox = ({ label, value, onRemove }: Props) => (
-  <span className='border-none flex items-center gap-2 rounded-full bg-kseb-light p-2 px-3 py-1 text-xs text-gray-700'>
+  <span className='border-kseb-line border bg-kseb-primary-100 flex items-center gap-2 rounded-full bg-kseb-light p-2 px-3 py-1 text-xs text-gray-700'>
     <span className='pr-2'>
      <b> {label}:</b> {value}
     </span>

@@ -50,7 +50,7 @@ export default function LeftNavBar({ items = { label: '', items: [] }, selectedI
         </div>
       )}
 
-      <NormalText className='mb-2 text-lg font-bold'>{items.label}</NormalText>
+      <NormalText className='context-menu-title mb-2 text-lg'>{items.label}</NormalText>
 
       {items.items.map((item) => {
         const hasChildren = item.children && item.children.length > 0
@@ -61,7 +61,7 @@ export default function LeftNavBar({ items = { label: '', items: [] }, selectedI
             {hasChildren ? (
               <div className='flex items-center gap-2 py-1'>
                 {item.icon}
-                <NormalText className='font-semibold italic'>{item.title}</NormalText>
+                <NormalText className='context-menu-subtitle'>{item.title}</NormalText>
               </div>
             ) : (
               <SidebarMenuButton asChild>
@@ -74,7 +74,7 @@ export default function LeftNavBar({ items = { label: '', items: [] }, selectedI
                   }`}
                 >
                   {item.icon}
-                  <NormalText>{item.title}</NormalText>
+                  <NormalText className='context-menu-item'>{item.title}</NormalText>
                 </a>
               </SidebarMenuButton>
             )}
@@ -89,9 +89,9 @@ export default function LeftNavBar({ items = { label: '', items: [] }, selectedI
                     <SidebarMenuSubItem key={child.title}>
                       <a
                         href={child.href}
-                        className={`flex items-center gap-3 rounded px-2 py-1 text-sm ${
+                        className={`context-menu-item flex items-center gap-3 rounded px-2 py-1 text-sm ${
                           isActive
-                            ? 'bg-blue-500 text-white'
+                            ? 'bg-[#D7EDFF] text-blue-500'
                             : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
