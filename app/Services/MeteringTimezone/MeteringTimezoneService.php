@@ -39,7 +39,6 @@ class MeteringTimezoneService
         if (array_key_exists('metering_timezone_id', $data)) {
             $request->setMeteringTimezoneId($data['metering_timezone_id']);
         }
-        $request->setPricingTypeId($data['pricing_type_id'] ?? 0);
         $request->setTimezoneTypeId($data['timezone_type_id'] ?? 0);
         $request->setTimezoneNameId($data['timezone_name_id'] ?? 0);
         $request->setFromHrs($data['from_hrs'] ?? 0);
@@ -169,9 +168,6 @@ class MeteringTimezoneService
         ?int $timezoneNameId = 0
     ): GrpcServiceResponse {
         $request = new ListMeteringTimezonesRequest;
-        if ($pricingTypeId) {
-            $request->setPricingTypeId($pricingTypeId);
-        }
         if ($timezoneTypeId) {
             $request->setTimezoneTypeId($timezoneTypeId);
         }
@@ -206,7 +202,6 @@ class MeteringTimezoneService
 
         $request = new UpdateMeteringTimezoneRequest;
         $request->setMeteringTimezoneId($data['metering_timezone_id']);
-        $request->setPricingTypeId($data['pricing_type_id'] ?? 0);
         $request->setTimezoneTypeId($data['timezone_type_id'] ?? 0);
         $request->setTimezoneNameId($data['timezone_name_id'] ?? 0);
         $request->setFromHrs($data['from_hrs'] ?? 0);
@@ -282,7 +277,6 @@ class MeteringTimezoneService
         return [
             'version_id' => $tz->getVersionId(),
             'metering_timezone_id' => $tz->getMeteringTimezoneId(),
-            'pricing_type' => self::transformParameterValueToArray($tz->getPricingType()),
             'timezone_type' => self::transformParameterValueToArray($tz->getTimezoneType()),
             'timezone_name' => self::transformParameterValueToArray($tz->getTimezoneName()),
             'from_hrs' => $tz->getFromHrs(),
