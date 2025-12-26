@@ -61,18 +61,18 @@ const SettingsDetail = () => {
               onClick={() => setSelectedItem(item)}
               className={`flex h-44 w-40 cursor-pointer flex-col items-center justify-center rounded-xl border p-4 text-center transition-all ${
                 isSelected
-                  ? 'scale-105 border-blue-500 bg-[#EEF5FF] shadow-xl'
+                  ? 'border-kseb-primary scale-105 bg-[#EEF5FF] shadow-xl'
                   : 'border-gray-200 bg-white shadow-sm hover:bg-gray-50 hover:shadow-md'
               } `}
             >
               <div
-                className={`mb-3 rounded-lg p-2 ${isSelected ? 'text-blue-600' : 'text-gray-700'}`}
+                className={`mb-3 rounded-lg p-2 ${isSelected ? 'text-kseb-primary' : 'text-gray-700'}`}
               >
                 <Icon className='h-8 w-8' />
               </div>
 
               <p
-                className={`text-sm font-medium ${isSelected ? 'text-blue-700' : 'text-gray-800'}`}
+                className={`text-sm font-medium ${isSelected ? 'text-kseb-primary' : 'text-gray-800'}`}
               >
                 {item.title}
               </p>

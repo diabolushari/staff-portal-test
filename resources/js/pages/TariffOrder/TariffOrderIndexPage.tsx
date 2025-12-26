@@ -13,7 +13,7 @@ const breadcrumb: BreadcrumbItem[] = [
     href: '/settings-page',
   },
   {
-    title: 'Tariff Order',
+    title: 'Tariff Orders',
     href: '/tariff-orders',
   },
 ]
@@ -34,12 +34,12 @@ export default function TariffOrderIndexPage({ filters, tariffOrders }: Props) {
       leftBarTitle='Tariff Management'
       addBtnUrl={route('tariff-orders.create')}
       selectedItem='Tariffs'
-      addBtnText='Tariff Order'
-      title='Tariff Order'
+      addBtnText='Tariff Orders'
+      title='Tariff Orders'
     >
       <ListSearch
         title=''
-        placeholder='Enter tariff order name'
+        placeholder='Find Tariff Orders'
         url={route('tariff-orders.index')}
         search={filters?.search}
       />
