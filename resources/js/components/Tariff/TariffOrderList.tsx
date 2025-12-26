@@ -3,6 +3,7 @@ import { router } from '@inertiajs/react'
 import { TariffOrder } from '@/interfaces/data_interfaces'
 import { useEffect, useRef, useState } from 'react'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import { getDisplayDate } from '@/utils'
 
 interface Props {
   tariff_orders: TariffOrder[]
@@ -70,12 +71,14 @@ export default function TariffOrderList({ tariff_orders }: Readonly<Props>) {
                     </div>
                   </div>
                   <div className='font-inter text-dark-gray text-sm'>
-                    Published Date: {new Date(order.published_date).toLocaleDateString()}
+                    Published Date: <b>{getDisplayDate(order.published_date)}</b>
                   </div>
                   <div className='font-inter text-dark-gray text-sm'>
-                    Effective Period: {new Date(order.effective_start).toLocaleDateString()}
-                    {order.effective_end &&
-                      ` → ${new Date(order.effective_end).toLocaleDateString()}`}
+                    Effective Period:{' '}
+                    <b>
+                      {getDisplayDate(order.effective_start)}
+                      {order.effective_end && ` → ${getDisplayDate(order.effective_end)}`}
+                    </b>
                   </div>
                 </div>
               </div>
