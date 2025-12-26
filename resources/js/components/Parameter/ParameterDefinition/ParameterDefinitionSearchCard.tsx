@@ -1,38 +1,59 @@
 import FilterBox from '@/components/ui/filterbox'
 import useCustomForm from '@/hooks/useCustomForm'
-import { SystemModule } from '@/interfaces/parameter_types'
+import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
+import { useEffect, useState } from 'react'
 
 interface Props {
   search?: string
   filters?: Record<string, string | number>
   systemModules: SystemModule[]
+  parameterDomains: ParameterDomain[]
 }
 
-export default function ParameterDomainSearchCard({
+export default function ParameterDefinitionSearchCard({
   search,
   filters,
   systemModules,
+  parameterDomains,
 }: Readonly<Props>) {
   const { formData, setFormValue } = useCustomForm({
-    module_id: filters?.module_id ?? '',
+    module_name: filters?.module_name ?? '',
+    domain_name: filters?.domain_name ?? '',
     search: search ? search : (filters?.search ?? ''),
   })
 
+  const [filteredParameterDomains, setFilteredParameterDomains] =
+    useState<ParameterDomain[]>(parameterDomains)
+
+  useEffect(() => {
+    const selectedModuleId = formData.module_name
+      ? (systemModules.find((module) => module.name === formData.module_name)?.id ?? null)
+      : null
+
+    if (selectedModuleId) {
+      setFilteredParameterDomains(
+        parameterDomains.filter((domain) => domain.managed_by_module === selectedModuleId)
+      )
+    } else {
+      setFilteredParameterDomains(parameterDomains)
+    }
+  }, [formData.module_name, systemModules, parameterDomains])
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    router.get(route('parameter-domain.index'), formData)
+    router.get(route('parameter-definition.index'), formData)
   }
 
   const handleFilter = () => {
-    router.get(route('parameter-domain.index'), formData)
+    router.get(route('parameter-definition.index'), formData)
   }
 
   const selectedModule = systemModules.find(
-    (module) => String(module.id) === String(filters?.module_id)
+    (module) => String(module.name) === String(filters?.module_name)
   )
 
   return (
@@ -60,6 +81,7 @@ export default function ParameterDomainSearchCard({
                 className='w-full'
               />
             </div>
+
             <div>
               <Button
                 label='Search'
@@ -70,13 +92,28 @@ export default function ParameterDomainSearchCard({
         </form>
 
         <div className='flex flex-wrap gap-2'>
-          {filters?.module_id && selectedModule && (
+          {filters?.module_name && selectedModule && (
             <FilterBox
-              label='System Module'
-              value={selectedModule?.name}
+              label='Module'
+              value={filters?.module_name.toString()}
               onRemove={() =>
-                router.get(route('parameter-domain.index'), {
+                router.get(route('parameter-definition.index'), {
                   search: formData.search,
+                  domain_name: formData.domain_name,
+                  module_name: '',
+                })
+              }
+            />
+          )}
+          {filters?.domain_name && (
+            <FilterBox
+              label='Domain'
+              value={filters?.domain_name.toString()}
+              onRemove={() =>
+                router.get(route('parameter-definition.index'), {
+                  search: formData.search,
+                  domain_name: '',
+                  module_name: formData.module_name,
                 })
               }
             />
@@ -85,7 +122,7 @@ export default function ParameterDomainSearchCard({
 
         <div className='mt-auto mr-auto'>
           <Button
-            onClick={() => router.get(route('parameter-domain.index'))}
+            onClick={() => router.get(route('parameter-definition.index'))}
             label='Clear filters'
             variant='link'
           />
@@ -99,15 +136,26 @@ export default function ParameterDomainSearchCard({
 
             <SelectList
               list={systemModules}
-              dataKey='id'
+              dataKey='name'
               displayKey='name'
-              setValue={setFormValue('module_id')}
-              value={formData.module_id}
+              setValue={setFormValue('module_name')}
+              value={formData.module_name}
               label=''
               showAllOption
               allOptionText='All Modules'
             />
-
+            {parameterDomains && (
+              <SelectList
+                list={filteredParameterDomains}
+                dataKey='domain_name'
+                displayKey='domain_name'
+                setValue={setFormValue('domain_name')}
+                value={formData.domain_name}
+                label=''
+                showAllOption
+                allOptionText='All Domains'
+              />
+            )}
             <div className='ml-auto pt-2'>
               <Button
                 label='Apply Filters'

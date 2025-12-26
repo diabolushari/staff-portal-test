@@ -63,6 +63,13 @@ export const chooseButtonColor = (type: string): [string, string] => {
         '',
       ]
     }
+    case 'ghost': {
+      return [
+        'bg-transparent border-none text-kseb-primary hover:text-kseb-primary/80 ' +
+          'focus:ring-0 focus:outline-none underline-offset-2',
+        '',
+      ]
+    }
 
     default: {
       return [

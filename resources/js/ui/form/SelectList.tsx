@@ -53,7 +53,7 @@ export default function SelectList<
   const selectClasses = cn(
     'w-full bg-white px-3 py-2 pr-10 rounded border border-gray-200 text-sm font-normal text-black',
     'appearance-none',
-    'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0078d4] focus-visible:border-[#0078d4]',
+    'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-kseb-primary focus-visible:border-kseb-primary',
     'disabled:bg-gray-50 disabled:text-black disabled:cursor-not-allowed disabled:opacity-100',
     className
   )
@@ -86,6 +86,7 @@ export default function SelectList<
           <option
             value={item[dataKey]}
             key={item[dataKey]}
+            className='hover:bg-kseb-primary'
           >
             {`${item[displayKey]} ${displayKey2 ? ` - ${item[displayKey2]}` : ''}`}
           </option>

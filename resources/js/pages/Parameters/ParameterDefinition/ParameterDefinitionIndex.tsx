@@ -1,13 +1,11 @@
 import { metadataNavItems } from '@/components/Navbar/navitems'
 import ParameterDefinitionForm from '@/components/Parameter/ParameterDefinition/ParameterDefinitionForm'
 import ParameterDefinitionList from '@/components/Parameter/ParameterDefinition/ParameterDefinitionList'
-import ParameterDefinitionSearchForm from '@/components/Parameter/ParameterDefinition/ParameterDefinitionSearchForm'
+import ParameterDefinitionSearchCard from '@/components/Parameter/ParameterDefinition/ParameterDefinitionSearchCard'
 import { ParameterDefinition, ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
-import AddButton from '@/ui/button/AddButton'
 import DeleteModal from '@/ui/Modal/DeleteModal'
-import ListSearch from '@/ui/Search/ListSearch'
 import { useCallback, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -20,7 +18,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/settings-page',
   },
   {
-    title: 'Parameter Definition',
+    title: 'Parameter Definitions',
     href: '/parameter-definition',
   },
 ]
@@ -58,11 +56,6 @@ export default function ParameterDefinitionIndex({
     setParameterFormModal(true)
   }, [])
 
-  console.log('parameter_definitions', parameter_definitions)
-  console.log('domains', domains)
-  console.log('system_modules', system_modules)
-  console.log('filters', filters)
-
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -73,21 +66,15 @@ export default function ParameterDefinitionIndex({
       addBtnClick={handleCreateClick}
       addBtnText='Parameter Definition'
     >
-      <div className='py-4'>
-        <ListSearch
-          title=''
-          url={route('parameter-definition.index')}
+      <div className='p-4'>
+        <ParameterDefinitionSearchCard
           search={filters.search}
           filters={filters}
-          placeholder='Search By Parameter Definition'
+          systemModules={system_modules}
+          parameterDomains={domains}
         />
 
-        <ParameterDefinitionSearchForm
-          parameterDomains={domains}
-          systemModules={system_modules}
-          filters={filters}
-        />
-        <div>
+        <div className='pt-5'>
           {items != null && items.length > 0 ? (
             <ParameterDefinitionList
               parameterDefinitions={items}

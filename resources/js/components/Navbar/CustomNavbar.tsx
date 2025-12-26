@@ -5,7 +5,8 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
-import { Link } from '@inertiajs/react'
+import Button from '@/ui/button/Button'
+import { Link, router } from '@inertiajs/react'
 // Using local wrapped NavigationMenu (supports viewport prop)
 
 interface Props {
@@ -24,7 +25,7 @@ export const NAV_ITEMS = [
     // ],
   },
   {
-    title: 'Billing',
+    title: 'Metering & Billing',
     value: 'Billing',
     href: '/billing-groups',
     description: 'Invoices and payments',
@@ -80,7 +81,7 @@ export function CustomNavbar({ selectedTopNav }: Props) {
       viewport={false}
       className='w-full'
     >
-      <NavigationMenuList className='flex gap-4 border-b border-gray-200 bg-white px-4 dark:border-gray-700 dark:bg-gray-900'>
+      <NavigationMenuList className='flex gap-4 bg-white px-4 dark:border-gray-700 dark:bg-gray-900'>
         {NAV_ITEMS.map((item) => {
           const isActive = selectedTopNav === item.value
 
@@ -91,7 +92,11 @@ export function CustomNavbar({ selectedTopNav }: Props) {
                 className={navigationMenuTriggerStyle()}
                 data-active={isActive || undefined}
               >
-                <Link href={item.href}>{item.title}</Link>
+                <Button
+                  variant='ghost'
+                  onClick={() => router.get(item.href)}
+                  label={item.title}
+                />
               </NavigationMenuLink>
             </NavigationMenuItem>
           )

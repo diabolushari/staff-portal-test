@@ -64,19 +64,18 @@ export default function TopNavBar({ selectedTopNav }: Props) {
 
               {/* Icons */}
               <div className='flex items-center gap-5'>
+                <button
+                  onClick={() => router.get(route('settings-page'))}
+                  className='cursor-pointer rounded p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'
+                >
+                  <SettingsIcon className='h-5 w-5' />
+                </button>
                 <button className='rounded p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'>
                   <BellIcon className='h-5 w-5' />
                 </button>
 
                 <button className='rounded p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'>
                   <HelpCircle className='h-5 w-5' />
-                </button>
-
-                <button
-                  onClick={() => router.get(route('settings-page'))}
-                  className='cursor-pointer rounded p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'
-                >
-                  <SettingsIcon className='h-5 w-5' />
                 </button>
 
                 {/* User dropdown */}
