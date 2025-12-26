@@ -76,7 +76,7 @@ export default function ParameterDefinitionSearchCard({
                 setValue={setFormValue('search')}
                 value={formData.search}
                 showClearButton
-                placeholder='Find Parameter Domains'
+                placeholder='Find Parameter Definitions'
                 style='google'
                 className='max-w-full'
               />

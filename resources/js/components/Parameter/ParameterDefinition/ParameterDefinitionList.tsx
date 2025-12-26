@@ -17,7 +17,7 @@ export default function ParameterDefinitionList({
   onDelete,
 }: Readonly<Props>) {
   return (
-    <div className='relative w-full rounded-lg bg-white'>
+    <div className='relative w-full rounded-lg bg-white pt-5'>
       <div className='flex flex-col px-7 pb-7'>
         {parameterDefinitions.map((def) => (
           <div

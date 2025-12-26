@@ -47,7 +47,7 @@ export default function SelectList<
   className = '',
 }: Properties<K, G, U, V, T>) {
   const selectedItem = useMemo(
-    () => list.find((item) => item[dataKey] === value),
+    () => list.find((item) => item[dataKey]?.toString() === value?.toString()),
     [list, dataKey, value]
   )
 

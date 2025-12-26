@@ -21,7 +21,7 @@ interface Props {
   title?: string
   selectedItem?: string
   selectedTopNav?: string
-  description?: string
+  description?: React.ReactNode
 }
 
 export default function MainLayout({

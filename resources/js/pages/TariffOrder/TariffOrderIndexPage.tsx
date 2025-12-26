@@ -39,7 +39,7 @@ export default function TariffOrderIndexPage({ filters, tariffOrders }: Props) {
     >
       <ListSearch
         title=''
-        placeholder='Enter tariff order name'
+        placeholder='Find Tariff Orders'
         url={route('tariff-orders.index')}
         search={filters?.search}
       />

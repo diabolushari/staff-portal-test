@@ -65,6 +65,7 @@ export default function TariffConfigEditForm({
               setValue={setFormValue('tariff_order_id')}
               value={formData.tariff_order_id}
               error={errors.tariff_order_id}
+              disabled={true}
             />
           )}
         </div>
@@ -87,6 +88,7 @@ export default function TariffConfigEditForm({
               displayKey='parameter_value'
               setValue={setFormValue('connection_tariff_id')}
               value={formData.connection_tariff_id}
+              disabled={true}
             />
           )}
           <Input

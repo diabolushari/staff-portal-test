@@ -13,8 +13,6 @@ interface Props {
 }
 
 export default function ListSearch({ title, placeholder, url, search, filters }: Readonly<Props>) {
-  console.log(search)
-
   const { formData, setFormValue } = useCustomForm({
     module_id: filters?.module_id ?? '',
     search: search ? search : (filters?.search ?? ''),
@@ -28,7 +26,7 @@ export default function ListSearch({ title, placeholder, url, search, filters }:
   }
 
   return (
-    <div className='relative flex flex-col items-center bg-white p-6 shadow-sm'>
+    <div className='relative flex flex-col items-center rounded bg-white p-6 shadow-sm'>
       <div className='absolute top-0 left-6 size-18 h-2/3 w-1/4 rounded-b-full bg-radial-[at_1%] from-[#0078D4]/0 to-[#0078D4]/5 to-5%'></div>
       <div className='flex w-full flex-col justify-center p-10'>
         <div className='mr-10 mb-4 flex items-center justify-center'>
