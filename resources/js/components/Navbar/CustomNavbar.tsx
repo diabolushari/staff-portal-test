@@ -5,8 +5,9 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
-import Button from '@/ui/button/Button'
-import { Link, router } from '@inertiajs/react'
+import { cn } from '@/utils'
+import { router } from '@inertiajs/react'
+import { Button } from '../ui/button'
 // Using local wrapped NavigationMenu (supports viewport prop)
 
 interface Props {
@@ -89,14 +90,19 @@ export function CustomNavbar({ selectedTopNav }: Props) {
             <NavigationMenuItem key={item.title}>
               <NavigationMenuLink
                 asChild
-                className={navigationMenuTriggerStyle()}
-                data-active={isActive || undefined}
+                className='rounded-none'
               >
                 <Button
                   variant='ghost'
                   onClick={() => router.get(item.href)}
-                  label={item.title}
-                />
+                  className={cn(
+                    'relative',
+                    isActive &&
+                      "after:bg-kseb-bg-blue after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:content-['']"
+                  )}
+                >
+                  {item.title}
+                </Button>
               </NavigationMenuLink>
             </NavigationMenuItem>
           )

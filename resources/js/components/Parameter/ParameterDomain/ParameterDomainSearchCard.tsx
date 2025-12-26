@@ -1,7 +1,7 @@
+import { Button } from '@/components/ui/button'
 import FilterBox from '@/components/ui/filterbox'
 import useCustomForm from '@/hooks/useCustomForm'
 import { SystemModule } from '@/interfaces/parameter_types'
-import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
@@ -31,10 +31,6 @@ export default function ParameterDomainSearchCard({
     router.get(route('parameter-domain.index'), formData)
   }
 
-  const selectedModule = systemModules.find(
-    (module) => String(module.id) === String(filters?.module_id)
-  )
-
   return (
     <div className='relative grid grid-cols-8 rounded-2xl bg-white p-6 shadow-sm'>
       <div className='pointer-events-none absolute inset-0 grid grid-cols-8'>
@@ -57,49 +53,58 @@ export default function ParameterDomainSearchCard({
                 showClearButton
                 placeholder='Find Parameter Domains'
                 style='google'
-                className='w-full'
+                className='max-w-full'
               />
             </div>
+
             <div>
               <Button
-                label='Search'
                 type='submit'
-              />
+                className='max-w-full'
+              >
+                Search
+              </Button>
             </div>
           </div>
         </form>
 
-        <div className='flex flex-wrap gap-2'>
-          {filters?.module_id && selectedModule && (
-            <FilterBox
-              label='System Module'
-              value={selectedModule?.name}
-              onRemove={() =>
-                router.get(route('parameter-domain.index'), {
-                  search: formData.search,
-                })
-              }
-            />
-          )}
-        </div>
+        <div className='flex flex-col gap-3'>
+          {/* Applied filters */}
+          <div className='flex flex-wrap gap-2'>
+            {filters?.module_id && (
+              <FilterBox
+                label='Module'
+                value={String(filters.module_id)}
+                onRemove={() =>
+                  router.get(route('parameter-domain.index'), {
+                    search: formData.search,
+                    module_id: '',
+                  })
+                }
+              />
+            )}
+          </div>
 
-        <div className='mt-auto mr-auto'>
-          <Button
-            onClick={() => router.get(route('parameter-domain.index'))}
-            label='Clear filters'
-            variant='link'
-          />
+          {(filters?.module_id || filters?.search) && (
+            <Button
+              onClick={() => router.get(route('parameter-domain.index'))}
+              variant='link'
+              className='w-fit px-0'
+            >
+              Clear filters
+            </Button>
+          )}
         </div>
       </div>
 
       <div className='relative col-span-4 flex justify-end pt-4'>
-        <div className='border-kseb-line w-full rounded border bg-white p-5 shadow-sm'>
+        <div className='border-kseb-line w-full rounded-b-md border bg-white p-5 shadow-sm'>
           <div className='flex flex-col gap-4'>
             <span className='context-subtitle'>Filters</span>
 
             <SelectList
               list={systemModules}
-              dataKey='id'
+              dataKey='name'
               displayKey='name'
               setValue={setFormValue('module_id')}
               value={formData.module_id}
@@ -107,13 +112,13 @@ export default function ParameterDomainSearchCard({
               showAllOption
               allOptionText='All Modules'
             />
-
             <div className='ml-auto pt-2'>
               <Button
-                label='Apply Filters'
                 onClick={handleFilter}
-                variant='tertiary'
-              />
+                variant='outline'
+              >
+                Apply Filters
+              </Button>
             </div>
           </div>
         </div>

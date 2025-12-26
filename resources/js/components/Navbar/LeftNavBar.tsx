@@ -42,10 +42,10 @@ export default function LeftNavBar({ items = { label: '', items: [] }, selectedI
   }, [items])
 
   return (
-    <SidebarMenu className='bg-kseb-bg-blue relative h-full rounded-2xl p-4 pt-20'>
+    <SidebarMenu className='bg-kseb-bg-blue relative h-full p-4 pt-20'>
       {/* Loading Overlay */}
       {loading && (
-        <div className='absolute inset-0 z-50 flex items-center justify-center rounded-2xl bg-white/60 backdrop-blur-sm'>
+        <div className='absolute inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur-sm'>
           <Spinner />
         </div>
       )}

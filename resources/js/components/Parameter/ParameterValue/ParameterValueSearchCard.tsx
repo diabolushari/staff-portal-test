@@ -1,60 +1,58 @@
 import { Button } from '@/components/ui/button'
 import FilterBox from '@/components/ui/filterbox'
 import useCustomForm from '@/hooks/useCustomForm'
-import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
+import useFetchRecord from '@/hooks/useFetchRecord'
+import { ParameterDefinition, ParameterDomain } from '@/interfaces/parameter_types'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
 
 interface Props {
-  search?: string
-  filters?: Record<string, string | number>
-  systemModules: SystemModule[]
   parameterDomains: ParameterDomain[]
+  parameterDefinitions: ParameterDefinition[]
+  filters: {
+    search: string
+    domain_name: string
+    parameter_name: string
+  }
 }
 
-export default function ParameterDefinitionSearchCard({
-  search,
+export default function ParameterValueSearchCard({
   filters,
-  systemModules,
   parameterDomains,
+  parameterDefinitions,
 }: Readonly<Props>) {
   const { formData, setFormValue } = useCustomForm({
-    module_name: filters?.module_name ?? '',
-    domain_name: filters?.domain_name ?? '',
-    search: search ? search : (filters?.search ?? ''),
+    domain_name: filters.domain_name ?? '',
+    parameter_name: filters.parameter_name ?? '',
+    search: filters.search ?? '',
   })
 
-  const [filteredParameterDomains, setFilteredParameterDomains] =
-    useState<ParameterDomain[]>(parameterDomains)
+  const [parameterDefinitionData, setParameterDefinitionData] = useState<
+    ParameterDefinition[] | null
+  >(null)
+
+  const [parameterDefinitionsApiData] = useFetchRecord<ParameterDefinition[]>(
+    formData.domain_name ? 'api/parameter-definitions?domain_name=' + formData.domain_name : ''
+  )
 
   useEffect(() => {
-    const selectedModuleId = formData.module_name
-      ? (systemModules.find((module) => module.name === formData.module_name)?.id ?? null)
-      : null
-
-    if (selectedModuleId) {
-      setFilteredParameterDomains(
-        parameterDomains.filter((domain) => domain.managed_by_module === selectedModuleId)
-      )
+    if (formData.domain_name) {
+      setParameterDefinitionData(parameterDefinitionsApiData)
     } else {
-      setFilteredParameterDomains(parameterDomains)
+      setParameterDefinitionData(parameterDefinitions)
     }
-  }, [formData.module_name, systemModules, parameterDomains])
+  }, [parameterDefinitionsApiData, parameterDefinitions])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    router.get(route('parameter-definition.index'), formData)
+    router.get(route('parameter-value.index', formData))
   }
 
   const handleFilter = () => {
-    router.get(route('parameter-definition.index'), formData)
+    router.get(route('parameter-value.index'), formData)
   }
-
-  const selectedModule = systemModules.find(
-    (module) => String(module.name) === String(filters?.module_name)
-  )
 
   return (
     <div className='relative grid grid-cols-8 rounded-2xl bg-white p-6 shadow-sm'>
@@ -76,7 +74,7 @@ export default function ParameterDefinitionSearchCard({
                 setValue={setFormValue('search')}
                 value={formData.search}
                 showClearButton
-                placeholder='Find Parameter Domains'
+                placeholder='Find Parameter Values'
                 style='google'
                 className='max-w-full'
               />
@@ -96,43 +94,44 @@ export default function ParameterDefinitionSearchCard({
         <div className='flex flex-col gap-3'>
           {/* Applied filters */}
           <div className='flex flex-wrap gap-2'>
-            {filters?.module_name && selectedModule && (
-              <FilterBox
-                label='Module'
-                value={filters?.module_name.toString()}
-                onRemove={() =>
-                  router.get(route('parameter-definition.index'), {
-                    search: formData.search,
-                    domain_name: formData.domain_name,
-                    module_name: '',
-                  })
-                }
-              />
-            )}
-
             {filters?.domain_name && (
               <FilterBox
                 label='Domain'
                 value={filters?.domain_name.toString()}
                 onRemove={() =>
-                  router.get(route('parameter-definition.index'), {
+                  router.get(route('parameter-value.index'), {
                     search: formData.search,
                     domain_name: '',
-                    module_name: formData.module_name,
+                    parameter_name: formData.parameter_name,
+                  })
+                }
+              />
+            )}
+
+            {filters?.parameter_name && (
+              <FilterBox
+                label='Definition'
+                value={filters?.parameter_name.toString()}
+                onRemove={() =>
+                  router.get(route('parameter-value.index'), {
+                    search: formData.search,
+                    domain_name: formData.domain_name,
+                    parameter_name: '',
                   })
                 }
               />
             )}
           </div>
-
           {/* Clear filters */}
-          <Button
-            onClick={() => router.get(route('parameter-definition.index'))}
-            variant='link'
-            className='w-fit px-0'
-          >
-            Clear filters
-          </Button>
+          {(filters?.domain_name || filters?.parameter_name || filters?.search) && (
+            <Button
+              onClick={() => router.get(route('parameter-value.index'))}
+              variant='link'
+              className='w-fit px-0'
+            >
+              Clear filters
+            </Button>
+          )}{' '}
         </div>
       </div>
 
@@ -141,19 +140,9 @@ export default function ParameterDefinitionSearchCard({
           <div className='flex flex-col gap-4'>
             <span className='context-subtitle'>Filters</span>
 
-            <SelectList
-              list={systemModules}
-              dataKey='name'
-              displayKey='name'
-              setValue={setFormValue('module_name')}
-              value={formData.module_name}
-              label=''
-              showAllOption
-              allOptionText='All Modules'
-            />
             {parameterDomains && (
               <SelectList
-                list={filteredParameterDomains}
+                list={parameterDomains}
                 dataKey='domain_name'
                 displayKey='domain_name'
                 setValue={setFormValue('domain_name')}
@@ -161,6 +150,18 @@ export default function ParameterDefinitionSearchCard({
                 label=''
                 showAllOption
                 allOptionText='All Domains'
+              />
+            )}
+            {parameterDefinitionData && (
+              <SelectList
+                list={parameterDefinitionData}
+                dataKey='parameter_name'
+                displayKey='parameter_name'
+                setValue={setFormValue('parameter_name')}
+                value={formData.parameter_name}
+                label=''
+                showAllOption
+                allOptionText='All Definitions'
               />
             )}
             <div className='ml-auto pt-2'>
