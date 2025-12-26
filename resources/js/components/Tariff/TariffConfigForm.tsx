@@ -9,7 +9,6 @@ import Modal from '@/ui/Modal/Modal'
 import { TariffOrder } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import dayjs from 'dayjs'
-import Field from '../ui/field'
 
 interface TariffConfigItem {
   connection_tariff: string
@@ -120,11 +119,6 @@ export default function TariffConfigForm({
             value={modalForm.connection_tariff}
             error={errors.connection_tariff}
             required
-          />
-
-          <Field
-            label='Tariff Type'
-            value={connectionTariff?.attribute1_value || ''}
           />
 
           <Input

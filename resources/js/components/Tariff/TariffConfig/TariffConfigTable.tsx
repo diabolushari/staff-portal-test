@@ -39,6 +39,8 @@ export default function TariffConfigTable({
 
   const [openActionId, setOpenActionId] = useState<number | null>(null)
 
+  const [openDirection, setOpenDirection] = useState<'up' | 'down'>('down')
+
   return (
     <CustomCard
       title='Tariff Configurations'
@@ -79,11 +81,16 @@ export default function TariffConfigTable({
                   <div>
                     {/* Action button */}
                     <button
-                      onClick={() =>
+                      onClick={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect()
+                        const spaceBelow = window.innerHeight - rect.bottom
+
+                        setOpenDirection(spaceBelow < 300 ? 'up' : 'down')
+
                         setOpenActionId(
                           openActionId === config.tariff_config_id ? null : config.tariff_config_id
                         )
-                      }
+                      }}
                       className='rounded-md p-2 text-gray-600 hover:bg-gray-100'
                     >
                       <MoreVertical className='h-5 w-5' />
@@ -100,7 +107,7 @@ export default function TariffConfigTable({
 
                         {/* Dropdown */}
                         <div
-                          className='absolute right-0 z-20 mt-2 w-36 rounded-md border border-gray-200 bg-white shadow-lg'
+                          className={`absolute right-0 z-20 w-36 rounded-md border border-gray-200 bg-white shadow-lg ${openDirection === 'up' ? 'bottom-full mb-2' : 'top-full mt-2'} `}
                           onClick={(e) => e.stopPropagation()}
                         >
                           <button
