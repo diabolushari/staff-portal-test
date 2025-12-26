@@ -18,7 +18,6 @@ class CreateConnectionFormRequest extends Data
         public int $adminOfficeCode,
         public int $voltageTypeId,
         public float $contractDemandKwVal,
-        public float $connectedLoadKwVal,
         public int $tariffTypeId,
         public int $primaryPurposeId,
         public int $connectionCategoryId,
@@ -32,6 +31,9 @@ class CreateConnectionFormRequest extends Data
         public float $lightLoadKwVal,
         public bool $otherconsFlag,
         public ?string $remarks,
+        public bool $powerIntensive,
+        public bool $excessDemand,
+        public int $noOfMainMeters,
 
     ) {}
 }

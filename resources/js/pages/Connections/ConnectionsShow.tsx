@@ -81,6 +81,10 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                 label='Consumer Number'
                 value={connection?.consumer_number}
               />
+              <Field
+                label='Application Number'
+                value={connection?.application_no}
+              />
               {connection?.consumer_profiles?.[0]?.organization_name && (
                 <Field
                   label='Industry Name'
@@ -109,6 +113,23 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                 label='Phase Type'
                 value={connection?.phase_type?.parameter_value}
               />
+              <Field
+                label='Connection Date'
+                value={formatDate(connection?.connected_date)}
+              />
+              <div className='col-span-2 mt-4'>
+                <Field
+                  label='Remarks'
+                  value={connection?.remarks}
+                />
+              </div>
+            </div>
+          </Card>
+          <Card className='rounded-lg p-7'>
+            <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
+              Load Details
+            </StrongText>
+            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
                 label='Contract Demand (KVA)'
                 value={connection?.contract_demand_kva_val}
@@ -204,29 +225,6 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
           </Card>
 
           {/* Dates */}
-          <Card className='rounded-lg p-7'>
-            <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
-              Dates
-            </StrongText>
-            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-              <Field
-                label='Connected Date'
-                value={formatDate(connection?.connected_date)}
-              />
-              <Field
-                label='Effective Start'
-                value={formatDate(connection?.effective_start)}
-              />
-              <Field
-                label='Effective End'
-                value={formatDate(connection?.effective_end)}
-              />
-              <Field
-                label='Updated At'
-                value={formatDate(connection?.updated_at)}
-              />
-            </div>
-          </Card>
         </div>
       </div>
     </ConnectionsLayout>

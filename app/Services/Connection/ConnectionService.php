@@ -105,7 +105,7 @@ class ConnectionService
             $connectionArray[] = ConnectionProtoConverter::convertToArray($connection);
         }
 
-        
+
         $paginatedData = [
             'connections' => $connectionArray,
             'total_count' => $response->getTotalCount(),
@@ -128,11 +128,16 @@ class ConnectionService
         $grpcRequest->setAdminOfficeCode($request->adminOfficeCode);
         $grpcRequest->setVoltageId($request->voltageTypeId);
         $grpcRequest->setContractDemandKvaVal($request->contractDemandKwVal);
-        $grpcRequest->setConnectedLoadKwVal($request->connectedLoadKwVal);
         $grpcRequest->setTariffId($request->tariffTypeId);
         $grpcRequest->setPrimaryPurposeId($request->primaryPurposeId);
         $grpcRequest->setConnectionCategoryId($request->connectionCategoryId);
         $grpcRequest->setConnectionSubcategoryId($request->connectionSubcategoryId);
+        if ($request->remarks) {
+            $grpcRequest->setRemarks($request->remarks);
+        }
+        $grpcRequest->setPowerIntensive($request->powerIntensive);
+        $grpcRequest->setExcessDemand($request->excessDemand);
+        $grpcRequest->setNoOfMainMeters($request->noOfMainMeters);
         $connectionAttribs = new Struct;
         $connectionAttribs->setFields($request->connectionAttribs ?? []);
         $grpcRequest->setConnectionAttribs($connectionAttribs);
@@ -148,7 +153,7 @@ class ConnectionService
         $grpcRequest->setLightLoadKwVal($request->lightLoadKwVal);
         $grpcRequest->setOtherconsFlag($request->otherconsFlag);
         $grpcRequest->setRemarks($request->remarks ?? '');
-       
+
 
         [$response, $status] = $this->client->CreateConnection($grpcRequest)->wait();
 

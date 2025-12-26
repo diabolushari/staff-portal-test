@@ -248,17 +248,7 @@ const toggleRotation = (
     setReadingValues(initializedMeters)
     
   }, [oldReading, metersWithTimezonesAndProfiles, readingValues, lastMeterReading])
-const calculateDiff = (
-  initial: number,
-  final: number,
-  isRotation: boolean,
-  maxValue: number
-) => {
-  if (!isRotation) {
-    return final - initial
-  }
-  return (maxValue - initial) + final
-}
+
 
   const updateReading = useCallback(
     (meterId: number, parameterId: number, timezoneId: number, value: string) => {

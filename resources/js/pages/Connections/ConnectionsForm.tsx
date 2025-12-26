@@ -56,6 +56,7 @@ interface Props {
   openAccessTypes: ParameterValues[]
   meteringTypes: ParameterValues[]
   renewableTypes: ParameterValues[]
+  indicators: ParameterValues[]
   connection?: Connection
 }
 
@@ -71,6 +72,7 @@ export default function ConnectionsForm({
   openAccessTypes,
   meteringTypes,
   renewableTypes,
+  indicators,
   connection,
 }: Readonly<Props>) {
   const tabs = [
@@ -91,6 +93,7 @@ export default function ConnectionsForm({
         <TabGroup tabs={tabs}>
           <TabsContent value='connection'>
             <ConnectionForm
+              indicators={indicators}
               connectionTypes={connectionTypes}
               connectionStatus={connectionStatus}
               voltageTypes={voltageTypes}

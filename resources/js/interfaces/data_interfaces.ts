@@ -158,6 +158,11 @@ export interface Connection {
   updated_by: number
   othercons_flag: boolean
   cpp_flag: boolean
+  power_intensive: boolean
+  excess_demand: boolean
+  no_of_main_meters: number
+  remarks?: string
+  application_no: string
   admin_office: Office | null
   service_office: Office | null
   meter_count?: number

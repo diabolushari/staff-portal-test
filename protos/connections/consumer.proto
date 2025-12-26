@@ -36,7 +36,7 @@ message ConsumerMessage {
   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto department_name = 20;
   string consumer_cin = 21;
   bool seasonal_ind = 22;
-  bool license_ind = 23;
+  
 }
 
 message AddressMessage {
@@ -60,13 +60,12 @@ message ContactMessage {
 }
 
 
-
-
 message ConsumerCreateRequest {
   ConsumerMessage consumer = 1;
   AddressMessage address = 2;
   ContactMessage contact = 3;
 }
+
 
 message ConsumerUpdateRequest {
     ConsumerMessage consumer = 1;

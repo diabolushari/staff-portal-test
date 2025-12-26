@@ -132,7 +132,7 @@ class ConsumerService
         $consumer->setConsumerCin($request->consumerCin);
         $consumer->setSeasonalInd($request->seasonalInd);
         $consumer->setLicenseInd($request->licenseInd);
-       
+
 
         // Convert billing & premises addresses to Struct
         $pendingAddresses = $request->otherAddresses ?? [];
@@ -194,7 +194,6 @@ class ConsumerService
             'consumer_type' => $this->parameterValueService->toArray($consumer->getConsumerType()),
             'consumer_cin' => $consumer->getConsumerCin(),
             'seasonal_ind' => $consumer->getSeasonalInd(),
-            'license_ind' => $consumer->getLicenseInd(),
             'virtual_account_number' => $consumer->getVirtualAccountNumber(),
             'contact_person' => $consumer->getContactPerson(),
             'department_name_id' => $consumer->getDepartmentNameId(),
@@ -217,8 +216,8 @@ class ConsumerService
             'primary_email' => $contact->getPrimaryEmail(),
             'primary_phone' => $contact->getPrimaryPhone(),
             'contact_folio' => $contactFolio
-            ? json_decode($contactFolio->serializeToJsonString(), true)
-            : null,
+                ? json_decode($contactFolio->serializeToJsonString(), true)
+                : null,
             'primary_address' => $this->addressToArray($contact->getPrimaryAddress()),
             'billing_address' => $this->addressToArray($contact->getBillingAddress()),
             'premises_address' => $this->addressToArray($contact->getPremisesAddress()),
