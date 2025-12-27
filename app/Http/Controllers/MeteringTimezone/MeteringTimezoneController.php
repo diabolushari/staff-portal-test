@@ -87,14 +87,7 @@ class MeteringTimezoneController extends Controller
      */
     public function create(): Response|RedirectResponse
     {
-        // Fetch all required parameter values for the form
-        $pricingTypesResponse = $this->parameterValueService->getParameterValues(
-            page: 1,
-            pageSize: 100,
-            search: null,
-            domainName: 'Meter',
-            parameterName: 'Pricing Type'
-        );
+
 
         $timezoneTypesResponse = $this->parameterValueService->getParameterValues(
             page: 1,
@@ -112,51 +105,9 @@ class MeteringTimezoneController extends Controller
             parameterName: 'Timezone Name'
         );
 
-        // Check for errors in any of the responses
-        if ($pricingTypesResponse->hasError()) {
-            return redirect()->back()->withErrors([
-                'grpc_error' => 'Error fetching Pricing Types: ' . ($pricingTypesResponse->statusDetails ?? 'Unknown error'),
-            ]);
-        }
-
-        if ($timezoneTypesResponse->hasError()) {
-            return redirect()->back()->withErrors([
-                'grpc_error' => 'Error fetching Timezone Types: ' . ($timezoneTypesResponse->statusDetails ?? 'Unknown error'),
-            ]);
-        }
-
-        if ($timezoneNamesResponse->hasError()) {
-            return redirect()->back()->withErrors([
-                'grpc_error' => 'Error fetching Timezone Names: ' . ($timezoneNamesResponse->statusDetails ?? 'Unknown error'),
-            ]);
-        }
-
-        // Transform the responses to the required format
-        $pricingTypes = collect($pricingTypesResponse->data)
-            ->map(fn($item) => [
-                'id' => $item['id'],
-                'parameterValue' => $item['parameter_value'],
-            ])
-            ->toArray();
-
-        $timezoneTypes = collect($timezoneTypesResponse->data)
-            ->map(fn($item) => [
-                'id' => $item['id'],
-                'parameterValue' => $item['parameter_value'],
-            ])
-            ->toArray();
-
-        $timezoneNames = collect($timezoneNamesResponse->data)
-            ->map(fn($item) => [
-                'id' => $item['id'],
-                'parameterValue' => $item['parameter_value'],
-            ])
-            ->toArray();
-
         return Inertia::render('MeteringTimezones/MeteringTimezoneFormPage', [
-            'pricingTypes' => $pricingTypes,
-            'timezoneTypes' => $timezoneTypes,
-            'timezoneNames' => $timezoneNames,
+            'timezoneTypes' => $timezoneTypesResponse->data,
+            'timezoneNames' => $timezoneNamesResponse->data,
         ]);
     }
 
@@ -338,7 +289,7 @@ class MeteringTimezoneController extends Controller
             return redirect()->back()->withErrors($response->error)->withInput();
         }
 
-        return redirect()->route('metering-timezone.index')->with('success', 'Meter timezone updated successfully.');
+        return redirect()->back()->with('message', 'Meter timezone updated successfully.');
     }
 
     /**
