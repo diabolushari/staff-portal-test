@@ -1,115 +1,39 @@
-# KSEB Staff Portal - AI Coding Assistant Instructions
+# Repository Guidelines
 
-## Architecture Overview
+## Project Structure & Module Organization
+- Backend lives in `app/`, with domain-based controllers in `app/Http/Controllers/{Domain}/` and services in `app/Services/`.
+- Frontend Inertia pages are in `resources/js/pages/{Domain}/`, shared components in `resources/js/components/`, and UI primitives in `resources/js/components/ui/`.
+- Proto files are in `protos/`, generated gRPC PHP classes in `generated/Proto/` and `generated/GPBMetadata/`.
+- Tests are in `tests/` (Pest), public assets in `public/`, and build output is handled by Vite.
 
-This is a **Laravel + React (Inertia.js) + gRPC microservices** application for KSEB (Kerala State Electricity Board) staff portal. The frontend is React with TypeScript, backend is Laravel PHP, and communication with external services happens via gRPC.
+## Build, Test, and Development Commands
+- `composer dev`: run Laravel server, queue, logs, and Vite together.
+- `composer dev:ssr`: start server with Inertia SSR.
+- `npm run dev`: frontend dev server only.
+- `npm run build` / `npm run build:ssr`: production builds.
+- `php artisan test` or `composer test`: run the full test suite.
+- `./scripts/generate-grpc.sh`: regenerate PHP classes after any `.proto` change.
 
-### Key Architectural Patterns
+## Coding Style & Naming Conventions
+- PHP formatting: `vendor/bin/pint` (Laravel Pint). Use form requests for validation.
+- Frontend formatting: `npm run format` (Prettier), linting: `npm run lint` (ESLint).
+- Naming: PascalCase React components, `{Entity}Controller` in domain folders, Inertia pages follow `{Domain}/{Entity}/{Action}`.
+- Indentation: follow existing files (2 spaces in JS/TS, 4 in PHP).
 
-- **Frontend**: React + TypeScript + Inertia.js (SPA-like with server-side routing)
-- **Backend**: Laravel 12 with gRPC client integration
-- **Protocol Buffers**: `.proto` files in `protos/` generate PHP classes in `generated/`
-- **Styling**: TailwindCSS v4 + Radix UI components
-- **Testing**: Pest PHP testing framework
+## Testing Guidelines
+- Framework: Pest PHP v3 in `tests/`.
+- Use descriptive test names; keep feature tests in `tests/Feature` and unit tests in `tests/Unit`.
+- Run focused tests with `php artisan test --filter=testName` or `php artisan test tests/Feature/FooTest.php`.
 
-## Development Workflow
+## Commit & Pull Request Guidelines
+- Use Conventional Commits: `type(scope): summary` (e.g., `feat(ui): add meter profile filters`, `fix(grpc): regenerate stubs`).
+- Types to prefer: `feat`, `fix`, `chore`, `docs`, `refactor`, `test`.
+- PRs should include a clear summary, linked issue/ticket when applicable, and screenshots for UI changes.
+- If `.proto` files change, note that `./scripts/generate-grpc.sh` was run.
 
-### gRPC Code Generation
-
-- **Always run** `./scripts/generate-grpc.sh` after modifying `.proto` files
-- Generated PHP classes go to `generated/Proto/` and `generated/GPBMetadata/`
-- The script automatically refreshes Composer autoloader
-
-### Development Server
-
-```bash
-# Start all services (server, queue, logs, vite)
-composer dev
-
-# With SSR
-composer dev:ssr
-```
-
-### Frontend Development
-
-- Pages are in `resources/js/pages/` following Inertia conventions
-- Use `npm run dev` for hot reloading
-- Components follow TailwindCSS + Radix UI patterns
-
-## Critical Code Patterns
-
-### gRPC Client Pattern
-
-Controllers instantiate gRPC clients in `__construct()`:
-
-```php
-public function __construct()
-{
-    $this->client = new ParameterDefinitionServiceClient(env('GRPC_HOST'), [
-        'credentials' => ChannelCredentials::createInsecure()
-    ]);
-}
-```
-
-### gRPC Error Handling
-
-Use `GrpcErrorHandler::extractError($status)` to parse structured gRPC errors from `grpc-status-details-bin` metadata. Supports Google's standard error types (`ErrorInfo`, `BadRequest`).
-
-### Inertia Data Flow
-
-Controllers return Inertia responses:
-
-```php
-return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionIndex', [
-    'parameterDefinitions' => $parameterDefinitions,
-]);
-```
-
-### Proto Message Mapping
-
-Manual mapping between Laravel requests and Protocol Buffer messages:
-
-```php
-$definition = new ParameterDefinitionProto();
-$definition->setParameterName($request->parameterName);
-// ... more setters
-```
-
-## File Organization
-
-- **Controllers**: Domain-organized in `app/Http/Controllers/{Domain}/`
-- **gRPC Services**: `app/Services/Grpc/`
-- **Proto Definitions**: `protos/{domain}/` (e.g., `protos/parameters/`)
-- **Generated Classes**: `generated/Proto/{Domain}/` and `generated/GPBMetadata/`
-- **Frontend Pages**: `resources/js/pages/{Domain}/`
-- **Form Requests**: `app/Http/Requests/{Domain}/`
-
-## Key Dependencies
-
-- **gRPC**: `grpc/grpc`, `google/protobuf`, `google/common-protos`
-- **Frontend**: `@inertiajs/react`, `@radix-ui/*`, TailwindCSS v4
-- **Laravel**: Inertia.js, Spatie Laravel Data, Ziggy (route helpers)
-- **Testing**: Pest PHP with Laravel plugin
-
-## Environment Requirements
-
-- PHP 8.2+ with `ext-grpc` extension
-- `protoc` compiler and `grpc_php_plugin` for code generation
-- Node.js for frontend tooling
-
-## Common Tasks
-
-1. **Adding new gRPC service**: Create `.proto` → run `generate-grpc.sh` → create controller → create Inertia pages
-2. **Frontend components**: Use existing Radix UI patterns and TailwindCSS utilities
-3. **Testing**: Use Pest syntax with Laravel-specific helpers
-4. **Debugging**: Check `php artisan pail` logs for real-time application logs
-
-## Naming Conventions
-
-- **Proto packages**: `com.kseb.consumerservice.proto.{domain}`
-- **PHP namespaces**: `Proto\{Domain}` for generated classes
-- **Controllers**: `{Entity}Controller` in domain folders
-- **Inertia pages**: `{Domain}/{Entity}/{Action}` structure
+## Configuration & gRPC Notes
+- Requires PHP 8.2+, `ext-grpc`, `protoc`, and `grpc_php_plugin`.
+- Keep `.env` values aligned with gRPC endpoints (e.g., `GRPC_HOST`).
 
 ===
 

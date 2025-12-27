@@ -23,7 +23,6 @@ export function ConnectionDetailTooltip({
             label='Month'
             value={new Date().toLocaleString('en-US', { month: 'long' })}
           />
-
           <Field
             label='Consumer number'
             value={connectionWithConsumer?.connection?.consumer_number}

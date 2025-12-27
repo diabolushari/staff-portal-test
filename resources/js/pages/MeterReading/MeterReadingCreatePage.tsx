@@ -15,9 +15,8 @@ import {
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
-import { showError } from '@/ui/alerts'
 import Button from '@/ui/button/Button'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 export interface MeterReadingForm extends MeterReading {
   reading_type: string
@@ -75,35 +74,41 @@ export default function MeterReadingCreatePage({
   latestMeterReading,
   editMode,
 }: Readonly<Props>) {
-  const breadcrumb: BreadcrumbItem[] = [
-    {
-      title: 'Home',
-      href: '/',
-    },
-    {
-      title: 'Connections',
-      href: '/connections',
-    },
-    {
-      title: connectionWithConsumer?.connection?.consumer_number.toString() ?? '',
-      href: `/connections/${connectionWithConsumer?.connection?.connection_id}`,
-    },
-    {
-      title: 'Meter Reading',
-      href: `/connection/${connectionWithConsumer?.connection?.connection_id}/meter-reading`,
-    },
-    {
-      title: 'Create',
-      href: `/connection/${connectionWithConsumer?.connection?.connection_id}/meter-reading/create`,
-    },
-  ]
+  const breadcrumb: BreadcrumbItem[] = useMemo(() => {
+    return [
+      {
+        title: 'Home',
+        href: '/',
+      },
+      {
+        title: 'Connections',
+        href: '/connections',
+      },
+      {
+        title: connectionWithConsumer?.connection?.consumer_number.toString() ?? '',
+        href: `/connections/${connectionWithConsumer?.connection?.connection_id}`,
+      },
+      {
+        title: 'Meter Reading',
+        href: `/connection/${connectionWithConsumer?.connection?.connection_id}/meter-reading`,
+      },
+      {
+        title: 'Create',
+        href: `/connection/${connectionWithConsumer?.connection?.connection_id}/meter-reading/create`,
+      },
+    ]
+  }, [connectionWithConsumer])
 
-  const { readingValues, updateReading, toggleRotation } = useMeterReadingForm(
+  useEffect(() => {
+    console.log(metersWithTimezonesAndProfiles)
+    console.log(latestMeterReading)
+  }, [metersWithTimezonesAndProfiles, latestMeterReading])
+
+  const { readingValues, updateReading } = useMeterReadingForm(
     metersWithTimezonesAndProfiles,
     latestMeterReading,
     editMode ? latestMeterReading : null
   )
-
   const { healthData, updateMeterHealth, updateCTPTHealth } = useMeterHealthForm(
     metersWithTimezonesAndProfiles
   )
@@ -139,21 +144,19 @@ export default function MeterReadingCreatePage({
 
   const [activeStep, setActiveStep] = useState(0)
 
-  // Check if a step has any errors
-  const hasStepError = (fields: string[]) => fields.some((f) => errors?.[f])
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement | null>, multipleReading = false) => {
-    e?.preventDefault()
-
+  const handleSubmit = () => {
     post({
       ...formData,
       readings_by_meter: readingValues,
       meter_health: healthData,
-      multiple_reading: multipleReading,
+      multiple_reading: false,
     })
   }
 
   const steps: Step[] = useMemo(() => {
+    const hasStepError = (fields: string[]) =>
+      fields.some((f) => errors?.[f as keyof typeof errors])
+
     return [
       {
         id: 1,
@@ -192,7 +195,7 @@ export default function MeterReadingCreatePage({
         cardSubtitle: `${formData.reading_start_date} to ${formData.reading_end_date}`,
       },
     ]
-  }, [connectionWithConsumer, formData, hasStepError])
+  }, [connectionWithConsumer, formData, errors])
 
   return (
     <MainLayout
@@ -241,7 +244,6 @@ export default function MeterReadingCreatePage({
                 updateMeterHealth={updateMeterHealth}
                 updateCTPTHealth={updateCTPTHealth}
                 setIsOnParameterForm={setIsOnParameterForm}
-                toggleRotation={toggleRotation}
               />
             )}
           </Stepper>
@@ -267,7 +269,7 @@ export default function MeterReadingCreatePage({
                 type='button'
                 label='Save & Add New Reading'
                 variant='link'
-                onClick={() => handleSubmit(null, true)}
+                onClick={() => handleSubmit()}
               />
             )}
             {activeStep === steps.length - 1 && !isOnParamaterForm && (

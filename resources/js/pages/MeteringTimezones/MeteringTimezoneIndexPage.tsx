@@ -69,6 +69,11 @@ export default function MeteringTimezonesIndexPage({
   timezone_type_parameter,
   filter,
 }: Props) {
+  console.log('timezones', timezones)
+  console.log('timezone_types', timezone_types)
+  console.log('timezone_type_parameter', timezone_type_parameter)
+  console.log('filter', filter)
+
   const [showAddModal, setShowAddModal] = useState<boolean>(false)
   const [selecedDefinition, setSelectedDefinition] = useState<ParameterDefinition | null>(null)
 

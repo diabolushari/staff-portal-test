@@ -34,7 +34,7 @@ export default function ParameterForm({
 }) {
   if (activeProfile !== null) {
     const meter = metersWithTimezonesAndProfiles[activeProfile.meterIdx]
-    const profile = meter.meter_profiles[activeProfile.profileIdx]
+    const profile = meter.reading_parameters[activeProfile.profileIdx]
     const meterData = formData.readings_by_meter.find((m: any) => m.meter_id === meter.meter_id)
     const paramData = meterData?.parameters.find(
       (p: any) => p.meter_parameter_id === profile.meter_parameter_id
@@ -54,7 +54,7 @@ export default function ParameterForm({
                 id: tz.timezone_id,
                 name: tz.timezone_name,
               }))}
-              values={paramData?.readings || []}
+              parameterReadingValues={paramData?.readings || []}
               onChange={(rowKey, tzId, val) =>
                 updateReading(
                   meter.meter_id,
