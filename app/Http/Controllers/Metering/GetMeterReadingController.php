@@ -34,32 +34,37 @@ class GetMeterReadingController extends Controller
 
     public function __invoke(Request $request, int $connectionId): Response
     {
-        $meterHealthTypes = $this->parameterService->getParameterValues(1,
+        $meterHealthTypes = $this->parameterService->getParameterValues(
+            1,
             100,
             null,
             'Meter',
             'Meter Health',
         );
-        $ctptHealthTypes = $this->parameterService->getParameterValues(1,
+        $ctptHealthTypes = $this->parameterService->getParameterValues(
+            1,
             100,
             null,
             'Meter',
             'Meter CTPT Health',
         );
-        $ctHealthTypes = $this->parameterService->getParameterValues(1,
+        $ctHealthTypes = $this->parameterService->getParameterValues(
+            1,
             100,
             null,
             'Meter CTPT',
             'CT-Health Type',
         );
-        $ptHealthTypes = $this->parameterService->getParameterValues(1,
+        $ptHealthTypes = $this->parameterService->getParameterValues(
+            1,
             100,
             null,
             'Meter CTPT',
             'PT-Health Type',
         );
 
-        $anomalyTypes = $this->parameterService->getParameterValues(1,
+        $anomalyTypes = $this->parameterService->getParameterValues(
+            1,
             100,
             null,
             'Meter',
@@ -74,7 +79,11 @@ class GetMeterReadingController extends Controller
         $timeZoneNames = [];
         $latestMeterReading = $this->meterReadingService->latestMeterReading($connectionId);
 
-        $meterIds = array_map(fn ($mapping) => $mapping['meter_id'], $meterConnectionRel->data);
+        $meterIds = [];
+        if ($meterConnectionRel->data != null) {
+            $meterIds = array_map(fn($mapping) => $mapping['meter_id'], $meterConnectionRel->data);
+        }
+
         $ctptRelations = [];
         $ctptResponse = $this->meterTransformerRelService->listAssignedToMeters($meterIds);
         if (! $ctptResponse->hasError()) {
@@ -124,7 +133,6 @@ class GetMeterReadingController extends Controller
                 $meterWithTimezoneAndProfile['reading_parameters'] = $meterProfiles;
 
                 $metersWithTimezonesAndProfiles[] = $meterWithTimezoneAndProfile;
-
             }
         }
 

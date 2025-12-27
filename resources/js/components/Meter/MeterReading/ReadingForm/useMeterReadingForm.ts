@@ -105,6 +105,14 @@ export default function useMeterReadingForm(
       return
     }
 
+    if (
+      metersWithTimezonesAndProfiles == null ||
+      metersWithTimezonesAndProfiles.length === 0 ||
+      lastMeterReading == null
+    ) {
+      return
+    }
+
     if (oldReading != null && oldReading?.values?.length > 0) {
       const transformed = transformToFormData(oldReading.values, metersWithTimezonesAndProfiles)
       setReadingValues(transformed)

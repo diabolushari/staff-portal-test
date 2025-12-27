@@ -1,18 +1,22 @@
-import useMeterHealthForm from '@/components/Meter/MeterReading/ReadingForm/useMeterHealthForm'
-import useMeterReadingForm from '@/components/Meter/MeterReading/ReadingForm/useMeterReadingForm'
-import Stepper from '@/components/Stepper'
-import useCustomForm from '@/hooks/useCustomForm'
-import useInertiaPost from '@/hooks/useInertiaPost'
-import { ConsumerData, MeterReading, MeterWithTimezoneAndProfile, } from '@/interfaces/data_interfaces'
-import { ParameterValues } from '@/interfaces/parameter_types'
-import { BreadcrumbItem } from '@/types'
-import Button from '@/ui/button/Button'
-import React, { useMemo, useState } from 'react'
 import MeterReadingGeneralStep from '@/components/Meter/MeterReading/MeterReadingGeneralStep'
 import MeterReadingObservationStep from '@/components/Meter/MeterReading/MeterReadingObservationStep'
 import MeterReadingsStep from '@/components/Meter/MeterReading/MeterReadingsStep'
-import MainLayout from '@/layouts/main-layout'
+import useMeterHealthForm from '@/components/Meter/MeterReading/ReadingForm/useMeterHealthForm'
+import useMeterReadingForm from '@/components/Meter/MeterReading/ReadingForm/useMeterReadingForm'
 import { consumerNavItems } from '@/components/Navbar/navitems'
+import Stepper from '@/components/Stepper'
+import useCustomForm from '@/hooks/useCustomForm'
+import useInertiaPost from '@/hooks/useInertiaPost'
+import {
+  ConsumerData,
+  MeterReading,
+  MeterWithTimezoneAndProfile,
+} from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
+import MainLayout from '@/layouts/main-layout'
+import { BreadcrumbItem } from '@/types'
+import Button from '@/ui/button/Button'
+import { useEffect, useMemo, useState } from 'react'
 
 export interface MeterReadingForm extends MeterReading {
   reading_type: string
@@ -95,6 +99,11 @@ export default function MeterReadingCreatePage({
     ]
   }, [connectionWithConsumer])
 
+  useEffect(() => {
+    console.log(metersWithTimezonesAndProfiles)
+    console.log(latestMeterReading)
+  }, [metersWithTimezonesAndProfiles, latestMeterReading])
+
   const { readingValues, updateReading } = useMeterReadingForm(
     metersWithTimezonesAndProfiles,
     latestMeterReading,
@@ -135,19 +144,18 @@ export default function MeterReadingCreatePage({
 
   const [activeStep, setActiveStep] = useState(0)
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement | null>, multipleReading = false) => {
-    e?.preventDefault()
-
+  const handleSubmit = () => {
     post({
       ...formData,
       readings_by_meter: readingValues,
       meter_health: healthData,
-      multiple_reading: multipleReading,
+      multiple_reading: false,
     })
   }
 
   const steps: Step[] = useMemo(() => {
-    const hasStepError = (fields: string[]) => fields.some((f) => errors?.[f])
+    const hasStepError = (fields: string[]) =>
+      fields.some((f) => errors?.[f as keyof typeof errors])
 
     return [
       {
@@ -261,7 +269,7 @@ export default function MeterReadingCreatePage({
                 type='button'
                 label='Save & Add New Reading'
                 variant='link'
-                onClick={() => handleSubmit(null, true)}
+                onClick={() => handleSubmit()}
               />
             )}
             {activeStep === steps.length - 1 && !isOnParamaterForm && (
