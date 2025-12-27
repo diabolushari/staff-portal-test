@@ -11,7 +11,6 @@ option php_metadata_namespace = "GPBMetadata";
 service MeteringTimezoneService {
   rpc CreateMeteringTimezone(CreateMeteringTimezoneRequest) returns (MeteringTimezoneResponse);
   rpc GetMeteringTimezone(GetMeteringTimezoneRequest) returns (MeteringTimezoneResponse);
-  rpc GetMeteringTimezonesByPricingType(GetMeteringTimezonesByPricingTypeRequest) returns (ListMeteringTimezonesResponse);
   rpc ListMeteringTimezones(ListMeteringTimezonesRequest) returns (ListMeteringTimezonesResponse);
   rpc UpdateMeteringTimezone(UpdateMeteringTimezoneRequest) returns (MeteringTimezoneResponse);
   rpc DeleteMeteringTimezone(DeleteMeteringTimezoneRequest) returns (google.protobuf.Empty);
@@ -21,50 +20,45 @@ service MeteringTimezoneService {
 
 message CreateMeteringTimezoneRequest {
   optional int32 metering_timezone_id = 1;
-  int32 pricing_type_id = 2;
-  int32 timezone_type_id = 3;
-  int32 timezone_name_id = 4;
-  int32 from_hrs = 5;
-  int32 from_mins = 6;
-  int32 to_hrs = 7;
-  int32 to_mins = 8;
-  optional google.protobuf.Timestamp effective_start_ts = 9;
-  optional google.protobuf.Timestamp effective_end_ts = 10;
-  optional bool is_active = 11;
-  int32 created_by = 12;
+  int32 timezone_type_id = 2;
+  int32 timezone_name_id = 3;
+  int32 from_hrs = 4;
+  int32 from_mins = 5;
+  int32 to_hrs = 6;
+  int32 to_mins = 7;
+  optional google.protobuf.Timestamp effective_start_ts = 8;
+  optional google.protobuf.Timestamp effective_end_ts = 9;
+  optional bool is_active = 10;
+  int32 created_by = 11;
 }
 
 message UpdateMeteringTimezoneRequest {
   int32 metering_timezone_id = 1;
-  int32 pricing_type_id = 2;
-  int32 timezone_type_id = 3;
-  int32 timezone_name_id = 4;
-  int32 from_hrs = 5;
-  int32 from_mins = 6;
-  int32 to_hrs = 7;
-  int32 to_mins = 8;
-  optional google.protobuf.Timestamp effective_start_ts = 9;
-  optional google.protobuf.Timestamp effective_end_ts = 10;
-  optional bool is_active = 11;
-  optional int32 updated_by = 12;
+  int32 timezone_type_id = 2;
+  int32 timezone_name_id = 3;
+  int32 from_hrs = 4;
+  int32 from_mins = 5;
+  int32 to_hrs = 6;
+  int32 to_mins = 7;
+  optional google.protobuf.Timestamp effective_start_ts = 8;
+  optional google.protobuf.Timestamp effective_end_ts = 9;
+  optional bool is_active = 10;
+  optional int32 updated_by = 11;
 }
 
 message GetMeteringTimezoneRequest {
   int32 metering_timezone_id = 1;
 }
 
-message GetMeteringTimezonesByPricingTypeRequest {
-  int32 pricing_type_id = 1;
-}
+
 
 message DeleteMeteringTimezoneRequest {
   int32 metering_timezone_id = 1;
 }
 
 message ListMeteringTimezonesRequest {
-  optional int32 pricing_type_id = 1;
-  optional int32 timezone_type_id = 2;
-  optional int32 timezone_name_id = 3;
+  optional int32 timezone_type_id = 1;
+  optional int32 timezone_name_id = 2;
 }
 
 message ListMeteringTimezonesResponse {
@@ -74,24 +68,23 @@ message ListMeteringTimezonesResponse {
 message MeteringTimezoneResponse {
   int32 version_id = 1;
   int32 metering_timezone_id = 2;
-  parameters.ParameterValueProto pricing_type = 3;
-  parameters.ParameterValueProto timezone_type = 4;
-  parameters.ParameterValueProto timezone_name = 5;
-  int32 from_hrs = 6;
-  int32 from_mins = 7;
-  int32 to_hrs = 8;
-  int32 to_mins = 9;
-  google.protobuf.Timestamp effective_start_ts = 10;
-  optional google.protobuf.Timestamp effective_end_ts = 11;
-  optional bool is_active = 12;
-  google.protobuf.Timestamp created_ts = 13;
-  optional google.protobuf.Timestamp updated_ts = 14;
-  int32 created_by = 15;
-  optional int32 updated_by = 16;
+  parameters.ParameterValueProto timezone_type = 3;
+  parameters.ParameterValueProto timezone_name = 4;
+  int32 from_hrs = 5;
+  int32 from_mins = 6;
+  int32 to_hrs = 7;
+  int32 to_mins = 8;
+  google.protobuf.Timestamp effective_start_ts = 9;
+  optional google.protobuf.Timestamp effective_end_ts = 10;
+  optional bool is_active = 11;
+  google.protobuf.Timestamp created_ts = 12;
+  optional google.protobuf.Timestamp updated_ts = 13;
+  int32 created_by = 14;
+  optional int32 updated_by = 15;
 }
 
 message ListTimezoneGroupByMeteringTypeRequest {
-   optional int32 profile_id = 1;
+  optional int32 profile_id = 1;
   optional string search = 2;
 }
 

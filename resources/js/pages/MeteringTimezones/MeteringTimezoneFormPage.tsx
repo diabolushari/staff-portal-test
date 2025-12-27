@@ -38,7 +38,6 @@ interface Props {
 
 export default function MeteringTimezoneFormPage({
   timezone,
-  pricingTypes,
   timezoneTypes,
   timezoneNames,
   isEdit = false,
@@ -56,18 +55,17 @@ export default function MeteringTimezoneFormPage({
     },
     {
       title: 'Metering Timezones',
-      href: route('metering-timezone.index'),
+      href: route('meter-timezones.index'),
     },
     {
       title: isEdit ? 'Edit Timezone' : 'Create Timezone',
       href: isEdit
-        ? route('metering-timezone.edit', timezone?.metering_timezone_id)
-        : route('metering-timezone.create'),
+        ? route('meter-timezones.edit', timezone?.metering_timezone_id)
+        : route('meter-timezones.create'),
     },
   ]
 
   const { formData, setFormValue } = useCustomForm({
-    pricing_type_id: timezone?.pricing_type?.id?.toString() ?? '',
     timezone_type_id: timezone?.timezone_type?.id?.toString() ?? '',
     timezone_name_id: timezone?.timezone_name?.id?.toString() ?? '',
     from_hrs: timezone?.from_hrs?.toString() ?? '',
@@ -79,12 +77,12 @@ export default function MeteringTimezoneFormPage({
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     isEdit
-      ? route('metering-timezone.update', timezone?.metering_timezone_id)
-      : route('metering-timezone.store')
+      ? route('meter-timezones.update', timezone?.metering_timezone_id)
+      : route('meter-timezones.store')
   )
 
   const handleBack = () => {
-    router.get(route('metering-timezone.index'))
+    router.get(route('meter-timezones.index'))
   }
 
   // Utility to create readable time string
@@ -150,7 +148,6 @@ export default function MeteringTimezoneFormPage({
               label='Back to List'
               onClick={handleBack}
               variant='outline'
-              icon={<ArrowLeft className='mr-2 h-4 w-4' />}
             />
           </div>
         </div>
@@ -166,20 +163,10 @@ export default function MeteringTimezoneFormPage({
             </div>
             <div className='mt-6 grid grid-cols-1 gap-6 p-6 md:grid-cols-2'>
               <SelectList
-                label='Pricing Type'
-                list={pricingTypes}
-                dataKey='id'
-                displayKey='parameterValue'
-                setValue={setFormValue('pricing_type_id')}
-                value={formData.pricing_type_id}
-                error={errors?.pricing_type_id}
-                required
-              />
-              <SelectList
                 label='Timezone Type'
                 list={timezoneTypes}
                 dataKey='id'
-                displayKey='parameterValue'
+                displayKey='parameter_value'
                 setValue={setFormValue('timezone_type_id')}
                 value={formData.timezone_type_id}
                 error={errors?.timezone_type_id}
@@ -191,7 +178,7 @@ export default function MeteringTimezoneFormPage({
                 label='Timezone Name'
                 list={timezoneNames}
                 dataKey='id'
-                displayKey='parameterValue'
+                displayKey='parameter_value'
                 setValue={setFormValue('timezone_name_id')}
                 value={formData.timezone_name_id}
                 error={errors?.timezone_name_id}

@@ -59,7 +59,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
   {
     title: 'Timezone Groups',
-    href: '/metering-timezones',
+    href: '/timezone-groups',
   },
 ]
 
@@ -80,7 +80,7 @@ export default function MeteringTimezonesIndexPage({
   )
 
   const handleShow = (id: number) => {
-    router.get(`/metering-timezone/${id}`)
+    router.get(`/timezone-groups/${id}`)
   }
 
   const handleAdd = () => {
@@ -104,7 +104,7 @@ export default function MeteringTimezonesIndexPage({
           placeholder='Enter timezone name'
           search={filter.search}
           filters={filter}
-          url={`metering-timezone`}
+          url={`timezone-groups`}
         />
 
         <div className='relative w-full rounded-lg bg-white'>
@@ -140,9 +140,9 @@ export default function MeteringTimezonesIndexPage({
             )}
 
             {/* Display timezone types without any metering timezones */}
-            {timezoneTypesWithoutTimezones.length > 0 && (
+            {timezoneTypesWithoutTimezones?.length > 0 && (
               <>
-                {timezoneTypesWithoutTimezones.map((type) => (
+                {timezoneTypesWithoutTimezones?.map((type) => (
                   <div
                     key={type.id}
                     className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'

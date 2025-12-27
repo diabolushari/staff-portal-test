@@ -92,20 +92,11 @@ export default function OfficeShow({
       breadcrumb={breadcrumbs}
       selectedItem='Office Details'
       navItems={metadataNavItems}
+      title={`${office.office_code} - ${office.office_name} `}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header Section */}
-        <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-          <div className='flex flex-col gap-2'>
-            <div className='flex items-center gap-3'>
-              <StrongText className='text-2xl font-semibold text-[#252c32]'>
-                {office.office_code} - {office.office_name}
-              </StrongText>
-              <TinyContainer variant={office.is_current ? 'success' : 'danger'}>
-                {office.is_current ? 'Active' : 'Inactive'}
-              </TinyContainer>
-            </div>
-          </div>
+        <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-end'>
           <button
             onClick={() => router.visit(route('offices.edit', office.office_id))}
             className='flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
@@ -113,8 +104,6 @@ export default function OfficeShow({
             {isEditing ? 'Cancel Edit' : 'Edit Details'}
           </button>
         </div>
-
-        {/* Main Content Tabs */}
 
         <div className='space-y-4'>
           {/* Basic Information */}

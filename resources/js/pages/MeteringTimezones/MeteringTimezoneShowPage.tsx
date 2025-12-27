@@ -74,7 +74,7 @@ export default function MeteringTimezoneShowPage({
     },
     {
       title: 'Timezone Groups',
-      href: route('metering-timezone.index'),
+      href: route('timezone-groups.index'),
     },
     {
       title: timezone_type?.parameter_value ?? '-',
@@ -122,7 +122,7 @@ export default function MeteringTimezoneShowPage({
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={meteringBillingNavItems}
-      selectedItem='Metering Timezones'
+      selectedItem='Timezone Groups'
       selectedTopNav='Consumers'
       title={timezone_type?.parameter_value}
     >
@@ -147,7 +147,7 @@ export default function MeteringTimezoneShowPage({
                   {/* Header */}
                   <div className='mb-6 flex items-center justify-between'>
                     <h2 className='text-lg font-semibold text-gray-900'>
-                      {tz.timezone_name.parameter_value}
+                      {tz?.timezone_name?.parameter_value}
                     </h2>
 
                     <div className='flex gap-2'>
@@ -180,15 +180,6 @@ export default function MeteringTimezoneShowPage({
                     </div>
 
                     {/* Pricing Type */}
-                    <div className='flex items-start gap-3'>
-                      <Tag className='mt-1 h-5 w-5 text-gray-400' />
-                      <div>
-                        <p className='text-sm text-gray-500'>Pricing Type</p>
-                        <p className='font-medium text-blue-600'>
-                          {tz.pricing_type.parameter_value}
-                        </p>
-                      </div>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -225,7 +216,7 @@ export default function MeteringTimezoneShowPage({
         <DeleteModal
           title={`Delete Metering Timezone ${deleteItem.timezone_name.parameter_value}`}
           setShowModal={setDeleteModalOpen}
-          url={route('metering-timezone.destroy', deleteItem.metering_timezone_id)}
+          url={route('timezone-groups.destroy', deleteItem.metering_timezone_id)}
         />
       )}
     </MainLayout>
