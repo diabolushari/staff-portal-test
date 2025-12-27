@@ -121,7 +121,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('meter-conn-rel', MeterConnectionMappingController::class);
     Route::resource('meter-timezone-rel', MeterTimezoneTypeRelController::class);
 
-    Route::resource('metering-timezone', MeteringTimezoneController::class);
+    Route::resource('timezone-groups', MeteringTimezoneController::class);
 
     Route::resource('meter-reading', MeterReadingController::class);
     Route::get('connection/{connection_id}/meter-reading', GetMeterReadingWithConnectionController::class)->name('connection.meter-reading');
@@ -148,8 +148,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('update-meter-transformer-assignment-status');
 
 
-    Route::resource('meter-profile',MeterProfileParameterController::class);
-
+    Route::resource('meter-profile', MeterProfileParameterController::class);
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
