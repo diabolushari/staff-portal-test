@@ -29,7 +29,6 @@ export default function MeterTimeZoneForm({
 }: Props) {
   const [timeSummary, setTimeSummary] = useState<string>('')
   const { formData, setFormValue } = useCustomForm({
-    pricing_type_id: timezone?.pricing_type.id?.toString() ?? '',
     timezone_type_id: timezoneGroup.id?.toString() ?? '',
     timezone_name_id: timezone?.timezone_name.id?.toString() ?? '',
     from_hrs: timezone?.from_hrs.toString() ?? '',
@@ -40,8 +39,8 @@ export default function MeterTimeZoneForm({
   })
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     timezone
-      ? route('metering-timezone.update', timezone?.metering_timezone_id)
-      : route('metering-timezone.store'),
+      ? route('timezone-groups.update', timezone?.metering_timezone_id)
+      : route('timezone-groups.store'),
     {
       onComplete: () => {
         onComplete?.()
@@ -107,15 +106,6 @@ export default function MeterTimeZoneForm({
             />
           </div>
         </div>
-        <SelectList
-          label='Pricing Type'
-          list={pricingTypes}
-          dataKey='id'
-          displayKey='parameter_value'
-          value={formData.pricing_type_id}
-          setValue={setFormValue('pricing_type_id')}
-          error={errors.pricing_type_id}
-        />
 
         <StrongText className='text-sm font-medium text-gray-700'>From Time</StrongText>
         <div className='grid grid-cols-2 gap-4'>

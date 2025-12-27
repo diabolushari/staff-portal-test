@@ -21,7 +21,7 @@ export default function EditButton({ link, onClick }: Props) {
 
   return (
     <Button
-      className='flex cursor-pointer items-center gap-2 border-b-2 border-blue-500 transition-transform hover:border-blue-800'
+      className='border-kseb-primary flex cursor-pointer items-center gap-2 border-b-2 transition-transform hover:border-blue-500'
       onClick={handleClick}
       variant='outline'
     >

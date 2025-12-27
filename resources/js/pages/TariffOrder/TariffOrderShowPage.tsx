@@ -8,6 +8,7 @@ import StrongText from '@/typography/StrongText'
 import TariffConfigTable from '@/components/Tariff/TariffConfig/TariffConfigTable'
 import CustomCard from '@/ui/Card/CustomCard'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import ShowPageCard from '@/ui/Card/ShowPageCard'
 
 export default function TariffOrderShowPage({
   tariff_order,
@@ -40,41 +41,35 @@ export default function TariffOrderShowPage({
       selectedItem='Tariffs'
       breadcrumb={breadcrumb}
       title={tariff_order?.order_descriptor}
+      description={
+        <>
+          Tariff Order details for{'  '}
+          <span className='font-bold'>{tariff_order?.order_descriptor}</span>
+        </>
+      }
     >
       {/* ---- Tariff Order Card ---- */}
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
-        <CustomCard
-          title=' '
-          editButton={{
-            title: 'Edit',
-            url: `/tariff-orders/${tariff_order?.tariff_order_id}/edit`,
-          }}
+        <ShowPageCard
+          title='Basic Information'
+          editUrl={`/tariff-orders/${tariff_order?.tariff_order_id}/edit`}
         >
-          <div className='mb-6 flex items-center justify-between'>
-            <StrongText className='text-base font-semibold text-[#252c32]'>
-              Basic Information
-            </StrongText>
-          </div>
+          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+            <Field
+              label='Published Date'
+              value={new Date(tariff_order?.published_date).toLocaleDateString()}
+            />
 
-          <div className='grid grid-cols-2 gap-2'>
-            <div>
-              <Field
-                label='Published Date'
-                value={new Date(tariff_order?.published_date).toLocaleDateString()}
-              />
-            </div>
-            <div>
-              <Field
-                label='Effective Start'
-                value={new Date(tariff_order?.effective_start).toLocaleDateString()}
-              />
-            </div>
-            <div>
-              <Field
-                label='Effective End'
-                value={new Date(tariff_order?.effective_end || '').toLocaleDateString()}
-              />
-            </div>
+            <Field
+              label='Effective Start'
+              value={new Date(tariff_order?.effective_start).toLocaleDateString()}
+            />
+
+            <Field
+              label='Effective End'
+              value={new Date(tariff_order?.effective_end || '').toLocaleDateString()}
+            />
+
             <div>
               <Field
                 label='Reference Document'
@@ -89,7 +84,7 @@ export default function TariffOrderShowPage({
               </a>
             </div>
           </div>
-        </CustomCard>
+        </ShowPageCard>
 
         {/* ---- Tariff Config Table ---- */}
         <TariffConfigTable

@@ -5,7 +5,9 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
-import { Link } from '@inertiajs/react'
+import { cn } from '@/utils'
+import { router } from '@inertiajs/react'
+import { Button } from '../ui/button'
 // Using local wrapped NavigationMenu (supports viewport prop)
 
 interface Props {
@@ -24,7 +26,7 @@ export const NAV_ITEMS = [
     // ],
   },
   {
-    title: 'Billing',
+    title: 'Metering & Billing',
     value: 'Billing',
     href: '/billing-groups',
     description: 'Invoices and payments',
@@ -80,7 +82,7 @@ export function CustomNavbar({ selectedTopNav }: Props) {
       viewport={false}
       className='w-full'
     >
-      <NavigationMenuList className='flex gap-4 border-b border-gray-200 bg-white px-4 dark:border-gray-700 dark:bg-gray-900'>
+      <NavigationMenuList className='flex gap-4 bg-white px-4 dark:border-gray-700 dark:bg-gray-900'>
         {NAV_ITEMS.map((item) => {
           const isActive = selectedTopNav === item.value
 
@@ -88,10 +90,19 @@ export function CustomNavbar({ selectedTopNav }: Props) {
             <NavigationMenuItem key={item.title}>
               <NavigationMenuLink
                 asChild
-                className={navigationMenuTriggerStyle()}
-                data-active={isActive || undefined}
+                className='rounded-none'
               >
-                <Link href={item.href}>{item.title}</Link>
+                <Button
+                  variant='ghost'
+                  onClick={() => router.get(item.href)}
+                  className={cn(
+                    'relative',
+                    isActive &&
+                      "after:bg-kseb-bg-blue after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:content-['']"
+                  )}
+                >
+                  {item.title}
+                </Button>
               </NavigationMenuLink>
             </NavigationMenuItem>
           )
