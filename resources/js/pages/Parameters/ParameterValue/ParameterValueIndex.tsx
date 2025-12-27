@@ -1,12 +1,11 @@
 import { metadataNavItems } from '@/components/Navbar/navitems'
 import ParameterValuesList from '@/components/Parameter/ParameterValue/ParameterValueList'
-import ParameterValueSearchForm from '@/components/Parameter/ParameterValue/ParameterValueSearchForm'
+import ParameterValueSearchCard from '@/components/Parameter/ParameterValue/ParameterValueSearchCard'
 import { ParameterDefinition, ParameterDomain, ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import Pagination from '@/ui/Pagination/Pagination'
-import ListSearch from '@/ui/Search/ListSearch'
 import { Paginator } from '@/ui/ui_interfaces'
 import { router } from '@inertiajs/react'
 import React, { useState } from 'react'
@@ -59,13 +58,7 @@ export default function ParameterValueIndex({ values, domains, definitions, filt
       title='Parameter Values'
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl py-4'>
-        <ListSearch
-          title=''
-          url={route('parameter-value.index')}
-          search={filters.search}
-          filters={filters}
-        />
-        <ParameterValueSearchForm
+        <ParameterValueSearchCard
           parameterDomains={domains}
           parameterDefinitions={definitions}
           filters={filters}

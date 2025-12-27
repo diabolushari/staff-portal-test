@@ -8,7 +8,6 @@ import {
 } from '../ui/sidebar'
 import { useEffect, useState } from 'react'
 import Spinner from '@/ui/Spinner'
-import FullSpinner from '@/ui/FullSpinner'
 
 type MenuItem = {
   title: string
@@ -43,15 +42,15 @@ export default function LeftNavBar({ items = { label: '', items: [] }, selectedI
   }, [items])
 
   return (
-    <SidebarMenu className='relative h-full rounded-2xl bg-blue-50 p-4 pt-8'>
+    <SidebarMenu className='bg-kseb-bg-blue relative h-full p-4 pt-20'>
       {/* Loading Overlay */}
       {loading && (
-        <div className='absolute inset-0 z-50 flex items-center justify-center rounded-2xl bg-white/60 backdrop-blur-sm'>
+        <div className='absolute inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur-sm'>
           <Spinner />
         </div>
       )}
 
-      <NormalText className='mb-2 text-lg font-bold'>{items.label}</NormalText>
+      <NormalText className='context-menu-title mb-2 text-lg'>{items.label}</NormalText>
 
       {items.items.map((item) => {
         const hasChildren = item.children && item.children.length > 0
@@ -62,7 +61,7 @@ export default function LeftNavBar({ items = { label: '', items: [] }, selectedI
             {hasChildren ? (
               <div className='flex items-center gap-2 py-1'>
                 {item.icon}
-                <NormalText className='font-semibold italic'>{item.title}</NormalText>
+                <NormalText className='context-menu-subtitle'>{item.title}</NormalText>
               </div>
             ) : (
               <SidebarMenuButton asChild>
@@ -75,7 +74,7 @@ export default function LeftNavBar({ items = { label: '', items: [] }, selectedI
                   }`}
                 >
                   {item.icon}
-                  <NormalText>{item.title}</NormalText>
+                  <NormalText className='context-menu-item'>{item.title}</NormalText>
                 </a>
               </SidebarMenuButton>
             )}
@@ -90,9 +89,9 @@ export default function LeftNavBar({ items = { label: '', items: [] }, selectedI
                     <SidebarMenuSubItem key={child.title}>
                       <a
                         href={child.href}
-                        className={`flex items-center gap-3 rounded px-2 py-1 text-sm ${
+                        className={`context-menu-item flex items-center gap-3 rounded px-2 py-1 text-sm ${
                           isActive
-                            ? 'bg-blue-500 text-white'
+                            ? 'bg-[#D7EDFF] text-blue-500'
                             : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >

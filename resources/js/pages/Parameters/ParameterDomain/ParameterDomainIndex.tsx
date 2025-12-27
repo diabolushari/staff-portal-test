@@ -1,14 +1,11 @@
 import { metadataNavItems } from '@/components/Navbar/navitems'
 import ParameterDomainForm from '@/components/Parameter/ParameterDomain/ParameterDomainForm'
 import ParameterDomainList from '@/components/Parameter/ParameterDomain/ParameterDomainList'
-import ParameterDomainSearchForm from '@/components/Parameter/ParameterDomain/ParameterDomainSearchForm'
+import ParameterDomainSearchCard from '@/components/Parameter/ParameterDomain/ParameterDomainSearchCard'
 import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { type BreadcrumbItem } from '@/types'
-import AddButton from '@/ui/button/AddButton'
-import Button from '@/ui/button/Button'
 import DeleteModal from '@/ui/Modal/DeleteModal'
-import ListSearch from '@/ui/Search/ListSearch'
 import { router } from '@inertiajs/react'
 import { AnimatePresence } from 'framer-motion'
 import { useCallback, useState } from 'react'
@@ -72,38 +69,16 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
       navItems={metadataNavItems}
       selectedItem='Domains'
       title='Parameter Domains'
+      addBtnClick={handleCreateClick}
+      addBtnText='Domain'
     >
       {/* <Head title='Parameter Domains' /> */}
 
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl py-4'>
-        <div className='mb-4 flex items-center justify-between'>
-          {/* <h2 className='text-lg font-semibold text-[#252c32]'>Parameter Domains</h2> */}
-          <div></div>
-          <AddButton
-            onClick={handleCreateClick}
-            buttonText='Add Domain'
-          />
-        </div>
-
-        <ListSearch
-          title=''
-          url={route('parameter-domain.index')}
+        <ParameterDomainSearchCard
           filters={filters}
-          placeholder='Search By Parameter Domain'
+          systemModules={modules}
         />
-        <div className='flex items-center justify-between'>
-          <ParameterDomainSearchForm
-            systemModules={modules}
-            filters={filters}
-          />
-          <Button
-            onClick={() =>
-              router.get(route('parameter-domain.index'), { search: '', module_id: '' })
-            }
-            label='Clear Filters'
-            variant='link'
-          />
-        </div>
 
         <div>
           {domains != null && domains.length > 0 ? (

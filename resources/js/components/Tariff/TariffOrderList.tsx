@@ -1,11 +1,9 @@
-import { Download } from 'lucide-react'
+import { Download, Edit, MoreVertical, Trash2 } from 'lucide-react'
 import { router } from '@inertiajs/react'
 import { TariffOrder } from '@/interfaces/data_interfaces'
-import EditButton from '@/ui/button/EditButton'
-import DeleteButton from '@/ui/button/DeleteButton'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import DeleteModal from '@/ui/Modal/DeleteModal'
-import Button from '@/ui/button/Button'
+import { getDisplayDate } from '@/utils'
 
 interface Props {
   tariff_orders: TariffOrder[]
@@ -24,11 +22,34 @@ export default function TariffOrderList({ tariff_orders }: Readonly<Props>) {
     setDeleteModalOrder(order)
   }
 
+  const [openActionId, setOpenActionId] = useState<number | null>(null)
+  const actionRef = useRef<HTMLDivElement>(null)
+  const actionMenuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (actionRef.current && !actionRef.current.contains(e.target as Node)) {
+        setOpenActionId(null)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+  useEffect(() => {
+    if (openActionId === null) return
+
+    const handler = (e: MouseEvent) => {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(e.target as Node)) {
+        setOpenActionId(null)
+      }
+    }
+
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [openActionId])
+
   return (
     <div className='relative w-full rounded-lg bg-white'>
-      <div className='font-inter text-dark-gray px-7 pt-[21px] pb-3 text-[15px] leading-[23px] font-semibold tracking-[-0.0924px]'>
-        Tariff Order Info
-      </div>
       <div className='flex flex-col px-7 pb-7'>
         {tariff_orders?.map((order) => (
           <div
@@ -50,31 +71,68 @@ export default function TariffOrderList({ tariff_orders }: Readonly<Props>) {
                     </div>
                   </div>
                   <div className='font-inter text-dark-gray text-sm'>
-                    Published Date: {new Date(order.published_date).toLocaleDateString()}
+                    Published Date: <b>{getDisplayDate(order.published_date)}</b>
                   </div>
                   <div className='font-inter text-dark-gray text-sm'>
-                    Effective Period: {new Date(order.effective_start).toLocaleDateString()}
-                    {order.effective_end &&
-                      ` → ${new Date(order.effective_end).toLocaleDateString()}`}
+                    Effective Period:{' '}
+                    <b>
+                      {getDisplayDate(order.effective_start)}
+                      {order.effective_end && ` → ${getDisplayDate(order.effective_end)}`}
+                    </b>
                   </div>
                 </div>
               </div>
-              <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
-                <div className='flex items-center gap-2'>
-                  <EditButton
-                    onClick={() => router.visit(route('tariff-orders.edit', order.tariff_order_id))}
-                  />
-                  <DeleteButton onClick={() => handleDelete(order)} />
-                </div>
-                <div className='flex items-center gap-2'>
+              <div className='flex cursor-pointer flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
+                <div
+                  className='relative'
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <button
-                    onClick={() => handleDownload(order)}
-                    className='flex items-center gap-2 rounded-md bg-blue-100 px-3 py-1.5 text-sm font-medium text-blue-800 hover:bg-blue-200'
+                    onClick={() =>
+                      setOpenActionId(
+                        openActionId === order.tariff_order_id ? null : order.tariff_order_id
+                      )
+                    }
+                    className='hover:bg-kseb-bg-blue rounded-md p-2 text-gray-600'
                   >
-                    <Download className='h-4 w-4' />
-                    Download
+                    <MoreVertical className='h-5 w-5' />
                   </button>
+
+                  {openActionId === order.tariff_order_id && (
+                    <div
+                      ref={actionMenuRef}
+                      className='absolute right-0 z-20 mt-2 w-40 cursor-pointer rounded-md border border-gray-200 bg-white shadow-lg'
+                    >
+                      <button
+                        onClick={() =>
+                          router.visit(route('tariff-orders.edit', order.tariff_order_id))
+                        }
+                        className='flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100'
+                      >
+                        <Edit className='h-4 w-4' />
+                        Edit
+                      </button>
+
+                      <button
+                        onClick={() => handleDownload(order)}
+                        className='flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100'
+                      >
+                        <Download className='h-4 w-4' />
+                        Download
+                      </button>
+
+                      <button
+                        onClick={() => handleDelete(order)}
+                        className='flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50'
+                      >
+                        <Trash2 className='h-4 w-4' />
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
+
+                <div className='flex items-center gap-2'></div>
               </div>
             </div>
           </div>

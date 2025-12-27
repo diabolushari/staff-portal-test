@@ -7,6 +7,7 @@ interface Properties {
   label: string
   onClick?: (e: React.FormEvent<HTMLButtonElement>) => void
   variant?: string
+  className?: string
   processing?: boolean
   disabled?: boolean
   link?: string
@@ -17,7 +18,7 @@ export const chooseButtonColor = (type: string): [string, string] => {
   switch (type) {
     case 'primary': {
       return [
-        'rounded-lg bg-[#0078d4] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]',
+        'rounded-lg  px-4 py-2 text-sm font-semibold text-white transition-colors bg-kseb-primary primary-button-text',
         '',
       ]
     }
@@ -58,8 +59,15 @@ export const chooseButtonColor = (type: string): [string, string] => {
     }
     case 'link': {
       return [
-        'lgButtonText text-blue-500 flex items-center justify-center px-10 py-2 tracking-wider capitalize transition duration-150 underline whitespace-nowrap' +
+        'lgButtonText link-button-text flex items-center justify-center px-10 py-2 tracking-wider capitalize transition duration-150 underline whitespace-nowrap' +
           ' ease-in-out focus:ring-4 focus:outline-hidden hover:cursor-pointer',
+        '',
+      ]
+    }
+    case 'ghost': {
+      return [
+        'bg-transparent border-none text-kseb-primary hover:text-kseb-primary/80 ghost-button-text' +
+          'focus:ring-0 focus:outline-none underline-offset-2',
         '',
       ]
     }
@@ -79,6 +87,7 @@ export default function Button({
   variant = 'primary',
   processing = false,
   disabled = false,
+  className,
   type = 'submit',
   link,
 }: Readonly<Properties>) {
@@ -106,7 +115,8 @@ export default function Button({
           className={cn(
             'lgButtonText flex items-center justify-center px-10 py-2 tracking-wider capitalize transition duration-150' +
               ' cursor-pointer ease-in-out focus:ring-4 focus:outline-hidden',
-            buttonStyle
+            buttonStyle,
+            className
           )}
           type={type}
         >

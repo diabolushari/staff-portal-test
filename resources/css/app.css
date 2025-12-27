@@ -112,6 +112,10 @@
   /* Custom colors */
   --color-dark-gray: #252c32;
   --color-deep-green: #1c6534;
+
+   --color-kseb-primary: var(--kseb-primary);
+   --color-kseb-bg-blue: var(--kseb-bg-blue);
+   --color-kseb-line: var(--kseb-line);
 }
 
 /*
@@ -166,6 +170,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.87 0 0);
+   --kseb-primary: #1A3B64;
+   --kseb-bg-blue:#F3F8FE;
+   --kseb-line:#DCDADA;
 }
 
 .dark {
@@ -201,7 +208,13 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+   --kseb-primary: #1A3B64;
+   --kseb-bg-blue: #F3F8FE;
+   --kseb-line:#DCDADA;
+
 }
+
+
 
 @layer base {
   * {
@@ -226,6 +239,86 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+}
+
+
+.normal-font {
+  font-family: 'Geist', sans-serif;
+  font-size: 14px;
+  line-height: 40px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: #000000;
+}
+
+
+.kseb-h1{
+  font-family: 'Geist', sans-serif;
+  font-size:36px;
+  line-height: 40px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: #000000;
+  
+}
+
+.kseb-paragraph{
+  font-family: 'Geist', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 300;
+  letter-spacing: 0;
+}
+
+.context-menu-title{
+  font-family: 'Geist', sans-serif;
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: 300;
+}
+
+
+.context-menu-subtitle{
+  font-family: 'Geist', sans-serif;
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 400;
+  color: #000000;
+}
+
+.context-menu-item{
+  font-family: 'Geist', sans-serif;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 400;
+  color: #7C7C7C;
+}
+
+.ghost-button-text {
+  font-family: 'Geist', sans-serif;
+  font-size: 14px;
+  font-weight: 400;       
+  line-height: normal;  
+  letter-spacing: 0;
+  color: #000000;
+}
+
+.link-button-text{
+  font-family: 'Geist', sans-serif;
+  font-size: 12px;
+  font-weight: 400;       
+  line-height: normal;  
+  letter-spacing: 0;
+  color: #1A3B64;
+}
+
+.primary-button-text{
+  font-family: 'Inter';
+  font-size: 14px;
+  font-weight: 300;       
+  line-height: normal;  
+  letter-spacing: 0;
+  color: #FFFFFF;
 }
 
 /*

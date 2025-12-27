@@ -8,6 +8,8 @@ import StrongText from '@/typography/StrongText'
 import TariffConfigTable from '@/components/Tariff/TariffConfig/TariffConfigTable'
 import CustomCard from '@/ui/Card/CustomCard'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import { Button } from '@/components/ui/button'
+import { router } from '@inertiajs/react'
 
 export default function TariffOrderShowPage({
   tariff_order,
@@ -40,22 +42,30 @@ export default function TariffOrderShowPage({
       selectedItem='Tariffs'
       breadcrumb={breadcrumb}
       title={tariff_order?.order_descriptor}
+      description={
+        <>
+          Tariff Order details for{'  '}
+          <span className='font-bold'>{tariff_order?.order_descriptor}</span>
+        </>
+      }
     >
       {/* ---- Tariff Order Card ---- */}
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
-        <CustomCard
-          title=' '
-          editButton={{
-            title: 'Edit',
-            url: `/tariff-orders/${tariff_order?.tariff_order_id}/edit`,
-          }}
-        >
-          <div className='mb-6 flex items-center justify-between'>
+        {/* <div className='ml-auto'>
+          <Button
+            variant='link'
+            onClick={() => router.visit(`/tariff-orders/${tariff_order?.tariff_order_id}/edit`)}
+          >
+            EDIT
+          </Button>
+        </div> */}
+        <CustomCard>
+          <div className='flex items-center justify-between'>
             <StrongText className='text-base font-semibold text-[#252c32]'>
               Basic Information
             </StrongText>
           </div>
-
+          <div className='bg-kseb-line h-px w-full' />
           <div className='grid grid-cols-2 gap-2'>
             <div>
               <Field

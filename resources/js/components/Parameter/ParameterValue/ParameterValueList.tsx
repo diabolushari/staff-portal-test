@@ -19,9 +19,6 @@ export default function ParameterValuesList({
 }: Readonly<Props>) {
   return (
     <div className='relative w-full rounded-lg bg-white'>
-      <div className='font-inter text-dark-gray px-7 pt-[21px] pb-3 text-[15px] leading-[23px] font-semibold tracking-[-0.0924px]'>
-        Parameter Values
-      </div>
       <div className='flex flex-col px-7 pb-7'>
         {parameterValues.map((param) => (
           <div

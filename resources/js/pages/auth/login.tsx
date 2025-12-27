@@ -1,7 +1,6 @@
 import { Head, useForm } from '@inertiajs/react'
 import { LoaderCircle } from 'lucide-react'
 import { FormEventHandler } from 'react'
-
 import InputError from '@/components/input-error'
 import TextLink from '@/components/text-link'
 import { Button } from '@/components/ui/button'
@@ -69,7 +68,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
               {canResetPassword && (
                 <TextLink
                   href={route('password.request')}
-                  className='ml-auto text-sm'
+                  className='text-kseb-primary ml-auto text-sm'
                   tabIndex={5}
                 >
                   Forgot password?
@@ -102,7 +101,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
           <Button
             type='submit'
-            className='mt-4 w-full bg-blue-950 text-white hover:bg-blue-800'
+            className='bg-kseb-primary hover:bg-kseb-primary/90 mt-4 w-full cursor-pointer text-white'
             tabIndex={4}
             disabled={processing}
           >
@@ -116,6 +115,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
           <TextLink
             href={route('register')}
             tabIndex={5}
+            className='text-kseb-primary'
           >
             Sign up
           </TextLink>
