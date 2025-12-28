@@ -30,10 +30,12 @@ message ConnectionFlagMessage {
 }
 
 
-message CreateConnectionFlagRequest {
-  int32 connection_id = 1;
-  int32 flag_id = 2;
-  int32 created_by = 3;
+message ConnectionFlagFormRequest {
+  optional int64 id = 1;
+  int32 connection_id = 2;
+  bool value = 3;
+  int32 flag_id = 4;
+  int32 created_by = 5;
 }
 
 message CreateConnectionFlagResponse {
@@ -68,11 +70,11 @@ message ListConnectionFlagsResponse {
 service ConnectionFlagService {
 
   rpc CreateConnectionFlag(
-      CreateConnectionFlagRequest
+      ConnectionFlagFormRequest
   ) returns (CreateConnectionFlagResponse);
 
   rpc UpdateConnectionFlag(
-      UpdateConnectionFlagRequest
+      ConnectionFlagFormRequest
   ) returns (UpdateConnectionFlagResponse);
 
   rpc GetConnectionFlag(
@@ -83,4 +85,3 @@ service ConnectionFlagService {
       ListConnectionFlagsByConnectionRequest
   ) returns (ListConnectionFlagsResponse);
 }
-

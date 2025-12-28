@@ -26,7 +26,10 @@ class ConnectionFormItemService
             10,
             null,
             'Connection',
-            'Indicator'
+            'Indicator',
+            'attribute1Value',
+            'Connection'
+
         );
 
         $connectionStatus = $this->parameterValueService->getParameterValues(

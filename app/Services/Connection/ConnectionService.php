@@ -2,6 +2,8 @@
 
 namespace App\Services\Connection;
 
+use App\GrpcConverters\Connection\ConnectionFlagProtoConverter;
+use App\GrpcConverters\Connection\ConnectionGenerationProtoConverter;
 use App\GrpcConverters\Connection\ConnectionProtoConverter;
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
 use App\Services\Grpc\GrpcErrorService;
@@ -135,9 +137,6 @@ class ConnectionService
         if ($request->remarks) {
             $grpcRequest->setRemarks($request->remarks);
         }
-        $grpcRequest->setPowerIntensive($request->powerIntensive);
-        $grpcRequest->setExcessDemand($request->excessDemand);
-        $grpcRequest->setNoOfMainMeters($request->noOfMainMeters);
         $connectionAttribs = new Struct;
         $connectionAttribs->setFields($request->connectionAttribs ?? []);
         $grpcRequest->setConnectionAttribs($connectionAttribs);
@@ -153,6 +152,57 @@ class ConnectionService
         $grpcRequest->setLightLoadKwVal($request->lightLoadKwVal);
         $grpcRequest->setOtherconsFlag($request->otherconsFlag);
         $grpcRequest->setRemarks($request->remarks ?? '');
+
+
+
+        if (!empty($request->indicators)) {
+            foreach ($request->indicators as $group) {
+
+                if (empty($group['flags'])) {
+                    continue;
+                }
+
+                foreach ($group['flags'] as $flag) {
+
+
+                    if (!($flag['value'] ?? false)) {
+                        continue;
+                    }
+
+                    if ($group['group_name'] === 'Renewable') {
+
+                        $generationPayload = [
+                            'connection_id' => $request->connectionId ?? 0,
+                            'generation_type_id' => $flag['id'],
+                            'generation_sub_type_id' => $flag['sub_id'] ??  null,
+                            'value' => $flag['value'] ??  null,
+                            'label' => $flag['label'] ??  null,
+                        ];
+
+                        $grpcRequest->getConnectionGenerationTypes()[] =
+                            ConnectionGenerationProtoConverter::convertToFormRequest(
+                                $generationPayload
+                            );
+
+                        continue;
+                    }
+
+                    /**
+                     * 🔥 OTHER GROUPS → FLAGS
+                     */
+                    $flagPayload = [
+                        'connection_id' => $request->connectionId ?? 0,
+                        'flag_id' => $flag['id'],
+                        'value' => $flag['value'] ??  null,
+                        'label' => $flag['label'] ??  null,
+                    ];
+
+                    $grpcRequest->getConnectionFlags()[] =
+                        ConnectionFlagProtoConverter::convertToFormRequest($flagPayload);
+                }
+            }
+        }
+
 
 
         [$response, $status] = $this->client->CreateConnection($grpcRequest)->wait();

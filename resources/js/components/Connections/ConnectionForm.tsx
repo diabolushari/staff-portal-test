@@ -60,7 +60,7 @@ export default function ConnectionForm({
   const [subCategories, setSubCategories] = useState<ParameterValues[]>([])
   const [category, setCategory] = useState<string>('')
 
-  const { flagData, updateFlagData } = useConnectionFlagForm(indicators)
+  const { flagData, updateFlagData, updateSubId } = useConnectionFlagForm(indicators)
 
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     connection_type_id: connection?.connection_type_id ?? '',
@@ -109,6 +109,7 @@ export default function ConnectionForm({
     e.preventDefault()
     const payload = { ...formData, indicators: flagData }
     console.log(payload)
+    post(payload)
   }
 
   const [adminOfficeApiData] = useFetchRecord<OfficeWithHierarchy>(
@@ -365,6 +366,7 @@ export default function ConnectionForm({
       <ConnectionFlagForm
         flagData={flagData}
         updateFlagData={updateFlagData}
+        updateSubId={updateSubId}
       />
 
       {/* Submit */}

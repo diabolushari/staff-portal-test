@@ -34,6 +34,7 @@ class CreateConnectionFormRequest extends Data
         public bool $powerIntensive,
         public bool $excessDemand,
         public int $noOfMainMeters,
+        public array $indicators,
 
     ) {}
 }

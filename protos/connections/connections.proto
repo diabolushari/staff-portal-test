@@ -8,13 +8,15 @@ option php_metadata_namespace = "GPBMetadata";
 
 // Imports
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
+import "google/protobuf/empty.proto";
 import "parameters/parameter-value.proto";
 import "consumers/office.proto";
-import "metering/meter_connection_mapping.proto";
 import "connections/consumer.proto";
+import "metering/meter_connection_mapping.proto";
 import "meterreading/meter_reading.proto";
+import "connections/connection-flag.proto";
+import "connections/connection-generation-type.proto";
 
 // Connection table
 message ConnectionMessage {
@@ -70,6 +72,8 @@ message ConnectionMessage {
   optional com.kseb.consumerservice.grpc.consumers.OfficeMessage service_office = 50;
   repeated com.kseb.consumerservice.grpc.connections.ConsumerMessage consumer_profile = 51;
   optional com.kseb.consumerservice.proto.meterreading.MeterReadingMessage latest_meter_reading = 52;
+  repeated com.kseb.consumerservice.grpc.connections.ConnectionFlagMessage connection_flags = 53;
+  repeated com.kseb.consumerservice.grpc.connections.ConnectionGenerationTypeMessage connection_generation_types = 54;
 }
 
 
@@ -101,9 +105,8 @@ message CreateConnectionRequest {
   bool othercons_flag = 25;
   string application_no = 26;
   optional string remarks = 27;
-  bool power_intensive = 28;
-  bool excess_demand = 29;
-  int32 no_of_main_meters = 30;
+  repeated com.kseb.consumerservice.grpc.connections.ConnectionFlagFormRequest connection_flags = 28;
+  repeated com.kseb.consumerservice.grpc.connections.ConnectionGenerationFormRequest connection_generation_types = 29;
 }
 
 message GetConnectionRequest{

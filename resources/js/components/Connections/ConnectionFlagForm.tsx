@@ -2,13 +2,15 @@ import FormCard from '@/ui/Card/FormCard'
 import { GroupedFlags } from './useConnectionFlagForm'
 import StrongText from '@/typography/StrongText'
 import CheckBox from '@/ui/form/CheckBox'
+import SelectList from '@/ui/form/SelectList'
 
 interface Props {
-  updateFlagData: (id: number, value: boolean) => void
+  updateFlagData: (id: number, value: boolean, label: string) => void
+  updateSubId: (id: number, subId: number) => void
   flagData: GroupedFlags[]
 }
 
-export default function ConnectionFlagForm({ updateFlagData, flagData }: Props) {
+export default function ConnectionFlagForm({ updateFlagData, updateSubId, flagData }: Props) {
   return (
     <FormCard title='Indicators'>
       <div className='col-span-2 gap-6'>
@@ -32,8 +34,21 @@ export default function ConnectionFlagForm({ updateFlagData, flagData }: Props) 
                   <CheckBox
                     label={indicator.label}
                     value={indicator.value}
-                    toggleValue={() => updateFlagData(indicator.id, !indicator.value)}
+                    toggleValue={() =>
+                      updateFlagData(indicator.id, !indicator.value, indicator.label)
+                    }
                   />
+                  {indicator.sub_categories?.length > 0 && (
+                    <div className='mt-2'>
+                      <SelectList
+                        list={indicator.sub_categories}
+                        value={indicator.sub_id ?? ''}
+                        setValue={(value) => updateSubId(indicator.id, Number(value))}
+                        dataKey='id'
+                        displayKey='parameter_value'
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

@@ -6,7 +6,7 @@ import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import StrongText from '@/typography/StrongText'
 import { router } from '@inertiajs/react'
 import { PencilIcon } from 'lucide-react'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 interface Props {
   connection: Connection
@@ -16,6 +16,7 @@ interface Props {
 export default function ConnectionsShow({ connection, consumerExist }: Readonly<Props>) {
   const formatDate = (dateStr?: string | null) =>
     dateStr ? new Date(dateStr).toLocaleDateString() : '-'
+  const [editIndicator, setEditIndicator] = useState(false)
 
   const breadcrumbs = useMemo(
     () => [
@@ -33,6 +34,10 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
     ],
     [connection]
   )
+
+  const handleIndicator = () => {
+    setEditIndicator(!editIndicator)
+  }
 
   return (
     <ConnectionsLayout
@@ -221,6 +226,37 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                 label='Multi Source Indicator'
                 value={connection?.multi_source_indicator ? 'Yes' : 'No'}
               />
+            </div>
+          </Card>
+          <Card className='rounded-lg p-7'>
+            <div className='mb-6 flex items-center justify-between'>
+              <StrongText className='text-base font-semibold text-[#252c32]'>Indicators</StrongText>
+              <button
+                onClick={() => handleIndicator()}
+                className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] hover:bg-gray-50'
+              >
+                <PencilIcon className='h-4 w-4' />
+                Edit
+              </button>
+            </div>
+            <hr className='mb-6 border-[#e5e9eb]' />
+            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+              {connection?.connection_generation_types?.map((generationType) => (
+                <Field
+                  key={generationType?.id}
+                  label={generationType?.generation_type?.parameter_value ?? '-'}
+                  value='Selected'
+                />
+              ))}
+              {connection?.connection_flags &&
+                connection?.connection_flags?.length > 0 &&
+                connection?.connection_flags?.map((flag) => (
+                  <Field
+                    key={flag?.id}
+                    label={flag?.flag?.parameter_value ?? '-'}
+                    value='Selected'
+                  />
+                ))}
             </div>
           </Card>
 

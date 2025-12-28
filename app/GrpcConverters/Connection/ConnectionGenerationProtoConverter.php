@@ -3,6 +3,8 @@
 namespace App\GrpcConverters\Connection;
 
 use App\GrpcConverters\ParameterValueProtoConvertor;
+use Illuminate\Support\Facades\Auth;
+use Proto\Connections\ConnectionGenerationFormRequest;
 use Proto\Connections\ConnectionGenerationTypeMessage;
 
 class ConnectionGenerationProtoConverter
@@ -20,6 +22,9 @@ class ConnectionGenerationProtoConverter
             'id' => $generationType->getId(),
             'connection_id' => $generationType->getConnectionId(),
             'generation_type_id' => $generationType->getGenerationTypeId(),
+            'generation_sub_type_id' => $generationType->getGenerationSubTypeId(),
+            'generation_type' => ParameterValueProtoConvertor::convertToArray($generationType->getGenerationType()),
+            'generation_sub_type' => ParameterValueProtoConvertor::convertToArray($generationType->getGenerationSubType()),
             'effective_start' => $generationType->getEffectiveStart()
                 ? $generationType->getEffectiveStart()->toDateTime()->format('Y-m-d')
                 : null,
@@ -27,12 +32,6 @@ class ConnectionGenerationProtoConverter
                 ? $generationType->getEffectiveEnd()->toDateTime()->format('Y-m-d')
                 : null,
             'is_current' => $generationType->getIsCurrent(),
-            'created_at' => $generationType->getCreatedAt()
-                ? $generationType->getCreatedAt()->toDateTime()->format('Y-m-d H:i:s')
-                : null,
-            'updated_at' => $generationType->getUpdatedAt()
-                ? $generationType->getUpdatedAt()->toDateTime()->format('Y-m-d H:i:s')
-                : null,
             'created_by' => $generationType->getCreatedBy() ?: null,
             'updated_by' => $generationType->getUpdatedBy() ?: null,
 
@@ -41,5 +40,24 @@ class ConnectionGenerationProtoConverter
                 $generationType->getGenerationType()
             ),
         ];
+    }
+
+    public static function convertToFormRequest(array $generationType): ConnectionGenerationFormRequest
+    {
+        $formRequest = new ConnectionGenerationFormRequest();
+        if (isset($generationType['id'])) {
+            $formRequest->setId($generationType['id']);
+        }
+        $formRequest->setValue($generationType['value']);
+        $formRequest->setConnectionId($generationType['connection_id']);
+        $formRequest->setGenerationTypeId($generationType['generation_type_id']);
+        if (isset($generationType['generation_sub_type_id'])) {
+            $formRequest->setGenerationSubTypeId($generationType['generation_sub_type_id']);
+        }
+        $user = Auth::user();
+        if ($user) {
+            $formRequest->setCreatedBy($user->id);
+        }
+        return $formRequest;
     }
 }

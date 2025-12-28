@@ -144,6 +144,18 @@ class ConnectionProtoConverter
             $consumerProfileArray = $converter->transformConsumerToArray($consumerProfile);
             $consumerProfilesArray[] = $consumerProfileArray;
         }
+        $connectionFlags = $connection->getConnectionFlags();
+        $connectionFlagsArrays = [];
+        foreach ($connectionFlags as $connectionFlag) {
+            $connectionFlagArray = ConnectionFlagProtoConverter::convertToArray($connectionFlag);
+            $connectionFlagsArrays[] = $connectionFlagArray;
+        }
+        $connectionGeneration = $connection->getConnectionGenerationTypes();
+        $connectionGenerationArrays = [];
+        foreach ($connectionGeneration as $connectionGeneration) {
+            $connectionGenerationArray = ConnectionGenerationProtoConverter::convertToArray($connectionGeneration);
+            $connectionGenerationArrays[] = $connectionGenerationArray;
+        }
         $meterreadingConverter = app(MeterReadingService::class);
         $latestMeterReading = $connection->getLatestMeterReading();
         $latestMeterReadingArray = null;
@@ -205,6 +217,8 @@ class ConnectionProtoConverter
             'effective_end' => $connection->getEffectiveEnd() ? $connection->getEffectiveEnd()->toDateTime()->format('Y-m-d') : null,
             'consumer_profiles' => $consumerProfilesArray,
             'latest_meter_reading' => $latestMeterReadingArray,
+            'connection_flags' => $connectionFlagsArrays,
+            'connection_generation_types' => $connectionGenerationArrays,
         ];
     }
 }

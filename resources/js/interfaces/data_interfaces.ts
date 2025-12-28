@@ -105,6 +105,36 @@ export interface ConnectionPartyMapping {
   party: Party
 }
 
+export interface ConnectionFlag {
+  connection_id: number
+created_by: number
+effective_end: string
+effective_start: string
+flag_id: number
+id: number
+is_current: boolean
+updated_by: number
+updated_ts: string
+flag: ParameterValues | null
+}
+
+export interface ConnectionGenerationType {
+  
+connection_id: number
+created_by: number
+effective_end: string
+effective_start: string
+generation_type_id: number
+generation_type: ParameterValues | null
+id: number
+is_current: boolean
+updated_by: number
+updated_ts: string
+generation_sub_type: ParameterValues | null
+generation_sub_type_id: number
+
+}
+
 export interface Connection {
   version_id: number
   connection_id: number
@@ -169,6 +199,8 @@ export interface Connection {
   meter_mappings: MeterConnectionMapping[]
 consumer_profiles?:Consumer[]
 latest_meter_reading?: MeterReading
+connection_flags?:ConnectionFlag[]
+connection_generation_types?:ConnectionGenerationType[]
 }
 
 export interface OfficeHierarchy {
