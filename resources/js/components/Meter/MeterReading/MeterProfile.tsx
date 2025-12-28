@@ -93,7 +93,7 @@ export default function MeterProfile({
         ))}
       </div>
 
-      {meterWithTimezoneAndProfile.meter_profiles.map((profile: any, pIdx: number) => (
+      {meterWithTimezoneAndProfile.reading_parameters.map((profile: any, pIdx: number) => (
         <MeterProfileList
           key={pIdx}
           profile={profile}

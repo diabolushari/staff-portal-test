@@ -154,6 +154,166 @@ This project includes Laravel Boost with specific tools:
 ===
 
 <laravel-boost-guidelines>
+=== .ai/backend-guidelines rules ===
+
+<h2>Project Structure & Architecture</h2>
+<ul>
+    <li>Group backend classes by feature inside default Laravel folders (Controllers, Models, Services, Requests,
+        Policies, etc.).</li>
+    <li>Use final classes for controllers, services, actions, requests, models to prevent unintended inheritance.</li>
+    <li>Prefer read-only promoted constructor properties for dependencies; avoid public mutable state.</li>
+    <li>No business logic inside controllers; delegate to small single-purpose service/action classes.</li>
+    <li>Keep classes focused: max ~300 lines; methods &lt;= 80 lines (strive for much smaller).</li>
+</ul>
+
+<h2>Naming & Conventions</h2>
+<ul>
+    <li>PascalCase class names; singular nouns (e.g. <code>ProjectInstance</code>, <code>ReferenceDataParameter</code>).
+    </li>
+    <li>Method names in camelCase starting with a verb (e.g. <code>storeRecord</code>, <code>verifySecondValue</code>).
+    </li>
+    <li>Boolean method prefixes: is / has / can / should (e.g. <code>isAuthorized</code>, <code>hasSecondValue</code>).
+    </li>
+    <li>Constants in UPPER_SNAKE_CASE.</li>
+    <li>Use imported class names instead of fully-qualified inline references.</li>
+</ul>
+
+<h2>Class Design & Dependencies</h2>
+<ul>
+    <li>Inject dependencies via constructor (property promotion) — never instantiate heavy collaborators inline.</li>
+    <li>Prefer interfaces for abstractions that may change (e.g. external gateways, complex domain services).</li>
+    <li>Keep service classes single-action; compose multiple services for orchestration.</li>
+    <li>Use value objects or enums for constrained primitives instead of raw strings/ints.</li>
+</ul>
+
+<h2>Type Safety & Data Handling</h2>
+<ul>
+    <li>Explicitly type every parameter & return; if impossible, document using PHPDoc with precise shapes.</li>
+    <li>Document array shapes with PHPDoc; extract DTOs (Spatie Data) for multi-dimensional structures.</li>
+    <li>Prefer DTOs over associative arrays for request/response boundaries.</li>
+    <li>Use enums for fixed sets; value objects (e.g. Money, Email) for domain invariants.</li>
+</ul>
+
+<h2>Validation & Authorization</h2>
+<ul>
+    <li>Never consume request input before validation.</li>
+    <li>Use Spatie Data attribute validation for structured form/data requests; Form Requests only for simple or legacy
+        cases.</li>
+    <li>Centralize authorization via policies / Gate::allows inside Data::authorize when following project pattern.</li>
+    <li>Prefer <code>Gate::authorize()</code> or policy helpers over manual conditionals.</li>
+</ul>
+
+<h2>Error Handling</h2>
+<ul>
+    <li>Wrap persistence mutations in try/catch; convert user-facing validation branches into ErrorResponse objects.
+    </li>
+    <li>Surface unexpected exceptions through <code>ExceptionMessage::getMessage()</code> for production safety.</li>
+</ul>
+
+<h2>Database & Performance</h2>
+<ul>
+    <li>Use Eloquent ORM and relationships; avoid raw queries unless justified for performance.</li>
+    <li>Prevent N+1 via eager loading (select only required columns).</li>
+    <li>Chunk large data operations; queue long-running tasks instead of blocking HTTP cycle.</li>
+    <li>Add indexes for frequently filtered columns; analyze slow queries before optimizing code paths.</li>
+    <li>Use caching strategically for read-heavy, slow-to-compute aggregates.</li>
+</ul>
+
+<h2>Security</h2>
+<ul>
+    <li>Route groups must enforce authentication for any state-changing endpoint.</li>
+    <li>Avoid using <code>env()</code> outside config files; read via <code>config()</code>.</li>
+    <li>Validate file uploads and use centralized FileSaver abstraction.</li>
+</ul>
+
+<h2>Middleware & Cross-Cutting Concerns</h2>
+<ul>
+    <li>Implement custom middleware for recurring concerns (feature flags, subscription state) rather than scattering
+        checks.</li>
+    <li>Keep middleware lean—delegate heavy logic to services.</li>
+</ul>
+
+
+<h2>Documentation & Maintainability</h2>
+<ul>
+    <li>Prefer self-expressive naming over inline comments; reserve comments for clarifying domain rules.</li>
+</ul>
+
+
+=== .ai/frontend-guidelines rules ===
+
+<h2>Structure & Organization</h2>
+<ul>
+    <li>Organize code by feature inside domain folders (Components, Hooks, Pages, Layout, Libs, DataStructures, ui for
+        shadcn).</li>
+    <li>Keep reusable cross-feature components in a shared directory; avoid duplication.</li>
+    <li>All shadcn components live under <code>ui</code> retaining original filenames.</li>
+    <li>Use kebab-case (preferred) or camelCase for file & folder names; components/pages keep PascalCase exports.</li>
+</ul>
+
+<h2>Component Design</h2>
+<ul>
+    <li>Single responsibility per component; extract reusable UI fragments promptly.</li>
+    <li>Do not nest component declarations inside other components; declare at module top scope.</li>
+    <li>Avoid ternary or switch for conditional rendering; use logical <code>&amp;&amp;</code> blocks or separate
+        functions/components.</li>
+    <li>Props must be readonly (TypeScript <code>readonly</code> or inferred immutability).</li>
+    <li>Co-locate feature interfaces/types in a single <code>types.ts</code> (or similar) file per feature.</li>
+</ul>
+
+<h2>Hooks & State</h2>
+<ul>
+    <li>Encapsulate data fetching / complex state in custom hooks instead of inline useEffect logic in components.</li>
+    <li>Custom hook names start with <code>use</code> and describe purpose (e.g. <code>useProjectMetrics</code>).</li>
+    <li>Call hooks only at top level of components or other hooks (never in conditions/loops).</li>
+    <li>Don't pass hook functions themselves as props—expose derived callbacks/state values instead.</li>
+    <li>Use Inertia's <code>usePage</code> to access page props.</li>
+</ul>
+
+<h2>Performance</h2>
+<ul>
+    <li>Memoize expensive calculations with <code>useMemo</code>; stable callback props via <code>useCallback</code>.
+    </li>
+    <li>Always supply dependency arrays; never omit them.</li>
+    <li>Wrap pure presentational components with <code>React.memo</code> when prop churn risks re-render cost.</li>
+    <li>Reserve <code>useLayoutEffect</code> only for pre-paint DOM measurements.</li>
+</ul>
+
+<h2>Data & Logic</h2>
+<ul>
+    <li>Use nullish coalescing <code>??</code> instead of logical OR for defaulting.</li>
+    <li>Favor custom hooks over ad-hoc effects for side-effects & fetching.</li>
+    <li>Use <code>useSyncExternalStore</code> for subscription-based external sources.</li>
+    <li>All JSON fields use snake_case; map to camelCase in TypeScript layer if desired (centralize mapping).</li>
+</ul>
+
+<h2>Routing</h2>
+<ul>
+    <li>Use global <code>route()</code> helper (Ziggy) without importing from ziggy-js.</li>
+</ul>
+
+<h2>Styling</h2>
+<ul>
+    <li>Prefer Tailwind <code>gap-*</code> utilities over space-* where layout allows.</li>
+</ul>
+
+<h2>Naming</h2>
+<ul>
+    <li>Components & enums in PascalCase (enum members UPPER_SNAKE_CASE).</li>
+    <li>Variables, functions, and props in camelCase; boolean prefixed with is/has/can/should.</li>
+    <li>Event handlers prefixed with handle / on (e.g. <code>handleSubmit</code>).</li>
+    <li>Context provider files use <code>-context</code> suffix.</li>
+    <li>Use single-letter generic type params (T, U, V...).</li>
+</ul>
+
+<h2>TypeScript</h2>
+<ul>
+    <li>All component props must be typed via interfaces or type aliases.</li>
+    <li>Define hook return types explicitly when not inferred clearly.</li>
+    <li>Use enums for discrete sets; discriminated unions for variant states.</li>
+</ul>
+
+
 === foundation rules ===
 
 # Laravel Boost Guidelines
@@ -163,18 +323,22 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 ## Foundational Context
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.4.11
+- php - 8.4.16
 - inertiajs/inertia-laravel (INERTIA) - v2
 - laravel/framework (LARAVEL) - v12
 - laravel/prompts (PROMPTS) - v0
 - tightenco/ziggy (ZIGGY) - v2
 - larastan/larastan (LARASTAN) - v3
+- laravel/mcp (MCP) - v0
 - laravel/pint (PINT) - v1
+- laravel/sail (SAIL) - v1
 - pestphp/pest (PEST) - v3
+- phpunit/phpunit (PHPUNIT) - v11
 - @inertiajs/react (INERTIA) - v2
 - react (REACT) - v19
 - tailwindcss (TAILWINDCSS) - v4
-
+- eslint (ESLINT) - v9
+- prettier (PRETTIER) - v3
 
 ## Conventions
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, naming.
@@ -267,12 +431,21 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Typically, keys in an Enum should be TitleCase. For example: `FavoritePerson`, `BestLake`, `Monthly`.
 
 
+=== tests rules ===
+
+## Test Enforcement
+
+- Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
+- Run the minimum number of tests needed to ensure code quality and speed. Use `php artisan test` with a specific filename or filter.
+
+
 === inertia-laravel/core rules ===
 
 ## Inertia Core
 
 - Inertia.js components should be placed in the `resources/js/Pages` directory unless specified differently in the JS bundler (vite.config.js).
 - Use `Inertia::render()` for server-side routing instead of traditional Blade views.
+- Use `search-docs` for accurate guidance on all things Inertia.
 
 <code-snippet lang="php" name="Inertia::render Example">
 // routes/web.php example
@@ -300,13 +473,16 @@ Route::get('/users', function () {
 ### Deferred Props & Empty States
 - When using deferred props on the frontend, you should add a nice empty state with pulsing / animated skeleton.
 
+### Inertia Form General Guidance
+- Build forms using the `useForm` helper. Use the code examples and `search-docs` tool with a query of `useForm helper` for guidance.
+
 
 === laravel/core rules ===
 
 ## Do Things the Laravel Way
 
 - Use `php artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list available Artisan commands using the `list-artisan-commands` tool.
-- If you're creating a generic PHP class, use `artisan make:class`.
+- If you're creating a generic PHP class, use `php artisan make:class`.
 - Pass `--no-interaction` to all Artisan commands to ensure they work without user input. You should also pass the correct `--options` to ensure correct behavior.
 
 ### Database
@@ -341,7 +517,7 @@ Route::get('/users', function () {
 ### Testing
 - When creating models for tests, use the factories for the models. Check if the factory has custom states that can be used before manually setting up the model.
 - Faker: Use methods such as `$this->faker->word()` or `fake()->randomDigit()`. Follow existing conventions whether to use `$this->faker` or `fake()`.
-- When creating tests, make use of `php artisan make:test [options] <name>` to create a feature test, and pass `--unit` to create a unit test. Most tests should be feature tests.
+- When creating tests, make use of `php artisan make:test [options] {name}` to create a feature test, and pass `--unit` to create a unit test. Most tests should be feature tests.
 
 ### Vite Error
 - If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
@@ -380,12 +556,11 @@ Route::get('/users', function () {
 === pest/core rules ===
 
 ## Pest
-
 ### Testing
 - If you need to verify a feature is working, write or update a Unit / Feature test.
 
 ### Pest Tests
-- All tests must be written using Pest. Use `php artisan make:test --pest <name>`.
+- All tests must be written using Pest. Use `php artisan make:test --pest {name}`.
 - You must not remove any tests or test files from the tests directory without approval. These are not temporary or helper files - these are core to the application.
 - Tests should test all of the happy paths, failure paths, and weird paths.
 - Tests live in the `tests/Feature` and `tests/Unit` directories.
@@ -437,53 +612,44 @@ it('has emails', function (string $email) {
 
 - Use `router.visit()` or `<Link>` for navigation instead of traditional links.
 
-<code-snippet lang="react" name="Inertia Client Navigation">
-    import { Link } from '@inertiajs/react'
+<code-snippet name="Inertia Client Navigation" lang="react">
 
-    <Link href="/">Home</Link>
+import { Link } from '@inertiajs/react'
+<Link href="/">Home</Link>
+
 </code-snippet>
 
-- For form handling, use `router.post` and related methods. Do not use regular forms.
 
-<code-snippet lang="react" name="Inertia React Form Example">
-import { useState } from 'react'
-import { router } from '@inertiajs/react'
+=== inertia-react/v2/forms rules ===
 
-export default function Edit() {
-    const [values, setValues] = useState({
-        first_name: "",
-        last_name: "",
-        email: "",
-    })
+## Inertia + React Forms
 
-    function handleChange(e) {
-        const key = e.target.id;
-        const value = e.target.value
+<code-snippet name="Inertia React useForm Example" lang="react">
 
-        setValues(values => ({
-            ...values,
-            [key]: value,
-        }))
-    }
+import { useForm } from '@inertiajs/react'
 
-    function handleSubmit(e) {
-        e.preventDefault()
+const { data, setData, post, processing, errors } = useForm({
+    email: '',
+    password: '',
+    remember: false,
+})
 
-        router.post('/users', values)
-    }
-
-    return (
-    <form onSubmit={handleSubmit}>
-        <label htmlFor="first_name">First name:</label>
-        <input id="first_name" value={values.first_name} onChange={handleChange} />
-        <label htmlFor="last_name">Last name:</label>
-        <input id="last_name" value={values.last_name} onChange={handleChange} />
-        <label htmlFor="email">Email:</label>
-        <input id="email" value={values.email} onChange={handleChange} />
-        <button type="submit">Submit</button>
-    </form>
-    )
+function submit(e) {
+    e.preventDefault()
+    post('/login')
 }
+
+return (
+<form onSubmit={submit}>
+    <input type="text" value={data.email} onChange={e => setData('email', e.target.value)} />
+    {errors.email && <div>{errors.email}</div>}
+    <input type="password" value={data.password} onChange={e => setData('password', e.target.value)} />
+    {errors.password && <div>{errors.password}</div>}
+    <input type="checkbox" checked={data.remember} onChange={e => setData('remember', e.target.checked)} /> Remember Me
+    <button type="submit" disabled={processing}>Login</button>
+</form>
+)
+
 </code-snippet>
 
 
@@ -518,9 +684,16 @@ export default function Edit() {
 
 - Always use Tailwind CSS v4 - do not use the deprecated utilities.
 - `corePlugins` is not supported in Tailwind v4.
+- In Tailwind v4, configuration is CSS-first using the `@theme` directive — no separate `tailwind.config.js` file is needed.
+<code-snippet name="Extending Theme in CSS" lang="css">
+@theme {
+  --color-brand: oklch(0.72 0.11 178);
+}
+</code-snippet>
+
 - In Tailwind v4, you import Tailwind using a regular CSS `@import` statement, not using the `@tailwind` directives used in v3:
 
-<code-snippet name="Tailwind v4 Import Tailwind Diff" lang="diff"
+<code-snippet name="Tailwind v4 Import Tailwind Diff" lang="diff">
    - @tailwind base;
    - @tailwind components;
    - @tailwind utilities;
@@ -545,12 +718,4 @@ export default function Edit() {
 | overflow-ellipsis | text-ellipsis |
 | decoration-slice | box-decoration-slice |
 | decoration-clone | box-decoration-clone |
-
-
-=== tests rules ===
-
-## Test Enforcement
-
-- Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
-- Run the minimum number of tests needed to ensure code quality and speed. Use `php artisan test` with a specific filename or filter.
 </laravel-boost-guidelines>

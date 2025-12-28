@@ -10,53 +10,55 @@ import { Meter, MeterProfileParameter } from '@/interfaces/data_interfaces'
 import Input from '@/ui/form/Input'
 import React from 'react'
 import { TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
+import ErrorText from '@/typography/ErrorText'
 
 interface Props {
-  values: TimezoneReadingState[]
+  parameterReadingValues: TimezoneReadingState[]
   onChange: (tzId: number, value: string) => void
   meter: Meter
   profileParameter: MeterProfileParameter
-  onToggleRotation: (tzId: number, checked: boolean) => void
+  onToggleRotation: (tzId: number) => void
+  errors: Record<string, string | undefined>
+  maxReadingValue: number
 }
 
 export default function MeterReadingValueForm({
-  values,
+  parameterReadingValues,
   onChange,
   meter,
   profileParameter,
   onToggleRotation,
+  maxReadingValue,
+  errors,
 }: Readonly<Props>) {
-  const integerDigits = meter.digit_count ?? 0
-  const decimalDigits = meter.decimal_digit_count ?? 0
-
-  const maxValue =
-    Number('9'.repeat(integerDigits)) +
-    (decimalDigits > 0 ? Number(`0.${'9'.repeat(decimalDigits)}`) : 0)
-
-  const stepValue = decimalDigits > 0 ? Number(`0.${'0'.repeat(decimalDigits - 1)}1`) : 1
-
   return (
     <div className='rounded border bg-white p-4'>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead></TableHead>
-            {values?.map((tz) => <TableHead key={tz.timezone_id}>{tz.timezone_name}</TableHead>)}
+            {parameterReadingValues?.map((tz) => (
+              <TableHead key={tz.timezone_id}>{tz.timezone_name}</TableHead>
+            ))}
           </TableRow>
         </TableHeader>
         <TableBody>
           {profileParameter.is_cumulative && (
             <TableRow>
               <TableCell className='font-medium'>Initial</TableCell>
-              {values?.map((tz) => (
+              {parameterReadingValues?.map((tz) => (
                 <React.Fragment key={tz.timezone_id}>
                   <TableCell>
                     <Input
                       type='number'
                       value={tz.values.initial}
                       setValue={() => {}}
+                      max={maxReadingValue}
                       disabled
                     />
+                    {errors?.[`${tz.timezone_id}.initial`] && (
+                      <ErrorText>{errors[`${tz.timezone_id}.initial`]}</ErrorText>
+                    )}
                   </TableCell>
                 </React.Fragment>
               ))}
@@ -64,12 +66,12 @@ export default function MeterReadingValueForm({
           )}
           <TableRow>
             <TableCell className='font-medium'>Rotation</TableCell>
-            {values.map((tz) => (
+            {parameterReadingValues.map((tz) => (
               <TableCell key={tz.timezone_id}>
                 <input
                   type='checkbox'
                   checked={tz.isRotation}
-                  onChange={(e) => onToggleRotation(tz.timezone_id, e.target.checked)}
+                  onChange={() => onToggleRotation(tz.timezone_id)}
                 />
               </TableCell>
             ))}
@@ -79,15 +81,18 @@ export default function MeterReadingValueForm({
             <TableCell className='font-medium'>
               {profileParameter.is_cumulative ? 'Final' : 'Reading'}
             </TableCell>
-            {values?.map((tz) => (
+            {parameterReadingValues?.map((tz) => (
               <React.Fragment key={tz.timezone_id}>
                 <TableCell>
                   <Input
                     type='number'
                     value={tz.values.final}
                     setValue={(val) => onChange(tz.timezone_id, val)}
-                    max={maxValue}
+                    max={maxReadingValue}
                   />
+                  {errors?.[`${tz.timezone_id}.final`] && (
+                    <ErrorText>{errors[`${tz.timezone_id}.final`]}</ErrorText>
+                  )}
                 </TableCell>
               </React.Fragment>
             ))}
@@ -95,7 +100,7 @@ export default function MeterReadingValueForm({
           {profileParameter.is_cumulative && (
             <TableRow>
               <TableCell className='font-medium'>Diff</TableCell>
-              {values?.map((tz) => (
+              {parameterReadingValues?.map((tz) => (
                 <React.Fragment key={tz.timezone_id}>
                   <TableCell>
                     <Input
@@ -104,6 +109,9 @@ export default function MeterReadingValueForm({
                       setValue={() => {}}
                       disabled
                     />
+                    {errors?.[`${tz.timezone_id}.diff`] && (
+                      <ErrorText>{errors[`${tz.timezone_id}.diff`]}</ErrorText>
+                    )}
                   </TableCell>
                 </React.Fragment>
               ))}
@@ -113,7 +121,7 @@ export default function MeterReadingValueForm({
             <TableCell className='font-medium'>
               {profileParameter.is_export ? 'Export' : 'Import'} (MF: {meter.meter_mf})
             </TableCell>
-            {values?.map((tz) => (
+            {parameterReadingValues?.map((tz) => (
               <React.Fragment key={tz.timezone_id}>
                 <TableCell>
                   <Input

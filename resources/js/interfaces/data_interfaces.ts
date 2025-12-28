@@ -197,8 +197,9 @@ export interface Connection {
   service_office: Office | null
   meter_count?: number
   meter_mappings: MeterConnectionMapping[]
-consumer_profiles?:Consumer[]
-latest_meter_reading?: MeterReading
+  consumer_profiles?: Consumer[]
+  latest_meter_reading?: MeterReading
+
 connection_flags?:ConnectionFlag[]
 connection_generation_types?:ConnectionGenerationType[]
 }
@@ -513,9 +514,9 @@ export interface MeterProfileParameter {
   is_export: boolean
   is_cumulative: boolean
 }
-export interface MeterProfileGroupByProfile{
-  profile: ParameterValues | null;
-  parameters: MeterProfileParameter[];
+export interface MeterProfileGroupByProfile {
+  profile: ParameterValues | null
+  parameters: MeterProfileParameter[]
 }
 
 export interface MeterReadingPowerFactor {
@@ -604,7 +605,7 @@ export interface MeterWithTimezoneAndProfile {
     timezone_id: number
     timezone_name: string
   }[]
-  meter_profiles: MeterProfileParameter[]
+  reading_parameters: MeterProfileParameter[]
 }
 
 export interface BillingGroup {
@@ -678,15 +679,14 @@ export interface RegionOption {
   [key: string]: unknown
 }
 
-
-export interface MeterProfileParameter{
-  display_name:string
-  id:number
-  is_active:boolean
-  is_cumulative:boolean
-  is_export:boolean
-  meter_parameter_id:number
-  name:string
-  profile:ParameterValue|null
-  profile_id:number
+export interface MeterProfileParameter {
+  display_name: string
+  id: number
+  is_active: boolean
+  is_cumulative: boolean
+  is_export: boolean
+  meter_parameter_id: number
+  name: string
+  profile: ParameterValue | null
+  profile_id: number
 }
