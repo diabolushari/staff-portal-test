@@ -171,7 +171,7 @@ export const meteringBillingNavItems: MainNav = {
   items: [
     {
       title: 'Timezone Groups',
-      href: '/metering-timezone',
+      href: '/timezone-groups',
       icon: '',
     },
     {

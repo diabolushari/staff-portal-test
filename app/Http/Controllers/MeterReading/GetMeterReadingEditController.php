@@ -100,7 +100,7 @@ class GetMeterReadingEditController extends Controller
                         $meterProfiles[] = $meterProfile;
                     }
                 }
-                $meterWithTimezoneAndProfile['meter_profile'] = $meterProfiles;
+                $meterWithTimezoneAndProfile['reading_parameters'] = $meterProfiles;
 
                 $metersWithTimezonesAndProfiles[] = $meterWithTimezoneAndProfile;
 

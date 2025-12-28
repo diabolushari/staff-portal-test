@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import MeterReadingPreview from './MeterReadingPreview'
 import ProfileReadingForm from './ProfileReadingForm'
 import { MeterHealth } from './ReadingForm/useMeterHealthForm'
-import { MeterReadingFormState } from './ReadingForm/useMeterReadingForm'
+import { MeterReadingFormState, TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
 
 interface Props {
   metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
@@ -21,15 +21,9 @@ interface Props {
   ctHealthTypes: ParameterValues[]
   ptHealthTypes: ParameterValues[]
   readingValues: MeterReadingFormState[]
-  updateReading: (meterId: number, parameterId: number, timezoneId: number, value: string) => void
+  updateReading: (meterId: number, parameterId: number, newReading: TimezoneReadingState[]) => void
   updateMeterHealth: (meterHealthId: number, meter: Meter) => void
   updateCTPTHealth: (meterId: number, ctptId: number, healthId: number) => void
-  toggleRotation: (
-    meterId: number,
-    parameterId: number,
-    timezoneId: number,
-    checked: boolean
-  ) => void
 }
 
 export default function MeterReadingsStep({
@@ -45,7 +39,6 @@ export default function MeterReadingsStep({
   updateReading,
   healthData,
   setIsOnParameterForm,
-  toggleRotation,
 }: Readonly<Props>) {
   const [activeProfile, setActiveProfile] = useState<{
     meterIdx: number
@@ -87,7 +80,6 @@ export default function MeterReadingsStep({
               updateReading={updateReading}
               readingValues={readingValues}
               setActiveProfile={setActiveProfile}
-              toggleRotation={toggleRotation}
             />
           )}
         </React.Fragment>

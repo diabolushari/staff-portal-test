@@ -114,13 +114,13 @@ export default function MeterReadingPreview({
   meterHealthTypes,
   ctHealthTypes,
 }: Readonly<Props>) {
-  console.log(meterWithTimezoneAndProfile.meter_profiles)
+  console.log(meterWithTimezoneAndProfile)
 
-  const hasImportKwh = meterWithTimezoneAndProfile.meter_profiles.some(
+  const hasImportKwh = meterWithTimezoneAndProfile.reading_parameters.some(
     (p) =>
       p.name.toLowerCase() === CONSUMPTION_PARAMETER_NAME.toLowerCase() && p.is_export === false
   )
-  const hasImportKvah = meterWithTimezoneAndProfile.meter_profiles.some(
+  const hasImportKvah = meterWithTimezoneAndProfile.reading_parameters.some(
     (p) => p.name.toLowerCase() === DEMAND_PARAMETER_NAME.toLowerCase() && p.is_export === false
   )
   const shouldShowPowerFactor = hasImportKwh && hasImportKvah
@@ -130,11 +130,9 @@ export default function MeterReadingPreview({
         readingValues,
         meterWithTimezoneAndProfile.meter_id,
         meterWithTimezoneAndProfile.timezones,
-        meterWithTimezoneAndProfile.meter_profiles
+        meterWithTimezoneAndProfile.reading_parameters
       )
     : []
-
-  console.log(powerFactorData)
 
   const averagePF = powerFactorData.length > 0 ? calculateAveragePF(powerFactorData) : null
 
@@ -229,7 +227,7 @@ export default function MeterReadingPreview({
       </div>
 
       <div className='grid gap-4 md:grid-cols-2'>
-        {meterWithTimezoneAndProfile?.meter_profiles?.map((profile, pIdx: number) => (
+        {meterWithTimezoneAndProfile?.reading_parameters?.map((profile, pIdx: number) => (
           <ReadingParameterPreviewCard
             key={profile.meter_parameter_id}
             meterWithTimezoneAndProfile={meterWithTimezoneAndProfile}
