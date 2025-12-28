@@ -149,10 +149,6 @@ export default function useMeterReadingForm(
 
     setReadingValues(initializedMeters)
   }, [oldReading, metersWithTimezonesAndProfiles, readingValues, lastMeterReading])
-<<<<<<< HEAD
-
-=======
->>>>>>> 3b81ee96d2b4c3caf5b4088a371d44d6e36d52ee
 
   const updateReading = useCallback(
     (meterId: number, parameterId: number, newReading: TimezoneReadingState[]) => {
