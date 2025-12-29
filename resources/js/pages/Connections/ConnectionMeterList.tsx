@@ -13,6 +13,7 @@ import { useState } from 'react'
 import { consumerNavItems } from '../../components/Navbar/navitems'
 import ConnectionMeterUpdateModal from '@/components/Connections/ConnectionMeter/ConnectionMeterUpdateModal'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import AddButton from '@/ui/button/AddButton'
 
 interface ConnectionMeterListProps {
   connection_id: number
@@ -92,8 +93,13 @@ export default function ConnectionMeterList({
   return (
     <ConnectionsLayout
       connectionId={connection_id}
-      heading={'Meters'}
-      description={'Meters assigned to this connection'}
+      heading={'Connection Details'}
+      description={
+        <>
+          Details of Meters assigned to Consumer Number {'  '}
+          <span className='font-bold'>{connection?.consumer_number}</span>
+        </>
+      }
       value='configuration'
       subTabValue='meter'
       connection={connection}
@@ -104,13 +110,10 @@ export default function ConnectionMeterList({
     >
       <div className='relative w-full rounded-lg bg-white'>
         <div className='flex items-center justify-end border-gray-200 px-6 py-4'>
-          <button
+          <AddButton
             onClick={handleAddMeter}
-            className='inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
-          >
-            <Plus className='h-4 w-4' />
-            Add Meter
-          </button>
+            buttonText='Add Meter'
+          />
         </div>
 
         <div className='flex flex-col px-6 pb-6'>

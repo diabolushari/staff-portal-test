@@ -36,9 +36,6 @@ const ConnectionIndexSearch = ({ oldConsumerNumber, oldOffice }: Readonly<Props>
     <div className='relative flex flex-col items-center bg-white p-6 shadow-sm'>
       <div className='absolute top-0 left-6 size-18 h-2/3 w-1/4 rounded-b-full bg-radial-[at_1%] from-[#0078D4]/0 to-[#0078D4]/5 to-5%'></div>
       <div className='flex w-full flex-col justify-center p-10'>
-        <div className='mr-10 mb-4 flex items-center justify-center'>
-          <StrongText className='text-2xl font-semibold'>Connections Search</StrongText>
-        </div>
         <div className='flex w-full items-center justify-center'>
           <form
             action=''
@@ -47,7 +44,7 @@ const ConnectionIndexSearch = ({ oldConsumerNumber, oldOffice }: Readonly<Props>
           >
             <div className='grid grid-cols-3 items-end gap-3'>
               <Input
-                label='Consumer Number'
+                label=''
                 setValue={setFormValue('consumer_number')}
                 value={formData.consumer_number}
                 showClearButton={true}
@@ -56,7 +53,7 @@ const ConnectionIndexSearch = ({ oldConsumerNumber, oldOffice }: Readonly<Props>
               />
 
               <ComboBox
-                label='Office'
+                label=''
                 url={`/api/offices?q=`}
                 setValue={setSelectedOffice}
                 value={selectedOffice}
@@ -66,7 +63,7 @@ const ConnectionIndexSearch = ({ oldConsumerNumber, oldOffice }: Readonly<Props>
                 placeholder='Search by Office'
                 className='w-full'
               />
-              <div className='flex w-1/4 items-center justify-center'>
+              <div className='flex w-1/4 items-center justify-center pl-5'>
                 <Button
                   label='Search'
                   type='submit'
@@ -75,6 +72,16 @@ const ConnectionIndexSearch = ({ oldConsumerNumber, oldOffice }: Readonly<Props>
             </div>
           </form>
         </div>
+        {(oldConsumerNumber || oldOffice) && (
+          <div className='flex w-full items-center justify-center p-5 pl-10'>
+            <button
+              onClick={() => router.get(route('connections.index'))}
+              className='link-button-text cursor-pointer underline'
+            >
+              Clear filter
+            </button>
+          </div>
+        )}
       </div>
       <div className='h-half absolute right-0 bottom-0 size-18 w-1/12 rounded-tl-full bg-radial-[at_1%_1%] from-[#0078D4]/30 to-[#0078D4]/5 to-90%'></div>
     </div>

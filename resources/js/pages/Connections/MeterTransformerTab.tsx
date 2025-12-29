@@ -69,8 +69,13 @@ export default function MeterTransformerTab({ connection, transformers }: Props)
       connectionsNavItems={consumerNavItems}
       value='configuration'
       subTabValue='meter-ctpts'
-      heading='Meter and CTPTs'
-      description='CTPTs connected with meters'
+      heading='Connection Details'
+      description={
+        <>
+          CTPTs connected with meters for Consumer Number {'  '}
+          <span className='font-bold'>{connection?.consumer_number}</span>
+        </>
+      }
       breadcrumbs={breadcrumbs}
       connectionId={connection.connection_id}
       connection={connection}

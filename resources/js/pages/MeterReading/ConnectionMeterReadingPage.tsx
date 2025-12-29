@@ -10,6 +10,7 @@ import { Cpu, Plus } from 'lucide-react'
 import MeterReadingCard from '@/components/Meter/MeterReading/MeterReadingCard'
 import Pagination from '@/ui/Pagination/Pagination'
 import { Paginator } from '@/ui/ui_interfaces'
+import AddButton from '@/ui/button/AddButton'
 
 interface ConnectionMeterReadingPageProps {
   connection: Connection
@@ -48,8 +49,13 @@ export default function ConnectionMeterReadingPage({
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
       connectionId={connection?.connection_id}
-      heading='Connection Meter Reading'
-      description='Connection Meter Reading'
+      heading='Connection Details'
+      description={
+        <>
+          Meter Reading Details for Consumer Number {'  '}
+          <span className='font-bold'>{connection?.consumer_number}</span>
+        </>
+      }
       value='meter-reading'
       subTabValue='reading'
     >
@@ -58,13 +64,10 @@ export default function ConnectionMeterReadingPage({
           <StrongText className='text-lg font-semibold text-gray-900'>
             Meter Reading Information
           </StrongText>
-          <button
+          <AddButton
             onClick={handleAddMeterReading}
-            className='inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500'
-          >
-            <Plus className='h-4 w-4' />
-            Add Meter Reading
-          </button>
+            buttonText='Add Meter Reading'
+          />
         </div>
         <div className='flex flex-col gap-6 px-6 pb-6'>
           <div>

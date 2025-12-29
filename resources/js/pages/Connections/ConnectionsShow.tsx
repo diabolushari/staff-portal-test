@@ -6,7 +6,6 @@ import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import StrongText from '@/typography/StrongText'
 import EditButton from '@/ui/button/EditButton'
 import { router } from '@inertiajs/react'
-import { PencilIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 interface Props {
@@ -31,6 +30,10 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
         href: connection?.connection_id
           ? route('connection.consumer', connection?.connection_id)
           : '#',
+      },
+      {
+        title: 'Connection Details',
+        href: '#',
       },
     ],
     [connection]
@@ -58,7 +61,7 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
       consumerExist={consumerExist}
       meterExist={connection?.meter_mappings?.length > 0}
     >
-      <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
+      <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto'>
         {/* Header */}
         {/* <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
           <div className='flex flex-col gap-2'>
@@ -72,19 +75,21 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
         {/* Tabs */}
 
         <div className='space-y-6'>
+          <div className='flex justify-end pr-5'>
+            <button
+              onClick={() => router.get(route('connections.edit', connection?.connection_id))}
+              className='link-button-text cursor-pointer underline'
+            >
+              EDIT
+            </button>
+          </div>
+
           {/* Basic Info */}
-          <Card className='rounded-lg p-7'>
+          <Card className='rounded-lg p-5'>
             <div className='mb-6 flex items-center justify-between'>
               <StrongText className='text-base font-semibold text-[#252c32]'>
                 Basic Information
               </StrongText>
-              <button
-                onClick={() => router.visit(route('connections.edit', connection?.connection_id))}
-                className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] hover:bg-gray-50'
-              >
-                <PencilIcon className='h-4 w-4' />
-                Edit
-              </button>
             </div>
             <hr className='mb-6 border-[#e5e9eb]' />
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
@@ -131,14 +136,16 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                 value={formatDate(connection?.connected_date)}
               />
               <div className='col-span-2 mt-4'>
-                <Field
-                  label='Remarks'
-                  value={connection?.remarks}
-                />
+                {connection?.remarks && (
+                  <Field
+                    label='Remarks'
+                    value={connection?.remarks}
+                  />
+                )}
               </div>
             </div>
           </Card>
-          <Card className='rounded-lg p-7'>
+          <Card className='rounded-lg p-5'>
             <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
               Load Details
             </StrongText>
@@ -163,7 +170,7 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
           </Card>
 
           {/* Office Info */}
-          <Card className='rounded-lg p-7'>
+          <Card className='rounded-lg p-5'>
             <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
               Office Information
             </StrongText>
@@ -188,7 +195,7 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
           </Card>
 
           {/* Category / Purpose Info */}
-          <Card className='rounded-lg p-7'>
+          <Card className='rounded-lg p-5'>
             <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
               Connection Category & Purpose
             </StrongText>
@@ -209,7 +216,7 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
           </Card>
 
           {/* Billing / Tariff Info */}
-          <Card className='rounded-lg p-7'>
+          <Card className='rounded-lg p-5'>
             <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
               Billing & Tariff
             </StrongText>
@@ -239,7 +246,7 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
 
           {connection.connection_generation_types &&
             connection.connection_generation_types.length > 0 && (
-              <Card className='rounded-lg p-7'>
+              <Card className='rounded-lg p-5'>
                 <div className='mb-6 flex items-center justify-between'>
                   <StrongText className='text-base font-semibold text-[#252c32]'>
                     Generation Types
@@ -269,7 +276,7 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
             )}
 
           {connection?.connection_flags && connection?.connection_flags?.length > 0 && (
-            <Card className='rounded-lg p-7'>
+            <Card className='rounded-lg p-5'>
               <div className='mb-6 flex items-center justify-between'>
                 <StrongText className='text-base font-semibold text-[#252c32]'>
                   Indicators

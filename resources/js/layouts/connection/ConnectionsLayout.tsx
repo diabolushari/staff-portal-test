@@ -282,7 +282,7 @@ export default function ConnectionsLayout({
             />
           </div>
 
-          <main className='col-span-12 p-4 lg:col-span-8'>
+          <main className='col-span-12 p-7 lg:col-span-8'>
             <div>
               <div className='px-4 pt-2'>
                 <CustomBreadcrumb list={breadcrumbs ?? []} />

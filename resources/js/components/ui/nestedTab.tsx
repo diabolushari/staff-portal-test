@@ -57,27 +57,28 @@ export function NestedTabGroup({
         {/* Right: Top Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList
-            className="
+            className='
               flex
               bg-white
               border border-tab-border
               rounded-md
               overflow-hidden
               divide-x
-            "
+            '
           >
             {tabs.map((tab) => (
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="
+                className='
                   flex items-center justify-center
                   p-4
                   text-gray-600
                   bg-white
                   data-[state=active]:bg-kseb-primary
                   data-[state=active]:text-kseb-bg-blue
-                "
+                  cursor-pointer
+                '
                 onClick={() => tab.href && router.visit(tab.href)}
               >
                 {activeTab === tab.value ? tab.activeIcon : tab.icon}
@@ -97,10 +98,10 @@ export function NestedTabGroup({
                 <TabsTrigger
                   key={st.subValue}
                   value={st.subValue}
-                  className="p-2 font-semibold border-b-2  
+                  className='p-2 font-semibold border-b-2  
                   data-[state=active]:border-blue-400 
                   data-[state=active]:text-blue-400 
-                  data-[state=active]:bg-blue-50"
+                  data-[state=active]:bg-blue-50 cursor-pointer'
                   onClick={() => {
                   if (st.subLink) {
                     router.visit(st.subLink)

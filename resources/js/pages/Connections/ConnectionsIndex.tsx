@@ -32,7 +32,6 @@ export default function ConnectionsIndex({
   oldOffice,
   oldConsumerNumber,
 }: Readonly<Props>) {
-  console.log(connections)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -41,6 +40,7 @@ export default function ConnectionsIndex({
       addBtnText='Connection'
       addBtnUrl={route('connections.create')}
       selectedTopNav='Consumers'
+      title='Connections'
     >
       {/* <ListSearch
         title='Connections Search'
