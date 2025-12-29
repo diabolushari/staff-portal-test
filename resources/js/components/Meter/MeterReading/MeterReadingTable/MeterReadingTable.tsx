@@ -57,14 +57,14 @@ export default function MeterReadingTable({ readings }: Readonly<Props>) {
                 )
                 .map((reading: MeterReadingValue) => (
                   <tr key={reading.id.toString()}>
-                    {profile.is_cumulative && (
-                      <td className='border px-4 py-2'>{reading.time_zone?.parameter_value}</td>
-                    )}
+                    <td className='border px-4 py-2'>{reading.time_zone?.parameter_value}</td>
                     {profile.is_cumulative && (
                       <td className='border px-4 py-2'>{reading.initial_reading}</td>
                     )}
                     <td className='border px-4 py-2'>{reading.final_reading}</td>
-                    <td className='border px-4 py-2'>{reading.difference}</td>
+                    {profile.is_cumulative && (
+                      <td className='border px-4 py-2'>{reading.difference}</td>
+                    )}
                     <td className='border px-4 py-2'>{reading.value}</td>
                   </tr>
                 ))}

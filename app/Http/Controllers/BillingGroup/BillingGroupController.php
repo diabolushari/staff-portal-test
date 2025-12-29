@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
-use Proto\Bill\BillGenerationJobStatusServiceClient;
 
 class BillingGroupController extends Controller
 {
@@ -88,12 +87,12 @@ class BillingGroupController extends Controller
     {
         $search = $request->get('search');
         $response = $this->billingGroupService->getBillingGroup(null, $id);
+
         $billingGenerateJobServiceResponse = $this->billingGenerateJobService->listBillGenerationJobStatus($id, null);
 
         if ($response->hasError()) {
             return $response->error ?? redirect()->back()->with(['error' => 'Failed to get billing group']);
         }
-
 
         return Inertia::render('BillingGroup/BillingGroupShowPage', [
             'billingGroup' => $response->data ?? null,

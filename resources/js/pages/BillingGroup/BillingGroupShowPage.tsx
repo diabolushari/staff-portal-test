@@ -40,7 +40,7 @@ export default function BillingGroupShowPage({
     {
       title: `Group ${billingGroup?.name}`,
       href: route('billing-groups.show', {
-        id: billingGroup?.billing_group_id,
+        billing_group: billingGroup?.billing_group_id,
       }),
     },
   ]
