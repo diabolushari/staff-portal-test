@@ -220,12 +220,9 @@ export interface Consumer {
   consumer_gstin?: string | null
   consumer_type: ParameterValues
   consumer_cin: string
-  seasonal_ind: boolean
-  license_ind: boolean
-  open_access_ind: boolean
-  income_tax_withholding_ind: boolean
-  gst_withholding_ind: boolean
-  solar_indicator: boolean // if applicable from frontend logic
+  virtual_account_number: string
+
+ // if applicable from frontend logic
 
   // Missing fields from PHP
   manufacturing_info: Record<string, any>

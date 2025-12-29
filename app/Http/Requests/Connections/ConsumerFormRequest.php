@@ -20,8 +20,10 @@ class ConsumerFormRequest extends Data
         public string $consumerPan,
         public string $consumerTan,
         public string $consumerGstin,
-        public bool $incomeTaxWithholdingInd,
-        public bool $gstWithholdingInd,
+        public string $virtualAccountNumber,
+        public ?string $contactPerson,
+        public ?int $departmentNameId,
+
         public string $addressLine1,
         public ?string $addressLine2,
         public string $cityTownVillage,
@@ -36,9 +38,8 @@ class ConsumerFormRequest extends Data
         public ?array $otherAddresses,
         public ?array $contactFolio,
         public ?string $consumerCin,
-        public bool $seasonalInd,
-        public bool $licenseInd,
-        public bool $openAccessInd,
+        public ?array $indicators,
+
 
     ) {}
 }

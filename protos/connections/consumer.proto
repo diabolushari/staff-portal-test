@@ -10,6 +10,7 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
 import "connections/consumer_contact_detail.proto";
 import "parameters/parameter-value.proto";
+import "connections/connection-flag.proto";
 
 // -------------------- MESSAGES --------------------
 
@@ -18,24 +19,23 @@ message ConsumerMessage {
   int32 connection_id = 2;
   int32 consumer_type_id = 3;
   string virtual_account_number = 4;
-  string contact_person = 5;
-  int32 department_name_id = 6;
+  optional string contact_person = 5;
+  optional int32 department_name_id = 6;
   string organization_name = 7;
   string consumer_pan = 8;
   string consumer_tan = 9;
   string consumer_gstin = 10;
-  bool income_tax_withholding_ind = 11;
-  bool gst_withholding_ind = 12;
-  optional google.protobuf.Struct manufacturing_info = 13;
-  optional google.protobuf.Struct tax_info = 14;
-  optional google.protobuf.Struct identity_info = 15;
-  optional google.protobuf.Struct application_info = 16;
-  optional bool is_current = 17;
-  optional google.protobuf.Struct addresses = 18;
-  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto consumer_type = 19;
-  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto department_name = 20;
-  string consumer_cin = 21;
-  bool seasonal_ind = 22;
+  optional google.protobuf.Struct manufacturing_info = 11;
+  optional google.protobuf.Struct tax_info = 12;
+  optional google.protobuf.Struct identity_info = 13;
+  optional google.protobuf.Struct application_info = 14;
+  optional bool is_current = 15;
+  optional google.protobuf.Struct addresses = 16;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto consumer_type = 17;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto department_name = 18;
+  string consumer_cin = 19;
+  repeated connections.ConnectionFlagFormRequest consumer_flags = 20;
+ 
   
 }
 

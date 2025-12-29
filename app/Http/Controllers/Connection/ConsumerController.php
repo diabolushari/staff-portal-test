@@ -55,7 +55,7 @@ class ConsumerController extends Controller
     {
 
         $response = $this->consumerService->createConsumer($request);
-        if ($response->hasError()) {
+        if ($response->hasError() || $response->statusCode !== 0) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
