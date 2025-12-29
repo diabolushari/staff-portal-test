@@ -103,6 +103,7 @@ export default function MeterReadingCreatePage({
     latestMeterReading,
     editMode ? latestMeterReading : null
   )
+
   const { healthData, updateMeterHealth, updateCTPTHealth } = useMeterHealthForm(
     metersWithTimezonesAndProfiles
   )

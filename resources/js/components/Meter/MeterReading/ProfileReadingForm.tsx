@@ -92,7 +92,7 @@ export default function ProfileReadingForm({
           }
           let diff: number
           if (tzReading.isRotation) {
-            diff = maxValue - tzReading.values.initial + valueAsNumber
+            diff = Math.ceil(maxValue) - tzReading.values.initial + valueAsNumber
           } else {
             diff = valueAsNumber - tzReading.values.initial
           }
@@ -157,7 +157,7 @@ export default function ProfileReadingForm({
           }
           let diff: number
           if (!tzReading.isRotation) {
-            diff = maxValue - tzReading.values.initial + finalValue
+            diff = Math.ceil(maxValue) - tzReading.values.initial + finalValue
           } else {
             diff = finalValue - tzReading.values.initial
           }
