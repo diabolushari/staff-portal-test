@@ -7,16 +7,14 @@ import { consumerNavItems } from '@/components/Navbar/navitems'
 import Stepper from '@/components/Stepper'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import {
-  ConsumerData,
-  MeterReading,
-  MeterWithTimezoneAndProfile,
-} from '@/interfaces/data_interfaces'
+import { ConsumerData, MeterReading, MeterWithTimezoneAndProfile, } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
+import ErrorBanner from '@/ui/Errors/ErrorBanner'
+import dayjs from 'dayjs'
 
 export interface MeterReadingForm extends MeterReading {
   reading_type: string
@@ -44,10 +42,11 @@ interface Props {
 }
 
 const getNextDay = (dateStr: string) => {
-  if (!dateStr) return ''
-  const date = new Date(dateStr)
-  date.setDate(date.getDate() + 1)
-  return date.toISOString().split('T')[0]
+  if (!dateStr) {
+    return ''
+  }
+  const date = dayjs(dateStr)
+  return date.add(1, 'day').format('YYYY-MM-DD')
 }
 const getToday = () => {
   const today = new Date()
@@ -99,11 +98,6 @@ export default function MeterReadingCreatePage({
     ]
   }, [connectionWithConsumer])
 
-  useEffect(() => {
-    console.log(metersWithTimezonesAndProfiles)
-    console.log(latestMeterReading)
-  }, [metersWithTimezonesAndProfiles, latestMeterReading])
-
   const { readingValues, updateReading } = useMeterReadingForm(
     metersWithTimezonesAndProfiles,
     latestMeterReading,
@@ -113,16 +107,28 @@ export default function MeterReadingCreatePage({
     metersWithTimezonesAndProfiles
   )
 
+  const isFirstReading = useMemo(() => {
+    return latestMeterReading == null
+  }, [latestMeterReading])
+
+  const readingStartDate = useMemo(() => {
+    if (isFirstReading) {
+      return dayjs(connectionWithConsumer.connection?.connected_date).format('YYYY-MM-DD')
+    }
+
+    return getNextDay(latestMeterReading.reading_start_date) ?? ''
+  }, [isFirstReading, latestMeterReading?.reading_start_date, connectionWithConsumer])
+
   const [isOnParamaterForm, setIsOnParameterForm] = useState(false)
 
   const { formData, setFormValue } = useCustomForm<MeterReadingForm>({
     id: editMode ? latestMeterReading?.id : 0,
     connection_id: connectionWithConsumer?.connection?.connection_id ?? 0,
     metering_date: getToday(),
-    reading_start_date: getNextDay(latestMeterReading?.reading_end_date) ?? '',
+    reading_start_date: readingStartDate,
     reading_end_date: editMode
       ? latestMeterReading?.reading_end_date
-      : (getMonthEnd(getNextDay(latestMeterReading?.reading_end_date)) ?? ''),
+      : (getMonthEnd(readingStartDate) ?? ''),
     reading_type: editMode ? latestMeterReading?.single_reading : 'single_reading',
     anomaly_id: editMode ? latestMeterReading?.anomaly_id : 0,
     voltage_r: editMode ? latestMeterReading?.voltage_r : 0,
@@ -144,7 +150,8 @@ export default function MeterReadingCreatePage({
 
   const [activeStep, setActiveStep] = useState(0)
 
-  const handleSubmit = () => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement> | undefined = undefined) => {
+    event?.preventDefault()
     post({
       ...formData,
       readings_by_meter: readingValues,
@@ -197,6 +204,18 @@ export default function MeterReadingCreatePage({
     ]
   }, [connectionWithConsumer, formData, errors])
 
+  const meterMissingErrors = useMemo(() => {
+    return {
+      title: 'Missing Meters',
+      description: 'Connection does not have any meters or ct/pt transformers attached to it.',
+      bulletPoints: [
+        'Please add meters to the connection first.',
+        'If you are adding meters to an existing connection, please make sure the meters are attached to the correct CT/PT transformers.',
+      ],
+      actionUrl: route('connections.show', connectionWithConsumer?.connection?.connection_id),
+    }
+  }, [connectionWithConsumer])
+
   return (
     <MainLayout
       breadcrumb={breadcrumb}
@@ -204,86 +223,97 @@ export default function MeterReadingCreatePage({
       selectedItem='Meter & Readings'
       selectedTopNav='Consumers'
     >
-      <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
-        <form onSubmit={handleSubmit}>
-          <Stepper
-            activeStep={activeStep}
-            onStepChange={setActiveStep}
-            steps={steps}
-          >
-            {activeStep === 0 && (
-              <MeterReadingGeneralStep
-                connectionWithConsumer={connectionWithConsumer}
-                formData={formData}
-                setFormValue={setFormValue}
-                errors={errors}
-                latestMeterReading={latestMeterReading}
-              />
-            )}
-            {activeStep === 1 && (
-              <MeterReadingObservationStep
-                formData={formData}
-                setFormValue={setFormValue}
-                anomalyTypes={anomalyTypes}
-                errors={errors}
-              />
-            )}
-            {activeStep === 2 && (
-              <MeterReadingsStep
-                healthData={healthData}
-                metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
-                formData={formData}
-                readingValues={readingValues}
-                updateReading={updateReading}
-                setFormValue={setFormValue}
-                latestMeterReading={latestMeterReading}
-                meterHealthTypes={meterHealthTypes}
-                ctptHealthTypes={ctptHealthTypes}
-                ctHealthTypes={ctHealthTypes}
-                ptHealthTypes={ptHealthTypes}
-                updateMeterHealth={updateMeterHealth}
-                updateCTPTHealth={updateCTPTHealth}
-                setIsOnParameterForm={setIsOnParameterForm}
-              />
-            )}
-          </Stepper>
-          <div className='mt-6 flex justify-between'>
-            {activeStep >= 0 && (
-              <Button
-                type='button'
-                variant='secondary'
-                onClick={() => setActiveStep(activeStep - 1)}
-                label='Back'
-                disabled={activeStep === 0}
-              />
-            )}
-            {activeStep < steps.length - 1 && (
-              <Button
-                type='button'
-                onClick={() => setActiveStep(activeStep + 1)}
-                label='Next'
-              />
-            )}
-            {formData.reading_type === 'multiple_reading' && activeStep === steps.length - 1 && (
-              <Button
-                type='button'
-                label='Save & Add New Reading'
-                variant='link'
-                onClick={() => handleSubmit()}
-              />
-            )}
-            {activeStep === steps.length - 1 && !isOnParamaterForm && (
-              <Button
-                type='submit'
-                label='Submit'
-                disabled={loading}
-                processing={loading}
-                variant={loading ? 'loading' : 'primary'}
-              />
-            )}
-          </div>
-        </form>
-      </div>
+      {metersWithTimezonesAndProfiles.length === 0 && (
+        <ErrorBanner
+          title={meterMissingErrors.title}
+          description={meterMissingErrors.description}
+          bulletPoints={meterMissingErrors.bulletPoints}
+          actionUrl={meterMissingErrors.actionUrl}
+        />
+      )}
+      {metersWithTimezonesAndProfiles.length > 0 && (
+        <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
+          <form onSubmit={handleSubmit}>
+            <Stepper
+              activeStep={activeStep}
+              onStepChange={setActiveStep}
+              steps={steps}
+            >
+              {activeStep === 0 && (
+                <MeterReadingGeneralStep
+                  connectionWithConsumer={connectionWithConsumer}
+                  formData={formData}
+                  setFormValue={setFormValue}
+                  errors={errors}
+                  latestMeterReading={latestMeterReading}
+                />
+              )}
+              {activeStep === 1 && (
+                <MeterReadingObservationStep
+                  formData={formData}
+                  setFormValue={setFormValue}
+                  anomalyTypes={anomalyTypes}
+                  errors={errors}
+                />
+              )}
+              {activeStep === 2 && (
+                <MeterReadingsStep
+                  healthData={healthData}
+                  metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
+                  formData={formData}
+                  readingValues={readingValues}
+                  updateReading={updateReading}
+                  setFormValue={setFormValue}
+                  latestMeterReading={latestMeterReading}
+                  meterHealthTypes={meterHealthTypes}
+                  ctptHealthTypes={ctptHealthTypes}
+                  ctHealthTypes={ctHealthTypes}
+                  ptHealthTypes={ptHealthTypes}
+                  updateMeterHealth={updateMeterHealth}
+                  updateCTPTHealth={updateCTPTHealth}
+                  setIsOnParameterForm={setIsOnParameterForm}
+                  isFirstReading={isFirstReading}
+                />
+              )}
+            </Stepper>
+            <div className='mt-6 flex justify-between'>
+              {activeStep >= 0 && (
+                <Button
+                  type='button'
+                  variant='secondary'
+                  onClick={() => setActiveStep(activeStep - 1)}
+                  label='Back'
+                  disabled={activeStep === 0}
+                />
+              )}
+              {activeStep < steps.length - 1 && (
+                <Button
+                  type='button'
+                  onClick={() => setActiveStep(activeStep + 1)}
+                  label='Next'
+                />
+              )}
+              {formData.reading_type === 'multiple_reading' && activeStep === steps.length - 1 && (
+                <Button
+                  type='button'
+                  label='Save & Add New Reading'
+                  variant='link'
+                  onClick={() => handleSubmit()}
+                />
+              )}
+              {activeStep === steps.length - 1 && !isOnParamaterForm && (
+                <Button
+                  type='submit'
+                  label='Submit'
+                  disabled={loading}
+                  processing={loading}
+                  variant={loading ? 'loading' : 'primary'}
+                />
+              )}
+            </div>
+          </form>
+        </div>
+      )}
     </MainLayout>
   )
 }

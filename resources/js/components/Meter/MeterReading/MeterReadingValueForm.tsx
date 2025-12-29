@@ -20,6 +20,8 @@ interface Props {
   onToggleRotation: (tzId: number) => void
   errors: Record<string, string | undefined>
   maxReadingValue: number
+  isFirstReading: boolean
+  updateInitialReading: (tzId: number, value: string) => void
 }
 
 export default function MeterReadingValueForm({
@@ -29,7 +31,9 @@ export default function MeterReadingValueForm({
   profileParameter,
   onToggleRotation,
   maxReadingValue,
+  isFirstReading,
   errors,
+  updateInitialReading,
 }: Readonly<Props>) {
   return (
     <div className='rounded border bg-white p-4'>
@@ -52,9 +56,9 @@ export default function MeterReadingValueForm({
                     <Input
                       type='number'
                       value={tz.values.initial}
-                      setValue={() => {}}
+                      setValue={(value) => updateInitialReading(tz.timezone_id, value)}
                       max={maxReadingValue}
-                      disabled
+                      disabled={!isFirstReading}
                     />
                     {errors?.[`${tz.timezone_id}.initial`] && (
                       <ErrorText>{errors[`${tz.timezone_id}.initial`]}</ErrorText>
@@ -64,19 +68,21 @@ export default function MeterReadingValueForm({
               ))}
             </TableRow>
           )}
-          <TableRow>
-            <TableCell className='font-medium'>Rotation</TableCell>
-            {parameterReadingValues.map((tz) => (
-              <TableCell key={tz.timezone_id}>
-                <input
-                  type='checkbox'
-                  checked={tz.isRotation}
-                  onChange={() => onToggleRotation(tz.timezone_id)}
-                />
-              </TableCell>
-            ))}
-          </TableRow>
-
+          {profileParameter.is_cumulative && (
+            <TableRow>
+              <TableCell className='font-medium'>Rotation</TableCell>
+              {parameterReadingValues.map((tz) => (
+                <TableCell key={tz.timezone_id}>
+                  <input
+                    type='checkbox'
+                    checked={tz.isRotation}
+                    onChange={() => onToggleRotation(tz.timezone_id)}
+                    disabled={isFirstReading}
+                  />
+                </TableCell>
+              ))}
+            </TableRow>
+          )}
           <TableRow>
             <TableCell className='font-medium'>
               {profileParameter.is_cumulative ? 'Final' : 'Reading'}
@@ -89,6 +95,7 @@ export default function MeterReadingValueForm({
                     value={tz.values.final}
                     setValue={(val) => onChange(tz.timezone_id, val)}
                     max={maxReadingValue}
+                    disabled={isFirstReading && profileParameter.is_cumulative}
                   />
                   {errors?.[`${tz.timezone_id}.final`] && (
                     <ErrorText>{errors[`${tz.timezone_id}.final`]}</ErrorText>

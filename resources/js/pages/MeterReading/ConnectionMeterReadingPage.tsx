@@ -28,7 +28,7 @@ export default function ConnectionMeterReadingPage({
     { title: 'Connections', href: route('connections.index') },
     {
       title: connection?.consumer_number.toString() ?? '',
-      href: route('connections.show', connection?.connection_id),
+      href: connection == null ? '' : route('connections.show', connection?.connection_id),
     },
     {
       title: 'Meter Reading',

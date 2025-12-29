@@ -24,6 +24,7 @@ interface Props {
   updateReading: (meterId: number, parameterId: number, newReading: TimezoneReadingState[]) => void
   updateMeterHealth: (meterHealthId: number, meter: Meter) => void
   updateCTPTHealth: (meterId: number, ctptId: number, healthId: number) => void
+  isFirstReading: boolean
 }
 
 export default function MeterReadingsStep({
@@ -39,6 +40,7 @@ export default function MeterReadingsStep({
   updateReading,
   healthData,
   setIsOnParameterForm,
+  isFirstReading,
 }: Readonly<Props>) {
   const [activeProfile, setActiveProfile] = useState<{
     meterIdx: number
@@ -80,6 +82,7 @@ export default function MeterReadingsStep({
               updateReading={updateReading}
               readingValues={readingValues}
               setActiveProfile={setActiveProfile}
+              isFirstReading={isFirstReading}
             />
           )}
         </React.Fragment>

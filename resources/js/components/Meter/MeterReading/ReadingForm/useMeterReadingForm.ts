@@ -105,11 +105,7 @@ export default function useMeterReadingForm(
       return
     }
 
-    if (
-      metersWithTimezonesAndProfiles == null ||
-      metersWithTimezonesAndProfiles.length === 0 ||
-      lastMeterReading == null
-    ) {
+    if (metersWithTimezonesAndProfiles == null || metersWithTimezonesAndProfiles.length === 0) {
       return
     }
 

@@ -45,7 +45,6 @@ use App\Http\Controllers\Metering\MeterTimezoneTypeRelController;
 use App\Http\Controllers\Metering\MeterTransfomerCreateController;
 use App\Http\Controllers\Metering\MeterTransformerController;
 use App\Http\Controllers\Metering\MeterTransformerRelController;
-use App\Http\Controllers\MeteringProfileParameter\MeteringProfileParameterController;
 use App\Http\Controllers\MeteringTimezone\MeteringTimezoneController;
 use App\Http\Controllers\MeterProfileParameter\MeterProfileParameterController;
 use App\Http\Controllers\MeterReading\GetMeterReadingEditController;
@@ -147,7 +146,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('update-meter-transformer-assignment-status', UpdateMeterTransformerAssignmentStatusController::class)
         ->name('update-meter-transformer-assignment-status');
 
-
     Route::resource('meter-profile', MeterProfileParameterController::class);
 });
 
@@ -182,7 +180,7 @@ Route::get('page-ui', function () {
 Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
     ->name('settings-page');
 
-//pdf download
+// pdf download
 Route::get('pdf-download/{billId}', [BillingPdfController::class, 'index'])->name('pdf-download');
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

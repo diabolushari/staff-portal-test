@@ -18,6 +18,7 @@ interface Props {
   metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
   updateReading: (meterId: number, parameterId: number, newReading: TimezoneReadingState[]) => void
   setActiveProfile: (profile: { meterIdx: number; profileIdx: number } | null) => void
+  isFirstReading: boolean
 }
 
 export default function ProfileReadingForm({
@@ -26,6 +27,7 @@ export default function ProfileReadingForm({
   metersWithTimezonesAndProfiles,
   updateReading,
   setActiveProfile,
+  isFirstReading,
 }: Readonly<Props>) {
   const [currentReadingState, setCurrentReadingState] = useState<TimezoneReadingState[]>([])
   const [readingErrors, setReadingErrors] = useState<Record<string, string | undefined>>({})
@@ -41,7 +43,6 @@ export default function ProfileReadingForm({
 
     const meter = metersWithTimezonesAndProfiles[activeProfile.meterIdx]
     const selectedParameter = meter.reading_parameters[activeProfile.profileIdx]
-
     const meterReadingData = readingValues.find((m) => m.meter_id === meter.meter_id)
     const parameterReading = meterReadingData?.parameters.find(
       (p) => p.meter_parameter_id === selectedParameter.meter_parameter_id
@@ -77,8 +78,6 @@ export default function ProfileReadingForm({
     )
   }, [meter])
 
-  console.log('maxValue', maxValue)
-
   const updateData = useCallback(
     (timeZoneId: number, value: string) => {
       const valueAsNumber = Number.parseFloat(value)
@@ -111,6 +110,30 @@ export default function ProfileReadingForm({
     },
     [meter, maxValue]
   )
+
+  const updateInitialValue = useCallback((timeZoneId: number, value: string) => {
+    setCurrentReadingState((prevState) => {
+      return prevState.map((tzReading) => {
+        if (tzReading.timezone_id !== timeZoneId) {
+          return tzReading
+        }
+        const valueAsNumber = Number.parseFloat(value)
+        if (value != '' && Number.isNaN(valueAsNumber)) {
+          return tzReading
+        }
+        return {
+          ...tzReading,
+          values: {
+            ...tzReading.values,
+            initial: value,
+            final: value,
+            diff: '0',
+            value: 0,
+          },
+        }
+      })
+    })
+  }, [])
 
   const toggleRotation = useCallback(
     (timezoneId: number) => {
@@ -178,7 +201,8 @@ export default function ProfileReadingForm({
       }
 
       if (Number.isNaN(diffAsNumber) || diffAsNumber < 0) {
-        errors[`${reading.timezone_id}.diff`] = 'Reading value must be a positive number.'
+        errors[`${reading.timezone_id}.diff`] =
+          'Final reading must not be less than Initial reading.'
         hasErrors = true
         return
       }
@@ -244,6 +268,9 @@ export default function ProfileReadingForm({
                 meter={meter.meter}
                 profileParameter={selectedParameter}
                 errors={readingErrors}
+                maxReadingValue={maxValue}
+                isFirstReading={isFirstReading}
+                updateInitialReading={updateInitialValue}
               />
             </div>
             <div className='mt-4 flex justify-end gap-2'>
