@@ -61,14 +61,13 @@ export default function ReadingParameterPreviewCard({
         style={{ scrollBehavior: 'smooth' }}
       >
         {paramData?.readings?.map((r) => {
-          const diff = r.values?.diff
           return (
             <div
               key={r.timezone_id}
               className='flex justify-between border-b border-gray-100 py-1 last:border-0'
             >
               <span>{r.timezone_name}</span>
-              <span className='font-medium text-gray-800'>{diff}</span>
+              <span className='font-medium text-gray-800'>{r.values.final}</span>
             </div>
           )
         })}

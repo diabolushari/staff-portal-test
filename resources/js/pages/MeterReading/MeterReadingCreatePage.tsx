@@ -7,7 +7,11 @@ import { consumerNavItems } from '@/components/Navbar/navitems'
 import Stepper from '@/components/Stepper'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ConsumerData, MeterReading, MeterWithTimezoneAndProfile, } from '@/interfaces/data_interfaces'
+import {
+  ConsumerData,
+  MeterReading,
+  MeterWithTimezoneAndProfile,
+} from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'

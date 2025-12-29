@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class GetMeterReadingController extends Controller
+class CreateMeterReadingController extends Controller
 {
     public function __construct(
         private ConnectionService $connectionService,
@@ -78,10 +78,9 @@ class GetMeterReadingController extends Controller
         $meterTimezoneTypeRel = [];
         $timeZoneNames = [];
         $latestMeterReading = $this->meterReadingService->latestMeterReading($connectionId);
-
         $meterIds = [];
         if ($meterConnectionRel->data != null) {
-            $meterIds = array_map(fn($mapping) => $mapping['meter_id'], $meterConnectionRel->data);
+            $meterIds = array_map(fn ($mapping) => $mapping['meter_id'], $meterConnectionRel->data);
         }
 
         $ctptRelations = [];

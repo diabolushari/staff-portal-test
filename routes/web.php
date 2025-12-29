@@ -35,7 +35,7 @@ use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
-use App\Http\Controllers\Metering\GetMeterReadingController;
+use App\Http\Controllers\Metering\CreateMeterReadingController;
 use App\Http\Controllers\Metering\MeterConnectionMappingController;
 use App\Http\Controllers\Metering\MeterConnectionMappingCreateController;
 use App\Http\Controllers\Metering\MeterConnectionMappingEditController;
@@ -124,7 +124,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('meter-reading', MeterReadingController::class);
     Route::get('connection/{connection_id}/meter-reading', GetMeterReadingWithConnectionController::class)->name('connection.meter-reading');
-    Route::get('connection/{connection_id}/meter-reading/create', GetMeterReadingController::class)->name('connection-meter-reading.create');
+    Route::get('connection/{connection_id}/meter-reading/create', CreateMeterReadingController::class)->name('connection-meter-reading.create');
     Route::get('connection/{connection_id}/meter-reading/edit', GetMeterReadingEditController::class)->name('meter-reading.edit');
 
     Route::resource('tariff-orders', TariffOrderController::class);
