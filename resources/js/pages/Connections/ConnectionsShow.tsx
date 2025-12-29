@@ -87,14 +87,16 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                 label='Consumer Number'
                 value={connection?.consumer_number}
               />
-              <Field
-                label='Application Number'
-                value={connection?.application_no}
-              />
               {connection?.consumer_profiles?.[0]?.organization_name && (
                 <Field
                   label='Industry Name'
                   value={connection?.consumer_profiles?.[0]?.organization_name}
+                />
+              )}
+              {connection?.application_no && (
+                <Field
+                  label='Application Number'
+                  value={connection?.application_no}
                 />
               )}
               {connection?.consumer_legacy_code && (
@@ -120,7 +122,7 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                 value={connection?.phase_type?.parameter_value}
               />
               <Field
-                label='Connection Date'
+                label='Service Connection Date'
                 value={formatDate(connection?.connected_date)}
               />
               <div className='col-span-2 mt-4'>

@@ -5,7 +5,7 @@ import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 import { router } from '@inertiajs/react'
-import { PencilIcon } from 'lucide-react'
+import { Info, PencilIcon } from 'lucide-react'
 
 interface ConsumerShowProps {
   consumer: ConsumerData
@@ -87,16 +87,18 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
           <hr className='mb-6 border-[#e5e9eb]' />
           <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
             <InfoBlock
-              label='Organization Name'
-              value={safe(consumer.consumer.organization_name)}
-            />
-            <InfoBlock
-              label='Applicant Code'
-              value={safe(consumer.consumer.applicant_code)}
-            />
-            <InfoBlock
               label='Consumer Type'
               value={consumer.consumer.consumer_type?.parameter_value}
+            />
+            {consumer.consumer.department_name && (
+              <InfoBlock
+                label='Department Name'
+                value={consumer.consumer.department_name?.parameter_value}
+              />
+            )}
+            <InfoBlock
+              label='Organization Name'
+              value={safe(consumer.consumer.organization_name)}
             />
             <InfoBlock
               label='Consumer CIN'
@@ -114,14 +116,34 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
               label='GSTIN'
               value={safe(consumer.consumer.consumer_gstin)}
             />
+            <InfoBlock
+              label='Virtual Account Number'
+              value={safe(consumer.consumer.virtual_account_number)}
+            />
+            <InfoBlock
+              label='Contact Person'
+              value={safe(consumer.consumer.contact_person)}
+            />
           </div>
         </Card>
-        <Card className='rounded-lg p-7'>
-          <StrongText className='text-base font-semibold text-[#252c32]'>Indicators</StrongText>
-        </Card>
+        {consumer?.consumer?.flags && consumer?.consumer?.flags?.length > 0 && (
+          <Card className='rounded-lg p-7'>
+            <StrongText className='text-base font-semibold text-[#252c32]'>
+              {consumer.consumer.flags[0]?.flag?.attribute2_value}
+            </StrongText>
+            <hr className='my-4 border-[#e5e9eb]' />
+            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+              {consumer?.consumer?.flags?.map((flag, index) => (
+                <InfoBlock
+                  key={index}
+                  label={flag.flag?.parameter_value ?? '-'}
+                  value={flag.flag?.parameter_value ?? '-'}
+                />
+              ))}
+            </div>
+          </Card>
+        )}
 
-        {/* --- Contact --- */}
-        {/* --- Contact --- */}
         <Card className='rounded-lg p-7'>
           <StrongText className='text-base font-semibold text-[#252c32]'>Contact</StrongText>
           <hr className='my-4 border-[#e5e9eb]' />

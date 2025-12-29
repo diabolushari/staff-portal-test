@@ -47,14 +47,14 @@ export default function ConsumerFormComponent({
 
   const primary = contact?.primary_address
 
-  const { updateFlagData, flagData, updateSubId } = useConnectionFlagForm(indicators)
+  const { updateFlagData, flagData } = useConnectionFlagForm(indicators ?? [])
   const { formData, setFormValue, setAll, toggleBoolean } = useCustomForm({
     // Primary Address
     address_id: primary?.address_id ?? null,
     connection_id: consumer?.connection_id ?? connection_id,
     consumer_type_id: consumer?.consumer_type_id ?? '',
+    contact_person: consumer?.contact_person ?? '',
     organization_name: consumer?.organization_name ?? '',
-    applicant_code: consumer?.applicant_code ?? '',
     department_id: consumer?.department_name_id ?? '',
     consumer_pan: consumer?.consumer_pan ?? '',
     consumer_tan: consumer?.consumer_tan ?? '',
@@ -183,12 +183,7 @@ export default function ConsumerFormComponent({
               value={formData.organization_name}
               error={errors?.organization_name}
             />
-            <Input
-              label='Applicant Code'
-              setValue={setFormValue('applicant_code')}
-              value={formData.applicant_code}
-              error={errors?.applicant_code}
-            />
+
             <Input
               label='Consumer CIN'
               setValue={setFormValue('consumer_cin')}
@@ -218,6 +213,12 @@ export default function ConsumerFormComponent({
               setValue={setFormValue('virtual_account_number')}
               value={formData.virtual_account_number}
               error={errors?.virtual_account_number}
+            />
+            <Input
+              label='Contact Person'
+              setValue={setFormValue('contact_person')}
+              value={formData.contact_person}
+              error={errors?.contact_person}
             />
           </div>
         </div>
@@ -338,11 +339,12 @@ export default function ConsumerFormComponent({
           )}
         </div>
       </Card>
-      <ConnectionFlagForm
-        flagData={flagData}
-        updateFlagData={updateFlagData}
-        updateSubId={updateSubId}
-      />
+      {!consumer && (
+        <ConnectionFlagForm
+          flagData={flagData}
+          updateFlagData={updateFlagData}
+        />
+      )}
 
       {/* Modal */}
       {showContactModal && (
