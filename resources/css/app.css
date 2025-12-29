@@ -313,8 +313,20 @@
   line-height: normal;  
   letter-spacing: 0;
   color: #1A3B64;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
+.delete-link{
+  font-family: 'Geist', sans-serif;
+  font-size: 12px;
+  font-weight: 400;       
+  line-height: normal;  
+  letter-spacing: 0;
+  color: #e20909;
+  cursor: pointer;
+  text-decoration: underline;
+}
 .primary-button-text{
   font-family: 'Inter';
   font-size: 14px;

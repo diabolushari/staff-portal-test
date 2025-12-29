@@ -56,8 +56,6 @@ export default function MeterIndex({ filters, meters }: Readonly<Props>) {
         />
 
         <div className='relative w-full rounded-lg bg-white'>
-          <CardHeader title='Meter Info' />
-
           <div className='flex flex-col px-7 pb-7'>
             {meters && meters?.data?.length > 0 ? (
               meters?.data?.map((meter) => (

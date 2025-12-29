@@ -91,7 +91,8 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                 Basic Information
               </StrongText>
             </div>
-            <hr className='mb-6 border-[#e5e9eb]' />
+            <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
                 label='Consumer Number'
@@ -149,6 +150,8 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
             <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
               Load Details
             </StrongText>
+            <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
                 label='Contract Demand (KVA)'
@@ -174,6 +177,8 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
             <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
               Office Information
             </StrongText>
+            <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
                 label='Admin Office Code'
@@ -199,6 +204,8 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
             <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
               Connection Category & Purpose
             </StrongText>
+            <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
                 label='Connection Category'
@@ -220,6 +227,8 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
             <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
               Billing & Tariff
             </StrongText>
+            <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
                 label='Billing Process'
@@ -253,7 +262,8 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                   </StrongText>
                   <EditButton onClick={() => handleIndicator()} />
                 </div>
-                <hr className='mb-6 border-[#e5e9eb]' />
+                <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                   {connection?.connection_generation_types?.map((generationType) => (
                     <>
@@ -283,7 +293,8 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                 </StrongText>
                 <EditButton onClick={() => handleIndicator()} />
               </div>
-              <hr className='mb-6 border-[#e5e9eb]' />
+              <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
               <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                 {connection?.connection_flags?.map((flag) => (
                   <>
