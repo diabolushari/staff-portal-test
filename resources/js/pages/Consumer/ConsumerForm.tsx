@@ -15,6 +15,7 @@ interface Props {
   states: RegionOption[]
   connection: Connection | null
   indicators: ParameterValues[]
+  departments: ParameterValues[]
 }
 
 export default function ConsumerForm({
@@ -25,6 +26,7 @@ export default function ConsumerForm({
   consumer,
   connection,
   indicators,
+  departments,
 }: Readonly<Props>) {
   const breadcrumbs = useMemo<BreadcrumbItem[]>(() => {
     const items: BreadcrumbItem[] = [
@@ -82,6 +84,7 @@ export default function ConsumerForm({
         connection_id={connectionId}
         data={consumer}
         indicators={indicators}
+        departments={departments}
       />
     </ConnectionsLayout>
   )

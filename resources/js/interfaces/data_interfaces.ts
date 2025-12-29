@@ -221,6 +221,7 @@ export interface Consumer {
   consumer_type: ParameterValues
   consumer_cin: string
   virtual_account_number: string
+  department_name_id: number | string
 
  // if applicable from frontend logic
 

@@ -117,33 +117,6 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
         </Card>
         <Card className='rounded-lg p-7'>
           <StrongText className='text-base font-semibold text-[#252c32]'>Indicators</StrongText>
-          <hr className='my-4 border-[#e5e9eb]' />
-          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-            <InfoBlock
-              label='Income Tax Withholding'
-              value={consumer.consumer.income_tax_withholding_ind ? 'Yes' : 'No'}
-            />
-            <InfoBlock
-              label='GST Withholding'
-              value={consumer.consumer.gst_withholding_ind ? 'Yes' : 'No'}
-            />
-            <InfoBlock
-              label='Seasonal'
-              value={consumer.consumer.seasonal_ind ? 'Yes' : 'No'}
-            />
-            <InfoBlock
-              label='License'
-              value={consumer.consumer.license_ind ? 'Yes' : 'No'}
-            />
-            <InfoBlock
-              label='Open Access'
-              value={consumer.consumer.open_access_ind ? 'Yes' : 'No'}
-            />
-            <InfoBlock
-              label='Renewable'
-              value={consumer.consumer.solar_indicator ? 'Yes' : 'No'}
-            />
-          </div>
         </Card>
 
         {/* --- Contact --- */}

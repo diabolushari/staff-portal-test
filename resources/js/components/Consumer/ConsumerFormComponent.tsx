@@ -21,6 +21,7 @@ interface Props {
   connection_id: number
   data?: ConsumerData
   indicators: ParameterValues[]
+  departments: ParameterValues[]
 }
 
 const isSameAddress = (primary?: any, other?: any) => {
@@ -34,6 +35,7 @@ export default function ConsumerFormComponent({
   connection_id,
   data,
   indicators,
+  departments,
 }: Props) {
   console.log(consumer_types)
   let consumer = null
@@ -53,6 +55,7 @@ export default function ConsumerFormComponent({
     consumer_type_id: consumer?.consumer_type_id ?? '',
     organization_name: consumer?.organization_name ?? '',
     applicant_code: consumer?.applicant_code ?? '',
+    department_id: consumer?.department_name_id ?? '',
     consumer_pan: consumer?.consumer_pan ?? '',
     consumer_tan: consumer?.consumer_tan ?? '',
     consumer_gstin: consumer?.consumer_gstin ?? '',
@@ -95,6 +98,7 @@ export default function ConsumerFormComponent({
   )
 
   const [showContactModal, setShowContactModal] = useState(false)
+  const [showDepartmentField, setShowDepartmentField] = useState(false)
 
   const setOtherAddress = (type: 'billing' | 'premises', value: any) => {
     setAll({
@@ -104,7 +108,15 @@ export default function ConsumerFormComponent({
       },
     })
   }
-
+  const handleDepartmentField = (value: string) => {
+    const consumerType = consumer_types.find((type) => type.id === Number(value))
+    setFormValue('consumer_type_id')(value)
+    if (consumerType?.parameter_value.toLowerCase().includes('govt')) {
+      setShowDepartmentField(true)
+    } else {
+      setShowDepartmentField(false)
+    }
+  }
   const updateOtherAddressField = (type: 'billing' | 'premises', field: string, value: any) => {
     if (!formData.other_addresses[type]) return
     setOtherAddress(type, {
@@ -147,10 +159,22 @@ export default function ConsumerFormComponent({
                 list={consumer_types}
                 dataKey='id'
                 displayKey='parameter_value'
-                setValue={setFormValue('consumer_type_id')}
+                setValue={handleDepartmentField}
                 value={formData.consumer_type_id}
                 required
                 error={errors?.consumer_type_id}
+              />
+            )}
+            {departments && showDepartmentField && (
+              <SelectList
+                label='Department'
+                list={departments}
+                dataKey='id'
+                displayKey='parameter_value'
+                setValue={setFormValue('department_id')}
+                value={formData.department_id}
+                required
+                error={errors?.department_id}
               />
             )}
             <Input

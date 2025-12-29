@@ -164,32 +164,9 @@ class ConnectionService
 
                 foreach ($group['flags'] as $flag) {
 
-
                     if (!($flag['value'] ?? false)) {
                         continue;
                     }
-
-                    if ($group['group_name'] === 'Renewable') {
-
-                        $generationPayload = [
-                            'connection_id' => $request->connectionId ?? 0,
-                            'generation_type_id' => $flag['id'],
-                            'generation_sub_type_id' => $flag['sub_id'] ??  null,
-                            'value' => $flag['value'] ??  null,
-                            'label' => $flag['label'] ??  null,
-                        ];
-
-                        $grpcRequest->getConnectionGenerationTypes()[] =
-                            ConnectionGenerationProtoConverter::convertToFormRequest(
-                                $generationPayload
-                            );
-
-                        continue;
-                    }
-
-                    /**
-                     * 🔥 OTHER GROUPS → FLAGS
-                     */
                     $flagPayload = [
                         'connection_id' => $request->connectionId ?? 0,
                         'flag_id' => $flag['id'],
@@ -200,6 +177,26 @@ class ConnectionService
                     $grpcRequest->getConnectionFlags()[] =
                         ConnectionFlagProtoConverter::convertToFormRequest($flagPayload);
                 }
+            }
+        }
+
+        if (!empty($request->generationTypes)) {
+            foreach ($request->generationTypes as $generationType) {
+                if (!($generationType['value'] ?? false)) {
+                    continue;
+                }
+                $generationPayload = [
+                    'connection_id' => $request->connectionId ?? 0,
+                    'generation_type_id' => $generationType['id'],
+                    'generation_sub_type_id' => $generationType['generation_sub_type_id'] ??  null,
+                    'value' => $generationType['value'] ??  null,
+                    'label' => $generationType['label'] ??  null,
+                ];
+
+                $grpcRequest->getConnectionGenerationTypes()[] =
+                    ConnectionGenerationProtoConverter::convertToFormRequest(
+                        $generationPayload
+                    );
             }
         }
 
