@@ -254,7 +254,6 @@ class ConnectionService
         $grpcRequest->setAdminOfficeCode($request->adminOfficeCode);
         $grpcRequest->setVoltageId($request->voltageTypeId);
         $grpcRequest->setContractDemandKvaVal($request->contractDemandKwVal);
-        $grpcRequest->setConnectedLoadKwVal($request->connectedLoadKwVal);
         $grpcRequest->setTariffId($request->tariffTypeId);
         $grpcRequest->setPrimaryPurposeId($request->primaryPurposeId);
         $grpcRequest->setConnectionCategoryId($request->connectionCategoryId);

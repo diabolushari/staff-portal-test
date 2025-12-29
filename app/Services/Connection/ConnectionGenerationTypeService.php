@@ -104,16 +104,26 @@ class ConnectionGenerationTypeService
         );
     }
 
-    public function update(int $id, ?int $generationTypeId, ?int $generationSubtypeId): GrpcServiceResponse
+    public function update(int $connectionId, array $data): GrpcServiceResponse
     {
         $request = new UpdateConnectionGenerationTypeRequest();
-        $request->setId($id);
+        $request->setConnectionId($connectionId);
+        if (!empty($data)) {
+            foreach ($data as $generationType) {
 
-        if ($generationTypeId !== null) {
-            $request->setGenerationTypeId($generationTypeId);
-        }
-        if ($generationSubtypeId !== null) {
-            $request->setGenerationSubtypeId($generationSubtypeId);
+                $generationPayload = [
+                    'connection_id' => $request->connectionId ?? 0,
+                    'generation_type_id' => $generationType['id'],
+                    'generation_sub_type_id' => $generationType['generation_sub_type_id'] ??  null,
+                    'value' => $generationType['value'],
+                    'label' => $generationType['label'],
+                ];
+
+                $request->getGenerationTypes()[] =
+                    ConnectionGenerationProtoConverter::convertToFormRequest(
+                        $generationPayload
+                    );
+            }
         }
 
         [$response, $status] =
@@ -129,7 +139,7 @@ class ConnectionGenerationTypeService
         }
 
         return GrpcServiceResponse::success(
-            ConnectionGenerationProtoConverter::convertToArray($response->getGenerationType()),
+            [],
             $response,
             $status->code,
             $status->details

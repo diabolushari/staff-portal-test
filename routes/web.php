@@ -22,6 +22,8 @@ use App\Http\Controllers\BillingGroup\BillingGroupConnectionRelController;
 use App\Http\Controllers\BillingGroup\BillingGroupController;
 use App\Http\Controllers\BillingGroup\ConsumerNumberApiController;
 use App\Http\Controllers\Connection\ConnectionController;
+use App\Http\Controllers\Connection\ConnectionFlagController;
+use App\Http\Controllers\Connection\ConnectionGenerationController;
 use App\Http\Controllers\Connection\ConnectionsPartyController;
 use App\Http\Controllers\Connection\ConsumerController;
 use App\Http\Controllers\Connection\CreateConsumerController;
@@ -89,6 +91,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('connection.consumer');
     Route::get('connection/{id}/consumer/create', CreateConsumerController::class)
         ->name('connection.consumer.create');
+    Route::resource('connection-flag', ConnectionFlagController::class);
+    Route::resource('connection-generation', ConnectionGenerationController::class);
 
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)
         ->name('offices.update-contacts');
@@ -182,5 +186,5 @@ Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
 
 // pdf download
 Route::get('pdf-download/{billId}', [BillingPdfController::class, 'index'])->name('pdf-download');
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
