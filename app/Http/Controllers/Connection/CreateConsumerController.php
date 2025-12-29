@@ -28,7 +28,7 @@ class CreateConsumerController extends Controller
             10,
             null,
             'Connection',
-            'Indicator',
+            'Indicators',
             'attribute1Value',
             'Consumer'
         );
@@ -38,6 +38,13 @@ class CreateConsumerController extends Controller
             null,
             'Connection',
             'Consumer Type'
+        );
+        $departments = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Departments'
         );
         $districts = $this->geoRegionsService->getGeoRegions(
             'Administrative',
@@ -60,6 +67,7 @@ class CreateConsumerController extends Controller
             'connectionId' => $connectionId,
             'connection' => $connection->data,
             'indicators' => $indicators->data,
+            'departments' => $departments->data,
         ]);
     }
 }

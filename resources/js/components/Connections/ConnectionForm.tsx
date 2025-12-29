@@ -11,12 +11,14 @@ import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { route } from 'ziggy-js'
 import { Card } from '../ui/card'
 import TextArea from '@/ui/form/TextArea'
 import ConnectionFlagForm from './ConnectionFlagForm'
 import useConnectionFlagForm, { GroupedFlags } from './useConnectionFlagForm'
+import useConnectionGenerationForm from './useConnectionGenerationForm'
+import ConnectionGenerationTypeForm from './ConnectionGenerationTypeForm'
 
 interface Props {
   connection?: Connection
@@ -32,6 +34,7 @@ interface Props {
   meteringTypes: ParameterValues[]
   renewableTypes: ParameterValues[]
   indicators: ParameterValues[]
+  generationTypes: ParameterValues[]
 }
 const formatDateForInput = (date?: string | Date) => {
   if (!date) return ''
@@ -52,15 +55,16 @@ export default function ConnectionForm({
   billingProcesses,
   phaseTypes,
   primaryPurposes,
-  openAccessTypes,
   meteringTypes,
-  renewableTypes,
+  generationTypes,
   indicators,
 }: Props) {
   const [subCategories, setSubCategories] = useState<ParameterValues[]>([])
   const [category, setCategory] = useState<string>('')
 
-  const { flagData, updateFlagData, updateSubId } = useConnectionFlagForm(indicators)
+  const { flagData, updateFlagData } = useConnectionFlagForm(indicators)
+  const { generationData, updateGenerationData, updateGenerationSubTypeData } =
+    useConnectionGenerationForm({ generationTypes })
 
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     connection_type_id: connection?.connection_type_id ?? '',
@@ -93,6 +97,8 @@ export default function ConnectionForm({
     remarks: connection?.remarks ?? '',
     application_no: connection?.application_no ?? '',
     indicators: flagData,
+    generation_types: generationData,
+    prosumers: false,
   })
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
@@ -107,8 +113,7 @@ export default function ConnectionForm({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const payload = { ...formData, indicators: flagData }
-    console.log(payload)
+    const payload = { ...formData, indicators: flagData, generation_types: generationData }
     post(payload)
   }
 
@@ -360,13 +365,24 @@ export default function ConnectionForm({
             value={formData.light_load_kw_val}
             error={errors?.light_load_kw_val}
           />
+          <CheckBox
+            label='Prosumers'
+            value={formData.prosumers}
+            toggleValue={toggleBoolean('prosumers')}
+          />
         </div>
       </Card>
+
+      <ConnectionGenerationTypeForm
+        generationData={generationData}
+        updateGenerationData={updateGenerationData}
+        updateGenerationSubTypeData={updateGenerationSubTypeData}
+        prosumers={formData.prosumers}
+      />
 
       <ConnectionFlagForm
         flagData={flagData}
         updateFlagData={updateFlagData}
-        updateSubId={updateSubId}
       />
 
       {/* Submit */}

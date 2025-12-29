@@ -26,10 +26,17 @@ class ConnectionFormItemService
             10,
             null,
             'Connection',
-            'Indicator',
+            'Indicators',
             'attribute1Value',
             'Connection'
 
+        );
+        $generationTypes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Generation Type'
         );
 
         $connectionStatus = $this->parameterValueService->getParameterValues(
@@ -126,6 +133,7 @@ class ConnectionFormItemService
             'meteringTypes' => $meteringTypes->data,
             'renewableTypes' => $renewableTypes->data,
             'indicators' => $indicators->data,
+            'generationTypes' => $generationTypes->data,
         ];
     }
 }
