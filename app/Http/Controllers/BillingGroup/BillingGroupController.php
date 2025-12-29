@@ -88,8 +88,6 @@ class BillingGroupController extends Controller
         $search = $request->get('search');
         $response = $this->billingGroupService->getBillingGroup(null, $id);
 
-        dd($response->data);
-
         $billingGenerateJobServiceResponse = $this->billingGenerateJobService->listBillGenerationJobStatus($id, null);
 
         if ($response->hasError()) {
