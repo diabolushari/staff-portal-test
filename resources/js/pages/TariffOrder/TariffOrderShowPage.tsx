@@ -4,9 +4,7 @@ import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import { Paginator } from '@/ui/ui_interfaces'
 import Field from '@/components/ui/field'
-import StrongText from '@/typography/StrongText'
 import TariffConfigTable from '@/components/Tariff/TariffConfig/TariffConfigTable'
-import CustomCard from '@/ui/Card/CustomCard'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import ShowPageCard from '@/ui/Card/ShowPageCard'
 
@@ -52,7 +50,7 @@ export default function TariffOrderShowPage({
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         <ShowPageCard
           title='Basic Information'
-          editUrl={`/tariff-orders/${tariff_order?.tariff_order_id}/edit`}
+          // editUrl={`/tariff-orders/${tariff_order?.tariff_order_id}/edit`}
         >
           <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
             <Field
