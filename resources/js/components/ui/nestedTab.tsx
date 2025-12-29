@@ -6,6 +6,8 @@ interface NestedTabProps {
   tabs: {
     value: string
     label: string
+    icon:React.ReactNode
+    activeIcon:React.ReactNode
     href?: string
     item?: {
       subValue: string
@@ -44,31 +46,46 @@ export function NestedTabGroup({
 
   return (
     <div className="flex w-full flex-col gap-6">
+      <div className="flex justify-end">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="flex gap-10 bg-white p-3 border-b">
+        <TabsList className="
+  flex
+  bg-white
+  border border-tab-border
+  rounded-md
+  overflow-hidden
+  divide-x
+">
+
           {tabs.map((tab) => (
-            <TabsTrigger
-              key={tab.value}
-              value={tab.value}
-              className="rounded-none border-b-2 text-xl border-transparent p-3 font-normal 
-              data-[state=active]:border-blue-400 
-              data-[state=active]:font-semibold 
-              data-[state=active]:text-blue-400 
-              data-[state=active]:bg-blue-50"
-              onClick={() => {
-              if (tab.href) {
-                router.visit(tab.href)
-              }
-            }}
-            >
-              {tab.label}
-            </TabsTrigger>
+           <TabsTrigger
+  key={tab.value}
+  value={tab.value}
+  className="
+    flex flex-1 items-center justify-center
+    p-5 text-xl font-normal
+    text-gray-600
+    bg-white
+
+    data-[state=active]:bg-kseb-primary
+    data-[state=active]:text-kseb-bg-blue
+    data-[state=active]:font-semibold
+  "
+  onClick={() => {
+    if (tab.href) {
+      router.visit(tab.href)
+    }
+  }}
+>
+  {activeTab === tab.value ? tab.activeIcon : tab.icon}
+</TabsTrigger>
+
           ))}
         </TabsList>
       </Tabs>
-
+      </div>
       {subTabs.length > 0 && (
-        <div className="flex justify-end">
+        <div className="flex justify-start">
           <Tabs value={activeSub} onValueChange={setActiveSub}>
             <TabsList className="flex gap-6 bg-white p-2 border">
               {subTabs.map((st) => (
