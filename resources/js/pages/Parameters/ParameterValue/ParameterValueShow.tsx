@@ -1,4 +1,3 @@
-import ViewParameterDetail from '@/components/Parameter/ViewParameterDetails'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { metadataNavItems } from '@/components/Navbar/navitems'
@@ -6,26 +5,29 @@ import { BreadcrumbItem } from '@/types'
 import FormCard from '@/ui/Card/FormCard'
 import Field from '@/components/ui/field'
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Home',
-    href: '/',
-  },
-  {
-    title: 'Settings',
-    href: '/settings-page',
-  },
-  {
-    title: 'Parameter Values',
-    href: '/parameter-value',
-  },
-]
-
 export default function ParameterValueShow({
   parameter_value,
 }: {
   parameter_value: ParameterValues
 }) {
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Home',
+      href: '/',
+    },
+    {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
+      title: 'Parameter Values',
+      href: '/parameter-value',
+    },
+    {
+      title: parameter_value?.parameter_value,
+      href: '#',
+    },
+  ]
   const allFields = [
     { label: 'Id', key: 'id' },
     { label: 'Parameter Code', key: 'parameter_code' },
@@ -62,7 +64,13 @@ export default function ParameterValueShow({
       breadcrumb={breadcrumbs}
       navItems={metadataNavItems}
       selectedItem='Values'
-      title={`Parameter Value : ${parameter_value?.parameter_value}`}
+      title={`${parameter_value?.parameter_value}`}
+      description={
+        <>
+          Parameter Value details for {''}
+          <span className='font-bold'>{parameter_value?.parameter_value}</span>
+        </>
+      }
     >
       {/* ---- Basic Detail Section ---- */}
       <FormCard title='Basic Information'>

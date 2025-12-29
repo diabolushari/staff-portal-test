@@ -1,14 +1,13 @@
+import ActionButton from '@/components/action-button'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
-import DeleteButton from '@/ui/button/DeleteButton'
-import EditButton from '@/ui/button/EditButton'
 import { Layers, Package } from 'lucide-react'
 
 interface Props {
   parameterValues: ParameterValues[]
   onView?: (item: ParameterValues) => void
-  onEdit?: (item: ParameterValues) => void
-  onDelete?: (item: ParameterValues) => void
+  onEdit: (item: ParameterValues) => void
+  onDelete: (item: ParameterValues) => void
 }
 
 export default function ParameterValuesList({
@@ -91,8 +90,10 @@ export default function ParameterValuesList({
 
                 {/* Inline Edit/Delete buttons */}
                 <div className='mt-2 flex items-center gap-3'>
-                  {onEdit && <EditButton onClick={() => onEdit(param)} />}
-                  {onDelete && <DeleteButton onClick={() => onDelete(param)} />}
+                  <ActionButton
+                    onDelete={() => onDelete(param)}
+                    onEdit={() => onEdit(param)}
+                  />
                 </div>
               </div>
             </div>

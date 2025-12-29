@@ -4,6 +4,7 @@ import DeleteModal from '@/ui/Modal/DeleteModal'
 import { router } from '@inertiajs/react'
 import { Calendar, Cpu, Hash, Zap } from 'lucide-react'
 import { useState } from 'react'
+import ActionButton from '../action-button'
 
 interface Props {
   connections: Connection[]
@@ -112,7 +113,7 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
                     className='flex flex-col items-end justify-end gap-2'
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <DeleteButton onClick={() => handleDeleteConnection(connection)} />
+                    <ActionButton onDelete={() => handleDeleteConnection(connection)} />
                   </div>
                 </div>
               </div>

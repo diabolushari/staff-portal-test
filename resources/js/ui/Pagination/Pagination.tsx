@@ -92,7 +92,7 @@ const Pagination = ({ pagination, filters }: PaginationProps) => {
                   key={index.toString() + link.label}
                   href={href}
                   className={`mr-4 hidden cursor-pointer border-t border-transparent px-2 pt-3 leading-none hover:border-indigo-400 hover:text-indigo-700 md:flex ${
-                    link.active ? 'border-indigo-400 text-indigo-700' : 'text-gray-600'
+                    link.active ? 'text-kseb-primary border-indigo-400' : 'text-gray-600'
                   } ${!link.url ? 'cursor-not-allowed opacity-50' : ''}`}
                   dangerouslySetInnerHTML={{ __html: link.label }}
                 />

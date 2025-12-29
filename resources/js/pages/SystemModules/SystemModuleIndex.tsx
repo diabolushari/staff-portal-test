@@ -8,10 +8,8 @@ import { useCallback, useState } from 'react'
 import { route } from 'ziggy-js'
 import SystemModuleForm from './components/SystemModuleForm'
 import { metadataNavItems } from '@/components/Navbar/navitems'
-import { Pencil, Trash2 } from 'lucide-react'
 import AddButton from '@/ui/button/AddButton'
-import EditButton from '@/ui/button/EditButton'
-import DeleteButton from '@/ui/button/DeleteButton'
+import ActionButton from '@/components/action-button'
 
 interface Props {
   systemModules: SystemModule[]
@@ -94,8 +92,10 @@ export default function SystemModuleIndex({ systemModules }: Readonly<Props>) {
 
                 {/* Right Section: Actions */}
                 <div className='flex items-center gap-3'>
-                  <EditButton onClick={() => handleEditClick(module)} />
-                  <DeleteButton onClick={() => handleDeleteClick(module)} />
+                  <ActionButton
+                    onDelete={() => handleDeleteClick(module)}
+                    onEdit={() => handleEditClick(module)}
+                  />
                 </div>
               </div>
             </div>
