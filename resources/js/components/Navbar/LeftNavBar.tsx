@@ -8,23 +8,12 @@ import {
 } from '../ui/sidebar'
 import { useEffect, useState } from 'react'
 import Spinner from '@/ui/Spinner'
-
-type MenuItem = {
-  title: string
-  href?: string
-  icon?: React.ReactNode
-  children?: MenuItem[]
-}
-
-type ItemsGroup = {
-  label?: string
-  items: MenuItem[]
-}
+import { MainNav } from './navitems'
 
 interface Props {
   title: string
   selectedItem?: string
-  items?: ItemsGroup
+  items?: MainNav
 }
 
 export default function LeftNavBar({ items = { label: '', items: [] }, selectedItem }: Props) {

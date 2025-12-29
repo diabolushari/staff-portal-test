@@ -123,7 +123,7 @@ export default function ConnectMeter({
       value='configuration'
       subTabValue='meter'
       heading='Connect Meter'
-      subHeading=''
+      description=''
       connectionId={connection?.connection_id ?? 0}
       connection={connection}
     >

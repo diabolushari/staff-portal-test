@@ -6,8 +6,8 @@ interface NestedTabProps {
   tabs: {
     value: string
     label: string
-    icon:React.ReactNode
-    activeIcon:React.ReactNode
+    icon: React.ReactNode
+    activeIcon: React.ReactNode
     href?: string
     item?: {
       subValue: string
@@ -17,13 +17,16 @@ interface NestedTabProps {
   }[]
   defaultValue?: string
   defaultSubValue?: string
+  headerLeft?: React.ReactNode
   children?: React.ReactNode
 }
+
 
 export function NestedTabGroup({
   tabs,
   defaultValue,
   defaultSubValue,
+  headerLeft,
   children,
 }: Readonly<NestedTabProps>) {
   const [activeTab, setActiveTab] = useState(defaultValue || tabs[0].value)
@@ -32,60 +35,62 @@ export function NestedTabGroup({
   const subTabs = activeMasterTab?.item || []
 
   const [activeSub, setActiveSub] = useState(
-    defaultSubValue || subTabs?.[0]?.subValue || ""
+    defaultSubValue || subTabs?.[0]?.subValue || ''
   )
 
- 
   useEffect(() => {
-    if (subTabs.length > 0) {
-        if (!defaultSubValue) {
-      setActiveSub(subTabs[0].subValue);
+    if (subTabs.length > 0 && !defaultSubValue) {
+      setActiveSub(subTabs[0].subValue)
     }
-    }
-  }, [activeTab]);
+  }, [activeTab])
 
   return (
     <div className="flex w-full flex-col gap-6">
-      <div className="flex justify-end">
+
+      {/* 🔹 HEADER ROW */}
+      <div className="flex items-center justify-between gap-6">
+        {/* Left: Heading */}
+        <div className="flex flex-col gap-1">
+          {headerLeft}
+        </div>
+
+        {/* Right: Top Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="
-  flex
-  bg-white
-  border border-tab-border
-  rounded-md
-  overflow-hidden
-  divide-x
-">
-
-          {tabs.map((tab) => (
-           <TabsTrigger
-  key={tab.value}
-  value={tab.value}
-  className="
-    flex flex-1 items-center justify-center
-    p-5 text-xl font-normal
-    text-gray-600
-    bg-white
-
-    data-[state=active]:bg-kseb-primary
-    data-[state=active]:text-kseb-bg-blue
-    data-[state=active]:font-semibold
-  "
-  onClick={() => {
-    if (tab.href) {
-      router.visit(tab.href)
-    }
-  }}
->
-  {activeTab === tab.value ? tab.activeIcon : tab.icon}
-</TabsTrigger>
-
-          ))}
-        </TabsList>
-      </Tabs>
+          <TabsList
+            className="
+              flex
+              bg-white
+              border border-tab-border
+              rounded-md
+              overflow-hidden
+              divide-x
+            "
+          >
+            {tabs.map((tab) => (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                className="
+                  flex items-center justify-center
+                  p-4
+                  text-gray-600
+                  bg-white
+                  data-[state=active]:bg-kseb-primary
+                  data-[state=active]:text-kseb-bg-blue
+                "
+                onClick={() => tab.href && router.visit(tab.href)}
+              >
+                {activeTab === tab.value ? tab.activeIcon : tab.icon}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
       </div>
+
+      {/* 🔹 SUB TABS */}
+      
       {subTabs.length > 0 && (
-        <div className="flex justify-start">
+        <div className="flex justify-start pt-3">
           <Tabs value={activeSub} onValueChange={setActiveSub}>
             <TabsList className="flex gap-6 bg-white p-2 border">
               {subTabs.map((st) => (
@@ -111,7 +116,9 @@ export function NestedTabGroup({
         </div>
       )}
 
+      {/* 🔹 CONTENT */}
       <div>{children}</div>
     </div>
   )
 }
+

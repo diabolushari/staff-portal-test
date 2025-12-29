@@ -29,7 +29,7 @@ export default function ConnectionParties({
       value='connection'
       subTabValue='parties'
       heading='Connection Parties'
-      subHeading='Connection Parties'
+      description='Connection Parties'
     >
       <div className='flex justify-between'>
         <p>Parties</p>

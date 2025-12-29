@@ -45,8 +45,13 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
       connectionId={connection?.connection_id ?? 0}
       value={'connection'}
       subTabValue='connection'
-      heading='Connection'
-      subHeading=''
+      heading='Connection Details'
+      description={
+        <>
+          Connection details for consumer number {'   '}
+          <span className='font-bold'>{connection?.consumer_number}</span>
+        </>
+      }
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
       consumerExist={consumerExist}

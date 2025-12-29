@@ -1,22 +1,25 @@
 import { BreadcrumbItem } from '@/types'
-import MainLayout from '../main-layout'
-import { navItem } from '@/components/Navbar/navitems'
+import { MainNav } from '@/components/Navbar/navitems'
 import { Connection } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import React from 'react'
 import { NestedTabGroup } from '@/components/ui/nestedTab'
 import CustomBreadcrumb from '@/ui/BreadCrumb'
+import { SidebarProvider } from '@/components/ui/sidebar'
+import { ToastContainer } from 'react-toastify'
+import TopNavBar from '@/components/Navbar/TopNavBar'
+import LeftNavBar from '@/components/Navbar/LeftNavBar'
 
 interface ConnectionsLayoutProps {
   children: React.ReactNode
   breadcrumbs: BreadcrumbItem[]
-  connectionsNavItems: navItem[]
+  connectionsNavItems: MainNav
   connection?: Connection | null
   connectionId: number
   value: string
   subTabValue?: string
   heading: string
-  subHeading: string
+  description: React.ReactNode
   onEdit?: () => void
   consumerExist?: boolean
   meterExist?: boolean
@@ -250,23 +253,6 @@ const connectionTabs = (connection?: Connection | null) => [
       },
     ],
   },
-  // {
-  //   value: 'consumer',
-  //   label: 'Consumer',
-  //   href: connection?.connection_id ? route('connection.consumer', connection?.connection_id) : '#',
-  // },
-  // consumerExist && {
-  //   value: 'meter',
-  //   label: 'Meter',
-  //   href: connection?.connection_id ? route('connection.meters', connection?.connection_id) : '#',
-  // },
-  // meterExist && {
-  //   value: 'meter-reading',
-  //   label: 'Meter Reading',
-  //   href: connection?.connection_id
-  //     ? route('connection.meter-reading', connection?.connection_id)
-  //     : '#',
-  // },
 ]
 export default function ConnectionsLayout({
   children,
@@ -276,41 +262,55 @@ export default function ConnectionsLayout({
   value,
   subTabValue,
   heading,
+  description,
   onEdit,
 }: Readonly<ConnectionsLayoutProps>) {
   return (
-    <MainLayout
-      navItems={connectionsNavItems}
-      selectedItem='Connections'
-      selectedTopNav='Consumers'
-    >
-      <NestedTabGroup
-        tabs={connectionTabs(connection)}
-        defaultValue={value}
-        defaultSubValue={subTabValue}
-      >
-        {' '}
-        <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
-          <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-            <div className='flex flex-col gap-2'>
-              <StrongText className='text-2xl font-semibold text-[#252c32]'>{heading}</StrongText>
-              <CustomBreadcrumb list={breadcrumbs} />
-              {/* <span className='text-sm text-gray-600'>{subHeading}</span> */}
-            </div>
-            {onEdit && (
-              <button
-                onClick={onEdit}
-                className='flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
-              >
-                Edit
-              </button>
-            )}
+    <SidebarProvider>
+      <ToastContainer theme='dark' />
+      <div className='flex h-screen w-full flex-col'>
+        <div className=''>
+          <TopNavBar selectedTopNav={'Consumers'} />
+        </div>
+
+        <div className='grid flex-1 grid-cols-12'>
+          <div className='col-span-2 hidden lg:block'>
+            <LeftNavBar
+              title={''}
+              selectedItem='Connections'
+              items={connectionsNavItems}
+            />
           </div>
 
-          <div>{children}</div>
+          <main className='col-span-12 p-4 lg:col-span-8'>
+            <div>
+              <div className='px-4 pt-2'>
+                <CustomBreadcrumb list={breadcrumbs ?? []} />
+              </div>
+
+              <div className='flex flex-col gap-4 overflow-x-auto p-2'>
+                {' '}
+                <NestedTabGroup
+                  tabs={connectionTabs(connection)}
+                  defaultValue={value}
+                  defaultSubValue={subTabValue}
+                  headerLeft={
+                    <>
+                      <div className='kseb-h1 pt-7'>{heading}</div>
+                      <p className='kseb-description pt-7 text-gray-600'>{description}</p>
+                    </>
+                  }
+                >
+                  {children}
+                </NestedTabGroup>
+              </div>
+            </div>
+          </main>
+
+          <div className='col-span-2 hidden lg:block'></div>
         </div>
-      </NestedTabGroup>
-    </MainLayout>
+      </div>
+    </SidebarProvider>
   )
 }
 export { connectionTabs }

@@ -64,7 +64,7 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
       connectionsNavItems={consumerNavItems}
       heading={`Connection #${connection?.consumer_number}`}
       onEdit={() => router.visit(route('connection.consumer', connection?.connection_id))}
-      subHeading='Consumer'
+      description='Consumer'
       consumerExist={true}
       meterExist={connection?.meter_mappings?.length > 0}
     >

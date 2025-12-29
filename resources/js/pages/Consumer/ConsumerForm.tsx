@@ -58,7 +58,7 @@ export default function ConsumerForm({
       connectionsNavItems={consumerNavItems}
       connectionId={connectionId}
       heading='Consumer Details'
-      subHeading='Consumer Details'
+      description='Consumer Details'
       value='connection'
       subTabValue='consumer'
     >

@@ -93,7 +93,7 @@ export default function ConnectionMeterList({
     <ConnectionsLayout
       connectionId={connection_id}
       heading={'Meters'}
-      subHeading={'Meters assigned to this connection'}
+      description={'Meters assigned to this connection'}
       value='configuration'
       subTabValue='meter'
       connection={connection}
