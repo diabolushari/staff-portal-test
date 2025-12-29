@@ -249,13 +249,13 @@ export default function ConnectionsShow({
                     <>
                       <Field
                         key={generationType?.id}
-                        label=''
-                        value={generationType?.generation_type?.parameter_value ?? '-'}
+                        label={generationType?.generation_type?.parameter_value ?? '-'}
+                        value='Yes'
                       />
                       {generationType?.generation_sub_type && (
                         <Field
                           key={generationType?.id}
-                          label='Sub Type'
+                          label={`${generationType.generation_type?.parameter_value} Sub Type`}
                           value={generationType?.generation_sub_type?.parameter_value ?? '-'}
                         />
                       )}
