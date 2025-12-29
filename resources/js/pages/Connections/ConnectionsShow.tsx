@@ -4,6 +4,7 @@ import Field from '@/components/ui/field'
 import type { Connection } from '@/interfaces/data_interfaces'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import StrongText from '@/typography/StrongText'
+import EditButton from '@/ui/button/EditButton'
 import { router } from '@inertiajs/react'
 import { PencilIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
@@ -228,37 +229,60 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
               />
             </div>
           </Card>
-          <Card className='rounded-lg p-7'>
-            <div className='mb-6 flex items-center justify-between'>
-              <StrongText className='text-base font-semibold text-[#252c32]'>Indicators</StrongText>
-              <button
-                onClick={() => handleIndicator()}
-                className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] hover:bg-gray-50'
-              >
-                <PencilIcon className='h-4 w-4' />
-                Edit
-              </button>
-            </div>
-            <hr className='mb-6 border-[#e5e9eb]' />
-            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-              {connection?.connection_generation_types?.map((generationType) => (
-                <Field
-                  key={generationType?.id}
-                  label={generationType?.generation_type?.parameter_value ?? '-'}
-                  value='Selected'
-                />
-              ))}
-              {connection?.connection_flags &&
-                connection?.connection_flags?.length > 0 &&
-                connection?.connection_flags?.map((flag) => (
-                  <Field
-                    key={flag?.id}
-                    label={flag?.flag?.parameter_value ?? '-'}
-                    value='Selected'
-                  />
+
+          {connection.connection_generation_types &&
+            connection.connection_generation_types.length > 0 && (
+              <Card className='rounded-lg p-7'>
+                <div className='mb-6 flex items-center justify-between'>
+                  <StrongText className='text-base font-semibold text-[#252c32]'>
+                    Generation Types
+                  </StrongText>
+                  <EditButton onClick={() => handleIndicator()} />
+                </div>
+                <hr className='mb-6 border-[#e5e9eb]' />
+                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                  {connection?.connection_generation_types?.map((generationType) => (
+                    <>
+                      <Field
+                        key={generationType?.id}
+                        label=''
+                        value={generationType?.generation_type?.parameter_value ?? '-'}
+                      />
+                      {generationType?.generation_sub_type && (
+                        <Field
+                          key={generationType?.id}
+                          label='Sub Type'
+                          value={generationType?.generation_sub_type?.parameter_value ?? '-'}
+                        />
+                      )}
+                    </>
+                  ))}
+                </div>
+              </Card>
+            )}
+
+          {connection?.connection_flags && connection?.connection_flags?.length > 0 && (
+            <Card className='rounded-lg p-7'>
+              <div className='mb-6 flex items-center justify-between'>
+                <StrongText className='text-base font-semibold text-[#252c32]'>
+                  Indicators
+                </StrongText>
+                <EditButton onClick={() => handleIndicator()} />
+              </div>
+              <hr className='mb-6 border-[#e5e9eb]' />
+              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                {connection?.connection_flags?.map((flag) => (
+                  <>
+                    <Field
+                      key={flag?.id}
+                      label={flag?.flag?.parameter_value ?? '-'}
+                      value='Selected'
+                    />
+                  </>
                 ))}
-            </div>
-          </Card>
+              </div>
+            </Card>
+          )}
 
           {/* Dates */}
         </div>

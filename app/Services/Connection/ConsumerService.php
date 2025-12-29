@@ -204,6 +204,8 @@ class ConsumerService
      */
     public function transformConsumerToArray(ConsumerMessage $consumer): array
     {
+
+
         return [
             'connection_id' => $consumer->getConnectionId(),
             'consumer_type_id' => $consumer->getConsumerTypeId(),

@@ -1,8 +1,6 @@
 import FormCard from '@/ui/Card/FormCard'
 import { GroupedFlags } from './useConnectionFlagForm'
-import StrongText from '@/typography/StrongText'
 import CheckBox from '@/ui/form/CheckBox'
-import SelectList from '@/ui/form/SelectList'
 
 interface Props {
   updateFlagData: (id: number, value: boolean, label: string) => void

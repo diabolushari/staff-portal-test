@@ -114,7 +114,6 @@ export default function ConnectionForm({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const payload = { ...formData, indicators: flagData, generation_types: generationData }
-    console.log(payload)
     post(payload)
   }
 

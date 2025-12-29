@@ -28,7 +28,7 @@ class CreateConsumerController extends Controller
             10,
             null,
             'Connection',
-            'Indicator',
+            'Indicators',
             'attribute1Value',
             'Consumer'
         );
