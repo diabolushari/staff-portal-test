@@ -13,6 +13,7 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
+import AddButton from '@/ui/button/AddButton'
 import EditButton from '@/ui/button/EditButton'
 import { router } from '@inertiajs/react'
 import { Info, PencilIcon } from 'lucide-react'
@@ -179,6 +180,7 @@ export default function ConsumerShow({
             />
           </div>
         </Card>
+
         {consumerGroupedFlags &&
           consumerGroupedFlags.length > 0 &&
           consumerGroupedFlags.map((group, index) => (
@@ -208,6 +210,14 @@ export default function ConsumerShow({
             indicators={indicators}
             connectionId={connection?.connection_id}
           />
+        )}
+        {consumerGroupedFlags.length === 0 && (
+          <div className='flex items-center justify-start'>
+            <AddButton
+              onClick={handleEditIndicator}
+              buttonText='Add Indicator'
+            />
+          </div>
         )}
 
         <Card className='rounded-lg p-7'>

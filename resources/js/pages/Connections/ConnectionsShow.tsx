@@ -12,21 +12,25 @@ import { groupFlagsBySection } from '../Consumer/ConsumerShow'
 import AddButton from '@/ui/button/AddButton'
 import ConnectionFlagModal from '@/components/Connections/ConnectionFlagModal'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import ConnectionGenerationFormModal from '@/components/Connections/ConnectionGenerationFormModal'
 
 interface Props {
   connection: Connection
   consumerExist: boolean
   indicators: ParameterValues[]
+  generationTypes: ParameterValues[]
 }
 
 export default function ConnectionsShow({
   connection,
   consumerExist,
   indicators,
+  generationTypes,
 }: Readonly<Props>) {
   const formatDate = (dateStr?: string | null) =>
     dateStr ? new Date(dateStr).toLocaleDateString() : '-'
   const [editIndicator, setEditIndicator] = useState(false)
+  const [editGeneration, setEditGeneration] = useState(false)
 
   const breadcrumbs = useMemo(
     () => [
@@ -49,6 +53,10 @@ export default function ConnectionsShow({
     setEditIndicator(!editIndicator)
   }
   const connectionGroupedFlags = groupFlagsBySection(connection?.connection_flags, 'Connection')
+
+  const handleGeneration = () => {
+    setEditGeneration(!editGeneration)
+  }
 
   return (
     <ConnectionsLayout
@@ -241,7 +249,7 @@ export default function ConnectionsShow({
                   <StrongText className='text-base font-semibold text-[#252c32]'>
                     Generation Types
                   </StrongText>
-                  <EditButton onClick={() => handleIndicator()} />
+                  <EditButton onClick={() => handleGeneration()} />
                 </div>
                 <hr className='mb-6 border-[#e5e9eb]' />
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
@@ -289,18 +297,34 @@ export default function ConnectionsShow({
                 </div>
               </Card>
             ))}
-          {connectionGroupedFlags?.length === 0 && (
-            <AddButton
-              onClick={() => handleIndicator()}
-              buttonText='Add Indicator'
-            />
-          )}
+          <div className='flex gap-4'>
+            {connectionGroupedFlags?.length === 0 && (
+              <AddButton
+                onClick={() => handleIndicator()}
+                buttonText='Add Indicator'
+              />
+            )}
+            {connection?.connection_generation_types?.length === 0 && (
+              <AddButton
+                onClick={() => handleGeneration()}
+                buttonText='Add Generation'
+              />
+            )}
+          </div>
           {editIndicator && (
             <ConnectionFlagModal
               connectionId={connection?.connection_id}
               setShowModal={setEditIndicator}
               currentFlags={connection.connection_flags}
               indicators={indicators}
+            />
+          )}
+          {editGeneration && (
+            <ConnectionGenerationFormModal
+              connectionId={connection?.connection_id}
+              setShowModal={setEditGeneration}
+              generationTypes={generationTypes}
+              initialGenerationData={connection?.connection_generation_types}
             />
           )}
           {/* Dates */}

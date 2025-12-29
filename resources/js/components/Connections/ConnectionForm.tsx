@@ -64,7 +64,9 @@ export default function ConnectionForm({
 
   const { flagData, updateFlagData } = useConnectionFlagForm(indicators)
   const { generationData, updateGenerationData, updateGenerationSubTypeData } =
-    useConnectionGenerationForm({ generationTypes })
+    useConnectionGenerationForm({
+      generationTypes,
+    })
 
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     connection_type_id: connection?.connection_type_id ?? '',

@@ -90,6 +90,13 @@ class ConnectionController extends Controller
             "attribute1Value",
             "Connection"
         );
+        $generationTypes = $this->parameterValueService->getParameterValues(
+            null,
+            null,
+            null,
+            "Connection",
+            "Generation Type"
+        );
         if ($connection->hasError()) {
             if ($connection->error) {
                 return $connection->error;
@@ -105,6 +112,7 @@ class ConnectionController extends Controller
             'connection' => $connection->data,
             'consumerExist' => $consumerExist,
             'indicators' => $indicators->data,
+            'generationTypes' => $generationTypes->data,
         ]);
     }
 

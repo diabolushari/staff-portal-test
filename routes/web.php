@@ -23,6 +23,7 @@ use App\Http\Controllers\BillingGroup\BillingGroupController;
 use App\Http\Controllers\BillingGroup\ConsumerNumberApiController;
 use App\Http\Controllers\Connection\ConnectionController;
 use App\Http\Controllers\Connection\ConnectionFlagController;
+use App\Http\Controllers\Connection\ConnectionGenerationController;
 use App\Http\Controllers\Connection\ConnectionsPartyController;
 use App\Http\Controllers\Connection\ConsumerController;
 use App\Http\Controllers\Connection\CreateConsumerController;
@@ -91,6 +92,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('connection/{id}/consumer/create', CreateConsumerController::class)
         ->name('connection.consumer.create');
     Route::resource('connection-flag', ConnectionFlagController::class);
+    Route::resource('connection-generation', ConnectionGenerationController::class);
 
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)
         ->name('offices.update-contacts');

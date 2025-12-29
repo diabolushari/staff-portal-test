@@ -43,6 +43,11 @@ message CreateConnectionGenerationTypeResponse {
 }
 
 
+message UpdateConnectionGenerationTypeRequest {
+  int32 connection_id = 1;
+  repeated ConnectionGenerationFormRequest generation_types = 2;
+}
+
 message UpdateConnectionGenerationTypeResponse {
   ConnectionGenerationTypeMessage generation_type = 1;
 }
@@ -66,7 +71,7 @@ service ConnectionGenerationTypeService {
   ) returns (CreateConnectionGenerationTypeResponse);
 
   rpc UpdateConnectionGenerationType(
-      ConnectionGenerationFormRequest
+      UpdateConnectionGenerationTypeRequest
   ) returns (UpdateConnectionGenerationTypeResponse);
 
   rpc GetConnectionGenerationType(
