@@ -1,4 +1,5 @@
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
+import ParameterValueModal from '@/components/Parameter/ParameterValue/ParameterValueModal'
 import MeterTimeZoneFormModal from '@/components/meteringtimezones/MeterTimeZoneFormModal'
 import { Card, CardContent } from '@/components/ui/card'
 import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
@@ -8,7 +9,7 @@ import DeleteModal from '@/ui/Modal/DeleteModal'
 import AddButton from '@/ui/button/AddButton'
 import DeleteButton from '@/ui/button/DeleteButton'
 import EditButton from '@/ui/button/EditButton'
-import { Clock, Tag, Timer } from 'lucide-react'
+import { Clock, Group, Tag, Timer } from 'lucide-react'
 import { useState } from 'react'
 
 // --- TYPES ---
@@ -52,8 +53,9 @@ export default function MeteringTimezoneShowPage({
   timezoneNameParameter,
   timezoneNames,
 }: Readonly<Props>) {
-  const [loading, setLoading] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
+  const [isGroupEditing, setIsGroupEditing] = useState(false)
+  const [group, setGroup] = useState<ParameterValues | null | undefined>(null)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [deleteItem, setDeleteItem] = useState<MeteringTimezone | null | undefined>(null)
   const [selectedTimezone, setSelectedTimezone] = useState<MeteringTimezone | null | undefined>(
@@ -116,6 +118,10 @@ export default function MeteringTimezoneShowPage({
     setShowCreateModal(true)
     setSelectedType(timezone_type ?? null)
   }
+  const handleGroupEdit = () => {
+    setIsGroupEditing(true)
+    setGroup(timezone_type ?? null)
+  }
 
   // --- RENDER ---
   return (
@@ -125,6 +131,7 @@ export default function MeteringTimezoneShowPage({
       selectedItem='Timezone Groups'
       selectedTopNav='Consumers'
       title={timezone_type?.parameter_value}
+      editBtnClick={handleGroupEdit}
     >
       <div className='p-4'>
         <div className='flex items-center justify-between p-4'>
@@ -200,6 +207,13 @@ export default function MeteringTimezoneShowPage({
           timezoneNames={timezoneNames}
           timezoneNameParameter={timezoneNameParameter}
           onClose={() => setIsEditing(false)}
+        />
+      )}
+      {isGroupEditing && group && (
+        <ParameterValueModal
+          parameterValue={group}
+          definitionId={group.definition_id}
+          onClose={() => setIsGroupEditing(false)}
         />
       )}
 

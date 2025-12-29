@@ -42,7 +42,7 @@ export interface ParameterValues {
   is_active: boolean
   sort_priority: number
   notes: string
-  definition?: Partial<ParameterDefinition> | null
+  definition?: ParameterDefinition | null
   domain?: Partial<ParameterDomain> | null
   system_module?: Partial<SystemModule> | null
 }
