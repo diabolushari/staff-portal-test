@@ -204,6 +204,13 @@ class ConsumerService
      */
     public function transformConsumerToArray(ConsumerMessage $consumer): array
     {
+
+        $consumerFlags = $consumer->getConsumerFlagsMessage();
+        $flags = [];
+        foreach ($consumerFlags as $flag) {
+            $flag = ConnectionFlagProtoConverter::convertToArray($flag);
+            $flags[] = $flag;
+        }
         return [
             'connection_id' => $consumer->getConnectionId(),
             'consumer_type_id' => $consumer->getConsumerTypeId(),
@@ -211,7 +218,6 @@ class ConsumerService
             'consumer_pan' => $consumer->getConsumerPan(),
             'consumer_tan' => $consumer->getConsumerTan(),
             'consumer_gstin' => $consumer->getConsumerGstin(),
-
             'manufacturing_info' => $consumer->getManufacturingInfo(),
             'tax_info' => $consumer->getTaxInfo(),
             'identity_info' => $consumer->getIdentityInfo(),
@@ -221,6 +227,7 @@ class ConsumerService
             'virtual_account_number' => $consumer->getVirtualAccountNumber(),
             'contact_person' => $consumer->getContactPerson(),
             'department_name_id' => $consumer->getDepartmentNameId(),
+            'flags' => $flags,
         ];
     }
 

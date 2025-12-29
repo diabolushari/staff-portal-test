@@ -45,9 +45,6 @@ class ConnectionGenerationProtoConverter
     public static function convertToFormRequest(array $generationType): ConnectionGenerationFormRequest
     {
         $formRequest = new ConnectionGenerationFormRequest();
-        if (isset($generationType['id'])) {
-            $formRequest->setId($generationType['id']);
-        }
         $formRequest->setValue($generationType['value']);
         $formRequest->setConnectionId($generationType['connection_id']);
         $formRequest->setGenerationTypeId($generationType['generation_type_id']);

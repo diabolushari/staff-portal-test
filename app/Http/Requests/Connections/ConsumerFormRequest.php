@@ -16,7 +16,6 @@ class ConsumerFormRequest extends Data
         public int $connectionId,
         public int $consumerTypeId,
         public string $organizationName,
-        public string $applicantCode,
         public string $consumerPan,
         public string $consumerTan,
         public string $consumerGstin,

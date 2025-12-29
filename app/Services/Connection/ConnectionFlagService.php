@@ -12,7 +12,7 @@ use Proto\Connections\UpdateConnectionFlagRequest;
 use Proto\Connections\GetConnectionFlagRequest;
 use Proto\Connections\ListConnectionFlagsByConnectionRequest;
 use Proto\Connections\ConnectionFlagMessage;
-use Google\Protobuf\Timestamp;
+
 
 class ConnectionFlagService
 {
@@ -27,56 +27,56 @@ class ConnectionFlagService
         );
     }
 
-      private function toArray(?ConnectionFlagMessage $flag): ?array
-        {
-            if ($flag === null) {
-                return null;
-            }
-
-            return [
-                'id' => $flag->getId(),
-                'connection_id' => $flag->getConnectionId(),
-                'flag_id' => $flag->getFlagId(),
-
-                'effective_start' => $flag->getEffectiveStart()
-                    ? $flag->getEffectiveStart()->toDateTime()->format('Y-m-d')
-                    : null,
-
-                'effective_end' => $flag->getEffectiveEnd()
-                    ? $flag->getEffectiveEnd()->toDateTime()->format('Y-m-d')
-                    : null,
-
-                'is_current' => $flag->getIsCurrent(),
-
-                'created_at' => $flag->getCreatedTs()
-                    ? $flag->getCreatedTs()->toDateTime()->format('Y-m-d H:i:s')
-                    : null,
-
-                'updated_at' => $flag->getUpdatedTs()
-                    ? $flag->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s')
-                    : null,
-
-                'deleted_at' => $flag->getDeletedTs()
-                    ? $flag->getDeletedTs()->toDateTime()->format('Y-m-d H:i:s')
-                    : null,
-
-                'created_by' => $flag->getCreatedBy() ?: null,
-                'updated_by' => $flag->getUpdatedBy() ?: null,
-                'deleted_by' => $flag->getDeletedBy() ?: null,
-
-                
-                'flag' => $flag->getFlag()
-                    ? $this->parameterValueService->toArray($flag->getFlag())
-                    : null,
-            ];
+    private function toArray(?ConnectionFlagMessage $flag): ?array
+    {
+        if ($flag === null) {
+            return null;
         }
+
+        return [
+            'id' => $flag->getId(),
+            'connection_id' => $flag->getConnectionId(),
+            'flag_id' => $flag->getFlagId(),
+
+            'effective_start' => $flag->getEffectiveStart()
+                ? $flag->getEffectiveStart()->toDateTime()->format('Y-m-d')
+                : null,
+
+            'effective_end' => $flag->getEffectiveEnd()
+                ? $flag->getEffectiveEnd()->toDateTime()->format('Y-m-d')
+                : null,
+
+            'is_current' => $flag->getIsCurrent(),
+
+            'created_at' => $flag->getCreatedTs()
+                ? $flag->getCreatedTs()->toDateTime()->format('Y-m-d H:i:s')
+                : null,
+
+            'updated_at' => $flag->getUpdatedTs()
+                ? $flag->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s')
+                : null,
+
+            'deleted_at' => $flag->getDeletedTs()
+                ? $flag->getDeletedTs()->toDateTime()->format('Y-m-d H:i:s')
+                : null,
+
+            'created_by' => $flag->getCreatedBy() ?: null,
+            'updated_by' => $flag->getUpdatedBy() ?: null,
+            'deleted_by' => $flag->getDeletedBy() ?: null,
+
+
+            'flag' => $flag->getFlag()
+                ? $this->parameterValueService->toArray($flag->getFlag())
+                : null,
+        ];
+    }
 
     public function create(int $connectionId, int $flagId): GrpcServiceResponse
     {
         $request = new CreateConnectionFlagRequest();
         $request->setConnectionId($connectionId);
         $request->setFlagId($flagId);
-       
+
 
         [$response, $status] = $this->client->CreateConnectionFlag($request)->wait();
 
@@ -104,7 +104,7 @@ class ConnectionFlagService
         if ($flagId !== null) {
             $request->setFlagId($flagId);
         }
-        
+
 
         [$response, $status] = $this->client->UpdateConnectionFlag($request)->wait();
 
@@ -125,7 +125,7 @@ class ConnectionFlagService
         );
     }
 
-    
+
     public function get(int $id): GrpcServiceResponse
     {
         $request = new GetConnectionFlagRequest();
@@ -150,7 +150,7 @@ class ConnectionFlagService
         );
     }
 
-   
+
     public function listByConnection(?int $connectionId = null): GrpcServiceResponse
     {
         $request = new ListConnectionFlagsByConnectionRequest();
@@ -182,5 +182,4 @@ class ConnectionFlagService
             $status->details
         );
     }
-
 }

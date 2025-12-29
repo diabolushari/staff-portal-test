@@ -27,10 +27,8 @@ export interface PageProps {
   billingGenerateJobStatus: BillJobStatus[]
 }
 
-export default function BillingGroupShowPage({
-  billingGroup,
-  billingGenerateJobStatus,
-}: PageProps) {
+export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProps>) {
+  console.log(billingGroup)
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Home',

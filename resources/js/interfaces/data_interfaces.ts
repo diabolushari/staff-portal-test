@@ -107,32 +107,30 @@ export interface ConnectionPartyMapping {
 
 export interface ConnectionFlag {
   connection_id: number
-created_by: number
-effective_end: string
-effective_start: string
-flag_id: number
-id: number
-is_current: boolean
-updated_by: number
-updated_ts: string
-flag: ParameterValues | null
+  created_by: number
+  effective_end: string
+  effective_start: string
+  flag_id: number
+  id: number
+  is_current: boolean
+  updated_by: number
+  updated_ts: string
+  flag: ParameterValues | null
 }
 
 export interface ConnectionGenerationType {
-  
-connection_id: number
-created_by: number
-effective_end: string
-effective_start: string
-generation_type_id: number
-generation_type: ParameterValues | null
-id: number
-is_current: boolean
-updated_by: number
-updated_ts: string
-generation_sub_type: ParameterValues | null
-generation_sub_type_id: number
-
+  connection_id: number
+  created_by: number
+  effective_end: string
+  effective_start: string
+  generation_type_id: number
+  generation_type: ParameterValues | null
+  id: number
+  is_current: boolean
+  updated_by: number
+  updated_ts: string
+  generation_sub_type: ParameterValues | null
+  generation_sub_type_id: number
 }
 
 export interface Connection {
@@ -200,8 +198,8 @@ export interface Connection {
   consumer_profiles?: Consumer[]
   latest_meter_reading?: MeterReading
 
-connection_flags?:ConnectionFlag[]
-connection_generation_types?:ConnectionGenerationType[]
+  connection_flags?: ConnectionFlag[]
+  connection_generation_types?: ConnectionGenerationType[]
 }
 
 export interface OfficeHierarchy {
@@ -221,17 +219,17 @@ export interface Consumer {
   consumer_type: ParameterValues
   consumer_cin: string
   virtual_account_number: string
-
- // if applicable from frontend logic
-
-  // Missing fields from PHP
+  department_name_id: number | string
+  department_name: ParameterValues
+  contact_person: string
   manufacturing_info: Record<string, any>
   tax_info: Record<string, any>
   identity_info: Record<string, any>
   application_info: Record<string, any>
-  addresses?: Record<string, any> // billing/premises from Struct
+  addresses?: Record<string, any>
 
   contact_folio: any
+  flags?: ConnectionFlag[]
 }
 
 export interface Contact {
