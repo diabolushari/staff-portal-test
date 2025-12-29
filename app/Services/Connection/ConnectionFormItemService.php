@@ -21,6 +21,17 @@ class ConnectionFormItemService
             'Connection Type'
         );
 
+        $indicators = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Indicator',
+            'attribute1Value',
+            'Connection'
+
+        );
+
         $connectionStatus = $this->parameterValueService->getParameterValues(
             1,
             10,
@@ -114,6 +125,7 @@ class ConnectionFormItemService
             'openAccessTypes' => $openAccessTypes->data,
             'meteringTypes' => $meteringTypes->data,
             'renewableTypes' => $renewableTypes->data,
+            'indicators' => $indicators->data,
         ];
     }
 }

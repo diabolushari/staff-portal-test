@@ -32,6 +32,7 @@ export default function ConnectionsIndex({
   oldOffice,
   oldConsumerNumber,
 }: Readonly<Props>) {
+  console.log(connections)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}

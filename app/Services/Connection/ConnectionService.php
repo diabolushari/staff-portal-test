@@ -2,6 +2,8 @@
 
 namespace App\Services\Connection;
 
+use App\GrpcConverters\Connection\ConnectionFlagProtoConverter;
+use App\GrpcConverters\Connection\ConnectionGenerationProtoConverter;
 use App\GrpcConverters\Connection\ConnectionProtoConverter;
 use App\Http\Requests\Connections\CreateConnectionFormRequest;
 use App\Services\Grpc\GrpcErrorService;
@@ -105,7 +107,7 @@ class ConnectionService
             $connectionArray[] = ConnectionProtoConverter::convertToArray($connection);
         }
 
-        
+
         $paginatedData = [
             'connections' => $connectionArray,
             'total_count' => $response->getTotalCount(),
@@ -123,15 +125,18 @@ class ConnectionService
         $grpcRequest->setConnectionTypeId($request->connectionTypeId);
         $grpcRequest->setConnectionStatusId($request->connectionStatusId);
         $grpcRequest->setConnectedDate($request->connectedDate);
+        $grpcRequest->setApplicationNo($request->applicationNo);
         $grpcRequest->setServiceOfficeCode($request->serviceOfficeCode);
         $grpcRequest->setAdminOfficeCode($request->adminOfficeCode);
         $grpcRequest->setVoltageId($request->voltageTypeId);
         $grpcRequest->setContractDemandKvaVal($request->contractDemandKwVal);
-        $grpcRequest->setConnectedLoadKwVal($request->connectedLoadKwVal);
         $grpcRequest->setTariffId($request->tariffTypeId);
         $grpcRequest->setPrimaryPurposeId($request->primaryPurposeId);
         $grpcRequest->setConnectionCategoryId($request->connectionCategoryId);
         $grpcRequest->setConnectionSubcategoryId($request->connectionSubcategoryId);
+        if ($request->remarks) {
+            $grpcRequest->setRemarks($request->remarks);
+        }
         $connectionAttribs = new Struct;
         $connectionAttribs->setFields($request->connectionAttribs ?? []);
         $grpcRequest->setConnectionAttribs($connectionAttribs);
@@ -139,18 +144,66 @@ class ConnectionService
         $purposesInfo->setFields($request->purposesInfo ?? []);
         $grpcRequest->setPurposesInfo($purposesInfo);
         $grpcRequest->setBillingProcessId($request->billingProcessId);
-        $grpcRequest->setSolarIndicator($request->solarIndicator);
         $grpcRequest->setOpenAccessTypeId($request->openAccessTypeId ?? 0);
         $grpcRequest->setMeteringTypeId($request->meteringTypeId ?? 0);
-        $grpcRequest->setRenewableTypeId($request->renewableTypeId ?? 0);
-        $grpcRequest->setMultiSourceIndicator($request->multiSourceIndicator);
-        $grpcRequest->setLiveIndicator($request->liveIndicator);
         $grpcRequest->setPhaseTypeId($request->phaseTypeId);
         $grpcRequest->setConsumerLegacyCode($request->consumerLegacyCode ?? '');
         $grpcRequest->setPowerLoadKwVal($request->powerLoadKwVal);
         $grpcRequest->setLightLoadKwVal($request->lightLoadKwVal);
         $grpcRequest->setOtherconsFlag($request->otherconsFlag);
-        $grpcRequest->setCppFlag($request->cppFlag);
+        $grpcRequest->setRemarks($request->remarks ?? '');
+
+
+
+        if (!empty($request->indicators)) {
+            foreach ($request->indicators as $group) {
+
+                if (empty($group['flags'])) {
+                    continue;
+                }
+
+                foreach ($group['flags'] as $flag) {
+
+
+                    if (!($flag['value'] ?? false)) {
+                        continue;
+                    }
+
+                    if ($group['group_name'] === 'Renewable') {
+
+                        $generationPayload = [
+                            'connection_id' => $request->connectionId ?? 0,
+                            'generation_type_id' => $flag['id'],
+                            'generation_sub_type_id' => $flag['sub_id'] ??  null,
+                            'value' => $flag['value'] ??  null,
+                            'label' => $flag['label'] ??  null,
+                        ];
+
+                        $grpcRequest->getConnectionGenerationTypes()[] =
+                            ConnectionGenerationProtoConverter::convertToFormRequest(
+                                $generationPayload
+                            );
+
+                        continue;
+                    }
+
+                    /**
+                     * 🔥 OTHER GROUPS → FLAGS
+                     */
+                    $flagPayload = [
+                        'connection_id' => $request->connectionId ?? 0,
+                        'flag_id' => $flag['id'],
+                        'value' => $flag['value'] ??  null,
+                        'label' => $flag['label'] ??  null,
+                    ];
+
+                    $grpcRequest->getConnectionFlags()[] =
+                        ConnectionFlagProtoConverter::convertToFormRequest($flagPayload);
+                }
+            }
+        }
+
+
 
         [$response, $status] = $this->client->CreateConnection($grpcRequest)->wait();
 
@@ -200,6 +253,7 @@ class ConnectionService
         $grpcRequest->setConnectionId($connectionId);
         $grpcRequest->setConnectionStatusId($request->connectionStatusId);
         $grpcRequest->setConnectedDate($request->connectedDate);
+        $grpcRequest->setApplicationNo($request->applicationNo);
         $grpcRequest->setAdminOfficeCode($request->adminOfficeCode);
         $grpcRequest->setVoltageId($request->voltageTypeId);
         $grpcRequest->setContractDemandKvaVal($request->contractDemandKwVal);
@@ -215,18 +269,14 @@ class ConnectionService
         $purposesInfo->setFields($request->purposesInfo ?? []);
         $grpcRequest->setPurposesInfo($purposesInfo);
         $grpcRequest->setBillingProcessId($request->billingProcessId);
-        $grpcRequest->setSolarIndicator($request->solarIndicator);
         $grpcRequest->setOpenAccessTypeId($request->openAccessTypeId ?? 0);
         $grpcRequest->setMeteringTypeId($request->meteringTypeId ?? 0);
-        $grpcRequest->setRenewableTypeId($request->renewableTypeId ?? 0);
-        $grpcRequest->setMultiSourceIndicator($request->multiSourceIndicator);
         $grpcRequest->setPhaseTypeId($request->phaseTypeId);
-        $grpcRequest->setLiveIndicator($request->liveIndicator);
         $grpcRequest->setConsumerLegacyCode($request->consumerLegacyCode ?? '');
         $grpcRequest->setPowerLoadKwVal($request->powerLoadKwVal);
         $grpcRequest->setLightLoadKwVal($request->lightLoadKwVal);
         $grpcRequest->setOtherconsFlag($request->otherconsFlag);
-        $grpcRequest->setCppFlag($request->cppFlag);
+        $grpcRequest->setRemarks($request->remarks ?? '');
 
         [$response, $status] = $this->client->UpdateConnection($grpcRequest)->wait();
         if ($status->code !== 0) {

@@ -2,6 +2,7 @@
 
 namespace App\Services\Connection;
 
+use App\GrpcConverters\Connection\ConnectionFlagProtoConverter;
 use App\GrpcConverters\Connection\GeoRegionProtoConverter;
 use App\Http\Requests\Connections\ConsumerFormRequest;
 use App\Services\Grpc\GrpcErrorService;
@@ -117,20 +118,47 @@ class ConsumerService
         $consumer->setConnectionId($request->connectionId);
         $consumer->setConsumerTypeId($request->consumerTypeId);
         $consumer->setOrganizationName($request->organizationName);
-        $consumer->setApplicantCode($request->applicantCode);
+
+        $consumer->setVirtualAccountNumber($request->virtualAccountNumber);
+        if ($request->contactPerson) {
+            $consumer->setContactPerson($request->contactPerson);
+        }
+        if ($request->departmentNameId) {
+            $consumer->setDepartmentNameId($request->departmentNameId);
+        }
+        if ($request->consumerCin) {
+            $consumer->setConsumerCin($request->consumerCin);
+        }
         $consumer->setConsumerPan($request->consumerPan);
         $consumer->setConsumerTan($request->consumerTan);
         $consumer->setConsumerGstin($request->consumerGstin);
-        $consumer->setIncomeTaxWithholdingInd($request->incomeTaxWithholdingInd);
-        $consumer->setGstWithholdingInd($request->gstWithholdingInd);
         $consumer->setManufacturingInfo(new Struct);
         $consumer->setTaxInfo(new Struct);
         $consumer->setIdentityInfo(new Struct);
         $consumer->setApplicationInfo(new Struct);
-        $consumer->setConsumerCin($request->consumerCin);
-        $consumer->setSeasonalInd($request->seasonalInd);
-        $consumer->setLicenseInd($request->licenseInd);
-        $consumer->setOpenAccessInd($request->openAccessInd);
+        if (!empty($request->indicators)) {
+            foreach ($request->indicators as $group) {
+
+                if (empty($group['flags'])) {
+                    continue;
+                }
+
+                foreach ($group['flags'] as $flag) {
+                    if (!($flag['value'] ?? false)) {
+                        continue;
+                    }
+                    $flagPayload = [
+                        'connection_id' => $request->connectionId ?? 0,
+                        'flag_id' => $flag['id'],
+                        'value' => $flag['value'] ??  null,
+                        'label' => $flag['label'] ??  null,
+                    ];
+
+                    $consumer->getConsumerFlags()[] =
+                        ConnectionFlagProtoConverter::convertToFormRequest($flagPayload);
+                }
+            }
+        }
 
         // Convert billing & premises addresses to Struct
         $pendingAddresses = $request->otherAddresses ?? [];
@@ -180,21 +208,19 @@ class ConsumerService
             'connection_id' => $consumer->getConnectionId(),
             'consumer_type_id' => $consumer->getConsumerTypeId(),
             'organization_name' => $consumer->getOrganizationName(),
-            'applicant_code' => $consumer->getApplicantCode(),
             'consumer_pan' => $consumer->getConsumerPan(),
             'consumer_tan' => $consumer->getConsumerTan(),
             'consumer_gstin' => $consumer->getConsumerGstin(),
-            'income_tax_withholding_ind' => $consumer->getIncomeTaxWithholdingInd(),
-            'gst_withholding_ind' => $consumer->getGstWithholdingInd(),
+
             'manufacturing_info' => $consumer->getManufacturingInfo(),
             'tax_info' => $consumer->getTaxInfo(),
             'identity_info' => $consumer->getIdentityInfo(),
             'application_info' => $consumer->getApplicationInfo(),
             'consumer_type' => $this->parameterValueService->toArray($consumer->getConsumerType()),
             'consumer_cin' => $consumer->getConsumerCin(),
-            'seasonal_ind' => $consumer->getSeasonalInd(),
-            'license_ind' => $consumer->getLicenseInd(),
-            'open_access_ind' => $consumer->getOpenAccessInd(),
+            'virtual_account_number' => $consumer->getVirtualAccountNumber(),
+            'contact_person' => $consumer->getContactPerson(),
+            'department_name_id' => $consumer->getDepartmentNameId(),
         ];
     }
 
@@ -214,8 +240,8 @@ class ConsumerService
             'primary_email' => $contact->getPrimaryEmail(),
             'primary_phone' => $contact->getPrimaryPhone(),
             'contact_folio' => $contactFolio
-            ? json_decode($contactFolio->serializeToJsonString(), true)
-            : null,
+                ? json_decode($contactFolio->serializeToJsonString(), true)
+                : null,
             'primary_address' => $this->addressToArray($contact->getPrimaryAddress()),
             'billing_address' => $this->addressToArray($contact->getBillingAddress()),
             'premises_address' => $this->addressToArray($contact->getPremisesAddress()),

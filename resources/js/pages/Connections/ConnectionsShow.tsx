@@ -6,7 +6,7 @@ import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import StrongText from '@/typography/StrongText'
 import { router } from '@inertiajs/react'
 import { PencilIcon } from 'lucide-react'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 interface Props {
   connection: Connection
@@ -16,6 +16,7 @@ interface Props {
 export default function ConnectionsShow({ connection, consumerExist }: Readonly<Props>) {
   const formatDate = (dateStr?: string | null) =>
     dateStr ? new Date(dateStr).toLocaleDateString() : '-'
+  const [editIndicator, setEditIndicator] = useState(false)
 
   const breadcrumbs = useMemo(
     () => [
@@ -33,6 +34,10 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
     ],
     [connection]
   )
+
+  const handleIndicator = () => {
+    setEditIndicator(!editIndicator)
+  }
 
   return (
     <ConnectionsLayout
@@ -81,6 +86,10 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                 label='Consumer Number'
                 value={connection?.consumer_number}
               />
+              <Field
+                label='Application Number'
+                value={connection?.application_no}
+              />
               {connection?.consumer_profiles?.[0]?.organization_name && (
                 <Field
                   label='Industry Name'
@@ -109,6 +118,23 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                 label='Phase Type'
                 value={connection?.phase_type?.parameter_value}
               />
+              <Field
+                label='Connection Date'
+                value={formatDate(connection?.connected_date)}
+              />
+              <div className='col-span-2 mt-4'>
+                <Field
+                  label='Remarks'
+                  value={connection?.remarks}
+                />
+              </div>
+            </div>
+          </Card>
+          <Card className='rounded-lg p-7'>
+            <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
+              Load Details
+            </StrongText>
+            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
                 label='Contract Demand (KVA)'
                 value={connection?.contract_demand_kva_val}
@@ -202,31 +228,39 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
               />
             </div>
           </Card>
-
-          {/* Dates */}
           <Card className='rounded-lg p-7'>
-            <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
-              Dates
-            </StrongText>
+            <div className='mb-6 flex items-center justify-between'>
+              <StrongText className='text-base font-semibold text-[#252c32]'>Indicators</StrongText>
+              <button
+                onClick={() => handleIndicator()}
+                className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] hover:bg-gray-50'
+              >
+                <PencilIcon className='h-4 w-4' />
+                Edit
+              </button>
+            </div>
+            <hr className='mb-6 border-[#e5e9eb]' />
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-              <Field
-                label='Connected Date'
-                value={formatDate(connection?.connected_date)}
-              />
-              <Field
-                label='Effective Start'
-                value={formatDate(connection?.effective_start)}
-              />
-              <Field
-                label='Effective End'
-                value={formatDate(connection?.effective_end)}
-              />
-              <Field
-                label='Updated At'
-                value={formatDate(connection?.updated_at)}
-              />
+              {connection?.connection_generation_types?.map((generationType) => (
+                <Field
+                  key={generationType?.id}
+                  label={generationType?.generation_type?.parameter_value ?? '-'}
+                  value='Selected'
+                />
+              ))}
+              {connection?.connection_flags &&
+                connection?.connection_flags?.length > 0 &&
+                connection?.connection_flags?.map((flag) => (
+                  <Field
+                    key={flag?.id}
+                    label={flag?.flag?.parameter_value ?? '-'}
+                    value='Selected'
+                  />
+                ))}
             </div>
           </Card>
+
+          {/* Dates */}
         </div>
       </div>
     </ConnectionsLayout>

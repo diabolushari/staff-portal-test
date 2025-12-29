@@ -23,6 +23,15 @@ class CreateConsumerController extends Controller
 
     public function __invoke(Request $request, int $connectionId): InertiaResponse|RedirectResponse
     {
+        $indicators = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Indicator',
+            'attribute1Value',
+            'Consumer'
+        );
         $consumerTypes = $this->parameterValueService->getParameterValues(
             1,
             10,
@@ -50,6 +59,7 @@ class CreateConsumerController extends Controller
             'states' => $states->data,
             'connectionId' => $connectionId,
             'connection' => $connection->data,
+            'indicators' => $indicators->data,
         ]);
     }
 }

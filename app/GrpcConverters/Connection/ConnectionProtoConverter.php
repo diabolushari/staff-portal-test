@@ -144,6 +144,18 @@ class ConnectionProtoConverter
             $consumerProfileArray = $converter->transformConsumerToArray($consumerProfile);
             $consumerProfilesArray[] = $consumerProfileArray;
         }
+        $connectionFlags = $connection->getConnectionFlags();
+        $connectionFlagsArrays = [];
+        foreach ($connectionFlags as $connectionFlag) {
+            $connectionFlagArray = ConnectionFlagProtoConverter::convertToArray($connectionFlag);
+            $connectionFlagsArrays[] = $connectionFlagArray;
+        }
+        $connectionGeneration = $connection->getConnectionGenerationTypes();
+        $connectionGenerationArrays = [];
+        foreach ($connectionGeneration as $connectionGeneration) {
+            $connectionGenerationArray = ConnectionGenerationProtoConverter::convertToArray($connectionGeneration);
+            $connectionGenerationArrays[] = $connectionGenerationArray;
+        }
         $meterreadingConverter = app(MeterReadingService::class);
         $latestMeterReading = $connection->getLatestMeterReading();
         $latestMeterReadingArray = null;
@@ -157,6 +169,7 @@ class ConnectionProtoConverter
             'connection_id' => $connection->getConnectionId(),
             'consumer_legacy_code' => $connection->getConsumerLegacyCode(),
             'connection_type_id' => $connection->getConnectionTypeId(),
+            'application_no' => $connection->getApplicationNo(),
             'consumer_number' => $connection->getConsumerNum(),
             'connection_status_id' => $connection->getConnectionStatusId(),
             'connected_date' => $connection->getConnectedDate(),
@@ -169,18 +182,14 @@ class ConnectionProtoConverter
             'connection_subcategory_id' => $connection->getConnectionSubcategoryId(),
             'billing_process_id' => $connection->getBillingProcessId(),
             'phase_type_id' => $connection->getPhaseTypeId(),
-            'solar_indicator' => $connection->getSolarIndicator(),
             'open_access_type_id' => $connection->getOpenAccessTypeId(),
             'metering_type_id' => $connection->getMeteringTypeId(),
-            'renewable_type_id' => $connection->getRenewableTypeId(),
-            'multi_source_indicator' => $connection->getMultiSourceIndicator(),
-            'live_indicator' => $connection->getLiveIndicator(),
             'is_current' => $connection->getIsCurrent(),
             'power_load_kw_val' => $connection->getPowerLoadKwVal(),
             'light_load_kw_val' => $connection->getLightLoadKwVal(),
             'connected_load_kw_val' => $connection->getConnectedLoadKwVal(),
             'othercons_flag' => $connection->getOtherconsFlag(),
-            'cpp_flag' => $connection->getCppFlag(),
+            'remarks' => $connection->getRemarks(),
             'connection_attribs' => $connection->getConnectionAttribs() ? json_decode($connection->getConnectionAttribs()->serializeToJsonString(), true) : null,
             'purposes_info' => $connection->getPurposesInfo() ? json_decode($connection->getPurposesInfo()->serializeToJsonString(), true) : null,
             'connected_load_info' => $connection->getConnectedLoadInfo() ? json_decode($connection->getConnectedLoadInfo()->serializeToJsonString(), true) : null,
@@ -190,7 +199,6 @@ class ConnectionProtoConverter
             'connection_status' => ParameterValueProtoConvertor::convertToArray($connection->getConnectionStatus()),
             'open_access_type' => ParameterValueProtoConvertor::convertToArray($connection->getOpenAccessType()),
             'metering_type' => ParameterValueProtoConvertor::convertToArray($connection->getMeteringType()),
-            'renewable_type' => ParameterValueProtoConvertor::convertToArray($connection->getRenewableType()),
             'phase_type' => ParameterValueProtoConvertor::convertToArray($connection->getPhaseType()),
             'voltage' => ParameterValueProtoConvertor::convertToArray($connection->getVoltage()),
             'connection_category' => ParameterValueProtoConvertor::convertToArray($connection->getConnectionCategory()),
@@ -209,6 +217,8 @@ class ConnectionProtoConverter
             'effective_end' => $connection->getEffectiveEnd() ? $connection->getEffectiveEnd()->toDateTime()->format('Y-m-d') : null,
             'consumer_profiles' => $consumerProfilesArray,
             'latest_meter_reading' => $latestMeterReadingArray,
+            'connection_flags' => $connectionFlagsArrays,
+            'connection_generation_types' => $connectionGenerationArrays,
         ];
     }
 }

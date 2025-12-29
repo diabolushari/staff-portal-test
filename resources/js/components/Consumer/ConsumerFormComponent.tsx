@@ -11,6 +11,8 @@ import { RegionOption } from '@/interfaces/data_interfaces'
 import { useState } from 'react'
 import { Card } from '../ui/card'
 import ConsumerContactFolioModal from './ConsumerContactFolioModal'
+import useConnectionFlagForm, { GroupedFlags } from '../Connections/useConnectionFlagForm'
+import ConnectionFlagForm from '../Connections/ConnectionFlagForm'
 
 interface Props {
   consumer_types: ParameterValues[]
@@ -18,6 +20,7 @@ interface Props {
   states: RegionOption[]
   connection_id: number
   data?: ConsumerData
+  indicators: ParameterValues[]
 }
 
 const isSameAddress = (primary?: any, other?: any) => {
@@ -30,6 +33,7 @@ export default function ConsumerFormComponent({
   states,
   connection_id,
   data,
+  indicators,
 }: Props) {
   console.log(consumer_types)
   let consumer = null
@@ -41,6 +45,7 @@ export default function ConsumerFormComponent({
 
   const primary = contact?.primary_address
 
+  const { updateFlagData, flagData, updateSubId } = useConnectionFlagForm(indicators)
   const { formData, setFormValue, setAll, toggleBoolean } = useCustomForm({
     // Primary Address
     address_id: primary?.address_id ?? null,
@@ -51,8 +56,6 @@ export default function ConsumerFormComponent({
     consumer_pan: consumer?.consumer_pan ?? '',
     consumer_tan: consumer?.consumer_tan ?? '',
     consumer_gstin: consumer?.consumer_gstin ?? '',
-    income_tax_withholding_ind: consumer?.income_tax_withholding_ind ?? false,
-    gst_withholding_ind: consumer?.gst_withholding_ind ?? false,
     consumer_cin: consumer?.consumer_cin ?? '',
     address_line1: primary?.address_line1 ?? '',
     address_line2: primary?.address_line2 ?? '',
@@ -60,9 +63,7 @@ export default function ConsumerFormComponent({
     pincode: primary?.pincode ?? '',
     district_id: primary?.district_id ?? '',
     state_id: primary?.state_id ?? '',
-    seasonal_ind: consumer?.seasonal_ind ?? false,
-    license_ind: consumer?.license_ind ?? false,
-    open_access_ind: consumer?.open_access_ind ?? false,
+    virtual_account_number: consumer?.virtual_account_number ?? '',
 
     // Other addresses
     other_addresses: {
@@ -81,12 +82,16 @@ export default function ConsumerFormComponent({
 
     // ✅ NEW: Add array for extra contacts
     contact_folio: contact?.contact_folio ?? [],
+    indicators: flagData,
 
     _method: consumer ? 'PUT' : undefined,
   })
 
   const { post, loading, errors } = useInertiaPost<typeof formData>(
-    consumer ? route('consumers.update', consumer.connection_id) : route('consumers.store')
+    consumer ? route('consumers.update', consumer.connection_id) : route('consumers.store'),
+    {
+      showErrorToast: true,
+    }
   )
 
   const [showContactModal, setShowContactModal] = useState(false)
@@ -119,7 +124,11 @@ export default function ConsumerFormComponent({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    post(formData)
+    const payload = {
+      ...formData,
+      indicators: flagData,
+    }
+    post(payload)
   }
 
   return (
@@ -180,31 +189,11 @@ export default function ConsumerFormComponent({
               value={formData.consumer_gstin}
               error={errors?.consumer_gstin}
             />
-
-            <CheckBox
-              label='TDS on GST'
-              toggleValue={toggleBoolean('income_tax_withholding_ind')}
-              value={formData.income_tax_withholding_ind}
-            />
-            <CheckBox
-              label='TDS on Income Tax'
-              toggleValue={toggleBoolean('gst_withholding_ind')}
-              value={formData.gst_withholding_ind}
-            />
-            <CheckBox
-              label='Seasonal'
-              toggleValue={toggleBoolean('seasonal_ind')}
-              value={formData.seasonal_ind}
-            />
-            {/* <CheckBox
-              label='License'
-              toggleValue={toggleBoolean('license_ind')}
-              value={formData.license_ind}
-            /> */}
-            <CheckBox
-              label='Open Access'
-              toggleValue={toggleBoolean('open_access_ind')}
-              value={formData.open_access_ind}
+            <Input
+              label='Virtual Account Number'
+              setValue={setFormValue('virtual_account_number')}
+              value={formData.virtual_account_number}
+              error={errors?.virtual_account_number}
             />
           </div>
         </div>
@@ -325,6 +314,11 @@ export default function ConsumerFormComponent({
           )}
         </div>
       </Card>
+      <ConnectionFlagForm
+        flagData={flagData}
+        updateFlagData={updateFlagData}
+        updateSubId={updateSubId}
+      />
 
       {/* Modal */}
       {showContactModal && (

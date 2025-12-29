@@ -14,6 +14,9 @@ import { router } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
 import { route } from 'ziggy-js'
 import { Card } from '../ui/card'
+import TextArea from '@/ui/form/TextArea'
+import ConnectionFlagForm from './ConnectionFlagForm'
+import useConnectionFlagForm, { GroupedFlags } from './useConnectionFlagForm'
 
 interface Props {
   connection?: Connection
@@ -28,6 +31,7 @@ interface Props {
   openAccessTypes: ParameterValues[]
   meteringTypes: ParameterValues[]
   renewableTypes: ParameterValues[]
+  indicators: ParameterValues[]
 }
 const formatDateForInput = (date?: string | Date) => {
   if (!date) return ''
@@ -51,9 +55,12 @@ export default function ConnectionForm({
   openAccessTypes,
   meteringTypes,
   renewableTypes,
+  indicators,
 }: Props) {
   const [subCategories, setSubCategories] = useState<ParameterValues[]>([])
   const [category, setCategory] = useState<string>('')
+
+  const { flagData, updateFlagData, updateSubId } = useConnectionFlagForm(indicators)
 
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     connection_type_id: connection?.connection_type_id ?? '',
@@ -70,23 +77,22 @@ export default function ConnectionForm({
     service_office_code: connection?.service_office_code ?? '',
     contract_demand_kw_val: connection?.contract_demand_kva_val ?? '',
     connected_load_kw_val: connection?.connected_load_kw_val ?? '',
-    solar_indicator: connection?.solar_indicator ?? false,
-    multi_source_indicator: connection?.multi_source_indicator ?? false,
-    live_indicator: connection?.live_indicator ?? false,
-    open_access_type_id: connection?.open_access_type_id ?? '',
     metering_type_id: connection?.metering_type_id ?? '',
     renewable_type_id: connection?.renewable_type_id ?? '',
     connected_date: connection?.connected_date
       ? formatDateForInput(connection?.connected_date)
       : '',
     consumer_legacy_code: connection?.consumer_legacy_code ?? '',
-    open_access_selected: connection?.open_access_type_id ? true : false,
-    renewable_selected: connection?.renewable_type_id ? true : false,
     power_load_kw_val: connection?.power_load_kw_val ?? '',
     light_load_kw_val: connection?.light_load_kw_val ?? '',
     othercons_flag: connection?.othercons_flag ?? false,
-    cpp_flag: connection?.cpp_flag ?? false,
     _method: connection ? 'PUT' : undefined,
+    power_intensive: connection?.power_intensive ?? false,
+    excess_demand: connection?.excess_demand ?? false,
+    no_of_main_meters: connection?.no_of_main_meters ?? '',
+    remarks: connection?.remarks ?? '',
+    application_no: connection?.application_no ?? '',
+    indicators: flagData,
   })
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
@@ -95,12 +101,15 @@ export default function ConnectionForm({
       onComplete: () => {
         router.visit(route('consumer.create'))
       },
+      showErrorToast: true,
     }
   )
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    post(formData)
+    const payload = { ...formData, indicators: flagData }
+    console.log(payload)
+    post(payload)
   }
 
   const [adminOfficeApiData] = useFetchRecord<OfficeWithHierarchy>(
@@ -125,6 +134,14 @@ export default function ConnectionForm({
       setSubCategories(subCategoryData)
     }
   }, [subCategoryData])
+  useEffect(() => {
+    if (Number(formData?.light_load_kw_val) >= 0 && Number(formData?.power_load_kw_val) >= 0) {
+      setFormValue('connected_load_kw_val')(
+        Number(formData?.light_load_kw_val) + Number(formData?.power_load_kw_val)
+      )
+    }
+  }, [formData?.light_load_kw_val, formData?.power_load_kw_val])
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -135,6 +152,12 @@ export default function ConnectionForm({
           <StrongText className='text-base font-semibold'>Basic Information</StrongText>
         </div>
         <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
+          <Input
+            label='Application No'
+            setValue={setFormValue('application_no')}
+            value={formData.application_no}
+            error={errors?.application_no}
+          />
           <SelectList
             label='Connection Type'
             list={connectionTypes}
@@ -187,6 +210,21 @@ export default function ConnectionForm({
             error={errors?.connected_date}
             required
           />
+          <Input
+            label='Number of Main Meters'
+            setValue={setFormValue('no_of_main_meters')}
+            value={formData.no_of_main_meters}
+            error={errors?.no_of_main_meters}
+            required
+          />
+          <div className='col-span-2'>
+            <TextArea
+              label='Remarks'
+              setValue={setFormValue('remarks')}
+              value={formData.remarks}
+              error={errors?.remarks}
+            />
+          </div>
         </div>
       </Card>
       <Card>
@@ -306,8 +344,9 @@ export default function ConnectionForm({
           <Input
             label='Connected Load (kW)'
             setValue={setFormValue('connected_load_kw_val')}
-            value={formData.connected_load_kw_val}
+            value={formData?.connected_load_kw_val}
             error={errors?.connected_load_kw_val}
+            disabled={true}
           />
           <Input
             label='Power Load (kW)'
@@ -324,89 +363,11 @@ export default function ConnectionForm({
         </div>
       </Card>
 
-      <Card>
-        <div className='border-b-2 border-gray-200 py-3'>
-          <StrongText className='text-base font-semibold'>Additional Information</StrongText>
-        </div>
-        <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
-          <div className='flex flex-col gap-4'>
-            <CheckBox
-              label='Open Access'
-              toggleValue={toggleBoolean('open_access_selected')}
-              value={formData.open_access_selected}
-            />
-            {formData.open_access_selected && (
-              <SelectList
-                label='Open Access Type'
-                list={openAccessTypes}
-                dataKey='id'
-                displayKey='parameter_value'
-                setValue={setFormValue('open_access_type_id')}
-                value={formData.open_access_type_id}
-                error={errors?.open_access_type_id}
-                required
-              />
-            )}
-          </div>
-          <div>
-            <CheckBox
-              label='Renewable'
-              toggleValue={toggleBoolean('renewable_selected')}
-              value={formData.renewable_selected}
-            />
-            {formData.renewable_selected && (
-              <SelectList
-                label='Renewable Type'
-                list={renewableTypes}
-                dataKey='id'
-                displayKey='parameter_value'
-                setValue={setFormValue('renewable_type_id')}
-                value={formData.renewable_type_id}
-                error={errors?.renewable_type_id}
-                required
-              />
-            )}
-          </div>
-        </div>
-      </Card>
-
-      <Card>
-        <div className='border-b-2 border-gray-200 py-3'>
-          <StrongText className='text-base font-semibold'>Indicators</StrongText>
-        </div>
-        <div className='mt-6 grid grid-cols-1 gap-4 p-4 md:grid-cols-3'>
-          <CheckBox
-            label='Solar'
-            toggleValue={toggleBoolean('solar_indicator')}
-            value={formData.solar_indicator}
-            error={errors?.solar_indicator}
-          />
-          <CheckBox
-            label='Multi Source'
-            toggleValue={toggleBoolean('multi_source_indicator')}
-            value={formData.multi_source_indicator}
-            error={errors?.multi_source_indicator}
-          />
-          {/* <CheckBox
-            label='Live Indicator'
-            toggleValue={toggleBoolean('live_indicator')}
-            value={formData.live_indicator}
-            error={errors?.live_indicator}
-          />
-          <CheckBox
-            label='Other Cons'
-            toggleValue={toggleBoolean('othercons_flag')}
-            value={formData.othercons_flag}
-            error={errors?.othercons_flag}
-          /> */}
-          <CheckBox
-            label='CPP'
-            toggleValue={toggleBoolean('cpp_flag')}
-            value={formData.cpp_flag}
-            error={errors?.cpp_flag}
-          />
-        </div>
-      </Card>
+      <ConnectionFlagForm
+        flagData={flagData}
+        updateFlagData={updateFlagData}
+        updateSubId={updateSubId}
+      />
 
       {/* Submit */}
       <div className='flex justify-end'>
