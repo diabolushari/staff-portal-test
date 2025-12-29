@@ -96,9 +96,8 @@ export function CustomNavbar({ selectedTopNav }: Props) {
                   variant='ghost'
                   onClick={() => router.get(item.href)}
                   className={cn(
-                    'relative',
-                    isActive &&
-                      "after:bg-kseb-bg-blue after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:content-['']"
+                    'border-b-8 border-transparent',
+                    isActive && 'border-b-kseb-bg-blue'
                   )}
                 >
                   {item.title}

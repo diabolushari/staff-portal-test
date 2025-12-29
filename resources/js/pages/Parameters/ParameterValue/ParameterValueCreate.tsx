@@ -15,25 +15,6 @@ import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
 import { useEffect, useState } from 'react'
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Home',
-    href: '/',
-  },
-  {
-    title: 'Settings',
-    href: '/settings-page',
-  },
-  {
-    title: 'Parameter Values',
-    href: '/parameter-value',
-  },
-  {
-    title: 'Create Parameter Value',
-    href: '/parameter-value/create',
-  },
-]
-
 interface Props {
   parameter_value?: ParameterValues
   definitions: ParameterDefinition[]
@@ -41,7 +22,24 @@ interface Props {
 }
 
 export default function ParameterValueCreate({ parameter_value, definitions, domains }: Props) {
-  console.log('parameter_value', parameter_value)
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Home',
+      href: '/',
+    },
+    {
+      title: 'Settings',
+      href: '/settings-page',
+    },
+    {
+      title: 'Parameter Values',
+      href: '/parameter-value',
+    },
+    {
+      title: parameter_value ? 'Edit' : 'Create',
+      href: '#',
+    },
+  ]
 
   const attributeValuePresent =
     parameter_value?.attribute1_value ||

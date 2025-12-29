@@ -1,19 +1,19 @@
+import ActionButton from '@/components/action-button'
 import { ParameterDefinition } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
-import DeleteButton from '@/ui/button/DeleteButton'
-import { Layers, Package, Pencil, Trash2 } from 'lucide-react'
+import { Layers, Package } from 'lucide-react'
 
 interface Props {
   parameterDefinitions: ParameterDefinition[]
   onView?: (item: ParameterDefinition) => void
   onEdit?: (item: ParameterDefinition) => void
-  onDelete?: (item: ParameterDefinition) => void
+  onDelete: (item: ParameterDefinition) => void
 }
 
 export default function ParameterDefinitionList({
   parameterDefinitions,
   onView,
-  onEdit,
+
   onDelete,
 }: Readonly<Props>) {
   return (
@@ -88,7 +88,7 @@ export default function ParameterDefinitionList({
               {/* Right section - actions */}
               <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
                 <div className='mt-2 flex items-center gap-3'>
-                  {onEdit && (
+                  {/* {onEdit && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
@@ -99,15 +99,8 @@ export default function ParameterDefinitionList({
                       <Pencil className='h-4 w-4' />
                       Edit
                     </button>
-                  )}
-                  {onDelete && (
-                    <DeleteButton
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onDelete(def)
-                      }}
-                    />
-                  )}
+                  )} */}
+                  <ActionButton onDelete={() => onDelete(def)} />
                 </div>
               </div>
             </div>
