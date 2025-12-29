@@ -1,16 +1,28 @@
+import ConnectionFlagForm from '@/components/Connections/ConnectionFlagForm'
+import ConnectionFlagModal from '@/components/Connections/ConnectionFlagModal'
+import useConnectionFlagForm, { GroupedFlags } from '@/components/Connections/useConnectionFlagForm'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
-import { Connection, ConsumerData, MeterAssignment } from '@/interfaces/data_interfaces'
+import {
+  Connection,
+  ConnectionFlag,
+  ConsumerData,
+  MeterAssignment,
+} from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
+import EditButton from '@/ui/button/EditButton'
 import { router } from '@inertiajs/react'
 import { Info, PencilIcon } from 'lucide-react'
+import { useState } from 'react'
 
 interface ConsumerShowProps {
   consumer: ConsumerData
   connection: Connection
   meters: MeterAssignment[]
+  indicators: ParameterValues[]
 }
 
 const safe = (v: unknown, fallback = '-') =>
@@ -31,10 +43,49 @@ const InfoBlock = ({ label, value }: { label: string; value?: string | number })
     </div>
   </div>
 )
+interface GroupFlags {
+  group_name: string
+  flags: ConnectionFlag[]
+}
+export const groupFlagsBySection = (
+  data: ConnectionFlag[] = [],
+  section: 'Consumer' | 'Connection'
+): GroupFlags[] => {
+  const grouped: GroupedFlagMap = {}
 
-export default function ConsumerShow({ consumer, connection }: Readonly<ConsumerShowProps>) {
+  data
+    // 1️⃣ filter by attribute1_value
+    .filter((flag) => flag.flag?.attribute1_value === section)
+
+    // 2️⃣ group by attribute2_value
+    .forEach((flag) => {
+      const groupName = flag.flag?.attribute2_value ?? 'Others'
+
+      if (!grouped[groupName]) {
+        grouped[groupName] = []
+      }
+
+      grouped[groupName].push(flag)
+    })
+
+  // 3️⃣ convert map → array
+  return Object.entries(grouped).map(([group_name, flags]) => ({
+    group_name,
+    flags,
+  }))
+}
+type GroupedFlagMap = Record<string, ConnectionFlag[]>
+export default function ConsumerShow({
+  consumer,
+  connection,
+  indicators,
+}: Readonly<ConsumerShowProps>) {
   const onEdit = () => router.visit(`/consumers/${Number(consumer?.consumer?.connection_id)}/edit`)
-
+  const [editIndicator, setEditIndicator] = useState(false)
+  const handleEditIndicator = () => {
+    setEditIndicator(!editIndicator)
+  }
+  const { flagData, updateFlagData } = useConnectionFlagForm(indicators, consumer?.consumer?.flags)
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Home',
@@ -53,7 +104,9 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
       href: route('connection.consumer', connection?.connection_id),
     },
   ]
-  console.log(consumer)
+  console.log(consumer?.consumer?.flags)
+
+  const consumerGroupedFlags = groupFlagsBySection(consumer?.consumer?.flags, 'Consumer')
 
   return (
     <ConnectionsLayout
@@ -126,22 +179,35 @@ export default function ConsumerShow({ consumer, connection }: Readonly<Consumer
             />
           </div>
         </Card>
-        {consumer?.consumer?.flags && consumer?.consumer?.flags?.length > 0 && (
-          <Card className='rounded-lg p-7'>
-            <StrongText className='text-base font-semibold text-[#252c32]'>
-              {consumer.consumer.flags[0]?.flag?.attribute2_value}
-            </StrongText>
-            <hr className='my-4 border-[#e5e9eb]' />
-            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-              {consumer?.consumer?.flags?.map((flag, index) => (
-                <InfoBlock
-                  key={index}
-                  label={flag.flag?.parameter_value ?? '-'}
-                  value={flag.flag?.parameter_value ?? '-'}
-                />
-              ))}
-            </div>
-          </Card>
+        {consumerGroupedFlags &&
+          consumerGroupedFlags.length > 0 &&
+          consumerGroupedFlags.map((group, index) => (
+            <Card className='rounded-lg p-7'>
+              <div className='flex items-center justify-between'>
+                <StrongText className='text-base font-semibold text-[#252c32]'>
+                  {group.group_name}
+                </StrongText>
+                <EditButton onClick={handleEditIndicator} />
+              </div>
+              <hr className='my-4 border-[#e5e9eb]' />
+              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                {group.flags?.map((flag, index) => (
+                  <InfoBlock
+                    key={index}
+                    label={flag.flag?.parameter_value ?? '-'}
+                    value='Yes'
+                  />
+                ))}
+              </div>
+            </Card>
+          ))}
+        {editIndicator && (
+          <ConnectionFlagModal
+            setShowModal={setEditIndicator}
+            currentFlags={consumer?.consumer?.flags}
+            indicators={indicators}
+            connectionId={connection?.connection_id}
+          />
         )}
 
         <Card className='rounded-lg p-7'>

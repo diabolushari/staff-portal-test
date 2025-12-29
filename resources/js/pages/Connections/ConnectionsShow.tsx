@@ -8,13 +8,22 @@ import EditButton from '@/ui/button/EditButton'
 import { router } from '@inertiajs/react'
 import { PencilIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { groupFlagsBySection } from '../Consumer/ConsumerShow'
+import AddButton from '@/ui/button/AddButton'
+import ConnectionFlagModal from '@/components/Connections/ConnectionFlagModal'
+import { ParameterValues } from '@/interfaces/parameter_types'
 
 interface Props {
   connection: Connection
   consumerExist: boolean
+  indicators: ParameterValues[]
 }
 
-export default function ConnectionsShow({ connection, consumerExist }: Readonly<Props>) {
+export default function ConnectionsShow({
+  connection,
+  consumerExist,
+  indicators,
+}: Readonly<Props>) {
   const formatDate = (dateStr?: string | null) =>
     dateStr ? new Date(dateStr).toLocaleDateString() : '-'
   const [editIndicator, setEditIndicator] = useState(false)
@@ -39,6 +48,7 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
   const handleIndicator = () => {
     setEditIndicator(!editIndicator)
   }
+  const connectionGroupedFlags = groupFlagsBySection(connection?.connection_flags, 'Connection')
 
   return (
     <ConnectionsLayout
@@ -221,19 +231,11 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                 label='Metering Type'
                 value={connection?.metering_type?.parameter_value}
               />
-              <Field
-                label='Solar Indicator'
-                value={connection?.solar_indicator ? 'Yes' : 'No'}
-              />
-              <Field
-                label='Multi Source Indicator'
-                value={connection?.multi_source_indicator ? 'Yes' : 'No'}
-              />
             </div>
           </Card>
 
-          {connection.connection_generation_types &&
-            connection.connection_generation_types.length > 0 && (
+          {connection?.connection_generation_types &&
+            connection?.connection_generation_types?.length > 0 && (
               <Card className='rounded-lg p-7'>
                 <div className='mb-6 flex items-center justify-between'>
                   <StrongText className='text-base font-semibold text-[#252c32]'>
@@ -263,29 +265,44 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
               </Card>
             )}
 
-          {connection?.connection_flags && connection?.connection_flags?.length > 0 && (
-            <Card className='rounded-lg p-7'>
-              <div className='mb-6 flex items-center justify-between'>
-                <StrongText className='text-base font-semibold text-[#252c32]'>
-                  Indicators
-                </StrongText>
-                <EditButton onClick={() => handleIndicator()} />
-              </div>
-              <hr className='mb-6 border-[#e5e9eb]' />
-              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                {connection?.connection_flags?.map((flag) => (
-                  <>
-                    <Field
-                      key={flag?.id}
-                      label={flag?.flag?.parameter_value ?? '-'}
-                      value='Selected'
-                    />
-                  </>
-                ))}
-              </div>
-            </Card>
+          {connectionGroupedFlags &&
+            connectionGroupedFlags.length > 0 &&
+            connectionGroupedFlags.map((group, index) => (
+              <Card className='rounded-lg p-7'>
+                <div className='mb-6 flex items-center justify-between'>
+                  <StrongText className='text-base font-semibold text-[#252c32]'>
+                    {group.group_name}
+                  </StrongText>
+                  <EditButton onClick={() => handleIndicator()} />
+                </div>
+                <hr className='mb-6 border-[#e5e9eb]' />
+                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                  {group?.flags?.map((flag) => (
+                    <>
+                      <Field
+                        key={flag?.id}
+                        label={flag?.flag?.parameter_value ?? '-'}
+                        value='Selected'
+                      />
+                    </>
+                  ))}
+                </div>
+              </Card>
+            ))}
+          {connectionGroupedFlags?.length === 0 && (
+            <AddButton
+              onClick={() => handleIndicator()}
+              buttonText='Add Indicator'
+            />
           )}
-
+          {editIndicator && (
+            <ConnectionFlagModal
+              connectionId={connection?.connection_id}
+              setShowModal={setEditIndicator}
+              currentFlags={connection.connection_flags}
+              indicators={indicators}
+            />
+          )}
           {/* Dates */}
         </div>
       </div>

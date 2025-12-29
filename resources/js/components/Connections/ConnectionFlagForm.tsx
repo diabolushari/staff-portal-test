@@ -12,8 +12,6 @@ export default function ConnectionFlagForm({ updateFlagData, flagData }: Props) 
     <>
       {flagData.map((group) => (
         <FormCard title={group.group_name}>
-          {/* Checkboxes */}
-
           {group.flags.map((indicator) => (
             <div
               key={indicator.id}

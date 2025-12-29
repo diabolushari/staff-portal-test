@@ -44,9 +44,8 @@ message CreateConnectionFlagResponse {
 
 
 message UpdateConnectionFlagRequest {
-  int64 id = 1;
-  optional int32 flag_id = 2;
-  int32 updated_by = 3;
+  int32 connection_id = 1;
+  repeated ConnectionFlagFormRequest flags = 2;
 }
 
 message UpdateConnectionFlagResponse {
@@ -74,7 +73,7 @@ service ConnectionFlagService {
   ) returns (CreateConnectionFlagResponse);
 
   rpc UpdateConnectionFlag(
-      ConnectionFlagFormRequest
+      UpdateConnectionFlagRequest
   ) returns (UpdateConnectionFlagResponse);
 
   rpc GetConnectionFlag(
