@@ -33,11 +33,10 @@ class BillingGroupConnectionRelController
         return redirect()->back()->with('message', 'Connection added to Billing Group');
     }
 
-
     public function destroy(int $versionId): RedirectResponse
     {
         $this->billingGroupConnectionRelService->deleteBillingGroupConnectionRel($versionId);
 
-        return back()->with('success', 'Connection removed from Billing Group');
+        return back()->with('message', 'Connection removed from Billing Group');
     }
 }
