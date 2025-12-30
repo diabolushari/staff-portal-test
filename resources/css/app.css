@@ -117,6 +117,7 @@
    --color-kseb-bg-blue: var(--kseb-bg-blue);
    --color-kseb-line: var(--kseb-line);
    --color-tab-border:var(--tab-border)
+   --color-kseb-highlight:var(--kseb-highlight)
 }
 
 /*
@@ -174,7 +175,8 @@
    --kseb-primary: #1A3B64;
    --kseb-bg-blue:#F3F8FE;
    --kseb-line:#DCDADA;
-   --tab-border:#A8A8A8
+   --tab-border:#A8A8A8;
+   --kseb-highlight:#387feb;
 }
 
 .dark {
@@ -213,7 +215,8 @@
    --kseb-primary: #1A3B64;
    --kseb-bg-blue: #F3F8FE;
    --kseb-line:#DCDADA;
-   --tab-border:#A8A8A8
+   --tab-border:#A8A8A8;
+   --kseb-highlight:#387feb;
 
 }
 
