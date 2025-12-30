@@ -12,6 +12,7 @@ interface Props {
   setFormValue: any
   errors?: any
   latestMeterReading?: any
+  isFirstReading?: boolean
 }
 
 export default function MeterReadingGeneralStep({
@@ -20,6 +21,7 @@ export default function MeterReadingGeneralStep({
   setFormValue,
   errors,
   latestMeterReading,
+  isFirstReading,
 }: Props) {
   const maxDate = dayjs().format('YYYY-MM-DD')
   const maxDateForReadingStartDate = dayjs(maxDate).subtract(1, 'day').format('YYYY-MM-DD')
@@ -69,7 +71,12 @@ export default function MeterReadingGeneralStep({
             <DatePicker
               label='Billing Period Start'
               value={formData.reading_start_date}
-              setValue={setFormValue('reading_start_date')}
+              setValue={(value) => {
+                setFormValue('reading_start_date')(value)
+                if (isFirstReading) {
+                  setFormValue('reading_end_date')(value)
+                }
+              }}
               error={errors?.reading_start_date}
               disabled={latestMeterReading?.reading_end_date}
               max={maxDateForReadingStartDate}
@@ -80,6 +87,7 @@ export default function MeterReadingGeneralStep({
               setValue={setFormValue('reading_end_date')}
               error={errors?.reading_end_date}
               max={maxDate}
+              disabled={isFirstReading}
             />
           </div>
         </div>

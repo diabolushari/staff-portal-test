@@ -57,8 +57,11 @@ const getToday = () => {
   return today.toISOString().split('T')[0]
 }
 
-const getMonthEnd = (dateStr: string) => {
+const getMonthEnd = (dateStr: string, isFirstReading: boolean) => {
   if (!dateStr) return ''
+  if (isFirstReading) {
+    return dateStr
+  }
   const date = new Date(dateStr)
   const year = date.getFullYear()
   const month = date.getMonth() + 1
@@ -133,15 +136,15 @@ export default function MeterReadingCreatePage({
     reading_start_date: readingStartDate,
     reading_end_date: editMode
       ? latestMeterReading?.reading_end_date
-      : (getMonthEnd(readingStartDate) ?? ''),
+      : (getMonthEnd(readingStartDate, isFirstReading) ?? ''),
     reading_type: editMode ? latestMeterReading?.single_reading : 'single_reading',
     anomaly_id: editMode ? latestMeterReading?.anomaly_id : 0,
-    voltage_r: editMode ? latestMeterReading?.voltage_r : 0,
-    voltage_y: editMode ? latestMeterReading?.voltage_y : 0,
-    voltage_b: editMode ? latestMeterReading?.voltage_b : 0,
-    current_r: editMode ? latestMeterReading?.current_r : 0,
-    current_y: editMode ? latestMeterReading?.current_y : 0,
-    current_b: editMode ? latestMeterReading?.current_b : 0,
+    voltage_r: latestMeterReading?.voltage_r ?? 0,
+    voltage_y: latestMeterReading?.voltage_y ?? 0,
+    voltage_b: latestMeterReading?.voltage_b ?? 0,
+    current_r: latestMeterReading?.current_r ?? 0,
+    current_y: latestMeterReading?.current_y ?? 0,
+    current_b: latestMeterReading?.current_b ?? 0,
     remarks: editMode ? latestMeterReading?.remarks : '',
     _method: editMode ? 'PUT' : undefined,
   })
@@ -251,6 +254,7 @@ export default function MeterReadingCreatePage({
                   setFormValue={setFormValue}
                   errors={errors}
                   latestMeterReading={latestMeterReading}
+                  isFirstReading={isFirstReading}
                 />
               )}
               {activeStep === 1 && (
