@@ -81,6 +81,22 @@ class ConnectionController extends Controller
     public function show(int $id): Response|RedirectResponse
     {
         $connection = $this->connectionService->getConnection($id);
+        $indicators = $this->parameterValueService->getParameterValues(
+            null,
+            null,
+            null,
+            "Connection",
+            "Indicators",
+            "attribute1Value",
+            "Connection"
+        );
+        $generationTypes = $this->parameterValueService->getParameterValues(
+            null,
+            null,
+            null,
+            "Connection",
+            "Generation Type"
+        );
         if ($connection->hasError()) {
             if ($connection->error) {
                 return $connection->error;
@@ -95,6 +111,8 @@ class ConnectionController extends Controller
         return Inertia::render('Connections/ConnectionsShow', [
             'connection' => $connection->data,
             'consumerExist' => $consumerExist,
+            'indicators' => $indicators->data,
+            'generationTypes' => $generationTypes->data,
         ]);
     }
 

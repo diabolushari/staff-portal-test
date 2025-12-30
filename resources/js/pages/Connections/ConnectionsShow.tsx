@@ -7,16 +7,29 @@ import StrongText from '@/typography/StrongText'
 import EditButton from '@/ui/button/EditButton'
 import { router } from '@inertiajs/react'
 import { useMemo, useState } from 'react'
+import { groupFlagsBySection } from '../Consumer/ConsumerShow'
+import AddButton from '@/ui/button/AddButton'
+import ConnectionFlagModal from '@/components/Connections/ConnectionFlagModal'
+import { ParameterValues } from '@/interfaces/parameter_types'
+import ConnectionGenerationFormModal from '@/components/Connections/ConnectionGenerationFormModal'
 
 interface Props {
   connection: Connection
   consumerExist: boolean
+  indicators: ParameterValues[]
+  generationTypes: ParameterValues[]
 }
 
-export default function ConnectionsShow({ connection, consumerExist }: Readonly<Props>) {
+export default function ConnectionsShow({
+  connection,
+  consumerExist,
+  indicators,
+  generationTypes,
+}: Readonly<Props>) {
   const formatDate = (dateStr?: string | null) =>
     dateStr ? new Date(dateStr).toLocaleDateString() : '-'
   const [editIndicator, setEditIndicator] = useState(false)
+  const [editGeneration, setEditGeneration] = useState(false)
 
   const breadcrumbs = useMemo(
     () => [
@@ -41,6 +54,11 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
 
   const handleIndicator = () => {
     setEditIndicator(!editIndicator)
+  }
+  const connectionGroupedFlags = groupFlagsBySection(connection?.connection_flags, 'Connection')
+
+  const handleGeneration = () => {
+    setEditGeneration(!editGeneration)
   }
 
   return (
@@ -242,25 +260,17 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                 label='Metering Type'
                 value={connection?.metering_type?.parameter_value}
               />
-              <Field
-                label='Solar Indicator'
-                value={connection?.solar_indicator ? 'Yes' : 'No'}
-              />
-              <Field
-                label='Multi Source Indicator'
-                value={connection?.multi_source_indicator ? 'Yes' : 'No'}
-              />
             </div>
           </Card>
 
-          {connection.connection_generation_types &&
-            connection.connection_generation_types.length > 0 && (
+          {connection?.connection_generation_types &&
+            connection?.connection_generation_types?.length > 0 && (
               <Card className='rounded-lg p-5'>
                 <div className='mb-6 flex items-center justify-between'>
                   <StrongText className='text-base font-semibold text-[#252c32]'>
                     Generation Types
                   </StrongText>
-                  <EditButton onClick={() => handleIndicator()} />
+                  <EditButton onClick={() => handleGeneration()} />
                 </div>
                 <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
 
@@ -269,13 +279,13 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
                     <>
                       <Field
                         key={generationType?.id}
-                        label=''
-                        value={generationType?.generation_type?.parameter_value ?? '-'}
+                        label={generationType?.generation_type?.parameter_value ?? '-'}
+                        value='Yes'
                       />
                       {generationType?.generation_sub_type && (
                         <Field
                           key={generationType?.id}
-                          label='Sub Type'
+                          label={`${generationType.generation_type?.parameter_value} Sub Type`}
                           value={generationType?.generation_sub_type?.parameter_value ?? '-'}
                         />
                       )}
@@ -285,30 +295,61 @@ export default function ConnectionsShow({ connection, consumerExist }: Readonly<
               </Card>
             )}
 
-          {connection?.connection_flags && connection?.connection_flags?.length > 0 && (
-            <Card className='rounded-lg p-5'>
-              <div className='mb-6 flex items-center justify-between'>
-                <StrongText className='text-base font-semibold text-[#252c32]'>
-                  Indicators
-                </StrongText>
-                <EditButton onClick={() => handleIndicator()} />
-              </div>
-              <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+          {connectionGroupedFlags &&
+            connectionGroupedFlags.length > 0 &&
+            connectionGroupedFlags.map((group, index) => (
+              <Card className='rounded-lg p-5'>
+                <div className='mb-6 flex items-center justify-between'>
+                  <StrongText className='text-base font-semibold text-[#252c32]'>
+                    {group.group_name}
+                  </StrongText>
+                  <EditButton onClick={() => handleIndicator()} />
+                </div>
+                <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
 
-              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                {connection?.connection_flags?.map((flag) => (
-                  <>
-                    <Field
-                      key={flag?.id}
-                      label={flag?.flag?.parameter_value ?? '-'}
-                      value='Selected'
-                    />
-                  </>
-                ))}
-              </div>
-            </Card>
+                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                  {group?.flags?.map((flag) => (
+                    <>
+                      <Field
+                        key={flag?.id}
+                        label={flag?.flag?.parameter_value ?? '-'}
+                        value='Selected'
+                      />
+                    </>
+                  ))}
+                </div>
+              </Card>
+            ))}
+          <div className='flex gap-4'>
+            {connectionGroupedFlags?.length === 0 && (
+              <AddButton
+                onClick={() => handleIndicator()}
+                buttonText='Add Indicator'
+              />
+            )}
+            {connection?.connection_generation_types?.length === 0 && (
+              <AddButton
+                onClick={() => handleGeneration()}
+                buttonText='Add Generation'
+              />
+            )}
+          </div>
+          {editIndicator && (
+            <ConnectionFlagModal
+              connectionId={connection?.connection_id}
+              setShowModal={setEditIndicator}
+              currentFlags={connection.connection_flags}
+              indicators={indicators}
+            />
           )}
-
+          {editGeneration && (
+            <ConnectionGenerationFormModal
+              connectionId={connection?.connection_id}
+              setShowModal={setEditGeneration}
+              generationTypes={generationTypes}
+              initialGenerationData={connection?.connection_generation_types}
+            />
+          )}
           {/* Dates */}
         </div>
       </div>

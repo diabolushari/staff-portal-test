@@ -2,6 +2,7 @@
 
 namespace App\Services\Connection;
 
+use App\GrpcConverters\Connection\ConnectionFlagProtoConverter;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
@@ -97,12 +98,30 @@ class ConnectionFlagService
         );
     }
 
-    public function update(int $id, ?int $flagId): GrpcServiceResponse
+    public function update(int $connectionId, array $flagGroups): GrpcServiceResponse
     {
         $request = new UpdateConnectionFlagRequest();
-        $request->setId($id);
-        if ($flagId !== null) {
-            $request->setFlagId($flagId);
+        $request->setConnectionId($connectionId);
+        if (!empty($flagGroups)) {
+            foreach ($flagGroups as $group) {
+
+                if (empty($group['flags'])) {
+                    continue;
+                }
+
+                foreach ($group['flags'] as $flag) {
+
+                    $flagPayload = [
+                        'connection_id' => $connectionId,
+                        'flag_id' => $flag['id'],
+                        'value' => $flag['value'],
+                        'label' => $flag['label'],
+                    ];
+
+                    $request->getFlags()[] =
+                        ConnectionFlagProtoConverter::convertToFormRequest($flagPayload);
+                }
+            }
         }
 
 

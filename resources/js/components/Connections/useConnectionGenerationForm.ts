@@ -1,6 +1,7 @@
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
+import { ConnectionGenerationType } from '@/interfaces/data_interfaces'
 
 export interface GenerationFormData {
   id: number
@@ -13,9 +14,13 @@ export interface GenerationFormData {
 
 export interface GenerationFormProps {
   generationTypes: ParameterValues[]
+  initialData?: ConnectionGenerationType[]
 }
 
-export default function useConnectionGenerationForm({ generationTypes }: GenerationFormProps) {
+export default function useConnectionGenerationForm({
+  generationTypes,
+  initialData,
+}: GenerationFormProps) {
   const [generationData, setGenerationData] = useState<GenerationFormData[]>([])
 
   useEffect(() => {
@@ -23,13 +28,17 @@ export default function useConnectionGenerationForm({ generationTypes }: Generat
       generationTypes.map((generationType) => ({
         id: generationType.id,
         label: generationType.parameter_value,
-        value: false,
+        value: initialData?.find((data) => data.generation_type_id === generationType.id)
+          ? true
+          : false,
         generation_type_id: generationType.id,
-        generation_sub_type_id: null,
+        generation_sub_type_id:
+          initialData?.find((data) => data.generation_type_id == generationType.id)
+            ?.generation_sub_type_id ?? null,
         generation_sub_types: [],
       }))
     )
-  }, [generationTypes])
+  }, [generationTypes, initialData])
 
   const updateGenerationData = useCallback(
     async (id: number, value: boolean, label: string) => {
