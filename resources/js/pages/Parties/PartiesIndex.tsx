@@ -16,6 +16,10 @@ interface Props {
 }
 const breadcrumbs = [
   {
+    title: 'Home',
+    href: '/',
+  },
+  {
     title: 'Parties',
     href: '/parties',
   },
@@ -33,12 +37,15 @@ export default function PartiesIndex({ parties }: Props) {
       navItems={consumerNavItems}
       addBtnText='Party'
       addBtnUrl={route('parties.create')}
+      title='Parties'
+      selectedItem='Parties'
+      selectedTopNav='Consumers'
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4'>
         {/* Controls */}
         <ListSearch
-          title='Parties Search'
-          placeholder='Enter party name'
+          title=''
+          placeholder='Find Parties'
           url={route('parties.index')}
           //setItems={setItems}
           search={''}
