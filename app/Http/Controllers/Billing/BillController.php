@@ -32,8 +32,8 @@ class BillController extends Controller
         $kvaValues   = $this->billExportService->filterReadingByParameter($meterReading, 'kva');
         $kvahValues  = $this->billExportService->filterReadingByParameter($meterReading, 'kvah');
         $kwhValues   = $this->billExportService->filterReadingByParameter($meterReading, 'kwh');
-        $lagValues   = $this->billExportService->filterReadingByParameter($meterReading, 'kvah lag');
-        $leadValues  = $this->billExportService->filterReadingByParameter($meterReading, 'kvah lead');
+        $lagValues   = $this->billExportService->filterReadingByParameter($meterReading, 'kVA(R)h Lag');
+        $leadValues  = $this->billExportService->filterReadingByParameter($meterReading, 'kVA(R)h Lead');
         $chargeHeads = $this->billExportService->getChargeHeads($bill->data['charge_heads'] ?? []);
         $computedProperties = $this->billExportService->getComputedProperties($bill->data['computed_properties'] ?? []);
         $energyChargeRows = $this->billExportService->getEnergyChargeRows($meter, $computedProperties, $kwhValues);
