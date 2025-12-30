@@ -24,69 +24,100 @@ export default function useConnectionGenerationForm({
   const [generationData, setGenerationData] = useState<GenerationFormData[]>([])
 
   useEffect(() => {
-    setGenerationData(
-      generationTypes.map((generationType) => ({
+    if (!generationTypes?.length) return
+
+    const baseData: GenerationFormData[] = generationTypes.map((generationType) => {
+      const existing = initialData?.find((data) => data.generation_type_id === generationType.id)
+
+      return {
         id: generationType.id,
         label: generationType.parameter_value,
-        value: initialData?.find((data) => data.generation_type_id === generationType.id)
-          ? true
-          : false,
+        value: !!existing,
         generation_type_id: generationType.id,
-        generation_sub_type_id:
-          initialData?.find((data) => data.generation_type_id == generationType.id)
-            ?.generation_sub_type_id ?? null,
+        generation_sub_type_id: existing?.generation_sub_type_id ?? null,
         generation_sub_types: [],
-      }))
-    )
+      }
+    })
+
+    setGenerationData(baseData)
   }, [generationTypes, initialData])
 
-  const updateGenerationData = useCallback(
-    async (id: number, value: boolean, label: string) => {
-      setGenerationData((prev) =>
-        prev.map((generation) => ({
-          ...generation,
-          value: generation.id === id ? value : generation.value,
-        }))
+  useEffect(() => {
+    if (!initialData || generationData.length === 0) return
+
+    const fetchSubTypesOnInit = async () => {
+      const updated = await Promise.all(
+        generationData.map(async (generation) => {
+          if (!generation.value) return generation
+
+          try {
+            const response = await axios.get(
+              `/api/parameter-values?attribute_name=attribute1Value&attribute_value=${generation.label}`
+            )
+
+            return {
+              ...generation,
+              generation_sub_types: response.data,
+            }
+          } catch (error) {
+            console.error(`Failed to fetch sub-types for ${generation.label}`, error)
+            return generation
+          }
+        })
       )
 
-      if (value === true) {
+      setGenerationData(updated)
+    }
+
+    fetchSubTypesOnInit()
+  }, [initialData, generationData.length])
+
+  const updateGenerationData = useCallback(async (id: number, value: boolean, label: string) => {
+    // Update checkbox state
+    setGenerationData((prev) =>
+      prev.map((generation) => (generation.id === id ? { ...generation, value } : generation))
+    )
+
+    if (value) {
+      try {
         const response = await axios.get(
           `/api/parameter-values?attribute_name=attribute1Value&attribute_value=${label}`
         )
-        setGenerationData((prev) =>
-          prev.map((generation) => ({
-            ...generation,
-            generation_sub_types:
-              generation.id === id ? response.data : generation.generation_sub_types,
-          }))
-        )
-      } else {
-        setGenerationData((prev) =>
-          prev.map((generation) => ({
-            ...generation,
-            generation_sub_types: generation.id === id ? [] : generation.generation_sub_types,
-            generation_sub_type_id: generation.id === id ? null : generation.generation_sub_type_id,
-          }))
-        )
-      }
-    },
-    [generationData]
-  )
 
-  const updateGenerationSubTypeData = useCallback(
-    async (id: number, value: boolean, label: string, generationSubTypeId: number) => {
-      setGenerationData((prev: GenerationFormData[]) =>
-        prev.map((generation: GenerationFormData) => ({
-          ...generation,
-          generation_sub_type_id:
-            generation.id === id && value === true
-              ? generationSubTypeId
-              : generation.generation_sub_type_id,
-        }))
+        setGenerationData((prev) =>
+          prev.map((generation) =>
+            generation.id === id
+              ? { ...generation, generation_sub_types: response.data }
+              : generation
+          )
+        )
+      } catch (error) {
+        console.error('Failed to fetch generation sub types', error)
+      }
+    } else {
+      setGenerationData((prev) =>
+        prev.map((generation) =>
+          generation.id === id
+            ? {
+                ...generation,
+                generation_sub_types: [],
+                generation_sub_type_id: null,
+              }
+            : generation
+        )
       )
-    },
-    [generationData]
-  )
+    }
+  }, [])
+
+  const updateGenerationSubTypeData = useCallback((id: number, generationSubTypeId: number) => {
+    setGenerationData((prev) =>
+      prev.map((generation) =>
+        generation.id === id
+          ? { ...generation, generation_sub_type_id: generationSubTypeId }
+          : generation
+      )
+    )
+  }, [])
 
   return {
     generationData,

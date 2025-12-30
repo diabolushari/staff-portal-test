@@ -11,8 +11,7 @@ interface Props {
   updateGenerationData: (id: number, value: boolean, label: string) => void
   updateGenerationSubTypeData: (
     id: number,
-    value: boolean,
-    label: string,
+
     generationSubTypeId: number
   ) => void
   generationData: GenerationFormData[]
@@ -28,41 +27,34 @@ export default function ConnectionGenerationTypeForm({
   return (
     <>
       {prosumers && (
-        <FormCard title='Generation Type'>
-          {/* Checkboxes */}
-
-          {generationData.map((indicator) => (
-            <div
-              key={indicator.id}
-              className='space-y-2'
-            >
-              <CheckBox
-                label={indicator.label}
-                value={indicator.value}
-                toggleValue={() =>
-                  updateGenerationData(indicator.id, !indicator.value, indicator.label)
-                }
-              />
-              {indicator.generation_sub_types.map((subType) => (
-                <SelectList
-                  label='Generation Sub Type'
-                  list={indicator.generation_sub_types}
-                  dataKey='id'
-                  displayKey='parameter_value'
-                  setValue={(value) =>
-                    updateGenerationSubTypeData(
-                      indicator.id,
-                      indicator.value,
-                      indicator.label,
-                      Number(value)
-                    )
+        <>
+          <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
+            {generationData.map((indicator) => (
+              <div
+                key={indicator.id}
+                className='space-y-2'
+              >
+                <CheckBox
+                  label={indicator.label}
+                  value={indicator.value}
+                  toggleValue={() =>
+                    updateGenerationData(indicator.id, !indicator.value, indicator.label)
                   }
-                  value={indicator.generation_sub_type_id ?? 0}
                 />
-              ))}
-            </div>
-          ))}
-        </FormCard>
+                {indicator.value && indicator.generation_sub_types.length > 0 && (
+                  <SelectList
+                    label='Generation Sub Type'
+                    list={indicator.generation_sub_types}
+                    dataKey='id'
+                    displayKey='parameter_value'
+                    setValue={(value) => updateGenerationSubTypeData(indicator.id, Number(value))}
+                    value={indicator.generation_sub_type_id ?? 0}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </>
   )

@@ -46,6 +46,7 @@ export default function ConnectionGenerationFormModal({
       title='Connection Generation Form'
       setShowModal={() => setShowModal}
       large
+      showClosButton
     >
       <form
         onSubmit={handleSubmit}
@@ -66,23 +67,16 @@ export default function ConnectionGenerationFormModal({
                   updateGenerationData(indicator.id, !indicator.value, indicator.label)
                 }
               />
-              {indicator.generation_sub_types.map((subType) => (
+              {indicator.value && indicator.generation_sub_types.length > 0 && (
                 <SelectList
                   label='Generation Sub Type'
                   list={indicator.generation_sub_types}
                   dataKey='id'
                   displayKey='parameter_value'
-                  setValue={(value) =>
-                    updateGenerationSubTypeData(
-                      indicator.id,
-                      indicator.value,
-                      indicator.label,
-                      Number(value)
-                    )
-                  }
+                  setValue={(value) => updateGenerationSubTypeData(indicator.id, Number(value))}
                   value={indicator.generation_sub_type_id ?? 0}
                 />
-              ))}
+              )}
             </div>
           ))}
         </FormCard>
