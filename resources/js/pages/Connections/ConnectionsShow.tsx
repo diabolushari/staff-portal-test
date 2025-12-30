@@ -41,9 +41,7 @@ export default function ConnectionsShow({
       { title: 'Connections', href: '/connections' },
       {
         title: connection?.consumer_number?.toString(),
-        href: connection?.connection_id
-          ? route('connection.consumer', connection?.connection_id)
-          : '#',
+        href: '#',
       },
     ],
     [connection]

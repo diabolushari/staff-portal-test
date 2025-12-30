@@ -370,29 +370,32 @@ export default function ConnectionForm({
         </div>
       </Card>
 
-      <Card>
-        <div className='border-b-2 border-gray-200 py-3'>
-          <StrongText className='text-base font-semibold'>Prosumers</StrongText>
-        </div>
-        <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
-          <CheckBox
-            label='Prosumers'
-            value={formData.prosumers}
-            toggleValue={toggleBoolean('prosumers')}
+      {!connection && (
+        <Card>
+          <div className='border-b-2 border-gray-200 py-3'>
+            <StrongText className='text-base font-semibold'>Prosumers</StrongText>
+          </div>
+          <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
+            <CheckBox
+              label='Prosumers'
+              value={formData.prosumers}
+              toggleValue={toggleBoolean('prosumers')}
+            />
+          </div>
+          <ConnectionGenerationTypeForm
+            generationData={generationData}
+            updateGenerationData={updateGenerationData}
+            updateGenerationSubTypeData={updateGenerationSubTypeData}
+            prosumers={formData.prosumers}
           />
-        </div>
-        <ConnectionGenerationTypeForm
-          generationData={generationData}
-          updateGenerationData={updateGenerationData}
-          updateGenerationSubTypeData={updateGenerationSubTypeData}
-          prosumers={formData.prosumers}
+        </Card>
+      )}
+      {!connection && (
+        <ConnectionFlagForm
+          flagData={flagData}
+          updateFlagData={updateFlagData}
         />
-      </Card>
-
-      <ConnectionFlagForm
-        flagData={flagData}
-        updateFlagData={updateFlagData}
-      />
+      )}
 
       {/* Submit */}
       <div className='flex justify-end'>
