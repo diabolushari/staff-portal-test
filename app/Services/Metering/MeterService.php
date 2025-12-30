@@ -206,15 +206,52 @@ class MeterService
         return GrpcServiceResponse::success($metersArray, $response, $status->code, $status->details);
     }
 
-    public function listMetersPaginated(int $pageNumber = 1, int $pageSize = 10, ?string $meterSerial = null, ?string $sortBy = null,
-        ?string $sortDirection = null): GrpcServiceResponse
-    {
+    public function listMetersPaginated(
+        int $pageNumber = 1,
+        int $pageSize = 10,
+        ?string $meterSerial = null,
+        ?bool $smartMeterInd = null,
+        ?bool $bidirectionalInd = null,
+        ?int $meterTypeId = null,
+        ?int $meterProfileId = null,
+        ?int $meterMakeId = null,
+        ?int $ownershipTypeId = null,
+        ?int $programmablePtRatio = null,
+        ?int $programmableCtRatio = null,
+        ?string $sortBy = null,
+        ?string $sortDirection = null
+    ): GrpcServiceResponse {
         $request = new MeterPaginatedListRequest;
         $request->setPageNumber($pageNumber);
         $request->setPageSize($pageSize);
 
+
         if ($meterSerial) {
             $request->setMeterSerial($meterSerial);
+        }
+        if ($smartMeterInd !== null) {
+            $request->setSmartMeterInd($smartMeterInd);
+        }
+        if ($bidirectionalInd !== null) {
+            $request->setBidirectionalInd($bidirectionalInd);
+        }
+        if ($meterTypeId !== null) {
+            $request->setMeterTypeId($meterTypeId);
+        }
+        if ($meterProfileId) {
+            $request->setMeterProfileId($meterProfileId);
+        }
+        if ($meterMakeId) {
+            $request->setMeterMakeId($meterMakeId);
+        }
+        if ($ownershipTypeId) {
+            $request->setOwnershipTypeId($ownershipTypeId);
+        }
+        if ($programmableCtRatio) {
+            $request->setProgrammableCtRatio($programmableCtRatio);
+        }
+        if ($programmablePtRatio) {
+            $request->setProgrammablePtRatio($programmablePtRatio);
         }
 
         if ($sortBy !== null && $sortBy !== '') {
@@ -237,7 +274,7 @@ class MeterService
         }
 
         $meters = array_map(
-            fn ($o) => MeterProtoConvertor::convertToArray($o),
+            fn($o) => MeterProtoConvertor::convertToArray($o),
             iterator_to_array($response->getMeters())
         );
 
@@ -272,7 +309,7 @@ class MeterService
         }
 
         $meters = array_map(
-            fn ($o) => MeterProtoConvertor::convertToArray($o),
+            fn($o) => MeterProtoConvertor::convertToArray($o),
             iterator_to_array($response->getMeters())
         );
         $data = [
@@ -445,7 +482,7 @@ class MeterService
             if ($value instanceof \DateTimeInterface) {
                 $dt = $value;
             } elseif (is_int($value)) {
-                $dt = (new \DateTimeImmutable('@'.$value))->setTimezone(new \DateTimeZone('UTC'));
+                $dt = (new \DateTimeImmutable('@' . $value))->setTimezone(new \DateTimeZone('UTC'));
             } else {
                 // string
                 $dt = new \DateTimeImmutable($value);
