@@ -14,27 +14,26 @@ class BillController extends Controller
     public function __construct(
         private readonly BillService $billService,
         private readonly BillExportService $billExportService
-    )
-    {}
+    ) {}
 
     public function show(int $id): Response
-    {   
+    {
 
         $bill = $this->billService->getBill($id);
         $meter = null;
-        if ($bill?->data['connection_id']){
+        if ($bill?->data['connection_id']) {
             $meter = $this->billExportService->getMainMeter($bill->data['connection_id']);
         }
         $meterReading = null;
-        
-        if ($bill?->data['connection_id']){
+
+        if ($bill?->data['connection_id']) {
             $meterReading = $this->billExportService->getMeterReading($bill->data['connection_id'], $bill->data['reading_year_month']);
         }
         $kvaValues   = $this->billExportService->filterReadingByParameter($meterReading, 'kva');
         $kvahValues  = $this->billExportService->filterReadingByParameter($meterReading, 'kvah');
         $kwhValues   = $this->billExportService->filterReadingByParameter($meterReading, 'kwh');
-        $lagValues   = $this->billExportService->filterReadingByParameter($meterReading, 'kvarh_lag');
-        $leadValues  = $this->billExportService->filterReadingByParameter($meterReading, 'kvarh_lead');
+        $lagValues   = $this->billExportService->filterReadingByParameter($meterReading, 'kvah lag');
+        $leadValues  = $this->billExportService->filterReadingByParameter($meterReading, 'kvah lead');
         $chargeHeads = $this->billExportService->getChargeHeads($bill->data['charge_heads'] ?? []);
         $computedProperties = $this->billExportService->getComputedProperties($bill->data['computed_properties'] ?? []);
         $energyChargeRows = $this->billExportService->getEnergyChargeRows($meter, $computedProperties, $kwhValues);
@@ -59,6 +58,7 @@ class BillController extends Controller
             'consumer' => $bill->data['consumer'] ?? null,
             'averageAndTotalKva' => $averageAndTotalKva,
             'averageAndTotalKwh' => $averageAndTotalKwh,
+            'demand' => $demand,
         ]);
     }
 }
