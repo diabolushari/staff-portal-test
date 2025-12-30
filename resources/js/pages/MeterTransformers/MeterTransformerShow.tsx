@@ -27,7 +27,7 @@ export default function MeterTransformerShow({ transformer }: Readonly<Props>) {
       breadcrumb={breadcrumbs}
       navItems={meteringBillingNavItems}
       selectedItem='CTPTs'
-      title={'CTPT Details  '}
+      title={'CTPT Details'}
       description={
         <>
           CTPT Details for <span className='font-semibold'>{transformer.ctpt_serial}</span>
