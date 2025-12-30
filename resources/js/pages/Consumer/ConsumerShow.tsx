@@ -69,7 +69,6 @@ export const groupFlagsBySection = (
       grouped[groupName].push(flag)
     })
 
-  // 3️⃣ convert map → array
   return Object.entries(grouped).map(([group_name, flags]) => ({
     group_name,
     flags,
@@ -98,11 +97,11 @@ export default function ConsumerShow({
     },
     {
       title: connection?.consumer_number.toString() ?? '',
-      href: route('connections.show', connection?.connection_id),
+      href: '#',
     },
     {
       title: 'Consumer',
-      href: route('connection.consumer', connection?.connection_id),
+      href: '#',
     },
   ]
   console.log(consumer?.consumer?.flags)

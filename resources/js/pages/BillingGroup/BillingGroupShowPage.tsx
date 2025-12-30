@@ -37,9 +37,7 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
     { title: 'Billing Groups', href: route('billing-groups.index') },
     {
       title: `Group ${billingGroup?.name}`,
-      href: route('billing-groups.show', {
-        billing_group: billingGroup?.billing_group_id,
-      }),
+      href: '#',
     },
   ]
   const [deleteConnection, setDeleteConnection] = useState<boolean>(false)

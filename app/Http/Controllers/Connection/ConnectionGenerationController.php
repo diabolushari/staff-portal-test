@@ -24,6 +24,6 @@ class ConnectionGenerationController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('message', 'Connection generation type updated successfully.');
+        return redirect()->route('connections.show', $connectionId)->with('message', 'Connection generation type updated successfully.');
     }
 }
