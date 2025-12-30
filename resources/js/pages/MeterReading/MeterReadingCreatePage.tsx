@@ -121,8 +121,8 @@ export default function MeterReadingCreatePage({
       return dayjs(connectionWithConsumer.connection?.connected_date).format('YYYY-MM-DD')
     }
 
-    return getNextDay(latestMeterReading.reading_start_date) ?? ''
-  }, [isFirstReading, latestMeterReading?.reading_start_date, connectionWithConsumer])
+    return getNextDay(latestMeterReading.reading_end_date) ?? ''
+  }, [isFirstReading, latestMeterReading?.reading_end_date, connectionWithConsumer])
 
   const [isOnParamaterForm, setIsOnParameterForm] = useState(false)
 
