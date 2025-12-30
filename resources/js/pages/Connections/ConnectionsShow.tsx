@@ -6,7 +6,6 @@ import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import StrongText from '@/typography/StrongText'
 import EditButton from '@/ui/button/EditButton'
 import { router } from '@inertiajs/react'
-import { PencilIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { groupFlagsBySection } from '../Consumer/ConsumerShow'
 import AddButton from '@/ui/button/AddButton'
@@ -43,6 +42,10 @@ export default function ConnectionsShow({
         title: connection?.consumer_number?.toString(),
         href: '#',
       },
+      {
+        title: 'Connection Details',
+        href: '#',
+      },
     ],
     [connection]
   )
@@ -62,14 +65,19 @@ export default function ConnectionsShow({
       connectionId={connection?.connection_id ?? 0}
       value={'connection'}
       subTabValue='connection'
-      heading='Connection'
-      subHeading=''
+      heading='Connection Details'
+      description={
+        <>
+          Connection details for consumer number {'   '}
+          <span className='font-bold'>{connection?.consumer_number}</span>
+        </>
+      }
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
       consumerExist={consumerExist}
       meterExist={connection?.meter_mappings?.length > 0}
     >
-      <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
+      <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto'>
         {/* Header */}
         {/* <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
           <div className='flex flex-col gap-2'>
@@ -83,21 +91,24 @@ export default function ConnectionsShow({
         {/* Tabs */}
 
         <div className='space-y-6'>
+          <div className='flex justify-end pr-5'>
+            <button
+              onClick={() => router.get(route('connections.edit', connection?.connection_id))}
+              className='link-button-text cursor-pointer underline'
+            >
+              EDIT
+            </button>
+          </div>
+
           {/* Basic Info */}
-          <Card className='rounded-lg p-7'>
+          <Card className='rounded-lg p-5'>
             <div className='mb-6 flex items-center justify-between'>
               <StrongText className='text-base font-semibold text-[#252c32]'>
                 Basic Information
               </StrongText>
-              <button
-                onClick={() => router.visit(route('connections.edit', connection?.connection_id))}
-                className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] hover:bg-gray-50'
-              >
-                <PencilIcon className='h-4 w-4' />
-                Edit
-              </button>
             </div>
-            <hr className='mb-6 border-[#e5e9eb]' />
+            <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
                 label='Consumer Number'
@@ -142,17 +153,21 @@ export default function ConnectionsShow({
                 value={formatDate(connection?.connected_date)}
               />
               <div className='col-span-2 mt-4'>
-                <Field
-                  label='Remarks'
-                  value={connection?.remarks}
-                />
+                {connection?.remarks && (
+                  <Field
+                    label='Remarks'
+                    value={connection?.remarks}
+                  />
+                )}
               </div>
             </div>
           </Card>
-          <Card className='rounded-lg p-7'>
+          <Card className='rounded-lg p-5'>
             <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
               Load Details
             </StrongText>
+            <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
                 label='Contract Demand (KVA)'
@@ -174,10 +189,12 @@ export default function ConnectionsShow({
           </Card>
 
           {/* Office Info */}
-          <Card className='rounded-lg p-7'>
+          <Card className='rounded-lg p-5'>
             <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
               Office Information
             </StrongText>
+            <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
                 label='Admin Office Code'
@@ -199,10 +216,12 @@ export default function ConnectionsShow({
           </Card>
 
           {/* Category / Purpose Info */}
-          <Card className='rounded-lg p-7'>
+          <Card className='rounded-lg p-5'>
             <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
               Connection Category & Purpose
             </StrongText>
+            <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
                 label='Connection Category'
@@ -220,10 +239,12 @@ export default function ConnectionsShow({
           </Card>
 
           {/* Billing / Tariff Info */}
-          <Card className='rounded-lg p-7'>
+          <Card className='rounded-lg p-5'>
             <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>
               Billing & Tariff
             </StrongText>
+            <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
                 label='Billing Process'
@@ -242,14 +263,15 @@ export default function ConnectionsShow({
 
           {connection?.connection_generation_types &&
             connection?.connection_generation_types?.length > 0 && (
-              <Card className='rounded-lg p-7'>
+              <Card className='rounded-lg p-5'>
                 <div className='mb-6 flex items-center justify-between'>
                   <StrongText className='text-base font-semibold text-[#252c32]'>
                     Generation Types
                   </StrongText>
                   <EditButton onClick={() => handleGeneration()} />
                 </div>
-                <hr className='mb-6 border-[#e5e9eb]' />
+                <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                   {connection?.connection_generation_types?.map((generationType) => (
                     <>
@@ -274,14 +296,15 @@ export default function ConnectionsShow({
           {connectionGroupedFlags &&
             connectionGroupedFlags.length > 0 &&
             connectionGroupedFlags.map((group, index) => (
-              <Card className='rounded-lg p-7'>
+              <Card className='rounded-lg p-5'>
                 <div className='mb-6 flex items-center justify-between'>
                   <StrongText className='text-base font-semibold text-[#252c32]'>
                     {group.group_name}
                   </StrongText>
                   <EditButton onClick={() => handleIndicator()} />
                 </div>
-                <hr className='mb-6 border-[#e5e9eb]' />
+                <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                   {group?.flags?.map((flag) => (
                     <>

@@ -3,7 +3,6 @@ import { Connection, ConsumerData, RegionOption } from '@/interfaces/data_interf
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { BreadcrumbItem } from '@/types'
 import { useMemo } from 'react'
-import StrongText from '@/typography/StrongText'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 
@@ -60,23 +59,15 @@ export default function ConsumerForm({
       connectionsNavItems={consumerNavItems}
       connectionId={connectionId}
       heading='Consumer Details'
-      subHeading='Consumer Details'
+      description={
+        <>
+          Consumer details for consumer number {'   '}
+          <span className='font-bold'>{connection?.consumer_number}</span>
+        </>
+      }
       value='connection'
       subTabValue='consumer'
     >
-      <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
-        {/* Header */}
-        <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-          <div className='flex flex-col gap-2'>
-            <StrongText className='text-2xl font-semibold text-[#252c32]'>
-              Connection #{connection?.connection_id}
-            </StrongText>
-            <span className='text-sm text-gray-600'>
-              Consumer No: {connection?.consumer_number}
-            </span>
-          </div>
-        </div>
-      </div>
       <ConsumerFormComponent
         consumer_types={consumerTypes}
         districts={districts}

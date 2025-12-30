@@ -9,13 +9,13 @@ import {
   Link2,
   Plug,
   Settings,
-  Trash,
   Wrench,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import ChangeMeterTransformerAssignment from './ChangeMeterTransformerAssignment'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import UpdateMeterTransformerAssignmentStatus from './UpdateMeterTransformerAssignmentStatus'
+import DeleteButton from '@/ui/button/DeleteButton'
 
 interface Props {
   meterMapping: MeterConnectionMapping
@@ -140,14 +140,7 @@ export default function ConnectionCardSection({
               </Button>
             </div>
           )}
-          <Button
-            variant='destructive'
-            size='icon'
-            className='cursor-pointer transition-transform hover:scale-105'
-            onClick={() => onDelete(meterMapping)}
-          >
-            <Trash className='h-5 w-5' />
-          </Button>
+          <DeleteButton onClick={() => onDelete(meterMapping)} />
         </div>
       </div>
       <div className='my-3'>

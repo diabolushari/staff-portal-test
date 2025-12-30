@@ -7,7 +7,6 @@ import { useState } from 'react'
 import { MeterTransformer } from '@/interfaces/data_interfaces'
 import { Paginator } from '@/ui/ui_interfaces'
 import Pagination from '@/ui/Pagination/Pagination'
-import { title } from 'process'
 
 interface Props {
   filters: {
@@ -38,7 +37,7 @@ export default function MeterTransformerIndex({ filters, transformers }: Readonl
       breadcrumb={breadcrumbs}
       navItems={meteringBillingNavItems}
       selectedItem='CTPTs'
-      addBtnText='Meter CTPT'
+      addBtnText='CTPT'
       addBtnUrl={route('meter-ctpt.create')}
       title='CTPTS'
     >
@@ -52,9 +51,6 @@ export default function MeterTransformerIndex({ filters, transformers }: Readonl
         {/* <Button label="Create Meter Transformer" onClick={handleCreate} /> */}
         {items && items.length > 0 ? (
           <div className='relative w-full rounded-lg bg-white'>
-            <div className='font-inter text-dark-gray px-7 pt-[21px] pb-3 text-[15px] leading-[23px] font-semibold tracking-[-0.0924px]'>
-              Meter CTPT List
-            </div>
             <div className='flex flex-col gap-4 px-7 pb-7'>
               {items.map((transformer) => (
                 <MeterTransformerListItem
