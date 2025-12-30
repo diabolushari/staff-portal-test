@@ -192,33 +192,44 @@ class BillExportService
     public function calculateDemand(array $kvaReadings, float $contractDemand): array
     {
         // Filter timezone readings
-        $timezoneReadings = array_filter($kvaReadings, fn($r) => !empty($r['timezone_code']));
+        $timezoneReadings = array_filter(
+            $kvaReadings,
+            fn($r) => !empty($r['timezone_code'])
+        );
+
         $threshold = $contractDemand * 0.75;
 
         if (!empty($timezoneReadings)) {
 
-            // Sort into fixed order (Peak, Normal, OffPeak)
+            // Priority order
             $orderedZones = ['Peak', 'Normal', 'OffPeak'];
 
-            // Create a map for quick lookup
+            // Build timezone => value map
             $zoneMap = [];
             foreach ($timezoneReadings as $r) {
                 $zoneMap[$r['timezone']] = $r['value'];
             }
 
-            // Determine max value
-            $maxValue = !empty($zoneMap) ? max($zoneMap) : 0;
+            // Find max value
+            $maxValue = max($zoneMap);
 
-            // If timezone max beats threshold → use timezone-based calculation
             if ($maxValue > $threshold) {
 
+                // Pick ONLY ONE zone based on priority
+                $selectedZone = null;
+                foreach ($orderedZones as $zone) {
+                    if (($zoneMap[$zone] ?? 0) === $maxValue) {
+                        $selectedZone = $zone;
+                        break;
+                    }
+                }
+
+                // Build result: selected zone = value, others = 0
                 $result = [];
                 foreach ($orderedZones as $zone) {
-                    $value = $zoneMap[$zone] ?? 0;
-
                     $result[] = [
                         'timezone' => $zone,
-                        'value'    => ($value == $maxValue ? $value : 0)
+                        'value' => ($zone === $selectedZone) ? $maxValue : 0
                     ];
                 }
 
@@ -229,7 +240,7 @@ class BillExportService
             }
         }
 
-        // Otherwise → return contract demand only
+        // Fallback → contract demand
         return [
             'is_contract_demand' => true,
             'result' => [
