@@ -75,7 +75,7 @@ class ConsumerService
         }
 
         $connection = $response->getConsumer();
-        $contact = $response->getContact();
+        $contact = $response->getContact() ?? null;
 
         return GrpcServiceResponse::success(
             [
@@ -234,8 +234,11 @@ class ConsumerService
     /**
      * @return array<string, mixed>
      */
-    public function transformContactToArray(ConsumerContactDetailMessage $contact): array
+    public function transformContactToArray(?ConsumerContactDetailMessage $contact): array
     {
+        if (!$contact) {
+            return [];
+        }
         $contactFolio = $contact->getContactFolio();
 
         return [
