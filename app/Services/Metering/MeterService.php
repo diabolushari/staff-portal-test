@@ -6,6 +6,7 @@ namespace App\Services\Metering;
 
 use App\GrpcConverters\MeterProtoConvertor;
 use App\Services\Grpc\GrpcErrorService;
+use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
 use Exception;
 use Google\Protobuf\Timestamp;
@@ -76,12 +77,12 @@ class MeterService
             $request->setDigitCount($data['digit_count']);
         }
         if (! empty($data['manufacture_date'])) {
-            if ($ts = self::toTimestamp($data['manufacture_date'])) {
+            if ($ts = DateTimeConverter::convertStringToTimestamp($data['manufacture_date'])) {
                 $request->setManufactureDate($ts);
             }
         }
         if (! empty($data['supply_date'])) {
-            if ($ts = self::toTimestamp($data['supply_date'])) {
+            if ($ts = DateTimeConverter::convertStringToTimestamp($data['supply_date'])) {
                 $request->setSupplyDate($ts);
             }
         }
@@ -206,9 +207,13 @@ class MeterService
         return GrpcServiceResponse::success($metersArray, $response, $status->code, $status->details);
     }
 
-    public function listMetersPaginated(int $pageNumber = 1, int $pageSize = 10, ?string $meterSerial = null, ?string $sortBy = null,
-        ?string $sortDirection = null): GrpcServiceResponse
-    {
+    public function listMetersPaginated(
+        int $pageNumber = 1,
+        int $pageSize = 10,
+        ?string $meterSerial = null,
+        ?string $sortBy = null,
+        ?string $sortDirection = null
+    ): GrpcServiceResponse {
         $request = new MeterPaginatedListRequest;
         $request->setPageNumber($pageNumber);
         $request->setPageSize($pageSize);
@@ -237,7 +242,7 @@ class MeterService
         }
 
         $meters = array_map(
-            fn ($o) => MeterProtoConvertor::convertToArray($o),
+            fn($o) => MeterProtoConvertor::convertToArray($o),
             iterator_to_array($response->getMeters())
         );
 
@@ -272,7 +277,7 @@ class MeterService
         }
 
         $meters = array_map(
-            fn ($o) => MeterProtoConvertor::convertToArray($o),
+            fn($o) => MeterProtoConvertor::convertToArray($o),
             iterator_to_array($response->getMeters())
         );
         $data = [
@@ -330,12 +335,12 @@ class MeterService
             $request->setDigitCount($data['digit_count']);
         }
         if (! empty($data['manufacture_date'])) {
-            if ($ts = self::toTimestamp($data['manufacture_date'])) {
+            if ($ts = DateTimeConverter::convertStringToTimestamp($data['manufacture_date'])) {
                 $request->setManufactureDate($ts);
             }
         }
         if (! empty($data['supply_date'])) {
-            if ($ts = self::toTimestamp($data['supply_date'])) {
+            if ($ts = DateTimeConverter::convertStringToTimestamp($data['supply_date'])) {
                 $request->setSupplyDate($ts);
             }
         }
@@ -445,7 +450,7 @@ class MeterService
             if ($value instanceof \DateTimeInterface) {
                 $dt = $value;
             } elseif (is_int($value)) {
-                $dt = (new \DateTimeImmutable('@'.$value))->setTimezone(new \DateTimeZone('UTC'));
+                $dt = (new \DateTimeImmutable('@' . $value))->setTimezone(new \DateTimeZone('UTC'));
             } else {
                 // string
                 $dt = new \DateTimeImmutable($value);
