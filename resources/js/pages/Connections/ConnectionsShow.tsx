@@ -283,7 +283,7 @@ export default function ConnectionsShow({
                       {generationType?.generation_sub_type && (
                         <Field
                           key={generationType?.id}
-                          label={`${generationType.generation_type?.parameter_value} Sub Type`}
+                          label='Generation Sub Type'
                           value={generationType?.generation_sub_type?.parameter_value ?? '-'}
                         />
                       )}
@@ -311,7 +311,7 @@ export default function ConnectionsShow({
                       <Field
                         key={flag?.id}
                         label={flag?.flag?.parameter_value ?? '-'}
-                        value='Selected'
+                        value='Yes'
                       />
                     </>
                   ))}
