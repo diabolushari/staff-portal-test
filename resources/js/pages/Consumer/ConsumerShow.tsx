@@ -119,10 +119,18 @@ export default function ConsumerShow({
       connectionsNavItems={consumerNavItems}
       heading={`Connection #${connection?.consumer_number}`}
       onEdit={() => router.visit(route('connection.consumer', connection?.connection_id))}
-      subHeading='Consumer'
+      description='Consumer'
       consumerExist={true}
       meterExist={connection?.meter_mappings?.length > 0}
     >
+      <div className='flex justify-end pr-5'>
+        <button
+          onClick={onEdit}
+          className='link-button-text cursor-pointer underline'
+        >
+          EDIT
+        </button>
+      </div>
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto'>
         {/* --- Basic Information --- */}
         <Card className='rounded-lg p-7'>
@@ -130,13 +138,6 @@ export default function ConsumerShow({
             <StrongText className='text-base font-semibold text-[#252c32]'>
               Basic Information
             </StrongText>
-            <button
-              onClick={onEdit}
-              className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
-            >
-              <PencilIcon className='h-4 w-4' />
-              Edit
-            </button>
           </div>
           <hr className='mb-6 border-[#e5e9eb]' />
           <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>

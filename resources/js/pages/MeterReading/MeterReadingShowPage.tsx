@@ -67,7 +67,7 @@ export default function MeterReadingShowPage({
       connectionsNavItems={consumerNavItems}
       connectionId={connectionId}
       heading='Meter Reading'
-      subHeading='Meter Reading'
+      description='Meter Reading'
       value='meter-reading'
       subTabValue='reading'
     >

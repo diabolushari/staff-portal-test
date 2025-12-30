@@ -44,6 +44,7 @@ export default function MeterTimezoneCard({
           Timezone Information
         </StrongText>
       </div>
+      <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
       {
         <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
           <SelectList

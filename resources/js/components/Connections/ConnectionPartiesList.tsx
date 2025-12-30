@@ -34,9 +34,11 @@ export default function ConnectionPartiesList({
   }
   return (
     <div className='relative w-full rounded-lg bg-white'>
-      <div className='font-inter text-dark-gray px-7 pt-[21px] pb-3 text-[15px] leading-[23px] font-semibold'>
-        Connection Parties
-      </div>
+      {connectionParties.length < 1 && (
+        <div className='font-inter text-dark-gray px-7 pt-[21px] pb-3 text-[15px] leading-[23px] font-semibold'>
+          No Parties Found
+        </div>
+      )}
 
       <div className='flex flex-col px-7 pb-7'>
         {connectionParties &&

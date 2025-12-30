@@ -109,7 +109,7 @@ export default function MeterTransformerRelForm({
       value='configuration'
       subTabValue='meter-ctpts'
       heading='Meter and CTPTs'
-      subHeading='CTPTs connected with meters'
+      description='CTPTs connected with meters'
       breadcrumbs={breadcrumbs}
       connectionId={connection.connection_id}
       connection={connection}

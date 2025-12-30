@@ -24,18 +24,6 @@ interface Props {
   relations: Relation[]
 }
 
-const MeterTabs = (meterId: number, ctptId?: number, relId?: number) => [
-  {
-    value: 'details',
-    label: 'Meter Details',
-    href: route('meters.show', meterId),
-  },
-  {
-    value: 'meter-ctpt',
-    label: 'Meter CTPT',
-  },
-]
-
 const breadcrumbs = [{ title: 'Meter CTPT Relations', href: '/meter-ctpt-rel' }]
 
 export default function MeterTransformerRelIndex({ relations }: Props) {
