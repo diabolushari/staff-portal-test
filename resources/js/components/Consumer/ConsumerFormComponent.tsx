@@ -1,17 +1,15 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ConsumerData } from '@/interfaces/data_interfaces'
+import { ConsumerData, RegionOption } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
-import CheckBox from '@/ui/form/CheckBox'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
-import { RegionOption } from '@/interfaces/data_interfaces'
 import { useEffect, useState } from 'react'
 import { Card } from '../ui/card'
 import ConsumerContactFolioModal from './ConsumerContactFolioModal'
-import useConnectionFlagForm, { GroupedFlags } from '../Connections/useConnectionFlagForm'
+import useConnectionFlagForm from '../Connections/useConnectionFlagForm'
 import ConnectionFlagForm from '../Connections/ConnectionFlagForm'
 import AddressCard from '../Connections/AddressCard'
 
@@ -436,11 +434,11 @@ export default function ConsumerFormComponent({
           setFormValue={setFormValue}
         />
       )}
-
       <div className='flex justify-end'>
         <Button
           type='submit'
           label='Submit'
+          processing={loading}
         />
       </div>
     </form>

@@ -68,6 +68,10 @@ class MeterReadingController extends Controller
                 ]);
         }
 
+        if ($response->statusCode != 0) {
+            return redirect()->back();
+        }
+
         return redirect()->route('connection.meter-reading', $request->connectionId)->with('message', 'Meter reading created successfully.');
     }
 

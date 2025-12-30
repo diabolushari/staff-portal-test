@@ -75,7 +75,8 @@ class ConnectionController extends Controller
         }
         $connection = $response->data;
 
-        return redirect()->route('connection.consumer', $connection['connection_id'])->with('message', 'Connection created successfully');
+        return redirect()->route('connection.consumer', $connection['connection_id'])
+            ->with('message', 'Connection created successfully');
     }
 
     public function show(int $id): Response|RedirectResponse
@@ -85,17 +86,17 @@ class ConnectionController extends Controller
             null,
             null,
             null,
-            "Connection",
-            "Indicators",
-            "attribute1Value",
-            "Connection"
+            'Connection',
+            'Indicators',
+            'attribute1Value',
+            'Connection'
         );
         $generationTypes = $this->parameterValueService->getParameterValues(
             null,
             null,
             null,
-            "Connection",
-            "Generation Type"
+            'Connection',
+            'Generation Type'
         );
         if ($connection->hasError()) {
             if ($connection->error) {
