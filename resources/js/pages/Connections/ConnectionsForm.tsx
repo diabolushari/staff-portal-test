@@ -2,11 +2,8 @@ import ConnectionForm from '@/components/Connections/ConnectionForm'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
-
 import { consumerNavItems } from '@/components/Navbar/navitems'
-import { TabsContent } from '@/components/ui/tabs'
 import { Connection } from '@/interfaces/data_interfaces'
-import { TabGroup } from '@/ui/Tabs/TabGroup'
 
 const getBreadcrumb = (connection?: Connection | null): BreadcrumbItem[] => {
   if (!connection) {
@@ -77,13 +74,6 @@ export default function ConnectionsForm({
   generationTypes,
   connection,
 }: Readonly<Props>) {
-  const tabs = [
-    {
-      value: 'connection',
-      label: 'Connection',
-    },
-  ]
-
   return (
     <MainLayout
       breadcrumb={getBreadcrumb(connection)}
@@ -92,26 +82,22 @@ export default function ConnectionsForm({
       selectedTopNav='Consumers'
     >
       <div>
-        <TabGroup tabs={tabs}>
-          <TabsContent value='connection'>
-            <ConnectionForm
-              indicators={indicators}
-              generationTypes={generationTypes}
-              connectionTypes={connectionTypes}
-              connectionStatus={connectionStatus}
-              voltageTypes={voltageTypes}
-              tariffTypes={tariffTypes}
-              connectionCategory={connectionCategory}
-              billingProcesses={billingProcesses}
-              phaseTypes={phaseTypes}
-              primaryPurposes={primaryPurposes}
-              openAccessTypes={openAccessTypes}
-              meteringTypes={meteringTypes}
-              renewableTypes={renewableTypes}
-              connection={connection}
-            />
-          </TabsContent>
-        </TabGroup>
+        <ConnectionForm
+          indicators={indicators}
+          generationTypes={generationTypes}
+          connectionTypes={connectionTypes}
+          connectionStatus={connectionStatus}
+          voltageTypes={voltageTypes}
+          tariffTypes={tariffTypes}
+          connectionCategory={connectionCategory}
+          billingProcesses={billingProcesses}
+          phaseTypes={phaseTypes}
+          primaryPurposes={primaryPurposes}
+          openAccessTypes={openAccessTypes}
+          meteringTypes={meteringTypes}
+          renewableTypes={renewableTypes}
+          connection={connection}
+        />
       </div>
     </MainLayout>
   )
