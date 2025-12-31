@@ -424,7 +424,7 @@
             <tr>
               <td>{{ $label }}. Demand Charge - {{ $zone['timezone'] ?? '-' }}</td>
               <td class="center">{{ $unit ?? '-' }}</td>
-              <td class="right">{{ $computedProperties['KVA RATE']['result'] ?? '-' }}</td>
+              <td class="right">{{ isset($computedProperties['KVA RATE']['result']) ? number_format($computedProperties['KVA RATE']['result'], 2) : 0 }}</td>
               <td class="right">{{ number_format($amount, 2) }}</td>
             </tr>
 
@@ -433,7 +433,7 @@
               <td>d. Excess Demand Charge</td>
               <td class="center">{{ 0 }}</td>
               <td class="right">{{ $kvaRate ?? '-' }}</td>
-              <td class="right">{{ $computedProperties['Excess Demand Charge']['result'] ?? '-' }}</td>
+              <td class="right">{{ isset($computedProperties['Excess Demand Charge']['result']) ? number_format($computedProperties['Excess Demand Charge']['result'], 2) : 0 }}</td>
             </tr>
 
             @endif
@@ -444,7 +444,7 @@
               <td>Sub Total</td>
               <td></td>
               <td></td>
-              <td class="right">{{ $chargeHeads['TOTAL DEMAND CHARGE']['result'] ?? '-' }}</td>
+              <td class="right">{{ isset($chargeHeads['TOTAL DEMAND CHARGE']['result']) ? number_format($chargeHeads['TOTAL DEMAND CHARGE']['result'], 2) : 0 }}</td>
             </tr>
 
             <tr>
@@ -464,10 +464,10 @@
 
             @foreach($rows as $i => $row)
             <tr>
-              <td>{{ chr(97 + $i) }}. {{ $row['label'] }} ({{ $row['units'] }} × {{ $row['rate'] }})</td>
+              <td>{{ chr(97 + $i) }}. {{ $row['label'] }} ({{ $row['units'] }} × {{ isset($row['rate']) ? number_format($row['rate'], 2) : 0 }})</td>
               <td></td>
               <td></td>
-              <td class="right">{{ $computedProperties['ENERGY CHARGE']['result'][$i]['result'] ?? 0 }}</td>
+              <td class="right">{{ isset($computedProperties['ENERGY CHARGE']['result'][$i]['result']) ? number_format($computedProperties['ENERGY CHARGE']['result'][$i]['result'], 2) : 0 }}</td>
             </tr>
             @endforeach
 
@@ -475,7 +475,7 @@
               <td>Sub Total (a + b + c)</td>
               <td></td>
               <td></td>
-              <td class="right">{{ $chargeHeads['ENERGY CHARGE']['result'] ?? 0 }}</td>
+              <td class="right">{{ isset($chargeHeads['ENERGY CHARGE']['result']) ? number_format($chargeHeads['ENERGY CHARGE']['result'], 2) : 0 }}</td>
             </tr>
 
 
@@ -487,13 +487,15 @@
               <td class="right">{{$chargeHeads['Power Factor Incentive and Disincentive']['result'] ?? 0}}</td>
             </tr>
             @php
-            $totalEnergyCharge = $chargeHeads['ENERGY CHARGE']['result'] ?? 0 + $chargeHeads['Power Factor Incentive and Disincentive']['result'] ?? 0;
+            $totalEnergyCharge =
+            ($chargeHeads['ENERGY CHARGE']['result'] ?? 0)
+            + ($chargeHeads['Power Factor Incentive and Disincentive']['result'] ?? 0);
             @endphp
             <tr class="total-row">
               <td>Total Energy Charge</td>
               <td></td>
               <td></td>
-              <td class="right">{{ $chargeHeads['ENERGY CHARGE']['result'] ?? 0 + $chargeHeads['Power Factor Incentive and Disincentive']['result'] ?? 0 }}</td>
+              <td class="right">{{ isset($totalEnergyCharge) ? number_format($totalEnergyCharge, 2) : 0 }}</td>
             </tr>
 
             <tr>
@@ -509,7 +511,7 @@
               <td>Total (add 1 to 9)</td>
               <td></td>
               <td></td>
-              <td class="right">{{$totalEnergyCharge}}</td>
+              <td class="right">{{ isset($totalEnergyCharge) ? number_format($totalEnergyCharge, 2) : 0 }}</td>
             </tr>
 
           </table>
@@ -533,7 +535,7 @@
             </tr>
             <tr>
               <td>Monthly Fuel Surcharge</td>
-              <td class="right">{{ $chargeHeads['Monthly Fuel Surcharge']['result'] ?? '-' }}</td>
+              <td class="right">{{ isset($chargeHeads['Monthly Fuel Surcharge']['result']) ? number_format($chargeHeads['Monthly Fuel Surcharge']['result'], 2) : '-' }}</td>
             </tr>
             <tr>
               <td>Green Energy Charge</td>
@@ -547,16 +549,18 @@
 
             <tr>
               <td>Electricity Duty</td>
-              <td class="right">{{ $chargeHeads['Electricity Duty']['result'] ?? '-' }}</td>
+              <td class="right"> {{ isset($chargeHeads['Electricity Duty']['result'])
+            ? number_format($chargeHeads['Electricity Duty']['result'], 2)
+            : '-' }}</td>
             </tr>
             <tr>
               <td>Ele. Surcharge</td>
-              <td class="right">{{ $chargeHeads['Electricity Surcharge']['result'] ?? '-' }}</td>
+              <td class="right">{{ isset($chargeHeads['Electricity Surcharge']['result']) ? number_format($chargeHeads['Electricity Surcharge']['result'], 2) : '-' }}</td>
             </tr>
 
             <tr class="total-row">
               <td>Net Payable</td>
-              <td class="right">{{$bill['bill_amount'] ?? 0}}</td>
+              <td class="right">{{ isset($bill['bill_amount']) ? number_format($bill['bill_amount'], 2) : 0 }}</td>
             </tr>
           </table>
         </td>

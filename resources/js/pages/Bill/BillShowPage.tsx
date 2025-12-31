@@ -370,9 +370,10 @@ export default function BillShowPage({
                         colSpan={3}
                         className='pl-8'
                       >
-                        {String.fromCharCode(97 + i)}. {row.label} ({row.units} × {row.rate})
+                        {String.fromCharCode(97 + i)}. {row?.label} ({row?.units} ×{' '}
+                        {Number(row?.rate).toFixed(2)})
                       </TableCell>
-                      <TableCell className='text-right'>{row.amount}</TableCell>
+                      <TableCell className='text-right'>{Number(row?.amount).toFixed(2)}</TableCell>
                     </TableRow>
                   ))}
                   <TableRow>
@@ -403,19 +404,19 @@ export default function BillShowPage({
                   <TableRow>
                     <TableCell>Monthly Fuel Surcharge</TableCell>
                     <TableCell className='text-right'>
-                      {chargeHeads['Monthly Fuel Surcharge']?.result ?? '-'}
+                      {Number(chargeHeads['Monthly Fuel Surcharge']?.result ?? 0).toFixed(2)}
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Electricity Duty</TableCell>
                     <TableCell className='text-right'>
-                      {chargeHeads['Electricity Duty']?.result ?? '-'}
+                      {Number(chargeHeads['Electricity Duty']?.result ?? 0).toFixed(2)}
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Ele. Surcharge</TableCell>
                     <TableCell className='text-right'>
-                      {chargeHeads['Electricity Surcharge']?.result ?? '-'}
+                      {Number(chargeHeads['Electricity Surcharge']?.result ?? 0).toFixed(2)}
                     </TableCell>
                   </TableRow>
 
