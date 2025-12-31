@@ -1,10 +1,19 @@
 import MeterReadingTable from '@/components/Meter/MeterReading/MeterReadingTable/MeterReadingTable'
 import { consumerNavItems } from '@/components/Navbar/navitems'
+import { Card } from '@/components/ui/card'
 import { Connection, Meter, MeterReading, MeterReadingValue } from '@/interfaces/data_interfaces'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 import { useMemo } from 'react'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 
 interface ReadingsByMeter {
   meterId: number
@@ -60,6 +69,7 @@ export default function MeterReadingShowPage({
     return Object.values(result)
   }, [meterReading])
 
+  console.log(meterReading)
   return (
     <ConnectionsLayout
       connection={connection}
@@ -78,6 +88,39 @@ export default function MeterReadingShowPage({
           Date: {meterReading.metering_date} (From {meterReading.reading_start_date} to{' '}
           {meterReading.reading_end_date})
         </p>
+        <Card>
+          <div className='mb-4'>
+            <h3 className='mb-2 text-lg font-semibold'>Phase Voltage & Current</h3>
+
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Parameter</TableHead>
+                  <TableHead className='text-center'>R</TableHead>
+                  <TableHead className='text-center'>Y</TableHead>
+                  <TableHead className='text-center'>B</TableHead>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                <TableRow>
+                  <TableCell className='font-medium'>Voltage (V)</TableCell>
+                  <TableCell className='text-center'>{meterReading.voltage_r ?? '-'}</TableCell>
+                  <TableCell className='text-center'>{meterReading.voltage_y ?? '-'}</TableCell>
+                  <TableCell className='text-center'>{meterReading.voltage_b ?? '-'}</TableCell>
+                </TableRow>
+
+                <TableRow>
+                  <TableCell className='font-medium'>Current (A)</TableCell>
+                  <TableCell className='text-center'>{meterReading.current_r ?? '-'}</TableCell>
+                  <TableCell className='text-center'>{meterReading.current_y ?? '-'}</TableCell>
+                  <TableCell className='text-center'>{meterReading.current_b ?? '-'}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+        </Card>
+
         {readingsByMeter.map((meter) => (
           <div
             key={meter.meterId}

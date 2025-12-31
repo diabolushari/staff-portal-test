@@ -33,9 +33,7 @@ export default function ConnectionMeterReadingPage({
     },
     {
       title: 'Meter Reading',
-      href: route('connection.meter-reading', {
-        connection_id: connection?.connection_id,
-      }),
+      href: '#',
     },
   ]
 

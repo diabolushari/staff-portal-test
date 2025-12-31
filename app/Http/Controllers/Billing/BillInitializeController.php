@@ -21,10 +21,14 @@ class BillInitializeController extends Controller
             return $response->error ?? redirect()->back()->with(['error' => 'Something went wrong']);
         }
 
+        if ($response->statusCode != 0) {
+            return redirect()->back();
+        }
+
         return redirect()->route('job-status.show', [
             'job_status' => $request->billingGroupId ?? null,
-            'bill_year_month' => $request->billMonthYear . '-01',
-            'reading_year_month' => $request->readingMonthYear . '-01',
+            'bill_year_month' => $request->billMonthYear.'-01',
+            'reading_year_month' => $request->readingMonthYear.'-01',
             'initialized_date' => now()->format('Y-m-d'),
         ])->with(['message' => 'Bill initialized successfully']);
     }

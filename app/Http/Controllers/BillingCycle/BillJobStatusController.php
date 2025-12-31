@@ -57,12 +57,7 @@ class BillJobStatusController extends Controller
         $billYearMonth = $request->input('bill_year_month') ?? null;
 
         if ($initializedDate == null && $readingYearMonth == null && $billYearMonth == null) {
-
-            dd('here');
             $billGenerationJobStatus = $this->billingGenerateJobService->listPaginatedBillGenerationJobStatus(null, null, null, null, null, $billingGroupId, null);
-
-            dd($billGenerationJobStatus->data);
-
             $paginatedData = [];
             if ($billGenerationJobStatus->data) {
                 $paginatedData = new LengthAwarePaginator(

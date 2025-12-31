@@ -40,9 +40,7 @@ export default function ConnectionsShow({
       { title: 'Connections', href: '/connections' },
       {
         title: connection?.consumer_number?.toString(),
-        href: connection?.connection_id
-          ? route('connection.consumer', connection?.connection_id)
-          : '#',
+        href: '#',
       },
       {
         title: 'Connection Details',
@@ -285,7 +283,7 @@ export default function ConnectionsShow({
                       {generationType?.generation_sub_type && (
                         <Field
                           key={generationType?.id}
-                          label={`${generationType.generation_type?.parameter_value} Sub Type`}
+                          label='Generation Sub Type'
                           value={generationType?.generation_sub_type?.parameter_value ?? '-'}
                         />
                       )}
@@ -313,7 +311,7 @@ export default function ConnectionsShow({
                       <Field
                         key={flag?.id}
                         label={flag?.flag?.parameter_value ?? '-'}
-                        value='Selected'
+                        value='Yes'
                       />
                     </>
                   ))}

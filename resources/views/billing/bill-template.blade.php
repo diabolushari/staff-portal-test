@@ -135,7 +135,8 @@
     <div class="header">
       <h1>KERALA STATE ELECTRICITY BOARD LIMITED</h1>
       <div class="sub">Office of the Special Officer (Revenue), Pattom, Thiruvananthapuram</div>
-      <div class="title">DEMAND CUM DISCONNECTION NOTICE FOR OCTOBER 2025</div>
+      <div class="title">DEMAND CUM DISCONNECTION NOTICE FOR {{ \Carbon\Carbon::parse($bill['bill_year_month'])->format('F Y') }}
+      </div>
       <div class="sub" style="font-style: italic;">As per CHAPTER VII OF KERALA ELECTRICITY SUPPLY CODE - 2014</div>
     </div>
 
@@ -148,13 +149,13 @@
               <td><strong>Cons#</strong></td>
               <td class="mono">{{ $connection['consumer_number'] ?? '-' }}</td>
               <td><strong>Bill Date</strong></td>
-              <td>{{ $bill['bill_date'] ?? '-' }}</td>
+              <td>{{ \Carbon\Carbon::parse($bill['bill_date'])->format('d-m-Y') ?? '-' }}</td>
             </tr>
             <tr>
               <td><strong>Due Date</strong></td>
-              <td>{{ $bill['due_date'] ?? '-' }}</td>
+              <td>{{ \Carbon\Carbon::parse($bill['due_date'])->format('d-m-Y') ?? '-' }}</td>
               <td><strong>DC Date</strong></td>
-              <td>{{ $bill['dc_date'] ?? '-' }}</td>
+              <td>{{ \Carbon\Carbon::parse($bill['dc_date'])->format('d-m-Y') ?? '-' }}</td>
             </tr>
             <tr>
               <td><strong>LCN</strong></td>
@@ -164,13 +165,12 @@
             </tr>
             <tr>
               <td rowspan="4" style="width:55%">
-                <strong>{{ $consumer['organization_name'] ?? '-' }}</strong><br>
-                KTDC Corporate Office, KTDC, Mascot square,<br>
-                THIRUVANANTHAPURAM<br>
-                Mobile: 9447556981
+                <strong>{{ $connection['consumer_profile'][0]['organization_name'] ?? '-' }}</strong><br>
+
+                Mobile: --
               </td>
               <td><strong>Bill.No</strong></td>
-              <td class="mono" style="border-right:1px solid #000;">21028112257573</td>
+              <td class="mono" style="border-right:1px solid #000;">{{ $bill['bill_id'] ?? '-' }}</td>
               <td style="border-right: 0px; border-bottom: 0px;"></td>
             </tr>
             <tr>
@@ -199,15 +199,15 @@
               <th colspan="2" class="center">Bank / GST</th>
             </tr>
             <tr>
-              <td><strong>SBI Virtual A/c No</strong></td>
-              <td>SBIN0070493</td>
+              <td><strong>Virtual A/c No</strong></td>
+              <td>{{ $connection['consumer_profiles'][0]['virtual_account_number'] ?? '-' }}</td>
             </tr>
             <tr>
               <td><strong>GSTIN</strong></td>
-              <td>{{ $consumer['consumer_gstin'] ?? '' }}</td>
+              <td>{{ $connection['consumer_profiles'][0]['gstin'] ?? '' }}</td>
             </tr>
             <tr>
-              <td colspan="2"><i>Email: aeeelectrickltdc@gmail.com</i></td>
+              <td colspan="2"><i>Email: {{ $connection['consumer_profiles'][0]['email'] ?? '' }}</i></td>
             </tr>
             <tr>
               <td><strong>Supply Voltage</strong></td>
@@ -226,7 +226,7 @@
     <div class="section">
       <table class="grid">
         <tr>
-          <th>Arrears as on 31-Aug-2025</th>
+          <th>Arrears</th>
           <th>Date of Previous Reading</th>
           <th>Date of Present Reading</th>
           <th>Average MD (kVA)</th>
@@ -235,8 +235,11 @@
         </tr>
         <tr>
           <td>Disputed: 0 | Undisputed: 115</td>
-          <td>31-Aug-2025</td>
-          <td>{{ $bill['reading_year_month'] ?? '' }}</td>
+          <td>--</td>
+          <td>
+            {{ \Carbon\Carbon::parse($bill['reading_year_month'])->format('F Y') }}
+          </td>
+
           <td class="center">{{ $averageAndTotalKva['averageKva'] ?? '' }}</td>
           <td class="center">{{ $averageAndTotalKwh['totalKwh'] ?? '' }}</td>
           <td class="center">{{ $computedProperties['Power Factor']['result'] ?? '' }}</td>
@@ -253,90 +256,7 @@
       <h3 style="margin:0 0 4px 0;">Reading Details of meter {{ $meter['meter_serial']}} - Working (KVA, KWh, KVAh & KVARh) for {{ $bill['reading_year_month'] ?? '' }}
       </h3>
 
-      <!-- kWh + kVARh -->
-      {{-- <table class="grid" style="page-break-inside: avoid;">
-        <tr>
-          <th colspan="6">1. Energy Consumption (kWh)</th>
-          <th colspan="8">3. Energy Consumption (KVARh) Lag and kVARh (Lead)</th>
-        </tr>
-        <tr>
-          <th>Zone</th>
-          <th>FR</th>
-          <th>IR</th>
-          <th>MF</th>
-          <th>Units</th>
-          <th></th>
-          <th>Zone</th>
-          <th>FR</th>
-          <th>IR</th>
-          <th>MF</th>
-          <th>Units</th>
-          <th>FR</th>
-          <th>IR</th>
-          <th>Units</th>
-        </tr>
 
-        <tr>
-          <td>1</td>
-          <td>375418</td>
-          <td>371322</td>
-          <td>2</td>
-          <td class="right">8178</td>
-          <td></td>
-          <td>1</td>
-          <td>51638</td>
-          <td>50761</td>
-          <td>2</td>
-          <td class="right">1754</td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-
-        <tr>
-          <td>2</td>
-          <td>44069</td>
-          <td>43517</td>
-          <td>2</td>
-          <td class="right">1104</td>
-          <td></td>
-          <td>2</td>
-          <td>11587</td>
-          <td>11434</td>
-          <td>2</td>
-          <td class="right">306</td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-
-        <tr>
-          <td>3</td>
-          <td>69772</td>
-          <td>68843</td>
-          <td>2</td>
-          <td class="right">1858</td>
-          <td></td>
-          <td>3</td>
-          <td>22371</td>
-          <td>22078</td>
-          <td>2</td>
-          <td class="right">586</td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-
-        <tr class="total-row">
-          <td colspan="4">Total</td>
-          <td class="right">11140</td>
-          <td></td>
-          <td colspan="4">Total kVARh (Lag)</td>
-          <td class="right">2646</td>
-          <td colspan="2">Total kVARh (Lead)</td>
-          <td>154</td>
-        </tr>
-      </table> --}}
       <table class="grid" style="page-break-inside: avoid;">
         <tr>
           <th colspan="6">1. Energy Consumption (kWh)</th>
@@ -359,112 +279,46 @@
           <th>Units</th>
         </tr>
 
-        
+
 
         @foreach($filteredkWhs as $index => $kWhRow)
-          <tr>
-            {{-- kWh Energy Consumption --}}
-            <td>{{ $index + 1 }}</td>
-            <td>{{ $kWhRow['final_reading'] }}</td>
-            <td>{{ $kWhRow['initial_reading'] }}</td>
-            <td>{{ $meter['meter_mf'] }}</td>
-            <td class="right">{{ $kWhRow['difference'] * ($meter['meter_mf'] ?? 1) }}</td>
-            <td></td>
+        <tr>
+          {{-- kWh Energy Consumption --}}
+          <td>{{ $index + 1 }}</td>
+          <td>{{ $kWhRow['final_reading'] }}</td>
+          <td>{{ $kWhRow['initial_reading'] }}</td>
+          <td>{{ $meter['meter_mf'] }}</td>
+          <td class="right">{{ $kWhRow['difference'] * ($meter['meter_mf'] ?? 1) }}</td>
+          <td></td>
 
-            {{-- kVArh Lag and Lead --}}
-            @php
-              $lagRow = $filteredLags[$index] ?? null;
-              $leadRow = $filteredLeads[$index] ?? null;
-            @endphp
-            <td>{{ $index + 1 }}</td>
-            <td>{{ $lagRow['initial_reading'] ?? '-' }}</td>
-            <td>{{ $lagRow['final_reading'] ?? '-' }}</td>
-            <td>{{ $meter['meter_mf'] ?? 1 }}</td>
-            <td class="right">{{ ($lagRow['difference'] ?? 0) * ($meter['meter_mf'] ?? 1) }}</td>
-            <td>{{ $leadRow['initial_reading'] ?? '' }}</td>
-            <td>{{ $leadRow['final_reading'] ?? '' }}</td>
-            <td class="right">{{ ($leadRow['difference'] ?? 0) * ($meter['meter_mf'] ?? 1) }}</td>
-          </tr>
+          {{-- kVArh Lag and Lead --}}
+          @php
+          $lagRow = $filteredLags[$index] ?? null;
+          $leadRow = $filteredLeads[$index] ?? null;
+          @endphp
+          <td>{{ $index + 1 }}</td>
+          <td>{{ $lagRow['initial_reading'] ?? '-' }}</td>
+          <td>{{ $lagRow['final_reading'] ?? '-' }}</td>
+          <td>{{ $meter['meter_mf'] ?? 1 }}</td>
+          <td class="right">{{ ($lagRow['difference'] ?? 0) * ($meter['meter_mf'] ?? 1) }}</td>
+          <td>{{ $leadRow['initial_reading'] ?? '' }}</td>
+          <td>{{ $leadRow['final_reading'] ?? '' }}</td>
+          <td class="right">{{ ($leadRow['difference'] ?? 0) * ($meter['meter_mf'] ?? 1) }}</td>
+        </tr>
         @endforeach
 
         <tr class="total-row">
           <td colspan="4">Total</td>
-          <td class="right">{{ collect($filteredkWhs)->sum('difference') }}</td>
+          <td class="right">{{ collect($filteredkWhs)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
           <td></td>
           <td colspan="4">Total kVARh (Lag)</td>
-          <td class="right">{{ collect($filteredLags)->sum('difference') }}</td>
+          <td class="right">{{ collect($filteredLags)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
           <td colspan="2">Total kVARh (Lead)</td>
-          <td>{{ collect($filteredLeads)->sum('difference') }}</td>
+          <td>{{ collect($filteredLeads)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
         </tr>
       </table>
 
-      {{-- <table class="grid" style="margin-top:4px; page-break-inside: avoid;">
-        <tr>
-          <th colspan="6">2. Energy Consumption (KVAh)</th>
-          <th colspan="4">4. Demand (KVA) Readings</th>
-        </tr>
 
-        <tr>
-          <th>Zone</th>
-          <th>FR</th>
-          <th>IR</th>
-          <th>MF</th>
-          <th>Units</th>
-          <th></th>
-          <th>Reading</th>
-          <th>MF</th>
-          <th>Units</th>
-          <th></th>
-        </tr>
-
-        <tr>
-          <td>1</td>
-          <td>387792</td>
-          <td>383563</td>
-          <td>2</td>
-          <td class="right">8458</td>
-          <td></td>
-
-          <td class="center">31.4</td>
-          <td>2</td>
-          <td class="right">62.8</td>
-          <td></td>
-        </tr>
-
-        <tr>
-          <td>2</td>
-          <td>47836</td>
-          <td>47258</td>
-          <td>2</td>
-          <td class="right">1156</td>
-          <td></td>
-          <td class="center">9.4</td>
-          <td>2</td>
-          <td class="right">18.8</td>
-          <td></td>
-        </tr>
-
-        <tr>
-          <td>3</td>
-          <td>78155</td>
-          <td>77175</td>
-          <td>2</td>
-          <td class="right">1960</td>
-          <td></td>
-          <td class="center">8.0</td>
-          <td>2</td>
-          <td class="right">16.0</td>
-          <td></td>
-        </tr>
-
-        <tr class="total-row">
-          <td colspan="4">Total</td>
-          <td class="right">11574</td>
-          <td></td>
-          <td colspan="3">Total</td>
-          <td class="right">117.6</td>
-        </tr>
-      </table> --}}
       <table class="grid" style="margin-top:4px; page-break-inside: avoid;">
         <tr>
           <th colspan="6">2. Energy Consumption (KVAh)</th>
@@ -485,31 +339,31 @@
         </tr>
 
         @foreach($filteredKVAhs as $index => $kVAhRow)
-          <tr>
-            {{-- Energy Consumption KVAh --}}
-            <td>{{ $index + 1 }}</td> {{-- Zone number --}}
-            <td>{{ $kVAhRow['initial_reading'] ?? '-' }}</td>
-            <td>{{ $kVAhRow['final_reading'] ?? '-' }}</td>
-            <td>{{ $meter['meter_mf'] ?? 1 }}</td> {{-- MF, adjust if needed --}}
-            <td class="right">{{ $kVAhRow['difference'] * ($meter['meter_mf'] ?? 1) }}</td>
-            <td></td>
+        <tr>
+          {{-- Energy Consumption KVAh --}}
+          <td>{{ $index + 1 }}</td> {{-- Zone number --}}
+          <td>{{ $kVAhRow['initial_reading'] ?? '-' }}</td>
+          <td>{{ $kVAhRow['final_reading'] ?? '-' }}</td>
+          <td>{{ $meter['meter_mf'] ?? 1 }}</td> {{-- MF, adjust if needed --}}
+          <td class="right">{{ $kVAhRow['difference'] * ($meter['meter_mf'] ?? 1) }}</td>
+          <td></td>
 
-            {{-- Demand KVA Readings --}}
-            @php
-              $kVAReading = $filteredkVAs[$index] ?? null;
-            @endphp
-            <td class="center">{{ $kVAReading['difference'] ?? '-' }}</td>
-            <td>{{ $meter['meter_mf'] ?? 1 }}</td>
-            <td class="right">
-              {{ ($kVAReading['difference'] ?? 0) * ($meter['meter_mf'] ?? 1) }}
-            </td>
-            <td></td>
-          </tr>
+          {{-- Demand KVA Readings --}}
+          @php
+          $kVAReading = $filteredkVAs[$index] ?? null;
+          @endphp
+          <td class="center">{{ $kVAReading['difference'] ?? '-' }}</td>
+          <td>{{ $meter['meter_mf'] ?? 1 }}</td>
+          <td class="right">
+            {{ ($kVAReading['difference'] ?? 0) * ($meter['meter_mf'] ?? 1) }}
+          </td>
+          <td></td>
+        </tr>
         @endforeach
 
         <tr class="total-row">
           <td colspan="4">Total</td>
-          <td class="right">{{ collect($filteredKVAhs)->sum('difference') }}</td>
+          <td class="right">{{ collect($filteredKVAhs)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
           <td></td>
           <td colspan="3">Total</td>
           <td class="right">{{ collect($filteredkVAs)->sum(fn($r) => $r['difference'] * ($meter['meter_mf'] ?? 1)) }}</td>
@@ -521,106 +375,108 @@
     </div>
 
     <!-- INVOICE SECTION -->
-   <table width="100%" cellspacing="0" cellpadding="0" class="invoice">
-    <tr>
+    <table width="100%" cellspacing="0" cellpadding="0" class="invoice">
+      <tr>
         <td width="65%" style="padding-right:4px; vertical-align: top;">
-            <table class="grid">
+          <table class="grid">
 
-                <tr>
-                    <th>1. Total Demand Charge</th>
-                    <th>Unit</th>
-                    <th>Rate</th>
-                    <th>Amount (Rs)</th>
-                </tr>
+            <tr>
+              <th>1. Total Demand Charge</th>
+              <th>Unit</th>
+              <th>Rate</th>
+              <th>Amount (Rs)</th>
+            </tr>
 
-                @php
-                    $kvaRate = $computedProperties['KVA RATE']['value'] ?? 0;
-                    $subTotalDemand = 0;
-                @endphp
-
-
-                {{-- CASE 1: CONTRACT DEMAND --}}
-                @if($demand['is_contract_demand'] === true)
-
-                    <tr>
-                        <td>a. Contract Demand</td>
-                        <td class="center">{{ $demand['result']['value'] ?? '-' }}</td>
-                        <td class="right">{{ $computedProperties['KVA RATE']['result'] ?? '-' }}</td>
-                        <td class="right">{{ $computedProperties['Demand Charge']['result'] ?? '-' }}</td>
-                    </tr>
-                     <tr>
-                        <td>b. Excess Demand Charge</td>
-                        <td class="center">{{ 0 }}</td>
-                        <td class="right">{{ $computedProperties['KVA RATE']['result'] ?? '-'}}</td>
-                        <td class="right">{{ $computedProperties['EXCESS DEMAND CHARGE']['result'] ?? '-' }}</td>
-                    </tr>
+            @php
+            $kvaRate = $computedProperties['KVA RATE']['value'] ?? 0;
+            $subTotalDemand = 0;
+            @endphp
 
 
-                {{-- CASE 2: TIME-ZONE BASED --}}
-                @else
+            {{-- CASE 1: CONTRACT DEMAND --}}
+            @if($demand['is_contract_demand'] === true)
 
-                    @foreach($demand['result'] as $i => $zone)
-                        @php
-                            $label = chr(97 + $i); // a, b, c...
-                            $unit = $zone['value'];
-                            $amount = $unit * $computedProperties['KVA RATE']['result'] ?? 0;
-                            $subTotalDemand += $amount;
-                        @endphp
-
-                        <tr>
-                            <td>{{ $label }}. Demand Charge - {{ $zone['timezone'] ?? '-' }}</td>
-                            <td class="center">{{ $unit ?? '-' }}</td>
-                            <td class="right">{{ $computedProperties['KVA RATE']['result'] ?? '-' }}</td>
-                            <td class="right">{{ number_format($amount, 2) }}</td>
-                        </tr>
-                        
-                    @endforeach
-                    <tr>
-                            <td>d. Excess Demand Charge</td>
-                            <td class="center">{{ 0 }}</td>
-                            <td class="right">{{ $kvaRate ?? '-' }}</td>
-                            <td class="right">{{ $computedProperties['EXCESS DEMAND CHARGE']['result'] ?? '-' }}</td>
-                        </tr>
-
-                @endif
+            <tr>
+              <td>a. Contract Demand</td>
+              <td class="center">{{ $demand['result']['value'] ?? '-' }}</td>
+              <td class="right">{{ $computedProperties['KVA RATE']['result'] ?? '-' }}</td>
+              <td class="right">{{ $computedProperties['Demand Charge']['result'] ?? '-' }}</td>
+            </tr>
+            <tr>
+              <td>b. Excess Demand Charge</td>
+              <td class="center">{{ 0 }}</td>
+              <td class="right">{{ $computedProperties['KVA RATE']['result'] ?? '-'}}</td>
+              <td class="right">{{ $computedProperties['Excess Demand Charge']['result'] ?? '-' }}</td>
+            </tr>
 
 
-                {{-- SUBTOTAL ROW --}}
-                <tr class="total-row">
-                    <td>Sub Total</td>
-                    <td></td>
-                    <td></td>
-                <td class="right">{{ $chargeHeads['TOTAL DEMAND CHARGE']['result'] ?? '-' }}</td>
-                </tr>
+            {{-- CASE 2: TIME-ZONE BASED --}}
+            @else
 
-                <tr><td colspan="4"></td></tr>
+            @foreach($demand['result'] as $i => $zone)
+            @php
+            $label = chr(97 + $i); // a, b, c...
+            $unit = $zone['value'];
+            $amount = $unit * $computedProperties['KVA RATE']['result'] ?? 0;
+            $subTotalDemand += $amount;
+            @endphp
+
+            <tr>
+              <td>{{ $label }}. Demand Charge - {{ $zone['timezone'] ?? '-' }}</td>
+              <td class="center">{{ $unit ?? '-' }}</td>
+              <td class="right">{{ $computedProperties['KVA RATE']['result'] ?? '-' }}</td>
+              <td class="right">{{ number_format($amount, 2) }}</td>
+            </tr>
+
+            @endforeach
+            <tr>
+              <td>d. Excess Demand Charge</td>
+              <td class="center">{{ 0 }}</td>
+              <td class="right">{{ $kvaRate ?? '-' }}</td>
+              <td class="right">{{ $computedProperties['Excess Demand Charge']['result'] ?? '-' }}</td>
+            </tr>
+
+            @endif
 
 
-                {{-- YOUR ENERGY TABLE CONTINUES HERE --}}
-                @php
-                    $rows = $energyChargeRows['energyChargeRows'] ?? [];
-                @endphp
+            {{-- SUBTOTAL ROW --}}
+            <tr class="total-row">
+              <td>Sub Total</td>
+              <td></td>
+              <td></td>
+              <td class="right">{{ $chargeHeads['TOTAL DEMAND CHARGE']['result'] ?? '-' }}</td>
+            </tr>
+
+            <tr>
+              <td colspan="4"></td>
+            </tr>
 
 
-<tr>
-    <th colspan="4">2. Total Energy Charges</th>
-</tr>
+            {{-- YOUR ENERGY TABLE CONTINUES HERE --}}
+            @php
+            $rows = $energyChargeRows['energyChargeRows'] ?? [];
+            @endphp
 
-@foreach($rows as $i => $row)
-<tr>
-    <td>{{ chr(97 + $i) }}. {{ $row['label'] }} ({{ $row['units'] }} × {{ $row['rate'] }})</td>
-    <td></td>
-    <td></td>
-    <td class="right">{{ $computedProperties['ENERGY CHARGE']['result'][$i]['result'] ?? 0 }}</td>
-</tr>
-@endforeach
 
-<tr class="total-row">
-    <td>Sub Total (a + b + c)</td>
-    <td></td>
-    <td></td>
-    <td class="right">{{ $chargeHeads['ENERGY CHARGE']['result'] ?? 0 }}</td>
-</tr>
+            <tr>
+              <th colspan="4">2. Total Energy Charges</th>
+            </tr>
+
+            @foreach($rows as $i => $row)
+            <tr>
+              <td>{{ chr(97 + $i) }}. {{ $row['label'] }} ({{ $row['units'] }} × {{ $row['rate'] }})</td>
+              <td></td>
+              <td></td>
+              <td class="right">{{ $computedProperties['ENERGY CHARGE']['result'][$i]['result'] ?? 0 }}</td>
+            </tr>
+            @endforeach
+
+            <tr class="total-row">
+              <td>Sub Total (a + b + c)</td>
+              <td></td>
+              <td></td>
+              <td class="right">{{ $chargeHeads['ENERGY CHARGE']['result'] ?? 0 }}</td>
+            </tr>
 
 
 
@@ -631,13 +487,13 @@
               <td class="right">{{$chargeHeads['Power Factor Incentive and Disincentive']['result'] ?? 0}}</td>
             </tr>
             @php
-            $totalEnergyCharge = $chargeHeads['ENERGY CHARGE']['result'] ?? 0 + $chargeHeads['Power Factor Incentive and Disincentive']['result'] ?? 0 + $chargeHeads['TOTAL DEMAND CHARGE']['result'] ?? 0;
+            $totalEnergyCharge = $chargeHeads['ENERGY CHARGE']['result'] ?? 0 + $chargeHeads['Power Factor Incentive and Disincentive']['result'] ?? 0;
             @endphp
             <tr class="total-row">
               <td>Total Energy Charge</td>
               <td></td>
               <td></td>
-              <td class="right">{{ $totalEnergyCharge }}</td>
+              <td class="right">{{ $chargeHeads['ENERGY CHARGE']['result'] ?? 0 + $chargeHeads['Power Factor Incentive and Disincentive']['result'] ?? 0 }}</td>
             </tr>
 
             <tr>
@@ -673,7 +529,7 @@
             </tr>
             <tr>
               <td>Charges for Belated Payments</td>
-              <td class="right">2.00</td>
+              <td class="right">0.00</td>
             </tr>
             <tr>
               <td>Monthly Fuel Surcharge</td>
@@ -686,7 +542,7 @@
 
             <tr class="total-row">
               <td>UnDisputed Arr Amount</td>
-              <td class="right">115.00</td>
+              <td class="right">00.00</td>
             </tr>
 
             <tr>
@@ -726,7 +582,7 @@
     <table width="100%" style="page-break-inside: avoid;">
       <tr>
         <td><strong>Cons#:</strong> <span class="mono">{{ $connection['consumer_number'] ?? '' }}</span></td>
-        <td><strong>Bill No:</strong> <span class="mono">21028112257573</span></td>
+        <td><strong>Bill No:</strong> <span class="mono">{{$bill['bill_id'] ?? ''}}</span></td>
         <td><strong>Rs:</strong> <span class="mono">{{$bill['bill_amount'] ?? 0}}</span></td>
       </tr>
     </table>

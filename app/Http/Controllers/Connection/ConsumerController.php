@@ -8,7 +8,6 @@ use App\Services\Connection\ConsumerService;
 use App\Services\Consumers\GeoRegionsService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -22,7 +21,6 @@ class ConsumerController extends Controller
 
     public function index(): InertiaResponse
     {
-
         return Inertia::render('Consumer/ConsumerIndex');
     }
 

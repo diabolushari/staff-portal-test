@@ -10,13 +10,12 @@ import ComboBox from '@/ui/form/ComboBox'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
-import { router } from '@inertiajs/react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { route } from 'ziggy-js'
 import { Card } from '../ui/card'
 import TextArea from '@/ui/form/TextArea'
 import ConnectionFlagForm from './ConnectionFlagForm'
-import useConnectionFlagForm, { GroupedFlags } from './useConnectionFlagForm'
+import useConnectionFlagForm from './useConnectionFlagForm'
 import useConnectionGenerationForm from './useConnectionGenerationForm'
 import ConnectionGenerationTypeForm from './ConnectionGenerationTypeForm'
 
@@ -106,9 +105,6 @@ export default function ConnectionForm({
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     connection ? route('connections.update', connection.connection_id) : route('connections.store'),
     {
-      onComplete: () => {
-        router.visit(route('consumer.create'))
-      },
       showErrorToast: true,
     }
   )
@@ -348,44 +344,56 @@ export default function ConnectionForm({
             value={formData.contract_demand_kw_val}
             error={errors?.contract_demand_kw_val}
           />
-          <Input
-            label='Connected Load (kW)'
-            setValue={setFormValue('connected_load_kw_val')}
-            value={formData?.connected_load_kw_val}
-            error={errors?.connected_load_kw_val}
-            disabled={true}
-          />
-          <Input
-            label='Power Load (kW)'
-            setValue={setFormValue('power_load_kw_val')}
-            value={formData.power_load_kw_val}
-            error={errors?.power_load_kw_val}
-          />
-          <Input
-            label='Light Load (kW)'
-            setValue={setFormValue('light_load_kw_val')}
-            value={formData.light_load_kw_val}
-            error={errors?.light_load_kw_val}
-          />
-          <CheckBox
-            label='Prosumers'
-            value={formData.prosumers}
-            toggleValue={toggleBoolean('prosumers')}
-          />
+          <div className='col-span-2 grid grid-cols-1 gap-6 md:grid-cols-2'>
+            <Input
+              label='Power Load (kW)'
+              setValue={setFormValue('power_load_kw_val')}
+              value={formData.power_load_kw_val}
+              error={errors?.power_load_kw_val}
+            />
+            <Input
+              label='Light Load (kW)'
+              setValue={setFormValue('light_load_kw_val')}
+              value={formData.light_load_kw_val}
+              error={errors?.light_load_kw_val}
+            />
+            <Input
+              label='Connected Load (kW)'
+              setValue={setFormValue('connected_load_kw_val')}
+              value={formData?.connected_load_kw_val}
+              error={errors?.connected_load_kw_val}
+              disabled={true}
+            />
+          </div>
         </div>
       </Card>
 
-      <ConnectionGenerationTypeForm
-        generationData={generationData}
-        updateGenerationData={updateGenerationData}
-        updateGenerationSubTypeData={updateGenerationSubTypeData}
-        prosumers={formData.prosumers}
-      />
-
-      <ConnectionFlagForm
-        flagData={flagData}
-        updateFlagData={updateFlagData}
-      />
+      {!connection && (
+        <Card>
+          <div className='border-b-2 border-gray-200 py-3'>
+            <StrongText className='text-base font-semibold'>Prosumers</StrongText>
+          </div>
+          <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
+            <CheckBox
+              label='Prosumers'
+              value={formData.prosumers}
+              toggleValue={toggleBoolean('prosumers')}
+            />
+          </div>
+          <ConnectionGenerationTypeForm
+            generationData={generationData}
+            updateGenerationData={updateGenerationData}
+            updateGenerationSubTypeData={updateGenerationSubTypeData}
+            prosumers={formData.prosumers}
+          />
+        </Card>
+      )}
+      {!connection && (
+        <ConnectionFlagForm
+          flagData={flagData}
+          updateFlagData={updateFlagData}
+        />
+      )}
 
       {/* Submit */}
       <div className='flex justify-end'>

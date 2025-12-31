@@ -1,18 +1,17 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ConsumerData } from '@/interfaces/data_interfaces'
+import { ConsumerData, RegionOption } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
-import CheckBox from '@/ui/form/CheckBox'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
-import { RegionOption } from '@/interfaces/data_interfaces'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Card } from '../ui/card'
 import ConsumerContactFolioModal from './ConsumerContactFolioModal'
-import useConnectionFlagForm, { GroupedFlags } from '../Connections/useConnectionFlagForm'
+import useConnectionFlagForm from '../Connections/useConnectionFlagForm'
 import ConnectionFlagForm from '../Connections/ConnectionFlagForm'
+import AddressCard from '../Connections/AddressCard'
 
 interface Props {
   consumer_types: ParameterValues[]
@@ -48,6 +47,8 @@ export default function ConsumerFormComponent({
   const primary = contact?.primary_address
 
   const { updateFlagData, flagData } = useConnectionFlagForm(indicators ?? [])
+  const [premisesAddress, setPremisesAddress] = useState<boolean>(false)
+  const [billingAddress, setBillingAddress] = useState<boolean>(false)
   const { formData, setFormValue, setAll, toggleBoolean } = useCustomForm({
     // Primary Address
     address_id: primary?.address_id ?? null,
@@ -89,6 +90,12 @@ export default function ConsumerFormComponent({
 
     _method: consumer ? 'PUT' : undefined,
   })
+  useEffect(() => {
+    if (!data?.contact) return
+
+    setPremisesAddress(!!data.contact.premises_address)
+    setBillingAddress(!!data.contact.billing_address)
+  }, [data])
 
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     consumer ? route('consumers.update', consumer.connection_id) : route('consumers.store'),
@@ -278,6 +285,79 @@ export default function ConsumerFormComponent({
         </div>
       </Card>
 
+      <div className='flex flex-col gap-4'>
+        {!premisesAddress && (
+          <div>
+            <Button
+              type='button'
+              label='Add Premises Address'
+              onClick={() => {
+                setOtherAddress('premises', {
+                  address_id: null,
+                  address_line1: '',
+                  address_line2: '',
+                  city_town_village: '',
+                  pincode: '',
+                  district_id: '',
+                  state_id: '',
+                })
+                setPremisesAddress(true)
+              }}
+            />
+          </div>
+        )}
+        {premisesAddress && (
+          <AddressCard
+            title='Premises Address'
+            address={formData.other_addresses.premises}
+            districts={districts}
+            states={states}
+            onChange={(field: string, value: any) =>
+              updateOtherAddressField('premises', field, value)
+            }
+            onRemove={() => {
+              setOtherAddress('premises', null)
+              setPremisesAddress(false)
+            }}
+          />
+        )}
+        {!billingAddress && (
+          <div>
+            <Button
+              type='button'
+              label='Add Billing Address'
+              onClick={() => {
+                setOtherAddress('billing', {
+                  address_id: null,
+                  address_line1: '',
+                  address_line2: '',
+                  city_town_village: '',
+                  pincode: '',
+                  district_id: '',
+                  state_id: '',
+                })
+                setBillingAddress(true)
+              }}
+            />
+          </div>
+        )}
+        {billingAddress && (
+          <AddressCard
+            title='Billing Address'
+            address={formData.other_addresses.billing}
+            districts={districts}
+            states={states}
+            onRemove={() => {
+              removeOtherAddress('billing')
+              setBillingAddress(false)
+            }}
+            onChange={(field: string, value: any) =>
+              updateOtherAddressField('billing', field, value)
+            }
+          />
+        )}
+      </div>
+
       {/* Contact Information */}
       <Card>
         <div className='border-b-2 border-gray-200 py-3'>
@@ -354,11 +434,11 @@ export default function ConsumerFormComponent({
           setFormValue={setFormValue}
         />
       )}
-
       <div className='flex justify-end'>
         <Button
           type='submit'
           label='Submit'
+          processing={loading}
         />
       </div>
     </form>

@@ -12,11 +12,13 @@ import { Card } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import Button from '@/ui/button/Button'
 import { router } from '@inertiajs/react'
+import { getDisplayDate } from '@/utils'
+import { Connection } from '@/interfaces/data_interfaces'
 
 interface BillShowPageProps {
   bill: any
   meter: any
-  connection: any
+  connection: Connection
   consumer: any
   kwhValues: any[]
   kvahValues: any[]
@@ -44,7 +46,7 @@ export default function BillShowPage({
 }: BillShowPageProps) {
   const totalAmount = 117839.0
   const mf = meter?.meter_mf || 1
-
+  console.log(chargeHeads, bill)
   return (
     <MainLayout
       navItems={billingNavItems}
@@ -53,7 +55,7 @@ export default function BillShowPage({
       leftBarTitle='Billing'
       selectedItem='Bill Details'
     >
-      <div className='mx-auto bg-white'>
+      <div className='bg-white'>
         <div>
           <Button
             onClick={() => {
@@ -63,7 +65,7 @@ export default function BillShowPage({
           />
         </div>
         {/* Main Bill Container - Like Original PDF */}
-        <div className='p-6 font-sans text-xs leading-tight'>
+        <div className='p-2 font-sans text-xs'>
           {/* Header */}
 
           {/* Top Info - 65/35 Split */}
@@ -75,13 +77,13 @@ export default function BillShowPage({
                     <TableCell className='w-24 font-bold'>Cons#</TableCell>
                     <TableCell className='font-mono'>{connection?.consumer_number}</TableCell>
                     <TableCell className='w-24 font-bold'>Bill Date</TableCell>
-                    <TableCell>{bill?.bill_date}</TableCell>
+                    <TableCell>{getDisplayDate(bill?.bill_date)}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className='font-bold'>Due Date</TableCell>
-                    <TableCell>{bill?.due_date}</TableCell>
+                    <TableCell>{getDisplayDate(bill?.due_date)}</TableCell>
                     <TableCell className='font-bold'>DC Date</TableCell>
-                    <TableCell>{bill?.dc_date}</TableCell>
+                    <TableCell>{getDisplayDate(bill?.dc_date)}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className='font-bold'>LCN</TableCell>
@@ -94,18 +96,17 @@ export default function BillShowPage({
                       rowSpan={4}
                       className='align-top text-sm font-bold'
                     >
-                      {consumer?.organization_name || 'KTDC Corporate Office, KTDC, Mascot square,'}
+                      {connection?.consumer_profiles?.[0]?.organization_name ?? '-'}
                       <br />
-                      THIRUVANANTHAPURAM
+                      {connection?.consumer_profiles?.[0]?.contact_person ?? '-'}
                       <br />
-                      Mobile: 9447556981
                     </TableCell>
                     <TableCell className='font-bold'>Bill.No</TableCell>
                     <TableCell
                       colSpan={2}
                       className='font-mono'
                     >
-                      21028112257573
+                      {bill?.bill_id}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -138,8 +139,10 @@ export default function BillShowPage({
                 </TableHeader>
                 <TableBody>
                   <TableRow>
-                    <TableCell className='font-bold'>SBI Virtual A/c No</TableCell>
-                    <TableCell>SBIN0070493</TableCell>
+                    <TableCell className='font-bold'>Virtual A/c No</TableCell>
+                    <TableCell>
+                      {connection.consumer_profiles?.[0]?.virtual_account_number}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className='font-bold'>GSTIN</TableCell>
@@ -150,7 +153,7 @@ export default function BillShowPage({
                       colSpan={2}
                       className='text-center italic'
                     >
-                      Email: aeeelectrickltdc@gmail.com
+                      Email:
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -171,7 +174,7 @@ export default function BillShowPage({
             <Table className='border border-black text-xs'>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Arrears as on 31-Aug-2025</TableHead>
+                  <TableHead>Arrears</TableHead>
                   <TableHead>Date of Previous Reading</TableHead>
                   <TableHead>Date of Present Reading</TableHead>
                   <TableHead>Average MD (kVA)</TableHead>
@@ -183,24 +186,28 @@ export default function BillShowPage({
                 <TableRow>
                   <TableCell>Disputed: 0 | Undisputed: 115</TableCell>
                   <TableCell>31-Aug-2025</TableCell>
-                  <TableCell>{bill?.reading_year_month}</TableCell>
-                  <TableCell className='text-center'>62.97</TableCell>
+                  <TableCell>
+                    {getDisplayDate(connection?.latest_meter_reading?.metering_date) ?? '---'}
+                  </TableCell>
+                  <TableCell className='text-center'>
+                    {kvaValues.reduce((s, r) => s + r.difference / kvaValues.length, 0).toFixed(2)}
+                  </TableCell>
                   <TableCell className='text-center'>
                     {kwhValues.reduce((s, r) => s + r.difference * mf, 0)}
                   </TableCell>
                   <TableCell className='text-center'>
-                    {computedProperties?.['Power Factor']?.result || '0.99'}
+                    {computedProperties?.['Power Factor']?.result ?? '--'}
                   </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell colSpan={2}>
-                    Contract Demand (kVA): {connection?.contract_demand_kva_val} | 75% of CD:{' '}
-                    {(connection?.contract_demand_kva_val * 0.75).toFixed(1)} | 130% of CD:{' '}
+                    Contract Demand (kVA): {connection?.contract_demand_kva_val ?? '--'}{' '}
+                    {(connection?.contract_demand_kva_val * 0.75).toFixed(1)} |{' '}
                     {(connection?.contract_demand_kva_val * 1.3).toFixed(1)}
                   </TableCell>
                   <TableCell colSpan={4}>
-                    Connected Load (kW): {connection?.connected_load_kw_val} | Section: Cantonment |
-                    Circle: Electrical Circle (Urban)
+                    Connected Load (kW): {connection?.connected_load_kw_val ?? '--'} | Section: -- |
+                    Circle: --
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -346,13 +353,15 @@ export default function BillShowPage({
               <Table className='text-xs'>
                 <TableBody>
                   <TableRow className='font-bold'>
-                    <TableCell colSpan={3}>1. Total Demand Charge</TableCell>
-                    <TableCell className='text-right'>31,500.00</TableCell>
+                    <TableCell colSpan={3}>Total Demand Charge</TableCell>
+                    <TableCell className='text-right'>
+                      {Number(chargeHeads['TOTAL DEMAND CHARGE'].result).toFixed(2)}
+                    </TableCell>
                   </TableRow>
                   <TableRow className='font-bold'>
                     <TableCell colSpan={3}>2. Total Energy Charges</TableCell>
                     <TableCell className='text-right'>
-                      {energyChargeRows.subTotal.toFixed(2)}
+                      {Number(energyChargeRows.subTotal).toFixed(2)}
                     </TableCell>
                   </TableRow>
                   {energyChargeRows.energyChargeRows.map((row: any, i: number) => (
@@ -368,11 +377,21 @@ export default function BillShowPage({
                   ))}
                   <TableRow>
                     <TableCell colSpan={3}>3. PF Incentive / Disincentive</TableCell>
-                    <TableCell className='text-right'>-387.35</TableCell>
+                    <TableCell className='text-right'>
+                      {Number(
+                        chargeHeads['Power Factor Incentive and Disincentive'].result
+                      ).toFixed(2)}
+                    </TableCell>
                   </TableRow>
                   <TableRow className='bg-gray-100 font-bold'>
                     <TableCell colSpan={3}>Total (add 1 to 9)</TableCell>
-                    <TableCell className='text-right'>117,723.88</TableCell>
+                    <TableCell className='text-right'>
+                      {(
+                        Number(chargeHeads['ENERGY CHARGE']?.result ?? 0) +
+                        Number(chargeHeads['TOTAL DEMAND CHARGE']?.result ?? 0) +
+                        Number(chargeHeads['Power Factor Incentive and Disincentive']?.result ?? 0)
+                      ).toFixed(2)}
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -384,28 +403,25 @@ export default function BillShowPage({
                   <TableRow>
                     <TableCell>Monthly Fuel Surcharge</TableCell>
                     <TableCell className='text-right'>
-                      {chargeHeads['Monthly Fuel Surcharge']?.result}
+                      {chargeHeads['Monthly Fuel Surcharge']?.result ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Electricity Duty</TableCell>
                     <TableCell className='text-right'>
-                      {chargeHeads['Electricity Duty']?.result}
+                      {chargeHeads['Electricity Duty']?.result ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Ele. Surcharge</TableCell>
                     <TableCell className='text-right'>
-                      {chargeHeads['Electricity Surcharge']?.result}
+                      {chargeHeads['Electricity Surcharge']?.result ?? '-'}
                     </TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell>UnDisputed Arr Amount</TableCell>
-                    <TableCell className='text-right'>115.00</TableCell>
-                  </TableRow>
+
                   <TableRow className='bg-gray-100 font-bold'>
                     <TableCell>Net Payable</TableCell>
-                    <TableCell className='text-right text-base'>117,839.00</TableCell>
+                    <TableCell className='text-right text-base'>{bill.bill_amount}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>

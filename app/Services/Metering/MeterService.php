@@ -6,6 +6,7 @@ namespace App\Services\Metering;
 
 use App\GrpcConverters\MeterProtoConvertor;
 use App\Services\Grpc\GrpcErrorService;
+use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
 use Exception;
 use Google\Protobuf\Timestamp;
@@ -76,12 +77,12 @@ class MeterService
             $request->setDigitCount($data['digit_count']);
         }
         if (! empty($data['manufacture_date'])) {
-            if ($ts = self::toTimestamp($data['manufacture_date'])) {
+            if ($ts = DateTimeConverter::convertStringToTimestamp($data['manufacture_date'])) {
                 $request->setManufactureDate($ts);
             }
         }
         if (! empty($data['supply_date'])) {
-            if ($ts = self::toTimestamp($data['supply_date'])) {
+            if ($ts = DateTimeConverter::convertStringToTimestamp($data['supply_date'])) {
                 $request->setSupplyDate($ts);
             }
         }
@@ -367,12 +368,12 @@ class MeterService
             $request->setDigitCount($data['digit_count']);
         }
         if (! empty($data['manufacture_date'])) {
-            if ($ts = self::toTimestamp($data['manufacture_date'])) {
+            if ($ts = DateTimeConverter::convertStringToTimestamp($data['manufacture_date'])) {
                 $request->setManufactureDate($ts);
             }
         }
         if (! empty($data['supply_date'])) {
-            if ($ts = self::toTimestamp($data['supply_date'])) {
+            if ($ts = DateTimeConverter::convertStringToTimestamp($data['supply_date'])) {
                 $request->setSupplyDate($ts);
             }
         }
