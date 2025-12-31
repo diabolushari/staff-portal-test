@@ -30,8 +30,8 @@ class MeterController extends Controller
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 10;
         $meter_serial = $request->input('meter_serial') ?? null;
-        $smart_meter_ind = $request->input('smart_meter_ind') ?? null;
-        $bidirectional_ind = $request->input('bidirectional_ind') ?? null;
+        $smart_meter_ind = $request->boolean('smart_meter_ind');
+        $bidirectional_ind = $request->boolean('bidirectional_ind');
         $meter_type_id = $request->input('meter_type_id') ?? null;
         $meter_profile_id = $request->input('meter_profile_id') ?? null;
         $meter_make_id = $request->input('meter_make_id') ?? null;
@@ -96,8 +96,8 @@ class MeterController extends Controller
         return Inertia::render('Meters/MeterIndex', [
             'meters' => $paginated ?? [],
             'oldMeterSerial' => $meter_serial,
-            'oldSmartMeterInd' => $smart_meter_ind ?? false,
-            'oldBidirectionalInd' => $bidirectional_ind ?? false,
+            'oldSmartMeterInd' => $smart_meter_ind,
+            'oldBidirectionalInd' => $bidirectional_ind,
             'oldMeterTypeId' => $meter_type_id,
             'oldMeterProfileId' => $meter_profile_id,
             'oldMeterMakeId' => $meter_make_id,

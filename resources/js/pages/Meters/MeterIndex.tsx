@@ -8,6 +8,7 @@ import Pagination from '@/ui/Pagination/Pagination'
 import { BreadcrumbItem } from '@/types'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MeterSearch from '@/components/Meter/MeterSearch'
+import { getDisplayDate } from '@/utils'
 
 interface Props {
   oldMeterSerial: string
@@ -113,34 +114,48 @@ export default function MeterIndex({
                           )}
                         </div>
 
+                        <div className='flex w-full flex-wrap items-center gap-5 text-sm text-slate-600'>
+                          <div className='flex items-center gap-1'>
+                            Smart Meter: <b>{meter.smart_meter_ind ? 'Yes' : 'No'}</b>
+                          </div>
+                          <div className='flex items-center gap-1'>
+                            Bidirectional: <b>{meter.bidirectional_ind ? 'Yes' : 'No'}</b>
+                          </div>
+                        </div>
                         {/* Meter Type + Make */}
                         <div className='flex w-full flex-wrap items-center gap-5 text-sm text-slate-600'>
                           {meter.meter_type && (
                             <div className='flex items-center gap-1'>
-                              <Cpu className='h-3.5 w-3.5 text-slate-500' />
-                              {meter.meter_type.parameter_value}
+                              Type:<b>{meter.meter_type.parameter_value}</b>
+                            </div>
+                          )}
+                          {meter.meter_profile && (
+                            <div className='flex items-center gap-1'>
+                              Profile:<b>{meter.meter_profile.parameter_value}</b>
                             </div>
                           )}
                           {meter.meter_make && (
                             <div className='flex items-center gap-1'>
-                              <Factory className='h-3.5 w-3.5 text-slate-500' />
-                              {meter.meter_make.parameter_value}
+                              Make:<b>{meter.meter_make.parameter_value}</b>
                             </div>
                           )}
                         </div>
 
                         {/* Accuracy class + ownership */}
                         <div className='flex w-full flex-wrap items-center gap-5 text-sm text-slate-600'>
-                          {meter.accuracy_class && (
-                            <div className='flex items-center gap-1'>
-                              <Shield className='h-3.5 w-3.5 text-slate-500' />
-                              Accuracy: {meter.accuracy_class.parameter_value}
-                            </div>
-                          )}
                           {meter.ownership_type && (
                             <div className='flex items-center gap-1'>
-                              <Barcode className='h-3.5 w-3.5 text-slate-500' />
-                              Owner: {meter.ownership_type.parameter_value}
+                              Ownership Type :<b> {meter.ownership_type.parameter_value}</b>
+                            </div>
+                          )}
+                          {meter.programmable_ct_ratio && (
+                            <div className='flex items-center gap-1'>
+                              CT Ratio:<b>{meter.programmable_ct_ratio}</b>
+                            </div>
+                          )}
+                          {meter.programmable_pt_ratio && (
+                            <div className='flex items-center gap-1'>
+                              PT Ratio:<b>{meter.programmable_pt_ratio}</b>
                             </div>
                           )}
                         </div>
@@ -149,14 +164,12 @@ export default function MeterIndex({
                         <div className='flex w-full flex-wrap items-center gap-5 text-sm text-slate-600'>
                           {meter.manufacture_date && (
                             <div className='flex items-center gap-1'>
-                              <Calendar className='h-3.5 w-3.5 text-slate-500' />
-                              Mfg: {meter.manufacture_date}
+                              Mfg: <b>{getDisplayDate(meter.manufacture_date)}</b>
                             </div>
                           )}
                           {meter.supply_date && (
                             <div className='flex items-center gap-1'>
-                              <Calendar className='h-3.5 w-3.5 text-slate-500' />
-                              Supply: {meter.supply_date}
+                              Supply: <b>{getDisplayDate(meter.supply_date)}</b>
                             </div>
                           )}
                         </div>
