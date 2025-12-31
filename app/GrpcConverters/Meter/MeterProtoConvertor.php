@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\GrpcConverters;
+namespace App\GrpcConverters\Meter;
 
 use App\GrpcConverters\Metering\MeterTransformerProtoConvertor;
+use App\GrpcConverters\ParameterValueProtoConvertor;
+use App\Http\Requests\Metering\MeterFormRequest;
+use App\Services\utils\DateTimeConverter;
+use Proto\Consumers\MeterFormRequest as ConsumersMeterFormRequest;
 use Proto\Consumers\MeterResponse;
 
 class MeterProtoConvertor
@@ -59,8 +63,8 @@ class MeterProtoConvertor
         }
 
         $manufactureDate = ($meter->hasManufactureDate() && $meter->getManufactureDate())
-        ? $meter->getManufactureDate()->toDateTime()->format('Y-m-d')
-        : null;
+            ? $meter->getManufactureDate()->toDateTime()->format('Y-m-d')
+            : null;
 
         $supplyDate = ($meter->hasSupplyDate() && $meter->getSupplyDate())
             ? $meter->getSupplyDate()->toDateTime()->format('Y-m-d')
@@ -119,5 +123,49 @@ class MeterProtoConvertor
             'updated_by' => $meter->getUpdatedBy(),
             'transformers' => $transformers,
         ];
+    }
+
+    public static function convertToProto(MeterFormRequest $meter): ConsumersMeterFormRequest
+    {
+        $manufactureDate = DateTimeConverter::convertStringToTimestamp($meter->manufactureDate);
+        $supplyDate = DateTimeConverter::convertStringToTimestamp($meter->supplyDate);
+        $meterProto = new ConsumersMeterFormRequest();
+        if ($meter->meterId) {
+            $meterProto->setMeterId($meter->meterId);
+        }
+        $meterProto->setMeterSerial($meter->meterSerial);
+        $meterProto->setOwnershipTypeId($meter->ownershipTypeId);
+        $meterProto->setMeterMakeId($meter->meterMakeId);
+        $meterProto->setMeterTypeId($meter->meterTypeId);
+        $meterProto->setAccuracyClassId($meter->accuracyClassId);
+        $meterProto->setDialingFactorId($meter->dialingFactorId);
+        $meterProto->setCompanySealNum($meter->companySealNum);
+        $meterProto->setDigitCount($meter->digitCount);
+        if ($manufactureDate) {
+            $meterProto->setManufactureDate($manufactureDate);
+        }
+        if ($supplyDate) {
+            $meterProto->setSupplyDate($supplyDate);
+        }
+        $meterProto->setMeterUnitId($meter->meterUnitId);
+        $meterProto->setMeterResetTypeId($meter->meterResetTypeId);
+        $meterProto->setSmartMeterInd($meter->smartMeterInd);
+        $meterProto->setBidirectionalInd($meter->bidirectionalInd);
+        $meterProto->setMeterPhaseId($meter->meterPhaseId);
+        $meterProto->setDecimalDigitCount($meter->decimalDigitCount);
+        $meterProto->setProgrammablePtRatio($meter->programmablePtRatio);
+        $meterProto->setProgrammableCtRatio($meter->programmableCtRatio);
+        $meterProto->setWarrantyPeriod($meter->warrantyPeriod);
+        if ($meter->meterConstant) {
+            $meterProto->setMeterConstant($meter->meterConstant);
+        }
+        $meterProto->setBatchCode($meter->batchCode);
+        $meterProto->setInternalCtPrimary($meter->internalCtPrimary);
+        $meterProto->setInternalCtSecondary($meter->internalCtSecondary);
+        $meterProto->setInternalPtPrimary($meter->internalPtPrimary);
+        $meterProto->setInternalPtSecondary($meter->internalPtSecondary);
+        $meterProto->setCtCount($meter->ctCount);
+        $meterProto->setPtCount($meter->ptCount);
+        return $meterProto;
     }
 }
