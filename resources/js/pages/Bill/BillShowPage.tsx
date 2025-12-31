@@ -457,10 +457,10 @@ export default function BillShowPage({
                   <span className='font-mono'>{connection?.consumer_number}</span>
                 </TableCell>
                 <TableCell>
-                  <strong>Bill No:</strong> <span className='font-mono'>21028112257573</span>
+                  <strong>Bill No:</strong> <span className='font-mono'>{bill?.bill_id}</span>
                 </TableCell>
                 <TableCell>
-                  <strong>Rs:</strong> <span className='font-mono'>117839.00</span>
+                  <strong>Rs:</strong> <span className='font-mono'>{bill?.bill_amount}</span>
                 </TableCell>
               </TableRow>
             </TableBody>
