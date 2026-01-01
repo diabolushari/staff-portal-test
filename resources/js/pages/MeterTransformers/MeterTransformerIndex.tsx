@@ -2,11 +2,12 @@ import MeterTransformerListItem from '@/components/Meter/MeterTransformer/MeterT
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import DeleteModal from '@/ui/Modal/DeleteModal'
-import ListSearch from '@/ui/Search/ListSearch'
 import { useState } from 'react'
 import { MeterTransformer } from '@/interfaces/data_interfaces'
 import { Paginator } from '@/ui/ui_interfaces'
 import Pagination from '@/ui/Pagination/Pagination'
+import MeterTransformerSearch from '@/components/Meter/MeterTransformer/MeterTransformerSearch'
+import { ParameterValues } from '@/interfaces/parameter_types'
 
 interface Props {
   filters: {
@@ -15,6 +16,17 @@ interface Props {
     sort_direction: string
   }
   transformers: Paginator<MeterTransformer>
+  oldCtptSerial?: string
+  oldMakeId?: string
+  oldTypeId?: string
+  oldOwnershipTypeId?: string
+  oldRatioPrimaryValue?: string
+  oldRatioSecondaryValue?: string
+  types: ParameterValues[]
+  makes: ParameterValues[]
+  ownershipTypes: ParameterValues[]
+  primaryRatios: ParameterValues[]
+  secondaryRatios: ParameterValues[]
 }
 
 const breadcrumbs = [
@@ -22,7 +34,20 @@ const breadcrumbs = [
   { title: 'CTPTs', href: '/meter-ctpt' },
 ]
 
-export default function MeterTransformerIndex({ filters, transformers }: Readonly<Props>) {
+export default function MeterTransformerIndex({
+  transformers,
+  oldCtptSerial,
+  oldMakeId,
+  oldTypeId,
+  oldOwnershipTypeId,
+  oldRatioPrimaryValue,
+  oldRatioSecondaryValue,
+  types,
+  makes,
+  ownershipTypes,
+  primaryRatios,
+  secondaryRatios,
+}: Readonly<Props>) {
   const items = transformers?.data ?? []
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedTransformer, setSelectedTransformer] = useState<MeterTransformer | null>(null)
@@ -37,16 +62,23 @@ export default function MeterTransformerIndex({ filters, transformers }: Readonl
       breadcrumb={breadcrumbs}
       navItems={meteringBillingNavItems}
       selectedItem='CTPTs'
-      addBtnText='CTPT'
+      addBtnText='CT/PT'
       addBtnUrl={route('meter-ctpt.create')}
       title='CTPTS'
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
-        <ListSearch
-          title=''
-          placeholder='Enter CTPT Serial'
-          url={route('meter-ctpt.index')}
-          search={filters?.search}
+        <MeterTransformerSearch
+          oldCtptSerial={oldCtptSerial}
+          oldMakeId={oldMakeId}
+          oldTypeId={oldTypeId}
+          oldOwnershipTypeId={oldOwnershipTypeId}
+          oldRatioPrimaryValue={oldRatioPrimaryValue}
+          oldRatioSecondaryValue={oldRatioSecondaryValue}
+          types={types}
+          makes={makes}
+          ownershipTypes={ownershipTypes}
+          primaryRatios={primaryRatios}
+          secondaryRatios={secondaryRatios}
         />
         {/* <Button label="Create Meter Transformer" onClick={handleCreate} /> */}
         {items && items.length > 0 ? (

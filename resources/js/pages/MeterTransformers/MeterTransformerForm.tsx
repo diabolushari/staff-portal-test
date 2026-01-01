@@ -18,6 +18,8 @@ export interface MeterTransformerFormProps {
   burdens: ParameterValues[]
   makes: ParameterValues[]
   types: ParameterValues[]
+  primaryRatios: ParameterValues[]
+  secondaryRatios: ParameterValues[]
   transformer?: MeterTransformer // for edit mode
 }
 
@@ -46,6 +48,8 @@ export default function MeterTransformerForm({
   burdens,
   makes,
   types,
+  primaryRatios,
+  secondaryRatios,
   transformer,
 }: MeterTransformerFormProps) {
   const isEditing = Boolean(transformer)
@@ -177,19 +181,23 @@ export default function MeterTransformerForm({
             displayKey='parameter_value'
             error={errors.burden_id}
           />
-          <Input
+          <SelectList
             label={transformerInfo.primary}
-            type='text'
             value={formData.ratio_primary_value}
             setValue={setFormValue('ratio_primary_value')}
+            list={primaryRatios}
+            dataKey='parameter_value'
+            displayKey='parameter_value'
             error={errors.ratio_primary_value}
           />
 
-          <Input
+          <SelectList
             label={transformerInfo.secondary}
-            type='text'
             value={formData.ratio_secondary_value}
             setValue={setFormValue('ratio_secondary_value')}
+            list={secondaryRatios}
+            dataKey=''
+            displayKey='parameter_value'
             error={errors.ratio_secondary_value}
           />
 

@@ -59,9 +59,26 @@ export default function MeterTransformerListItem({ transformer, onDelete }: Read
               <div className='font-inter text-base leading-normal font-semibold text-black'>
                 {transformer.ctpt_serial}
               </div>
-              <div className='rounded-[50px] bg-blue-100 px-2.5 py-px'>
+              <div className='rounded-[50px] bg-blue-100 px-2.5'>
                 <div className='font-inter text-xs leading-6 font-normal tracking-[-0.072px] text-blue-800'>
                   {transformer.type?.parameter_value}
+                </div>
+              </div>
+            </div>
+            <div className='flex w-full flex-wrap gap-5'>
+              <div className='flex items-center gap-[3px]'>
+                <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                  Type: <b>{transformer.type?.parameter_value}</b>
+                </div>
+              </div>
+              <div className='flex items-center gap-[3px]'>
+                <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                  Make: <b>{transformer.make?.parameter_value}</b>
+                </div>
+              </div>
+              <div className='flex items-center gap-[3px]'>
+                <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                  Ownership Type: <b>{transformer.ownership_type?.parameter_value}</b>
                 </div>
               </div>
             </div>
@@ -69,24 +86,12 @@ export default function MeterTransformerListItem({ transformer, onDelete }: Read
             {/* Primary and Secondary Values */}
             <div className='flex w-full flex-wrap gap-5'>
               <div className='flex items-center gap-[3px]'>
-                {transformerInfo.primaryUnit == 'V' && (
-                  <Gauge className='text-dark-gray h-3.5 w-3.5' />
-                )}
-                {transformerInfo.primaryUnit != 'V' && (
-                  <Activity className='text-dark-gray h-3.5 w-3.5' />
-                )}
                 <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
                   {transformerInfo.primary}: {transformer.ratio_primary_value || 'N/A'}
                   {transformerInfo.primaryUnit && ` ${transformerInfo.primaryUnit}`}
                 </div>
               </div>
               <div className='flex items-center gap-[3px]'>
-                {transformerInfo.secondaryUnit == 'V' && (
-                  <Gauge className='text-dark-gray h-3.5 w-3.5' />
-                )}
-                {transformerInfo.secondaryUnit != 'V' && (
-                  <Activity className='text-dark-gray h-3.5 w-3.5' />
-                )}
                 <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
                   {transformerInfo.secondary}: {transformer.ratio_secondary_value || 'N/A'}
                   {transformerInfo.secondaryUnit && ` ${transformerInfo.secondaryUnit}`}
