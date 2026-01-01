@@ -100,6 +100,14 @@ class MeterService
         int $pageNumber = 1,
         int $pageSize = 10,
         ?string $meterSerial = null,
+        ?bool $smartMeterInd = null,
+        ?bool $bidirectionalInd = null,
+        ?int $meterTypeId = null,
+        ?int $meterProfileId = null,
+        ?int $meterMakeId = null,
+        ?int $ownershipTypeId = null,
+        ?int $programmablePtRatio = null,
+        ?int $programmableCtRatio = null,
         ?string $sortBy = null,
         ?string $sortDirection = null
     ): GrpcServiceResponse {
@@ -107,8 +115,33 @@ class MeterService
         $request->setPageNumber($pageNumber);
         $request->setPageSize($pageSize);
 
+
         if ($meterSerial) {
             $request->setMeterSerial($meterSerial);
+        }
+        if ($smartMeterInd !== null) {
+            $request->setSmartMeterInd($smartMeterInd);
+        }
+        if ($bidirectionalInd !== null) {
+            $request->setBidirectionalInd($bidirectionalInd);
+        }
+        if ($meterTypeId !== null) {
+            $request->setMeterTypeId($meterTypeId);
+        }
+        if ($meterProfileId) {
+            $request->setMeterProfileId($meterProfileId);
+        }
+        if ($meterMakeId) {
+            $request->setMeterMakeId($meterMakeId);
+        }
+        if ($ownershipTypeId) {
+            $request->setOwnershipTypeId($ownershipTypeId);
+        }
+        if ($programmableCtRatio) {
+            $request->setProgrammableCtRatio($programmableCtRatio);
+        }
+        if ($programmablePtRatio) {
+            $request->setProgrammablePtRatio($programmablePtRatio);
         }
 
         if ($sortBy !== null && $sortBy !== '') {

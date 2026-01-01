@@ -27,7 +27,8 @@ export default function BillingGroupCreatePage({
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      leftBarTitle='Billing Group'
+      selectedTopNav='Billing'
+      selectedItem='Billing Groups'
       navItems={billingNavItems}
       title='Billing Groups'
     >

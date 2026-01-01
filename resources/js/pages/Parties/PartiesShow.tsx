@@ -5,9 +5,10 @@ import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 import TinyContainer from '@/ui/Card/TinyContainer'
 import { TabGroup } from '@/ui/Tabs/TabGroup'
+import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 import { TabsContent } from '@radix-ui/react-tabs'
-import { Calendar, PencilIcon } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 
 //TODO should have a seperate types file
 interface Party {
@@ -40,13 +41,6 @@ interface Props {
 
 // Hash-based color for avatar bg for consistency
 
-const fmtLocal = (iso?: string | null) => {
-  if (!iso) return '-'
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return '-'
-  return d.toLocaleString() // local time/date
-}
-
 const safe = (v: unknown, fallback = '-') =>
   v === null || v === undefined || v === '' ? fallback : String(v)
 
@@ -71,16 +65,6 @@ const StatusBadge = ({ text }: { text: string }) => {
     </span>
   )
 }
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Home',
-    href: '/',
-  },
-  {
-    title: 'Parties',
-    href: route('parties.index'),
-  },
-]
 
 export default function PartiesShow({ party }: Props) {
   const statusText =
@@ -89,7 +73,21 @@ export default function PartiesShow({ party }: Props) {
     party?.party_type?.parameter_value ?? (party.party_type_id === 1 ? 'Individual' : 'Company')
 
   const onEdit = () => router.visit(route('parties.edit', party.version_id))
-  const onBack = () => router.visit(route('parties.index'))
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Home',
+      href: '/',
+    },
+    {
+      title: 'Parties',
+      href: route('parties.index'),
+    },
+    {
+      title: party.party_code,
+      href: '#',
+    },
+  ]
 
   //TODO should be separate component
   const InfoBlock = ({ label, value }: { label: string; value?: string | number }) => (
@@ -105,13 +103,14 @@ export default function PartiesShow({ party }: Props) {
       breadcrumb={breadcrumbs}
       navItems={consumerNavItems}
       selectedItem='Parties'
+      selectedTopNav='Consumers'
     >
-      <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
+      <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto py-6'>
         {/* Header Section */}
         <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
           <div className='flex flex-col gap-2'>
             <div className='flex items-center gap-3'>
-              <StrongText className='text-2xl font-semibold text-[#252c32]'>
+              <StrongText className='kseb-h1'>
                 {party.party_code} - {safe(party.name)}
               </StrongText>
               <TinyContainer variant={party.is_current ? 'success' : 'danger'}>
@@ -119,23 +118,6 @@ export default function PartiesShow({ party }: Props) {
               </TinyContainer>
               <StatusBadge text={statusText} />
             </div>
-            <div className='text-sm text-slate-600'>
-              Party ID: <span className='font-medium'>{party.party_id}</span>
-            </div>
-          </div>
-          <div className='flex items-center gap-2'>
-            <button
-              onClick={onBack}
-              className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#252c32] transition-colors hover:bg-gray-50'
-            >
-              Back
-            </button>
-            <button
-              onClick={onEdit}
-              className='flex items-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#106ebe]'
-            >
-              Edit Details
-            </button>
           </div>
         </div>
 
@@ -154,21 +136,23 @@ export default function PartiesShow({ party }: Props) {
         >
           {/* Basic Info */}
           <TabsContent value='details'>
+            <div className='flex justify-end p-5'>
+              <button
+                onClick={onEdit}
+                className='link-button-text'
+              >
+                EDIT
+              </button>
+            </div>
             <div className='space-y-4'>
               <Card className='rounded-lg p-7'>
                 <div className='mb-6 flex items-center justify-between'>
                   <StrongText className='text-base font-semibold text-[#252c32]'>
                     Basic Information
                   </StrongText>
-                  <button
-                    onClick={onEdit}
-                    className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
-                  >
-                    <PencilIcon className='h-4 w-4' />
-                    Edit
-                  </button>
                 </div>
-                <hr className='mb-6 border-[#e5e9eb]' />
+                <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                   <InfoBlock
                     label='Party Code'
@@ -184,11 +168,11 @@ export default function PartiesShow({ party }: Props) {
                   />
                   <InfoBlock
                     label='Effective Start'
-                    value={fmtLocal(party.effective_start)}
+                    value={getDisplayDate(party.effective_start)}
                   />
                   <InfoBlock
                     label='Effective End'
-                    value={party.effective_end ? fmtLocal(party.effective_end) : 'Ongoing'}
+                    value={party.effective_end ? getDisplayDate(party.effective_end) : 'Ongoing'}
                   />
                 </div>
               </Card>
@@ -199,15 +183,9 @@ export default function PartiesShow({ party }: Props) {
                   <StrongText className='text-base font-semibold text-[#252c32]'>
                     Contact
                   </StrongText>
-                  <button
-                    onClick={onEdit}
-                    className='flex items-center gap-2 rounded-lg border border-[#dde2e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#0078d4] transition-colors hover:bg-gray-50'
-                  >
-                    <PencilIcon className='h-4 w-4' />
-                    Edit
-                  </button>
                 </div>
-                <hr className='mb-6 border-[#e5e9eb]' />
+                <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                   <InfoBlock
                     label='Email'
@@ -235,7 +213,8 @@ export default function PartiesShow({ party }: Props) {
                     Address
                   </StrongText>
                 </div>
-                <hr className='mb-6 border-[#e5e9eb]' />
+                <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
                 <div className='rounded bg-gray-50 px-2.5 py-2.5 text-sm font-normal text-[#252c32]'>
                   {safe(party.address)}
                 </div>
@@ -248,7 +227,8 @@ export default function PartiesShow({ party }: Props) {
                     Metadata
                   </StrongText>
                 </div>
-                <hr className='mb-6 border-[#e5e9eb]' />
+                <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
                   <InfoBlock
                     label='Version'
@@ -264,12 +244,14 @@ export default function PartiesShow({ party }: Props) {
                   />
                   <InfoBlock
                     label='Created At'
-                    value={fmtLocal(party.created_at)}
+                    value={getDisplayDate(party.created_at)}
                   />
-                  <InfoBlock
-                    label='Updated At'
-                    value={party.updated_at ? fmtLocal(party.updated_at) : '-'}
-                  />
+                  {party.updated_at && (
+                    <InfoBlock
+                      label='Updated At'
+                      value={getDisplayDate(party.updated_at)}
+                    />
+                  )}
                   <InfoBlock
                     label='Status'
                     value={statusText}

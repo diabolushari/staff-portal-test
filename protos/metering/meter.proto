@@ -2,16 +2,19 @@ syntax = "proto3";
 
 package com.kseb.consumerservice.proto.metering;
 
-import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
-import "parameters/parameter-value.proto";
-import "metering/meter-transformer.proto";
-
-
 
 option php_namespace = "Proto\\Consumers";
 option php_metadata_namespace = "GPBMetadata";
 
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "parameters/parameter-value.proto";
+import "metering/meter-transformer.proto";
+import "metering/meter_timezone_type_rel.proto";
+
+option java_package = "com.kseb.consumerservice.proto.metering";
+option java_multiple_files = true;
+option java_outer_classname = "MeterProto";
 
 service MeterService {
   rpc CreateMeter(MeterFormRequest) returns (google.protobuf.Empty);
@@ -61,10 +64,10 @@ message MeterFormRequest {
   optional int32 meter_category_id = 6;
   int32 accuracy_class_id = 7;
   int32 dialing_factor_id = 8;
-  string company_seal_num = 9;
+  optional string company_seal_num = 9;
   int32 digit_count = 10;
-  google.protobuf.Timestamp manufacture_date = 11;
-  google.protobuf.Timestamp supply_date = 12;
+  string manufacture_date = 11;
+  string supply_date = 12;
   int32 meter_unit_id = 13;
   int32 meter_reset_type_id = 14;
   bool smart_meter_ind = 15;
@@ -73,22 +76,19 @@ message MeterFormRequest {
   int32 decimal_digit_count = 18;
   optional float programmable_pt_ratio = 19;
   optional int32 programmable_ct_ratio = 20;
-  float meter_mf = 21;
+  optional float meter_mf = 21;
   int32 warranty_period = 22;
   optional int32 meter_constant = 23;
   string batch_code = 24;
-  optional int32 internal_ct_primary = 25;
-  optional int32 internal_ct_secondary = 26;
-  optional int32 internal_pt_primary = 27;
-  optional int32 internal_pt_secondary = 28;
+  int32 internal_ct_primary = 25;
+  int32 internal_ct_secondary = 26;
+  int32 internal_pt_primary = 27;
+  int32 internal_pt_secondary = 28;
   int64 profile_id = 29;
-  parameters.ParameterValueProto profile = 30;
-  int32 ct_count = 31;
-  int32 pt_count = 32;
-  optional int32 created_by = 33;
-  optional int32 updated_by = 34;
-
-  optional int32 timezone_type_id = 35;
+  int32 ct_count = 30;
+  int32 pt_count = 31;
+  optional int32 created_by = 32;
+  optional int32 updated_by = 33;
 }
 
 message DeleteMeterRequest {
@@ -96,46 +96,74 @@ message DeleteMeterRequest {
 }
 
 message MeterResponse {
-  int32 version_id = 1;
-  int32 meter_id = 2;
-  string meter_serial = 3;
-  parameters.ParameterValueProto ownership_type = 4;
-  parameters.ParameterValueProto meter_make = 5;
-  parameters.ParameterValueProto meter_type = 6;
-  parameters.ParameterValueProto meter_category = 7;
-  parameters.ParameterValueProto accuracy_class = 8;
-  parameters.ParameterValueProto dialing_factor = 9;
-  optional string company_seal_num = 10;
-  optional int32 digit_count = 11;
-  optional google.protobuf.Timestamp manufacture_date = 12;
-  optional google.protobuf.Timestamp supply_date = 13;
-  parameters.ParameterValueProto meter_unit = 14;
-  parameters.ParameterValueProto meter_reset_type = 15;
-  bool smart_meter_ind = 16;
-  bool bidirectional_ind = 17;
-  google.protobuf.Timestamp created_ts = 18;
-  google.protobuf.Timestamp updated_ts = 19;
-  int32 created_by = 20;
-  optional int32 updated_by = 21;
-  parameters.ParameterValueProto meter_phase = 22;
-  optional int32 decimal_digit_count = 23;
-  optional float programmable_pt_ratio = 24;
-  optional int32 programmable_ct_ratio = 25;
-  optional float meter_mf = 26;
-  optional int32 warranty_period = 27;
-  optional int32 meter_constant = 28;
-  optional string batch_code = 29;
 
-  // New: expose internal CT/PT ratios
-  optional int32 internal_ct_primary = 30;
-  optional int32 internal_ct_secondary = 31;
-  optional int32 internal_pt_primary = 32;
-  optional int32 internal_pt_secondary = 33;
-  int64 profile_id = 34;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 35;
+  // --- Core identifiers ---
+  int32 meter_id = 1;
+  string meter_serial = 2;
+
+  // --- Parameter IDs (important for UI + updates) ---
+  int32 ownership_type_id = 3;
+  int32 meter_make_id = 4;
+  int32 meter_type_id = 5;
+  optional int32 meter_category_id = 6;
+  int32 accuracy_class_id = 7;
+  int32 dialing_factor_id = 8;
+  int32 meter_unit_id = 9;
+  int32 meter_reset_type_id = 10;
+  int32 meter_phase_id = 11;
+
+  // --- Parameter objects (read-only view) ---
+  parameters.ParameterValueProto ownership_type = 12;
+  parameters.ParameterValueProto meter_make = 13;
+  parameters.ParameterValueProto meter_type = 14;
+  parameters.ParameterValueProto meter_category = 15;
+  parameters.ParameterValueProto accuracy_class = 16;
+  parameters.ParameterValueProto dialing_factor = 17;
+  parameters.ParameterValueProto meter_unit = 18;
+  parameters.ParameterValueProto meter_reset_type = 19;
+  parameters.ParameterValueProto meter_phase = 20;
+
+  // --- Meter details ---
+  optional string company_seal_num = 21;
+  optional int32 digit_count = 22;
+  optional int32 decimal_digit_count = 23;
+
+  optional string manufacture_date = 24;
+  optional string supply_date = 25;
+
+  bool smart_meter_ind = 26;
+  bool bidirectional_ind = 27;
+
+  // --- Electrical configuration ---
+  optional float programmable_pt_ratio = 28;
+  optional int32 programmable_ct_ratio = 29;
+  optional float meter_mf = 30;
+  optional int32 meter_constant = 31;
+
+  optional int32 internal_ct_primary = 32;
+  optional int32 internal_ct_secondary = 33;
+  optional int32 internal_pt_primary = 34;
+  optional int32 internal_pt_secondary = 35;
+
   int32 ct_count = 36;
   int32 pt_count = 37;
-  repeated com.kseb.consumerservice.proto.metering.MeterTransformerMessage transformers = 38;
+
+  // --- Warranty / batch ---
+  optional int32 warranty_period = 38;
+  optional string batch_code = 39;
+
+  // --- Profile ---
+  int64 profile_id = 40;
+  parameters.ParameterValueProto profile = 41;
+
+  // --- Audit ---
+  string created_ts = 42;
+  string updated_ts = 43;
+  optional int32 created_by = 44;
+  optional int32 updated_by = 45;
+
+  // --- Relations ---
+  repeated com.kseb.consumerservice.proto.metering.MeterTransformerMessage transformers = 46;
 }
 
 message MeterPaginatedListRequest {
