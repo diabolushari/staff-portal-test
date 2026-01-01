@@ -27,13 +27,17 @@ class BillInitializeService
     {
         $proto = new BillInitializeRequest;
         $proto->setConnectionIds($request->connectionIds);
-        $billMonth = DateTimeConverter::convertStringToTimestamp($request->billMonthYear.'-01 12:00:00');
+        $billMonth = DateTimeConverter::convertStringToTimestamp($request->billMonthYear . '-01 12:00:00');
         if ($billMonth != null) {
             $proto->setBillMonthYear($billMonth);
         }
-        $readingMonth = DateTimeConverter::convertStringToTimestamp($request->readingMonthYear.'-01 12:00:00');
+        $readingMonth = DateTimeConverter::convertStringToTimestamp($request->readingMonthYear . '-01 12:00:00');
         if ($readingMonth != null) {
             $proto->setReadingMonthYear($readingMonth);
+        }
+
+        if ($request->billDate != null) {
+            $proto->setBillDate($request->billDate);
         }
         [$response, $status] = $this->client->InitializeBill($proto)->wait();
         if ($status->code !== 0) {
