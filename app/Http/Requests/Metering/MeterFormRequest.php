@@ -54,5 +54,6 @@ class MeterFormRequest extends Data
 
         public int $ctCount,
         public int $ptCount,
+
     ) {}
 }

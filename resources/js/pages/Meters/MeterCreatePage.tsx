@@ -1,7 +1,7 @@
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { Meter } from '@/interfaces/data_interfaces'
+import { Meter, MeterTimezoneType } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import Button from '@/ui/button/Button'
@@ -30,6 +30,7 @@ export interface MeterFormProps {
   internalCtRatios: ParameterValues[]
   timezoneTypes: ParameterValues[]
   meter?: Meter
+  currentTimezone?: MeterTimezoneType
 }
 
 interface MeterForm extends Meter {
@@ -52,10 +53,9 @@ const breadcrumbs = [
   },
 ]
 
-export default function MeterForm({
+export default function MeterCreatePage({
   ownershipTypes,
   meterProfiles,
-  makes,
   types,
   accuracyClasses,
   phases,
@@ -64,15 +64,15 @@ export default function MeterForm({
   resetTypes,
   meter,
   timezoneTypes,
+  currentTimezone,
 }: Readonly<MeterFormProps>) {
-  const isEditing = meter != null
   const { formData, setFormValue } = useCustomForm({
     meter_serial: meter?.meter_serial ?? '',
     ownership_type_id: meter?.ownership_type_id ?? '',
     meter_profile_id: meter?.meter_profile_id ?? '',
-    meter_make_id: 4,
-    meter_type_id: 2,
-    timezone_type_id: '',
+    meter_make_id: meter?.meter_make_id ?? '',
+    meter_type_id: meter?.meter_type_id ?? '',
+    timezone_type_id: meter ? currentTimezone?.timezone_type_id : '',
     meter_category_id: meter?.meter_category_id ?? '',
     accuracy_class_id: meter?.accuracy_class_id ?? '',
     dialing_factor_id: meter?.dialing_factor_id ?? '',
@@ -98,20 +98,14 @@ export default function MeterForm({
     internal_pt_secondary: meter?.internal_pt_secondary ?? '',
     ct_count: meter?.ct_count ?? '',
     pt_count: meter?.pt_count ?? '',
+    _method: meter ? 'PUT' : 'POST',
   })
   const { post, loading, errors } = useInertiaPost<typeof formData>(
-    isEditing ? `/meters/${meter?.meter_id}` : '/meters'
+    meter ? route('meters.update', meter?.meter_id) : route('meters.store')
   )
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // Base payload
-    const basePayload = {
-      ...formData,
-      _method: isEditing ? 'PUT' : undefined,
-    }
-    post({
-      ...basePayload,
-    })
+    post(formData)
   }
 
   useEffect(() => {
@@ -153,7 +147,7 @@ export default function MeterForm({
       breadcrumb={breadcrumbs}
       navItems={meteringBillingNavItems}
       selectedItem='Meters'
-      title={isEditing ? 'Edit Meter' : 'Add Meter'}
+      title={meter ? 'Edit Meter' : 'Add Meter'}
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
         <Card>
@@ -230,24 +224,6 @@ export default function MeterForm({
                 displayKey='parameter_value'
                 error={errors.ownership_type_id}
               />
-              {/* <SelectList
-                label='Category'
-                value={formData.meter_category_id}
-                setValue={setFormValue('meter_category_id')}
-                list={categories}
-                dataKey='id'
-                displayKey='parameter_value'
-                error={errors.meter_category_id}
-              /> */}
-              {/* <SelectList
-                label='Meter Make'
-                value={formData.meter_make_id}
-                setValue={setFormValue('meter_make_id')}
-                list={makes}
-                dataKey='id'
-                displayKey='parameter_value'
-                error={errors.meter_make_id}
-              /> */}
 
               <ComboBox
                 label='Meter Make'
@@ -373,13 +349,6 @@ export default function MeterForm({
                 error={errors.programmable_pt_ratio}
                 disabled
               />
-              {/* <Input
-                label='Meter MF'
-                type='number'
-                value={formData.meter_mf}
-                setValue={setFormValue('meter_mf')}
-                error={errors.meter_mf}
-              /> */}
               <Input
                 label='CT Count'
                 type='number'
@@ -432,7 +401,7 @@ export default function MeterForm({
               />
               <Button
                 type='submit'
-                label={isEditing ? 'Update Meter' : 'Create Meter'}
+                label={meter ? 'Update Meter' : 'Create Meter'}
                 disabled={loading}
                 processing={loading}
                 variant={loading ? 'loading' : 'primary'}
