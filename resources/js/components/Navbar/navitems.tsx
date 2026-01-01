@@ -1,4 +1,3 @@
-import { HomeIcon, ListIcon } from 'lucide-react'
 import React from 'react'
 
 export interface navItem {
@@ -19,7 +18,7 @@ export const settingsOffices: MainNav = {
     {
       title: 'Offices',
       href: '/offices',
-      icon: <ListIcon className='h-4 w-4' />,
+      icon: '',
     },
   ],
 }
@@ -30,7 +29,7 @@ export const meterTimezoneNavItems: MainNav = {
     {
       title: 'Timezones',
       href: '/metering-timezone',
-      icon: <ListIcon className='h-4 w-4' />,
+      icon: '',
     },
   ],
 }
@@ -40,7 +39,7 @@ export const meterNavItems: MainNav = {
     {
       title: 'Meters',
       href: '/meters',
-      icon: <ListIcon className='h-4 w-4' />,
+      icon: '',
     },
   ],
 }
@@ -50,7 +49,7 @@ export const meterCTPTNavItems: MainNav = {
     {
       title: 'Meter CTPT',
       href: '/meter-ctpt',
-      icon: <HomeIcon className='h-4 w-4' />,
+      icon: '',
     },
   ],
 }
@@ -77,7 +76,7 @@ export const meterReadingNavItems: MainNav = {
     {
       title: 'Meter Readings',
       href: '/meter-reading',
-      icon: <ListIcon className='h-4 w-4' />,
+      icon: '',
     },
   ],
 }
@@ -88,7 +87,7 @@ export const tariffNavItems: MainNav = {
     {
       title: 'Tariff Order',
       href: '/tariff-orders',
-      icon: <ListIcon className='h-4 w-4' />,
+      icon: '',
     },
   ],
 }
@@ -99,7 +98,7 @@ export const billingNavItems: MainNav = {
     {
       title: 'Billing',
       href: '/billing-groups',
-      icon: <ListIcon className='h-4 w-4' />,
+      icon: '',
       children: [
         {
           title: 'Billing Groups',

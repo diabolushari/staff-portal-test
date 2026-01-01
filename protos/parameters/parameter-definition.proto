@@ -15,7 +15,7 @@ import "google/protobuf/empty.proto";
 import "parameters/parameter-domain.proto";
 
 // ------------ MESSAGE ------------
-message ParameterDefinitionProto {
+message ParameterDefinitionProto  {
   int64 id = 1;
   int64 domain_id = 2;
   bool is_effective_date_driven = 3;
@@ -33,25 +33,36 @@ message CreateParameterDefinitionRequest  { ParameterDefinitionProto  definition
 message UpdateParameterDefinitionRequest  { ParameterDefinitionProto  definition = 1; }
 message GetParameterDefinitionRequest     { optional int64 id = 1; optional string domain_name = 2; optional string parameter_name = 3; optional string system_module_name = 4; }
 message DeleteParameterDefinitionRequest  { int64 id = 1; }
+message ListParameterDefinitionsRequest   { int32 page = 1; int32 page_size = 2; string domain_name = 3; string module_name = 4; string search = 5;   }
+message ListParameterDefinitionsResponse  { repeated ParameterDefinitionProto  definitions = 1; }
 
+message ParameterDefinitionPaginatedListRequest {
+  optional string domain_name = 1;
+  optional string module_name = 2;
+  optional string search = 3;
 
-message ListParameterDefinitionsRequest {
-  int32 page = 1;
-  int32 page_size = 2;
-  string domain_name = 3;
-  string module_name = 4;
-  string search = 5;
+  int32 page_number = 4;
+  int32 page_size = 5;
+
+  optional string sort_by = 6;        
+  optional string sort_direction = 7;
 }
-
-message ListParameterDefinitionsResponse {
+message ParameterDefinitionPaginatedListResponse {
   repeated ParameterDefinitionProto definitions = 1;
+
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
 }
+
 
 // ------------ SERVICE ------------
 service ParameterDefinitionService {
-  rpc CreateParameterDefinition (CreateParameterDefinitionRequest) returns (ParameterDefinitionProto);
-  rpc GetParameterDefinition    (GetParameterDefinitionRequest)    returns (ParameterDefinitionProto);
-  rpc UpdateParameterDefinition (UpdateParameterDefinitionRequest) returns (ParameterDefinitionProto);
-  rpc DeleteParameterDefinition (DeleteParameterDefinitionRequest) returns (google.protobuf.Empty);
-  rpc ListParameterDefinitions  (ListParameterDefinitionsRequest)  returns (ListParameterDefinitionsResponse);
+  rpc CreateParameterDefinition (CreateParameterDefinitionRequest)  returns (ParameterDefinitionProto);
+  rpc GetParameterDefinition    (GetParameterDefinitionRequest)     returns (ParameterDefinitionProto);
+  rpc UpdateParameterDefinition (UpdateParameterDefinitionRequest)  returns (ParameterDefinitionProto);
+  rpc DeleteParameterDefinition (DeleteParameterDefinitionRequest)  returns (google.protobuf.Empty);
+  rpc ListParameterDefinitions  (ListParameterDefinitionsRequest)   returns (ListParameterDefinitionsResponse);
+  rpc ListParameterDefinitionsPaginated  (ParameterDefinitionPaginatedListRequest)   returns (ParameterDefinitionPaginatedListResponse);
 }

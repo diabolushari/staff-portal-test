@@ -1,10 +1,8 @@
+import ActionButton from '@/components/action-button'
 import { BillingGroup } from '@/interfaces/data_interfaces'
-import Button from '@/ui/button/Button'
-import DeleteButton from '@/ui/button/DeleteButton'
-import EditButton from '@/ui/button/EditButton'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
-import { Building, CalendarDaysIcon } from 'lucide-react'
 import { useState } from 'react'
 
 interface Props {
@@ -14,14 +12,6 @@ interface Props {
 export default function BillingGroupList({ billingGroups }: Props) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [selectedBillingGroup, setSelectedBillingGroup] = useState<BillingGroup | null>(null)
-
-  const handleBillingGroupClick = (billingGroup: BillingGroup) => {
-    router.get(
-      route('billing-groups.show', {
-        id: billingGroup.billing_group_id,
-      })
-    )
-  }
 
   if (!billingGroups || billingGroups.length === 0) {
     return (
@@ -37,9 +27,6 @@ export default function BillingGroupList({ billingGroups }: Props) {
 
   return (
     <div className='relative w-full rounded-lg bg-white'>
-      <div className='font-inter text-dark-gray px-7 pt-[21px] pb-3 text-[15px] leading-[23px] font-semibold tracking-[-0.0924px]'>
-        Billing Group Info
-      </div>
       <div className='flex flex-col px-7 pb-7'>
         {billingGroups?.map((billingGroup, index) => (
           <div
@@ -67,42 +54,15 @@ export default function BillingGroupList({ billingGroups }: Props) {
                   </div>
 
                   <div className='flex w-full items-center gap-5'>
-                    <div className='flex items-center gap-[3px]'>
-                      <Building className='text-dark-gray h-3.5 w-3.5' />
-                    </div>
-
-                    <CalendarDaysIcon className='text-dark-gray h-3.5 w-3.5' />
+                    Effective Start:
                     <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                      {billingGroup?.effective_start}
+                      <b>{getDisplayDate(billingGroup?.effective_start)}</b>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
-                <div
-                  className='flex flex-row gap-2'
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <EditButton
-                    link={route('billing-groups.edit', {
-                      versionId: billingGroup?.version_id,
-                      id: billingGroup?.billing_group_id,
-                    })}
-                  />
-                  <DeleteButton onClick={() => handleDeleteClick(billingGroup)} />
-                  {/* <Button
-                    variant='link'
-                    label='View'
-                    onClick={() =>
-                      router.get(
-                        route('billing-groups.show', {
-                          id: billingGroup?.billing_group_id,
-                        })
-                      )
-                    }
-                  /> */}
-                </div>
                 <div
                   className={`rounded-[50px] px-2.5 py-px ${
                     billingGroup?.deleted_at ? 'bg-red-100' : 'bg-green-100'
@@ -116,6 +76,17 @@ export default function BillingGroupList({ billingGroups }: Props) {
                     {billingGroup?.deleted_at ? 'Inactive' : 'Active'}
                   </div>
                 </div>
+                <ActionButton
+                  onEdit={() =>
+                    router.get(
+                      route('billing-groups.edit', {
+                        versionId: billingGroup?.version_id,
+                        id: billingGroup?.billing_group_id,
+                      })
+                    )
+                  }
+                  onDelete={() => handleDeleteClick(billingGroup)}
+                />
               </div>
             </div>
           </div>

@@ -1,11 +1,10 @@
 import { MeterProfileParameter } from '@/interfaces/data_interfaces'
-import DeleteButton from '@/ui/button/DeleteButton'
-import EditButton from '@/ui/button/EditButton'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import { router } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tag, Upload, Sigma } from 'lucide-react'
+import ActionButton from '../action-button'
 
 interface Props {
   meterProfileParameters: MeterProfileParameter[]
@@ -34,11 +33,9 @@ const ProfileParameterShowList = ({ meterProfileParameters }: Props) => {
               <h2 className='text-lg font-semibold text-gray-900'>{param.name}</h2>
 
               <div className='flex gap-2'>
-                <EditButton
-                  onClick={() => router.get(route('meter-profile.edit', param.meter_parameter_id))}
-                />
-                <DeleteButton
-                  onClick={() => {
+                <ActionButton
+                  onEdit={() => router.get(route('meter-profile.edit', param.meter_parameter_id))}
+                  onDelete={() => {
                     setSelectedItem(param)
                     setShowDeleteModal(true)
                   }}

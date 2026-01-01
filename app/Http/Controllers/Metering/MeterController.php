@@ -10,6 +10,7 @@ use App\Services\Metering\MeterTransformerRelService;
 use App\Services\Metering\MeterTransformerService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -24,20 +25,35 @@ class MeterController extends Controller
         private readonly ParameterValueService $parameterValueService
     ) {}
 
-    public function index(): Response|RedirectResponse
+    public function index(Request $request): Response|RedirectResponse
     {
-        $pageNumber = request()->input('page') ?? 1;
-        $pageSize = request()->input('page_size') ?? 10;
-        $search = request()->input('search') ?? null;
-        $sortBy = request()->input('sort_by') ?? null;
+        $pageNumber = $request->input('page') ?? 1;
+        $pageSize = $request->input('page_size') ?? 10;
+        $meter_serial = $request->input('meter_serial') ?? null;
+        $smart_meter_ind = $request->boolean('smart_meter_ind');
+        $bidirectional_ind = $request->boolean('bidirectional_ind');
+        $meter_type_id = $request->input('meter_type_id') ?? null;
+        $meter_profile_id = $request->input('meter_profile_id') ?? null;
+        $meter_make_id = $request->input('meter_make_id') ?? null;
+        $ownership_type_id = $request->input('ownership_type_id') ?? null;
+        $programmable_ct_ratio = $request->input('programmable_ct_ratio') ?? null;
+        $programmable_pt_ratio = $request->input('programmable_pt_ratio') ?? null;
+        $sortBy = $request->input('sort_by') ?? null;
         $sortDirection = request()->input('sort_direction') ?? null;
         $response = $this->meterService->listMetersPaginated(
             pageNumber: $pageNumber,
             pageSize: $pageSize,
-            meterSerial: $search,
+            meterSerial: $meter_serial,
+            smartMeterInd: $smart_meter_ind,
+            bidirectionalInd: $bidirectional_ind,
+            meterTypeId: $meter_type_id,
+            meterProfileId: $meter_profile_id,
+            meterMakeId: $meter_make_id,
+            ownershipTypeId: $ownership_type_id,
+            programmablePtRatio: $programmable_pt_ratio,
+            programmableCtRatio: $programmable_ct_ratio,
             sortBy: $sortBy,
             sortDirection: $sortDirection,
-
         );
         if ($response->hasError()) {
             return $response->error ?? redirect()->back()->withErrors([
@@ -55,13 +71,44 @@ class MeterController extends Controller
             );
         }
 
+        $types = $this->parameterValueService->getParameterValues(
+            null,
+            null,
+            null,
+            'Meter',
+            'Type'
+        )->data;
+        $meterProfiles = $this->parameterValueService->getParameterValues(
+            null,
+            null,
+            null,
+            'Meter',
+            'Meter Profile'
+        )->data;
+        $ownershipTypes = $this->parameterValueService->getParameterValues(
+            null,
+            null,
+            null,
+            'Meter',
+            'Ownership Type'
+        )->data;
+
         return Inertia::render('Meters/MeterIndex', [
             'meters' => $paginated ?? [],
-            'filters' => [
-                'search' => $search,
-                'sort_by' => $sortBy,
-                'sort_direction' => $sortDirection,
-            ],
+            'oldMeterSerial' => $meter_serial,
+            'oldSmartMeterInd' => $smart_meter_ind,
+            'oldBidirectionalInd' => $bidirectional_ind,
+            'oldMeterTypeId' => $meter_type_id,
+            'oldMeterProfileId' => $meter_profile_id,
+            'oldMeterMakeId' => $meter_make_id,
+            'oldOwnershipTypeId' => $ownership_type_id,
+            'oldProgrammableCtRatio' => $programmable_ct_ratio,
+            'oldProgrammablePtRatio' => $programmable_pt_ratio,
+            'oldSortBy' => $sortBy,
+            'oldSortDirection' => $sortDirection,
+            'types' => $types,
+            'meterProfiles' => $meterProfiles,
+            'ownershipTypes' => $ownershipTypes,
         ]);
     }
 
@@ -69,43 +116,95 @@ class MeterController extends Controller
     {
         $viewData = [
             'ownershipTypes' => $this->parameterValueService->getParameterValues(
-                null, null, null, 'Meter', 'Ownership Type'
+                null,
+                null,
+                null,
+                'Meter',
+                'Ownership Type'
             )->data,
             'meterProfiles' => $this->parameterValueService->getParameterValues(
-                null, null, null, 'Meter', 'Meter Profile'
+                null,
+                null,
+                null,
+                'Meter',
+                'Meter Profile'
             )->data,
             'makes' => $this->parameterValueService->getParameterValues(
-                null, null, null, 'Meter', 'Make'
+                null,
+                null,
+                null,
+                'Meter',
+                'Make'
             )->data,
             'types' => $this->parameterValueService->getParameterValues(
-                null, null, null, 'Meter', 'Type'
+                null,
+                null,
+                null,
+                'Meter',
+                'Type'
             )->data,
             'categories' => $this->parameterValueService->getParameterValues(
-                null, null, null, 'Meter', 'Category'
+                null,
+                null,
+                null,
+                'Meter',
+                'Category'
             )->data,
             'accuracyClasses' => $this->parameterValueService->getParameterValues(
-                null, null, null, 'Meter', 'Accuracy Class'
+                null,
+                null,
+                null,
+                'Meter',
+                'Accuracy Class'
             )->data,
             'phases' => $this->parameterValueService->getParameterValues(
-                null, null, null, 'Meter', 'Phase'
+                null,
+                null,
+                null,
+                'Meter',
+                'Phase'
             )->data,
             'dialingFactors' => $this->parameterValueService->getParameterValues(
-                null, null, null, 'Meter', 'Dialing Factor'
+                null,
+                null,
+                null,
+                'Meter',
+                'Dialing Factor'
             )->data,
             'units' => $this->parameterValueService->getParameterValues(
-                null, null, null, 'Meter', 'Unit'
+                null,
+                null,
+                null,
+                'Meter',
+                'Unit'
             )->data,
             'resetTypes' => $this->parameterValueService->getParameterValues(
-                null, null, null, 'Meter', 'Reset Type'
+                null,
+                null,
+                null,
+                'Meter',
+                'Reset Type'
             )->data,
             'internalPtRatios' => $this->parameterValueService->getParameterValues(
-                null, null, null, 'Meter', 'Internal PT Ratio'
+                null,
+                null,
+                null,
+                'Meter',
+                'Internal PT Ratio'
             )->data,
             'internalCtRatios' => $this->parameterValueService->getParameterValues(
-                null, null, null, 'Meter', 'Internal CT Ratio'
+                null,
+                null,
+                null,
+                'Meter',
+                'Internal CT Ratio'
             )->data,
             'timezoneTypes' => $this->parameterValueService->getParameterValues(
-                null, null, null, 'Meter', 'Timezone Type'
+                null,
+                null,
+                null,
+                'Meter',
+                'Timezone Type'
             )->data,
         ];
 
@@ -159,7 +258,6 @@ class MeterController extends Controller
             'timezoneTypes' => $timezoneTypesResponse->data,
             'relation' => $relResponse->data ?? null,
         ]);
-
     }
 
     public function destroy(int $id): RedirectResponse

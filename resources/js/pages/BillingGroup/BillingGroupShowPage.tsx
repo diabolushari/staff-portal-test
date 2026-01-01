@@ -81,7 +81,7 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      leftBarTitle='Billing Group'
+      selectedTopNav='Billing'
       selectedItem='Billing Groups'
       navItems={billingNavItems}
       title={billingGroup.name}

@@ -44,7 +44,7 @@ const MeterProfileParameterIndex = ({
     <MainLayout
       navItems={meteringBillingNavItems}
       selectedItem='Metering Profiles'
-      addBtnText='Meter Profile'
+      addBtnText='Metering Profile'
       addBtnClick={() => setShowModal(true)}
       title='Metering Profiles'
       breadcrumb={breadcrumbs}
