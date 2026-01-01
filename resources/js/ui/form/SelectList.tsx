@@ -46,9 +46,11 @@ export default function SelectList<
   allOptionText = 'All',
   className = '',
 }: Properties<K, G, U, V, T>) {
+  const safeList = Array.isArray(list) ? list : []
+
   const selectedItem = useMemo(
-    () => list.find((item) => item[dataKey]?.toString() === value?.toString()),
-    [list, dataKey, value]
+    () => safeList.find((item) => item[dataKey]?.toString() === value?.toString()),
+    [safeList, dataKey, value]
   )
 
   const buttonText = selectedItem
@@ -103,7 +105,7 @@ export default function SelectList<
               </Listbox.Option>
             )}
 
-            {list.map((item) => (
+            {safeList.map((item) => (
               <Listbox.Option
                 key={item[dataKey]}
                 value={item[dataKey]}

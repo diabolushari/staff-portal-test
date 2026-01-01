@@ -34,7 +34,7 @@ export default function BillJobStatusIndexPage({ bill_generation_job_status, fil
       breadcrumb={breadcrumb}
       navItems={billingNavItems}
       title='Bill Jobs'
-      leftBarTitle='Billing'
+      selectedTopNav='Billing'
       selectedItem='Jobs'
     >
       <BillingJobStatusSearchForm filters={filters} />

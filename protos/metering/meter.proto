@@ -2,19 +2,20 @@ syntax = "proto3";
 
 package com.kseb.consumerservice.proto.metering;
 
-import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
-import "parameters/parameter-value.proto";
-import "metering/meter-transformer.proto";
-
-
 
 option php_namespace = "Proto\\Consumers";
 option php_metadata_namespace = "GPBMetadata";
 
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "parameters/parameter-value.proto";
+import "metering/meter-transformer.proto";
+import "metering/meter_timezone_type_rel.proto";
+
 option java_package = "com.kseb.consumerservice.proto.metering";
 option java_multiple_files = true;
 option java_outer_classname = "MeterProto";
+
 
 service MeterService {
   rpc CreateMeter(CreateMeterRequest) returns (google.protobuf.Empty);
@@ -40,6 +41,7 @@ message ListUnassignedMetersResponse {
   int32 total_pages = 5;
 
 }
+
 message ListMetersResponse {
   repeated MeterResponse meters = 1;
 }
@@ -48,7 +50,11 @@ message GetMeterRequest {
   int32 meter_id = 1;
 }
 
-message ListMetersRequest {}
+message ListMetersRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  optional string meter_serial = 3;
+}
 
 message CreateMeterRequest {
   string meter_serial = 1;
@@ -94,7 +100,7 @@ message UpdateMeterRequest {
   int32 ownership_type_id = 3;
   int32 meter_make_id = 4;
   int32 meter_type_id = 5;
-  int32 meter_category_id = 6;
+  optional int32 meter_category_id = 6;
   int32 accuracy_class_id = 7;
   int32 dialing_factor_id = 8;
   string company_seal_num = 9;
@@ -108,8 +114,8 @@ message UpdateMeterRequest {
   int32 updated_by = 17;
   int32 meter_phase_id = 18;
   int32 decimal_digit_count = 19;
-  int32 ct_count = 20;
-  int32 pt_count = 21;
+  optional float programmable_pt_ratio = 20;
+  optional int32 programmable_ct_ratio = 21;
   float meter_mf = 22;
   int32 warranty_period = 23;
   optional int32 meter_constant = 24;
@@ -123,11 +129,11 @@ message UpdateMeterRequest {
 
   // Allow client to set updated_ts if needed; otherwise server sets it
   optional google.protobuf.Timestamp updated_ts = 30;
-
   int64 profile_id = 31;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 32;
-
-  
+  optional int32 timezone_type_id = 33;
+  int32 ct_count = 34;
+  int32 pt_count = 35;
 }
 
 message DeleteMeterRequest {
@@ -181,8 +187,19 @@ message MeterPaginatedListRequest {
   optional string meter_serial = 1; // search filter
   int32 page_number = 2;
   int32 page_size = 3;
-  optional string sort_by = 4;
+  optional string sort_by = 4;       
   optional string sort_direction = 5;
+
+  optional bool smart_meter_ind = 6;
+  optional bool bidirectional_ind = 7;
+
+  optional int32 meter_type_id = 8;
+  optional int64 meter_profile_id = 9;
+  optional int32 meter_make_id = 10;
+  optional int32 ownership_type_id = 11;
+
+  optional int32 programmable_ct_ratio = 12;
+  optional float programmable_pt_ratio = 13;
 }
 
 // Paginated list response
@@ -193,4 +210,3 @@ message MeterPaginatedListResponse {
   int32 page_size = 4;
   int32 total_pages = 5;
 }
-
