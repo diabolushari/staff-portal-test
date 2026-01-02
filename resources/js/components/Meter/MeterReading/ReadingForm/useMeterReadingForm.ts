@@ -137,8 +137,8 @@ export default function useMeterReadingForm(
                   profile.meter_parameter_id,
                   tz.timezone_id
                 ),
-            final: '0',
-            diff: '',
+            final: lastMeterReading ? '' : 0,
+            diff: lastMeterReading ? '' : 0,
             value: 0,
           },
         })),

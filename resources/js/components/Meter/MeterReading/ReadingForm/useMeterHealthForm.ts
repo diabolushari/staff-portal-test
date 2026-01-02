@@ -12,35 +12,40 @@ export interface MeterHealth {
 const storeInitialMetersHealthData = (
   metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[],
   meterHealths: ParameterValues[],
-  ctptHealths: ParameterValues[]
+  ctHealths: ParameterValues[]
 ): MeterHealth[] => {
   const defaultMeterHealth = meterHealths.find((h) => h.parameter_value === 'Working')
-  const defaultCTPTHealth = ctptHealths.find((h) => h.parameter_value === 'Working')
+  const defaultCTHealth = ctHealths.find((h) => h.parameter_value === 'Working')
 
-  return metersWithTimezonesAndProfiles.map((meter) => ({
-    meter_id: meter.meter_id,
-    meter_health_id: defaultMeterHealth?.id ?? null,
-    meter_serial: meter.meter.meter_serial,
-    ctpts: meter.meter.transformers.map((ctpt) => ({
-      ctpt_id: ctpt.meter_ctpt_id,
-      health: defaultCTPTHealth?.id ?? null,
-      ctpt_serial: ctpt.ctpt_serial,
-    })),
-  }))
+  return metersWithTimezonesAndProfiles.map((meter) => {
+    console.log(meter, 'meter')
+    return {
+      meter_id: meter.meter_id,
+      meter_health_id: defaultMeterHealth?.id ?? null,
+      meter_serial: meter.meter.meter_serial,
+      ctpts: meter.meter.transformers.map((ctpt) => {
+        return {
+          ctpt_id: ctpt.meter_ctpt_id,
+          health: defaultCTHealth?.id ?? '',
+          ctpt_serial: ctpt.ctpt_serial,
+        }
+      }),
+    }
+  })
 }
 
 export default function useMeterHealthForm(
   metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[],
   meterHealths: ParameterValues[],
-  ctptHealths: ParameterValues[]
+  ctHealths: ParameterValues[]
 ) {
   const [healthData, setHealthData] = useState<MeterHealth[]>([])
 
   useEffect(() => {
     setHealthData(
-      storeInitialMetersHealthData(metersWithTimezonesAndProfiles, meterHealths, ctptHealths)
+      storeInitialMetersHealthData(metersWithTimezonesAndProfiles, meterHealths, ctHealths)
     )
-  }, [metersWithTimezonesAndProfiles, meterHealths, ctptHealths])
+  }, [metersWithTimezonesAndProfiles, meterHealths, ctHealths])
 
   const updateMeterHealth = useCallback((statusId: number, meter: Meter) => {
     setHealthData((oldValue) =>
