@@ -49,10 +49,10 @@ class MeterProtoConvertor
      *     decimal_digit_count: int,
      *     programmable_pt_ratio: float,
      *     programmable_ct_ratio: int,
-     *     meter_mf: float,
-     *     warranty_period: int,
-     *     meter_constant: int,
-     *     batch_code: string,
+     *     meter_mf: float|null,
+     *     warranty_period: int|null,
+     *     meter_constant: int|null,
+     *     batch_code: string|null,
      *     internal_ct_primary: int,
      *     internal_ct_secondary: int,
      *     internal_pt_primary: int,
@@ -162,11 +162,15 @@ class MeterProtoConvertor
         if ($meter->programmableCtRatio) {
             $meterProto->setProgrammableCtRatio($meter->programmableCtRatio);
         }
-        $meterProto->setWarrantyPeriod($meter->warrantyPeriod);
+        if ($meter->warrantyPeriod) {
+            $meterProto->setWarrantyPeriod($meter->warrantyPeriod);
+        }
         if ($meter->meterConstant) {
             $meterProto->setMeterConstant($meter->meterConstant);
         }
-        $meterProto->setBatchCode($meter->batchCode);
+        if ($meter->batchCode) {
+            $meterProto->setBatchCode($meter->batchCode);
+        }
         $meterProto->setInternalCtPrimary($meter->internalCtPrimary);
         $meterProto->setInternalCtSecondary($meter->internalCtSecondary);
         $meterProto->setInternalPtPrimary($meter->internalPtPrimary);

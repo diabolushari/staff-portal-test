@@ -46,9 +46,9 @@ class MeterFormRequest extends Data
         public ?float $programmablePtRatio,
         public ?int $programmableCtRatio,
         // public float $meterMf,
-        public int $warrantyPeriod,
+        public ?int $warrantyPeriod,
         public ?int $meterConstant,
-        public string $batchCode,
+        public ?string $batchCode,
 
         public int $ctCount,
         public int $ptCount,

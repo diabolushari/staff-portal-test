@@ -209,7 +209,6 @@ export default function MeterForm({
           value={formData.batch_code}
           setValue={setFormValue('batch_code')}
           error={errors.batch_code}
-          required
         />
       </FormCard>
       <FormCard title='Technical Specifications'>
@@ -371,7 +370,6 @@ export default function MeterForm({
           value={formData.warranty_period}
           setValue={setFormValue('warranty_period')}
           error={errors.warranty_period}
-          required
           min={0}
         />
 
