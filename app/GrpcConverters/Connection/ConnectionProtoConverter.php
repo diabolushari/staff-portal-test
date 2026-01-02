@@ -219,6 +219,7 @@ class ConnectionProtoConverter
             'latest_meter_reading' => $latestMeterReadingArray,
             'connection_flags' => $connectionFlagsArrays,
             'connection_generation_types' => $connectionGenerationArrays,
+            'no_of_main_meters' => $connection->getNoOfMainMeters(),
         ];
     }
 }

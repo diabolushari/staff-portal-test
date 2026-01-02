@@ -1,5 +1,6 @@
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
+import useFetchList from '@/hooks/useFetchList'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { MeterTransformer } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
@@ -48,8 +49,6 @@ export default function MeterTransformerForm({
   burdens,
   makes,
   types,
-  primaryRatios,
-  secondaryRatios,
   transformer,
 }: MeterTransformerFormProps) {
   const isEditing = Boolean(transformer)
@@ -115,6 +114,26 @@ export default function MeterTransformerForm({
     post(formData)
   }
 
+  const primaryRatioUrl = useMemo(() => {
+    if (!transformerType) return null
+
+    return `/api/parameter-values?domain_name=CTPT&parameter_name=Primary Ratio&attribute_name=attribute1Value&attribute_value=${transformerType}`
+  }, [transformerType])
+
+  const secondaryRatioUrl = useMemo(() => {
+    if (!transformerType) return null
+
+    return `/api/parameter-values?domain_name=CTPT&parameter_name=Secondary Ratio&attribute_name=attribute1Value&attribute_value=${transformerType}`
+  }, [transformerType])
+
+  const [filteredPrimaryRatios, primaryRatioLoading] =
+    useFetchList<ParameterValues>(primaryRatioUrl)
+
+  const [filteredSecondaryRatios, secondaryRatioLoading] =
+    useFetchList<ParameterValues>(secondaryRatioUrl)
+
+  console.log(filteredPrimaryRatios)
+  console.log(filteredSecondaryRatios)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -185,7 +204,7 @@ export default function MeterTransformerForm({
             label={transformerInfo.primary}
             value={formData.ratio_primary_value}
             setValue={setFormValue('ratio_primary_value')}
-            list={primaryRatios}
+            list={filteredPrimaryRatios ?? []}
             dataKey='parameter_value'
             displayKey='parameter_value'
             error={errors.ratio_primary_value}
@@ -195,8 +214,8 @@ export default function MeterTransformerForm({
             label={transformerInfo.secondary}
             value={formData.ratio_secondary_value}
             setValue={setFormValue('ratio_secondary_value')}
-            list={secondaryRatios}
-            dataKey=''
+            list={filteredSecondaryRatios ?? []}
+            dataKey='parameter_value'
             displayKey='parameter_value'
             error={errors.ratio_secondary_value}
           />

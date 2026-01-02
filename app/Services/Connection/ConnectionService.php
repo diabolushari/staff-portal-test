@@ -142,6 +142,9 @@ class ConnectionService
         if ($request->remarks) {
             $grpcRequest->setRemarks($request->remarks);
         }
+        if ($request->noOfMainMeters) {
+            $grpcRequest->setNoOfMainMeters($request->noOfMainMeters);
+        }
         $connectionAttribs = new Struct;
         $connectionAttribs->setFields($request->connectionAttribs ?? []);
         $grpcRequest->setConnectionAttribs($connectionAttribs);
@@ -265,6 +268,9 @@ class ConnectionService
             $otherPurposes = new Struct();
             $otherPurposes->setFields($request->otherPurposes);
             $grpcRequest->setOtherPurposes($otherPurposes);
+        }
+        if ($request->noOfMainMeters) {
+            $grpcRequest->setNoOfMainMeters($request->noOfMainMeters);
         }
         $grpcRequest->setConnectionCategoryId($request->connectionCategoryId);
         $grpcRequest->setConnectionSubcategoryId($request->connectionSubcategoryId);

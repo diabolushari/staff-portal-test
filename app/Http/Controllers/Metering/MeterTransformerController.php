@@ -100,8 +100,7 @@ class MeterTransformerController extends Controller
             'burdens' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Burden')->data,
             'makes' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Make')->data,
             'types' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Type')->data,
-            'primaryRatios' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Primary Ratio')->data,
-            'secondaryRatios' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Secondary Ratio')->data,
+
         ];
 
         return Inertia::render('MeterTransformers/MeterTransformerForm', $parameterRequests);
@@ -146,8 +145,6 @@ class MeterTransformerController extends Controller
             'burdens' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Burden')->data,
             'makes' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Make')->data,
             'types' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Type')->data,
-            'primaryRatios' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Primary Ratio')->data,
-            'secondaryRatios' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Secondary Ratio')->data,
         ];
 
         return Inertia::render('MeterTransformers/MeterTransformerForm', [

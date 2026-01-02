@@ -346,7 +346,7 @@ export default function ConnectionForm({
           <MultiSelectList
             label='Other Purposes'
             list={otherPurposeList}
-            dataKey='id'
+            dataKey='parameter_value'
             displayKey='parameter_value'
             setValue={setFormValue('other_purposes_ids')}
             value={formData.other_purposes_ids}

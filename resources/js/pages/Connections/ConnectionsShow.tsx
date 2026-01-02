@@ -152,6 +152,10 @@ export default function ConnectionsShow({
                 label='Service Connection Date'
                 value={formatDate(connection?.connected_date)}
               />
+              <Field
+                label='Number of Main Meters'
+                value={connection.no_of_main_meters}
+              />
               <div className='col-span-2 mt-4'>
                 {connection?.remarks && (
                   <Field
