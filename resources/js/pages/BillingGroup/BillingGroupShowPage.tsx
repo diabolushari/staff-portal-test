@@ -15,6 +15,7 @@ import { formatMeterReadingMonth } from '@/utils'
 import { router } from '@inertiajs/react'
 import { useState } from 'react'
 import BillingGroupAddConnection from './BillingGroupAddConnection'
+import dayjs from 'dayjs'
 
 export interface BillingGroupConnectionRelForm {
   billing_group_id: number
@@ -46,6 +47,7 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
   )
   const [showInitializeModal, setShowInitializeModal] = useState(false)
   const [addConnectionComponent, setAddConnectionComponent] = useState(false)
+  const [oldestReadingDate, setOldestReadingDate] = useState<string>('')
 
   const { formData, setFormValue } = useCustomForm({
     search: '',
@@ -63,11 +65,24 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
   const handleBillInitialize = () => {
     setShowInitializeModal(true)
   }
-  const handleSelectConnection = (connectionId: number) => {
+  const handleSelectConnection = (connectionId: number, latestReadingDate?: string) => {
     const updatedSelectedConnections = formData.selectedConnections.includes(connectionId)
       ? formData.selectedConnections.filter((id) => id !== connectionId)
       : [...formData.selectedConnections, connectionId]
     setFormValue('selectedConnections')(updatedSelectedConnections)
+
+    if (latestReadingDate) {
+      const readingDate = dayjs(latestReadingDate)
+      const currentReadingDate = oldestReadingDate
+        ? dayjs(oldestReadingDate)
+        : dayjs(latestReadingDate)
+
+      console.log('currentReadingDate', currentReadingDate.toString())
+      console.log('readingDate', readingDate.toString())
+      if (readingDate.isBefore(currentReadingDate)) {
+        setOldestReadingDate(latestReadingDate)
+      }
+    }
   }
 
   const handleOnClickConnection = (connectionId: number) => {
@@ -77,7 +92,6 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
       })
     )
   }
-  console.log(billingGroup)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -189,7 +203,12 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
                   <DeleteButton onClick={() => handleDelete(conn)} />
                   <CheckBox
                     label=''
-                    toggleValue={() => handleSelectConnection(conn?.connection_id)}
+                    toggleValue={() =>
+                      handleSelectConnection(
+                        conn?.connection_id,
+                        conn?.connection?.latest_meter_reading?.reading_end_date
+                      )
+                    }
                     value={formData?.selectedConnection?.includes(conn?.connection_id)}
                   />
                 </div>
@@ -213,6 +232,7 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
       )}
       {showInitializeModal && (
         <BillInitializeModal
+          readingMonthYear={oldestReadingDate}
           setShowModal={setShowInitializeModal}
           showModal={showInitializeModal}
           selectedConnections={formData.selectedConnections}
