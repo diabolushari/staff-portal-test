@@ -45,7 +45,7 @@ class MeterService
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
-                GrpcErrorService::handleErrorResponse(StdClassConverter::convertToObject($status)),
+                GrpcErrorService::handleErrorResponse($status),
                 $response,
                 $status->code,
                 $status->details
@@ -221,7 +221,7 @@ class MeterService
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
-                GrpcErrorService::handleErrorResponse(StdClassConverter::convertToObject($status)),
+                GrpcErrorService::handleErrorResponse($status),
                 $response,
                 $status->code,
                 $status->details

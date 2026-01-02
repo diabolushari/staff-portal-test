@@ -62,6 +62,7 @@ export default function MeterSearch({
   const [selectedMeterMake, setSelectedMeterMake] = useState<ParameterValues | null>(null)
 
   const filterApplied =
+    oldSmartMeterInd ||
     oldBidirectionalInd ||
     oldMeterSerial ||
     oldMeterTypeId ||
@@ -82,11 +83,7 @@ export default function MeterSearch({
       <div className='absolute top-0 left-6 size-18 h-2/3 w-1/4 rounded-b-full bg-radial-[at_1%] from-[#0078D4]/0 to-[#0078D4]/5 to-5%'></div>
       <div className='flex w-full flex-col justify-center p-10'>
         <div className='flex w-full items-center justify-center'>
-          <form
-            action=''
-            className='w-full'
-            onSubmit={handleSubmit}
-          >
+          <div className='w-full'>
             <div className='relative grid w-full grid-cols-3 gap-x-6 gap-y-5'>
               <div className='col-span-1 flex items-center pt-6'>
                 <CheckBox
@@ -164,6 +161,7 @@ export default function MeterSearch({
               <Button
                 label='Search'
                 type='submit'
+                onClick={(e) => handleSubmit(e)}
               />
               {filterApplied && (
                 <button
@@ -174,7 +172,7 @@ export default function MeterSearch({
                 </button>
               )}
             </div>
-          </form>
+          </div>
         </div>
       </div>
       <div className='h-half absolute right-0 bottom-0 size-18 w-1/12 rounded-tl-full bg-radial-[at_1%_1%] from-[#0078D4]/30 to-[#0078D4]/5 to-90%'></div>

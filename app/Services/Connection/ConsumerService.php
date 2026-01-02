@@ -118,8 +118,9 @@ class ConsumerService
         $consumer->setConnectionId($request->connectionId);
         $consumer->setConsumerTypeId($request->consumerTypeId);
         $consumer->setOrganizationName($request->organizationName);
-
-        $consumer->setVirtualAccountNumber($request->virtualAccountNumber);
+        if ($request->virtualAccountNumber) {
+            $consumer->setVirtualAccountNumber($request->virtualAccountNumber);
+        }
         if ($request->contactPerson) {
             $consumer->setContactPerson($request->contactPerson);
         }
@@ -129,9 +130,15 @@ class ConsumerService
         if ($request->consumerCin) {
             $consumer->setConsumerCin($request->consumerCin);
         }
-        $consumer->setConsumerPan($request->consumerPan);
-        $consumer->setConsumerTan($request->consumerTan);
-        $consumer->setConsumerGstin($request->consumerGstin);
+        if ($request->consumerPan) {
+            $consumer->setConsumerPan($request->consumerPan);
+        }
+        if ($request->consumerTan) {
+            $consumer->setConsumerTan($request->consumerTan);
+        }
+        if ($request->consumerGstin) {
+            $consumer->setConsumerGstin($request->consumerGstin);
+        }
         $consumer->setManufacturingInfo(new Struct);
         $consumer->setTaxInfo(new Struct);
         $consumer->setIdentityInfo(new Struct);
@@ -179,7 +186,9 @@ class ConsumerService
         $address = new AddressMessage;
         $address->setAddressId($request->addressId ?? 0);
         $address->setAddressLine1($request->addressLine1);
-        $address->setAddressLine2($request->addressLine2);
+        if ($request->addressLine2) {
+            $address->setAddressLine2($request->addressLine2);
+        }
         $address->setCityTownVillage($request->cityTownVillage);
         $address->setPincode($request->pincode);
         $address->setDistrictId($request->districtId);

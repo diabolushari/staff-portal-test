@@ -18,6 +18,7 @@ import ConnectionFlagForm from './ConnectionFlagForm'
 import useConnectionFlagForm from './useConnectionFlagForm'
 import useConnectionGenerationForm from './useConnectionGenerationForm'
 import ConnectionGenerationTypeForm from './ConnectionGenerationTypeForm'
+import MultiSelectList from '@/ui/form/MultiSelect'
 
 interface Props {
   connection?: Connection
@@ -78,6 +79,7 @@ export default function ConnectionForm({
     billing_process_id: connection?.billing_process_id ?? '',
     phase_type_id: connection?.phase_type_id ?? '',
     primary_purpose_id: connection?.primary_purpose_id ?? '',
+    other_purposes_ids: connection?.other_purposes_ids ?? [],
     admin_office_code: connection?.admin_office_code ?? '',
     service_office_code: connection?.service_office_code ?? '',
     contract_demand_kw_val: connection?.contract_demand_kva_val ?? '',
@@ -101,13 +103,21 @@ export default function ConnectionForm({
     generation_types: generationData,
     prosumers: false,
   })
-
+  console.log(formData)
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     connection ? route('connections.update', connection.connection_id) : route('connections.store'),
     {
       showErrorToast: true,
     }
   )
+
+  const [otherPurposeList, setOtherPurposeList] = useState<ParameterValues[]>(primaryPurposes)
+  useEffect(() => {
+    const filteredPurpose = primaryPurposes.filter(
+      (purpose) => purpose.id !== Number(formData.primary_purpose_id)
+    )
+    setOtherPurposeList(filteredPurpose)
+  }, [formData.primary_purpose_id, primaryPurposes])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -218,6 +228,8 @@ export default function ConnectionForm({
             setValue={setFormValue('no_of_main_meters')}
             value={formData.no_of_main_meters}
             error={errors?.no_of_main_meters}
+            min={1}
+            type='number'
             required
           />
           <div className='col-span-2'>
@@ -331,6 +343,15 @@ export default function ConnectionForm({
             error={errors?.primary_purpose_id}
             required
           />
+          {/* <MultiSelectList
+            label='Other Purposes'
+            list={otherPurposeList}
+            dataKey='id'
+            displayKey='parameter_value'
+            setValue={setFormValue('other_purposes_ids')}
+            value={formData.other_purposes_ids}
+            error={errors?.other_purposes_ids}
+          /> */}
         </div>
       </Card>
       <Card>
@@ -339,7 +360,7 @@ export default function ConnectionForm({
         </div>
         <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
           <Input
-            label='Contract Demand (kW)'
+            label='Contract Demand (kVA)'
             setValue={setFormValue('contract_demand_kw_val')}
             value={formData.contract_demand_kw_val}
             error={errors?.contract_demand_kw_val}

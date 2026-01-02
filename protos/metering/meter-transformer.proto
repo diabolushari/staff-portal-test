@@ -30,7 +30,7 @@ message MeterTransformerMessage {
   int64 updated_by = 18;
   bool is_active = 19;
   google.protobuf.Timestamp manufacture_date = 20;
-
+  optional bool is_edit = 21;
 }
 
 message CreateMeterTransformerMessage {
@@ -39,27 +39,43 @@ message CreateMeterTransformerMessage {
   int64 burden_id = 3;
   int64 make_id = 4;
   int64 type_id = 5;
-
   string ctpt_serial = 6;
   string ratio_primary_value = 7;
   string ratio_secondary_value = 8;
   bool is_active = 9;
   int64 created_by = 10;
   google.protobuf.Timestamp manufacture_date = 11;
-
 }
 
 message CreateMeterTransformerRequest {
   CreateMeterTransformerMessage transformer = 1;
 }
 
-message GetMeterTransformerRequest {
+message UpdateMeterTransformerMessage{
   int64 meter_ctpt_id = 1;
+  optional int64 ownership_type_id = 2;
+  optional int64 accuracy_class_id = 3;
+  optional int64 burden_id = 4;
+  optional int64 make_id = 5;
+  optional int64 type_id = 6;
+
+  optional string ctpt_serial = 7;
+  optional string ratio_primary_value = 8;
+  optional string ratio_secondary_value = 9;
+
+  optional int64 updated_by = 10;
+  optional google.protobuf.Timestamp manufacture_date = 11;
 }
 
-message DeleteMeterTransformerRequest {
-  int64 meter_ctpt_id = 1;
+
+message UpdateMeterTransformerRequest {
+  UpdateMeterTransformerMessage transformer = 1;
 }
+
+
+message GetMeterTransformerRequest    { int64 meter_ctpt_id = 1; }
+message DeleteMeterTransformerRequest { int64 meter_ctpt_id = 1; }
+
 
 message ListMeterTransformersRequest {
   int32 page = 1;
@@ -68,12 +84,14 @@ message ListMeterTransformersRequest {
   bool is_active = 4;
 }
 
-message ListMeterTransformersResponse {
-  repeated MeterTransformerMessage transformers = 1;
-}
-message ListUnassignedMeterTransformersRequest{
+message ListUnassignedMeterTransformersRequest {
   int32 page = 1;
   int32 page_size = 2;
+  optional string type = 3;
+}
+
+message ListMeterTransformersResponse {
+  repeated MeterTransformerMessage transformers = 1;
 }
 
 message ListUnassignedMeterTransformersPaginatedRequest {
@@ -81,14 +99,26 @@ message ListUnassignedMeterTransformersPaginatedRequest {
   int32 page_size = 2;
   optional string ctpt_serial = 3;
   optional int64 type_id = 4;
+  optional string type = 5;
+  optional int64 ownership_type_id = 6;
+  optional int64 make_id = 7;
+  optional string ratio_primary_value = 8;
+  optional string ratio_secondary_value = 9;
+
 }
 
- message MeterTransformerPaginatedListRequest {
+message MeterTransformerPaginatedListRequest {
   optional string ctpt_serial = 1;
   int32 page_number = 2;
   int32 page_size = 3;
   optional string sort_by = 4;
   optional string sort_direction = 5;
+  optional int64 type_id = 6;
+  optional string type = 7;
+  optional int64 ownership_type_id = 8;
+  optional int64 make_id = 9;
+  optional string ratio_primary_value = 10;
+  optional string ratio_secondary_value = 11;
 }
 
 message MeterTransformerPaginatedListResponse {
@@ -97,14 +127,16 @@ message MeterTransformerPaginatedListResponse {
   int32 page_number = 3;
   int32 page_size = 4;
   int32 total_pages = 5;
+  optional int64 type_id = 6;
 }
 
 service MeterTransformerService {
   rpc CreateMeterTransformer(CreateMeterTransformerRequest) returns (MeterTransformerMessage);
-  rpc GetMeterTransformer(GetMeterTransformerRequest) returns (MeterTransformerMessage);
+  rpc UpdateMeterTransformer(UpdateMeterTransformerRequest) returns (MeterTransformerMessage);
+  rpc GetMeterTransformer(GetMeterTransformerRequest)       returns (MeterTransformerMessage);
   rpc DeleteMeterTransformer(DeleteMeterTransformerRequest) returns (google.protobuf.Empty);
-  rpc ListMeterTransformers(ListMeterTransformersRequest) returns (ListMeterTransformersResponse);
-  rpc ListUnassignedMeterTransformers(ListUnassignedMeterTransformersRequest) returns (ListMeterTransformersResponse);
+  rpc ListMeterTransformers(ListMeterTransformersRequest)   returns (ListMeterTransformersResponse);
+  rpc ListUnassignedMeterTransformers(ListUnassignedMeterTransformersRequest)   returns (ListMeterTransformersResponse);
   rpc ListUnassignedMeterTransformersPaginated(ListUnassignedMeterTransformersPaginatedRequest) returns (MeterTransformerPaginatedListResponse);
   rpc ListMeterTransformersPaginated(MeterTransformerPaginatedListRequest) returns (MeterTransformerPaginatedListResponse);
 }

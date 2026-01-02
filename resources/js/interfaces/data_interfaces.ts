@@ -173,6 +173,8 @@ export interface Connection {
   phase_type_id: number | string
   phase_type: ParameterValues
   primary_purpose_id: number | string
+  other_purposes:ParameterValues[]
+  other_purposes_ids:Array<number>
   primary_purpose: ParameterValues
   purposes_info: string | null
   renewable_type_id: number | string
@@ -381,6 +383,7 @@ export interface MeterTransformer {
   burden?: Partial<ParameterValues> | null
   make?: Partial<ParameterValues> | null
   type?: Partial<ParameterValues> | null
+  is_edit: boolean
   ctpt_serial: string
   ratio_primary_value: string | null
   ratio_secondary_value: string | null

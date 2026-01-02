@@ -52,14 +52,14 @@ class CreateMeterReadingController extends Controller
             1,
             100,
             null,
-            'Meter CTPT',
+            'CTPT',
             'CT-Health Type',
         );
         $ptHealthTypes = $this->parameterService->getParameterValues(
             1,
             100,
             null,
-            'Meter CTPT',
+            'CTPT',
             'PT-Health Type',
         );
 

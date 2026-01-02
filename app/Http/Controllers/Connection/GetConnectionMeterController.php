@@ -34,18 +34,18 @@ class GetConnectionMeterController extends Controller
 
         $ctptRelations = [];
         if (! $meterConnectionMappingsResponse->hasError() && ! empty($meterConnectionMappingsResponse->data)) {
-            $meterIds = array_map(fn ($mapping) => $mapping['meter_id'], $meterConnectionMappingsResponse->data);
+            $meterIds = array_map(fn($mapping) => $mapping['meter_id'], $meterConnectionMappingsResponse->data);
 
             $ctptResponse = $this->meterTransformerRelService->listAssignedToMeters($meterIds);
             if (! $ctptResponse->hasError()) {
                 $ctptRelations = $ctptResponse->data;
             }
         }
-        $status = $this->parameterValueService->getParameterValues(null,null,null,'Meter','Status');
-        $changeReason = $this->parameterValueService->getParameterValues(null,null,null,'Meter','Change Reason');
+        $status = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Status');
+        $changeReason = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Change Reason');
 
-        $ctptStatus = $this->parameterValueService->getParameterValues(null,null,null,'Meter CTPT','Status');
-        $ctptChangeReason = $this->parameterValueService->getParameterValues(null,null,null,'Meter CTPT','Change Reason');
+        $ctptStatus = $this->parameterValueService->getParameterValues(null, null, null, 'CTPT', 'Status');
+        $ctptChangeReason = $this->parameterValueService->getParameterValues(null, null, null, 'CTPT', 'Change Reason');
 
         return Inertia::render('Connections/ConnectionMeterList', [
             'connection_id' => $id,

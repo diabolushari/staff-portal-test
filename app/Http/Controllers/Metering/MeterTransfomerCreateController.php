@@ -23,14 +23,14 @@ class MeterTransfomerCreateController extends Controller
         $connection = $this->connectionService->getConnection($connectionId);
 
         $parameterRequests = [
-            'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Status')->data,
-            'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Change Reason')->data,
+            'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Status')->data,
+            'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Change Reason')->data,
         ];
 
         return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [
             'meter' => $meter->data,
             'connection' => $connection->data,
-            'transformerTypes' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Type')->data,
+            'transformerTypes' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Type')->data,
             ...$parameterRequests,
         ]);
     }

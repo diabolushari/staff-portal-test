@@ -10,7 +10,7 @@ export default function PowerFactorBar({ powerFactorsByMeter, averagePF }: Props
   if (!powerFactorsByMeter || powerFactorsByMeter.factors === null) return null
   return (
     <div className='mb-4 flex space-x-4 overflow-x-auto pb-2'>
-      {powerFactorsByMeter.factors.map((pf: any) => (
+      {powerFactorsByMeter?.factors?.map((pf: any) => (
         <Card
           key={pf.timezone_name}
           className='min-w-[140px] flex-shrink-0 border border-gray-300 bg-gradient-to-b from-white to-gray-50 p-3 text-center shadow-sm'
