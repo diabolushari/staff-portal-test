@@ -38,7 +38,7 @@ class OfficeListApiController extends Controller
         // Now $officeType is a single array (or null if not found)
         $officeTypeValue = $officeType['parameter_value'] ?? null;
         $query = $request->query('q');
-        $offices = $this->officeService->getOffices(1, 10, null, $officeTypeValue, $query)->data;
+        $offices = $this->officeService->getOffices(1, 10, $query, $officeTypeValue, null)->data;
         $officeArray = [];
         if ($offices !== null) {
             foreach ($offices as $office) {
