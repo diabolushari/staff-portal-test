@@ -69,7 +69,9 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
           >
             DELETE
           </button>
-          <EditButton onClick={() => router.get(route('meters.edit', meter.meter_id))} />
+          {!meter?.has_meter_reading && (
+            <EditButton onClick={() => router.get(route('meters.edit', meter.meter_id))} />
+          )}
         </div>
 
         {/* Main Content Card */}

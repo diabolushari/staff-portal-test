@@ -161,6 +161,7 @@ message MeterResponse {
 
   // --- Relations ---
   repeated com.kseb.consumerservice.proto.metering.MeterTransformerMessage transformers = 46;
+  optional bool has_meter_reading = 47;
 }
 
 
