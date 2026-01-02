@@ -186,7 +186,9 @@ class ConsumerService
         $address = new AddressMessage;
         $address->setAddressId($request->addressId ?? 0);
         $address->setAddressLine1($request->addressLine1);
-        $address->setAddressLine2($request->addressLine2);
+        if ($request->addressLine2) {
+            $address->setAddressLine2($request->addressLine2);
+        }
         $address->setCityTownVillage($request->cityTownVillage);
         $address->setPincode($request->pincode);
         $address->setDistrictId($request->districtId);

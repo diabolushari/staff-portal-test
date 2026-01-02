@@ -18,6 +18,8 @@ import "meterreading/meter_reading.proto";
 import "connections/connection-flag.proto";
 import "connections/connection-generation-type.proto";
 
+
+
 // Connection table
 message ConnectionMessage {
   int32 version_id = 1;
@@ -56,24 +58,26 @@ message ConnectionMessage {
   bool othercons_flag = 34;
   string application_no = 35;
   optional string remarks = 36;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto consumer_type = 37;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_type = 38;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_status = 39;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto open_access_type = 40;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto metering_type = 41;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto phase_type = 42;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto voltage = 43;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_category = 44;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_subcategory = 45;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto tariff = 46;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto primary_purpose = 47;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto billing_process = 48;
-  optional com.kseb.consumerservice.grpc.consumers.OfficeMessage admin_office = 49;
-  optional com.kseb.consumerservice.grpc.consumers.OfficeMessage service_office = 50;
-  repeated com.kseb.consumerservice.grpc.connections.ConsumerMessage consumer_profile = 51;
-  optional com.kseb.consumerservice.proto.meterreading.MeterReadingMessage latest_meter_reading = 52;
-  repeated com.kseb.consumerservice.grpc.connections.ConnectionFlagMessage connection_flags = 53;
-  repeated com.kseb.consumerservice.grpc.connections.ConnectionGenerationTypeMessage connection_generation_types = 54;
+  optional int32 no_of_main_meters = 37;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto consumer_type = 38;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_type = 39;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_status = 40;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto open_access_type = 41;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto metering_type = 42;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto phase_type = 43;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto voltage = 44;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_category = 45;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_subcategory = 46;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto tariff = 47;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto primary_purpose = 48;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto billing_process = 49;
+  optional com.kseb.consumerservice.grpc.consumers.OfficeMessage admin_office = 50;
+  optional com.kseb.consumerservice.grpc.consumers.OfficeMessage service_office = 51;
+  repeated com.kseb.consumerservice.grpc.connections.ConsumerMessage consumer_profile = 52;
+  optional com.kseb.consumerservice.proto.meterreading.MeterReadingMessage latest_meter_reading = 53;
+  repeated com.kseb.consumerservice.grpc.connections.ConnectionFlagMessage connection_flags = 54;
+  repeated com.kseb.consumerservice.grpc.connections.ConnectionGenerationTypeMessage connection_generation_types = 55;
+
 }
 
 
@@ -105,8 +109,9 @@ message CreateConnectionRequest {
   bool othercons_flag = 25;
   string application_no = 26;
   optional string remarks = 27;
-  repeated com.kseb.consumerservice.grpc.connections.ConnectionFlagFormRequest connection_flags = 28;
-  repeated com.kseb.consumerservice.grpc.connections.ConnectionGenerationFormRequest connection_generation_types = 29;
+  optional int32 no_of_main_meters = 28;
+  repeated com.kseb.consumerservice.grpc.connections.ConnectionFlagFormRequest connection_flags = 29;
+  repeated com.kseb.consumerservice.grpc.connections.ConnectionGenerationFormRequest connection_generation_types = 30;
 }
 
 message GetConnectionRequest{
@@ -209,6 +214,7 @@ message ConnectionUpdateRequest {
   bool othercons_flag = 25;
   string application_no = 26;
   optional string remarks = 27;
+  optional int32 no_of_main_meters = 28;
 }
 message ConnectionUpdateResponse {
   ConnectionMessage connection = 1;
