@@ -17,6 +17,8 @@ use Proto\Metering\ListUnassignedMeterTransformersPaginatedRequest;
 use Proto\Metering\ListUnassignedMeterTransformersRequest;
 use Proto\Metering\MeterTransformerPaginatedListRequest;
 use Proto\Metering\MeterTransformerServiceClient;
+use Proto\Metering\UpdateMeterTransformerMessage;
+use Proto\Metering\UpdateMeterTransformerRequest;
 
 class MeterTransformerService
 {
@@ -73,6 +75,76 @@ class MeterTransformerService
             $status->details
         );
     }
+
+    public function updateTransformer(int $id, MeterTransformerFormRequest $request): GrpcServiceResponse
+    {
+        $transformer = new UpdateMeterTransformerMessage;
+
+
+        $transformer->setMeterCtptId($id);
+
+        if ($request->ownership_type_id) {
+            $transformer->setOwnershipTypeId($request->ownership_type_id);
+        }
+
+        if ($request->accuracy_class_id) {
+            $transformer->setAccuracyClassId($request->accuracy_class_id);
+        }
+
+        if ($request->burden_id) {
+            $transformer->setBurdenId($request->burden_id);
+        }
+
+        if ($request->make_id) {
+            $transformer->setMakeId($request->make_id);
+        }
+
+        if ($request->type_id) {
+            $transformer->setTypeId($request->type_id);
+        }
+
+        if ($request->ctpt_serial) {
+            $transformer->setCtptSerial($request->ctpt_serial);
+        }
+
+        if ($request->ratio_primary_value) {
+            $transformer->setRatioPrimaryValue($request->ratio_primary_value);
+        }
+
+        if ($request->ratio_secondary_value) {
+            $transformer->setRatioSecondaryValue($request->ratio_secondary_value);
+        }
+
+        if (! empty($request->manufacture_date)) {
+            $timestamp = new Timestamp;
+            $timestamp->fromDateTime(new \DateTime($request->manufacture_date));
+            $transformer->setManufactureDate($timestamp);
+        }
+
+
+        $updateRequest = new UpdateMeterTransformerRequest;
+        $updateRequest->setTransformer($transformer);
+
+        [$response, $status] = $this->client->UpdateMeterTransformer($updateRequest)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success(
+            MeterTransformerProtoConvertor::convertToArray($response),
+            $response,
+            $status->code,
+            $status->details
+        );
+    }
+
+
 
     public function getTransformer(int $id): GrpcServiceResponse
     {

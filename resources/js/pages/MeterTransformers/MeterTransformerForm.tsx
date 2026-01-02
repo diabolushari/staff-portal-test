@@ -97,7 +97,7 @@ export default function MeterTransformerForm({
   })
 
   const { post, loading, errors } = useInertiaPost<typeof formData>(
-    isEditing ? `/meter-ctpt/${transformer.meter_ctpt_id}` : '/meter-ctpt',
+    transformer ? `/meter-ctpt/${transformer.meter_ctpt_id}` : '/meter-ctpt',
     {
       showErrorToast: true,
     }
