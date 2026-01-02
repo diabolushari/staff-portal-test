@@ -11,8 +11,9 @@ import "billinggroup/bill.proto";
 
 message BillInitializeRequest {
   repeated int32 connection_ids = 1;
-  google.protobuf.Timestamp bill_month_year = 2;
-  google.protobuf.Timestamp reading_month_year = 3;
+  string bill_date = 2;
+  google.protobuf.Timestamp bill_month_year = 3;
+  google.protobuf.Timestamp reading_month_year = 4;
 }
 
 message BillInitializeResponse {
