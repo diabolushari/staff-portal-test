@@ -173,6 +173,8 @@ export interface Connection {
   phase_type_id: number | string
   phase_type: ParameterValues
   primary_purpose_id: number | string
+  other_purposes:ParameterValues[]
+  other_purposes_ids:Array<number>
   primary_purpose: ParameterValues
   purposes_info: string | null
   renewable_type_id: number | string

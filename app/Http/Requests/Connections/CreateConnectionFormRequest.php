@@ -38,6 +38,7 @@ class CreateConnectionFormRequest extends Data
         public int $noOfMainMeters,
         public array $indicators,
         public array $generationTypes,
+        public array $otherPurposesIds,
 
     ) {}
 }

@@ -18,6 +18,7 @@ import ConnectionFlagForm from './ConnectionFlagForm'
 import useConnectionFlagForm from './useConnectionFlagForm'
 import useConnectionGenerationForm from './useConnectionGenerationForm'
 import ConnectionGenerationTypeForm from './ConnectionGenerationTypeForm'
+import MultiSelectList from '@/ui/form/MultiSelect'
 
 interface Props {
   connection?: Connection
@@ -78,6 +79,7 @@ export default function ConnectionForm({
     billing_process_id: connection?.billing_process_id ?? '',
     phase_type_id: connection?.phase_type_id ?? '',
     primary_purpose_id: connection?.primary_purpose_id ?? '',
+    other_purposes_ids: connection?.other_purposes_ids ?? [],
     admin_office_code: connection?.admin_office_code ?? '',
     service_office_code: connection?.service_office_code ?? '',
     contract_demand_kw_val: connection?.contract_demand_kva_val ?? '',
@@ -101,13 +103,21 @@ export default function ConnectionForm({
     generation_types: generationData,
     prosumers: false,
   })
-
+  console.log(formData)
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     connection ? route('connections.update', connection.connection_id) : route('connections.store'),
     {
       showErrorToast: true,
     }
   )
+
+  const [otherPurposeList, setOtherPurposeList] = useState<ParameterValues[]>(primaryPurposes)
+  useEffect(() => {
+    const filteredPurpose = primaryPurposes.filter(
+      (purpose) => purpose.id !== Number(formData.primary_purpose_id)
+    )
+    setOtherPurposeList(filteredPurpose)
+  }, [formData.primary_purpose_id, primaryPurposes])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -332,6 +342,15 @@ export default function ConnectionForm({
             value={formData.primary_purpose_id}
             error={errors?.primary_purpose_id}
             required
+          />
+          <MultiSelectList
+            label='Other Purposes'
+            list={otherPurposeList}
+            dataKey='id'
+            displayKey='parameter_value'
+            setValue={setFormValue('other_purposes_ids')}
+            value={formData.other_purposes_ids}
+            error={errors?.other_purposes_ids}
           />
         </div>
       </Card>
