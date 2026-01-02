@@ -47,12 +47,12 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
   )
   const [showInitializeModal, setShowInitializeModal] = useState(false)
   const [addConnectionComponent, setAddConnectionComponent] = useState(false)
-  const [oldestReadingDate, setOldestReadingDate] = useState<string>('')
 
   const { formData, setFormValue } = useCustomForm({
     search: '',
     bill_year_month: '',
     selectedConnections: [],
+    oldestReadingDate: '',
   })
   const handleSearchClick = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -70,17 +70,13 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
       ? formData.selectedConnections.filter((id) => id !== connectionId)
       : [...formData.selectedConnections, connectionId]
     setFormValue('selectedConnections')(updatedSelectedConnections)
-
     if (latestReadingDate) {
-      const readingDate = dayjs(latestReadingDate)
-      const currentReadingDate = oldestReadingDate
-        ? dayjs(oldestReadingDate)
-        : dayjs(latestReadingDate)
-
-      console.log('currentReadingDate', currentReadingDate.toString())
-      console.log('readingDate', readingDate.toString())
-      if (readingDate.isBefore(currentReadingDate)) {
-        setOldestReadingDate(latestReadingDate)
+      const readingDate = dayjs(latestReadingDate).format('YYYY-MM')
+      const currentReadingDate = formData.oldestReadingDate
+        ? dayjs(formData.oldestReadingDate).format('YYYY-MM')
+        : dayjs(latestReadingDate).format('YYYY-MM')
+      if (readingDate <= currentReadingDate) {
+        setFormValue('oldestReadingDate')(latestReadingDate.toString())
       }
     }
   }
@@ -115,20 +111,19 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
             onSubmit={handleSearchClick}
             className='flex gap-4'
           >
-            <div>
+            <div className='flex gap-4'>
               <Input
-                label='Consumer Number/Name/Type/Purpose'
+                label='Consumer Number/Name'
                 value={formData.search}
                 setValue={setFormValue('search')}
               />
-            </div>
-            <div className='mt-1'>
               <MonthPicker
                 label='Bill Year Month'
                 value={formData.bill_year_month}
                 setValue={setFormValue('bill_year_month')}
               />
             </div>
+
             <div className='mt-6'>
               <Button
                 label='Search'
@@ -232,7 +227,7 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
       )}
       {showInitializeModal && (
         <BillInitializeModal
-          readingMonthYear={oldestReadingDate}
+          readingMonthYear={formData.oldestReadingDate}
           setShowModal={setShowInitializeModal}
           showModal={showInitializeModal}
           selectedConnections={formData.selectedConnections}
