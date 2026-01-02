@@ -17,15 +17,14 @@ class MeterFormRequest extends Data
         public int $meterProfileId,
         public int $meterMakeId,
         public int $meterTypeId,
-        // public int $meterCategoryId,
         public int $accuracyClassId,
         public int $dialingFactorId,
-        public string $companySealNum,
+        public ?string $companySealNum,
         public int $digitCount,
 
         // Timestamps coming as strings or Carbon — Spatie will cast strings to Carbon if typed as CarbonInterface
-        public string $manufactureDate,
-        public string $supplyDate,
+        public ?string $manufactureDate,
+        public ?string $supplyDate,
 
         public int $internalCtPrimary,
         public int $internalCtSecondary,
@@ -44,15 +43,15 @@ class MeterFormRequest extends Data
         // Additional fields from proto
         public int $meterPhaseId,
         public int $decimalDigitCount,
-        public float $programmablePtRatio,
-        public int $programmableCtRatio,
+        public ?float $programmablePtRatio,
+        public ?int $programmableCtRatio,
         // public float $meterMf,
-        public int $warrantyPeriod,
+        public ?int $warrantyPeriod,
         public ?int $meterConstant,
-        public string $batchCode,
-        public int $timezoneTypeId,
+        public ?string $batchCode,
 
         public int $ctCount,
         public int $ptCount,
+
     ) {}
 }

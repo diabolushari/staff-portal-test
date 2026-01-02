@@ -301,37 +301,29 @@ export interface MeterAssignment {
 }
 
 export interface Meter {
-  version_id: number
   meter_id: number
   meter_serial: string
 
-  // Ownership Type
+  profile_id: number | string
+
   ownership_type_id: number
   ownership_type: ParameterValues | null
 
-  // Meter Profile
-  profile_id: number
-  meter_profile_id: number
-  profile: ParameterValues | null
+  meter_profile_id: number | string
   meter_profile: ParameterValues | null
 
-  // Meter Make
   meter_make_id: number
   meter_make: ParameterValues | null
 
-  // Meter Type
   meter_type_id: number
   meter_type: ParameterValues | null
 
-  // Meter Category
-  meter_category_id: number
+  meter_category_id: number | null
   meter_category: ParameterValues | null
 
-  // Accuracy Class
   accuracy_class_id: number
   accuracy_class: ParameterValues | null
 
-  // Dialing Factor
   dialing_factor_id: number
   dialing_factor: ParameterValues | null
 
@@ -340,18 +332,15 @@ export interface Meter {
   manufacture_date: string | null
   supply_date: string | null
 
-  // Meter Unit
   meter_unit_id: number
   meter_unit: ParameterValues | null
 
-  // Meter Reset Type
   meter_reset_type_id: number
   meter_reset_type: ParameterValues | null
 
   smart_meter_ind: boolean
   bidirectional_ind: boolean
 
-  // Meter Phase
   meter_phase_id: number
   meter_phase: ParameterValues | null
 
@@ -363,7 +352,6 @@ export interface Meter {
   meter_constant: number | null
   batch_code: string | null
 
-  // Internal CT/PT ratios
   internal_ct_primary: number | null
   internal_ct_secondary: number | null
   internal_pt_primary: number | null
@@ -374,10 +362,10 @@ export interface Meter {
 
   created_ts: string | null
   updated_ts: string | null
-  created_by: number
-  updated_by: number
+  created_by: number | null
+  updated_by: number | null
+
   transformers: MeterTransformer[]
-  is_active: boolean
 }
 
 export interface MeterTransformer {
@@ -682,6 +670,6 @@ export interface MeterProfileParameter {
   is_export: boolean
   meter_parameter_id: number
   name: string
-  profile: ParameterValue | null
+  profile: ParameterValues | null
   profile_id: number
 }

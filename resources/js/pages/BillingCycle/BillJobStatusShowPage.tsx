@@ -39,7 +39,7 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
       href: `/bills/job-status/${billing_group?.billing_group_id}`,
     },
   ]
-  console.log(bills)
+
   return (
     <MainLayout
       breadcrumb={breadcrumb}

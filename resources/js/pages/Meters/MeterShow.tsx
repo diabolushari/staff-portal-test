@@ -12,6 +12,7 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import type { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
+import EditButton from '@/ui/button/EditButton'
 import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 
@@ -20,17 +21,10 @@ interface Props {
   transformers: MeterTransformer[]
   currentTimezone: MeterTimezoneType
   timezoneTypes: ParameterValues[]
-  relation: MeterTransformerAssignment | null
 }
 
 // --- MAIN COMPONENT: MeterShow ---
-export default function MeterShow({
-  meter,
-  currentTimezone,
-  timezoneTypes,
-  transformers,
-  relation,
-}: Readonly<Props>) {
+export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Readonly<Props>) {
   // --- BREADCRUMBS AND FORMATTERS ---
   const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -75,6 +69,7 @@ export default function MeterShow({
           >
             DELETE
           </button>
+          <EditButton onClick={() => router.get(route('meters.edit', meter.meter_id))} />
         </div>
 
         {/* Main Content Card */}
@@ -120,11 +115,6 @@ export default function MeterShow({
               label='Meter Make'
               value={meter?.meter_make?.parameter_value}
             />
-
-            {/* <Field
-                  label='Category'
-                  value={meter?.meter_category?.parameter_value}
-                /> */}
 
             <Field
               label='Batch Code'
@@ -182,10 +172,10 @@ export default function MeterShow({
               label='Meter Constant'
               value={meter?.meter_constant}
             />
-            {/* <Field
-                  label='Meter MF'
-                  value={meter?.meter_mf}
-                /> */}
+            <Field
+              label='Meter MF'
+              value={meter?.meter_mf}
+            />
 
             <Field
               label='Warranty Period (Months)'
@@ -202,14 +192,6 @@ export default function MeterShow({
           <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
 
           <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-            {/* <Field
-                  label='Programmable PT Ratio'
-                  value={meter?.programmable_pt_ratio}
-                />
-                <Field
-                  label='Programmable CT Ratio'
-                  value={meter?.programmable_ct_ratio}
-                /> */}
             <Field
               label='Internal CT Ratio'
               value={
@@ -238,20 +220,12 @@ export default function MeterShow({
         </Card>
 
         {/* --- Timezone Information --- */}
-        <MeterTimezoneCard
+        {/* <MeterTimezoneCard
           meter={meter}
           currentTimezone={currentTimezone}
           timezoneTypes={timezoneTypes}
-        />
+        /> */}
       </div>
-
-      {/* <TabsContent value='meter-ctpt'>
-        <MeterTransformerTab
-          meterId={meter.meter_id}
-          transformers={transformers}
-          version_id={relation?.version_id}
-        />
-      </TabsContent> */}
     </MainLayout>
   )
 }

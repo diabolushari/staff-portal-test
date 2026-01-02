@@ -77,14 +77,14 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
       })
     )
   }
-
+  console.log(billingGroup)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
       selectedTopNav='Billing'
       selectedItem='Billing Groups'
       navItems={billingNavItems}
-      title={billingGroup.name}
+      title={billingGroup?.name ?? ''}
     >
       <div className='flex justify-end gap-2'>
         <Button

@@ -3,7 +3,7 @@
 namespace App\Services\Metering;
 
 use App\GrpcConverters\Connection\MeterConnectionMappingConverter;
-use App\GrpcConverters\MeterProtoConvertor;
+use App\GrpcConverters\Meter\MeterProtoConvertor;
 use App\Http\Requests\Connections\ConnectionMeterChangeReasonFormRequest;
 use App\Http\Requests\Connections\ConnectionMeterStatusFormRequest;
 use App\Http\Requests\Metering\MeterConnectionRelFormRequest;
