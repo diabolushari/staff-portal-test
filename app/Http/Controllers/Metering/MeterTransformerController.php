@@ -7,6 +7,7 @@ use App\Http\Requests\Metering\MeterTransformerFormRequest;
 use App\Services\Metering\MeterTransformerService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -21,17 +22,27 @@ class MeterTransformerController extends Controller
     /**
      * Display a listing of transformers.
      */
-    public function index(): Response|RedirectResponse
+    public function index(Request $request): Response|RedirectResponse
     {
-        $pageNumber = request()->input('page') ?? 1;
-        $pageSize = request()->input('page_size') ?? 10;
-        $search = request()->input('search') ?? null;
-        $sortBy = request()->input('sort_by') ?? null;
-        $sortDirection = request()->input('sort_direction') ?? null;
+        $pageNumber = $request->input('page') ?? 1;
+        $pageSize = $request->input('page_size') ?? 10;
+        $ctptSerial = $request->input('ctpt_serial') ?? null;
+        $makeId = $request->input('make_id') ?? null;
+        $typeId = $request->input('type_id') ?? null;
+        $ownershipTypeId = $request->input('ownership_type_id') ?? null;
+        $ratioPrimaryValue = $request->input('ratio_primary_value') ?? null;
+        $ratioSecondaryValue = $request->input('ratio_secondary_value') ?? null;
+        $sortBy = $request->input('sort_by') ?? null;
+        $sortDirection = $request->input('sort_direction') ?? null;
         $response = $this->transformerService->listTransformersPaginated(
             pageNumber: $pageNumber,
             pageSize: $pageSize,
-            ctptSerial: $search,
+            ctptSerial: $ctptSerial,
+            makeId: $makeId,
+            typeId: $typeId,
+            ownershipTypeId: $ownershipTypeId,
+            ratioPrimaryValue: $ratioPrimaryValue,
+            ratioSecondaryValue: $ratioSecondaryValue,
             sortBy: $sortBy,
             sortDirection: $sortDirection,
         );
@@ -51,14 +62,30 @@ class MeterTransformerController extends Controller
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
         }
+        $types = $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Type')->data;
+        $makes = $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Make')->data;
+        $ownershipTypes = $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Ownership Type')->data;
+        $primaryRatios = $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Primary Ratio')->data;
+        $secondaryRatios = $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Secondary Ratio')->data;
 
         return Inertia::render('MeterTransformers/MeterTransformerIndex', [
             'transformers' => $paginated ?? [],
             'filters' => [
-                'search' => $search,
+                'search' => $ctptSerial,
                 'sort_by' => $sortBy,
                 'sort_direction' => $sortDirection,
             ],
+            'oldCtptSerial' => $ctptSerial,
+            'oldMakeId' => $makeId,
+            'oldTypeId' => $typeId,
+            'oldOwnershipTypeId' => $ownershipTypeId,
+            'oldRatioPrimaryValue' => $ratioPrimaryValue,
+            'oldRatioSecondaryValue' => $ratioSecondaryValue,
+            'types' => $types,
+            'makes' => $makes,
+            'ownershipTypes' => $ownershipTypes,
+            'primaryRatios' => $primaryRatios,
+            'secondaryRatios' => $secondaryRatios,
         ]);
     }
 
@@ -68,11 +95,13 @@ class MeterTransformerController extends Controller
     public function create(): Response|RedirectResponse
     {
         $parameterRequests = [
-            'ownershipTypes' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Ownership Type')->data,
-            'accuracyClasses' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Accuracy Class')->data,
-            'burdens' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Burden')->data,
-            'makes' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Make')->data,
-            'types' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Type')->data,
+            'ownershipTypes' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Ownership Type')->data,
+            'accuracyClasses' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Accuracy Class')->data,
+            'burdens' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Burden')->data,
+            'makes' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Make')->data,
+            'types' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Type')->data,
+            'primaryRatios' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Primary Ratio')->data,
+            'secondaryRatios' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Secondary Ratio')->data,
         ];
 
         return Inertia::render('MeterTransformers/MeterTransformerForm', $parameterRequests);

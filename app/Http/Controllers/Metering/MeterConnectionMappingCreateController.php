@@ -36,8 +36,8 @@ class MeterConnectionMappingCreateController extends Controller
         $useCategory = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Use Category');
         $meterStatus = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Status');
         $changeReason = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Change Reason');
-        $statuses = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Status')->data;
-        $changeReasons = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Change Reason')->data;
+        $statuses = $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Status')->data;
+        $changeReasons = $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Change Reason')->data;
 
         return Inertia::render('Connections/ConnectMeter', [
             'connection_id' => $id,

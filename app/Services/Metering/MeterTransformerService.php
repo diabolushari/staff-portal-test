@@ -194,6 +194,11 @@ class MeterTransformerService
         int $pageNumber = 1,
         int $pageSize = 10,
         ?string $ctptSerial = null,
+        ?int $makeId = null,
+        ?int $typeId = null,
+        ?int $ownershipTypeId = null,
+        ?string $ratioPrimaryValue = null,
+        ?string $ratioSecondaryValue = null,
         ?string $sortBy = null,
         ?string $sortDirection = null
     ): GrpcServiceResponse {
@@ -203,6 +208,21 @@ class MeterTransformerService
 
         if ($ctptSerial) {
             $request->setCtptSerial($ctptSerial);
+        }
+        if ($makeId) {
+            $request->setMakeId($makeId);
+        }
+        if ($typeId) {
+            $request->setTypeId($typeId);
+        }
+        if ($ownershipTypeId) {
+            $request->setOwnershipTypeId($ownershipTypeId);
+        }
+        if ($ratioPrimaryValue) {
+            $request->setRatioPrimaryValue($ratioPrimaryValue);
+        }
+        if ($ratioSecondaryValue) {
+            $request->setRatioSecondaryValue($ratioSecondaryValue);
         }
 
         if ($sortBy !== null && $sortBy !== '') {

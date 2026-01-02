@@ -170,7 +170,7 @@ export default function ConnectionsShow({
 
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <Field
-                label='Contract Demand (KVA)'
+                label='Contract Demand (kVA)'
                 value={connection?.contract_demand_kva_val}
               />
               <Field

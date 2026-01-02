@@ -59,6 +59,7 @@ class MeterTransformerProtoConvertor
             'burden_id' => $t->getBurdenId(),
             'make_id' => $t->getMakeId(),
             'type_id' => $t->getTypeId(),
+            'is_edit' => $t->getIsEdit(),
             'ownership_type' => ParameterValueProtoConvertor::convertToArray($t->getOwnershipType()),
             'accuracy_class' => ParameterValueProtoConvertor::convertToArray($t->getAccuracyClass()),
             'burden' => ParameterValueProtoConvertor::convertToArray($t->getBurden()),
