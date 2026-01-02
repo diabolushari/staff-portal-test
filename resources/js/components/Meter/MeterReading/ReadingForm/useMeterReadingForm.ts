@@ -50,7 +50,7 @@ function transformToFormData(
           isRotation: false,
           values: {
             initial: match?.initial_reading ?? 0,
-            final: match?.final_reading?.toString() ?? '',
+            final: match?.final_reading?.toString() ?? '0',
             diff: match?.difference?.toString() ?? '0',
             value: 0,
           },
@@ -137,7 +137,7 @@ export default function useMeterReadingForm(
                   profile.meter_parameter_id,
                   tz.timezone_id
                 ),
-            final: '',
+            final: '0',
             diff: '',
             value: 0,
           },

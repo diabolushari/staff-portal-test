@@ -112,7 +112,9 @@ export default function MeterReadingCreatePage({
   )
 
   const { healthData, updateMeterHealth, updateCTPTHealth } = useMeterHealthForm(
-    metersWithTimezonesAndProfiles
+    metersWithTimezonesAndProfiles,
+    meterHealthTypes,
+    ctptHealthTypes
   )
 
   const isFirstReading = useMemo(() => {
