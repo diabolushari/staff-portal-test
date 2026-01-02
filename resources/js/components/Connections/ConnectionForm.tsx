@@ -343,7 +343,7 @@ export default function ConnectionForm({
             error={errors?.primary_purpose_id}
             required
           />
-          {/* <MultiSelectList
+          <MultiSelectList
             label='Other Purposes'
             list={otherPurposeList}
             dataKey='id'
@@ -351,7 +351,7 @@ export default function ConnectionForm({
             setValue={setFormValue('other_purposes_ids')}
             value={formData.other_purposes_ids}
             error={errors?.other_purposes_ids}
-          /> */}
+          />
         </div>
       </Card>
       <Card>

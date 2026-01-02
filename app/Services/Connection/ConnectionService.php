@@ -132,6 +132,11 @@ class ConnectionService
         $grpcRequest->setContractDemandKvaVal($request->contractDemandKwVal);
         $grpcRequest->setTariffId($request->tariffTypeId);
         $grpcRequest->setPrimaryPurposeId($request->primaryPurposeId);
+        if ($request->otherPurposes) {
+            $otherPurposes = new Struct();
+            $otherPurposes->setFields($request->otherPurposes);
+            $grpcRequest->setOtherPurposes($otherPurposes);
+        }
         $grpcRequest->setConnectionCategoryId($request->connectionCategoryId);
         $grpcRequest->setConnectionSubcategoryId($request->connectionSubcategoryId);
         if ($request->remarks) {
@@ -256,6 +261,11 @@ class ConnectionService
         $grpcRequest->setContractDemandKvaVal($request->contractDemandKwVal);
         $grpcRequest->setTariffId($request->tariffTypeId);
         $grpcRequest->setPrimaryPurposeId($request->primaryPurposeId);
+        if ($request->otherPurposes) {
+            $otherPurposes = new Struct();
+            $otherPurposes->setFields($request->otherPurposes);
+            $grpcRequest->setOtherPurposes($otherPurposes);
+        }
         $grpcRequest->setConnectionCategoryId($request->connectionCategoryId);
         $grpcRequest->setConnectionSubcategoryId($request->connectionSubcategoryId);
         $connectionAttribs = new Struct;
