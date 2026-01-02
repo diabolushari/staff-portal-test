@@ -9,16 +9,16 @@ import CheckBox from '@/ui/form/CheckBox'
 import ComboBox from '@/ui/form/ComboBox'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
+import MultiSelectList from '@/ui/form/MultiSelect'
 import SelectList from '@/ui/form/SelectList'
+import TextArea from '@/ui/form/TextArea'
 import { useEffect, useState } from 'react'
 import { route } from 'ziggy-js'
 import { Card } from '../ui/card'
-import TextArea from '@/ui/form/TextArea'
 import ConnectionFlagForm from './ConnectionFlagForm'
+import ConnectionGenerationTypeForm from './ConnectionGenerationTypeForm'
 import useConnectionFlagForm from './useConnectionFlagForm'
 import useConnectionGenerationForm from './useConnectionGenerationForm'
-import ConnectionGenerationTypeForm from './ConnectionGenerationTypeForm'
-import MultiSelectList from '@/ui/form/MultiSelect'
 
 interface Props {
   connection?: Connection
@@ -59,6 +59,7 @@ export default function ConnectionForm({
   generationTypes,
   indicators,
 }: Props) {
+  console.log(connection)
   const [subCategories, setSubCategories] = useState<ParameterValues[]>([])
   const [category, setCategory] = useState<string>('')
 
@@ -79,7 +80,7 @@ export default function ConnectionForm({
     billing_process_id: connection?.billing_process_id ?? '',
     phase_type_id: connection?.phase_type_id ?? '',
     primary_purpose_id: connection?.primary_purpose_id ?? '',
-    other_purposes_ids: connection?.other_purposes_ids ?? [],
+    other_purposes: connection?.other_purposes ?? [],
     admin_office_code: connection?.admin_office_code ?? '',
     service_office_code: connection?.service_office_code ?? '',
     contract_demand_kw_val: connection?.contract_demand_kva_val ?? '',
@@ -103,7 +104,7 @@ export default function ConnectionForm({
     generation_types: generationData,
     prosumers: false,
   })
-  console.log(formData)
+
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     connection ? route('connections.update', connection.connection_id) : route('connections.store'),
     {
@@ -346,11 +347,11 @@ export default function ConnectionForm({
           <MultiSelectList
             label='Other Purposes'
             list={otherPurposeList}
-            dataKey='parameter_value'
+            dataKey='id'
             displayKey='parameter_value'
-            setValue={setFormValue('other_purposes_ids')}
-            value={formData.other_purposes_ids}
-            error={errors?.other_purposes_ids}
+            setValue={setFormValue('other_purposes')}
+            value={formData.other_purposes}
+            error={errors?.other_purposes}
           />
         </div>
       </Card>

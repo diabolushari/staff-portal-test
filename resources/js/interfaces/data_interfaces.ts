@@ -1,4 +1,3 @@
-import { ParameterValue } from 'vendor/tightenco/ziggy/src/js'
 import { ParameterValues } from './parameter_types'
 import { Party } from './parties'
 
@@ -173,8 +172,7 @@ export interface Connection {
   phase_type_id: number | string
   phase_type: ParameterValues
   primary_purpose_id: number | string
-  other_purposes:ParameterValues[]
-  other_purposes_ids:Array<number>
+  other_purposes: number[] | null
   primary_purpose: ParameterValues
   purposes_info: string | null
   renewable_type_id: number | string
@@ -199,7 +197,6 @@ export interface Connection {
   meter_mappings: MeterConnectionMapping[]
   consumer_profiles?: Consumer[]
   latest_meter_reading?: MeterReading
-
   connection_flags?: ConnectionFlag[]
   connection_generation_types?: ConnectionGenerationType[]
 }

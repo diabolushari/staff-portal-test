@@ -10,8 +10,6 @@ use Proto\Connections\ConnectionMessage;
 
 class ConnectionProtoConverter
 {
-
-
     /**
      * Convert ConnectionMessage proto to array.
      *
@@ -163,6 +161,10 @@ class ConnectionProtoConverter
             $latestMeterReadingArray = $meterreadingConverter->toArray($latestMeterReading);
         }
 
+        $otherPurposes = [];
+        foreach ($connection->getOtherPurposes() as $purposeId) {
+            $otherPurposes[] = (int) $purposeId;
+        }
 
         return [
             'version_id' => $connection->getVersionId(),
@@ -190,6 +192,7 @@ class ConnectionProtoConverter
             'connected_load_kw_val' => $connection->getConnectedLoadKwVal(),
             'othercons_flag' => $connection->getOtherconsFlag(),
             'remarks' => $connection->getRemarks(),
+            'other_purposes' => $otherPurposes,
             'connection_attribs' => $connection->getConnectionAttribs() ? json_decode($connection->getConnectionAttribs()->serializeToJsonString(), true) : null,
             'purposes_info' => $connection->getPurposesInfo() ? json_decode($connection->getPurposesInfo()->serializeToJsonString(), true) : null,
             'connected_load_info' => $connection->getConnectedLoadInfo() ? json_decode($connection->getConnectedLoadInfo()->serializeToJsonString(), true) : null,

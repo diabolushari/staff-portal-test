@@ -60,7 +60,7 @@ message ConnectionMessage {
   string application_no = 35;
   optional string remarks = 36;
   optional int32 no_of_main_meters = 37;
-  google.protobuf.Struct other_purposes = 38;
+  repeated int64 other_purposes = 38;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto consumer_type = 39;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_type = 40;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_status = 41;
@@ -112,7 +112,7 @@ message CreateConnectionRequest {
   string application_no = 26;
   optional string remarks = 27;
   optional int32 no_of_main_meters = 28;
-  google.protobuf.Struct other_purposes = 29;
+  repeated int64 other_purposes = 29;
   repeated com.kseb.consumerservice.grpc.connections.ConnectionFlagFormRequest connection_flags = 30;
   repeated com.kseb.consumerservice.grpc.connections.ConnectionGenerationFormRequest connection_generation_types = 31;
 }
@@ -135,10 +135,11 @@ message ListConnectionsRequest {
   int32 page = 1;
   int32 page_size = 2;
   optional string consumer_number = 3;
-  optional int32 office_code = 4;               
-  optional int32 consumer_type_id = 5;          
+  optional int32 office_code = 4;
+  optional int32 consumer_type_id = 5;
   optional int32 primary_purpose_id = 6;
 }
+
 message ListConnectionsResponse {
   repeated ConnectionMessage items = 1;
 }
@@ -147,12 +148,12 @@ message ListConnectionsPaginatedRequest {
   optional string connection_type = 1;
   optional string search = 2;
   optional string consumer_number = 3;
-  optional int32 office_code = 4;               
-  optional int32 consumer_type_id = 5;          
+  optional int32 office_code = 4;
+  optional int32 consumer_type_id = 5;
   optional int32 primary_purpose_id = 6;
-  int32 page_number = 7;   
+  int32 page_number = 7;
   int32 page_size = 8;
-  optional string sort_by = 9;      
+  optional string sort_by = 9;
   optional string sort_direction = 10;
 }
 message ListConnectionsPaginatedResponse {
@@ -218,8 +219,9 @@ message ConnectionUpdateRequest {
   string application_no = 26;
   optional string remarks = 27;
   optional int32 no_of_main_meters = 28;
-  google.protobuf.Struct other_purposes = 29;
+  repeated int64 other_purposes = 29;
 }
+
 message ConnectionUpdateResponse {
   ConnectionMessage connection = 1;
 }
