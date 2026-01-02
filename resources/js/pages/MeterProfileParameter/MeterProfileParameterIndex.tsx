@@ -73,10 +73,10 @@ const MeterProfileParameterIndex = ({
           <ParameterValueModal
             onClose={() => setShowModal(false)}
             definition={definition}
-            title='Add Meter Profile'
-            codeLabel='Meter Profile Code'
-            valueLabel='Meter Profile Label'
-            descriptionLabel='Meter Profile Description'
+            title='Add Metering Profile'
+            codeLabel='Code'
+            valueLabel='Name'
+            descriptionLabel='Description'
           />
         )}
       </div>

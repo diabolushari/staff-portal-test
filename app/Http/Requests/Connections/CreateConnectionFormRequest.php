@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Connections;
 
 use Spatie\LaravelData\Attributes\MapName;
+use Spatie\LaravelData\Attributes\Validation\Min;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
@@ -33,6 +34,7 @@ class CreateConnectionFormRequest extends Data
         public ?string $remarks,
         public bool $powerIntensive,
         public bool $excessDemand,
+        #[Min(1)]
         public int $noOfMainMeters,
         public array $indicators,
         public array $generationTypes,

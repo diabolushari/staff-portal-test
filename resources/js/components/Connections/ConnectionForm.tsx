@@ -218,6 +218,8 @@ export default function ConnectionForm({
             setValue={setFormValue('no_of_main_meters')}
             value={formData.no_of_main_meters}
             error={errors?.no_of_main_meters}
+            min={1}
+            type='number'
             required
           />
           <div className='col-span-2'>
@@ -339,7 +341,7 @@ export default function ConnectionForm({
         </div>
         <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
           <Input
-            label='Contract Demand (kW)'
+            label='Contract Demand (kVA)'
             setValue={setFormValue('contract_demand_kw_val')}
             value={formData.contract_demand_kw_val}
             error={errors?.contract_demand_kw_val}
