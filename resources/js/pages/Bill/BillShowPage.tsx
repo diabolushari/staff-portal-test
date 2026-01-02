@@ -355,7 +355,7 @@ export default function BillShowPage({
                   <TableRow className='font-bold'>
                     <TableCell colSpan={3}>Total Demand Charge</TableCell>
                     <TableCell className='text-right'>
-                      {Number(chargeHeads['TOTAL DEMAND CHARGE'].result).toFixed(2)}
+                      {Number(chargeHeads['TOTAL DEMAND CHARGE']?.result).toFixed(2)}
                     </TableCell>
                   </TableRow>
                   <TableRow className='font-bold'>
