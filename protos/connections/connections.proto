@@ -59,24 +59,25 @@ message ConnectionMessage {
   string application_no = 35;
   optional string remarks = 36;
   optional int32 no_of_main_meters = 37;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto consumer_type = 38;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_type = 39;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_status = 40;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto open_access_type = 41;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto metering_type = 42;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto phase_type = 43;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto voltage = 44;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_category = 45;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_subcategory = 46;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto tariff = 47;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto primary_purpose = 48;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto billing_process = 49;
-  optional com.kseb.consumerservice.grpc.consumers.OfficeMessage admin_office = 50;
-  optional com.kseb.consumerservice.grpc.consumers.OfficeMessage service_office = 51;
-  repeated com.kseb.consumerservice.grpc.connections.ConsumerMessage consumer_profile = 52;
-  optional com.kseb.consumerservice.proto.meterreading.MeterReadingMessage latest_meter_reading = 53;
-  repeated com.kseb.consumerservice.grpc.connections.ConnectionFlagMessage connection_flags = 54;
-  repeated com.kseb.consumerservice.grpc.connections.ConnectionGenerationTypeMessage connection_generation_types = 55;
+  google.protobuf.Struct other_purposes = 38;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto consumer_type = 39;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_type = 40;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_status = 41;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto open_access_type = 42;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto metering_type = 43;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto phase_type = 44;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto voltage = 45;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_category = 46;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_subcategory = 47;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto tariff = 48;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto primary_purpose = 49;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto billing_process = 50;
+  optional com.kseb.consumerservice.grpc.consumers.OfficeMessage admin_office = 51;
+  optional com.kseb.consumerservice.grpc.consumers.OfficeMessage service_office = 52;
+  repeated com.kseb.consumerservice.grpc.connections.ConsumerMessage consumer_profile = 53;
+  optional com.kseb.consumerservice.proto.meterreading.MeterReadingMessage latest_meter_reading = 54;
+  repeated com.kseb.consumerservice.grpc.connections.ConnectionFlagMessage connection_flags = 55;
+  repeated com.kseb.consumerservice.grpc.connections.ConnectionGenerationTypeMessage connection_generation_types = 56;
 
 }
 
