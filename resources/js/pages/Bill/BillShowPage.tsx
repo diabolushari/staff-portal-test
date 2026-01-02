@@ -44,9 +44,7 @@ export default function BillShowPage({
   computedProperties,
   energyChargeRows,
 }: BillShowPageProps) {
-  const totalAmount = 117839.0
   const mf = meter?.meter_mf || 1
-  console.log(chargeHeads, bill)
   return (
     <MainLayout
       navItems={billingNavItems}
@@ -141,12 +139,12 @@ export default function BillShowPage({
                   <TableRow>
                     <TableCell className='font-bold'>Virtual A/c No</TableCell>
                     <TableCell>
-                      {connection.consumer_profiles?.[0]?.virtual_account_number}
+                      {connection?.consumer_profiles?.[0]?.virtual_account_number}
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className='font-bold'>GSTIN</TableCell>
-                    <TableCell>{consumer?.consumer_gstin}</TableCell>
+                    <TableCell>{connection?.consumer_profiles?.[0]?.consumer_gstin}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell
@@ -190,10 +188,12 @@ export default function BillShowPage({
                     {getDisplayDate(connection?.latest_meter_reading?.metering_date) ?? '---'}
                   </TableCell>
                   <TableCell className='text-center'>
-                    {kvaValues.reduce((s, r) => s + r.difference / kvaValues.length, 0).toFixed(2)}
+                    {kvaValues
+                      ?.reduce((s, r) => s + (r?.difference ?? 0) / kvaValues.length, 0)
+                      .toFixed(2)}
                   </TableCell>
                   <TableCell className='text-center'>
-                    {kwhValues.reduce((s, r) => s + r.difference * mf, 0)}
+                    {kwhValues?.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0)}
                   </TableCell>
                   <TableCell className='text-center'>
                     {computedProperties?.['Power Factor']?.result ?? '--'}
@@ -254,20 +254,18 @@ export default function BillShowPage({
                   return (
                     <TableRow key={i}>
                       <TableCell>{i + 1}</TableCell>
-                      <TableCell>{kwh.final_reading}</TableCell>
-                      <TableCell>{kwh.initial_reading}</TableCell>
+                      <TableCell>{kwh?.final_reading}</TableCell>
+                      <TableCell>{kwh?.initial_reading}</TableCell>
                       <TableCell>{mf}</TableCell>
-                      <TableCell className='text-right'>
-                        {(kwh.difference * mf).toFixed(0)}
-                      </TableCell>
+                      <TableCell className='text-right'>{(kwh?.difference ?? 0) * mf}</TableCell>
                       <TableCell></TableCell>
                       <TableCell>{i + 1}</TableCell>
-                      <TableCell>{lag.initial_reading || '-'}</TableCell>
-                      <TableCell>{lag.final_reading || '-'}</TableCell>
+                      <TableCell>{lag?.initial_reading || '-'}</TableCell>
+                      <TableCell>{lag?.final_reading || '-'}</TableCell>
                       <TableCell>{mf}</TableCell>
-                      <TableCell className='text-right'>{(lag.difference || 0) * mf}</TableCell>
-                      <TableCell>{lead.initial_reading || ''}</TableCell>
-                      <TableCell>{lead.final_reading || ''}</TableCell>
+                      <TableCell className='text-right'>{(lag?.difference ?? 0) * mf}</TableCell>
+                      <TableCell>{lead?.initial_reading || ''}</TableCell>
+                      <TableCell>{lead?.final_reading || ''}</TableCell>
                       <TableCell className='text-right'>{(lead.difference || 0) * mf}</TableCell>
                     </TableRow>
                   )
@@ -275,16 +273,16 @@ export default function BillShowPage({
                 <TableRow className='bg-gray-100 font-bold'>
                   <TableCell colSpan={4}>Total</TableCell>
                   <TableCell className='text-right'>
-                    {kwhValues.reduce((s, r) => s + r.difference * mf, 0)}
+                    {kwhValues?.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0)}
                   </TableCell>
                   <TableCell></TableCell>
                   <TableCell colSpan={4}>Total kVARh (Lag)</TableCell>
                   <TableCell className='text-right'>
-                    {lagValues.reduce((s, r) => s + (r?.difference || 0) * mf, 0)}
+                    {lagValues?.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0)}
                   </TableCell>
                   <TableCell colSpan={2}>Total kVARh (Lead)</TableCell>
                   <TableCell>
-                    {leadValues.reduce((s, r) => s + (r?.difference || 0) * mf, 0)}
+                    {leadValues?.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0)}
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -335,12 +333,12 @@ export default function BillShowPage({
                 <TableRow className='bg-gray-100 font-bold'>
                   <TableCell colSpan={4}>Total</TableCell>
                   <TableCell className='text-right'>
-                    {kvahValues.reduce((s, r) => s + r.difference * mf, 0)}
+                    {kvahValues.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0)}
                   </TableCell>
                   <TableCell></TableCell>
                   <TableCell colSpan={3}>Total</TableCell>
                   <TableCell className='text-right'>
-                    {kvaValues.reduce((s, r) => s + (r?.difference || 0) * mf, 0).toFixed(1)}
+                    {kvaValues.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0).toFixed(1)}
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -355,16 +353,16 @@ export default function BillShowPage({
                   <TableRow className='font-bold'>
                     <TableCell colSpan={3}>Total Demand Charge</TableCell>
                     <TableCell className='text-right'>
-                      {Number(chargeHeads['TOTAL DEMAND CHARGE'].result).toFixed(2)}
+                      {Number(chargeHeads['TOTAL DEMAND CHARGE']?.result).toFixed(2)}
                     </TableCell>
                   </TableRow>
                   <TableRow className='font-bold'>
                     <TableCell colSpan={3}>2. Total Energy Charges</TableCell>
                     <TableCell className='text-right'>
-                      {Number(energyChargeRows.subTotal).toFixed(2)}
+                      {Number(energyChargeRows?.subTotal).toFixed(2)}
                     </TableCell>
                   </TableRow>
-                  {energyChargeRows.energyChargeRows.map((row: any, i: number) => (
+                  {energyChargeRows?.energyChargeRows?.map((row: any, i: number) => (
                     <TableRow key={i}>
                       <TableCell
                         colSpan={3}
@@ -422,7 +420,7 @@ export default function BillShowPage({
 
                   <TableRow className='bg-gray-100 font-bold'>
                     <TableCell>Net Payable</TableCell>
-                    <TableCell className='text-right text-base'>{bill.bill_amount}</TableCell>
+                    <TableCell className='text-right text-base'>{bill?.bill_amount}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>

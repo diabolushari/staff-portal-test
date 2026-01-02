@@ -123,6 +123,7 @@ class MeterProtoConvertor
             'created_by' => $meter->getCreatedBy(),
             'updated_by' => $meter->getUpdatedBy(),
             'transformers' => $transformers,
+            'has_meter_reading' => $meter->getHasMeterReading(),
         ];
     }
 

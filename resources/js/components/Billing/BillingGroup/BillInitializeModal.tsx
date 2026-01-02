@@ -22,6 +22,7 @@ export default function BillInitializeModal({
   billingGroup,
   readingMonthYear,
 }: BillInitializeModalProps) {
+  console.log('readingMonthYear', readingMonthYear)
   const { formData, setFormValue } = useCustomForm({
     billing_group_id: billingGroup.billing_group_id,
     connection_ids: selectedConnections,

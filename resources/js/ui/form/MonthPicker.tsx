@@ -1,10 +1,20 @@
 import React from 'react'
-import { FormFieldProp } from '../ui_interfaces'
+import { Input as ShadcnInput } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 import ErrorText from '@/typography/ErrorText'
+import { FormFieldProp } from '../ui_interfaces'
 
-interface MonthPickerProp extends FormFieldProp {
-  min?: string // Expected format "2024-01"
-  max?: string // Expected format "2030-12"
+interface MonthPickerProp {
+  label?: string
+  value: string
+  error?: string
+  setValue: (value: string) => void
+  placeholder?: string
+  min?: string // format: YYYY-MM
+  max?: string // format: YYYY-MM
+  disabled?: boolean
+  required?: boolean
+  className?: string
 }
 
 export default function MonthPicker({
@@ -16,24 +26,35 @@ export default function MonthPicker({
   min,
   max,
   disabled = false,
-}: MonthPickerProp) {
+  required = false,
+  className = '',
+}: Readonly<MonthPickerProp>) {
+  const figmaInputClasses = cn(
+    'w-full bg-white px-3 py-2 rounded border border-gray-200 text-sm font-normal text-black',
+    'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0078d4] focus-visible:border-kseb-primary',
+    'disabled:bg-gray-50 disabled:text-black disabled:cursor-not-allowed disabled:opacity-100',
+    'placeholder:text-gray-400',
+    className
+  )
+
   return (
-    <div className='flex flex-col'>
-      {label && (
-        <label className='font-inter text-left align-top text-sm leading-[1.4] tracking-[-0.006em] text-gray-800 dark:text-gray-200'>
-          {label}
+    <div className='space-y-1'>
+      {label != null && (
+        <label className='text-sm leading-6 font-normal text-[#252c32]'>
+          {required ? `${label} *` : label}
         </label>
       )}
 
-      <input
+      <ShadcnInput
         type='month'
         value={value}
-        min={min}
-        max={max}
+        min={min ?? undefined}
+        max={max ?? undefined}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
+        className={figmaInputClasses}
         disabled={disabled}
-        className='rounded-sm border border-gray-300 bg-transparent p-2 text-sm text-gray-800 shadow-xs focus:border-indigo-700 focus:outline-hidden disabled:bg-gray-100'
+        required={required}
       />
 
       {error && <ErrorText>{error}</ErrorText>}

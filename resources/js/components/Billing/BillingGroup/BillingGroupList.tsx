@@ -50,14 +50,7 @@ export default function BillingGroupList({ billingGroups }: Props) {
                   </div>
 
                   <div className='font-inter text-sm leading-[20px] text-gray-600'>
-                    {billingGroup.description}
-                  </div>
-
-                  <div className='flex w-full items-center gap-5'>
-                    Effective Start:
-                    <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                      <b>{getDisplayDate(billingGroup?.effective_start)}</b>
-                    </div>
+                    {billingGroup?.description}
                   </div>
                 </div>
               </div>

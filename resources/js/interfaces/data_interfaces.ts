@@ -368,6 +368,7 @@ export interface Meter {
   updated_by: number | null
 
   transformers: MeterTransformer[]
+  has_meter_reading?: boolean
 }
 
 export interface MeterTransformer {

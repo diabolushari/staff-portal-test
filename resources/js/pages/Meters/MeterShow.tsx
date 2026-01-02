@@ -1,13 +1,7 @@
-import MeterTimezoneCard from '@/components/Meter/MeterTimezoneCard'
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
-import {
-  Meter,
-  MeterTimezoneType,
-  MeterTransformer,
-  MeterTransformerAssignment,
-} from '@/interfaces/data_interfaces'
+import { Meter, MeterTimezoneType, MeterTransformer } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import type { BreadcrumbItem } from '@/types'
@@ -69,7 +63,9 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
           >
             DELETE
           </button>
-          <EditButton onClick={() => router.get(route('meters.edit', meter.meter_id))} />
+          {!meter?.has_meter_reading && (
+            <EditButton onClick={() => router.get(route('meters.edit', meter.meter_id))} />
+          )}
         </div>
 
         {/* Main Content Card */}
