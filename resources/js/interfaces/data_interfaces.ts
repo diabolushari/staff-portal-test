@@ -394,6 +394,7 @@ export interface MeterTransformer {
   burden?: Partial<ParameterValues> | null
   make?: Partial<ParameterValues> | null
   type?: Partial<ParameterValues> | null
+  is_edit: boolean
   ctpt_serial: string
   ratio_primary_value: string | null
   ratio_secondary_value: string | null

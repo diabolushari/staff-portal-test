@@ -52,14 +52,14 @@ class CreateMeterReadingController extends Controller
             1,
             100,
             null,
-            'Meter CTPT',
+            'CTPT',
             'CT-Health Type',
         );
         $ptHealthTypes = $this->parameterService->getParameterValues(
             1,
             100,
             null,
-            'Meter CTPT',
+            'CTPT',
             'PT-Health Type',
         );
 
@@ -80,7 +80,7 @@ class CreateMeterReadingController extends Controller
         $latestMeterReading = $this->meterReadingService->latestMeterReading($connectionId);
         $meterIds = [];
         if ($meterConnectionRel->data != null) {
-            $meterIds = array_map(fn ($mapping) => $mapping['meter_id'], $meterConnectionRel->data);
+            $meterIds = array_map(fn($mapping) => $mapping['meter_id'], $meterConnectionRel->data);
         }
 
         $ctptRelations = [];

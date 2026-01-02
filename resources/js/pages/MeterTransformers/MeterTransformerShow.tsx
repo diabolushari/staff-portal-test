@@ -6,6 +6,7 @@ import Field from '@/components/ui/field'
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { MeterTransformer } from '@/interfaces/data_interfaces'
 import { getDisplayDate } from '@/utils'
+import { router } from '@inertiajs/react'
 
 interface Props {
   transformer: MeterTransformer
@@ -21,7 +22,10 @@ export default function MeterTransformerShow({ transformer }: Readonly<Props>) {
     { title: 'CTPTs', href: '/meter-ctpt' },
     { title: 'Detail', href: `/meter-ctpt/${transformer.meter_ctpt_id}` },
   ]
-
+  const handleEdit = () => {
+    router.get(route('meter-ctpt.edit', transformer.meter_ctpt_id))
+  }
+  console.log(transformer)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -34,6 +38,18 @@ export default function MeterTransformerShow({ transformer }: Readonly<Props>) {
         </>
       }
     >
+      <div>
+        <div className='flex flex-col gap-4 pr-3 sm:flex-row sm:items-end sm:justify-end'>
+          {/* {transformer.is_edit && (
+            <button
+              onClick={handleEdit}
+              className='link-button-text'
+            >
+              EDIT
+            </button>
+          )} */}
+        </div>
+      </div>
       {/* Main Content Card */}
       <Card className='rounded-lg p-7'>
         <StrongText className='mb-6 block text-base font-semibold text-[#252c32]'>

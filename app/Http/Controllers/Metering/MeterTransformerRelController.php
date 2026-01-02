@@ -43,8 +43,8 @@ class MeterTransformerRelController extends Controller
         $meters = $this->meterService->listMeters();
 
         $parameterRequests = [
-            'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Status')->data,
-            'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Change Reason')->data,
+            'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Status')->data,
+            'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Change Reason')->data,
         ];
 
         return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [
@@ -101,8 +101,8 @@ class MeterTransformerRelController extends Controller
         // Fetch statuses + change reasons
 
         $parameterRequests = [
-            'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Status')->data,
-            'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'Meter CTPT', 'Change Reason')->data,
+            'statuses' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Status')->data,
+            'changeReasons' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Change Reason')->data,
         ];
 
         return Inertia::render('MeterTransformerRel/MeterTransformerRelForm', [

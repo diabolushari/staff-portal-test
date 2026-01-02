@@ -30,6 +30,7 @@ message MeterTransformerMessage {
   int64 updated_by = 18;
   bool is_active = 19;
   google.protobuf.Timestamp manufacture_date = 20;
+  optional bool is_edit = 21;
 }
 
 message CreateMeterTransformerMessage {
@@ -48,6 +49,27 @@ message CreateMeterTransformerMessage {
 
 message CreateMeterTransformerRequest {
   CreateMeterTransformerMessage transformer = 1;
+}
+
+message UpdateMeterTransformerMessage{
+  int64 meter_ctpt_id = 1;
+  optional int64 ownership_type_id = 2;
+  optional int64 accuracy_class_id = 3;
+  optional int64 burden_id = 4;
+  optional int64 make_id = 5;
+  optional int64 type_id = 6;
+
+  optional string ctpt_serial = 7;
+  optional string ratio_primary_value = 8;
+  optional string ratio_secondary_value = 9;
+
+  optional int64 updated_by = 10;
+  optional google.protobuf.Timestamp manufacture_date = 11;
+}
+
+
+message UpdateMeterTransformerRequest {
+  UpdateMeterTransformerMessage transformer = 1;
 }
 
 
@@ -110,6 +132,7 @@ message MeterTransformerPaginatedListResponse {
 
 service MeterTransformerService {
   rpc CreateMeterTransformer(CreateMeterTransformerRequest) returns (MeterTransformerMessage);
+  rpc UpdateMeterTransformer(UpdateMeterTransformerRequest) returns (MeterTransformerMessage);
   rpc GetMeterTransformer(GetMeterTransformerRequest)       returns (MeterTransformerMessage);
   rpc DeleteMeterTransformer(DeleteMeterTransformerRequest) returns (google.protobuf.Empty);
   rpc ListMeterTransformers(ListMeterTransformersRequest)   returns (ListMeterTransformersResponse);

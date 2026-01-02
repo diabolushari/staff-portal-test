@@ -29,14 +29,14 @@ class CreateMeterCtptRelController extends Controller
                 1,
                 100,
                 null,
-                'Meter CTPT',
+                'CTPT',
                 'Status'
             )->data,
             'changeReasons' => $this->parameterValueService->getParameterValues(
                 1,
                 100,
                 null,
-                'Meter CTPT',
+                'CTPT',
                 'Change Reason'
             )->data,
         ];

@@ -51,6 +51,7 @@ export default function MeterTransformerIndex({
   const items = transformers?.data ?? []
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedTransformer, setSelectedTransformer] = useState<MeterTransformer | null>(null)
+  console.log(items)
 
   function handleDeleteClick(item: MeterTransformer) {
     setShowDeleteModal(true)
