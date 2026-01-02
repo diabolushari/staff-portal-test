@@ -100,8 +100,7 @@ class MeterTransformerController extends Controller
             'burdens' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Burden')->data,
             'makes' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Make')->data,
             'types' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Type')->data,
-            'primaryRatios' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Primary Ratio')->data,
-            'secondaryRatios' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Secondary Ratio')->data,
+
         ];
 
         return Inertia::render('MeterTransformers/MeterTransformerForm', $parameterRequests);
@@ -133,6 +132,37 @@ class MeterTransformerController extends Controller
         return Inertia::render('MeterTransformers/MeterTransformerShow', [
             'transformer' => $response->data ?? null,
         ]);
+    }
+
+
+    public function edit(int $id): Response
+    {
+
+        $response = $this->transformerService->getTransformer($id);
+        $parameterRequests = [
+            'ownershipTypes' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Ownership Type')->data,
+            'accuracyClasses' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Accuracy Class')->data,
+            'burdens' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Burden')->data,
+            'makes' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Make')->data,
+            'types' => $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Type')->data,
+        ];
+
+        return Inertia::render('MeterTransformers/MeterTransformerForm', [
+            'transformer' => $response->data ?? null,
+            ...$parameterRequests
+        ]);
+    }
+
+    public function update(int $id, MeterTransformerFormRequest $request): RedirectResponse
+    {
+        $response = $this->transformerService->updateTransformer($id, $request);
+
+        if ($response->hasError()) {
+            return redirect()->back()->withErrors($response->error ?? 'Unknown error');
+        }
+
+        return redirect()->route('meter-ctpt.show', $id)
+            ->with('message', 'Meter Transformer updated successfully.');
     }
 
     /**

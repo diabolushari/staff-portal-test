@@ -1,23 +1,24 @@
+import ConnectionFlagModal from '@/components/Connections/ConnectionFlagModal'
+import ConnectionGenerationFormModal from '@/components/Connections/ConnectionGenerationFormModal'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
 import type { Connection } from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import StrongText from '@/typography/StrongText'
+import AddButton from '@/ui/button/AddButton'
 import EditButton from '@/ui/button/EditButton'
 import { router } from '@inertiajs/react'
 import { useMemo, useState } from 'react'
 import { groupFlagsBySection } from '../Consumer/ConsumerShow'
-import AddButton from '@/ui/button/AddButton'
-import ConnectionFlagModal from '@/components/Connections/ConnectionFlagModal'
-import { ParameterValues } from '@/interfaces/parameter_types'
-import ConnectionGenerationFormModal from '@/components/Connections/ConnectionGenerationFormModal'
 
 interface Props {
   connection: Connection
   consumerExist: boolean
   indicators: ParameterValues[]
   generationTypes: ParameterValues[]
+  primaryPurposes: ParameterValues[]
 }
 
 export default function ConnectionsShow({
@@ -25,6 +26,7 @@ export default function ConnectionsShow({
   consumerExist,
   indicators,
   generationTypes,
+  primaryPurposes,
 }: Readonly<Props>) {
   const formatDate = (dateStr?: string | null) =>
     dateStr ? new Date(dateStr).toLocaleDateString() : '-'
@@ -59,6 +61,30 @@ export default function ConnectionsShow({
     setEditGeneration(!editGeneration)
   }
 
+  const otherPurposesLabel = useMemo(() => {
+    if (!connection?.other_purposes?.length) {
+      return '-'
+    }
+
+    const purposeMap = new Map(
+      primaryPurposes.map((purpose) => [purpose.id, purpose.parameter_value])
+    )
+
+    console.log('purposeMap', purposeMap)
+
+    const labels = connection.other_purposes
+      .map((purposeId) => purposeMap.get(Number(purposeId)))
+      .filter((label) => label != undefined)
+
+    if (!labels.length) {
+      return '-'
+    }
+
+    return labels.join(', ')
+  }, [connection?.other_purposes, primaryPurposes])
+
+  console.log(connection)
+
   return (
     <ConnectionsLayout
       connection={connection}
@@ -78,18 +104,6 @@ export default function ConnectionsShow({
       meterExist={connection?.meter_mappings?.length > 0}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto'>
-        {/* Header */}
-        {/* <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-          <div className='flex flex-col gap-2'>
-            <StrongText className='text-2xl font-semibold text-[#252c32]'>Connection</StrongText>
-            <span className='text-sm text-gray-600'>
-              Consumer No: {connection?.consumer_number}
-            </span>
-          </div>
-        </div> */}
-
-        {/* Tabs */}
-
         <div className='space-y-6'>
           <div className='flex justify-end pr-5'>
             <button
@@ -151,6 +165,10 @@ export default function ConnectionsShow({
               <Field
                 label='Service Connection Date'
                 value={formatDate(connection?.connected_date)}
+              />
+              <Field
+                label='Number of Main Meters'
+                value={connection.no_of_main_meters}
               />
               <div className='col-span-2 mt-4'>
                 {connection?.remarks && (
@@ -234,6 +252,10 @@ export default function ConnectionsShow({
               <Field
                 label='Primary Purpose'
                 value={connection?.primary_purpose?.parameter_value}
+              />
+              <Field
+                label='Other Purposes'
+                value={otherPurposesLabel}
               />
             </div>
           </Card>

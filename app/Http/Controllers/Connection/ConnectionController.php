@@ -98,6 +98,13 @@ class ConnectionController extends Controller
             'Connection',
             'Generation Type'
         );
+        $primaryPurposes = $this->parameterValueService->getParameterValues(
+            null,
+            null,
+            null,
+            'Connection',
+            'Primary Purpose'
+        );
         if ($connection->hasError()) {
             if ($connection->error) {
                 return $connection->error;
@@ -114,6 +121,7 @@ class ConnectionController extends Controller
             'consumerExist' => $consumerExist,
             'indicators' => $indicators->data,
             'generationTypes' => $generationTypes->data,
+            'primaryPurposes' => $primaryPurposes->data,
         ]);
     }
 
@@ -138,7 +146,9 @@ class ConnectionController extends Controller
             ]);
         }
 
-        return redirect()->route('connections.show', $id)->with('success', 'Connection updated successfully.');
+        return redirect()->route('connections.show', $id)->with([
+            'message' => 'Connection updated successfully.',
+        ]);
     }
 
     public function destroy(int $id): RedirectResponse

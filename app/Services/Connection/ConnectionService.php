@@ -107,7 +107,6 @@ class ConnectionService
             $connectionArray[] = ConnectionProtoConverter::convertToArray($connection);
         }
 
-
         $paginatedData = [
             'connections' => $connectionArray,
             'total_count' => $response->getTotalCount(),
@@ -132,10 +131,14 @@ class ConnectionService
         $grpcRequest->setContractDemandKvaVal($request->contractDemandKwVal);
         $grpcRequest->setTariffId($request->tariffTypeId);
         $grpcRequest->setPrimaryPurposeId($request->primaryPurposeId);
+        $grpcRequest->setOtherPurposes($request->otherPurposes ?? []);
         $grpcRequest->setConnectionCategoryId($request->connectionCategoryId);
         $grpcRequest->setConnectionSubcategoryId($request->connectionSubcategoryId);
         if ($request->remarks) {
             $grpcRequest->setRemarks($request->remarks);
+        }
+        if ($request->noOfMainMeters) {
+            $grpcRequest->setNoOfMainMeters($request->noOfMainMeters);
         }
         $connectionAttribs = new Struct;
         $connectionAttribs->setFields($request->connectionAttribs ?? []);
@@ -153,9 +156,7 @@ class ConnectionService
         $grpcRequest->setOtherconsFlag($request->otherconsFlag);
         $grpcRequest->setRemarks($request->remarks ?? '');
 
-
-
-        if (!empty($request->indicators)) {
+        if (! empty($request->indicators)) {
             foreach ($request->indicators as $group) {
 
                 if (empty($group['flags'])) {
@@ -164,14 +165,14 @@ class ConnectionService
 
                 foreach ($group['flags'] as $flag) {
 
-                    if (!($flag['value'] ?? false)) {
+                    if (! ($flag['value'] ?? false)) {
                         continue;
                     }
                     $flagPayload = [
                         'connection_id' => $request->connectionId ?? 0,
                         'flag_id' => $flag['id'],
-                        'value' => $flag['value'] ??  null,
-                        'label' => $flag['label'] ??  null,
+                        'value' => $flag['value'] ?? null,
+                        'label' => $flag['label'] ?? null,
                     ];
 
                     $grpcRequest->getConnectionFlags()[] =
@@ -180,17 +181,17 @@ class ConnectionService
             }
         }
 
-        if (!empty($request->generationTypes)) {
+        if (! empty($request->generationTypes)) {
             foreach ($request->generationTypes as $generationType) {
-                if (!($generationType['value'] ?? false)) {
+                if (! ($generationType['value'] ?? false)) {
                     continue;
                 }
                 $generationPayload = [
                     'connection_id' => $request->connectionId ?? 0,
                     'generation_type_id' => $generationType['id'],
-                    'generation_sub_type_id' => $generationType['generation_sub_type_id'] ??  null,
-                    'value' => $generationType['value'] ??  null,
-                    'label' => $generationType['label'] ??  null,
+                    'generation_sub_type_id' => $generationType['generation_sub_type_id'] ?? null,
+                    'value' => $generationType['value'] ?? null,
+                    'label' => $generationType['label'] ?? null,
                 ];
 
                 $grpcRequest->getConnectionGenerationTypes()[] =
@@ -199,8 +200,6 @@ class ConnectionService
                     );
             }
         }
-
-
 
         [$response, $status] = $this->client->CreateConnection($grpcRequest)->wait();
 
@@ -256,6 +255,10 @@ class ConnectionService
         $grpcRequest->setContractDemandKvaVal($request->contractDemandKwVal);
         $grpcRequest->setTariffId($request->tariffTypeId);
         $grpcRequest->setPrimaryPurposeId($request->primaryPurposeId);
+        $grpcRequest->setOtherPurposes($request->otherPurposes ?? []);
+        if ($request->noOfMainMeters) {
+            $grpcRequest->setNoOfMainMeters($request->noOfMainMeters);
+        }
         $grpcRequest->setConnectionCategoryId($request->connectionCategoryId);
         $grpcRequest->setConnectionSubcategoryId($request->connectionSubcategoryId);
         $connectionAttribs = new Struct;

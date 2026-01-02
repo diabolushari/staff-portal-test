@@ -40,14 +40,14 @@ export default function MeterTransformerShow({ transformer }: Readonly<Props>) {
     >
       <div>
         <div className='flex flex-col gap-4 pr-3 sm:flex-row sm:items-end sm:justify-end'>
-          {/* {transformer.is_edit && (
+          {transformer.is_edit && (
             <button
               onClick={handleEdit}
               className='link-button-text'
             >
               EDIT
             </button>
-          )} */}
+          )}
         </div>
       </div>
       {/* Main Content Card */}
