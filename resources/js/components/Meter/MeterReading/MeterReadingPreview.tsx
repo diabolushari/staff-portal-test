@@ -50,7 +50,7 @@ const calculatePowerFactor = (
     (p) => p.meter_parameter_id === kvahProfile.meter_parameter_id
   )
 
-  return timezones.map((tz) => {
+  return timezones?.map((tz) => {
     const kwhReading = kwhParam?.readings.find((r) => r.timezone_id === tz.timezone_id)
     const kvahReading = kvahParam?.readings.find((r) => r.timezone_id === tz.timezone_id)
 
@@ -134,7 +134,7 @@ export default function MeterReadingPreview({
       )
     : []
 
-  const averagePF = powerFactorData.length > 0 ? calculateAveragePF(powerFactorData) : null
+  const averagePF = powerFactorData?.length > 0 ? calculateAveragePF(powerFactorData) : null
 
   return (
     <div

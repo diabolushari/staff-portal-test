@@ -12,6 +12,7 @@ interface BillInitializeModalProps {
   showModal: boolean
   selectedConnections: number[]
   billingGroup: BillingGroup
+  readingMonthYear: string
 }
 
 export default function BillInitializeModal({
@@ -19,17 +20,17 @@ export default function BillInitializeModal({
   showModal,
   selectedConnections,
   billingGroup,
+  readingMonthYear,
 }: BillInitializeModalProps) {
   const { formData, setFormValue } = useCustomForm({
     billing_group_id: billingGroup.billing_group_id,
     connection_ids: selectedConnections,
-    bill_month_year: '',
-    reading_month_year: '',
-    bill_date: '',
-    due_date: '',
-    dc_date: '',
+    bill_month_year: dayjs(readingMonthYear).add(1, 'month').format('YYYY-MM').toString(),
+    reading_month_year: dayjs(readingMonthYear).format('YYYY-MM').toString(),
+    bill_date: dayjs().format('YYYY-MM-DD'),
+    due_date: dayjs().add(7, 'day').format('YYYY-MM-DD'),
+    dc_date: dayjs().add(15, 'day').format('YYYY-MM-DD'),
   })
-
   const handleBillDateChange = (value: string) => {
     setFormValue('bill_date')(value)
 
