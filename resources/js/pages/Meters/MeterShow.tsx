@@ -12,6 +12,7 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import type { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
+import EditButton from '@/ui/button/EditButton'
 import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 
@@ -68,6 +69,7 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
           >
             DELETE
           </button>
+          <EditButton onClick={() => router.get(route('meters.edit', meter.meter_id))} />
         </div>
 
         {/* Main Content Card */}
@@ -218,11 +220,11 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
         </Card>
 
         {/* --- Timezone Information --- */}
-        <MeterTimezoneCard
+        {/* <MeterTimezoneCard
           meter={meter}
           currentTimezone={currentTimezone}
           timezoneTypes={timezoneTypes}
-        />
+        /> */}
       </div>
     </MainLayout>
   )

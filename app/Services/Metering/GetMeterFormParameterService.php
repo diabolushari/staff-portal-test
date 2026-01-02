@@ -10,7 +10,7 @@ class GetMeterFormParameterService
         private readonly ParameterValueService $parameterValueService,
     ) {}
 
-    public function getMeterFormParameters()
+    public function getMeterFormParameters(): array
     {
         $viewData = [
             'ownershipTypes' => $this->parameterValueService->getParameterValues(
@@ -104,6 +104,35 @@ class GetMeterFormParameterService
                 'Meter',
                 'Timezone Type'
             )->data,
+            'meterCtPrimary' => $this->parameterValueService->getParameterValues(
+                null,
+                null,
+                null,
+                'Meter',
+                'Internal CT Primary'
+            )->data,
+            'meterCtSecondary' => $this->parameterValueService->getParameterValues(
+                null,
+                null,
+                null,
+                'Meter',
+                'Internal CT Secondary'
+            )->data,
+            'meterPtPrimary' => $this->parameterValueService->getParameterValues(
+                null,
+                null,
+                null,
+                'Meter',
+                'Internal PT Primary'
+            )->data,
+            'meterPtSecondary' => $this->parameterValueService->getParameterValues(
+                null,
+                null,
+                null,
+                'Meter',
+                'Internal PT Secondary'
+            )->data,
+
         ];
 
         return $viewData;

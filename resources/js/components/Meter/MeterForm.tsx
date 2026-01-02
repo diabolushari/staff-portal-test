@@ -287,7 +287,7 @@ export default function MeterForm({
           value={formData.internal_ct_primary}
           setValue={setFormValue('internal_ct_primary')}
           list={internalCtPrimary}
-          dataKey='id'
+          dataKey='parameter_value'
           displayKey='parameter_value'
           error={errors.internal_ct_primary}
           required
@@ -297,7 +297,7 @@ export default function MeterForm({
           value={formData.internal_ct_secondary}
           setValue={setFormValue('internal_ct_secondary')}
           list={internalCtSecondary}
-          dataKey='id'
+          dataKey='parameter_value'
           displayKey='parameter_value'
           error={errors.internal_ct_secondary}
           required
@@ -307,7 +307,7 @@ export default function MeterForm({
           value={formData.internal_pt_primary}
           setValue={setFormValue('internal_pt_primary')}
           list={internalPtPrimary}
-          dataKey='id'
+          dataKey='parameter_value'
           displayKey='parameter_value'
           error={errors.internal_pt_primary}
           required
@@ -317,7 +317,7 @@ export default function MeterForm({
           value={formData.internal_pt_secondary}
           setValue={setFormValue('internal_pt_secondary')}
           list={internalPtSecondary}
-          dataKey='id'
+          dataKey='parameter_value'
           displayKey='parameter_value'
           error={errors.internal_pt_secondary}
           required

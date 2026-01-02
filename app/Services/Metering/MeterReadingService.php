@@ -2,7 +2,8 @@
 
 namespace App\Services\Metering;
 
-use App\GrpcConverters\MeterProtoConvertor;
+use App\GrpcConverters\Meter\MeterProtoConvertor;
+
 use App\Http\Requests\Metering\MeterReadingForm;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
@@ -37,11 +38,13 @@ class MeterReadingService
         );
     }
 
-    public function listMeterReadings(?int $page = 1, ?int $pageSize = 10,
-     ?string $search = null,
-      ?int $connectionId = null,
-      ?string $readingMonthYear = null): GrpcServiceResponse
-    {
+    public function listMeterReadings(
+        ?int $page = 1,
+        ?int $pageSize = 10,
+        ?string $search = null,
+        ?int $connectionId = null,
+        ?string $readingMonthYear = null
+    ): GrpcServiceResponse {
         $protoRequest = new ListMeterReadingRequest;
         if ($page) {
             $protoRequest->setPage($page);
@@ -55,7 +58,7 @@ class MeterReadingService
         if ($connectionId) {
             $protoRequest->setConnectionId($connectionId);
         }
-        if(DateTimeConverter::convertStringToTimestamp($readingMonthYear)) {
+        if (DateTimeConverter::convertStringToTimestamp($readingMonthYear)) {
             $protoRequest->setReadingMonthYear(DateTimeConverter::convertStringToTimestamp($readingMonthYear));
         }
         [$response, $status] = $this->client->ListMeterReading($protoRequest)->wait();
@@ -191,7 +194,7 @@ class MeterReadingService
     {
         $protoRequest = new LatestMeterReadingRequest();
         $protoRequest->setConnectionId($connectionId);
-        
+
         [$response, $status] = $this->client->LatestMeterReading($protoRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -308,7 +311,6 @@ class MeterReadingService
                     }
 
                     $protoRequest->getReadings()[] = $protoReading;
-
                 }
             }
         }
@@ -318,7 +320,7 @@ class MeterReadingService
 
             if ($meterHealth['meter_health_id'] == null) {
                 throw ValidationException::withMessages([
-                    'meter_health_id' => ['Meter health is required. for meter :'.$meterHealth['meter_serial']],
+                    'meter_health_id' => ['Meter health is required. for meter :' . $meterHealth['meter_serial']],
                 ]);
             }
             $protoMeterHealth->setMeterHealthId($meterHealth['meter_health_id']);
@@ -330,7 +332,7 @@ class MeterReadingService
 
                 if ($transformer['health'] == null) {
                     throw ValidationException::withMessages([
-                        'ctpt_health_id' => ['CTPT health is required. for meter CTPT :'.$transformer['ctpt_serial']],
+                        'ctpt_health_id' => ['CTPT health is required. for meter CTPT :' . $transformer['ctpt_serial']],
                     ]);
                 }
 
@@ -444,7 +446,6 @@ class MeterReadingService
                     }
 
                     $protoRequest->getReadings()[] = $protoReading;
-
                 }
             }
         }

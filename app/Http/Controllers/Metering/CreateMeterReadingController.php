@@ -80,7 +80,7 @@ class CreateMeterReadingController extends Controller
         $latestMeterReading = $this->meterReadingService->latestMeterReading($connectionId);
         $meterIds = [];
         if ($meterConnectionRel->data != null) {
-            $meterIds = array_map(fn ($mapping) => $mapping['meter_id'], $meterConnectionRel->data);
+            $meterIds = array_map(fn($mapping) => $mapping['meter_id'], $meterConnectionRel->data);
         }
 
         $ctptRelations = [];
@@ -96,14 +96,6 @@ class CreateMeterReadingController extends Controller
                 $meterWithTimezoneAndProfile['meter_id'] = $meterConnectionRel['meter_id'];
                 $meter = $this->meterService->getMeter($meterConnectionRel['meter_id']);
                 $meterWithTimezoneAndProfile['meter'] = $meter->data;
-
-                // if ($meterWithTimezoneAndProfile['meter'] != null && ! empty($ctptRelations)) {
-                //     foreach ($ctptRelations as $ctptRelation) {
-                //         if ($ctptRelation['meter_id'] == $meterWithTimezoneAndProfile['meter']['meter_id'] && isset($ctptRelation['ctpt'])) {
-                //             $meterWithTimezoneAndProfile['meter']['transformers'][] = $ctptRelation['ctpt'];
-                //         }
-                //     }
-                // }
 
                 $data = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($meterConnectionRel['meter_id'])->data ?? [];
                 if (! empty($data)) {
