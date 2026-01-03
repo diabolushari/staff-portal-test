@@ -202,8 +202,12 @@ export default function BillShowPage({
                 <TableRow>
                   <TableCell colSpan={2}>
                     Contract Demand (kVA): {connection?.contract_demand_kva_val ?? '--'}{' '}
-                    {(connection?.contract_demand_kva_val * 0.75).toFixed(1)} |{' '}
-                    {(connection?.contract_demand_kva_val * 1.3).toFixed(1)}
+                    {connection?.contract_demand_kva_val
+                      ? (connection.contract_demand_kva_val * 0.75).toFixed(1)
+                      : '--'}
+                    {connection?.contract_demand_kva_val
+                      ? (connection.contract_demand_kva_val * 1.3).toFixed(1)
+                      : '--'}
                   </TableCell>
                   <TableCell colSpan={4}>
                     Connected Load (kW): {connection?.connected_load_kw_val ?? '--'} | Section: -- |
@@ -248,7 +252,7 @@ export default function BillShowPage({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {kwhValues.map((kwh, i) => {
+                {kwhValues?.map((kwh, i) => {
                   const lag = lagValues[i] || {}
                   const lead = leadValues[i] || {}
                   return (
@@ -309,22 +313,24 @@ export default function BillShowPage({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {kvahValues.map((kvah, i) => {
+                {kvahValues?.map((kvah, i) => {
                   const kva = kvaValues[i] || {}
                   return (
                     <TableRow key={i}>
                       <TableCell>{i + 1}</TableCell>
-                      <TableCell>{kvah.initial_reading}</TableCell>
-                      <TableCell>{kvah.final_reading}</TableCell>
+                      <TableCell>{kvah?.initial_reading ?? '--'}</TableCell>
+                      <TableCell>{kvah?.final_reading ?? '--'}</TableCell>
                       <TableCell>{mf}</TableCell>
                       <TableCell className='text-right'>
-                        {(kvah.difference * mf).toFixed(0)}
+                        {kvah?.difference ? (kvah?.difference * mf).toFixed(0) : '--'}
                       </TableCell>
                       <TableCell></TableCell>
-                      <TableCell className='text-center'>{kva.difference || '-'}</TableCell>
+                      <TableCell className='text-center'>
+                        {kva?.difference ? kva.difference : '-'}
+                      </TableCell>
                       <TableCell>{mf}</TableCell>
                       <TableCell className='text-right'>
-                        {kva.difference ? (kva.difference * mf).toFixed(1) : '-'}
+                        {kva?.difference ? (kva.difference * mf).toFixed(1) : '-'}
                       </TableCell>
                       <TableCell></TableCell>
                     </TableRow>
@@ -333,12 +339,12 @@ export default function BillShowPage({
                 <TableRow className='bg-gray-100 font-bold'>
                   <TableCell colSpan={4}>Total</TableCell>
                   <TableCell className='text-right'>
-                    {kvahValues.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0)}
+                    {kvahValues?.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0)}
                   </TableCell>
                   <TableCell></TableCell>
                   <TableCell colSpan={3}>Total</TableCell>
                   <TableCell className='text-right'>
-                    {kvaValues.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0).toFixed(1)}
+                    {kvaValues?.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0).toFixed(1)}
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -378,7 +384,7 @@ export default function BillShowPage({
                     <TableCell colSpan={3}>3. PF Incentive / Disincentive</TableCell>
                     <TableCell className='text-right'>
                       {Number(
-                        chargeHeads['Power Factor Incentive and Disincentive'].result
+                        chargeHeads['Power Factor Incentive and Disincentive']?.result
                       ).toFixed(2)}
                     </TableCell>
                   </TableRow>

@@ -199,6 +199,11 @@ export default function ProfileReadingForm({
         hasErrors = true
         return
       }
+      if (finalAsNumber < 0) {
+        errors[`${reading.timezone_id}.final`] = 'Final reading must not be less than 0.'
+        hasErrors = true
+        return
+      }
 
       if (Number.isNaN(diffAsNumber) || diffAsNumber < 0) {
         errors[`${reading.timezone_id}.diff`] =

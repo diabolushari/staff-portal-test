@@ -33,15 +33,20 @@ class ConnectionPartiesMappingService
         $grpcRequest = new CreatePartiesConnectionRelRequest;
         $grpcRequest->setPartyId($request->partyId);
         $grpcRequest->setConnectionId($request->connectionId);
-        $grpcRequest->setEffectiveStart(DateTimeConverter::convertStringToTimestamp($request->effectiveStart));
-        $grpcRequest->setIsActive(true);
+        $grpcRequest->setPartyRelationTypeId($request->partyRelationTypeId);
+        $effectiveStart = DateTimeConverter::convertStringToTimestamp($request->effectiveStart);
+        $effectiveEnd = DateTimeConverter::convertStringToTimestamp($request->effectiveEnd);
+        if ($effectiveStart) {
+            $grpcRequest->setEffectiveStart($effectiveStart);
+        }
+        if ($effectiveEnd) {
+            $grpcRequest->setEffectiveEnd($effectiveEnd);
+        }
         $user = FacadesAuth::user();
         if ($user) {
             $grpcRequest->setCreatedBy($user->id);
         }
-        if ($request->effectiveEnd) {
-            $grpcRequest->setEffectiveEnd(DateTimeConverter::convertStringToTimestamp($request->effectiveEnd));
-        }
+
         [$response, $status] = $this->client->CreatePartiesConnectionRel($grpcRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(

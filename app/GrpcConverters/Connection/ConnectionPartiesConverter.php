@@ -2,6 +2,7 @@
 
 namespace App\GrpcConverters\Connection;
 
+use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Services\Parties\PartyService;
 use Proto\Consumers\PartiesConnectionRelMessage;
 
@@ -18,6 +19,8 @@ class ConnectionPartiesConverter
      *    version_id: int,
      *    party_id: int,
      *    connection_id: int,
+     *    party_relation_type_id: int,
+     *    party_relation_type: array,
      *    effective_start: \DateTime | null,
      *    effective_end: \DateTime | null,
      *    is_active: bool,
@@ -48,6 +51,8 @@ class ConnectionPartiesConverter
             'deleted_ts' => $message->getDeletedTs() ? $message->getDeletedTs()->toDateTime() : null,
             'deleted_by' => $message->getDeletedBy(),
             'party' => $partyArray,
+            'party_relation_type_id' => $message->getPartyRelationTypeId(),
+            'party_relation_type' => ParameterValueProtoConvertor::convertToArray($message->getPartyRelationType()),
         ];
     }
 }

@@ -59,6 +59,7 @@ export default function MeterReadingValueForm({
                       setValue={(value) => updateInitialReading(tz.timezone_id, value)}
                       max={maxReadingValue}
                       disabled={!isFirstReading}
+                      min={0}
                     />
                     {errors?.[`${tz.timezone_id}.initial`] && (
                       <ErrorText>{errors[`${tz.timezone_id}.initial`]}</ErrorText>
@@ -96,6 +97,7 @@ export default function MeterReadingValueForm({
                     setValue={(val) => onChange(tz.timezone_id, val)}
                     max={maxReadingValue}
                     disabled={isFirstReading && profileParameter.is_cumulative}
+                    min={0}
                   />
                   {errors?.[`${tz.timezone_id}.final`] && (
                     <ErrorText>{errors[`${tz.timezone_id}.final`]}</ErrorText>
@@ -115,6 +117,7 @@ export default function MeterReadingValueForm({
                       value={tz.values.diff}
                       setValue={() => {}}
                       disabled
+                      min={0}
                     />
                     {errors?.[`${tz.timezone_id}.diff`] && (
                       <ErrorText>{errors[`${tz.timezone_id}.diff`]}</ErrorText>
@@ -136,6 +139,7 @@ export default function MeterReadingValueForm({
                     value={tz.values.value}
                     setValue={() => {}}
                     disabled
+                    min={0}
                   />
                 </TableCell>
               </React.Fragment>
