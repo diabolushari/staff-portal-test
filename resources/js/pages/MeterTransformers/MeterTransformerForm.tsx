@@ -1,6 +1,7 @@
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
 import useFetchList from '@/hooks/useFetchList'
+import useFetchRecord from '@/hooks/useFetchRecord'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { MeterTransformer } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
@@ -96,7 +97,7 @@ export default function MeterTransformerForm({
   })
 
   const { post, loading, errors } = useInertiaPost<typeof formData>(
-    transformer ? `/meter-ctpt/${transformer.meter_ctpt_id}` : '/meter-ctpt',
+    transformer ? route('meter-ctpt.update', transformer.meter_ctpt_id) : route('meter-ctpt.store'),
     {
       showErrorToast: true,
     }
@@ -126,14 +127,14 @@ export default function MeterTransformerForm({
     return `/api/parameter-values?domain_name=CTPT&parameter_name=Secondary Ratio&attribute_name=attribute1Value&attribute_value=${transformerType}`
   }, [transformerType])
 
-  const [filteredPrimaryRatios, primaryRatioLoading] =
-    useFetchList<ParameterValues>(primaryRatioUrl)
+  const [filteredPrimaryRatios] = useFetchRecord<ParameterValues>(
+    primaryRatioUrl ? primaryRatioUrl : ' '
+  )
 
-  const [filteredSecondaryRatios, secondaryRatioLoading] =
-    useFetchList<ParameterValues>(secondaryRatioUrl)
+  const [filteredSecondaryRatios] = useFetchList<ParameterValues>(
+    secondaryRatioUrl ? secondaryRatioUrl : ''
+  )
 
-  console.log(filteredPrimaryRatios)
-  console.log(filteredSecondaryRatios)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -200,25 +201,29 @@ export default function MeterTransformerForm({
             displayKey='parameter_value'
             error={errors.burden_id}
           />
-          <SelectList
-            label={transformerInfo.primary}
-            value={formData.ratio_primary_value}
-            setValue={setFormValue('ratio_primary_value')}
-            list={filteredPrimaryRatios ?? []}
-            dataKey='parameter_value'
-            displayKey='parameter_value'
-            error={errors.ratio_primary_value}
-          />
+          {filteredPrimaryRatios && (
+            <SelectList
+              label={transformerInfo.primary}
+              value={formData.ratio_primary_value}
+              setValue={setFormValue('ratio_primary_value')}
+              list={filteredPrimaryRatios ?? []}
+              dataKey='parameter_value'
+              displayKey='parameter_value'
+              error={errors.ratio_primary_value}
+            />
+          )}
 
-          <SelectList
-            label={transformerInfo.secondary}
-            value={formData.ratio_secondary_value}
-            setValue={setFormValue('ratio_secondary_value')}
-            list={filteredSecondaryRatios ?? []}
-            dataKey='parameter_value'
-            displayKey='parameter_value'
-            error={errors.ratio_secondary_value}
-          />
+          {filteredSecondaryRatios && (
+            <SelectList
+              label={transformerInfo.secondary}
+              value={formData.ratio_secondary_value}
+              setValue={setFormValue('ratio_secondary_value')}
+              list={filteredSecondaryRatios ?? []}
+              dataKey='parameter_value'
+              displayKey='parameter_value'
+              error={errors.ratio_secondary_value}
+            />
+          )}
 
           <DatePicker
             label='Manufacture Date'
