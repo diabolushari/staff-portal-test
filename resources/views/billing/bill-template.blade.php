@@ -164,11 +164,27 @@
               <td>{{ $connection['tariff']['parameter_value'] ?? '-' }}</td>
             </tr>
             <tr>
-              <td rowspan="4" style="width:55%">
+
+              <td rowspan="4" style="width:55%; vertical-align: top; font-size: 13px;">
                 <strong>{{ $consumer['organization_name'] ?? '-' }}</strong><br>
 
-                Mobile: --
+                {{ $consumer['contact_details'][0]['billing_address']['address_line1'] ?? '-' }}
+                {{ isset($consumer['contact_details'][0]['billing_address']['address_line2']) ? ', '.$consumer['contact_details'][0]['billing_address']['address_line2'] : '' }}
+                {{ isset($consumer['contact_details'][0]['billing_address']['city_town_village']) ? ', '.$consumer['contact_details'][0]['billing_address']['city_town_village'] : '' }}
+                {{ isset($consumer['contact_details'][0]['billing_address']['district']['name']) ? ', '.$consumer['contact_details'][0]['billing_address']['district']['name'] : '' }}
+                <br>
+
+                {{ $consumer['contact_details'][0]['billing_address']['state']['name'] ?? '-' }}
+                {{ isset($consumer['contact_details'][0]['billing_address']['pincode']) ? ', '.$consumer['contact_details'][0]['billing_address']['pincode'] : '' }}
+                <br>
+
+                {{ $consumer['contact_details'][0]['contact_person'] ?? '-' }}
+                <br>
+
+                Mobile: {{ $consumer['contact_details'][0]['primary_phone'] ?? '--' }}
               </td>
+
+
               <td><strong>Bill.No</strong></td>
               <td class="mono" style="border-right:1px solid #000;">{{ $bill['bill_id'] ?? '-' }}</td>
               <td style="border-right: 0px; border-bottom: 0px;"></td>
@@ -207,7 +223,7 @@
               <td>{{ $consumer['consumer_gstin'] ?? '' }}</td>
             </tr>
             <tr>
-              <td><i>Email: {{ $connection['consumer_profiles'][0]['email'] ?? '' }}</i></td>
+              <td><i>Email: {{ $consumer['contact_details'][0]['primary_email'] ?? '' }}</i></td>
             </tr>
             <tr>
               <td><strong>Supply Voltage</strong></td>
@@ -568,7 +584,7 @@
     </table>
 
     <div class="footer">
-      <i>(Rupees One Lakh Seventeen Thousand Eight Hundred Thirty Nine Only)</i>
+      <i>(Rupees {{ $bill['bill_amount'] }} Only)</i>
       <div class="signature">SPECIAL OFFICER (REVENUE)</div>
     </div>
   </div>

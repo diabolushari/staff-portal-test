@@ -114,6 +114,9 @@ export default function BillShowPage({
                         ?.pincode ?? '-'}
                       {' , '}
                       {connection?.consumer_profiles?.[0]?.contact_person ?? '-'}
+                      {' , '}
+                      {connection?.consumer_profiles?.[0]?.contact_details?.[0]?.primary_phone ??
+                        '-'}
                       <br />
                     </TableCell>
                     <TableCell className='font-bold'>Bill.No</TableCell>
@@ -453,9 +456,7 @@ export default function BillShowPage({
             </div>
           </div>
 
-          <div className='mt-6 text-center italic'>
-            (Rupees One Lakh Seventeen Thousand Eight Hundred Thirty Nine Only)
-          </div>
+          <div className='mt-6 text-center italic'>(Rupees {bill?.bill_amount})</div>
 
           <div className='mt-8 border-t border-black pt-2 text-right font-bold'>
             SPECIAL OFFICER (REVENUE)
