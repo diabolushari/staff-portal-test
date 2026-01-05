@@ -41,6 +41,7 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
       href: '#',
     },
   ]
+
   const [deleteConnection, setDeleteConnection] = useState<boolean>(false)
   const [deleteConnectionItem, setDeleteConnectionItem] = useState<BillingGroupConnection | null>(
     null

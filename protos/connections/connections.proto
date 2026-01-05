@@ -79,7 +79,7 @@ message ConnectionMessage {
   optional com.kseb.consumerservice.proto.meterreading.MeterReadingMessage latest_meter_reading = 54;
   repeated com.kseb.consumerservice.grpc.connections.ConnectionFlagMessage connection_flags = 55;
   repeated com.kseb.consumerservice.grpc.connections.ConnectionGenerationTypeMessage connection_generation_types = 56;
-
+  optional com.kseb.consumerservice.proto.meterreading.MeterReadingMessage previous_reading = 57;
 }
 
 

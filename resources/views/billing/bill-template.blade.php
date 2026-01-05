@@ -207,7 +207,7 @@
               <td>{{ $connection['consumer_profiles'][0]['gstin'] ?? '' }}</td>
             </tr>
             <tr>
-              <td colspan="2"><i>Email: {{ $connection['consumer_profiles'][0]['email'] ?? '' }}</i></td>
+              <td><i>Email: {{ $connection['consumer_profiles'][0]['email'] ?? '' }}</i></td>
             </tr>
             <tr>
               <td><strong>Supply Voltage</strong></td>
@@ -234,8 +234,8 @@
           <th>PF</th>
         </tr>
         <tr>
-          <td>Disputed: 0 | Undisputed: 115</td>
-          <td>--</td>
+          <td>Disputed: - | Undisputed: -</td>
+          <td>{{ \Carbon\Carbon::parse($connection['previous_reading']['reading_end_date'])->format('F Y') }}</td>
           <td>
             {{ \Carbon\Carbon::parse($bill['reading_year_month'])->format('F Y') }}
           </td>
@@ -246,7 +246,7 @@
         </tr>
         <tr>
           <td colspan="2">Contract Demand (kVA): {{ $connection['contract_demand_kva_val'] ?? '' }} | 75% of CD: {{ $connection['contract_demand_kva_val'] * 0.75}} | 130% of CD: {{ $connection['contract_demand_kva_val'] * 1.30}}</td>
-          <td colspan="4">Connected Load (kW): {{ $connection['connected_load_kw_val'] ?? '' }} | Section: Cantonment | Circle: Electrical Circle (Urban)</td>
+          <td colspan="4">Connected Load (kW): {{ $connection['connected_load_kw_val'] ?? '' }} | Section: {{ $connection['service_office'] ? $connection['service_office']['office_name'] : '-' }} | Circle: -</td>
         </tr>
       </table>
     </div>

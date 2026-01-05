@@ -199,6 +199,7 @@ export interface Connection {
   latest_meter_reading?: MeterReading
   connection_flags?: ConnectionFlag[]
   connection_generation_types?: ConnectionGenerationType[]
+  previous_reading: MeterReading
 }
 
 export interface OfficeHierarchy {

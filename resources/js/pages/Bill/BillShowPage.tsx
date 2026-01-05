@@ -14,6 +14,7 @@ import Button from '@/ui/button/Button'
 import { router } from '@inertiajs/react'
 import { getDisplayDate } from '@/utils'
 import { Connection } from '@/interfaces/data_interfaces'
+import { Badge } from 'lucide-react'
 
 interface BillShowPageProps {
   bill: any
@@ -147,12 +148,8 @@ export default function BillShowPage({
                     <TableCell>{connection?.consumer_profiles?.[0]?.consumer_gstin}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell
-                      colSpan={2}
-                      className='text-center italic'
-                    >
-                      Email:
-                    </TableCell>
+                    <TableCell className='italic'>Email:</TableCell>
+                    <TableCell>---</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className='font-bold'>Supply Voltage</TableCell>
@@ -182,10 +179,12 @@ export default function BillShowPage({
               </TableHeader>
               <TableBody>
                 <TableRow>
-                  <TableCell>Disputed: 0 | Undisputed: 115</TableCell>
-                  <TableCell>31-Aug-2025</TableCell>
+                  <TableCell>Disputed: - | Undisputed: -</TableCell>
                   <TableCell>
-                    {getDisplayDate(connection?.latest_meter_reading?.metering_date) ?? '---'}
+                    {getDisplayDate(connection?.previous_reading?.reading_start_date) ?? '-'}
+                  </TableCell>
+                  <TableCell>
+                    {getDisplayDate(connection?.latest_meter_reading?.reading_start_date) ?? '-'}
                   </TableCell>
                   <TableCell className='text-center'>
                     {kvaValues
@@ -201,17 +200,22 @@ export default function BillShowPage({
                 </TableRow>
                 <TableRow>
                   <TableCell colSpan={2}>
-                    Contract Demand (kVA): {connection?.contract_demand_kva_val ?? '--'}{' '}
-                    {connection?.contract_demand_kva_val
-                      ? (connection.contract_demand_kva_val * 0.75).toFixed(1)
-                      : '--'}
-                    {connection?.contract_demand_kva_val
-                      ? (connection.contract_demand_kva_val * 1.3).toFixed(1)
-                      : '--'}
+                    Contract Demand (kVA): <b>{connection?.contract_demand_kva_val ?? '-'} | </b>
+                    75% of CD:{' '}
+                    <b>{(connection?.contract_demand_kva_val * 0.75).toFixed(2) ?? '-'} | </b>
+                    130% of CD:{' '}
+                    <b>{(connection?.contract_demand_kva_val * 1.3).toFixed(2) ?? '-'}</b>
                   </TableCell>
                   <TableCell colSpan={4}>
-                    Connected Load (kW): {connection?.connected_load_kw_val ?? '--'} | Section: -- |
-                    Circle: --
+                    Connected Load (kW): {connection?.connected_load_kw_val ?? '--'} | Section:{' '}
+                    {connection.service_office ? (
+                      <>
+                        {`${connection.service_office?.office_name} - code: ${connection.service_office?.office_code}`}{' '}
+                        | Circle: --
+                      </>
+                    ) : (
+                      '--'
+                    )}
                   </TableCell>
                 </TableRow>
               </TableBody>
