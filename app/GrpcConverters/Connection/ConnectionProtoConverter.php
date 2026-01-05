@@ -230,6 +230,7 @@ class ConnectionProtoConverter
             'connection_generation_types' => $connectionGenerationArrays,
             'no_of_main_meters' => $connection->getNoOfMainMeters(),
             'previous_reading' => $previousMeterReadingArray,
+
         ];
     }
 }

@@ -165,7 +165,7 @@
             </tr>
             <tr>
               <td rowspan="4" style="width:55%">
-                <strong>{{ $connection['consumer_profile'][0]['organization_name'] ?? '-' }}</strong><br>
+                <strong>{{ $consumer['organization_name'] ?? '-' }}</strong><br>
 
                 Mobile: --
               </td>
@@ -200,11 +200,11 @@
             </tr>
             <tr>
               <td><strong>Virtual A/c No</strong></td>
-              <td>{{ $connection['consumer_profiles'][0]['virtual_account_number'] ?? '-' }}</td>
+              <td>{{ $consumer['virtual_account_number'] ?? '-' }}</td>
             </tr>
             <tr>
               <td><strong>GSTIN</strong></td>
-              <td>{{ $connection['consumer_profiles'][0]['gstin'] ?? '' }}</td>
+              <td>{{ $consumer['consumer_gstin'] ?? '' }}</td>
             </tr>
             <tr>
               <td><i>Email: {{ $connection['consumer_profiles'][0]['email'] ?? '' }}</i></td>

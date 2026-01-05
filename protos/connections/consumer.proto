@@ -35,7 +35,8 @@ message ConsumerMessage {
   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto department_name = 18;
   string consumer_cin = 19;
   repeated connections.ConnectionFlagFormRequest consumer_flags = 20;
- repeated connections.ConnectionFlagMessage consumer_flags_message = 21;
+  repeated connections.ConnectionFlagMessage consumer_flags_message = 21;
+  repeated connections.ConsumerContactDetailMessage consumer_contact_details = 22;
   
 }
 

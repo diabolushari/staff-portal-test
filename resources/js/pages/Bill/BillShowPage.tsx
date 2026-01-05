@@ -13,14 +13,14 @@ import { Separator } from '@/components/ui/separator'
 import Button from '@/ui/button/Button'
 import { router } from '@inertiajs/react'
 import { getDisplayDate } from '@/utils'
-import { Connection } from '@/interfaces/data_interfaces'
+import { Connection, Consumer } from '@/interfaces/data_interfaces'
 import { Badge } from 'lucide-react'
 
 interface BillShowPageProps {
   bill: any
   meter: any
   connection: Connection
-  consumer: any
+  consumer: Consumer
   kwhValues: any[]
   kvahValues: any[]
   kvaValues: any[]
@@ -95,8 +95,24 @@ export default function BillShowPage({
                       rowSpan={4}
                       className='align-top text-sm font-bold'
                     >
-                      {connection?.consumer_profiles?.[0]?.organization_name ?? '-'}
+                      {connection?.consumer_profiles?.[0]?.organization_name ?? '-'} <br />
+                      {connection?.consumer_profiles?.[0]?.contact_details?.[0]?.billing_address
+                        ?.address_line1 ?? '-'}
+                      {' , '}
+                      {connection?.consumer_profiles?.[0]?.contact_details?.[0]?.billing_address
+                        ?.address_line2 ?? '-'}
+                      {connection?.consumer_profiles?.[0]?.contact_details?.[0]?.billing_address
+                        ?.city_town_village ?? '-'}
+                      {' , '}
+                      {connection?.consumer_profiles?.[0]?.contact_details?.[0]?.billing_address
+                        ?.district.name ?? '-'}
                       <br />
+                      {connection?.consumer_profiles?.[0]?.contact_details?.[0]?.billing_address
+                        ?.state.name ?? '-'}
+                      {' , '}
+                      {connection?.consumer_profiles?.[0]?.contact_details?.[0]?.billing_address
+                        ?.pincode ?? '-'}
+                      {' , '}
                       {connection?.consumer_profiles?.[0]?.contact_person ?? '-'}
                       <br />
                     </TableCell>
@@ -149,7 +165,7 @@ export default function BillShowPage({
                   </TableRow>
                   <TableRow>
                     <TableCell className='italic'>Email:</TableCell>
-                    <TableCell>---</TableCell>
+                    <TableCell>{consumer?.contact_details?.[0]?.primary_email ?? '---'}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className='font-bold'>Supply Voltage</TableCell>

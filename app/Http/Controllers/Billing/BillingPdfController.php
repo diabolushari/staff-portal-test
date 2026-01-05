@@ -47,7 +47,7 @@ class BillingPdfController extends Controller
             'filteredLeads' => $leadValues ?? [],
             'bill' => $bill->data ?? [],
             'connection' => $bill->data['connection'] ?? [],
-            'consumer' => $bill->data['consumer'] ?? [],
+            'consumer' => $bill->data['connection']['consumer_profiles'][0] ?? [],
             'meter' => $meter ?? [],
             'chargeHeads' => $chargeHeads,
             'computedProperties' => $computedProperties,

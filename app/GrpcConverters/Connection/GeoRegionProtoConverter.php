@@ -7,19 +7,17 @@ use Proto\Consumers\GeoRegionMessage;
 
 class GeoRegionProtoConverter
 {
-    public function __construct(
-        private ParameterValueProtoConvertor $parameterValueProtoConvertor
-    ) {}
+    public function __construct() {}
 
-    public function toArray(GeoRegionMessage $geoRegion): array
+    public static function toArray(GeoRegionMessage $geoRegion): array
     {
         return [
             'id' => $geoRegion->getRegionId(),
             'name' => $geoRegion->getRegionName(),
             'type_id' => $geoRegion->getRegionTypeId(),
-            'type' => $this->parameterValueProtoConvertor->convertToArray($geoRegion->getRegionType()),
+            'type' => ParameterValueProtoConvertor::convertToArray($geoRegion->getRegionType()),
             'classification_id' => $geoRegion->getRegionClassificationId(),
-            'classification' => $this->parameterValueProtoConvertor->convertToArray($geoRegion->getRegionClassification()),
+            'classification' => ParameterValueProtoConvertor::convertToArray($geoRegion->getRegionClassification()),
             'parent_id' => $geoRegion->getParentRegionId(),
             'created_at' => $geoRegion->getCreatedAt(),
             'updated_at' => $geoRegion->getUpdatedAt(),

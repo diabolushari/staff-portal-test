@@ -230,6 +230,7 @@ export interface Consumer {
 
   contact_folio: any
   flags?: ConnectionFlag[]
+  contact_details?: Contact[]
 }
 
 export interface Contact {
