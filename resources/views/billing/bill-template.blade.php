@@ -164,11 +164,27 @@
               <td>{{ $connection['tariff']['parameter_value'] ?? '-' }}</td>
             </tr>
             <tr>
-              <td rowspan="4" style="width:55%">
-                <strong>{{ $connection['consumer_profile'][0]['organization_name'] ?? '-' }}</strong><br>
 
-                Mobile: --
+              <td rowspan="4" style="width:55%; vertical-align: top; font-size: 13px;">
+                <strong>{{ $consumer['organization_name'] ?? '-' }}</strong><br>
+
+                {{ $consumer['contact_details'][0]['billing_address']['address_line1'] ?? '-' }}
+                {{ isset($consumer['contact_details'][0]['billing_address']['address_line2']) ? ', '.$consumer['contact_details'][0]['billing_address']['address_line2'] : '' }}
+                {{ isset($consumer['contact_details'][0]['billing_address']['city_town_village']) ? ', '.$consumer['contact_details'][0]['billing_address']['city_town_village'] : '' }}
+                {{ isset($consumer['contact_details'][0]['billing_address']['district']['name']) ? ', '.$consumer['contact_details'][0]['billing_address']['district']['name'] : '' }}
+                <br>
+
+                {{ $consumer['contact_details'][0]['billing_address']['state']['name'] ?? '-' }}
+                {{ isset($consumer['contact_details'][0]['billing_address']['pincode']) ? ', '.$consumer['contact_details'][0]['billing_address']['pincode'] : '' }}
+                <br>
+
+                {{ $consumer['contact_details'][0]['contact_person'] ?? '-' }}
+                <br>
+
+                Mobile: {{ $consumer['contact_details'][0]['primary_phone'] ?? '--' }}
               </td>
+
+
               <td><strong>Bill.No</strong></td>
               <td class="mono" style="border-right:1px solid #000;">{{ $bill['bill_id'] ?? '-' }}</td>
               <td style="border-right: 0px; border-bottom: 0px;"></td>
@@ -200,14 +216,14 @@
             </tr>
             <tr>
               <td><strong>Virtual A/c No</strong></td>
-              <td>{{ $connection['consumer_profiles'][0]['virtual_account_number'] ?? '-' }}</td>
+              <td>{{ $consumer['virtual_account_number'] ?? '-' }}</td>
             </tr>
             <tr>
               <td><strong>GSTIN</strong></td>
-              <td>{{ $connection['consumer_profiles'][0]['gstin'] ?? '' }}</td>
+              <td>{{ $consumer['consumer_gstin'] ?? '' }}</td>
             </tr>
             <tr>
-              <td colspan="2"><i>Email: {{ $connection['consumer_profiles'][0]['email'] ?? '' }}</i></td>
+              <td><i>Email: {{ $consumer['contact_details'][0]['primary_email'] ?? '' }}</i></td>
             </tr>
             <tr>
               <td><strong>Supply Voltage</strong></td>
@@ -234,8 +250,8 @@
           <th>PF</th>
         </tr>
         <tr>
-          <td>Disputed: 0 | Undisputed: 115</td>
-          <td>--</td>
+          <td>Disputed: - | Undisputed: -</td>
+          <td>{{ \Carbon\Carbon::parse($connection['previous_reading']['reading_end_date'])->format('F Y') }}</td>
           <td>
             {{ \Carbon\Carbon::parse($bill['reading_year_month'])->format('F Y') }}
           </td>
@@ -246,7 +262,7 @@
         </tr>
         <tr>
           <td colspan="2">Contract Demand (kVA): {{ $connection['contract_demand_kva_val'] ?? '' }} | 75% of CD: {{ $connection['contract_demand_kva_val'] * 0.75}} | 130% of CD: {{ $connection['contract_demand_kva_val'] * 1.30}}</td>
-          <td colspan="4">Connected Load (kW): {{ $connection['connected_load_kw_val'] ?? '' }} | Section: Cantonment | Circle: Electrical Circle (Urban)</td>
+          <td colspan="4">Connected Load (kW): {{ $connection['connected_load_kw_val'] ?? '' }} | Section: {{ $connection['service_office'] ? $connection['service_office']['office_name'] : '-' }} | Circle: -</td>
         </tr>
       </table>
     </div>
@@ -568,7 +584,7 @@
     </table>
 
     <div class="footer">
-      <i>(Rupees One Lakh Seventeen Thousand Eight Hundred Thirty Nine Only)</i>
+      <i>(Rupees {{ $bill['bill_amount'] }} Only)</i>
       <div class="signature">SPECIAL OFFICER (REVENUE)</div>
     </div>
   </div>

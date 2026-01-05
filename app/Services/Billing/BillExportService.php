@@ -174,6 +174,12 @@ class BillExportService
     public function getAverageAndTotalKva(array $filteredkVAs): array
     {
         $totalKva = array_sum(array_column($filteredkVAs, 'difference'));
+        if (count($filteredkVAs) == 0) {
+            return [
+                'totalKva' => 0,
+                'averageKva' => 0
+            ];
+        }
         $averageKva = $totalKva / count($filteredkVAs);
         return [
             'totalKva' => $totalKva,
@@ -183,6 +189,12 @@ class BillExportService
     public function getAverageAndTotalKwh(array $filteredkWhs): array
     {
         $totalKwh = array_sum(array_column($filteredkWhs, 'difference'));
+        if (count($filteredkWhs) == 0) {
+            return [
+                'totalKwh' => 0,
+                'averageKwh' => 0
+            ];
+        }
         $averageKwh = $totalKwh / count($filteredkWhs);
         return [
             'totalKwh' => $totalKwh,

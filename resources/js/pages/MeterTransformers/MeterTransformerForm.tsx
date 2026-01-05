@@ -85,11 +85,11 @@ export default function MeterTransformerForm({
 
   const { formData, setFormValue } = useCustomForm({
     ctpt_serial: transformer?.ctpt_serial ?? '',
-    ownership_type_id: transformer?.ownership_type_id ?? null,
-    accuracy_class_id: transformer?.accuracy_class_id ?? null,
-    burden_id: transformer?.burden_id ?? null,
-    make_id: transformer?.make_id ?? null,
-    type_id: transformer?.type_id ?? null,
+    ownership_type_id: transformer?.ownership_type_id ?? '',
+    accuracy_class_id: transformer?.accuracy_class_id ?? '',
+    burden_id: transformer?.burden_id ?? '',
+    make_id: transformer?.make_id ?? '',
+    type_id: transformer?.type_id ?? '',
     ratio_primary_value: transformer?.ratio_primary_value ?? '',
     ratio_secondary_value: transformer?.ratio_secondary_value ?? '',
     manufacture_date: toYMD(transformer?.manufacture_date) ?? '',
@@ -131,7 +131,7 @@ export default function MeterTransformerForm({
     primaryRatioUrl ? primaryRatioUrl : ' '
   )
 
-  const [filteredSecondaryRatios] = useFetchList<ParameterValues>(
+  const [filteredSecondaryRatios] = useFetchRecord<ParameterValues>(
     secondaryRatioUrl ? secondaryRatioUrl : ''
   )
 
@@ -206,7 +206,7 @@ export default function MeterTransformerForm({
               label={transformerInfo.primary}
               value={formData.ratio_primary_value}
               setValue={setFormValue('ratio_primary_value')}
-              list={filteredPrimaryRatios ?? []}
+              list={filteredPrimaryRatios}
               dataKey='parameter_value'
               displayKey='parameter_value'
               error={errors.ratio_primary_value}

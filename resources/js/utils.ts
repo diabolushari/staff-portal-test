@@ -53,7 +53,7 @@ export const shortMonthNames = [
 ]
 export const getDisplayDate = (date?: string | null) => {
   if (date == null) {
-    return ''
+    return '-'
   }
   const splitTime = splitDateTime(date)
   const datePart = splitTime.length === 2 ? splitTime[0] : date
@@ -105,10 +105,7 @@ export const getDisplayMonthYear = (date?: string | null) => {
 }
 import dayjs from 'dayjs'
 
-export const formatMeterReadingMonth = (
-  startDate?: string,
-  endDate?: string
-) => {
+export const formatMeterReadingMonth = (startDate?: string, endDate?: string) => {
   if (!startDate || !endDate) return '-'
 
   const start = dayjs(startDate)

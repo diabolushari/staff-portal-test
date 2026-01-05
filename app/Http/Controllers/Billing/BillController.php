@@ -55,7 +55,7 @@ class BillController extends Controller
             'computedProperties' => $computedProperties,
             'energyChargeRows' => $energyChargeRows,
             'connection' => $bill->data['connection'] ?? null,
-            'consumer' => $bill->data['consumer'] ?? null,
+            'consumer' => $bill->data['connection']['consumer_profiles'][0] ?? null,
             'averageAndTotalKva' => $averageAndTotalKva,
             'averageAndTotalKwh' => $averageAndTotalKwh,
             'demand' => $demand,
