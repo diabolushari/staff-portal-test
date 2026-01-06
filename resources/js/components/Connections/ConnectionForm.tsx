@@ -174,6 +174,7 @@ export default function ConnectionForm({
           />
           <SelectList
             label='Connection Type'
+            required
             list={connectionTypes}
             dataKey='id'
             displayKey='parameter_value'
@@ -190,6 +191,7 @@ export default function ConnectionForm({
           />
           <SelectList
             label='Connection Status'
+            required
             list={connectionStatus}
             dataKey='id'
             displayKey='parameter_value'
@@ -258,6 +260,7 @@ export default function ConnectionForm({
             displayKey='office_name'
             displayValue2='office_code'
             error={errors?.admin_office_code}
+            required
           />
 
           <ComboBox
@@ -271,6 +274,7 @@ export default function ConnectionForm({
             displayValue2='office_code'
             error={errors?.service_office_code}
             disabled={connection?.service_office_code ? true : false}
+            required
           />
         </div>
       </Card>
@@ -365,6 +369,7 @@ export default function ConnectionForm({
             setValue={setFormValue('contract_demand_kw_val')}
             value={formData.contract_demand_kw_val}
             error={errors?.contract_demand_kw_val}
+            required
           />
           <div className='col-span-2 grid grid-cols-1 gap-6 md:grid-cols-2'>
             <Input
@@ -372,12 +377,14 @@ export default function ConnectionForm({
               setValue={setFormValue('power_load_kw_val')}
               value={formData.power_load_kw_val}
               error={errors?.power_load_kw_val}
+              required
             />
             <Input
               label='Light Load (kW)'
               setValue={setFormValue('light_load_kw_val')}
               value={formData.light_load_kw_val}
               error={errors?.light_load_kw_val}
+              required
             />
             <Input
               label='Connected Load (kW)'
