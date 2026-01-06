@@ -102,8 +102,7 @@ message ListUnassignedMeterTransformersPaginatedRequest {
   optional string type = 5;
   optional int64 ownership_type_id = 6;
   optional int64 make_id = 7;
-  optional string ratio_primary_value = 8;
-  optional string ratio_secondary_value = 9;
+  optional string ratio_value = 8;
 
 }
 
@@ -117,8 +116,7 @@ message MeterTransformerPaginatedListRequest {
   optional string type = 7;
   optional int64 ownership_type_id = 8;
   optional int64 make_id = 9;
-  optional string ratio_primary_value = 10;
-  optional string ratio_secondary_value = 11;
+  optional string ratio_value = 10;
 }
 
 message MeterTransformerPaginatedListResponse {
