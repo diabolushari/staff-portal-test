@@ -75,6 +75,7 @@ export default function MeterTransformerIndex({
           oldOwnershipTypeId={oldOwnershipTypeId}
           oldRatioPrimaryValue={oldRatioPrimaryValue}
           oldRatioSecondaryValue={oldRatioSecondaryValue}
+          
           types={types}
           makes={makes}
           ownershipTypes={ownershipTypes}

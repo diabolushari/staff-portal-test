@@ -54,6 +54,7 @@ message CreateMeterConnectionMappingRequest {
   optional int32 sort_priority = 17;
   optional bool is_meter_reading_mandatory = 18;
   repeated MeterTransformerRelFormRequest meter_transformers = 19;
+  int32 timezone_type_id = 20;
 }
 
 message UpdateMeterConnectionMappingRequest {

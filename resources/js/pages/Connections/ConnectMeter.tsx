@@ -22,6 +22,7 @@ import { BreadcrumbItem } from '@/types'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import ConnectMeterTransformerModal from '@/components/Connections/ConnectionMeter/ConnectMeterTransformerModal'
 import SelectUnassignedMeterModal from '@/components/Connections/ConnectionMeter/SelectUnassignedMeterModal'
+import { time } from 'console'
 
 const toYMD = (iso?: string | null): string => {
   if (!iso) return ''
@@ -38,6 +39,7 @@ export default function ConnectMeter({
   connection,
   ctpts,
   statuses,
+  timezoneTypes,
 }: {
   connection_id: number
   relation?: MeterConnectionMapping
@@ -49,6 +51,7 @@ export default function ConnectMeter({
   ctpts: MeterTransformer[]
   statuses: ParameterValues[]
   changeReasons: ParameterValues[]
+  timezoneTypes: ParameterValues[]
 }) {
   const [meterTransformers, setMeterTransformers] = useState<MeterTransformerAssignment[]>([])
 
@@ -61,6 +64,7 @@ export default function ConnectMeter({
     meter_id: '',
     meter_use_category: '',
     meter_status_id: '',
+    timezone_type_id: '',
     sort_priority: '0',
     is_meter_reading_mandatory: false,
     energise_date: '',
@@ -188,6 +192,17 @@ export default function ConnectMeter({
               dataKey='id'
               displayKey='parameter_value'
               error={errors.meter_use_category}
+              required
+            />
+
+            <SelectList
+              label='Meter Timezone'
+              value={formData.timezone_type_id}
+              setValue={setFormValue('timezone_type_id')}
+              list={timezoneTypes}
+              dataKey='id'
+              displayKey='parameter_value'
+              error={errors.timezone_type_id}
               required
             />
 
