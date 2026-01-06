@@ -32,16 +32,15 @@ const toYMD = (iso?: string | null): string => {
 export default function ConnectMeter({
   connection_id,
   relation,
-  meters,
   useCategory,
   meterStatus,
   connection,
   ctpts,
   statuses,
+  meterProfiles,
 }: {
   connection_id: number
   relation?: MeterConnectionMapping
-  meters: Meter[]
   useCategory: ParameterValues[]
   meterStatus: ParameterValues[]
   changeReason: ParameterValues[]
@@ -49,6 +48,7 @@ export default function ConnectMeter({
   ctpts: MeterTransformer[]
   statuses: ParameterValues[]
   changeReasons: ParameterValues[]
+  meterProfiles: ParameterValues[]
 }) {
   const [meterTransformers, setMeterTransformers] = useState<MeterTransformerAssignment[]>([])
 
@@ -60,6 +60,7 @@ export default function ConnectMeter({
     connection_id: connection_id,
     meter_id: '',
     meter_use_category: '',
+    meter_profile_id: '',
     meter_status_id: '',
     sort_priority: '0',
     is_meter_reading_mandatory: false,
@@ -188,6 +189,16 @@ export default function ConnectMeter({
               dataKey='id'
               displayKey='parameter_value'
               error={errors.meter_use_category}
+              required
+            />
+            <SelectList
+              label='Meter Profile'
+              value={formData.meter_profile_id}
+              setValue={setFormValue('meter_profile_id')}
+              list={meterProfiles}
+              dataKey='id'
+              displayKey='parameter_value'
+              error={errors.meter_profile_id}
               required
             />
 

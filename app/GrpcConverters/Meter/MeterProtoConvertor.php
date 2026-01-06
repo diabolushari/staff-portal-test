@@ -81,8 +81,6 @@ class MeterProtoConvertor
             'profile_id' => $meter->getProfileId(),
             'ownership_type_id' => $meter->getOwnershipTypeId(),
             'ownership_type' => ParameterValueProtoConvertor::convertToArray($meter->getOwnershipType()),
-            'meter_profile_id' => $meter->getProfileId(),
-            'meter_profile' => ParameterValueProtoConvertor::convertToArray($meter->getProfile()),
             'meter_make_id' => $meter->getMeterMakeId(),
             'meter_make' => ParameterValueProtoConvertor::convertToArray($meter->getMeterMake()),
             'meter_type_id' => $meter->getMeterTypeId(),
@@ -152,7 +150,6 @@ class MeterProtoConvertor
         }
         $meterProto->setMeterUnitId($meter->meterUnitId);
         $meterProto->setMeterResetTypeId($meter->meterResetTypeId);
-        $meterProto->setProfileId($meter->meterProfileId);
         $meterProto->setSmartMeterInd($meter->smartMeterInd);
         $meterProto->setBidirectionalInd($meter->bidirectionalInd);
         $meterProto->setMeterPhaseId($meter->meterPhaseId);

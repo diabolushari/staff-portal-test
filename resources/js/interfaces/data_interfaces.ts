@@ -305,14 +305,8 @@ export interface Meter {
   meter_id: number
   meter_serial: string
 
-  profile_id: number | string
-
   ownership_type_id: number
   ownership_type: ParameterValues | null
-
-  meter_profile_id: number | string
-  meter_profile: ParameterValues | null
-
   meter_make_id: number
   meter_make: ParameterValues | null
 
