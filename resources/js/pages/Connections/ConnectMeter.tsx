@@ -22,13 +22,6 @@ import { BreadcrumbItem } from '@/types'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import ConnectMeterTransformerModal from '@/components/Connections/ConnectionMeter/ConnectMeterTransformerModal'
 import SelectUnassignedMeterModal from '@/components/Connections/ConnectionMeter/SelectUnassignedMeterModal'
-import { time } from 'console'
-
-const toYMD = (iso?: string | null): string => {
-  if (!iso) return ''
-  const d = new Date(iso)
-  return !Number.isNaN(d.getTime()) ? d.toISOString().split('T')[0] : ''
-}
 
 export default function ConnectMeter({
   connection_id,

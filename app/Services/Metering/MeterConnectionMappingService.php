@@ -43,6 +43,8 @@ class MeterConnectionMappingService
         $request->setMeterId($data->meterId);
         $request->setConnectionId($data->connectionId);
         $request->setMeterUseCategory($data->meterUseCategory);
+        $request->setProfileId($data->meterProfileId);
+        $request->setTimezoneTypeId($data->timezoneTypeId);
         $request->setMeterStatusId($data->meterStatusId);
         if (isset($data->sortPriority)) {
             $request->setSortPriority($data->sortPriority);
