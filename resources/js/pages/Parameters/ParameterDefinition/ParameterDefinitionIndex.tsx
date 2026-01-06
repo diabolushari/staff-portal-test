@@ -51,6 +51,11 @@ export default function ParameterDefinitionIndex({
     setParameterDeleteModal(true)
   }, [])
 
+  const handleEditClick = useCallback((item: ParameterDefinition) => {
+    setParameterDefinitionToEdit(item)
+    setParameterFormModal(true)
+  }, [])
+
   const handleCreateClick = useCallback(() => {
     setParameterDefinitionToEdit(null)
     setParameterFormModal(true)
@@ -79,6 +84,7 @@ export default function ParameterDefinitionIndex({
             <ParameterDefinitionList
               parameterDefinitions={items}
               onDelete={handleDeleteClick}
+              onEdit={handleEditClick}
             />
           ) : (
             <p>No Parameter Definitions Found.</p>
