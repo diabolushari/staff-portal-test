@@ -199,6 +199,7 @@ export interface Connection {
   latest_meter_reading?: MeterReading
   connection_flags?: ConnectionFlag[]
   connection_generation_types?: ConnectionGenerationType[]
+  previous_reading: MeterReading
 }
 
 export interface OfficeHierarchy {
@@ -229,6 +230,7 @@ export interface Consumer {
 
   contact_folio: any
   flags?: ConnectionFlag[]
+  contact_details?: Contact[]
 }
 
 export interface Contact {
@@ -303,14 +305,8 @@ export interface Meter {
   meter_id: number
   meter_serial: string
 
-  profile_id: number | string
-
   ownership_type_id: number
   ownership_type: ParameterValues | null
-
-  meter_profile_id: number | string
-  meter_profile: ParameterValues | null
-
   meter_make_id: number
   meter_make: ParameterValues | null
 

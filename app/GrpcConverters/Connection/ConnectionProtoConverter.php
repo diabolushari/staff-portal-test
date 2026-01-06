@@ -161,6 +161,12 @@ class ConnectionProtoConverter
             $latestMeterReadingArray = $meterreadingConverter->toArray($latestMeterReading);
         }
 
+        $previousMeterReading = $connection->getPreviousReading();
+        $previousMeterReadingArray = null;
+        if ($previousMeterReading !== null) {
+            $previousMeterReadingArray = $meterreadingConverter->toArray($previousMeterReading);
+        }
+
         $otherPurposes = [];
         foreach ($connection->getOtherPurposes() as $purposeId) {
             $otherPurposes[] = (int) $purposeId;
@@ -223,6 +229,8 @@ class ConnectionProtoConverter
             'connection_flags' => $connectionFlagsArrays,
             'connection_generation_types' => $connectionGenerationArrays,
             'no_of_main_meters' => $connection->getNoOfMainMeters(),
+            'previous_reading' => $previousMeterReadingArray,
+
         ];
     }
 }

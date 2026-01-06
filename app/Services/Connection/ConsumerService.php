@@ -3,6 +3,7 @@
 namespace App\Services\Connection;
 
 use App\GrpcConverters\Connection\ConnectionFlagProtoConverter;
+use App\GrpcConverters\Connection\ConsumerContactDetailsProtoConverter;
 use App\GrpcConverters\Connection\GeoRegionProtoConverter;
 use App\Http\Requests\Connections\ConsumerFormRequest;
 use App\Services\Grpc\GrpcErrorService;
@@ -220,6 +221,12 @@ class ConsumerService
             $flag = ConnectionFlagProtoConverter::convertToArray($flag);
             $flags[] = $flag;
         }
+        $contactDetailsArray = [];
+        $contactDetails = $consumer->getConsumerContactDetails();
+        foreach ($contactDetails as $contactDetail) {
+            $contactDetail = ConsumerContactDetailsProtoConverter::convertToArray($contactDetail);
+            $contactDetailsArray[] = $contactDetail;
+        }
         return [
             'connection_id' => $consumer->getConnectionId(),
             'consumer_type_id' => $consumer->getConsumerTypeId(),
@@ -237,6 +244,7 @@ class ConsumerService
             'contact_person' => $consumer->getContactPerson(),
             'department_name_id' => $consumer->getDepartmentNameId(),
             'flags' => $flags,
+            'contact_details' => $contactDetailsArray,
         ];
     }
 

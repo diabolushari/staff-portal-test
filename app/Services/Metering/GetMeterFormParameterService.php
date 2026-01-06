@@ -20,13 +20,6 @@ class GetMeterFormParameterService
                 'Meter',
                 'Ownership Type'
             )->data,
-            'meterProfiles' => $this->parameterValueService->getParameterValues(
-                null,
-                null,
-                null,
-                'Meter',
-                'Meter Profile'
-            )->data,
             'makes' => $this->parameterValueService->getParameterValues(
                 null,
                 null,

@@ -62,10 +62,14 @@ const getMonthEnd = (dateStr: string, isFirstReading: boolean) => {
   if (isFirstReading) {
     return dateStr
   }
+  const today = dayjs()
   const date = new Date(dateStr)
   const year = date.getFullYear()
   const month = date.getMonth() + 1
   const lastDay = new Date(year, month, +1)
+  if (today.isBefore(lastDay)) {
+    return today.format('YYYY-MM-DD')
+  }
   return lastDay.toISOString().split('T')[0]
 }
 
@@ -128,6 +132,7 @@ export default function MeterReadingCreatePage({
     if (latestMeterReading?.reading_start_date == latestMeterReading?.reading_end_date) {
       return latestMeterReading?.reading_end_date
     }
+
     return getNextDay(latestMeterReading?.reading_end_date) ?? ''
   }, [isFirstReading, latestMeterReading?.reading_end_date, connectionWithConsumer])
 

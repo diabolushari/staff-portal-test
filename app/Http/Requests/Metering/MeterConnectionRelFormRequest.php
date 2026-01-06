@@ -19,6 +19,7 @@ class MeterConnectionRelFormRequest extends Data
         public int $meterId,
         public int $connectionId,
         public int $meterUseCategory,
+        public int $meterProfileId,
         public int $meterStatusId,
         public ?int $sortPriority,
         public bool $isMeterReadingMandatory,
