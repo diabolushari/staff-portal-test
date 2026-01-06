@@ -105,10 +105,10 @@ export default function BillShowPage({
                         ?.city_town_village ?? '-'}
                       {' , '}
                       {connection?.consumer_profiles?.[0]?.contact_details?.[0]?.billing_address
-                        ?.district.name ?? '-'}
+                        ?.district?.name ?? '-'}
                       <br />
                       {connection?.consumer_profiles?.[0]?.contact_details?.[0]?.billing_address
-                        ?.state.name ?? '-'}
+                        ?.state?.name ?? '-'}
                       {' , '}
                       {connection?.consumer_profiles?.[0]?.contact_details?.[0]?.billing_address
                         ?.pincode ?? '-'}
@@ -456,7 +456,7 @@ export default function BillShowPage({
             </div>
           </div>
 
-          <div className='mt-6 text-center italic'>(Rupees {bill?.bill_amount})</div>
+          <div className='mt-6 text-center italic'>(Rupees {bill?.bill_amount ?? '-'})</div>
 
           <div className='mt-8 border-t border-black pt-2 text-right font-bold'>
             SPECIAL OFFICER (REVENUE)
