@@ -78,7 +78,6 @@ class MeterProtoConvertor
         return [
             'meter_id' => $meter->getMeterId(),
             'meter_serial' => $meter->getMeterSerial(),
-            'profile_id' => $meter->getProfileId(),
             'ownership_type_id' => $meter->getOwnershipTypeId(),
             'ownership_type' => ParameterValueProtoConvertor::convertToArray($meter->getOwnershipType()),
             'meter_make_id' => $meter->getMeterMakeId(),

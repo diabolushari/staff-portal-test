@@ -54,6 +54,8 @@ message CreateMeterConnectionMappingRequest {
   optional int32 sort_priority = 17;
   optional bool is_meter_reading_mandatory = 18;
   repeated MeterTransformerRelFormRequest meter_transformers = 19;
+  int32 timezone_type_id = 20;
+  int32 profile_id = 21;
 }
 
 message UpdateMeterConnectionMappingRequest {
@@ -75,6 +77,7 @@ message UpdateMeterConnectionMappingRequest {
   optional int32 updated_by = 16;
   optional int32 sort_priority = 17;
   optional bool is_meter_reading_mandatory = 18;
+  int32 profile_id = 19;
 }
 
 
@@ -119,25 +122,28 @@ message MeterConnectionMappingResponse {
   int32 rel_id = 2;
   int32 meter_id = 3;
   int32 connection_id = 4;
-  parameters.ParameterValueProto meter_use_category = 5;
-  parameters.ParameterValueProto meter_status = 6;
-  optional google.protobuf.Timestamp faulty_date = 7;
-  optional google.protobuf.Timestamp rectification_date = 8;
-  optional google.protobuf.Timestamp energise_date = 9;
-  optional google.protobuf.Timestamp notice_date = 10;
-  optional google.protobuf.Timestamp intimation_date = 11;
-  optional google.protobuf.Timestamp change_date = 12;
-  optional parameters.ParameterValueProto change_reason = 13;
-  google.protobuf.Timestamp effective_start_ts = 14;
-  optional google.protobuf.Timestamp effective_end_ts = 15;
-  optional bool is_active = 16;
-  google.protobuf.Timestamp created_ts = 17;
-  optional google.protobuf.Timestamp updated_ts = 18;
-  optional int32 created_by = 19;
-  optional int32 updated_by = 20;
-  optional int32 sort_priority = 21;
-  optional bool is_meter_reading_mandatory = 22;
-  optional MeterResponse meter = 23;
+  int32 profile_id = 5;
+  parameters.ParameterValueProto meter_use_category = 6;
+  parameters.ParameterValueProto meter_status = 7;
+  parameters.ParameterValueProto profile = 8;
+  optional google.protobuf.Timestamp faulty_date = 9;
+  optional google.protobuf.Timestamp rectification_date = 10;
+  optional google.protobuf.Timestamp energise_date = 11;
+  optional google.protobuf.Timestamp notice_date = 12;
+  optional google.protobuf.Timestamp intimation_date = 13;
+  optional google.protobuf.Timestamp change_date = 14;
+  optional parameters.ParameterValueProto change_reason = 15;
+  google.protobuf.Timestamp effective_start_ts = 16;
+  optional google.protobuf.Timestamp effective_end_ts = 17;
+  optional bool is_active = 18;
+  google.protobuf.Timestamp created_ts = 19;
+  optional google.protobuf.Timestamp updated_ts = 20;
+  optional int32 created_by = 21;
+  optional int32 updated_by = 22;
+  optional int32 sort_priority = 23;
+  optional bool is_meter_reading_mandatory = 24;
+  optional MeterResponse meter = 25;
+
 }
 
 
