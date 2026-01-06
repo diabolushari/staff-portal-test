@@ -586,6 +586,7 @@ export interface MeterWithTimezoneAndProfile {
     timezone_name: string
   }[]
   reading_parameters: MeterProfileParameter[]
+  meter_profile: ParameterValues
 }
 
 export interface BillingGroup {

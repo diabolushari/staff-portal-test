@@ -4,6 +4,7 @@ namespace App\Services\Metering;
 
 use App\GrpcConverters\Connection\MeterConnectionMappingConverter;
 use App\GrpcConverters\Meter\MeterProtoConvertor;
+use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Http\Requests\Connections\ConnectionMeterChangeReasonFormRequest;
 use App\Http\Requests\Connections\ConnectionMeterStatusFormRequest;
 use App\Http\Requests\Metering\MeterConnectionRelFormRequest;
@@ -282,7 +283,7 @@ class MeterConnectionMappingService
         $noticeDate = $rel->getNoticeDate() ? $rel->getNoticeDate()->toDateTime()->format('Y-m-d') : null;
         $intimationDate = $rel->getIntimationDate() ? $rel->getIntimationDate()->toDateTime()->format('Y-m-d') : null;
         $changeDate = $rel->getChangeDate() ? $rel->getChangeDate()->toDateTime()->format('Y-m-d') : null;
-
+        $meterProfile = ParameterValueProtoConvertor::convertToArray($rel->getProfile());
         return [
             'version_id' => $rel->getVersionId(),
             'rel_id' => $rel->getRelId(),
@@ -306,6 +307,7 @@ class MeterConnectionMappingService
             'notice_date' => $noticeDate,
             'intimation_date' => $intimationDate,
             'change_date' => $changeDate,
+            'meter_profile' => $meterProfile,
         ];
     }
 
