@@ -15,7 +15,7 @@ import "metering/meter_timezone_type_rel.proto";
 
 service MeterService {
   rpc CreateMeter(MeterFormRequest) returns (google.protobuf.Empty);
-  rpc GetMeter(GetMeterRequest) returns (MeterResponse);
+  rpc GetMeter(GetMeterRequest) returns (MeterResponseMessage);
   rpc ListMeters(ListMetersRequest) returns (ListMetersResponse);
   rpc UpdateMeter(MeterFormRequest) returns (MeterResponse);
   rpc DeleteMeter(DeleteMeterRequest) returns (google.protobuf.Empty);
@@ -157,6 +157,10 @@ message MeterResponse {
   // --- Relations ---
   repeated com.kseb.consumerservice.proto.metering.MeterTransformerMessage transformers = 44;
   optional bool has_meter_reading = 45;
+}
+
+message MeterResponseMessage {
+  optional MeterResponse meter = 1;
 }
 
 
