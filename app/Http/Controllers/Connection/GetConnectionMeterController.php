@@ -26,18 +26,18 @@ class GetConnectionMeterController extends Controller
     {
         $connectionResponse = $this->connectionService->getConnection($id);
 
-        if ($connectionResponse->hasError()) {
+        if ($connectionResponse->hasValidationError()) {
             return back()->withErrors(['grpc_error' => $connectionResponse->error]);
         }
 
         $meterConnectionMappingsResponse = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($id);
 
         $ctptRelations = [];
-        if (! $meterConnectionMappingsResponse->hasError() && ! empty($meterConnectionMappingsResponse->data)) {
-            $meterIds = array_map(fn($mapping) => $mapping['meter_id'], $meterConnectionMappingsResponse->data);
+        if (! $meterConnectionMappingsResponse->hasValidationError() && ! empty($meterConnectionMappingsResponse->data)) {
+            $meterIds = array_map(fn ($mapping) => $mapping['meter_id'], $meterConnectionMappingsResponse->data);
 
             $ctptResponse = $this->meterTransformerRelService->listAssignedToMeters($meterIds);
-            if (! $ctptResponse->hasError()) {
+            if (! $ctptResponse->hasValidationError()) {
                 $ctptRelations = $ctptResponse->data;
             }
         }

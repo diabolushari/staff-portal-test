@@ -10,18 +10,17 @@ use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class MeterProfileParameterController extends Controller
 {
-
     public function __construct(
         private MeteringParameterProfileService $meterProfileParameterService,
         private ParameterValueService $parameterValueService,
         private ParameterDefinitionService $parameterDefinitionService,
     ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -58,7 +57,6 @@ class MeterProfileParameterController extends Controller
             ->values()
             ->all();
 
-
         $paginated = null;
         if (! empty($response->data)) {
             $paginated = new LengthAwarePaginator(
@@ -70,7 +68,7 @@ class MeterProfileParameterController extends Controller
             );
         }
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch Meter Profile Parameter.',
                 'grpcStatus' => [
@@ -79,8 +77,6 @@ class MeterProfileParameterController extends Controller
                 ],
             ]);
         }
-
-
 
         return Inertia::render('MeterProfileParameter/MeterProfileParameterIndex', [
             'meterProfileParameters' => $paginated ?? [],
@@ -118,7 +114,7 @@ class MeterProfileParameterController extends Controller
     {
         $response = $this->meterProfileParameterService->createMeterProfileParameter($request);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to create meter profile parameter.',
                 'grpcStatus' => [
@@ -137,10 +133,7 @@ class MeterProfileParameterController extends Controller
         ]);
     }
 
-
-
     /**
-
      * Display the specified resource.
      */
     public function show(Request $request, int $id): Response|RedirectResponse
@@ -156,7 +149,6 @@ class MeterProfileParameterController extends Controller
             $search,
             $profileId
         );
-
 
         $paginated = null;
         if (! empty($response->data)) {
@@ -174,8 +166,7 @@ class MeterProfileParameterController extends Controller
             );
         }
 
-
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch meter profile parameter.',
                 'grpcStatus' => [
@@ -200,7 +191,7 @@ class MeterProfileParameterController extends Controller
     {
         $response = $this->meterProfileParameterService->getMeterProfileParameter($id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch meter profile parameter.',
                 'grpcStatus' => [
@@ -228,7 +219,7 @@ class MeterProfileParameterController extends Controller
     {
         $response = $this->meterProfileParameterService->updateMeterProfileParameter($request, $meterParameterId);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to update meter profile parameter.',
                 'grpcStatus' => [
@@ -254,7 +245,7 @@ class MeterProfileParameterController extends Controller
     {
         $response = $this->meterProfileParameterService->deleteMeterProfileParameter($id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to delete meter profile parameter.',
                 'grpcStatus' => [

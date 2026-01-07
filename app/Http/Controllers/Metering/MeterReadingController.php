@@ -61,7 +61,7 @@ class MeterReadingController extends Controller
     public function store(MeterReadingForm $request): RedirectResponse
     {
         $response = $this->meterReadingService->createMeterReading($request);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()
                 ->with([
                     'message' => 'Failed to create meter reading.',
@@ -96,7 +96,7 @@ class MeterReadingController extends Controller
     public function update(MeterReadingForm $request, int $meterReadingId): RedirectResponse
     {
         $response = $this->meterReadingService->updateMeterReading($request, $meterReadingId);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             if ($response->error) {
                 return $response->error;
             } else {

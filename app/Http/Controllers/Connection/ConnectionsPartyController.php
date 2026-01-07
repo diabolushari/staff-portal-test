@@ -18,7 +18,7 @@ class ConnectionsPartyController extends Controller
 
         $response = $this->connectionPartiesMappingService->createConnectionPartiesMapping($request);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->withErrors($response->error ?? 'Failed to create connection parties mapping');
         }
 
@@ -29,7 +29,7 @@ class ConnectionsPartyController extends Controller
     {
         $response = $this->connectionPartiesMappingService->updateConnectionPartiesMapping($request, $id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->withErrors($response->error ?? 'Failed to update connection parties mapping');
         }
 
@@ -40,7 +40,7 @@ class ConnectionsPartyController extends Controller
     {
         $response = $this->connectionPartiesMappingService->deleteConnectionPartiesMapping($id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->withErrors($response->error ?? 'Failed to delete connection parties mapping');
         }
 

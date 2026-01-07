@@ -17,7 +17,7 @@ class SystemModuleController extends Controller
     {
         $response = $this->systemModuleService->getSystemModules(page: 1, pageSize: 5);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch system modules.',
                 'grpcStatus' => [
@@ -40,7 +40,7 @@ class SystemModuleController extends Controller
     {
         $response = $this->systemModuleService->createSystemModule($request);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to create system module.',
                 'grpcStatus' => [
@@ -63,7 +63,7 @@ class SystemModuleController extends Controller
     {
         $response = $this->systemModuleService->updateSystemModule($request, $id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to update system module.',
                 'grpcStatus' => [
@@ -86,7 +86,7 @@ class SystemModuleController extends Controller
     {
         $response = $this->systemModuleService->deleteSystemModule($id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to delete system module.',
                 'grpcStatus' => [

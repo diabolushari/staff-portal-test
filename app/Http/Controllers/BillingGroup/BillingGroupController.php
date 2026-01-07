@@ -90,7 +90,7 @@ class BillingGroupController extends Controller
 
         $billingGenerateJobServiceResponse = $this->billingGenerateJobService->listBillGenerationJobStatus($id, null);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with(['error' => 'Failed to get billing group']);
         }
 

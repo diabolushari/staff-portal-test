@@ -58,7 +58,7 @@ class MeterController extends Controller
             sortBy: $sortBy,
             sortDirection: $sortDirection,
         );
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
@@ -122,7 +122,6 @@ class MeterController extends Controller
         return Inertia::render('Meters/MeterCreatePage', $viewData);
     }
 
-
     public function store(MeterFormRequest $request): RedirectResponse
     {
         $user = Auth::user();
@@ -132,7 +131,7 @@ class MeterController extends Controller
 
         $response = $this->meterService->createMeter($request);
 
-        if ($response->hasError() || $response->statusCode !== 0) {
+        if ($response->hasValidationError() || $response->statusCode !== 0) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
@@ -150,7 +149,7 @@ class MeterController extends Controller
         $response = $this->meterService->getMeter($id);
         $relResponse = $this->meterTransformerRelService->getRelByMeterId($id);
         $transformers = [];
-        if ($relResponse->hasError() == false) {
+        if ($relResponse->hasValidationError() == false) {
             $ctpts = $relResponse->data ?? [];
             foreach ($ctpts as $ctpt) {
                 $transformers[] = $this->meterTransformerService->getTransformer($ctpt['ctpt_id'])->data;
@@ -192,7 +191,7 @@ class MeterController extends Controller
 
         $response = $this->meterService->updateMeter($request);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
@@ -208,7 +207,7 @@ class MeterController extends Controller
     {
         $response = $this->meterService->deleteMeter($id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);

@@ -32,7 +32,7 @@ class ParameterDefinitionController extends Controller
         $systemModulesResponse = $this->systemModuleService->getSystemModules($page, $pageSize);
         $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, $domainName, $moduleName, $search);
 
-        if ($domainsResponse->hasError()) {
+        if ($domainsResponse->hasValidationError()) {
             return $domainsResponse->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch parameter domains.',
                 'grpcStatus' => [
@@ -42,7 +42,7 @@ class ParameterDefinitionController extends Controller
             ]);
         }
 
-        if ($systemModulesResponse->hasError()) {
+        if ($systemModulesResponse->hasValidationError()) {
             return $systemModulesResponse->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch system modules.',
                 'grpcStatus' => [
@@ -52,7 +52,7 @@ class ParameterDefinitionController extends Controller
             ]);
         }
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch parameter definitions.',
                 'grpcStatus' => [
@@ -78,7 +78,7 @@ class ParameterDefinitionController extends Controller
     {
         $response = $this->parameterDefinitionService->getParameterDefinition($id, null, null, null);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch parameter definition.',
                 'grpcStatus' => [
@@ -101,7 +101,7 @@ class ParameterDefinitionController extends Controller
     {
         $response = $this->parameterDefinitionService->createParameterDefinition($request);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to create parameter definition.',
                 'grpcStatus' => [
@@ -124,7 +124,7 @@ class ParameterDefinitionController extends Controller
     {
         $response = $this->parameterDefinitionService->updateParameterDefinition($request, $id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to update parameter definition.',
                 'grpcStatus' => [
@@ -147,7 +147,7 @@ class ParameterDefinitionController extends Controller
     {
         $response = $this->parameterDefinitionService->deleteParameterDefinition($id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to delete parameter definition.',
                 'grpcStatus' => [

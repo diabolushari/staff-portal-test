@@ -47,7 +47,7 @@ class TariffOrderController extends Controller
             );
         }
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
@@ -84,7 +84,7 @@ class TariffOrderController extends Controller
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 5;
         $response = $this->tariffOrderService->getTariffOrder($id);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->withErrors([
                 'message' => $response->error ?? $response->statusDetails ?? 'Unknown error',
             ]);
@@ -123,7 +123,7 @@ class TariffOrderController extends Controller
     public function edit(int $id): Response|RedirectResponse
     {
         $response = $this->tariffOrderService->getTariffOrder($id);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
@@ -148,7 +148,7 @@ class TariffOrderController extends Controller
     public function destroy(int $id): RedirectResponse
     {
         $response = $this->tariffOrderService->deleteTariffOrder($id);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->with('error', 'Failed to delete tariff order');
         }
 
