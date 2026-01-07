@@ -26,6 +26,7 @@ interface Props {
   updateMeterHealth: (meterHealthId: number, meter: Meter) => void
   updateCTPTHealth: (meterId: number, ctptId: number, healthId: number) => void
   isFirstReading: boolean
+  isOnparameterForm: boolean
 }
 
 export default function MeterReadingsStep({
@@ -41,11 +42,15 @@ export default function MeterReadingsStep({
   updateReading,
   healthData,
   setIsOnParameterForm,
+  isOnparameterForm,
   isFirstReading,
 }: Readonly<Props>) {
   const isSingleMeter = metersWithTimezonesAndProfiles.length === 1
 
   const [activeMeterIdx, setActiveMeterIdx] = useState<number | null>(isSingleMeter ? 0 : null)
+  const [hasMultipleMeters, setHasMultipleMeters] = useState<boolean>(
+    metersWithTimezonesAndProfiles.length > 1
+  )
 
   const [activeProfile, setActiveProfile] = useState<{
     meterIdx: number
@@ -53,7 +58,11 @@ export default function MeterReadingsStep({
   } | null>(null)
 
   useEffect(() => {
-    setIsOnParameterForm(activeProfile !== null)
+    if (hasMultipleMeters) {
+      setIsOnParameterForm(true)
+    } else {
+      setIsOnParameterForm(activeProfile !== null)
+    }
   }, [activeProfile, setIsOnParameterForm])
 
   const metersToRender = useMemo(() => {
@@ -76,12 +85,16 @@ export default function MeterReadingsStep({
     return []
   }, [isSingleMeter, activeMeterIdx, metersWithTimezonesAndProfiles])
 
+  useEffect(() => {
+    setIsOnParameterForm(false)
+  }, [])
+
   return (
     <div className='flex flex-col gap-6'>
       {/* ---------- MULTIPLE METERS : SELECTOR ---------- */}
       {!isSingleMeter && activeMeterIdx === null && (
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-          {metersWithTimezonesAndProfiles.map((meter, idx) => (
+          {metersWithTimezonesAndProfiles?.map((meter, idx) => (
             <div
               key={meter.meter_id}
               className='hover:bg-muted cursor-pointer rounded-xl border p-4 transition'
@@ -117,7 +130,7 @@ export default function MeterReadingsStep({
       )}
 
       {/* ---------- PREVIEW + PROFILE FOR SELECTED METER ---------- */}
-      {metersToRender.map(({ meter, meterIdx }) => (
+      {metersToRender?.map(({ meter, meterIdx }) => (
         <React.Fragment key={meter.meter_id}>
           {(!activeProfile || activeProfile.meterIdx !== meterIdx) && (
             <MeterReadingPreview
@@ -144,7 +157,29 @@ export default function MeterReadingsStep({
               readingValues={readingValues}
               setActiveProfile={setActiveProfile}
               isFirstReading={isFirstReading}
+              hasMultipleMeters={hasMultipleMeters}
+              setIsOnParameterForm={setIsOnParameterForm}
             />
+          )}
+          {hasMultipleMeters && activeProfile === null && (
+            <div className='flex justify-between'>
+              <Button
+                variant='secondary'
+                label='Cancel'
+                onClick={() => {
+                  setActiveMeterIdx(null)
+                  setIsOnParameterForm(false)
+                }}
+              />
+              <Button
+                variant='primary'
+                label='Update'
+                onClick={() => {
+                  setActiveMeterIdx(null)
+                  setIsOnParameterForm(false)
+                }}
+              />
+            </div>
           )}
         </React.Fragment>
       ))}

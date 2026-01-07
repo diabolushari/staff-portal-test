@@ -19,6 +19,8 @@ interface Props {
   updateReading: (meterId: number, parameterId: number, newReading: TimezoneReadingState[]) => void
   setActiveProfile: (profile: { meterIdx: number; profileIdx: number } | null) => void
   isFirstReading: boolean
+  hasMultipleMeters: boolean
+  setIsOnParameterForm: (isOnParameterForm: boolean) => void
 }
 
 export default function ProfileReadingForm({
@@ -28,6 +30,8 @@ export default function ProfileReadingForm({
   updateReading,
   setActiveProfile,
   isFirstReading,
+  hasMultipleMeters,
+  setIsOnParameterForm,
 }: Readonly<Props>) {
   const [currentReadingState, setCurrentReadingState] = useState<TimezoneReadingState[]>([])
   const [readingErrors, setReadingErrors] = useState<Record<string, string | undefined>>({})
@@ -281,7 +285,10 @@ export default function ProfileReadingForm({
             <div className='mt-4 flex justify-end gap-2'>
               <Button
                 variant='secondary'
-                onClick={() => setActiveProfile(null)}
+                onClick={() => {
+                  setActiveProfile(null)
+                  hasMultipleMeters ? setIsOnParameterForm(true) : setIsOnParameterForm(true)
+                }}
                 label='Cancel'
               />
               <Button
