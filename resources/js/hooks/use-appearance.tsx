@@ -28,7 +28,7 @@ const mediaQuery = () => {
     return null
   }
 
-  return window.matchMedia('(prefers-color-scheme: light)')
+  return window.matchMedia('(prefers-color-scheme: dark)')
 }
 
 const handleSystemThemeChange = () => {

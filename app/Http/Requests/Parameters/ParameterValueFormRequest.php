@@ -13,6 +13,7 @@ class ParameterValueFormRequest extends Data
         public string $parameterCode,
         public string $parameterValue,
         public int $definitionId,
+        public bool $isActive,
         public ?int $parentParameterValue,
         public ?string $attribute1Value,
         public ?string $attribute2Value,

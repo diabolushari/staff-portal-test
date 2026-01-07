@@ -39,6 +39,7 @@ export interface FormFieldProp {
 }
 
 export interface CheckboxProp {
+  required?: boolean
   label?: string
   value?: boolean
   error?: string

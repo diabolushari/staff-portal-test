@@ -6,14 +6,14 @@ import { Layers, Package } from 'lucide-react'
 interface Props {
   parameterDefinitions: ParameterDefinition[]
   onView?: (item: ParameterDefinition) => void
-  onEdit?: (item: ParameterDefinition) => void
+  onEdit: (item: ParameterDefinition) => void
   onDelete: (item: ParameterDefinition) => void
 }
 
 export default function ParameterDefinitionList({
   parameterDefinitions,
   onView,
-
+  onEdit,
   onDelete,
 }: Readonly<Props>) {
   return (
@@ -100,7 +100,10 @@ export default function ParameterDefinitionList({
                       Edit
                     </button>
                   )} */}
-                  <ActionButton onDelete={() => onDelete(def)} />
+                  <ActionButton
+                    onDelete={() => onDelete(def)}
+                    onEdit={() => onEdit(def)}
+                  />
                 </div>
               </div>
             </div>
