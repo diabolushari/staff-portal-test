@@ -96,6 +96,7 @@ class CreateMeterReadingController extends Controller
                 $meterWithTimezoneAndProfile['meter_id'] = $meterConnectionRel['meter_id'];
                 $meter = $this->meterService->getMeter($meterConnectionRel['meter_id']);
                 $meterWithTimezoneAndProfile['meter'] = $meter->data;
+                $meterWithTimezoneAndProfile['meter_profile'] = $meterConnectionRel['meter_profile'];
 
                 $data = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($meterConnectionRel['meter_id'])->data ?? [];
                 if (! empty($data)) {
@@ -114,7 +115,7 @@ class CreateMeterReadingController extends Controller
                     $meterWithTimezoneAndProfile['timezones'] = $timezones;
                 }
 
-                $meterProfilesResponse = $this->meteringParameterProfileService->listMeteringProfileParameters(1, 10, null, $meter->data['profile_id'] ?? null)->data;
+                $meterProfilesResponse = $this->meteringParameterProfileService->listMeteringProfileParameters(1, 10, null, $meterConnectionRel['meter_profile']['id'] ?? null)->data;
                 $meterProfiles = [];
                 if ($meterProfilesResponse) {
                     foreach ($meterProfilesResponse as $meterProfile) {

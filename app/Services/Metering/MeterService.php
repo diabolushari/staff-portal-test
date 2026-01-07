@@ -53,6 +53,10 @@ class MeterService
         $request->setMeterId($meterId);
 
         [$response, $status] = $this->client->GetMeter($request)->wait();
+        $meter = null;
+        if ($response->hasMeter()) {
+            $meter = $response->getMeter();
+        }
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -63,7 +67,7 @@ class MeterService
             );
         }
 
-        return GrpcServiceResponse::success(MeterProtoConvertor::convertToArray($response), $response, $status->code, $status->details);
+        return GrpcServiceResponse::success(MeterProtoConvertor::convertToArray($meter), $response, $status->code, $status->details);
     }
 
     public function listMeters(): GrpcServiceResponse
@@ -118,9 +122,6 @@ class MeterService
         }
         if ($meterTypeId !== null) {
             $request->setMeterTypeId($meterTypeId);
-        }
-        if ($meterProfileId) {
-            $request->setMeterProfileId($meterProfileId);
         }
         if ($meterMakeId) {
             $request->setMeterMakeId($meterMakeId);
