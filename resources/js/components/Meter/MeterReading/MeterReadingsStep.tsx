@@ -57,8 +57,8 @@ export default function MeterReadingsStep({
 
   return (
     <div className='flex flex-col gap-6'>
-      {metersWithTimezonesAndProfiles.map((meter, mIdx) => (
-        <React.Fragment key={meter.meter_id}>
+      {metersWithTimezonesAndProfiles?.map((meter, mIdx) => (
+        <React.Fragment key={meter?.meter_id}>
           {(!activeProfile || activeProfile.meterIdx !== mIdx) && (
             <MeterReadingPreview
               healthData={healthData}

@@ -169,9 +169,9 @@
                 <strong>{{ $consumer['organization_name'] ?? '-' }}</strong><br>
 
                 {{ $consumer['contact_details'][0]['billing_address']['address_line1'] ?? '-' }}
-                {{ isset($consumer['contact_details'][0]['billing_address']['address_line2']) ? ', '.$consumer['contact_details'][0]['billing_address']['address_line2'] : '' }}
-                {{ isset($consumer['contact_details'][0]['billing_address']['city_town_village']) ? ', '.$consumer['contact_details'][0]['billing_address']['city_town_village'] : '' }}
-                {{ isset($consumer['contact_details'][0]['billing_address']['district']['name']) ? ', '.$consumer['contact_details'][0]['billing_address']['district']['name'] : '' }}
+                {{ isset($consumer['contact_details'][0]['billing_address']['address_line2']) ? ', '.$consumer['contact_details'][0]['billing_address']['address_line2'] : '-' }}
+                {{ isset($consumer['contact_details'][0]['billing_address']['city_town_village']) ? ', '.$consumer['contact_details'][0]['billing_address']['city_town_village'] : '-' }}
+                {{ isset($consumer['contact_details'][0]['billing_address']['district']['name']) ? ', '.$consumer['contact_details'][0]['billing_address']['district']['name'] : '-' }}
                 <br>
 
                 {{ $consumer['contact_details'][0]['billing_address']['state']['name'] ?? '-' }}
@@ -251,14 +251,14 @@
         </tr>
         <tr>
           <td>Disputed: - | Undisputed: -</td>
-          <td>{{ \Carbon\Carbon::parse($connection['previous_reading']['reading_end_date'])->format('F Y') }}</td>
+          <td>{{ \Carbon\Carbon::parse($connection['previous_reading']['reading_end_date'])->format('F Y') ?? '-' }}</td>
           <td>
-            {{ \Carbon\Carbon::parse($bill['reading_year_month'])->format('F Y') }}
+            {{ \Carbon\Carbon::parse($bill['reading_year_month'])->format('F Y') ?? '-' }}
           </td>
 
-          <td class="center">{{ $averageAndTotalKva['averageKva'] ?? '' }}</td>
-          <td class="center">{{ $averageAndTotalKwh['totalKwh'] ?? '' }}</td>
-          <td class="center">{{ $computedProperties['Power Factor']['result'] ?? '' }}</td>
+          <td class="center">{{ $averageAndTotalKva['averageKva'] ?? '-' }}</td>
+          <td class="center">{{ $averageAndTotalKwh['totalKwh'] ?? '-' }}</td>
+          <td class="center">{{ $computedProperties['Power Factor']['result'] ?? '-' }}</td>
         </tr>
         <tr>
           <td colspan="2">Contract Demand (kVA): {{ $connection['contract_demand_kva_val'] ?? '' }} | 75% of CD: {{ $connection['contract_demand_kva_val'] * 0.75}} | 130% of CD: {{ $connection['contract_demand_kva_val'] * 1.30}}</td>
@@ -301,9 +301,9 @@
         <tr>
           {{-- kWh Energy Consumption --}}
           <td>{{ $index + 1 }}</td>
-          <td>{{ $kWhRow['final_reading'] }}</td>
-          <td>{{ $kWhRow['initial_reading'] }}</td>
-          <td>{{ $meter['meter_mf'] }}</td>
+          <td>{{ $kWhRow['final_reading'] ?? '-' }}</td>
+          <td>{{ $kWhRow['initial_reading'] ?? '-' }}</td>
+          <td>{{ $meter['meter_mf'] ?? '-' }}</td>
           <td class="right">{{ $kWhRow['difference'] * ($meter['meter_mf'] ?? 1) }}</td>
           <td></td>
 
@@ -315,10 +315,10 @@
           <td>{{ $index + 1 }}</td>
           <td>{{ $lagRow['initial_reading'] ?? '-' }}</td>
           <td>{{ $lagRow['final_reading'] ?? '-' }}</td>
-          <td>{{ $meter['meter_mf'] ?? 1 }}</td>
+          <td>{{ $meter['meter_mf'] ?? '-' }}</td>
           <td class="right">{{ ($lagRow['difference'] ?? 0) * ($meter['meter_mf'] ?? 1) }}</td>
-          <td>{{ $leadRow['initial_reading'] ?? '' }}</td>
-          <td>{{ $leadRow['final_reading'] ?? '' }}</td>
+          <td>{{ $leadRow['initial_reading'] ?? '-' }}</td>
+          <td>{{ $leadRow['final_reading'] ?? '-' }}</td>
           <td class="right">{{ ($leadRow['difference'] ?? 0) * ($meter['meter_mf'] ?? 1) }}</td>
         </tr>
         @endforeach
@@ -584,7 +584,7 @@
     </table>
 
     <div class="footer">
-      <i>(Rupees {{ $bill['bill_amount'] }} Only)</i>
+      <i>(Rupees {{ $bill['bill_amount'] ?? '-' }} Only)</i>
       <div class="signature">SPECIAL OFFICER (REVENUE)</div>
     </div>
   </div>
@@ -601,9 +601,9 @@
 
     <table width="100%" style="page-break-inside: avoid;">
       <tr>
-        <td><strong>Cons#:</strong> <span class="mono">{{ $connection['consumer_number'] ?? '' }}</span></td>
-        <td><strong>Bill No:</strong> <span class="mono">{{$bill['bill_id'] ?? ''}}</span></td>
-        <td><strong>Rs:</strong> <span class="mono">{{$bill['bill_amount'] ?? 0}}</span></td>
+        <td><strong>Cons#:</strong> <span class="mono">{{ $connection['consumer_number'] ?? '-' }}</span></td>
+        <td><strong>Bill No:</strong> <span class="mono">{{$bill['bill_id'] ?? '-'}}</span></td>
+        <td><strong>Rs:</strong> <span class="mono">{{$bill['bill_amount'] ?? '-'}}</span></td>
       </tr>
     </table>
   </div>

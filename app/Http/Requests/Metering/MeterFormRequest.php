@@ -14,7 +14,6 @@ class MeterFormRequest extends Data
         public ?int $meterId,
         public string $meterSerial,
         public int $ownershipTypeId,
-        public int $meterProfileId,
         public int $meterMakeId,
         public int $meterTypeId,
         public int $accuracyClassId,

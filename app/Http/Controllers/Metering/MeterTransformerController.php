@@ -30,8 +30,7 @@ class MeterTransformerController extends Controller
         $makeId = $request->input('make_id') ?? null;
         $typeId = $request->input('type_id') ?? null;
         $ownershipTypeId = $request->input('ownership_type_id') ?? null;
-        $ratioPrimaryValue = $request->input('ratio_primary_value') ?? null;
-        $ratioSecondaryValue = $request->input('ratio_secondary_value') ?? null;
+        $ratio = $request->input('ratio') ?? null;
         $sortBy = $request->input('sort_by') ?? null;
         $sortDirection = $request->input('sort_direction') ?? null;
         $response = $this->transformerService->listTransformersPaginated(
@@ -41,8 +40,7 @@ class MeterTransformerController extends Controller
             makeId: $makeId,
             typeId: $typeId,
             ownershipTypeId: $ownershipTypeId,
-            ratioPrimaryValue: $ratioPrimaryValue,
-            ratioSecondaryValue: $ratioSecondaryValue,
+            ratio: $ratio,
             sortBy: $sortBy,
             sortDirection: $sortDirection,
         );
@@ -68,6 +66,19 @@ class MeterTransformerController extends Controller
         $primaryRatios = $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Primary Ratio')->data;
         $secondaryRatios = $this->parameterValueService->getParameterValues(1, 100, null, 'CTPT', 'Secondary Ratio')->data;
 
+        $ratios = [];
+
+        foreach ($primaryRatios as $primary) {
+            foreach ($secondaryRatios as $secondary) {
+                $ratios[] = [
+                    'primary_id' => $primary['id'],
+                    'secondary_id' => $secondary['id'],
+                    'ratio' => $primary['parameter_value'] . '/' . $secondary['parameter_value'],
+                ];
+            }
+        }
+
+
         return Inertia::render('MeterTransformers/MeterTransformerIndex', [
             'transformers' => $paginated ?? [],
             'filters' => [
@@ -79,13 +90,13 @@ class MeterTransformerController extends Controller
             'oldMakeId' => $makeId,
             'oldTypeId' => $typeId,
             'oldOwnershipTypeId' => $ownershipTypeId,
-            'oldRatioPrimaryValue' => $ratioPrimaryValue,
-            'oldRatioSecondaryValue' => $ratioSecondaryValue,
+            'oldRatio' => $ratio,
             'types' => $types,
             'makes' => $makes,
             'ownershipTypes' => $ownershipTypes,
             'primaryRatios' => $primaryRatios,
             'secondaryRatios' => $secondaryRatios,
+            'ratios' => $ratios,
         ]);
     }
 

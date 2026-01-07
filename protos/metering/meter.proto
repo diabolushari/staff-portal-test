@@ -81,11 +81,10 @@ message MeterFormRequest {
   int32 internal_ct_secondary = 26;
   int32 internal_pt_primary = 27;
   int32 internal_pt_secondary = 28;
-  int64 profile_id = 29;
-  int32 ct_count = 30;
-  int32 pt_count = 31;
-  optional int32 created_by = 32;
-  optional int32 updated_by = 33;
+  int32 ct_count = 29;
+  int32 pt_count = 30;
+  optional int32 created_by = 31;
+  optional int32 updated_by = 32;
 }
 
 message DeleteMeterRequest {
@@ -149,19 +148,15 @@ message MeterResponse {
   optional int32 warranty_period = 38;
   optional string batch_code = 39;
 
-  // --- Profile ---
-  int64 profile_id = 40;
-  parameters.ParameterValueProto profile = 41;
-
   // --- Audit ---
-  string created_ts = 42;
-  string updated_ts = 43;
-  optional int32 created_by = 44;
-  optional int32 updated_by = 45;
+  string created_ts = 40;
+  string updated_ts = 41;
+  optional int32 created_by = 42;
+  optional int32 updated_by = 43;
 
   // --- Relations ---
-  repeated com.kseb.consumerservice.proto.metering.MeterTransformerMessage transformers = 46;
-  optional bool has_meter_reading = 47;
+  repeated com.kseb.consumerservice.proto.metering.MeterTransformerMessage transformers = 44;
+  optional bool has_meter_reading = 45;
 }
 
 
@@ -176,12 +171,11 @@ message MeterPaginatedListRequest {
   optional bool bidirectional_ind = 7;
 
   optional int32 meter_type_id = 8;
-  optional int64 meter_profile_id = 9;
-  optional int32 meter_make_id = 10;
-  optional int32 ownership_type_id = 11;
+  optional int32 meter_make_id = 9;
+  optional int32 ownership_type_id = 10;
 
-  optional int32 programmable_ct_ratio = 12;
-  optional float programmable_pt_ratio = 13;
+  optional int32 programmable_ct_ratio = 11;
+  optional float programmable_pt_ratio = 12;
 }
 
 // Paginated list response

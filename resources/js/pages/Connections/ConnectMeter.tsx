@@ -22,28 +22,20 @@ import { BreadcrumbItem } from '@/types'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import ConnectMeterTransformerModal from '@/components/Connections/ConnectionMeter/ConnectMeterTransformerModal'
 import SelectUnassignedMeterModal from '@/components/Connections/ConnectionMeter/SelectUnassignedMeterModal'
-import { time } from 'console'
-
-const toYMD = (iso?: string | null): string => {
-  if (!iso) return ''
-  const d = new Date(iso)
-  return !Number.isNaN(d.getTime()) ? d.toISOString().split('T')[0] : ''
-}
 
 export default function ConnectMeter({
   connection_id,
   relation,
-  meters,
   useCategory,
   meterStatus,
   connection,
   ctpts,
   statuses,
+  meterProfiles,
   timezoneTypes,
 }: {
   connection_id: number
   relation?: MeterConnectionMapping
-  meters: Meter[]
   useCategory: ParameterValues[]
   meterStatus: ParameterValues[]
   changeReason: ParameterValues[]
@@ -51,6 +43,7 @@ export default function ConnectMeter({
   ctpts: MeterTransformer[]
   statuses: ParameterValues[]
   changeReasons: ParameterValues[]
+  meterProfiles: ParameterValues[]
   timezoneTypes: ParameterValues[]
 }) {
   const [meterTransformers, setMeterTransformers] = useState<MeterTransformerAssignment[]>([])
@@ -63,6 +56,7 @@ export default function ConnectMeter({
     connection_id: connection_id,
     meter_id: '',
     meter_use_category: '',
+    meter_profile_id: '',
     meter_status_id: '',
     timezone_type_id: '',
     sort_priority: '0',
@@ -192,6 +186,16 @@ export default function ConnectMeter({
               dataKey='id'
               displayKey='parameter_value'
               error={errors.meter_use_category}
+              required
+            />
+            <SelectList
+              label='Meter Profile'
+              value={formData.meter_profile_id}
+              setValue={setFormValue('meter_profile_id')}
+              list={meterProfiles}
+              dataKey='id'
+              displayKey='parameter_value'
+              error={errors.meter_profile_id}
               required
             />
 

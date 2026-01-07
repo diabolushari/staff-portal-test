@@ -49,11 +49,7 @@ export function useAppearance() {
 
   const updateAppearance = useCallback((mode: Appearance) => {
     setAppearance(mode)
-
-    // Store in localStorage for client-side persistence...
     localStorage.setItem('appearance', mode)
-
-    // Store in cookie for SSR...
     setCookie('appearance', mode)
 
     applyTheme(mode)

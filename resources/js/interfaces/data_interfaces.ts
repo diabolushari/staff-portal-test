@@ -305,14 +305,8 @@ export interface Meter {
   meter_id: number
   meter_serial: string
 
-  profile_id: number | string
-
   ownership_type_id: number
   ownership_type: ParameterValues | null
-
-  meter_profile_id: number | string
-  meter_profile: ParameterValues | null
-
   meter_make_id: number
   meter_make: ParameterValues | null
 
@@ -393,7 +387,11 @@ export interface MeterTransformer {
   updated_by?: number | null
   is_active?: boolean
 }
-
+export interface PrimarySecondaryRatio {
+  primary_id: number
+  secondary_id: number
+  ratio: string
+}
 export interface MeterTransformerAssignment {
   version_id: number
   ctpt_id: number

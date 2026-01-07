@@ -269,8 +269,8 @@ class MeterTransformerService
         ?int $makeId = null,
         ?int $typeId = null,
         ?int $ownershipTypeId = null,
-        ?string $ratioPrimaryValue = null,
-        ?string $ratioSecondaryValue = null,
+        ?string $ratio = null,
+
         ?string $sortBy = null,
         ?string $sortDirection = null
     ): GrpcServiceResponse {
@@ -290,11 +290,8 @@ class MeterTransformerService
         if ($ownershipTypeId) {
             $request->setOwnershipTypeId($ownershipTypeId);
         }
-        if ($ratioPrimaryValue) {
-            $request->setRatioPrimaryValue($ratioPrimaryValue);
-        }
-        if ($ratioSecondaryValue) {
-            $request->setRatioSecondaryValue($ratioSecondaryValue);
+        if ($ratio) {
+            $request->setRatioValue($ratio);
         }
 
         if ($sortBy !== null && $sortBy !== '') {
