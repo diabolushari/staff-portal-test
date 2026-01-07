@@ -8,6 +8,7 @@ import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
 import FormCard from '@/ui/Card/FormCard'
+import CheckBox from '@/ui/form/CheckBox'
 import DatePicker from '@/ui/form/DatePicker'
 import DynamicSelectList from '@/ui/form/DynamicSelectList'
 import Input from '@/ui/form/Input'
@@ -54,6 +55,7 @@ export default function ParameterValueCreate({ parameter_value, definitions, dom
 
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     definition_id: parameter_value?.definition_id ?? '',
+    is_active: parameter_value?.is_active ?? true,
     parameter_code: parameter_value?.parameter_code ?? '',
     parameter_value: parameter_value?.parameter_value ?? '',
     attribute1_value: parameter_value?.attribute1_value ?? '',
@@ -190,6 +192,12 @@ export default function ParameterValueCreate({ parameter_value, definitions, dom
               )}
             </>
           )}
+          <CheckBox
+            label='Active'
+            value={formData.is_active}
+            error={errors?.is_active}
+            toggleValue={toggleBoolean('is_active')}
+          />
         </FormCard>
 
         {selectedDefinition?.is_effective_date_driven && (

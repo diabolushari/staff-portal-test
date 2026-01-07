@@ -1,8 +1,8 @@
-import React from 'react'
 import { CheckboxProp } from '../ui_interfaces'
 import ErrorText from '@/typography/ErrorText'
 
 export default function CheckBox({
+  required = false,
   label,
   value,
   toggleValue,
@@ -41,7 +41,7 @@ export default function CheckBox({
             </svg>
           </div>
         </div>
-        <p className='small-1stop ml-1 leading-4'>{label}</p>
+        <p className='small-1stop ml-1 leading-4'>{required ? `${label} *` : label}</p>
         {/* Code block ends */}
         <style>
           {`.checkbox:checked + .check-icon {

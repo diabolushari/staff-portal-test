@@ -139,7 +139,6 @@ message ListConnectionsRequest {
   optional int32 consumer_type_id = 5;
   optional int32 primary_purpose_id = 6;
 }
-
 message ListConnectionsResponse {
   repeated ConnectionMessage items = 1;
 }

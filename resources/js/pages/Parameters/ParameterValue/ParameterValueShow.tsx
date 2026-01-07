@@ -117,11 +117,18 @@ export default function ParameterValueShow({
           value={parameter_value?.sort_priority}
         />
 
+        <Field
+          label='Active'
+          value={parameter_value?.is_active ? 'Yes' : 'No'}
+        />
+
         <div className='col-span-2'>
-          <Field
-            label='Notes'
-            value={parameter_value?.notes}
-          />
+          {parameter_value?.notes && (
+            <Field
+              label='Notes'
+              value={parameter_value?.notes}
+            />
+          )}
         </div>
       </FormCard>
     </MainLayout>

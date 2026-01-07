@@ -16,6 +16,7 @@ interface Properties<
   V extends number | string | null,
   T extends Record<K, U> & Record<G, V>,
 > {
+  required?: boolean
   label?: string
   error?: string
   disabled?: boolean
@@ -40,6 +41,7 @@ const ComboBox = <
   T extends Record<K, U> & Record<G, V>,
 >({
   label,
+  required,
   value,
   error,
   setValue,
@@ -156,7 +158,7 @@ const ComboBox = <
           <div className='flex flex-col'>
             <div className='flex justify-between'>
               <label className='small-1stop mb-1 text-sm tracking-normal text-gray-800'>
-                {label}
+                {required ? `${label} *` : label}
               </label>
 
               <a

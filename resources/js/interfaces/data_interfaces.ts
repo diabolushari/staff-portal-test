@@ -387,7 +387,11 @@ export interface MeterTransformer {
   updated_by?: number | null
   is_active?: boolean
 }
-
+export interface PrimarySecondaryRatio {
+  primary_id: number
+  secondary_id: number
+  ratio: string
+}
 export interface MeterTransformerAssignment {
   version_id: number
   ctpt_id: number

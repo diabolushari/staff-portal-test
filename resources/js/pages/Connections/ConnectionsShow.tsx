@@ -341,18 +341,19 @@ export default function ConnectionsShow({
               </Card>
             ))}
           <div className='flex gap-4'>
-            {connectionGroupedFlags?.length === 0 && (
+            {connectionGroupedFlags?.length === 0 && indicators.length > 0 && (
               <AddButton
                 onClick={() => handleIndicator()}
                 buttonText='Add Indicator'
               />
             )}
-            {connection?.connection_generation_types?.length === 0 && (
-              <AddButton
-                onClick={() => handleGeneration()}
-                buttonText='Add Generation'
-              />
-            )}
+            {connection?.connection_generation_types?.length === 0 &&
+              generationTypes.length > 0 && (
+                <AddButton
+                  onClick={() => handleGeneration()}
+                  buttonText='Add Generation'
+                />
+              )}
           </div>
           {editIndicator && (
             <ConnectionFlagModal

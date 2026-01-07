@@ -86,6 +86,7 @@ export default function ConsumerShow({
     setEditIndicator(!editIndicator)
   }
   const { flagData, updateFlagData } = useConnectionFlagForm(indicators, consumer?.consumer?.flags)
+
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Home',
@@ -104,7 +105,6 @@ export default function ConsumerShow({
       href: '#',
     },
   ]
-  console.log(consumer?.consumer?.flags)
 
   const consumerGroupedFlags = groupFlagsBySection(consumer?.consumer?.flags, 'Consumer')
 
@@ -211,7 +211,7 @@ export default function ConsumerShow({
             connectionId={connection?.connection_id}
           />
         )}
-        {consumerGroupedFlags.length === 0 && (
+        {consumerGroupedFlags.length === 0 && indicators.length > 0 && (
           <div className='flex items-center justify-start'>
             <AddButton
               onClick={handleEditIndicator}
