@@ -80,12 +80,12 @@ class CreateMeterReadingController extends Controller
         $latestMeterReading = $this->meterReadingService->latestMeterReading($connectionId);
         $meterIds = [];
         if ($meterConnectionRel->data != null) {
-            $meterIds = array_map(fn($mapping) => $mapping['meter_id'], $meterConnectionRel->data);
+            $meterIds = array_map(fn ($mapping) => $mapping['meter_id'], $meterConnectionRel->data);
         }
 
         $ctptRelations = [];
         $ctptResponse = $this->meterTransformerRelService->listAssignedToMeters($meterIds);
-        if (! $ctptResponse->hasError()) {
+        if (! $ctptResponse->hasValidationError()) {
             $ctptRelations = $ctptResponse->data;
         }
 

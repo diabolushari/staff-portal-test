@@ -23,7 +23,7 @@ class MeterTimezoneTypeRelController extends Controller
 
         $response = $this->meterTimezoneTypeRelService->createMeterTimezoneTypeRel($data);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return back()->withErrors(['grpc_error' => $response->error->message ?? 'Something went wrong']);
         }
 
@@ -38,7 +38,7 @@ class MeterTimezoneTypeRelController extends Controller
 
         $response = $this->meterTimezoneTypeRelService->updateMeterTimezoneTypeRel($data);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return back()->withErrors(['grpc_error' => $response->error->message ?? 'Something went wrong']);
         }
 

@@ -55,7 +55,7 @@ class MeterTransformerController extends Controller
             );
         }
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
@@ -73,11 +73,10 @@ class MeterTransformerController extends Controller
                 $ratios[] = [
                     'primary_id' => $primary['id'],
                     'secondary_id' => $secondary['id'],
-                    'ratio' => $primary['parameter_value'] . '/' . $secondary['parameter_value'],
+                    'ratio' => $primary['parameter_value'].'/'.$secondary['parameter_value'],
                 ];
             }
         }
-
 
         return Inertia::render('MeterTransformers/MeterTransformerIndex', [
             'transformers' => $paginated ?? [],
@@ -125,7 +124,7 @@ class MeterTransformerController extends Controller
 
         $response = $this->transformerService->createTransformer($request);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->withErrors($response->error ?? 'Unknown error');
         }
 
@@ -145,7 +144,6 @@ class MeterTransformerController extends Controller
         ]);
     }
 
-
     public function edit(int $id): Response
     {
 
@@ -160,7 +158,7 @@ class MeterTransformerController extends Controller
 
         return Inertia::render('MeterTransformers/MeterTransformerForm', [
             'transformer' => $response->data ?? null,
-            ...$parameterRequests
+            ...$parameterRequests,
         ]);
     }
 
@@ -168,7 +166,7 @@ class MeterTransformerController extends Controller
     {
         $response = $this->transformerService->updateTransformer($id, $request);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->withErrors($response->error ?? 'Unknown error');
         }
 
@@ -183,7 +181,7 @@ class MeterTransformerController extends Controller
     {
         $response = $this->transformerService->deleteTransformer($id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->withErrors($response->error ?? 'Unknown error');
         }
 

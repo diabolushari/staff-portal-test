@@ -29,7 +29,7 @@ class TariffConfigController extends Controller
         $tariffOrderId = $request->input('tariffOrderId');
 
         $response = $this->tariffConfigService->listPaginatedTariffConfigs($pageNumber, $pageSize, $tariffOrderId);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->with('error', $response->error ?? 'Unknown error');
         }
 
@@ -76,7 +76,7 @@ class TariffConfigController extends Controller
     {
         $response = $this->tariffConfigService->createTariffConfig($request);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->with('error', $response->error);
         }
 
@@ -113,7 +113,7 @@ class TariffConfigController extends Controller
     {
         $response = $this->tariffConfigService->updateTariffConfig($request, $id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->with('error', $response->error);
         }
 
@@ -125,7 +125,7 @@ class TariffConfigController extends Controller
     {
         $response = $this->tariffConfigService->deleteTariffConfig($id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->with('error', $response->error);
         }
 

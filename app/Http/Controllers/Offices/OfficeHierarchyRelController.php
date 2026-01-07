@@ -16,7 +16,7 @@ class OfficeHierarchyRelController extends Controller
         $response = $this->officeHierarchyRelService->createOfficeHierarchyRel(
             $request
         );
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
@@ -28,7 +28,7 @@ class OfficeHierarchyRelController extends Controller
     public function update(OfficeHierarchyForm $request, int $id): RedirectResponse
     {
         $response = $this->officeHierarchyRelService->updateOfficeHierarchyRel($request, $id);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
@@ -40,7 +40,7 @@ class OfficeHierarchyRelController extends Controller
     public function destroy(int $id): RedirectResponse
     {
         $response = $this->officeHierarchyRelService->deleteOfficeHierarchyRel($id);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);

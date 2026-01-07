@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Services\Connection\ConnectionGenerationTypeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 
 class ConnectionGenerationController extends Controller
 {
@@ -18,7 +17,7 @@ class ConnectionGenerationController extends Controller
     {
         $response = $this->connectionGenerationTypeService->update($connectionId, $request->input('generation_types'));
 
-        if ($response->hasError() || $response->statusCode !== 0) {
+        if ($response->hasValidationError() || $response->statusCode !== 0) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);

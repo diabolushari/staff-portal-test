@@ -35,7 +35,7 @@ class GetConnectionMeterTransformerController extends Controller
                 $relResponse = $this->meterTransformerRelService->getRelByMeterId($meterConnectionRel['meter_id']);
                 $transformers = [];
 
-                if ($relResponse->hasError() == false) {
+                if ($relResponse->hasValidationError() == false) {
                     $ctpts = $relResponse->data ?? [];
                     foreach ($ctpts as $ctpt) {
                         $transformer['transformer'] = $this->meterTransformerService->getTransformer($ctpt['ctpt_id'])->data;

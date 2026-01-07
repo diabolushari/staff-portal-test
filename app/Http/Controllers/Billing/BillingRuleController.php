@@ -56,7 +56,7 @@ class BillingRuleController extends Controller
     public function store(BillingRuleRequest $request): RedirectResponse
     {
         $response = $this->billingRuleService->createBillingRule($request);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->withErrors(
                 $response->error ? $response->error : 'Something went wrong'
             );
@@ -131,7 +131,7 @@ class BillingRuleController extends Controller
     public function destroy(int $id): RedirectResponse
     {
         $response = $this->billingRuleService->deleteBillingRule($id);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->withErrors(
                 $response->error ? $response->error : 'Something went wrong'
             );

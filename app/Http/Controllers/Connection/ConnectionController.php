@@ -105,7 +105,7 @@ class ConnectionController extends Controller
             'Connection',
             'Primary Purpose'
         );
-        if ($connection->hasError()) {
+        if ($connection->hasValidationError()) {
             if ($connection->error) {
                 return $connection->error;
             } else {
@@ -114,7 +114,7 @@ class ConnectionController extends Controller
         }
 
         $consumer = $this->consumerService->getConsumer($id);
-        $consumerExist = ! $consumer->hasError() && $consumer->data !== null;
+        $consumerExist = ! $consumer->hasValidationError() && $consumer->data !== null;
 
         return Inertia::render('Connections/ConnectionsShow', [
             'connection' => $connection->data,
@@ -140,7 +140,7 @@ class ConnectionController extends Controller
     {
         $response = $this->connectionService->updateConnection($request, $id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
@@ -155,7 +155,7 @@ class ConnectionController extends Controller
     {
         $response = $this->connectionService->deleteConnection($id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);

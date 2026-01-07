@@ -17,7 +17,7 @@ class UpdateOfficeContactsController extends Controller
     {
         $response = $this->officeService->updateOfficeContactFolio($data);
 
-        if ($response->hasError() && $response->error !== null) {
+        if ($response->hasValidationError() && $response->error !== null) {
             return $response->error;
         }
 
