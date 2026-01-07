@@ -1,4 +1,5 @@
 import useCustomForm from '@/hooks/useCustomForm'
+import { PrimarySecondaryRatio } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
@@ -10,8 +11,7 @@ interface MeterTransformerSearchProps {
   make_id?: string
   type_id?: string
   ownership_type_id?: string
-  ratio_primary_value?: string
-  ratio_secondary_value?: string
+  ratio?: string
 }
 
 interface Props {
@@ -19,13 +19,11 @@ interface Props {
   oldMakeId?: string
   oldTypeId?: string
   oldOwnershipTypeId?: string
-  oldRatioPrimaryValue?: string
-  oldRatioSecondaryValue?: string
+  oldRatio?: string
   types: ParameterValues[]
   makes: ParameterValues[]
   ownershipTypes: ParameterValues[]
-  primaryRatios: ParameterValues[]
-  secondaryRatios: ParameterValues[]
+  ratios: PrimarySecondaryRatio[]
 }
 
 const MeterTransformerSearch = ({
@@ -33,21 +31,18 @@ const MeterTransformerSearch = ({
   oldMakeId,
   oldTypeId,
   oldOwnershipTypeId,
-  oldRatioPrimaryValue,
-  oldRatioSecondaryValue,
   types,
   makes,
   ownershipTypes,
-  primaryRatios,
-  secondaryRatios,
+  ratios,
+  oldRatio,
 }: Readonly<Props>) => {
   const { formData, setFormValue } = useCustomForm<MeterTransformerSearchProps>({
     ctpt_serial: oldCtptSerial,
     make_id: oldMakeId,
     type_id: oldTypeId,
     ownership_type_id: oldOwnershipTypeId,
-    ratio_primary_value: oldRatioPrimaryValue,
-    ratio_secondary_value: oldRatioSecondaryValue,
+    ratio: oldRatio,
   })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -57,12 +52,7 @@ const MeterTransformerSearch = ({
   }
 
   const filterApplied = Boolean(
-    oldCtptSerial ||
-      oldMakeId ||
-      oldTypeId ||
-      oldOwnershipTypeId ||
-      oldRatioPrimaryValue ||
-      oldRatioSecondaryValue
+    oldCtptSerial || oldMakeId || oldTypeId || oldOwnershipTypeId || oldRatio
   )
 
   return (
@@ -111,25 +101,15 @@ const MeterTransformerSearch = ({
                 />
                 <SelectList
                   label=''
-                  value={formData.ratio_primary_value}
-                  setValue={setFormValue('ratio_primary_value')}
-                  list={primaryRatios}
-                  dataKey='parameter_value'
-                  displayKey='parameter_value'
+                  value={formData.ratio}
+                  setValue={setFormValue('ratio')}
+                  list={ratios}
+                  dataKey='ratio'
+                  displayKey='ratio'
                   showAllOption
-                  allOptionText='All Primary Ratios'
+                  allOptionText='All Ratios'
                 />
 
-                <SelectList
-                  label=''
-                  value={formData.ratio_secondary_value}
-                  setValue={setFormValue('ratio_secondary_value')}
-                  list={secondaryRatios}
-                  dataKey='parameter_value'
-                  displayKey='parameter_value'
-                  showAllOption
-                  allOptionText='All Secondary Ratios'
-                />
                 <Button
                   label='Search'
                   type='submit'

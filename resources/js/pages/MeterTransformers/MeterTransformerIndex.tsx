@@ -3,7 +3,7 @@ import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import MainLayout from '@/layouts/main-layout'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import { useState } from 'react'
-import { MeterTransformer } from '@/interfaces/data_interfaces'
+import { MeterTransformer, PrimarySecondaryRatio } from '@/interfaces/data_interfaces'
 import { Paginator } from '@/ui/ui_interfaces'
 import Pagination from '@/ui/Pagination/Pagination'
 import MeterTransformerSearch from '@/components/Meter/MeterTransformer/MeterTransformerSearch'
@@ -20,13 +20,13 @@ interface Props {
   oldMakeId?: string
   oldTypeId?: string
   oldOwnershipTypeId?: string
-  oldRatioPrimaryValue?: string
-  oldRatioSecondaryValue?: string
+  oldRatio?: string
   types: ParameterValues[]
   makes: ParameterValues[]
   ownershipTypes: ParameterValues[]
   primaryRatios: ParameterValues[]
   secondaryRatios: ParameterValues[]
+  ratios: PrimarySecondaryRatio[]
 }
 
 const breadcrumbs = [
@@ -40,18 +40,16 @@ export default function MeterTransformerIndex({
   oldMakeId,
   oldTypeId,
   oldOwnershipTypeId,
-  oldRatioPrimaryValue,
-  oldRatioSecondaryValue,
+  oldRatio,
   types,
   makes,
   ownershipTypes,
-  primaryRatios,
-  secondaryRatios,
+
+  ratios,
 }: Readonly<Props>) {
   const items = transformers?.data ?? []
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedTransformer, setSelectedTransformer] = useState<MeterTransformer | null>(null)
-  console.log(items)
 
   function handleDeleteClick(item: MeterTransformer) {
     setShowDeleteModal(true)
@@ -73,14 +71,11 @@ export default function MeterTransformerIndex({
           oldMakeId={oldMakeId}
           oldTypeId={oldTypeId}
           oldOwnershipTypeId={oldOwnershipTypeId}
-          oldRatioPrimaryValue={oldRatioPrimaryValue}
-          oldRatioSecondaryValue={oldRatioSecondaryValue}
-          
+          oldRatio={oldRatio}
           types={types}
           makes={makes}
           ownershipTypes={ownershipTypes}
-          primaryRatios={primaryRatios}
-          secondaryRatios={secondaryRatios}
+          ratios={ratios}
         />
         {/* <Button label="Create Meter Transformer" onClick={handleCreate} /> */}
         {items && items.length > 0 ? (
