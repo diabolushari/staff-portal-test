@@ -100,10 +100,6 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
             />
 
             <Field
-              label='Metering Profile'
-              value={meter?.meter_profile?.parameter_value}
-            />
-            <Field
               label='Ownership Type'
               value={meter?.ownership_type?.parameter_value}
             />

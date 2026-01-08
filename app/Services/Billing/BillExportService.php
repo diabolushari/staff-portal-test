@@ -23,7 +23,7 @@ class BillExportService
         $meterConnectionMapping = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($connectionId)->data;
         if ($meterConnectionMapping) {
             foreach ($meterConnectionMapping as $mapping) {
-                if ($mapping['meter']['meter_profile']['parameter_value'] == 'Main Meter') {
+                if ($mapping['meter_profile']['parameter_value'] == 'Main Meter') {
                     $meter = $mapping['meter'];
                 }
             }
