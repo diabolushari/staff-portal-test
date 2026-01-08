@@ -129,6 +129,8 @@ class MeterReadingValueService
             'meter' => $response->getReading()?->getMeter(),
             'timezone' => $this->parameterValueService->toArray($response->getReading()?->getTimezone()),
             'parameter' => $this->meteringParameterProfileService->toArray($response->getReading()?->getParameter()),
+            'meter_mf' => $response->getReading()?->getMeterMf(),
+            'is_rotation' => $response->getReading()?->getIsRotation()
         ];
     }
 
