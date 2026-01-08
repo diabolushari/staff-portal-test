@@ -77,8 +77,12 @@ class TariffConfigController extends Controller
         $response = $this->tariffConfigService->createTariffConfig($request);
 
         if ($response->hasValidationError()) {
-            return redirect()->back()->with('error', $response->error);
+            return $response->error ?? redirect()->back();
         }
+        if ($response->statusCode !== 0) {
+            return redirect()->back();
+        }
+
 
         return redirect()->route('tariff-orders.show', $request->tariffOrderId)->with('message', 'Tariff config added successfully');
     }
@@ -114,7 +118,10 @@ class TariffConfigController extends Controller
         $response = $this->tariffConfigService->updateTariffConfig($request, $id);
 
         if ($response->hasValidationError()) {
-            return redirect()->back()->with('error', $response->error);
+            return $response->error ?? redirect()->back();
+        }
+        if ($response->statusCode !== 0) {
+            return redirect()->back();
         }
 
         return redirect()->route('tariff-orders.show', $request->tariffOrderId)
@@ -126,9 +133,9 @@ class TariffConfigController extends Controller
         $response = $this->tariffConfigService->deleteTariffConfig($id);
 
         if ($response->hasValidationError()) {
-            return redirect()->back()->with('error', $response->error);
+            return $response->error ?? redirect()->back();
         }
 
-        return redirect()->back()->with('success', 'Tariff config deleted successfully');
+        return redirect()->back()->with('message', 'Tariff config deleted successfully');
     }
 }

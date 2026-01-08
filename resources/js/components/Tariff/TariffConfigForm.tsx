@@ -33,19 +33,8 @@ export default function TariffConfigForm({
   consumptionTariff,
   setModalOpen,
 }: Readonly<PageProps>) {
-  const { formData } = useCustomForm({
+  const { formData, setFormValue } = useCustomForm({
     tariff_order_id: tariffOrder.tariff_order_id,
-  })
-
-  const { post, loading } = useInertiaPost<typeof formData>(route('tariff-configs.store'), {
-    showErrorToast: true,
-  })
-
-  const [connectionTariff, setConnectionTariff] = useState<ParameterValues | null>(null)
-
-  const [errors, setErrors] = useState<Record<string, string>>({})
-
-  const [modalForm, setModalForm] = useState<TariffConfigItem>({
     connection_tariff: '',
     consumption_lower_limit: '',
     consumption_upper_limit: '',
@@ -55,49 +44,12 @@ export default function TariffConfigForm({
     effective_end: tariffOrder.effective_end ? dateToString(tariffOrder.effective_end) : '',
   })
 
-  const handleModalChange = (field: keyof TariffConfigItem, value: any) => {
-    setModalForm((prev) => ({ ...prev, [field]: value }))
-    setErrors((prev) => ({ ...prev, [field]: '' }))
-  }
-
-  useEffect(() => {
-    const tariff = consumptionTariff.find((t) => t.id === Number(modalForm.connection_tariff))
-    if (tariff) setConnectionTariff(tariff)
-  }, [modalForm.connection_tariff])
-
-  const validateModalForm = (): boolean => {
-    const newErrors: Record<string, string> = {}
-
-    const start = dayjs(modalForm.effective_start)
-    const end = dayjs(modalForm.effective_end)
-    const tariffStart = dayjs(tariffOrder.effective_start)
-    const tariffEnd = tariffOrder.effective_end ? dayjs(tariffOrder.effective_end) : null
-
-    if (!start.isBefore(end)) {
-      newErrors.effective_start = 'Effective start must be before effective end.'
-    }
-
-    if (start.isBefore(tariffStart)) {
-      newErrors.effective_start = 'Effective start cannot be before the tariff order start date.'
-    }
-
-    if (tariffEnd && end.isAfter(tariffEnd)) {
-      newErrors.effective_end = 'Effective end cannot exceed tariff order effective end.'
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+  const { post, loading, errors } = useInertiaPost<typeof formData>(route('tariff-configs.store'), {
+    showErrorToast: true,
+  })
 
   const handleSubmit = () => {
-    if (!validateModalForm()) return
-
-    post({
-      ...formData,
-      tariff_config_items: [modalForm], // only 1 item
-    })
-
-    setModalOpen(false)
+    post(formData)
   }
 
   return (
@@ -115,8 +67,8 @@ export default function TariffConfigForm({
             list={consumptionTariff}
             dataKey='id'
             displayKey='parameter_value'
-            setValue={(val: any) => handleModalChange('connection_tariff', val)}
-            value={modalForm.connection_tariff}
+            setValue={setFormValue('connection_tariff')}
+            value={formData.connection_tariff}
             error={errors.connection_tariff}
             required
           />
@@ -124,8 +76,8 @@ export default function TariffConfigForm({
           <Input
             label='Consumption Lower Limit'
             type='number'
-            value={modalForm.consumption_lower_limit}
-            setValue={(val: any) => handleModalChange('consumption_lower_limit', val)}
+            value={formData.consumption_lower_limit}
+            setValue={setFormValue('consumption_lower_limit')}
             error={errors.consumption_lower_limit}
             required
           />
@@ -133,8 +85,8 @@ export default function TariffConfigForm({
           <Input
             label='Consumption Upper Limit'
             type='number'
-            value={modalForm.consumption_upper_limit}
-            setValue={(val: any) => handleModalChange('consumption_upper_limit', val)}
+            value={formData.consumption_upper_limit}
+            setValue={setFormValue('consumption_upper_limit')}
             error={errors.consumption_upper_limit}
             required
           />
@@ -142,31 +94,33 @@ export default function TariffConfigForm({
           <Input
             label='Demand Charge KVA'
             type='number'
-            value={modalForm.demand_charge_kva}
-            setValue={(val: any) => handleModalChange('demand_charge_kva', val)}
+            value={formData.demand_charge_kva}
+            setValue={setFormValue('demand_charge_kva')}
             required
+            error={errors.demand_charge_kva}
           />
 
           <Input
             label='Energy Charge KWH'
             type='number'
-            value={modalForm.energy_charge_kwh}
-            setValue={(val: any) => handleModalChange('energy_charge_kwh', val)}
+            value={formData.energy_charge_kwh}
+            setValue={setFormValue('energy_charge_kwh')}
             required
+            error={errors.energy_charge_kwh}
           />
 
           <DatePicker
             label='Effective Start'
-            value={modalForm.effective_start}
-            setValue={(val: any) => handleModalChange('effective_start', val)}
+            value={formData.effective_start}
+            setValue={setFormValue('effective_start')}
             error={errors.effective_start}
             required
           />
 
           <DatePicker
             label='Effective End'
-            value={modalForm.effective_end}
-            setValue={(val: any) => handleModalChange('effective_end', val)}
+            value={formData.effective_end}
+            setValue={setFormValue('effective_end')}
             error={errors.effective_end}
           />
         </div>
@@ -179,12 +133,20 @@ export default function TariffConfigForm({
           </div>
         )}
 
-        <div className='mt-4 flex justify-end'>
+        <div className='mt-4 flex justify-between'>
+          <Button
+            type='button'
+            label='Cancel'
+            onClick={() => setModalOpen(false)}
+            variant='secondary'
+          />
           <Button
             type='button'
             label='Save'
             onClick={handleSubmit}
-            loading={loading}
+            disabled={loading}
+            variant={loading ? 'loading' : 'default'}
+            processing={loading}
           />
         </div>
       </Modal>
