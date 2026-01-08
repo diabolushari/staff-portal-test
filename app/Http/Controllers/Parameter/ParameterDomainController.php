@@ -8,6 +8,7 @@ use App\Services\Parameters\ParameterDomainService;
 use App\Services\SystemModule\SystemModuleService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -26,7 +27,7 @@ class ParameterDomainController extends Controller
         $search = $request->input('search');
         $moduleId = $request->input('module_id') ? (int) $request->input('module_id') : null;
 
-        $response = $this->parameterDomainService->getParameterDomains(
+        $response = $this->parameterDomainService->listPaginatedParameterDomains(
             $page,
             $pageSize,
             $search,
@@ -45,8 +46,19 @@ class ParameterDomainController extends Controller
 
         $modulesResponse = $this->systemModuleService->getSystemModules();
 
+        $paginated = null;
+        if (! empty($response->data)) {
+            $paginated = new LengthAwarePaginator(
+                $response->data['parameter_domains'],
+                $response->data['total_count'],
+                $response->data['page_size'],
+                $response->data['page_number'],
+                ['path' => request()->url()]
+            );
+        }
+
         return Inertia::render('Parameters/ParameterDomain/ParameterDomainIndex', [
-            'domains' => $response->data,
+            'domains' => $paginated,
             'modules' => $modulesResponse->data,
             'grpcStatus' => [
                 'code' => $response->statusCode,

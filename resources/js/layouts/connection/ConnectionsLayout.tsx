@@ -1,14 +1,16 @@
-import { BreadcrumbItem } from '@/types'
+import { BreadcrumbItem, PageProps } from '@/types'
 import { MainNav } from '@/components/Navbar/navitems'
 import { Connection } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NestedTabGroup } from '@/components/ui/nestedTab'
 import CustomBreadcrumb from '@/ui/BreadCrumb'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { ToastContainer } from 'react-toastify'
 import TopNavBar from '@/components/Navbar/TopNavBar'
 import LeftNavBar from '@/components/Navbar/LeftNavBar'
+import { usePage } from '@inertiajs/react'
+import { showError, showInfo, showSuccess } from '@/ui/alerts'
 
 interface ConnectionsLayoutProps {
   children: React.ReactNode
@@ -265,6 +267,21 @@ export default function ConnectionsLayout({
   description,
   onEdit,
 }: Readonly<ConnectionsLayoutProps>) {
+  const { flash } = usePage<PageProps>().props
+  useEffect(() => {
+    if (flash?.message) {
+      showSuccess(flash.message)
+    }
+    if (flash?.error) {
+      showError(flash.error)
+    }
+    if (flash?.debug) {
+      console.log(flash.debug)
+      flash.debug.forEach((debug) => {
+        showInfo(debug)
+      })
+    }
+  }, [flash])
   return (
     <SidebarProvider>
       <ToastContainer theme='dark' />

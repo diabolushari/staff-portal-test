@@ -9,6 +9,8 @@ use App\Services\Parameters\ParameterDomainService;
 use App\Services\SystemModule\SystemModuleService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -20,7 +22,7 @@ class ParameterDefinitionController extends Controller
         private SystemModuleService $systemModuleService
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): RedirectResponse|InertiaResponse
     {
 
         $page = $request->input('page', 1);
@@ -30,7 +32,7 @@ class ParameterDefinitionController extends Controller
         $search = $request->input('search');
         $domainsResponse = $this->parameterDomainService->getParameterDomains($page, $pageSize, null, null);
         $systemModulesResponse = $this->systemModuleService->getSystemModules($page, $pageSize);
-        $response = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, $domainName, $moduleName, $search);
+        $response = $this->parameterDefinitionService->listPaginatedParameterDefinitions($page, $pageSize, $domainName, $moduleName, $search);
 
         if ($domainsResponse->hasError()) {
             return $domainsResponse->error ?? redirect()->back()->with([
@@ -62,8 +64,19 @@ class ParameterDefinitionController extends Controller
             ]);
         }
 
+
+        $paginated = null;
+        if (! empty($response->data)) {
+            $paginated = new LengthAwarePaginator(
+                $response->data['parameter_definitions'],
+                $response->data['total_count'],
+                $response->data['page_size'],
+                $response->data['page_number'],
+                ['path' => request()->url()]
+            );
+        }
         return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionIndex', [
-            'parameter_definitions' => $response->data ?? [],
+            'parameter_definitions' => $paginated ?? [],
             'domains' => $domainsResponse->data ?? [],
             'system_modules' => $systemModulesResponse->data ?? [],
             'filters' => [

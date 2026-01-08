@@ -13,6 +13,7 @@ use App\Services\utils\GrpcServiceResponse;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Proto\Metering\CreateMeterConnectionMappingRequest;
 use Proto\Metering\DeleteMeterConnectionMappingRequest;
 use Proto\Metering\GetMeterConnectionMappingByConnectionIdRequest;
@@ -97,6 +98,7 @@ class MeterConnectionMappingService
         }
 
         [$response, $status] = $this->client->CreateMeterConnectionMapping($request)->wait();
+
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
