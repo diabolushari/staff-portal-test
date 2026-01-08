@@ -26,10 +26,11 @@ class MeterReadingValueService
         );
     }
 
-    public function listMeterReadingValues(int $page = 1,
+    public function listMeterReadingValues(
+        int $page = 1,
         int $pageSize = 10,
-        ?string $search = null): GrpcServiceResponse
-    {
+        ?string $search = null
+    ): GrpcServiceResponse {
 
         $request = new ListMeterReadingValuesRequest;
         if ($page) {
@@ -63,15 +64,15 @@ class MeterReadingValueService
             $status->code,
             $status->details
         );
-
     }
 
-    public function getMeterReadingValues(?int $meterReadingValuesId = null,
+    public function getMeterReadingValues(
+        ?int $meterReadingValuesId = null,
         ?int $meterId = null,
         ?int $meterParameterId = null,
         ?int $timezoneId = null,
-        ?int $meterReadingId = null): GrpcServiceResponse
-    {
+        ?int $meterReadingId = null
+    ): GrpcServiceResponse {
         $request = new GetMeterReadingValuesRequest;
         if ($meterReadingValuesId) {
             $request->setMeterReadingValuesId($meterReadingValuesId);
@@ -121,7 +122,7 @@ class MeterReadingValueService
             'initial' => $response->getReading()?->getInitialReading(),
             'final' => $response->getReading()?->getFinalReading(),
             'diff' => $response->getReading()?->getDifference(),
-            'value' => $response->getReading()?->getValue(),
+            'value' => $response->getReading()?->getMulValue(),
             'created_by' => $response->getReading()?->getCreatedBy(),
             'updated_by' => $response->getReading()?->getUpdatedBy(),
             'is_active' => $response->getReading()?->getIsActive(),
@@ -141,13 +142,15 @@ class MeterReadingValueService
             'initial' => $response->getInitialReading(),
             'final' => $response->getFinalReading(),
             'diff' => $response->getDifference(),
-            'value' => $response->getValue(),
+            'value' => $response->getMulValue(),
             'created_by' => $response->getCreatedBy(),
             'updated_by' => $response->getUpdatedBy(),
             'is_active' => $response->getIsActive(),
             'meter' => $response->getMeter(),
             'timezone' => $this->parameterValueService->toArray($response->getTimezone()),
             'parameter' => $this->meteringParameterProfileService->toArray($response->getParameter()),
+            'meter_mf' => $response->getMeterMf(),
+            'is_rotation' => $response->getIsRotation()
         ];
     }
 }
