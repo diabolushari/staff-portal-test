@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers\Connection;
 
@@ -9,15 +9,15 @@ use Illuminate\Http\RedirectResponse;
 
 class MeterConnectionMappingUpdateStatusController extends Controller
 {
-    public function __construct( private readonly MeterConnectionMappingService $meterConnectionMappingService)
-    {}
+    public function __construct(private readonly MeterConnectionMappingService $meterConnectionMappingService) {}
 
     public function __invoke(ConnectionMeterStatusFormRequest $request): RedirectResponse
     {
         $response = $this->meterConnectionMappingService->updateMeterConnectionStatus($request);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->with('error', $response->error ?? 'Something went wrong');
         }
+
         return redirect()->back()->with('message', 'Meter status updated successfully');
     }
 }

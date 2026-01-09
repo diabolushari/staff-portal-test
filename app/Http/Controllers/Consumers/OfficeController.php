@@ -46,7 +46,7 @@ class OfficeController extends Controller
                 ['path' => request()->url()]              // so pagination links work properly
             );
         }
-        if ($offices->hasError()) {
+        if ($offices->hasValidationError()) {
             return $offices->error ?? redirect()->back()->withErrors([
                 'message' => $offices->statusDetails ?? 'Error',
             ]);
@@ -74,7 +74,7 @@ class OfficeController extends Controller
         );
         $officeHierarchies = $this->officeHierarchyService->getOfficeHierarchies();
 
-        if ($parameterValues->hasError()) {
+        if ($parameterValues->hasValidationError()) {
             return $parameterValues->error ?? redirect()->back()->withErrors([
                 'message' => $parameterValues->statusDetails ?? 'Unknown error',
             ]);
@@ -89,7 +89,7 @@ class OfficeController extends Controller
     public function store(OfficeFormRequest $request): Response|RedirectResponse
     {
         $grpcResponse = $this->officeService->createOffice($request);
-        if ($grpcResponse->hasError()) {
+        if ($grpcResponse->hasValidationError()) {
             return $grpcResponse->error ?? redirect()->back()->withErrors([
                 'message' => $grpcResponse->statusDetails ?? 'Unknown error',
             ]);
@@ -103,7 +103,7 @@ class OfficeController extends Controller
         $officeHierarchies = $this->officeHierarchyService->getOfficeHierarchies();
 
         $response = $this->officeService->getOffice($id, null);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
@@ -133,7 +133,7 @@ class OfficeController extends Controller
     public function edit(int $id): Response|RedirectResponse
     {
         $office = $this->officeService->getOffice($id, null);
-        if ($office->hasError()) {
+        if ($office->hasValidationError()) {
             return $office->error ?? redirect()->back()->withErrors([
                 'message' => $office->statusDetails ?? 'Unknown error',
             ]);
@@ -157,7 +157,7 @@ class OfficeController extends Controller
     public function update(OfficeFormRequest $request, int $id): RedirectResponse
     {
         $response = $this->officeService->updateOffice($request, $id);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
@@ -169,7 +169,7 @@ class OfficeController extends Controller
     public function destroy(int $id): RedirectResponse
     {
         $response = $this->officeService->deleteOffice($id);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);

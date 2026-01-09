@@ -29,7 +29,7 @@ class TariffConfigController extends Controller
         $tariffOrderId = $request->input('tariffOrderId');
 
         $response = $this->tariffConfigService->listPaginatedTariffConfigs($pageNumber, $pageSize, $tariffOrderId);
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->with('error', $response->error ?? 'Unknown error');
         }
 
@@ -76,9 +76,13 @@ class TariffConfigController extends Controller
     {
         $response = $this->tariffConfigService->createTariffConfig($request);
 
-        if ($response->hasError()) {
-            return redirect()->back()->with('error', $response->error);
+        if ($response->hasValidationError()) {
+            return $response->error ?? redirect()->back();
         }
+        if ($response->statusCode !== 0) {
+            return redirect()->back();
+        }
+
 
         return redirect()->route('tariff-orders.show', $request->tariffOrderId)->with('message', 'Tariff config added successfully');
     }
@@ -109,12 +113,15 @@ class TariffConfigController extends Controller
         ]);
     }
 
-    public function update(TariffConfigUpdateFormRequest $request, int $id): RedirectResponse
+    public function update(TariffConfigFormRequest $request, int $id): RedirectResponse
     {
         $response = $this->tariffConfigService->updateTariffConfig($request, $id);
 
-        if ($response->hasError()) {
-            return redirect()->back()->with('error', $response->error);
+        if ($response->hasValidationError()) {
+            return $response->error ?? redirect()->back();
+        }
+        if ($response->statusCode !== 0) {
+            return redirect()->back();
         }
 
         return redirect()->route('tariff-orders.show', $request->tariffOrderId)
@@ -125,10 +132,10 @@ class TariffConfigController extends Controller
     {
         $response = $this->tariffConfigService->deleteTariffConfig($id);
 
-        if ($response->hasError()) {
-            return redirect()->back()->with('error', $response->error);
+        if ($response->hasValidationError()) {
+            return $response->error ?? redirect()->back();
         }
 
-        return redirect()->back()->with('success', 'Tariff config deleted successfully');
+        return redirect()->back()->with('message', 'Tariff config deleted successfully');
     }
 }

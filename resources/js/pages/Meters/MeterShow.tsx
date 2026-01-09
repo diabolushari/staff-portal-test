@@ -34,15 +34,15 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
       href: route('meters.index'),
     },
     {
-      title: meter.meter_serial,
-      href: route('meters.show', meter.meter_id),
+      title: meter?.meter_serial ?? '',
+      href: route('meters.show', meter?.meter_id ?? 0),
     },
   ]
 
   // --- EVENT HANDLERS ---
   const handleDelete = () => {
     if (confirm('Are you sure you want to delete this meter?')) {
-      router.delete(route('meters.destroy', meter.meter_id))
+      router.delete(route('meters.destroy', meter?.meter_id ?? 0))
     }
   }
 
@@ -52,7 +52,7 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
       navItems={meteringBillingNavItems}
       selectedItem='Meters'
       title='Meter Details'
-      description={<>Meter Details for {meter.meter_serial}</>}
+      description={<>Meter Details for {meter?.meter_serial ?? ''}</>}
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header */}
@@ -64,7 +64,7 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
             DELETE
           </button>
           {!meter?.has_meter_reading && (
-            <EditButton onClick={() => router.get(route('meters.edit', meter.meter_id))} />
+            <EditButton onClick={() => router.get(route('meters.edit', meter?.meter_id ?? 0))} />
           )}
         </div>
 
@@ -80,29 +80,25 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
           <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
             <Field
               label='Smart Meter'
-              value={meter.smart_meter_ind ? 'Yes' : 'No'}
+              value={meter?.smart_meter_ind ? 'Yes' : 'No'}
             />
             <Field
               label='Bidirectional'
-              value={meter.bidirectional_ind ? 'Yes' : 'No'}
+              value={meter?.bidirectional_ind ? 'Yes' : 'No'}
             />
             <Field
               label='Meter Serial'
-              value={meter.meter_serial}
+              value={meter?.meter_serial ?? ''}
             />
             <Field
               label='Company Seal Number'
-              value={meter.company_seal_num}
+              value={meter?.company_seal_num ?? ''}
             />
             <Field
               label='Meter Type'
               value={meter?.meter_type?.parameter_value}
             />
 
-            <Field
-              label='Metering Profile'
-              value={meter?.meter_profile?.parameter_value}
-            />
             <Field
               label='Ownership Type'
               value={meter?.ownership_type?.parameter_value}
@@ -114,7 +110,7 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
 
             <Field
               label='Batch Code'
-              value={meter.batch_code}
+              value={meter?.batch_code ?? ''}
             />
           </div>
         </Card>
@@ -129,11 +125,11 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
           <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
             <Field
               label='Manufacture Date'
-              value={getDisplayDate(meter.manufacture_date)}
+              value={getDisplayDate(meter?.manufacture_date ?? '')}
             />
             <Field
               label='Supply Date'
-              value={getDisplayDate(meter.supply_date)}
+              value={getDisplayDate(meter?.supply_date ?? '')}
             />
             <Field
               label='Accuracy Class'
@@ -158,24 +154,24 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
             <div></div>
             <Field
               label='Digit Count'
-              value={meter?.digit_count}
+              value={meter?.digit_count ?? ''}
             />
             <Field
               label='Decimal Digit Count'
-              value={meter?.decimal_digit_count}
+              value={meter?.decimal_digit_count ?? ''}
             />
             <Field
               label='Meter Constant'
-              value={meter?.meter_constant}
+              value={meter?.meter_constant ?? ''}
             />
             <Field
               label='Meter MF'
-              value={meter?.meter_mf}
+              value={meter?.meter_mf ?? ''}
             />
 
             <Field
               label='Warranty Period (Months)'
-              value={meter?.warranty_period}
+              value={meter?.warranty_period ?? ''}
             />
           </div>
         </Card>
@@ -192,7 +188,7 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
               label='Internal CT Ratio'
               value={
                 meter?.internal_ct_primary && meter?.internal_ct_secondary
-                  ? `${meter.internal_ct_primary} / ${meter.internal_ct_secondary}`
+                  ? `${meter?.internal_ct_primary} / ${meter?.internal_ct_secondary}`
                   : '-'
               }
             />
@@ -200,17 +196,17 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
               label='Internal PT Ratio'
               value={
                 meter?.internal_pt_primary && meter?.internal_pt_secondary
-                  ? `${meter.internal_pt_primary} / ${meter.internal_pt_secondary}`
+                  ? `${meter?.internal_pt_primary} / ${meter?.internal_pt_secondary}`
                   : '-'
               }
             />
             <Field
               label='CT Count'
-              value={meter?.ct_count}
+              value={meter?.ct_count ?? ''}
             />
             <Field
               label='PT Count'
-              value={meter?.pt_count}
+              value={meter?.pt_count ?? ''}
             />
           </div>
         </Card>

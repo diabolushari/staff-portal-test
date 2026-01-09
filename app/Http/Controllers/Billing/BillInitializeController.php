@@ -17,7 +17,7 @@ class BillInitializeController extends Controller
     {
         $response = $this->billInitializeService->initializeBill($request);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with(['error' => 'Something went wrong']);
         }
 

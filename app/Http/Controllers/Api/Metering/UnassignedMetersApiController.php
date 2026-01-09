@@ -1,11 +1,9 @@
 <?php
 
-
 namespace App\Http\Controllers\Api\Metering;
 
 use App\Http\Controllers\Controller;
 use App\Services\Metering\MeterService;
-use App\Services\Metering\MeterTransformerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -28,7 +26,7 @@ class UnassignedMetersApiController extends Controller
             $search
         );
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return response()->json(['success' => false, 'message' => $response->error]);
         }
 

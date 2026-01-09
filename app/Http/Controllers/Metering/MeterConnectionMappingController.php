@@ -25,9 +25,10 @@ class MeterConnectionMappingController extends Controller
         $response = $this->meterConnectionMappingService->createMeterConnectionMapping($request);
 
 
-        if ($response->hasError() || $response->statusCode != 0) {
+        if ($response->hasValidationError() || $response->statusCode != 0) {
             return $response->error ?? redirect()->back()->withErrors(['message' => 'Failed to create relation']);
         }
+
         return redirect()->route(
             'connections.meters.ctpt.create',
             [
@@ -53,7 +54,7 @@ class MeterConnectionMappingController extends Controller
     {
         $response = $this->meterConnectionMappingService->deleteMeterConnectionMapping($relId);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return back()->withErrors(['grpc_error' => $response->error]);
         }
 

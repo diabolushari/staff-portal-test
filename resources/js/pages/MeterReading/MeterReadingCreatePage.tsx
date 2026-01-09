@@ -291,6 +291,7 @@ export default function MeterReadingCreatePage({
                   updateCTPTHealth={updateCTPTHealth}
                   setIsOnParameterForm={setIsOnParameterForm}
                   isFirstReading={isFirstReading}
+                  isOnparameterForm={isOnParamaterForm}
                 />
               )}
             </Stepper>

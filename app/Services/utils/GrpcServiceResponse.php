@@ -65,7 +65,7 @@ class GrpcServiceResponse
     }
 
     /** Quickly check if there is an error redirect */
-    public function hasError(): bool
+    public function hasValidationError(): bool
     {
         return $this->error !== null;
     }

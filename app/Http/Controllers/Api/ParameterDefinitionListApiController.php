@@ -19,7 +19,7 @@ class ParameterDefinitionListApiController extends Controller
         $search = request('search');
         $response = $this->parameterDefinitionService->getParameterDefinitions(1, 100, $domainName, $moduleName, $search);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return response()->json(['error' => $response->error], 500);
         }
 

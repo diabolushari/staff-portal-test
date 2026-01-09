@@ -8,21 +8,14 @@ use App\GrpcConverters\Meter\MeterProtoConvertor;
 use App\Http\Requests\Metering\MeterFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Grpc\StdClassConverter;
-use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
-use Exception;
-use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
-use Illuminate\Contracts\Container\BindingResolutionException;
-use InvalidArgumentException;
-use Proto\Consumers\CreateMeterRequest;
 use Proto\Consumers\DeleteMeterRequest;
 use Proto\Consumers\GetMeterRequest;
 use Proto\Consumers\ListMetersRequest;
 use Proto\Consumers\ListUnassignedMetersRequest;
 use Proto\Consumers\MeterPaginatedListRequest;
 use Proto\Consumers\MeterServiceClient;
-use Proto\Consumers\UpdateMeterRequest;
 
 class MeterService
 {
@@ -35,7 +28,6 @@ class MeterService
             ['credentials' => ChannelCredentials::createInsecure()]
         );
     }
-
 
     public function createMeter(MeterFormRequest $data): GrpcServiceResponse
     {
@@ -61,6 +53,10 @@ class MeterService
         $request->setMeterId($meterId);
 
         [$response, $status] = $this->client->GetMeter($request)->wait();
+        $meter = null;
+        if ($response->hasMeter()) {
+            $meter = $response->getMeter();
+        }
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -71,7 +67,7 @@ class MeterService
             );
         }
 
-        return GrpcServiceResponse::success(MeterProtoConvertor::convertToArray($response), $response, $status->code, $status->details);
+        return GrpcServiceResponse::success(MeterProtoConvertor::convertToArray($meter), $response, $status->code, $status->details);
     }
 
     public function listMeters(): GrpcServiceResponse
@@ -115,7 +111,6 @@ class MeterService
         $request->setPageNumber($pageNumber);
         $request->setPageSize($pageSize);
 
-
         if ($meterSerial) {
             $request->setMeterSerial($meterSerial);
         }
@@ -127,9 +122,6 @@ class MeterService
         }
         if ($meterTypeId !== null) {
             $request->setMeterTypeId($meterTypeId);
-        }
-        if ($meterProfileId) {
-            $request->setMeterProfileId($meterProfileId);
         }
         if ($meterMakeId) {
             $request->setMeterMakeId($meterMakeId);
@@ -164,7 +156,7 @@ class MeterService
         }
 
         $meters = array_map(
-            fn($o) => MeterProtoConvertor::convertToArray($o),
+            fn ($o) => MeterProtoConvertor::convertToArray($o),
             iterator_to_array($response->getMeters())
         );
 
@@ -179,7 +171,7 @@ class MeterService
 
     public function listUnassignedMeters(int $pageNumber = 1, int $pageSize = 10, ?string $search = null): GrpcServiceResponse
     {
-        $request = new ListUnassignedMetersRequest();
+        $request = new ListUnassignedMetersRequest;
         $request->setPageNumber($pageNumber);
         $request->setPageSize($pageSize);
 
@@ -199,7 +191,7 @@ class MeterService
         }
 
         $meters = array_map(
-            fn($o) => MeterProtoConvertor::convertToArray($o),
+            fn ($o) => MeterProtoConvertor::convertToArray($o),
             iterator_to_array($response->getMeters())
         );
         $data = [

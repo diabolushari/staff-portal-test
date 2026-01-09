@@ -63,7 +63,7 @@ class MeterTransformerRelController extends Controller
         $request->createdBy = auth()->id();
         $response = $this->relService->createRelation($request);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->withErrors(['message' => 'Failed to create relation']);
         }
 
@@ -122,7 +122,7 @@ class MeterTransformerRelController extends Controller
         // Call updateRelation instead of createRelation
         $response = $this->relService->updateRelation($data, $id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->withErrors($response->error ?? 'Failed to update relation');
         }
 
@@ -136,7 +136,7 @@ class MeterTransformerRelController extends Controller
     {
         $response = $this->relService->deleteRelation($id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->withErrors($response->error ?? 'Failed to delete relation');
         }
 

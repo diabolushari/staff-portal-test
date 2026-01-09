@@ -25,7 +25,7 @@ class ParameterValueController extends Controller
     {
 
         $value = $this->parameterValueService->getParameterValue($id);
-        if ($value->hasError()) {
+        if ($value->hasValidationError()) {
             return $value->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch parameter value.',
                 'grpcStatus' => [
@@ -55,7 +55,7 @@ class ParameterValueController extends Controller
         $values = $this->parameterValueService->listParameterValuePaginated($page, $pageSize, $search, $domainName, $parameterName);
         $domains = $this->parameterDomainService->getParameterDomains($page, $pageSize, null, null);
         $definitions = $this->parameterDefinitionService->getParameterDefinitions($page, $pageSize, null, null);
-        if ($values->hasError()) {
+        if ($values->hasValidationError()) {
             return $values->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch parameter values.',
                 'grpcStatus' => [
@@ -102,7 +102,7 @@ class ParameterValueController extends Controller
     public function show(int $id): InertiaResponse|RedirectResponse
     {
         $value = $this->parameterValueService->getParameterValue($id);
-        if ($value->hasError()) {
+        if ($value->hasValidationError()) {
             return $value->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch parameter value.',
                 'grpcStatus' => [
@@ -122,7 +122,7 @@ class ParameterValueController extends Controller
 
         $response = $this->parameterValueService->createParameterValue($request);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to create parameter value.',
                 'grpcStatus' => [
@@ -146,7 +146,7 @@ class ParameterValueController extends Controller
 
         $response = $this->parameterValueService->updateParameterValue($request, $id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to update parameter value.',
                 'grpcStatus' => [
@@ -169,7 +169,7 @@ class ParameterValueController extends Controller
     {
         $response = $this->parameterValueService->deleteParameterValue($id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to delete parameter value.',
                 'grpcStatus' => [

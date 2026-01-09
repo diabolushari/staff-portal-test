@@ -6,11 +6,14 @@ option php_namespace = "Proto\\MeterReading";
 option php_metadata_namespace = "GPBMetadata";
 
 
+
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "parameters/parameter-value.proto";
 import "metering/meter.proto";
 import "meterreading/metering_profile_parameters.proto";
+
+
 
 message ReadingValueMessage{
   int64 meter_reading_values_id = 1;
@@ -28,6 +31,8 @@ message ReadingValueMessage{
   int32 updated_by = 13;
   bool is_active = 14;
   com.kseb.consumerservice.proto.meterreading.MeteringProfileParameterMessage parameter = 15;
+  bool is_rotation = 16;
+  optional float meter_mf = 17;
 }
 
 message ReadingValueFormMessage {
@@ -40,6 +45,7 @@ message ReadingValueFormMessage {
   double mul_value = 7;
   int32 created_by = 8;
   optional int64 meter_reading_value_id = 9;
+  bool is_rotation = 10;
 }
 
 
@@ -76,6 +82,7 @@ message MeterReadingMessage {
   bool is_active = 29;
   repeated ReadingValueMessage values = 30;
 }
+
 // ----------- REQUEST/RESPONSE MESSAGES ----------
 
 message CtptHealthFormMessage {
@@ -168,6 +175,7 @@ message ListMeterReadingRequest {
   string search = 4;
   int64 meter_reading_id = 5;
   optional google.protobuf.Timestamp reading_month_year = 6;
+
 }
 message ListMeterReadingResponse {
   repeated MeterReadingMessage readings = 1;
@@ -187,8 +195,8 @@ message ListMeterReadingPaginatedRequest {
   optional string search = 2;
   int32 page_number = 3;
   int32 page_size = 4;
-  optional string sort_by = 5;
-  optional string sort_direction = 6;
+  optional string sort_by = 5;       
+  optional string sort_direction = 6; 
 }
 
 message ListMeterReadingPaginatedResponse {

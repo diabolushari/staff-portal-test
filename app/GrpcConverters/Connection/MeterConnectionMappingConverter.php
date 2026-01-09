@@ -1,9 +1,9 @@
-<?php 
+<?php
 
 
 namespace App\GrpcConverters\Connection;
 
-use App\GrpcConverters\MeterProtoConvertor;
+use App\GrpcConverters\Meter\MeterProtoConvertor;
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Http\Requests\Connections\ConnectionMeterChangeReasonFormRequest;
 use App\Http\Requests\Connections\ConnectionMeterStatusFormRequest;
@@ -62,8 +62,10 @@ class MeterConnectionMappingConverter
             'rel_id' => $rel->getRelId(),
             'meter_id' => $rel->getMeterId(),
             'connection_id' => $rel->getConnectionId(),
+            'meter_profile_id' => $rel->getProfileId(),
             'meter_use_category' => ParameterValueProtoConvertor::convertToArray($rel->getMeterUseCategory()),
             'meter_status' => ParameterValueProtoConvertor::convertToArray($rel->getMeterStatus()),
+            'meter_profile' => ParameterValueProtoConvertor::convertToArray($rel->getProfile()),
             'faulty_date' => $faultyDate,
             'rectification_date' => $rectificationDate,
             'sort_priority' => $rel->getSortPriority(),

@@ -28,7 +28,7 @@ class UnassignedTransformersApiController extends Controller
             $typeId
         );
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return response()->json(['success' => false, 'message' => $response->error]);
         }
 

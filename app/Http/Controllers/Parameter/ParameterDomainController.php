@@ -34,7 +34,7 @@ class ParameterDomainController extends Controller
             $moduleId
         );
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch parameter domains.',
                 'grpcStatus' => [
@@ -75,7 +75,7 @@ class ParameterDomainController extends Controller
     {
         $response = $this->parameterDomainService->getParameterDomain($id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to fetch parameter domain.',
                 'grpcStatus' => [
@@ -98,7 +98,7 @@ class ParameterDomainController extends Controller
     {
         $response = $this->parameterDomainService->createParameterDomain($request);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to create parameter domain.',
                 'grpcStatus' => [
@@ -121,7 +121,7 @@ class ParameterDomainController extends Controller
     {
         $response = $this->parameterDomainService->updateParameterDomain($request, $id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to update parameter domain.',
                 'grpcStatus' => [
@@ -144,7 +144,7 @@ class ParameterDomainController extends Controller
     {
         $response = $this->parameterDomainService->deleteParameterDomain($id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with([
                 'message' => 'Failed to delete parameter domain.',
                 'grpcStatus' => [

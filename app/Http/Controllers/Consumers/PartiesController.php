@@ -15,9 +15,7 @@ use Inertia\Response;
 class PartiesController extends Controller
 {
     public function __construct(private PartyService $partyService,
-    private ParameterValueService $parameterValueService)
-    {
-    }
+        private ParameterValueService $parameterValueService) {}
 
     /**
      * Display a listing of the parties.
@@ -27,7 +25,7 @@ class PartiesController extends Controller
         $search = $request->input('search') ?? null;
         $partiesResponse = $this->partyService->getParties($search);
 
-        if ($partiesResponse->hasError()) {
+        if ($partiesResponse->hasValidationError()) {
             return redirect()->back()->with('error', $partiesResponse->error ?? 'Failed to get parties.');
         }
 
@@ -41,9 +39,8 @@ class PartiesController extends Controller
      */
     public function create(): Response|RedirectResponse
     {
-        $partyTypes = $this->parameterValueService->getParameterValues(null,null,null,'Parties','Party Type');
-        $partyStatus = $this->parameterValueService->getParameterValues(null,null,null,'Parties','Status');
-
+        $partyTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Parties', 'Party Type');
+        $partyStatus = $this->parameterValueService->getParameterValues(null, null, null, 'Parties', 'Status');
 
         return Inertia::render('Parties/PartiesCreate', [
             'partyTypes' => $partyTypes->data,
@@ -57,12 +54,12 @@ class PartiesController extends Controller
     public function store(PartiesFormRequest $request): RedirectResponse
     {
         $user = Auth::user();
-        if($user){
+        if ($user) {
             $request->createdBy = $user->id;
         }
         $response = $this->partyService->createParty($request);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->with('error', $response->error ?? 'Failed to create party.');
         }
 
@@ -76,7 +73,7 @@ class PartiesController extends Controller
     {
         $partyResponse = $this->partyService->getParty($id);
 
-        if ($partyResponse->hasError()) {
+        if ($partyResponse->hasValidationError()) {
             return redirect()->back()->with('error', $partyResponse->error ?? 'Failed to get party.');
         }
 
@@ -92,13 +89,13 @@ class PartiesController extends Controller
     {
         // First, get the specific party to edit
         $partyResponse = $this->partyService->getParty($id);
-        if ($partyResponse->hasError()) {
+        if ($partyResponse->hasValidationError()) {
             return redirect()->back()->with('error', $partyResponse->error ?? 'Failed to get party.');
         }
         $party = $partyResponse->data;
 
-        $partyTypes = $this->parameterValueService->getParameterValues(null,null,null,'Parties','Party Type');
-        $partyStatus = $this->parameterValueService->getParameterValues(null,null,null,'Parties','Status');
+        $partyTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Parties', 'Party Type');
+        $partyStatus = $this->parameterValueService->getParameterValues(null, null, null, 'Parties', 'Status');
 
         return Inertia::render('Parties/PartiesCreate', [
             'party' => $party,
@@ -114,12 +111,12 @@ class PartiesController extends Controller
     {
         $request->versionId = $id;
         $user = Auth::user();
-        if($user){
+        if ($user) {
             $request->updatedBy = $user->id;
         }
         $response = $this->partyService->updateParty($request);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->with('error', $response->error ?? 'Failed to update party.');
         }
 
@@ -133,7 +130,7 @@ class PartiesController extends Controller
     {
         $response = $this->partyService->deleteParty($id);
 
-        if ($response->hasError()) {
+        if ($response->hasValidationError()) {
             return redirect()->back()->with('error', $response->error ?? 'Failed to delete party.');
         }
 
