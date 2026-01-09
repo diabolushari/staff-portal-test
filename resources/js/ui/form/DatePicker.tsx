@@ -16,13 +16,14 @@ export default function DatePicker({
   min,
   max,
   disabled = false,
+  required,
 }: DatePickerProp) {
   return (
     <>
       <div className='flex flex-col'>
         {label != null && (
-          <label className='font-inter text-left align-top text-sm leading-[1.4] tracking-[-0.006em] text-gray-800 dark:text-gray-200'>
-            {label}
+          <label className='text-sm leading-6 font-normal text-[#252c32]'>
+            {required ? `${label} *` : label}
           </label>
         )}
 

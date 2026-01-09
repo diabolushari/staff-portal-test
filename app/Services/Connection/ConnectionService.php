@@ -32,7 +32,7 @@ class ConnectionService
         );
     }
 
-    public function listConnections(?string $consumerNumber, ?int $officeCode): GrpcServiceResponse
+    public function listConnections(?string $consumerNumber, ?int $officeCode, ?string $consumerLegacyCode, ?string $search = null): GrpcServiceResponse
     {
         $request = new ListConnectionsRequest;
 
@@ -43,6 +43,12 @@ class ConnectionService
         }
         if ($officeCode) {
             $request->setOfficeCode($officeCode);
+        }
+        if ($consumerLegacyCode) {
+            $request->setConsumerLegacyCode($consumerLegacyCode);
+        }
+        if ($search) {
+            $request->setSearch($search);
         }
 
         [$response, $status] = $this->client->ListConnections($request)->wait();

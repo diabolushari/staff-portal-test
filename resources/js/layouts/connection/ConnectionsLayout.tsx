@@ -241,16 +241,9 @@ const connectionTabs = (connection?: Connection | null) => [
     item: [
       {
         subValue: 'meter',
-        subLabel: 'Meter',
+        subLabel: 'Meters and CTPTs',
         subLink: connection?.connection_id
           ? route('connection.meters', connection?.connection_id)
-          : '#',
-      },
-      {
-        subValue: 'meter-ctpts',
-        subLabel: 'CTPTs',
-        subLink: connection?.connection_id
-          ? route('connections.meters.ctpts', connection?.connection_id)
           : '#',
       },
     ],

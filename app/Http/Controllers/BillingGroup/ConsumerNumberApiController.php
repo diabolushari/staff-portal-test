@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Services\Connection\ConnectionService;
+use Illuminate\Support\Facades\Log;
 
 class ConsumerNumberApiController extends Controller
 {
@@ -14,12 +15,13 @@ class ConsumerNumberApiController extends Controller
     {
         $query = $request->query('q');
 
+
         if (!$query) {
             return response()->json([]);
         }
 
         $connections = $this->connectionService
-            ->listConnections($query, null)
+            ->listConnections(null, null, null, $query)
             ->data;
 
         $consumerArray = [];
@@ -28,6 +30,7 @@ class ConsumerNumberApiController extends Controller
             foreach ($connections as $conn) {
                 $consumerArray[] = [
                     'connection_id'   => $conn['connection_id'],
+                    'consumer_legacy_code' => $conn['consumer_legacy_code'],
                     'consumer_number' => $conn['consumer_number'],
                     'connection_type_id'     => $conn['connection_type_id'],
                 ];

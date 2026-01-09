@@ -188,6 +188,7 @@ export default function ConnectionForm({
             setValue={setFormValue('consumer_legacy_code')}
             value={formData.consumer_legacy_code}
             error={errors?.consumer_legacy_code}
+            required
           />
           <SelectList
             label='Connection Status'
