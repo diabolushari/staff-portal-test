@@ -107,10 +107,10 @@ class TariffConfigService
         return GrpcServiceResponse::success($this->tariffConfigMessageToArray($response->getConfig()), $response, $status->code, $status->details);
     }
 
-    public function updateTariffConfig(TariffConfigUpdateFormRequest $request, int $id): GrpcServiceResponse
+    public function updateTariffConfig(TariffConfigFormRequest $request, int $id): GrpcServiceResponse
     {
         $grpcRequest = new UpdateTariffConfigRequest;
-        $grpcRequest->setConfig($this->configToGrpcMessage($request));
+        $grpcRequest->setConfig($this->configFormToGrpcMessage($request));
 
         [$response, $status] = $this->client->updateTariffConfig($grpcRequest)->wait();
 
@@ -152,6 +152,9 @@ class TariffConfigService
     public function configFormToGrpcMessage(TariffConfigFormRequest $request): TariffConfigFormMessage
     {
         $msg = new TariffConfigFormMessage;
+        if ($request->tariffConfigId) {
+            $msg->setTariffConfigId($request->tariffConfigId);
+        }
         $msg->setTariffOrderId($request->tariffOrderId);
         $msg->setConnectionTariffId($request->connectionTariff);
         $msg->setConsumptionLowerLimit($request->consumptionLowerLimit);
@@ -201,23 +204,5 @@ class TariffConfigService
             'page_size' => $response->getPageSize(),
             'total_pages' => $response->getTotalPages(),
         ];
-    }
-
-    public function configToGrpcMessage(TariffConfigUpdateFormRequest $request): TariffConfigFormMessage
-    {
-        $msg = new TariffConfigFormMessage;
-        $msg->setTariffConfigId($request->tariffConfigId);
-        $msg->setTariffOrderId($request->tariffOrderId);
-        $msg->setConnectionTariffId($request->connectionTariffId);
-        $msg->setConsumptionLowerLimit($request->consumptionLowerLimit);
-        $msg->setConsumptionUpperLimit($request->consumptionUpperLimit);
-        $msg->setDemandChargeKva($request->demandChargeKva);
-        $msg->setEnergyChargeKwh($request->energyChargeKwh);
-        $msg->setEffectiveStart(DateTimeConverter::convertStringToTimestamp($request->effectiveStart));
-        if ($request->effectiveEnd) {
-            $msg->setEffectiveEnd(DateTimeConverter::convertStringToTimestamp($request->effectiveEnd));
-        }
-
-        return $msg;
     }
 }

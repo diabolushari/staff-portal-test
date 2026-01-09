@@ -113,7 +113,7 @@ class TariffConfigController extends Controller
         ]);
     }
 
-    public function update(TariffConfigUpdateFormRequest $request, int $id): RedirectResponse
+    public function update(TariffConfigFormRequest $request, int $id): RedirectResponse
     {
         $response = $this->tariffConfigService->updateTariffConfig($request, $id);
 

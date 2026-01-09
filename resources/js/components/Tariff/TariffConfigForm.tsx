@@ -6,7 +6,7 @@ import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import DatePicker from '@/ui/form/DatePicker'
 import Modal from '@/ui/Modal/Modal'
-import { TariffOrder } from '@/interfaces/data_interfaces'
+import { TariffConfig, TariffOrder } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import dayjs from 'dayjs'
 
@@ -26,27 +26,39 @@ interface PageProps {
   tariffOrder: TariffOrder
   consumptionTariff: ParameterValues[]
   setModalOpen: (open: boolean) => void
+  tariffConfig?: TariffConfig | null
 }
 
 export default function TariffConfigForm({
   tariffOrder,
   consumptionTariff,
   setModalOpen,
+  tariffConfig,
 }: Readonly<PageProps>) {
   const { formData, setFormValue } = useCustomForm({
     tariff_order_id: tariffOrder.tariff_order_id,
-    connection_tariff: '',
-    consumption_lower_limit: '',
-    consumption_upper_limit: '',
-    demand_charge_kva: '',
-    energy_charge_kwh: '',
-    effective_start: dateToString(tariffOrder.effective_start),
-    effective_end: tariffOrder.effective_end ? dateToString(tariffOrder.effective_end) : '',
+    connection_tariff: tariffConfig?.connection_tariff?.id ?? '',
+    consumption_lower_limit: tariffConfig?.consumption_lower_limit ?? '',
+    consumption_upper_limit: tariffConfig?.consumption_upper_limit ?? '',
+    demand_charge_kva: tariffConfig?.demand_charge_kva ?? '',
+    energy_charge_kwh: tariffConfig?.energy_charge_kwh ?? '',
+    effective_start:
+      tariffConfig?.effective_start ?? dayjs(tariffOrder.effective_start).format('YYYY-MM-DD'),
+    effective_end: tariffOrder.effective_end
+      ? dayjs(tariffOrder.effective_end).format('YYYY-MM-DD')
+      : '',
+    tariff_config_id: tariffConfig?.tariff_config_id ?? '',
+    _method: tariffConfig ? 'PUT' : 'POST',
   })
 
-  const { post, loading, errors } = useInertiaPost<typeof formData>(route('tariff-configs.store'), {
-    showErrorToast: true,
-  })
+  const { post, loading, errors } = useInertiaPost<typeof formData>(
+    tariffConfig
+      ? route('tariff-configs.update', tariffConfig?.tariff_config_id)
+      : route('tariff-configs.store'),
+    {
+      showErrorToast: true,
+    }
+  )
 
   const handleSubmit = () => {
     post(formData)
@@ -71,6 +83,7 @@ export default function TariffConfigForm({
             value={formData.connection_tariff}
             error={errors.connection_tariff}
             required
+            disabled={!!tariffConfig}
           />
 
           <Input

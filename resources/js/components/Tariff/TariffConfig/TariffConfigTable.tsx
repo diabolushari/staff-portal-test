@@ -30,21 +30,26 @@ export default function TariffConfigTable({
 }) {
   const [addTariffConfig, setAddTariffConfig] = useState<boolean>(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [selectedTariffConfig, setSelectedTariffConfig] = useState<TariffConfig | null>(null)
+  const [selectedTariffConfig, setSelectedTariffConfig] = useState<TariffConfig | null | undefined>(
+    null
+  )
 
   const handleDelete = (tariffConfig: TariffConfig) => {
     setSelectedTariffConfig(tariffConfig)
     setIsDeleteModalOpen(true)
   }
+  const handleEdit = (tariffConfig: TariffConfig) => {
+    setSelectedTariffConfig(tariffConfig)
+    setAddTariffConfig(true)
+  }
 
   return (
     <CustomCard
       title='Tariff Configurations'
-      // addButton={{
-      //   title: 'Add Tariff Config',
-      //   url: route('tariff-config.create', tariffOrder.tariff_order_id),
-      // }}
-      onAddClick={() => setAddTariffConfig(true)}
+      onAddClick={() => {
+        setSelectedTariffConfig(null)
+        setAddTariffConfig(true)
+      }}
       addButtonText='Add Tariff Config'
     >
       <div className='overflow-visible'>
@@ -76,9 +81,7 @@ export default function TariffConfigTable({
                 <TableCell className='relative'>
                   <div>
                     <ActionButton
-                      onEdit={() =>
-                        router.visit(route('tariff-configs.edit', config.tariff_config_id))
-                      }
+                      onEdit={() => handleEdit(config)}
                       onDelete={() => handleDelete(config)}
                     />
                   </div>
@@ -107,6 +110,7 @@ export default function TariffConfigTable({
           tariffOrder={tariffOrder}
           consumptionTariff={consumption_tariff ?? []}
           setModalOpen={setAddTariffConfig}
+          tariffConfig={selectedTariffConfig}
         />
       )}
     </CustomCard>
