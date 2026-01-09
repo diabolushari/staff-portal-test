@@ -16,6 +16,7 @@ import ChangeMeterTransformerAssignment from './ChangeMeterTransformerAssignment
 import { ParameterValues } from '@/interfaces/parameter_types'
 import UpdateMeterTransformerAssignmentStatus from './UpdateMeterTransformerAssignmentStatus'
 import DeleteButton from '@/ui/button/DeleteButton'
+import { getDisplayDate } from '@/utils'
 
 interface Props {
   meterMapping: MeterConnectionMapping
@@ -62,12 +63,14 @@ export default function ConnectionCardSection({
       <div className='flex items-start justify-between pb-4'>
         <div className='flex flex-1 flex-col gap-2'>
           <div className='flex flex-wrap items-center gap-3'>
-            <h3
-              className='cursor-pointer text-lg font-semibold text-black'
-              onClick={() => router.get(`/meters/${meterMapping.meter_id}`)}
+            <a
+              href={`/meters/${meterMapping.meter_id}`}
+              target='__blank'
             >
-              {meterMapping.meter?.meter_serial}
-            </h3>
+              <h3 className='cursor-pointer text-lg font-semibold text-black'>
+                {meterMapping.meter?.meter_serial}
+              </h3>
+            </a>
             {meterMapping.meter_status && (
               <div
                 className={`rounded-full px-3 py-1 ${
@@ -107,6 +110,12 @@ export default function ConnectionCardSection({
                 <span>Changed: {meterMapping.effective_start_ts}</span>
               </div>
             )}
+
+            <div>
+              <span>
+                Energise Date : <b>{getDisplayDate(meterMapping.energise_date)}</b>
+              </span>
+            </div>
           </div>
 
           {/* Change reason */}
@@ -173,8 +182,16 @@ export default function ConnectionCardSection({
                 <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-center'>
                   <div className='flex flex-wrap items-center gap-4 text-sm'>
                     <div className='flex items-center gap-1'>
-                      <span className='font-medium text-slate-700'>Serial:</span>
-                      <span className='text-slate-600'>{ctpt.ctpt?.ctpt_serial ?? 'N/A'}</span>
+                      <a
+                        href={`/meter-ctpt/${ctpt.ctpt_id}`}
+                        target='__blank'
+                      >
+                        <span className='font-medium text-slate-700'>Serial:</span>
+
+                        <span className='text-slate-600'>
+                          <b>{ctpt.ctpt?.ctpt_serial ?? 'N/A'}</b>
+                        </span>
+                      </a>
                     </div>
                     <div className='flex items-center gap-1'>
                       <span className='font-medium text-slate-700'>Type:</span>

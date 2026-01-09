@@ -80,6 +80,7 @@ message ConnectionMessage {
   repeated com.kseb.consumerservice.grpc.connections.ConnectionFlagMessage connection_flags = 55;
   repeated com.kseb.consumerservice.grpc.connections.ConnectionGenerationTypeMessage connection_generation_types = 56;
   optional com.kseb.consumerservice.proto.meterreading.MeterReadingMessage previous_reading = 57;
+
 }
 
 
@@ -138,6 +139,8 @@ message ListConnectionsRequest {
   optional int32 office_code = 4;
   optional int32 consumer_type_id = 5;
   optional int32 primary_purpose_id = 6;
+  optional string consumer_legacy_code = 7;
+  optional string search = 8;
 }
 message ListConnectionsResponse {
   repeated ConnectionMessage items = 1;

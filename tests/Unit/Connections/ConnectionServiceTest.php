@@ -35,7 +35,7 @@ class ConnectionServiceTest extends TestCase
         $property->setAccessible(true);
         $property->setValue($service, $mockGrpcClient);
 
-        $result = $service->listConnections(null);
+        $result = $service->listConnections(null, null, null);
         $this->assertNotNull($result);
     }
 }

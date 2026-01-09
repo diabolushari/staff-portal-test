@@ -6,13 +6,15 @@ import { ParameterDomain, SystemModule } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { type BreadcrumbItem } from '@/types'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import Pagination from '@/ui/Pagination/Pagination'
+import { Paginator } from '@/ui/ui_interfaces'
 import { router } from '@inertiajs/react'
 import { AnimatePresence } from 'framer-motion'
 import { useCallback, useState } from 'react'
 import { route } from 'ziggy-js'
 
 interface Props {
-  domains: ParameterDomain[]
+  domains: Paginator<ParameterDomain>
   modules: SystemModule[]
   filters: {
     search: string
@@ -81,13 +83,19 @@ export default function ParameterDomainIndex({ domains, modules, filters }: Read
         />
 
         <div>
-          {domains != null && domains.length > 0 ? (
-            <ParameterDomainList
-              domains={domains}
-              onEdit={handleEditClick}
-              onDelete={handleDeleteClick}
-              onView={(domain) => router.get(route('parameter-domains.show', domain.id))}
-            />
+          {domains != null && domains.data.length > 0 ? (
+            <>
+              <ParameterDomainList
+                domains={domains.data}
+                onEdit={handleEditClick}
+                onDelete={handleDeleteClick}
+                onView={(domain) => router.get(route('parameter-domains.show', domain.id))}
+              />
+              <Pagination
+                pagination={domains}
+                filters={filters}
+              />
+            </>
           ) : (
             <p>No Parameter Domains Found.</p>
           )}

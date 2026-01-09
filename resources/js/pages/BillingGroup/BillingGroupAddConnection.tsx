@@ -35,14 +35,14 @@ export default function BillingGroupAddConnection({
       >
         <FormCard title='Search & Add Members'>
           <ComboBox
-            label='Consumer Number'
+            label='Consumer Number / Legacy Code'
             url={`/api/consumer-number?q=`}
             setValue={setSelectedConsumer}
             value={selectedConsumer}
             dataKey='connection_id'
             displayKey='consumer_number'
-            displayValue2='connection_type_id'
-            placeholder='Enter Consumer Number'
+            displayValue2='consumer_legacy_code'
+            placeholder='Enter Consumer Number / Legacy Code'
           />
           <div className='mt-6'>
             <Button

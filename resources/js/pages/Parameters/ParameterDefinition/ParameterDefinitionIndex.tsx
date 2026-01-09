@@ -6,6 +6,8 @@ import { ParameterDefinition, ParameterDomain, SystemModule } from '@/interfaces
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import Pagination from '@/ui/Pagination/Pagination'
+import { Paginator } from '@/ui/ui_interfaces'
 import { useCallback, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -29,7 +31,7 @@ export default function ParameterDefinitionIndex({
   system_modules,
   filters,
 }: {
-  parameter_definitions: ParameterDefinition[]
+  parameter_definitions: Paginator<ParameterDefinition>
   domains: ParameterDomain[]
   system_modules: SystemModule[]
   filters: {
@@ -60,7 +62,7 @@ export default function ParameterDefinitionIndex({
     setParameterDefinitionToEdit(null)
     setParameterFormModal(true)
   }, [])
-
+  console.log(items)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -80,12 +82,18 @@ export default function ParameterDefinitionIndex({
         />
 
         <div className='pt-5'>
-          {items != null && items.length > 0 ? (
-            <ParameterDefinitionList
-              parameterDefinitions={items}
-              onDelete={handleDeleteClick}
-              onEdit={handleEditClick}
-            />
+          {items != null && items.data.length > 0 ? (
+            <>
+              <ParameterDefinitionList
+                parameterDefinitions={items.data}
+                onDelete={handleDeleteClick}
+                onEdit={handleEditClick}
+              />
+              <Pagination
+                pagination={parameter_definitions}
+                filters={filters}
+              />
+            </>
           ) : (
             <p>No Parameter Definitions Found.</p>
           )}

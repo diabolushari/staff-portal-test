@@ -47,6 +47,7 @@ class MeterConnectionMappingCreateController extends Controller
             'Meter',
             'Meter Profile'
         )->data;
+
         return Inertia::render('Connections/ConnectMeter', [
             'connection_id' => $id,
             'connection' => $connection->data,

@@ -10,6 +10,7 @@ use Proto\Parameters\CreateParameterDomainRequest;
 use Proto\Parameters\DeleteParameterDomainRequest;
 use Proto\Parameters\GetParameterDomainRequest;
 use Proto\Parameters\ListParameterDomainsRequest;
+use Proto\Parameters\ParameterDomainPaginatedListRequest;
 use Proto\Parameters\ParameterDomainProto;
 use Proto\Parameters\ParameterDomainServiceClient;
 use Proto\Parameters\UpdateParameterDomainRequest;
@@ -24,6 +25,66 @@ class ParameterDomainService
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
         );
+    }
+
+    public function listPaginatedParameterDomains(?int $page, ?int $pageSize, ?string $search, ?int $moduleId): GrpcServiceResponse
+    {
+        $request = new ParameterDomainPaginatedListRequest();
+        $request->setPageNumber($page ?? 1);
+        $request->setPageSize($pageSize ?? 10);
+
+        if ($search !== null) {
+            $request->setSearch($search);
+        }
+
+        if ($moduleId !== null && $moduleId > 0) {
+            $request->setModuleId($moduleId);
+        }
+
+        [$response, $status] = $this->client->ParameterDomainPaginatedList($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $domains = $response?->getDomains();
+        $domainsArray = [];
+
+        if ($domains) {
+            foreach ($domains as $domain) {
+                $systemModule = $domain->getSystemModule();
+                $systemModuleArray = null;
+                if ($systemModule) {
+                    $systemModuleArray = [
+                        'id' => $systemModule->getId(),
+                        'name' => $systemModule->getName(),
+                    ];
+                }
+                $domainsArray[] = [
+                    'id' => $domain->getId(),
+                    'domain_name' => $domain->getDomainName(),
+                    'description' => $domain->getDescription(),
+                    'domain_code' => $domain->getDomainCode(),
+                    'managed_by_module' => $domain->getManagedByModule(),
+                    'system_module' => $systemModuleArray,
+                ];
+            }
+        }
+
+        $parameterDomainsData = [
+            'parameter_domains' => $domainsArray,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ];
+
+        return GrpcServiceResponse::success($parameterDomainsData, $response, $status->code, $status->details);
     }
 
     /**

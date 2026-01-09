@@ -14,6 +14,7 @@ use App\Services\utils\GrpcServiceResponse;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Proto\Metering\CreateMeterConnectionMappingRequest;
 use Proto\Metering\DeleteMeterConnectionMappingRequest;
 use Proto\Metering\GetMeterConnectionMappingByConnectionIdRequest;
@@ -98,6 +99,7 @@ class MeterConnectionMappingService
         }
 
         [$response, $status] = $this->client->CreateMeterConnectionMapping($request)->wait();
+
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -284,6 +286,7 @@ class MeterConnectionMappingService
         $intimationDate = $rel->getIntimationDate() ? $rel->getIntimationDate()->toDateTime()->format('Y-m-d') : null;
         $changeDate = $rel->getChangeDate() ? $rel->getChangeDate()->toDateTime()->format('Y-m-d') : null;
         $meterProfile = ParameterValueProtoConvertor::convertToArray($rel->getProfile());
+        $energiseDate = $rel->getEnergiseDate() ? $rel->getEnergiseDate()->toDateTime()->format('Y-m-d') : null;
         return [
             'version_id' => $rel->getVersionId(),
             'rel_id' => $rel->getRelId(),
@@ -308,6 +311,7 @@ class MeterConnectionMappingService
             'intimation_date' => $intimationDate,
             'change_date' => $changeDate,
             'meter_profile' => $meterProfile,
+            'energise_date' => $energiseDate,
         ];
     }
 

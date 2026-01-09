@@ -7,6 +7,7 @@ use App\Http\Requests\Metering\MeterConnectionRelFormRequest;
 use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 
 class MeterConnectionMappingController extends Controller
 {
@@ -23,8 +24,9 @@ class MeterConnectionMappingController extends Controller
 
         $response = $this->meterConnectionMappingService->createMeterConnectionMapping($request);
 
+
         if ($response->hasValidationError() || $response->statusCode != 0) {
-            return redirect()->back()->with(['error' => $response->error ?? 'Meter not found']);
+            return $response->error ?? redirect()->back()->withErrors(['message' => 'Failed to create relation']);
         }
 
         return redirect()->route(

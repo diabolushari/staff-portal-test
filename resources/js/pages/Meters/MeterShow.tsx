@@ -6,7 +6,6 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import type { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
-import EditButton from '@/ui/button/EditButton'
 import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 
@@ -57,15 +56,20 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
         {/* Header */}
         <div className='flex flex-col gap-4 pr-3 sm:flex-row sm:items-end sm:justify-end'>
+          {!meter?.has_meter_reading && (
+            <button
+              onClick={() => router.get(route('meters.edit', meter?.meter_id ?? 0))}
+              className='link-button-text'
+            >
+              EDIT
+            </button>
+          )}
           <button
             onClick={handleDelete}
             className='delete-link'
           >
             DELETE
           </button>
-          {!meter?.has_meter_reading && (
-            <EditButton onClick={() => router.get(route('meters.edit', meter?.meter_id ?? 0))} />
-          )}
         </div>
 
         {/* Main Content Card */}
