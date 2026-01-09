@@ -57,6 +57,9 @@ export default function TariffConfigForm({
       : route('tariff-configs.store'),
     {
       showErrorToast: true,
+      onComplete: () => {
+        setModalOpen(false)
+      },
     }
   )
 

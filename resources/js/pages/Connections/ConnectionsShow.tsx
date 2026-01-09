@@ -168,7 +168,7 @@ export default function ConnectionsShow({
               />
               <Field
                 label='Number of Main Meters'
-                value={connection.no_of_main_meters}
+                value={connection?.no_of_main_meters}
               />
               <div className='col-span-2 mt-4'>
                 {connection?.remarks && (

@@ -51,8 +51,8 @@ message TariffConfigFormMessage {
   double demand_charge_kva = 6;
   double energy_charge_kwh = 7;
 
-  google.protobuf.Timestamp effective_start = 8;
-  google.protobuf.Timestamp effective_end = 9;
+  string effective_start = 8;
+  string effective_end = 9;
 
   optional int32 created_by = 10;
   optional int32 updated_by = 11;

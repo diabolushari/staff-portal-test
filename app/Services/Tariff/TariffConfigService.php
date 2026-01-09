@@ -2,16 +2,12 @@
 
 namespace App\Services\Tariff;
 
-use App\Http\Requests\Tariff\TariffConfigFormItems;
 use App\Http\Requests\Tariff\TariffConfigFormRequest;
-use App\Http\Requests\Tariff\TariffConfigUpdateFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
-use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
 use Illuminate\Support\Facades\Auth;
-use Proto\Tariff\CreateMultipleTariffConfigRequest;
 use Proto\Tariff\CreateTariffConfigRequest;
 use Proto\Tariff\DeleteTariffConfigRequest;
 use Proto\Tariff\GetTariffConfigRequest;
@@ -161,8 +157,8 @@ class TariffConfigService
         $msg->setConsumptionUpperLimit($request->consumptionUpperLimit);
         $msg->setDemandChargeKva($request->demandChargeKva);
         $msg->setEnergyChargeKwh($request->energyChargeKwh);
-        $msg->setEffectiveStart(DateTimeConverter::convertStringToTimestamp($request->effectiveStart));
-        $msg->setEffectiveEnd(DateTimeConverter::convertStringToTimestamp($request->effectiveEnd));
+        $msg->setEffectiveStart($request->effectiveStart);
+        $msg->setEffectiveEnd($request->effectiveEnd);
 
         return $msg;
     }
