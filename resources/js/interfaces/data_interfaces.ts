@@ -75,6 +75,7 @@ export interface MeterConnectionMapping {
   notice_date?: string
   intimation_date?: string
   change_date?: string
+  energise_date?:string
 }
 
 export interface DateTimeField {

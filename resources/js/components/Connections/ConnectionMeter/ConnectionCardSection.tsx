@@ -16,6 +16,7 @@ import ChangeMeterTransformerAssignment from './ChangeMeterTransformerAssignment
 import { ParameterValues } from '@/interfaces/parameter_types'
 import UpdateMeterTransformerAssignmentStatus from './UpdateMeterTransformerAssignmentStatus'
 import DeleteButton from '@/ui/button/DeleteButton'
+import { getDisplayDate } from '@/utils'
 
 interface Props {
   meterMapping: MeterConnectionMapping
@@ -109,6 +110,12 @@ export default function ConnectionCardSection({
                 <span>Changed: {meterMapping.effective_start_ts}</span>
               </div>
             )}
+
+            <div>
+              <span>
+                Energise Date : <b>{getDisplayDate(meterMapping.energise_date)}</b>
+              </span>
+            </div>
           </div>
 
           {/* Change reason */}
