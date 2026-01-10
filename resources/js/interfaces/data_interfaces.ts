@@ -473,6 +473,7 @@ export interface MeterReading {
   updated_by: number
   is_active: boolean
   values: MeterReadingValue[]
+  power_factors: MeterReadingPowerFactor[]
 }
 
 export interface MeterReadingValue {

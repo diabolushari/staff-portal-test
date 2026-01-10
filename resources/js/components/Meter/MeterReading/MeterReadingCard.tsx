@@ -59,9 +59,7 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
       }
     })
   }, [meterReading, meters])
-
-  console.log(meterSummaries, meterReading)
-
+  console.log(meterReading)
   return (
     <Card className='mb-4 p-4'>
       <div className='flex justify-between'>
@@ -71,6 +69,9 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
           </StrongText>
           <NormalText>
             {meterReading?.reading_start_date} to {meterReading?.reading_end_date}
+          </NormalText>
+          <NormalText>
+            Power Factor: {meterReading?.power_factors[0]?.average_power_factor ?? '-'}
           </NormalText>
         </div>
         <Button
