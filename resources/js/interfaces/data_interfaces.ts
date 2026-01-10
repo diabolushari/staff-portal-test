@@ -75,7 +75,8 @@ export interface MeterConnectionMapping {
   notice_date?: string
   intimation_date?: string
   change_date?: string
-  energise_date?:string
+  energise_date?: string
+  meter_profile?: MeterProfileParameter
 }
 
 export interface DateTimeField {
@@ -472,6 +473,7 @@ export interface MeterReading {
   updated_by: number
   is_active: boolean
   values: MeterReadingValue[]
+  power_factors: MeterReadingPowerFactor[]
 }
 
 export interface MeterReadingValue {

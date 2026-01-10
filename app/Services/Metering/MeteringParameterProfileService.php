@@ -2,6 +2,7 @@
 
 namespace App\Services\Metering;
 
+use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Http\Requests\MeterProfileParameter\MeterProfileParameterFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
@@ -274,7 +275,7 @@ class MeteringParameterProfileService
     /**
      * @return array<string, mixed>
      */
-    public function toArray(?MeteringProfileParameterMessage $detail): ?array
+    public static function toArray(?MeteringProfileParameterMessage $detail): ?array
     {
         if ($detail === null) {
             return null;
@@ -291,7 +292,7 @@ class MeteringParameterProfileService
             'updated_by' => $detail->getUpdatedBy(),
             'is_active' => $detail->getIsActive(),
             'is_cumulative' => $detail->getIsCumulative(),
-            'profile' => $this->parameterValueService->toArray($detail->getProfile()),
+            'profile' => ParameterValueProtoConvertor::convertToArray($detail->getProfile()),
         ];
     }
 

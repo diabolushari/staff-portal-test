@@ -48,7 +48,7 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
       return {
         meterId: meter?.meter_id,
         serial: meter?.meter_serial,
-        meterProfile: meter?.meter_profile,
+        meterProfile: meterWithConn?.meter_profile,
         kva: kvaMax
           ? {
               value: kvaMax.final_reading ?? 0,
@@ -59,7 +59,7 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
       }
     })
   }, [meterReading, meters])
-
+  console.log(meterReading)
   return (
     <Card className='mb-4 p-4'>
       <div className='flex justify-between'>
@@ -69,6 +69,9 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
           </StrongText>
           <NormalText>
             {meterReading?.reading_start_date} to {meterReading?.reading_end_date}
+          </NormalText>
+          <NormalText>
+            Power Factor: {meterReading?.power_factors[0]?.average_power_factor ?? '-'}
           </NormalText>
         </div>
         <Button

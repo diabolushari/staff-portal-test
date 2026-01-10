@@ -114,8 +114,6 @@ export default function MeterReadingPreview({
   meterHealthTypes,
   ctHealthTypes,
 }: Readonly<Props>) {
-  console.log(meterWithTimezoneAndProfile)
-
   const hasImportKwh = meterWithTimezoneAndProfile.reading_parameters.some(
     (p) =>
       p.name.toLowerCase() === CONSUMPTION_PARAMETER_NAME.toLowerCase() && p.is_export === false
@@ -240,7 +238,7 @@ export default function MeterReadingPreview({
         ))}
       </div>
 
-      {shouldShowPowerFactor && (
+      {shouldShowPowerFactor && averagePF !== null && (
         <div className='mt-6'>
           <StrongText className='mb-3'>Power Factor</StrongText>
           <PowerFactorBar

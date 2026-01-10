@@ -3,7 +3,7 @@
 namespace App\Services\Metering;
 
 use App\GrpcConverters\Meter\MeterProtoConvertor;
-
+use App\GrpcConverters\Metering\MeterReadingConverter;
 use App\Http\Requests\Metering\MeterReadingForm;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
@@ -165,10 +165,10 @@ class MeterReadingService
         }
         $meterReadingValuesArray = [];
         foreach ($response->getValues() as $value) {
-            $value = $this->meterReadingValuesToArray($value);
+            $value = MeterReadingConverter::meterReadingValuesToArray($value);
             $meterReadingValuesArray[] = $value;
         }
-        $meterReadingArray = $this->toArray($response->getReading());
+        $meterReadingArray = MeterReadingConverter::toArray($response->getReading());
         $meterReadingArray['values'] = $meterReadingValuesArray;
 
         return GrpcServiceResponse::success($meterReadingArray, $response, $status->code, $status->details);
@@ -204,10 +204,10 @@ class MeterReadingService
                 $status->details
             );
         }
-        $meterReadingArray = $this->toArray($response->getReading());
+        $meterReadingArray = MeterReadingConverter::toArray($response->getReading());
         $meterReadingValuesArray = [];
         foreach ($response->getValues() as $value) {
-            $value = $this->meterReadingValuesToArray($value);
+            $value = MeterReadingConverter::meterReadingValuesToArray($value);
             $meterReadingValuesArray[] = $value;
         }
         $meterReadingArray['values'] = $meterReadingValuesArray;
@@ -459,32 +459,7 @@ class MeterReadingService
     public function toArray(MeterReadingMessage $detail): array
     {
 
-        $values = [];
-        foreach ($detail->getValues() as $value) {
-            $values[] = $this->meterReadingValuesToArray($value);
-        }
-
-        return [
-            'id' => $detail->getMeterReadingId(),
-            'metering_date' => $detail->getMeteringDate(),
-            'reading_start_date' => $detail->getReadingStartDate(),
-            'reading_end_date' => $detail->getReadingEndDate(),
-            'connection_id' => $detail->getConnectionId(),
-            'single_reading' => $detail->getSingleReading(),
-            'multiple_reading' => $detail->getMultipleReading(),
-            'anomaly_id' => $detail->getAnomalyId(),
-            'voltage_r' => $detail->getVoltageR(),
-            'voltage_y' => $detail->getVoltageY(),
-            'voltage_b' => $detail->getVoltageB(),
-            'current_r' => $detail->getCurrentR(),
-            'current_y' => $detail->getCurrentY(),
-            'current_b' => $detail->getCurrentB(),
-            'remarks' => $detail->getRemarks(),
-            'created_by' => $detail->getCreatedBy(),
-            'updated_by' => $detail->getUpdatedBy(),
-            'is_active' => $detail->getIsActive(),
-            'values' => $values,
-        ];
+        return MeterReadingConverter::toArray($detail);
     }
 
     public function meterReadingValuesToArray(ReadingValueMessage $detail): array
