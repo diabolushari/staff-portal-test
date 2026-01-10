@@ -48,7 +48,7 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
       return {
         meterId: meter?.meter_id,
         serial: meter?.meter_serial,
-        meterProfile: meter?.meter_profile,
+        meterProfile: meterWithConn?.meter_profile,
         kva: kvaMax
           ? {
               value: kvaMax.final_reading ?? 0,
@@ -59,6 +59,8 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
       }
     })
   }, [meterReading, meters])
+
+  console.log(meterSummaries, meterReading)
 
   return (
     <Card className='mb-4 p-4'>

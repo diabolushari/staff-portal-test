@@ -1,14 +1,5 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { Meter, MeterProfileParameter } from '@/interfaces/data_interfaces'
 import Input from '@/ui/form/Input'
-import React from 'react'
 import { TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
 import ErrorText from '@/typography/ErrorText'
 
