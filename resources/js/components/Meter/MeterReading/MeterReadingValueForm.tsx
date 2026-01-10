@@ -37,116 +37,138 @@ export default function MeterReadingValueForm({
 }: Readonly<Props>) {
   return (
     <div className='rounded border bg-white p-4'>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead></TableHead>
+      <div
+        className='grid overflow-hidden rounded-md'
+        style={{
+          gridTemplateColumns: `200px repeat(${parameterReadingValues?.length || 0}, minmax(0, 1fr))`,
+        }}
+      >
+        {/* Header */}
+        <div className='border-b p-2 text-sm font-medium'></div>
+        {parameterReadingValues?.map((tz) => (
+          <div
+            key={tz.timezone_id}
+            className='border-b p-2 text-center text-sm font-medium'
+          >
+            {tz.timezone_name}
+          </div>
+        ))}
+
+        {/* Initial */}
+        {profileParameter.is_cumulative && (
+          <>
+            <div className='border-b p-2 text-sm font-medium'>Initial</div>
             {parameterReadingValues?.map((tz) => (
-              <TableHead key={tz.timezone_id}>{tz.timezone_name}</TableHead>
+              <div
+                key={tz.timezone_id}
+                className='border-b p-2'
+              >
+                <Input
+                  type='number'
+                  value={tz.values.initial}
+                  setValue={(value) => updateInitialReading(tz.timezone_id, value)}
+                  max={maxReadingValue}
+                  disabled={!isFirstReading}
+                  min={0}
+                />
+                {errors?.[`${tz.timezone_id}.initial`] && (
+                  <ErrorText>{errors[`${tz.timezone_id}.initial`]}</ErrorText>
+                )}
+              </div>
             ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {profileParameter.is_cumulative && (
-            <TableRow>
-              <TableCell className='font-medium'>Initial</TableCell>
-              {parameterReadingValues?.map((tz) => (
-                <React.Fragment key={tz.timezone_id}>
-                  <TableCell>
-                    <Input
-                      type='number'
-                      value={tz.values.initial}
-                      setValue={(value) => updateInitialReading(tz.timezone_id, value)}
-                      max={maxReadingValue}
-                      disabled={!isFirstReading}
-                      min={0}
-                    />
-                    {errors?.[`${tz.timezone_id}.initial`] && (
-                      <ErrorText>{errors[`${tz.timezone_id}.initial`]}</ErrorText>
-                    )}
-                  </TableCell>
-                </React.Fragment>
-              ))}
-            </TableRow>
-          )}
-          {profileParameter.is_cumulative && (
-            <TableRow>
-              <TableCell className='font-medium'>Rotation</TableCell>
-              {parameterReadingValues.map((tz) => (
-                <TableCell key={tz.timezone_id}>
-                  <input
-                    type='checkbox'
-                    checked={tz.isRotation}
-                    onChange={() => onToggleRotation(tz.timezone_id)}
-                    disabled={isFirstReading}
-                  />
-                </TableCell>
-              ))}
-            </TableRow>
-          )}
-          <TableRow>
-            <TableCell className='font-medium'>
-              {profileParameter.is_cumulative ? 'Final' : 'Reading'}
-            </TableCell>
+          </>
+        )}
+
+        {/* Rotation (compact) */}
+        {profileParameter.is_cumulative && (
+          <>
+            <div className='text-muted-foreground border-b p-2 text-xs font-medium'>Rotation</div>
+            {parameterReadingValues.map((tz) => (
+              <div
+                key={tz.timezone_id}
+                className='flex items-center justify-start border-b p-2'
+              >
+                <input
+                  type='checkbox'
+                  className='h-3 w-3'
+                  checked={tz.isRotation}
+                  onChange={() => onToggleRotation(tz.timezone_id)}
+                  disabled={isFirstReading}
+                />
+              </div>
+            ))}
+          </>
+        )}
+
+        {/* Final / Reading */}
+        <>
+          <div className='border-b p-2 text-sm font-medium'>
+            {profileParameter.is_cumulative ? 'Final' : 'Reading'}
+          </div>
+          {parameterReadingValues?.map((tz) => (
+            <div
+              key={tz.timezone_id}
+              className='border-b p-2'
+            >
+              <Input
+                type='number'
+                value={tz.values.final}
+                setValue={(val) => onChange(tz.timezone_id, val)}
+                max={maxReadingValue}
+                disabled={isFirstReading && profileParameter.is_cumulative}
+                min={0}
+              />
+              {errors?.[`${tz.timezone_id}.final`] && (
+                <ErrorText>{errors[`${tz.timezone_id}.final`]}</ErrorText>
+              )}
+            </div>
+          ))}
+        </>
+
+        {/* Diff */}
+        {profileParameter.is_cumulative && (
+          <>
+            <div className='border-b p-2 text-sm font-medium'>Diff</div>
             {parameterReadingValues?.map((tz) => (
-              <React.Fragment key={tz.timezone_id}>
-                <TableCell>
-                  <Input
-                    type='number'
-                    value={tz.values.final}
-                    setValue={(val) => onChange(tz.timezone_id, val)}
-                    max={maxReadingValue}
-                    disabled={isFirstReading && profileParameter.is_cumulative}
-                    min={0}
-                  />
-                  {errors?.[`${tz.timezone_id}.final`] && (
-                    <ErrorText>{errors[`${tz.timezone_id}.final`]}</ErrorText>
-                  )}
-                </TableCell>
-              </React.Fragment>
+              <div
+                key={tz.timezone_id}
+                className='border-b p-2'
+              >
+                <Input
+                  type='number'
+                  value={tz.values.diff}
+                  disabled
+                  min={0}
+                  setValue={() => {}}
+                  error={errors?.[`${tz.timezone_id}.diff`]}
+                />
+              </div>
             ))}
-          </TableRow>
-          {profileParameter.is_cumulative && (
-            <TableRow>
-              <TableCell className='font-medium'>Diff</TableCell>
-              {parameterReadingValues?.map((tz) => (
-                <React.Fragment key={tz.timezone_id}>
-                  <TableCell>
-                    <Input
-                      type='number'
-                      value={tz.values.diff}
-                      setValue={() => {}}
-                      disabled
-                      min={0}
-                    />
-                    {errors?.[`${tz.timezone_id}.diff`] && (
-                      <ErrorText>{errors[`${tz.timezone_id}.diff`]}</ErrorText>
-                    )}
-                  </TableCell>
-                </React.Fragment>
-              ))}
-            </TableRow>
-          )}
-          <TableRow>
-            <TableCell className='font-medium'>
-              {profileParameter.is_export ? 'Export' : 'Import'} (MF: {meter.meter_mf})
-            </TableCell>
-            {parameterReadingValues?.map((tz) => (
-              <React.Fragment key={tz.timezone_id}>
-                <TableCell>
-                  <Input
-                    type='number'
-                    value={tz.values.value}
-                    setValue={() => {}}
-                    disabled
-                    min={0}
-                  />
-                </TableCell>
-              </React.Fragment>
-            ))}
-          </TableRow>
-        </TableBody>
-      </Table>
+          </>
+        )}
+
+        {/* Import / Export */}
+        <>
+          <div className='p-2 text-sm font-medium'>
+            {profileParameter.is_export ? 'Export' : 'Import'} (MF: {meter.meter_mf})
+          </div>
+          {parameterReadingValues?.map((tz) => (
+            <div
+              key={tz.timezone_id}
+              className='p-2'
+            >
+              <Input
+                type='number'
+                value={tz.values.value}
+                disabled
+                min={0}
+                setValue={() => {}}
+                error={errors?.[`${tz.timezone_id}.value`]}
+              />
+            </div>
+          ))}
+        </>
+      </div>
     </div>
   )
 }
