@@ -76,7 +76,7 @@ export interface MeterConnectionMapping {
   intimation_date?: string
   change_date?: string
   energise_date?: string
-  meter_profile?: ParameterValues | null
+  meter_profile?: ParameterValues
 }
 
 export interface DateTimeField {
@@ -509,6 +509,7 @@ export interface MeterProfileGroupByProfile {
 export interface MeterReadingPowerFactor {
   id: number
   meter_reading_id: number
+  meter_id: number
   average_power_factor: number
   meter_reading: MeterReading
   meter: Meter

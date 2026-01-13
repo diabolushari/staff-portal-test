@@ -78,6 +78,7 @@ class MeterReadingConverter
         return [
             'id' => $powerFactor->getId(),
             'meter_reading_id' => $powerFactor->getMeterReadingId(),
+            'meter_id' => $powerFactor->getMeterId(),
             'average_power_factor' => $powerFactor->getAveragePowerFactor(),
             'created_by' => $powerFactor->getCreatedBy(),
             'updated_by' => $powerFactor->getUpdatedBy(),

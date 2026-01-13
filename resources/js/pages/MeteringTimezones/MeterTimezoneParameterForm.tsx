@@ -36,6 +36,7 @@ export default function MeterTimezoneParameterForm({
     effective_end_date: '',
     sort_priority: '',
     notes: '',
+    is_active: true,
   })
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
