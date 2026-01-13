@@ -6,6 +6,7 @@ import { BreadcrumbItem, PageProps } from '@/types'
 import { showError, showInfo, showSuccess } from '@/ui/alerts'
 import CustomBreadcrumb from '@/ui/BreadCrumb'
 import AddButton from '@/ui/button/AddButton'
+import EditButton from '@/ui/button/EditButton'
 import { router, usePage } from '@inertiajs/react'
 import React, { useEffect } from 'react'
 import { ToastContainer } from 'react-toastify'
@@ -22,6 +23,7 @@ interface Props {
   selectedItem?: string
   selectedTopNav?: string
   description?: React.ReactNode
+  editBtnClick?: () => void
 }
 
 export default function MainLayout({
@@ -35,6 +37,7 @@ export default function MainLayout({
   selectedItem,
   selectedTopNav,
   description,
+  editBtnClick,
 }: Readonly<Props>) {
   const { flash } = usePage<PageProps>().props
 
@@ -85,19 +88,22 @@ export default function MainLayout({
                   )}
                 </div>
 
-                <div className='flex items-center gap-2'>
-                  {addBtnUrl && (
-                    <AddButton
-                      onClick={() => router.get(addBtnUrl)}
-                      buttonText={`Add ${addBtnText}`}
-                    />
-                  )}
-                  {addBtnClick && (
-                    <AddButton
-                      onClick={addBtnClick}
-                      buttonText={`Add ${addBtnText}`}
-                    />
-                  )}
+                <div>
+                  <div className='flex items-center gap-2'>
+                    {addBtnUrl && (
+                      <AddButton
+                        onClick={() => router.get(addBtnUrl)}
+                        buttonText={`Add ${addBtnText}`}
+                      />
+                    )}
+                    {addBtnClick && (
+                      <AddButton
+                        onClick={addBtnClick}
+                        buttonText={`Add ${addBtnText}`}
+                      />
+                    )}
+                    {editBtnClick && <EditButton onClick={editBtnClick} />}
+                  </div>
                 </div>
               </div>
 
