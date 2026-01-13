@@ -43,7 +43,7 @@ class ConsumerController extends Controller
         );
 
         return Inertia::render('Consumer/ConsumerForm', [
-            'consumer_types' => $consumerTypes->data,
+            'consumerTypes' => $consumerTypes->data,
             'districts' => $districts->data,
             'states' => $states->data,
         ]);
@@ -82,7 +82,7 @@ class ConsumerController extends Controller
         );
 
         return Inertia::render('Consumer/ConsumerForm', [
-            'consumer_types' => $consumerTypes->data,
+            'consumerTypes' => $consumerTypes->data,
             'districts' => $districts->data,
             'states' => $states->data,
             'consumer' => $consumer->data,

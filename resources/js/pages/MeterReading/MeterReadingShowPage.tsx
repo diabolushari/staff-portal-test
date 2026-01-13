@@ -1,7 +1,13 @@
 import MeterReadingTable from '@/components/Meter/MeterReading/MeterReadingTable/MeterReadingTable'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
-import { Connection, Meter, MeterReading, MeterReadingValue } from '@/interfaces/data_interfaces'
+import {
+  Connection,
+  Meter,
+  MeterConnectionMapping,
+  MeterReading,
+  MeterReadingValue,
+} from '@/interfaces/data_interfaces'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
@@ -21,18 +27,21 @@ interface ReadingsByMeter {
   serial: string | undefined
   profile: string | undefined
   readings: MeterReadingValue[]
+  meterPf: number | undefined
 }
 
 interface Props {
   meterReading: MeterReading
   connectionId: number
   connection: Connection
+  meterConnectionMapping: MeterConnectionMapping[]
 }
 
 export default function MeterReadingShowPage({
   meterReading,
   connectionId,
   connection,
+  meterConnectionMapping,
 }: Readonly<Props>) {
   const breadcrumb: BreadcrumbItem[] = [
     {
@@ -60,8 +69,11 @@ export default function MeterReadingShowPage({
           meterId,
           meter: reading.meter ?? null,
           serial: reading.meter?.meter_serial,
-          profile: reading.meter?.meter_profile?.parameter_value,
+          profile: meterConnectionMapping.find((mapping) => mapping.meter_id === meterId)
+            ?.meter_profile?.parameter_value,
           readings: [] as MeterReadingValue[],
+          meterPf: meterReading.power_factors?.filter((pf) => pf.meter_id === meterId)[0]
+            ?.average_power_factor,
         }
       }
       result[meterId].readings.push(reading)
@@ -69,7 +81,7 @@ export default function MeterReadingShowPage({
     return Object.values(result)
   }, [meterReading])
 
-  console.log(meterReading)
+  console.log(meterReading, meterConnectionMapping)
   return (
     <ConnectionsLayout
       connection={connection}
@@ -130,6 +142,9 @@ export default function MeterReadingShowPage({
               Meter: {meter.serial} ({meter.profile})
             </h2>
             <h3 className='text-sm font-semibold'>MF: {meter.meter?.meter_mf}</h3>
+            <h3 className='text-sm font-semibold'>
+              Meter Power Factor: {meter?.meterPf?.toFixed(2) ?? '-'}
+            </h3>
             <MeterReadingTable readings={meter.readings} />
           </div>
         ))}

@@ -56,6 +56,7 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
           ? {
               value: kvaMax.final_reading ?? 0,
               timezone: kvaMax.time_zone?.parameter_value ?? '-',
+              timezone: kvaMax.time_zone?.parameter_value ?? '-',
             }
           : null,
         kwhSum,
@@ -87,6 +88,7 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
         {meterSummaries.map((summary) => (
           <div
             key={summary.meterId}
+            className='flex flex-col gap-2 rounded-lg border bg-gray-50 p-3'
             className='flex flex-col gap-2 rounded-lg border bg-gray-50 p-3'
           >
             <StrongText className='text-md font-semibold'>

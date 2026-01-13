@@ -16,7 +16,6 @@ class GetMeterReadingWithConnectionController extends Controller
     public function __construct(
         private ConnectionService $connectionService,
         private MeterReadingService $meterReadingService,
-        private MeterConnectionMappingService $meterConnectionMappingService,
     ) {}
 
     public function __invoke(Request $request, int $connectionId): Response
