@@ -509,6 +509,7 @@ export interface MeterProfileGroupByProfile {
 export interface MeterReadingPowerFactor {
   id: number
   meter_reading_id: number
+  meter_id: number
   average_power_factor: number
   meter_reading: MeterReading
   meter: Meter
