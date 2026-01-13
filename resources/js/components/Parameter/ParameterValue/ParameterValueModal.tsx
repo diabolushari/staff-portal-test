@@ -40,6 +40,7 @@ export default function ParameterValueModal({
     effective_start_date: parameterValue?.effective_start_date ?? '',
     effective_end_date: parameterValue?.effective_end_date ?? '',
     sort_priority: parameterValue?.sort_priority ?? '',
+    is_active: parameterValue?.is_active ?? true,
     notes: parameterValue?.notes ?? '',
     _method: parameterValue ? 'PUT' : 'POST',
   })
