@@ -26,6 +26,7 @@ interface Props {
   onEdit: (mappingId: number) => void
   onMeterStatusChange: (meter: MeterConnectionMapping) => void
   onMeterChange: (meter: MeterConnectionMapping) => void
+  onMeterProfileChange: (mapping: MeterConnectionMapping) => void
   changeReasons: ParameterValues[]
   statuses: ParameterValues[]
 }
@@ -39,6 +40,7 @@ export default function ConnectionCardSection({
   onEdit,
   onMeterStatusChange,
   onMeterChange,
+  onMeterProfileChange,   
   statuses,
 }: Readonly<Props>) {
   const meterTransformers = ctptRelations.filter((ctpt) => ctpt.meter_id === meterMapping.meter_id)
@@ -48,6 +50,7 @@ export default function ConnectionCardSection({
   const [updateStatus, setUpdateStatus] = useState<boolean>(false)
 
   const [selectedCtpt, setSelectedCtpt] = useState<MeterTransformerAssignment | null>(null)
+
 
   useEffect(() => {
     if (!change && !updateStatus) {
@@ -96,6 +99,12 @@ export default function ConnectionCardSection({
               <div className='flex items-center gap-1.5'>
                 <Settings className='h-4 w-4 text-slate-500' />
                 <span>{meterMapping.meter_use_category?.parameter_value}</span>
+              </div>
+            )}
+            {meterMapping.meter_profile != null && (
+              <div className='flex items-center gap-1.5 cursor-pointer' onClick={() => onMeterProfileChange(meterMapping)}>
+                <Settings className='h-4 w-4 text-slate-500' />
+                <span>{meterMapping.meter_profile?.parameter_value}</span>
               </div>
             )}
 
@@ -250,7 +259,7 @@ export default function ConnectionCardSection({
                       className='h-8 cursor-pointer gap-1.5 text-xs'
                     >
                       <ArrowLeftRight className='h-3.5 w-3.5' />
-                      Change
+                      Remove
                     </Button>
                   </div>
                 </div>

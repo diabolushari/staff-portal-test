@@ -241,6 +241,7 @@ export default function ConsumerFormComponent({
               setValue={setFormValue('address_line1')}
               value={formData.address_line1}
               error={errors?.address_line1}
+              required
             />
             <Input
               label='Address Line2'
@@ -253,6 +254,7 @@ export default function ConsumerFormComponent({
               setValue={setFormValue('city_town_village')}
               value={formData.city_town_village}
               error={errors?.city_town_village}
+              required
             />
             <Input
               label='Pincode'
@@ -260,6 +262,7 @@ export default function ConsumerFormComponent({
               setValue={setFormValue('pincode')}
               value={formData.pincode}
               error={errors?.pincode}
+              required
             />
             {districts && (
               <SelectList
@@ -369,6 +372,7 @@ export default function ConsumerFormComponent({
               setValue={setFormValue('primary_email')}
               value={formData.primary_email}
               error={errors?.primary_email}
+              required
             />
             <Input
               label='Primary Phone'
@@ -376,6 +380,7 @@ export default function ConsumerFormComponent({
               setValue={setFormValue('primary_phone')}
               value={formData.primary_phone}
               error={errors?.primary_phone}
+              required
             />
           </div>
 
