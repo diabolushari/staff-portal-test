@@ -1,9 +1,11 @@
+import ActionButton from '@/components/action-button'
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import ParameterValueModal from '@/components/Parameter/ParameterValue/ParameterValueModal'
 import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import NormalText from '@/typography/NormalText'
+import DeleteModal from '@/ui/Modal/DeleteModal'
 import ListSearch from '@/ui/Search/ListSearch'
 import { router } from '@inertiajs/react'
 import { useState } from 'react'
@@ -76,6 +78,8 @@ export default function MeteringTimezonesIndexPage({
 
   const [showAddModal, setShowAddModal] = useState<boolean>(false)
   const [selecedDefinition, setSelectedDefinition] = useState<ParameterDefinition | null>(null)
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false)
+  const [selectedParameterValue, setSelectedParameterValue] = useState<ParameterValues | null>(null)
 
   const timezonesData = Array.isArray(timezones) ? timezones : timezones?.data || []
   const [groups] = useState<TimezoneGroup[]>(timezonesData)
@@ -91,6 +95,10 @@ export default function MeteringTimezonesIndexPage({
   const handleAdd = () => {
     setSelectedDefinition(timezone_type_parameter)
     setShowAddModal(true)
+  }
+  const handleDelete = (parameterValue: ParameterValues) => {
+    setSelectedParameterValue(parameterValue)
+    setDeleteModalOpen(true)
   }
 
   return (
@@ -158,6 +166,9 @@ export default function MeteringTimezonesIndexPage({
                     <div className='font-inter border-b border-gray-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800'>
                       {type.parameter_value}
                     </div>
+                    <div className='flex cursor-pointer flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
+                      <ActionButton onDelete={() => handleDelete(type)} />
+                    </div>
                   </div>
                 ))}
               </>
@@ -171,6 +182,13 @@ export default function MeteringTimezonesIndexPage({
             title='Time Zone Group'
             codeLabel='Code'
             valueLabel='Group Name'
+          />
+        )}
+        {deleteModalOpen && (
+          <DeleteModal
+            setShowModal={setDeleteModalOpen}
+            title='Delete Tariff Order'
+            url={route('parameter-value.destroy', selectedParameterValue?.id)}
           />
         )}
       </div>
