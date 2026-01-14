@@ -143,7 +143,7 @@ export default function MeterReadingPreview({
         Meter {meterWithTimezoneAndProfile.meter.meter_serial}
       </StrongText>
       <span className='text-sm text-gray-500'>
-        Multiplication Factor: {meterWithTimezoneAndProfile.meter.meter_mf}
+        Multiplication Factor: {meterWithTimezoneAndProfile.meter_mf}
       </span>
       <div className='flex flex-col gap-2'>
         {meterHealthTypes && (

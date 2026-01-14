@@ -106,10 +106,7 @@ export default function MeterReadingsStep({
               <div className='font-semibold'>
                 Meter #{meter?.meter?.meter_serial ?? meter?.meter_id}
               </div>
-              <div className='text-muted-foreground text-sm'>
-                {' '}
-                Meter MF: {meter?.meter?.meter_mf}
-              </div>
+              <div className='text-muted-foreground text-sm'> Meter MF: {meter?.meter_mf}</div>
             </div>
           ))}
         </div>

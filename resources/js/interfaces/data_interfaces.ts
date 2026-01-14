@@ -77,6 +77,7 @@ export interface MeterConnectionMapping {
   change_date?: string
   energise_date?: string
   meter_profile?: ParameterValues
+  meter_mf?: number | null
 }
 
 export interface DateTimeField {
@@ -344,7 +345,6 @@ export interface Meter {
   decimal_digit_count: number | null
   programmable_pt_ratio: number | null
   programmable_ct_ratio: number | null
-  meter_mf: number | null
   warranty_period: number | null
   meter_constant: number | null
   batch_code: string | null
@@ -595,6 +595,7 @@ export interface MeterWithTimezoneAndProfile {
   }[]
   reading_parameters: MeterProfileParameter[]
   meter_profile: ParameterValues
+  meter_mf: number | null
 }
 
 export interface BillingGroup {

@@ -168,10 +168,6 @@ export default function MeterShow({ meter, currentTimezone, timezoneTypes }: Rea
               label='Meter Constant'
               value={meter?.meter_constant ?? ''}
             />
-            <Field
-              label='Meter MF'
-              value={meter?.meter_mf ?? ''}
-            />
 
             <Field
               label='Warranty Period (Months)'
