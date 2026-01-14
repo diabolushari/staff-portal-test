@@ -62,6 +62,7 @@ class MeterConnectionMappingConverter
             'rel_id' => $rel->getRelId(),
             'meter_id' => $rel->getMeterId(),
             'connection_id' => $rel->getConnectionId(),
+            'meter_mf' => $rel->getMeterMf(),
             'meter_profile_id' => $rel->getProfileId(),
             'meter_use_category' => ParameterValueProtoConvertor::convertToArray($rel->getMeterUseCategory()),
             'meter_status' => ParameterValueProtoConvertor::convertToArray($rel->getMeterStatus()),
