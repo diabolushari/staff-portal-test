@@ -38,6 +38,7 @@ export default function ConnectionProfileUpdateModal({
     <Modal
       setShowModal={() => setShowModal(false)}
       title='Update Meter Profile'
+      
     >
       <form
         className='flex flex-col gap-4'
