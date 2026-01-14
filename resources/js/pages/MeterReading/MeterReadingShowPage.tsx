@@ -79,7 +79,7 @@ export default function MeterReadingShowPage({
       result[meterId].readings.push(reading)
     })
     return Object.values(result)
-  }, [meterReading])
+  }, [meterReading, meterConnectionMapping])
 
   console.log(meterReading, meterConnectionMapping)
   return (

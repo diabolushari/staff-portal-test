@@ -143,6 +143,9 @@ export default function MeteringTimezonesIndexPage({
                         <NormalText>{group?.timezone_type?.notes}</NormalText>
                       </div>
                     </div>
+                    <div className='flex cursor-pointer flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
+                      <ActionButton onDelete={() => handleDelete(group.timezone_type)} />
+                    </div>
                   </div>
                 </div>
               ))
@@ -157,14 +160,14 @@ export default function MeteringTimezonesIndexPage({
               <>
                 {timezoneTypesWithoutTimezones?.map((type) => (
                   <div
-                    key={type.id}
+                    key={type?.id}
                     className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
                     onClick={() => {
                       handleShow(type.id)
                     }}
                   >
                     <div className='font-inter border-b border-gray-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800'>
-                      {type.parameter_value}
+                      {type?.parameter_value}
                     </div>
                     <div className='flex cursor-pointer flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
                       <ActionButton onDelete={() => handleDelete(type)} />
