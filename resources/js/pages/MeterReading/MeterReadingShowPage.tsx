@@ -28,6 +28,7 @@ interface ReadingsByMeter {
   profile: string | undefined
   readings: MeterReadingValue[]
   meterPf: number | undefined
+  meterMF: number | null | undefined
 }
 
 interface Props {
@@ -74,6 +75,7 @@ export default function MeterReadingShowPage({
           readings: [] as MeterReadingValue[],
           meterPf: meterReading.power_factors?.filter((pf) => pf.meter_id === meterId)[0]
             ?.average_power_factor,
+          meterMF: meterConnectionMapping.find((mapping) => mapping.meter_id === meterId)?.meter_mf,
         }
       }
       result[meterId].readings.push(reading)
@@ -141,7 +143,7 @@ export default function MeterReadingShowPage({
             <h2 className='mb-2 text-xl font-bold'>
               Meter: {meter.serial} ({meter.profile})
             </h2>
-            <h3 className='text-sm font-semibold'>MF: {meter.meter?.meter_mf}</h3>
+            <h3 className='text-sm font-semibold'>MF: {meter?.meterMF ?? '-'}</h3>
             <h3 className='text-sm font-semibold'>
               Meter Power Factor: {meter?.meterPf?.toFixed(2) ?? '-'}
             </h3>
