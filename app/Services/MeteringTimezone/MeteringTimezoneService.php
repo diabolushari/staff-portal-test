@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\MeteringTimezone;
 
+use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Services\Grpc\GrpcErrorService;
+use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
@@ -242,7 +244,7 @@ class MeteringTimezoneService
         $meteringTimezones = iterator_to_array($timezoneGroup->getMeteringTimezones());
 
         return [
-            'timezone_type' => self::transformParameterValueToArray($timezoneGroup->getTimezoneType()),
+            'timezone_type' => ParameterValueProtoConvertor::convertToArray($timezoneGroup->getTimezoneType()),
             'metering_timezones' => array_map(
                 fn(MeteringTimezoneResponse $tz) => self::timezoneProtoToArray($tz),
                 $meteringTimezones
@@ -277,34 +279,23 @@ class MeteringTimezoneService
         return [
             'version_id' => $tz->getVersionId(),
             'metering_timezone_id' => $tz->getMeteringTimezoneId(),
-            'timezone_type' => self::transformParameterValueToArray($tz->getTimezoneType()),
-            'timezone_name' => self::transformParameterValueToArray($tz->getTimezoneName()),
+            'timezone_type' => ParameterValueProtoConvertor::convertToArray($tz->getTimezoneType()),
+            'timezone_name' => ParameterValueProtoConvertor::convertToArray($tz->getTimezoneName()),
             'from_hrs' => $tz->getFromHrs(),
             'from_mins' => $tz->getFromMins(),
             'to_hrs' => $tz->getToHrs(),
             'to_mins' => $tz->getToMins(),
             'effective_start_ts' => $tz->getEffectiveStartTs()?->toDateTime()->format('Y-m-d H:i:s'),
-            'effective_end_ts' => $tz->hasEffectiveEndTs() ? $tz->getEffectiveEndTs()->toDateTime()->format('Y-m-d H:i:s') : null,
+            'effective_end_ts' => $tz->hasEffectiveEndTs() ? DateTimeConverter::convertTimestampToString($tz->getEffectiveEndTs()) : null,
             'is_active' => $tz->hasIsActive() ? $tz->getIsActive() : null,
             'created_ts' => $tz->getCreatedTs()?->toDateTime()->format('Y-m-d H:i:s'),
-            'updated_ts' => $tz->hasUpdatedTs() ? $tz->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s') : null,
+            'updated_ts' => $tz->hasUpdatedTs() ? DateTimeConverter::convertTimestampToString($tz->getUpdatedTs()) : null,
             'created_by' => $tz->getCreatedBy(),
             'updated_by' => $tz->hasUpdatedBy() ? $tz->getUpdatedBy() : null,
         ];
     }
 
-    private static function transformParameterValueToArray($parameterValue): ?array
-    {
-        if ($parameterValue === null) {
-            return null;
-        }
 
-        return [
-            'id' => $parameterValue->getId(),
-            'parameter_value' => $parameterValue->getParameterValue(),
-            'notes' => $parameterValue->getNotes(),
-        ];
-    }
 
     private static function toTimestamp(\DateTimeInterface|string|int $value): ?Timestamp
     {
