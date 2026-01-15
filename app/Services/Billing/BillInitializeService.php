@@ -39,6 +39,7 @@ class BillInitializeService
         if ($request->billDate != null) {
             $proto->setBillDate($request->billDate);
         }
+        $proto->setBillingGroupId($request->billingGroupId);
         [$response, $status] = $this->client->InitializeBill($proto)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(

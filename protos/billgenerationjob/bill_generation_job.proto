@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.billgenerationjob;
+
+option php_namespace = "Proto\\BillGenerationJob";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+import "billinggroup/billing_group.proto";
+import "billinggroup/billing_group_connection_rel.proto";
+import "billinggroup/bill.proto";
+
+
+// --------------------- JOB STATUS MESSAGE ---------------------
+
+message BillGenerationJobMessage {
+  com.kseb.consumerservice.proto.billinggroup.BillingGroupMessage billing_group = 1;
+  int64 total_connections = 2;
+  int64 total_bills = 3;
+  string reading_year_month = 4;
+  string bill_year_month = 5;
+  string initilized_date = 6;
+}
+
+
+// --------------------- GET REQUEST ---------------------
+
+message GetBillGenerationJobRequest {
+  int32 billing_group_id = 1;
+  optional string reading_year_month = 2;    // YYYY-MM
+  optional string bill_year_month = 3;
+  optional google.protobuf.Timestamp initilized_date = 4;
+}
+
+message GetBillGenerationJobResponse {
+ repeated BillGenerationJobMessage status = 1;
+}
+
+
+// --------------------- LIST REQUEST ---------------------
+
+message ListBillGenerationJobRequest {
+  optional int32 billing_group_id = 1;
+  optional string reading_year_month = 2;     // YYYY-MM
+  optional string bill_year_month = 3;        // YYYY-MM
+
+}
+
+message ListBillGenerationJobResponse {
+  repeated BillGenerationJobMessage data = 1;
+  int64 total_count = 2;
+}
+
+message PaginatedBillGenerationJobRequest {
+
+  int32 page_number = 1;
+  int32 page_size = 2;
+  optional string search = 3;
+  optional string sort_by = 4;          // optional sort field
+  optional string sort_direction = 5; 
+  optional int32 billing_group_id = 6;
+  optional string reading_year_month = 7;
+  
+}
+
+message PaginatedBillGenerationJobResponse {
+  repeated BillGenerationJobMessage data = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
+
+// ---------------------- SERVICE ----------------------
+
+service BillGenerationJobService {
+  rpc GetBillGenerationJob (GetBillGenerationJobRequest)
+      returns (GetBillGenerationJobResponse);
+
+  rpc ListBillGenerationJob (ListBillGenerationJobRequest)
+      returns (ListBillGenerationJobResponse);
+
+  rpc PaginatedListBillGenerationJob (PaginatedBillGenerationJobRequest)
+      returns (PaginatedBillGenerationJobResponse);
+}

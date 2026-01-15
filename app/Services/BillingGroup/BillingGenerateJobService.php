@@ -11,14 +11,17 @@ use Proto\Bill\BillGenerationJobStatusServiceClient;
 use Proto\Bill\ListBillGenerationJobStatusRequest;
 use Grpc\ChannelCredentials;
 use Proto\Bill\PaginatedBillGenerationJobStatusRequest;
+use Proto\BillGenerationJob\BillGenerationJobMessage;
+use Proto\BillGenerationJob\BillGenerationJobServiceClient;
+use Proto\BillGenerationJob\ListBillGenerationJobRequest;
 
 class BillingGenerateJobService
 {
-    private BillGenerationJobStatusServiceClient $client;
+    private BillGenerationJobServiceClient $client;
 
     public function __construct()
     {
-        $this->client = new BillGenerationJobStatusServiceClient(
+        $this->client = new BillGenerationJobServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
         );
@@ -28,14 +31,14 @@ class BillingGenerateJobService
         ?int $billingGroupId,
         ?string $readingYearMonth
     ): GrpcServiceResponse {
-        $request = new ListBillGenerationJobStatusRequest();
+        $request = new ListBillGenerationJobRequest();
         if ($billingGroupId) {
             $request->setBillingGroupId($billingGroupId);
         }
         if ($readingYearMonth) {
             $request->setReadingYearMonth($readingYearMonth);
         }
-        [$response, $status] = $this->client->listBillGenerationJobStatus($request)->wait();
+        [$response, $status] = $this->client->ListBillGenerationJob($request)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -58,68 +61,8 @@ class BillingGenerateJobService
         );
     }
 
-    public function listPaginatedBillGenerationJobStatus(
-        ?int $pageNumber = 1,
-        ?int $pageSize = 5,
-        ?string $search = null,
-        ?string $sortBy = null,
-        ?string $sortDirection = null,
-        ?int $billingGroupId = null,
-        ?string $readingYearMonth = null,
-    ): GrpcServiceResponse {
-        $request = new PaginatedBillGenerationJobStatusRequest();
-        if ($pageNumber) {
-            $request->setPageNumber($pageNumber);
-        }
-        if ($pageSize) {
-            $request->setPageSize($pageSize);
-        }
-        if ($search) {
-            $request->setSearch($search);
-        }
-        if ($sortBy) {
-            $request->setSortBy($sortBy);
-        }
-        if ($sortDirection) {
-            $request->setSortDirection($sortDirection);
-        }
-        if ($billingGroupId) {
-            $request->setBillingGroupId($billingGroupId);
-        }
-        if ($readingYearMonth) {
-            $request->setReadingYearMonth($readingYearMonth);
-        }
-        [$response, $status] = $this->client->PaginatedListBillGenerationJobStatus($request)->wait();
-        if ($status->code !== 0) {
-            return GrpcServiceResponse::error(
-                GrpcErrorService::handleErrorResponse($status),
-                $response,
-                $status->code,
-                $status->details
-            );
-        }
 
-        $data = [];
-        foreach ($response->getData() as $message) {
-            $data[] = $this->BillGenerateMessageToArray($message);
-        }
-        $pagination = [
-            'bill_generation_job_status' => $data,
-            'total' => $response->getTotalCount(),
-            'page' => $response->getPageNumber(),
-            'page_size' => $response->getPageSize(),
-            'total_pages' => $response->getTotalPages(),
-        ];
-
-        return GrpcServiceResponse::success(
-            $pagination,
-            $response,
-            $status->code,
-            $status->details
-        );
-    }
-
-    public function BillGenerateMessageToArray(BillGenerationJobStatusMessage $message): array
+    public function BillGenerateMessageToArray(BillGenerationJobMessage $message): array
     {
         $billingGroup = $message->getBillingGroup();
         if ($billingGroup) {
