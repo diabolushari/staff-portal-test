@@ -1,6 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { ParameterDefinition } from '@/interfaces/parameter_types'
+import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import FormCard from '@/ui/Card/FormCard'
 import Input from '@/ui/form/Input'
@@ -9,11 +9,13 @@ import Modal from '@/ui/Modal/Modal'
 
 interface PageProps {
   onClose: () => void
-  definition: ParameterDefinition
+  definition?: ParameterDefinition
   title?: string
   codeLabel?: string
   valueLabel?: string
   descriptionLabel?: string
+  parameterValue?: ParameterValues
+  definitionId?: number
 }
 
 export default function ParameterValueModal({
@@ -23,24 +25,30 @@ export default function ParameterValueModal({
   codeLabel,
   valueLabel,
   descriptionLabel,
+  parameterValue,
+  definitionId,
 }: PageProps) {
   const { formData, setFormValue } = useCustomForm({
-    definition_id: definition?.id,
-    parameter_code: '',
-    parameter_value: '',
-    attribute1_value: '',
-    attribute2_value: '',
-    attribute3_value: '',
-    attribute4_value: '',
-    attribute5_value: '',
-    effective_start_date: '',
-    effective_end_date: '',
-    sort_priority: '',
-    notes: '',
+    definition_id: definition?.id ?? definitionId ?? '',
+    parameter_code: parameterValue?.parameter_code ?? '',
+    parameter_value: parameterValue?.parameter_value ?? '',
+    attribute1_value: parameterValue?.attribute1_value ?? '',
+    attribute2_value: parameterValue?.attribute2_value ?? '',
+    attribute3_value: parameterValue?.attribute3_value ?? '',
+    attribute4_value: parameterValue?.attribute4_value ?? '',
+    attribute5_value: parameterValue?.attribute5_value ?? '',
+    effective_start_date: parameterValue?.effective_start_date ?? '',
+    effective_end_date: parameterValue?.effective_end_date ?? '',
+    sort_priority: parameterValue?.sort_priority ?? '',
+    is_active: parameterValue?.is_active ?? true,
+    notes: parameterValue?.notes ?? '',
+    _method: parameterValue ? 'PUT' : 'POST',
   })
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
-    route('parameter-value.store'),
+    parameterValue
+      ? route('parameter-value.update', parameterValue.id)
+      : route('parameter-value.store'),
     {
       onComplete: () => {
         onClose()
@@ -85,11 +93,11 @@ export default function ParameterValueModal({
           error={errors?.sort_priority}
         />
 
-        {definition.attribute1_name ||
-          definition.attribute2_name ||
-          definition.attribute3_name ||
-          definition.attribute4_name ||
-          (definition.attribute5_name && (
+        {definition?.attribute1_name ||
+          definition?.attribute2_name ||
+          definition?.attribute3_name ||
+          definition?.attribute4_name ||
+          (definition?.attribute5_name && (
             <FormCard title='Attributes'>
               {definition.attribute1_name && (
                 <Input

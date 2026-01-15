@@ -24,7 +24,7 @@ export default function BillingJobList({
         <BillingJobCard
           key={index}
           month={job.reading_year_month}
-          groupName={isGroupNameVisible ? job.billing_group.name : undefined}
+          groupName={isGroupNameVisible ? job.billing_group?.name : undefined}
           completed={job.total_bills}
           total={job.total_connections}
           billYearMonth={job.bill_year_month}

@@ -27,8 +27,9 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
       const kvaValues = filteredValues.filter(
         (v) => v.meter_profile_parameter?.name.toLowerCase() == DEMAND_PARAMETER_NAME.toLowerCase()
       )
+      console.log(kvaValues)
       let kvaMax = null
-      if (kvaValues.length > 0) {
+      if (kvaValues?.length > 0) {
         kvaMax = kvaValues.reduce(
           (max: MeterReadingValue | null, curr: MeterReadingValue | null) => {
             return (curr?.final_reading ?? 0) > (max?.final_reading ?? 0) ? curr : max
@@ -48,18 +49,21 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
       return {
         meterId: meter?.meter_id,
         serial: meter?.meter_serial,
+        meter: meter,
+        meter_pf: meterReading?.power_factors.filter((pf) => pf.meter_id === meter?.meter_id)[0],
         meterProfile: meterWithConn?.meter_profile,
         kva: kvaMax
           ? {
               value: kvaMax.final_reading ?? 0,
-              timezone: kvaMax.time_zone?.parameter_value,
+              timezone: kvaMax.time_zone?.parameter_value ?? '-',
+              timezone: kvaMax.time_zone?.parameter_value ?? '-',
             }
           : null,
         kwhSum,
       }
     })
   }, [meterReading, meters])
-  console.log(meterReading)
+
   return (
     <Card className='mb-4 p-4'>
       <div className='flex justify-between'>
@@ -69,9 +73,6 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
           </StrongText>
           <NormalText>
             {meterReading?.reading_start_date} to {meterReading?.reading_end_date}
-          </NormalText>
-          <NormalText>
-            Power Factor: {meterReading?.power_factors[0]?.average_power_factor ?? '-'}
           </NormalText>
         </div>
         <Button
@@ -87,14 +88,23 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
         {meterSummaries.map((summary) => (
           <div
             key={summary.meterId}
-            className='rounded-lg border bg-gray-50 p-3'
+            className='flex flex-col gap-2 rounded-lg border bg-gray-50 p-3'
+            className='flex flex-col gap-2 rounded-lg border bg-gray-50 p-3'
           >
             <StrongText className='text-md font-semibold'>
               Meter Serial: {summary.serial}({summary.meterProfile?.parameter_value})
             </StrongText>
+            <NormalText>
+              Power Factor:{' '}
+              {summary.meter_pf?.average_power_factor != null
+                ? summary.meter_pf?.average_power_factor.toFixed(
+                    summary.meter?.decimal_digit_count ?? 3
+                  )
+                : '-'}
+            </NormalText>
 
             <div className='mt-1 text-sm text-gray-700'>
-              {summary.kva ? (
+              {summary?.kva ? (
                 <p>
                   <b>KVA (highest):</b> {summary.kva.value} at timezone {summary.kva.timezone}
                 </p>

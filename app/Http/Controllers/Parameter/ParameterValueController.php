@@ -179,6 +179,6 @@ class ParameterValueController extends Controller
             ]);
         }
 
-        return redirect()->route('parameter-value.index')->with(['message' => 'Deleted successfully.']);
+        return redirect()->back()->with(['message' => 'Deleted successfully.']);
     }
 }

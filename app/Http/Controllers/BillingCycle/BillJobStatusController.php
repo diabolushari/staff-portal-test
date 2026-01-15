@@ -27,14 +27,14 @@ class BillJobStatusController extends Controller
         $search = $request->input('search', null);
         $sortBy = $request->input('sort_by', null);
         $sortDirection = $request->input('sort_direction', null);
-        $billGenerationJobStatus = $this->billingGenerateJobService->listPaginatedBillGenerationJobStatus($pageNumber, $pageSize, $search, $sortBy, $sortDirection);
+        $billGenerationJobStatus = $this->billingGenerateJobService->listBillGenerationJobStatus(null, null);
         $paginatedData = [];
         if ($billGenerationJobStatus->data) {
             $paginatedData = new LengthAwarePaginator(
-                $billGenerationJobStatus->data['bill_generation_job_status'],
-                $billGenerationJobStatus->data['total'],
-                $billGenerationJobStatus->data['page_size'],
-                $billGenerationJobStatus->data['page'],
+                $billGenerationJobStatus->data,
+                100,
+                5,
+                1,
                 ['path' => request()->url()]
             );
         }
@@ -57,14 +57,14 @@ class BillJobStatusController extends Controller
         $billYearMonth = $request->input('bill_year_month') ?? null;
 
         if ($initializedDate == null && $readingYearMonth == null && $billYearMonth == null) {
-            $billGenerationJobStatus = $this->billingGenerateJobService->listPaginatedBillGenerationJobStatus(null, null, null, null, null, $billingGroupId, null);
+            $billGenerationJobStatus = $this->billingGenerateJobService->listBillGenerationJobStatus($billingGroupId, $readingYearMonth);
             $paginatedData = [];
             if ($billGenerationJobStatus->data) {
                 $paginatedData = new LengthAwarePaginator(
-                    $billGenerationJobStatus->data['bill_generation_job_status'],
-                    $billGenerationJobStatus->data['total'],
-                    $billGenerationJobStatus->data['page_size'],
-                    $billGenerationJobStatus->data['page'],
+                    $billGenerationJobStatus->data,
+                    100,
+                    5,
+                    1,
                     ['path' => request()->url()]
                 );
             }
