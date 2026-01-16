@@ -136,26 +136,26 @@ export default function MeterReadingShowPage({
                     <TableRow>
                       <TableCell className='font-medium'>Voltage (V)</TableCell>
                       <TableCell className='text-center'>
-                        {meter.health.voltage_r.toFixed(2) ?? '-'}
+                        {meter.health.voltage_r ? meter.health.voltage_r.toFixed(2) : '-'}
                       </TableCell>
                       <TableCell className='text-center'>
-                        {meter.health.voltage_y.toFixed(2) ?? '-'}
+                        {meter.health.voltage_y ? meter.health.voltage_y.toFixed(2) : '-'}
                       </TableCell>
                       <TableCell className='text-center'>
-                        {meter.health.voltage_b.toFixed(2) ?? '-'}
+                        {meter.health.voltage_b ? meter.health.voltage_b.toFixed(2) : '-'}
                       </TableCell>
                     </TableRow>
 
                     <TableRow>
                       <TableCell className='font-medium'>Current (A)</TableCell>
                       <TableCell className='text-center'>
-                        {meter.health.current_r.toFixed(2) ?? '-'}
+                        {meter.health.current_r ? meter.health.current_r.toFixed(2) : '-'}
                       </TableCell>
                       <TableCell className='text-center'>
-                        {meter.health.current_y.toFixed(2) ?? '-'}
+                        {meter.health.current_y ? meter.health.current_y.toFixed(2) : '-'}
                       </TableCell>
                       <TableCell className='text-center'>
-                        {meter.health.current_b.toFixed(2) ?? '-'}
+                        {meter?.health?.current_b ? meter.health.current_b.toFixed(2) : '-'}
                       </TableCell>
                     </TableRow>
                   </TableBody>
