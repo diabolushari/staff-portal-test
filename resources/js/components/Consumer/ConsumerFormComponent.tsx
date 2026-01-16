@@ -15,6 +15,7 @@ import AddressCard from '../Connections/AddressCard'
 
 interface Props {
   consumer_types: ParameterValues[]
+  consumer_ownership_types: ParameterValues[]
   districts: RegionOption[]
   states: RegionOption[]
   connection_id: number
@@ -29,6 +30,7 @@ const isSameAddress = (primary?: any, other?: any) => {
 
 export default function ConsumerFormComponent({
   consumer_types,
+  consumer_ownership_types,
   districts,
   states,
   connection_id,
@@ -36,7 +38,7 @@ export default function ConsumerFormComponent({
   indicators,
   departments,
 }: Props) {
-  console.log(consumer_types)
+  console.log(consumer_ownership_types)
   let consumer = null
   let contact = null
   if (data) {
@@ -54,6 +56,8 @@ export default function ConsumerFormComponent({
     address_id: primary?.address_id ?? null,
     connection_id: consumer?.connection_id ?? connection_id,
     consumer_type_id: consumer?.consumer_type_id ?? '',
+    consumer_ownership_type_id: consumer?.consumer_ownership_type_id ?? '',
+    consumer_name: consumer?.consumer_name ?? '',
     contact_person: consumer?.contact_person ?? '',
     organization_name: consumer?.organization_name ?? '',
     department_id: consumer?.department_name_id ?? '',
@@ -150,6 +154,17 @@ export default function ConsumerFormComponent({
     post(payload)
   }
 
+  const [selectedOwnership, setSelectedOwnership] = useState<ParameterValues | null>(null)
+
+  useEffect(() => {
+    if (formData.consumer_ownership_type_id) {
+      const ownership = consumer_ownership_types.find(
+        (type) => type.id === Number(formData.consumer_ownership_type_id)
+      )
+      setSelectedOwnership(ownership || null)
+    }
+  }, [consumer_ownership_types, formData.consumer_ownership_type_id])
+
   return (
     <form
       className='flex flex-col gap-6'
@@ -184,12 +199,44 @@ export default function ConsumerFormComponent({
                 error={errors?.department_id}
               />
             )}
+            {consumer_ownership_types && (
+              <SelectList
+                label='Consumer Ownership Type'
+                list={consumer_ownership_types}
+                dataKey='id'
+                displayKey='parameter_value'
+                setValue={setFormValue('consumer_ownership_type_id')}
+                value={formData.consumer_ownership_type_id}
+                required
+                error={errors?.consumer_ownership_type_id}
+              />
+            )}
             <Input
-              label='Organization Name'
-              setValue={setFormValue('organization_name')}
-              value={formData.organization_name}
-              error={errors?.organization_name}
+              label='Consumer Name'
+              setValue={setFormValue('consumer_name')}
+              value={formData.consumer_name}
+              error={errors?.consumer_name}
+              required
             />
+            {selectedOwnership &&
+              selectedOwnership.parameter_value.toLowerCase().includes('organization') && (
+                <Input
+                  label='Organization Name'
+                  setValue={setFormValue('organization_name')}
+                  value={formData.organization_name}
+                  error={errors?.organization_name}
+                  required
+                />
+              )}
+            {selectedOwnership &&
+              selectedOwnership.parameter_value.toLowerCase().includes('organization') && (
+                <Input
+                  label='Contact Person'
+                  setValue={setFormValue('contact_person')}
+                  value={formData.contact_person}
+                  error={errors?.contact_person}
+                />
+              )}
 
             <Input
               label='Consumer CIN'
@@ -221,12 +268,6 @@ export default function ConsumerFormComponent({
               value={formData.virtual_account_number}
               error={errors?.virtual_account_number}
             />
-            <Input
-              label='Contact Person'
-              setValue={setFormValue('contact_person')}
-              value={formData.contact_person}
-              error={errors?.contact_person}
-            />
           </div>
         </div>
       </Card>
@@ -241,6 +282,7 @@ export default function ConsumerFormComponent({
               setValue={setFormValue('address_line1')}
               value={formData.address_line1}
               error={errors?.address_line1}
+              required
             />
             <Input
               label='Address Line2'
@@ -253,6 +295,7 @@ export default function ConsumerFormComponent({
               setValue={setFormValue('city_town_village')}
               value={formData.city_town_village}
               error={errors?.city_town_village}
+              required
             />
             <Input
               label='Pincode'
@@ -260,17 +303,8 @@ export default function ConsumerFormComponent({
               setValue={setFormValue('pincode')}
               value={formData.pincode}
               error={errors?.pincode}
+              required
             />
-            {districts && (
-              <SelectList
-                label='District'
-                list={districts}
-                dataKey='region_id'
-                displayKey='region_name'
-                setValue={setFormValue('district_id')}
-                value={formData.district_id}
-              />
-            )}
             {states && (
               <SelectList
                 label='State'
@@ -279,6 +313,18 @@ export default function ConsumerFormComponent({
                 displayKey='region_name'
                 setValue={setFormValue('state_id')}
                 value={formData.state_id}
+                required
+              />
+            )}
+            {districts && (
+              <SelectList
+                label='District'
+                list={districts}
+                dataKey='region_id'
+                displayKey='region_name'
+                setValue={setFormValue('district_id')}
+                value={formData.district_id}
+                required
               />
             )}
           </div>
@@ -369,6 +415,7 @@ export default function ConsumerFormComponent({
               setValue={setFormValue('primary_email')}
               value={formData.primary_email}
               error={errors?.primary_email}
+              required
             />
             <Input
               label='Primary Phone'
@@ -376,6 +423,7 @@ export default function ConsumerFormComponent({
               setValue={setFormValue('primary_phone')}
               value={formData.primary_phone}
               error={errors?.primary_phone}
+              required
             />
           </div>
 

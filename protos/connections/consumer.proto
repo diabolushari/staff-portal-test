@@ -12,8 +12,6 @@ import "connections/consumer_contact_detail.proto";
 import "parameters/parameter-value.proto";
 import "connections/connection-flag.proto";
 
-// -------------------- MESSAGES --------------------
-
 message ConsumerMessage {
   optional int32 version_id = 1;
   int32 connection_id = 2;
@@ -34,9 +32,12 @@ message ConsumerMessage {
   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto consumer_type = 17;
   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto department_name = 18;
   string consumer_cin = 19;
-  repeated connections.ConnectionFlagFormRequest consumer_flags = 20;
-  repeated connections.ConnectionFlagMessage consumer_flags_message = 21;
-  repeated connections.ConsumerContactDetailMessage consumer_contact_details = 22;
+  int32 consumer_ownership_type_id = 20;
+  string consumer_name = 21;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto consumer_ownership_type = 22;
+  repeated connections.ConnectionFlagFormRequest consumer_flags = 23;
+  repeated connections.ConnectionFlagMessage consumer_flags_message = 24;
+  repeated connections.ConsumerContactDetailMessage consumer_contact_details = 25;
   
 }
 
@@ -71,7 +72,7 @@ message ConsumerCreateRequest {
 message ConsumerUpdateRequest {
     ConsumerMessage consumer = 1;
     AddressMessage address = 2;
-    ContactMessage contact = 3;
+   ContactMessage contact = 3;
 }
 
 message ConsumerIdRequest {
@@ -84,7 +85,7 @@ message ConsumerListResponse {
 
 message GetConsumerResponse {
   ConsumerMessage consumer = 1;
-  ConsumerContactDetailMessage contact = 2;
+ optional ConsumerContactDetailMessage contact = 2;
 }
 
 service ConsumerService {

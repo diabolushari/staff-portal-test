@@ -214,12 +214,15 @@ export interface OfficeHierarchy {
 export interface Consumer {
   connection_id: number | string
   consumer_type_id: number | string
+  consumer_ownership_type_id: number | string
+  consumer_name?: string
   organization_name: string
   applicant_code: string
   consumer_pan: string
   consumer_tan?: string | null
   consumer_gstin?: string | null
   consumer_type: ParameterValues
+  consumer_ownership_type: ParameterValues
   consumer_cin: string
   virtual_account_number: string
   department_name_id: number | string
