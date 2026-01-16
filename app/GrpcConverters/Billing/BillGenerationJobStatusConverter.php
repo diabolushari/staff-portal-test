@@ -26,8 +26,7 @@ class BillGenerationJobStatusConverter
             'is_exception' => $billJobGenerationStatus->getIsException(),
             'job_started_ts' => $billJobGenerationStatus->getJobStartedTs(),
             'job_completed_ts' => $billJobGenerationStatus->getJobCompletedTs(),
-            'exception' => $billJobGenerationStatus->getException(),
-            'initialized_date' => $billJobGenerationStatus->getIsException(),
+            'exception' => $billJobGenerationStatus->getException() ? $billJobGenerationStatus->getException() : '',
             'connection' => $billJobGenerationStatus->getConnection() ? ConnectionProtoConverter::convertToArray($billJobGenerationStatus->getConnection()) : null,
             'bill' => $billJobGenerationStatus->getBill() ? BillProtoConverter::convertToArray($billJobGenerationStatus->getBill()) : null,
         ];
