@@ -462,18 +462,26 @@ export interface MeterReading {
   anomaly_id: number
   meter_health_id: number
   ctpt_health_id: number
-  voltage_r: number
-  voltage_y: number
-  voltage_b: number
-  current_r: number
-  current_y: number
-  current_b: number
   remarks: string
   created_by: number
   updated_by: number
   is_active: boolean
   values: MeterReadingValue[]
   power_factors: MeterReadingPowerFactor[]
+  healths: MeterHealth[]
+}
+
+export interface MeterHealth {
+  id: number
+  meter_reading_id: number
+  meter_id: number
+  parameter_id: number
+  current_r: number
+  current_y: number
+  current_b: number
+  voltage_r: number
+  voltage_y: number
+  voltage_b: number
 }
 
 export interface MeterReadingValue {

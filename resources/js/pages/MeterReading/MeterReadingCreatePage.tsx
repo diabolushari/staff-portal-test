@@ -115,12 +115,12 @@ export default function MeterReadingCreatePage({
     editMode ? latestMeterReading : null
   )
 
-  const { healthData, updateMeterHealth, updateCTPTHealth } = useMeterHealthForm(
+  const { healthData, updateMeterHealth, updateCTPTHealth, updateRybValues } = useMeterHealthForm(
     metersWithTimezonesAndProfiles,
     meterHealthTypes,
-    ctHealthTypes
+    ctHealthTypes,
+    latestMeterReading
   )
-  console.log(healthData, 'healthData')
   const isFirstReading = useMemo(() => {
     return latestMeterReading == null
   }, [latestMeterReading])
@@ -148,12 +148,6 @@ export default function MeterReadingCreatePage({
       : (getMonthEnd(readingStartDate, isFirstReading) ?? ''),
     reading_type: editMode ? latestMeterReading?.single_reading : 'single_reading',
     anomaly_id: editMode ? latestMeterReading?.anomaly_id : 0,
-    voltage_r: latestMeterReading?.voltage_r ?? 0,
-    voltage_y: latestMeterReading?.voltage_y ?? 0,
-    voltage_b: latestMeterReading?.voltage_b ?? 0,
-    current_r: latestMeterReading?.current_r ?? 0,
-    current_y: latestMeterReading?.current_y ?? 0,
-    current_b: latestMeterReading?.current_b ?? 0,
     remarks: editMode ? latestMeterReading?.remarks : '',
     _method: editMode ? 'PUT' : undefined,
   })
@@ -272,6 +266,8 @@ export default function MeterReadingCreatePage({
                   setFormValue={setFormValue}
                   anomalyTypes={anomalyTypes}
                   errors={errors}
+                  meterHealthData={healthData}
+                  updateRybValues={updateRybValues}
                 />
               )}
               {activeStep === 2 && (
