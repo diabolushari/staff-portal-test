@@ -4,6 +4,7 @@ namespace App\Http\Controllers\BillingCycle;
 
 use App\Http\Controllers\Controller;
 use App\Services\Billing\BillService;
+use App\Services\BillingGroup\BillGenerationJobService;
 use App\Services\BillingGroup\BillingGenerateJobService;
 use App\Services\BillingGroup\BillingGroupService;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class BillJobStatusController extends Controller
 {
     public function __construct(
 
-        private readonly BillingGenerateJobService $billingGenerateJobService,
+        private readonly BillGenerationJobService $billingGenerateJobService,
         private readonly BillService $billService,
         private readonly BillingGroupService $billingGroupService,
     ) {}
@@ -27,14 +28,14 @@ class BillJobStatusController extends Controller
         $search = $request->input('search', null);
         $sortBy = $request->input('sort_by', null);
         $sortDirection = $request->input('sort_direction', null);
-        $billGenerationJobStatus = $this->billingGenerateJobService->listBillGenerationJobStatus(null, null);
+        $billGenerationJobStatus = $this->billingGenerateJobService->listPaginatedBillGenerationJob($pageNumber, $pageSize, $search, $sortBy, $sortDirection);
         $paginatedData = [];
         if ($billGenerationJobStatus->data) {
             $paginatedData = new LengthAwarePaginator(
-                $billGenerationJobStatus->data,
-                100,
-                5,
-                1,
+                $billGenerationJobStatus->data['bill_generation_job_status'],
+                $billGenerationJobStatus->data['total'],
+                $billGenerationJobStatus->data['page_size'],
+                $billGenerationJobStatus->data['page'],
                 ['path' => request()->url()]
             );
         }
@@ -49,41 +50,11 @@ class BillJobStatusController extends Controller
         ]);
     }
 
-    public function show(int $billingGroupId, Request $request): Response
+    public function show(int $id, Request $request): Response
     {
-        $initializedDate = $request->input('initialized_date') ?? null;
-        $billingGroup = $this->billingGroupService->getBillingGroup($billingGroupId);
-        $readingYearMonth = $request->input('reading_year_month') ?? null;
-        $billYearMonth = $request->input('bill_year_month') ?? null;
-
-        if ($initializedDate == null && $readingYearMonth == null && $billYearMonth == null) {
-            $billGenerationJobStatus = $this->billingGenerateJobService->listBillGenerationJobStatus($billingGroupId, $readingYearMonth);
-            $paginatedData = [];
-            if ($billGenerationJobStatus->data) {
-                $paginatedData = new LengthAwarePaginator(
-                    $billGenerationJobStatus->data,
-                    100,
-                    5,
-                    1,
-                    ['path' => request()->url()]
-                );
-            }
-
-            return Inertia::render('BillingCycle/BillJobStatusIndexPage', [
-                'bill_generation_job_status' => $paginatedData,
-                'filters' => [
-                    'search' => '',
-                    'sort_by' => '',
-                    'sort_direction' => '',
-                ],
-            ]);
-        }
-
-        $response = $this->billService->listBills($billingGroupId, $initializedDate, $billYearMonth, $readingYearMonth);
-
+        $response = $this->billingGenerateJobService->getBillGenerationJob($id);
         return Inertia::render('BillingCycle/BillJobStatusShowPage', [
-            'bills' => $response->data ?? [],
-            'billing_group' => $billingGroup->data ?? [],
+            'data' => $response->data ?? [],
         ]);
     }
 }

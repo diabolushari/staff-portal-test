@@ -637,29 +637,32 @@ export interface Bill {
   consumer: Consumer
 }
 
-export interface BillJobStatus {
-  billing_group: BillingGroup
+export interface BillGenerationJob {
+  id: number
+  billing_group_id: number
   reading_year_month: string
   bill_year_month: string
-  initilized_date: string
+  initialized_date: string
+
+  bill_generation_job_status: BillGenerationJobStatus[]
+  billing_group: BillingGroup
+
   total_connections: number
   total_bills: number
+  total_exceptions: number
+  total_pending: number
 }
-export interface BillJobGenerationStatus {
-  bill_job_generation_status_id: number
+export interface BillGenerationJobStatus {
+  version_id: number
+  bill_generation_job_status_id: number
   connection_id: number
-  reading_year_month: string
-  bill_year_month: string
-  bill_date: string
-  due_date: string
-  dc_date: string
-  initialized_date: string
   exception: string
   connection: Connection
+  bill?: Bill | null
 }
 export interface BillWithException {
   bills: Bill[]
-  exceptions: BillJobGenerationStatus[]
+  exceptions: BillGenerationJobStatus[]
 }
 
 export interface RegionOption {

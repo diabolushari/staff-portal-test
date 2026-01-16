@@ -4,6 +4,7 @@ namespace App\Http\Controllers\BillingGroup;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BillingGroup\BillingGroupFormRequest;
+use App\Services\BillingGroup\BillGenerationJobService;
 use App\Services\BillingGroup\BillingGenerateJobService;
 use App\Services\BillingGroup\BillingGroupService;
 use Illuminate\Http\RedirectResponse;
@@ -16,7 +17,7 @@ class BillingGroupController extends Controller
 {
     public function __construct(
         private readonly BillingGroupService $billingGroupService,
-        private readonly BillingGenerateJobService $billingGenerateJobService
+        private readonly BillGenerationJobService $billingGenerateJobService
     ) {}
 
     public function index(Request $request): Response

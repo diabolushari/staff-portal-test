@@ -128,10 +128,15 @@ message MeterTransformerPaginatedListResponse {
   optional int64 type_id = 6;
 }
 
+message MeterTransformerResponse {
+  optional MeterTransformerMessage transformer = 1;
+}
+
+
 service MeterTransformerService {
   rpc CreateMeterTransformer(CreateMeterTransformerRequest) returns (MeterTransformerMessage);
   rpc UpdateMeterTransformer(UpdateMeterTransformerRequest) returns (MeterTransformerMessage);
-  rpc GetMeterTransformer(GetMeterTransformerRequest)       returns (MeterTransformerMessage);
+  rpc GetMeterTransformer(GetMeterTransformerRequest)       returns (MeterTransformerResponse);
   rpc DeleteMeterTransformer(DeleteMeterTransformerRequest) returns (google.protobuf.Empty);
   rpc ListMeterTransformers(ListMeterTransformersRequest)   returns (ListMeterTransformersResponse);
   rpc ListUnassignedMeterTransformers(ListUnassignedMeterTransformersRequest)   returns (ListMeterTransformersResponse);

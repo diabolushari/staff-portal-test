@@ -10,31 +10,42 @@ import "google/protobuf/struct.proto";
 import "billinggroup/billing_group.proto";
 import "billinggroup/billing_group_connection_rel.proto";
 import "billinggroup/bill.proto";
+import "billgenerationjob/bill_generation_job_status.proto";
 
 
 // --------------------- JOB STATUS MESSAGE ---------------------
 
-message BillGenerationJobMessage {
-  com.kseb.consumerservice.proto.billinggroup.BillingGroupMessage billing_group = 1;
-  int64 total_connections = 2;
-  int64 total_bills = 3;
+message BillGenerationJobMessage {  
+  int64 id = 1;
+  int32 billing_group_id = 2;
+  string initialized_date = 3;
   string reading_year_month = 4;
   string bill_year_month = 5;
-  string initilized_date = 6;
+  optional string created_ts = 6;
+  optional int32 created_by = 7;
+  optional string deleted_ts = 8;
+  optional int32 deleted_by = 9;
+  repeated com.kseb.consumerservice.proto.billgenerationjob.BillGenerationJobStatusMessage bill_generation_job_status = 10;
+  com.kseb.consumerservice.proto.billinggroup.BillingGroupMessage billing_group = 11;
+  optional int64 total_connections = 12;
+  optional int64 total_bills = 13;
+  optional int64 total_exceptions = 14;
+  optional int64 total_pending = 15;
+  
 }
 
 
 // --------------------- GET REQUEST ---------------------
 
 message GetBillGenerationJobRequest {
-  int32 billing_group_id = 1;
+  int64 id = 1;
   optional string reading_year_month = 2;    // YYYY-MM
   optional string bill_year_month = 3;
   optional google.protobuf.Timestamp initilized_date = 4;
 }
 
 message GetBillGenerationJobResponse {
- repeated BillGenerationJobMessage status = 1;
+ optional BillGenerationJobMessage bill_generation_job = 1;
 }
 
 

@@ -163,7 +163,7 @@ class MeterTransformerService
         }
 
         return GrpcServiceResponse::success(
-            MeterTransformerProtoConvertor::convertToArray($response),
+            MeterTransformerProtoConvertor::convertToArray($response->getTransformer()),
             $response,
             $status->code,
             $status->details
