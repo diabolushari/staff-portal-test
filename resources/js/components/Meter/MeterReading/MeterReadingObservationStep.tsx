@@ -2,12 +2,20 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
+import { MeterHealth } from './ReadingForm/useMeterHealthForm'
+import NormalText from '@/typography/NormalText'
 
 interface Props {
   formData: any
   setFormValue: any
   anomalyTypes: ParameterValues[]
   errors?: any
+  meterHealthData: MeterHealth[]
+  updateRybValues: (
+    meterId: number,
+    value: number,
+    type: 'voltage_r' | 'voltage_y' | 'voltage_b' | 'current_r' | 'current_y' | 'current_b'
+  ) => void
 }
 
 export default function MeterReadingObservationStep({
@@ -15,10 +23,12 @@ export default function MeterReadingObservationStep({
   setFormValue,
   anomalyTypes,
   errors,
+  meterHealthData,
+  updateRybValues,
 }: Props) {
   return (
     <>
-      <div className='w-full'>
+      <div className='flex w-full flex-col gap-4'>
         <div className='grid gap-4 md:grid-cols-2'>
           <SelectList
             label='Anomaly'
@@ -30,51 +40,57 @@ export default function MeterReadingObservationStep({
             error={errors?.anomaly_id}
           />
         </div>
-        <div className='grid gap-4 md:grid-cols-3'>
-          <Input
-            label='Voltage R'
-            value={formData.voltage_r}
-            setValue={setFormValue('voltage_r')}
-            type='number'
-            error={errors?.voltage_r}
-          />
-          <Input
-            label='Voltage Y'
-            value={formData.voltage_y}
-            setValue={setFormValue('voltage_y')}
-            type='number'
-            error={errors?.voltage_y}
-          />
-          <Input
-            label='Voltage B'
-            value={formData.voltage_b}
-            setValue={setFormValue('voltage_b')}
-            type='number'
-            error={errors?.voltage_b}
-          />
+        {meterHealthData.map((meter) => (
+          <div className='border p-4'>
+            <NormalText>Meter #{meter.meter_serial}</NormalText>
+            <div className='grid gap-4 md:grid-cols-3'>
+              <Input
+                key={meter.meter_id}
+                label='Voltage R'
+                value={meter.voltage_r}
+                setValue={(value) => updateRybValues(meter.meter_id, value, 'voltage_r')}
+                type='number'
+                error={errors?.voltage_r}
+              />
+              <Input
+                label='Voltage Y'
+                value={meter.voltage_y}
+                setValue={(value) => updateRybValues(meter.meter_id, value, 'voltage_y')}
+                type='number'
+                error={errors?.voltage_y}
+              />
+              <Input
+                label='Voltage B'
+                value={meter.voltage_b}
+                setValue={(value) => updateRybValues(meter.meter_id, value, 'voltage_b')}
+                type='number'
+                error={errors?.voltage_b}
+              />
 
-          <Input
-            label='Current R'
-            value={formData.current_r}
-            setValue={setFormValue('current_r')}
-            type='number'
-            error={errors?.current_r}
-          />
-          <Input
-            label='Current Y'
-            value={formData.current_y}
-            setValue={setFormValue('current_y')}
-            type='number'
-            error={errors?.current_y}
-          />
-          <Input
-            label='Current B'
-            value={formData.current_b}
-            setValue={setFormValue('current_b')}
-            type='number'
-            error={errors?.current_b}
-          />
-        </div>
+              <Input
+                label='Current R'
+                value={meter.current_r}
+                setValue={(value) => updateRybValues(meter.meter_id, value, 'current_r')}
+                type='number'
+                error={errors?.current_r}
+              />
+              <Input
+                label='Current Y'
+                value={meter.current_y}
+                setValue={(value) => updateRybValues(meter.meter_id, value, 'current_y')}
+                type='number'
+                error={errors?.current_y}
+              />
+              <Input
+                label='Current B'
+                value={meter.current_b}
+                setValue={(value) => updateRybValues(meter.meter_id, value, 'current_b')}
+                type='number'
+                error={errors?.current_b}
+              />
+            </div>
+          </div>
+        ))}
         <TextArea
           label='Remarks'
           value={formData.remarks}

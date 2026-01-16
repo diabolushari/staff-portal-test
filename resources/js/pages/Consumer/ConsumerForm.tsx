@@ -8,6 +8,7 @@ import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 
 interface Props {
   consumerTypes: ParameterValues[]
+  consumerOwnershipTypes: ParameterValues[]
   connectionId: number
   consumer?: ConsumerData
   districts: RegionOption[]
@@ -19,6 +20,7 @@ interface Props {
 
 export default function ConsumerForm({
   consumerTypes,
+  consumerOwnershipTypes,
   districts,
   states,
   connectionId,
@@ -51,6 +53,7 @@ export default function ConsumerForm({
 
     return items
   }, [connection, connectionId])
+  console.log(consumerOwnershipTypes)
 
   return (
     <ConnectionsLayout
@@ -70,6 +73,7 @@ export default function ConsumerForm({
     >
       <ConsumerFormComponent
         consumer_types={consumerTypes}
+        consumer_ownership_types={consumerOwnershipTypes}
         districts={districts}
         states={states}
         connection_id={connectionId}

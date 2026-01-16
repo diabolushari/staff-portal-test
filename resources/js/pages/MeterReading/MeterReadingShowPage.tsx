@@ -5,6 +5,7 @@ import {
   Connection,
   Meter,
   MeterConnectionMapping,
+  MeterHealth,
   MeterReading,
   MeterReadingValue,
 } from '@/interfaces/data_interfaces'
@@ -28,6 +29,8 @@ interface ReadingsByMeter {
   profile: string | undefined
   readings: MeterReadingValue[]
   meterPf: number | undefined
+  meterMF: number | null | undefined
+  health: MeterHealth
 }
 
 interface Props {
@@ -74,6 +77,8 @@ export default function MeterReadingShowPage({
           readings: [] as MeterReadingValue[],
           meterPf: meterReading.power_factors?.filter((pf) => pf.meter_id === meterId)[0]
             ?.average_power_factor,
+          meterMF: meterConnectionMapping.find((mapping) => mapping.meter_id === meterId)?.meter_mf,
+          health: meterReading.healths?.filter((health) => health.meter_id === meterId)[0],
         }
       }
       result[meterId].readings.push(reading)
@@ -100,38 +105,6 @@ export default function MeterReadingShowPage({
           Date: {meterReading.metering_date} (From {meterReading.reading_start_date} to{' '}
           {meterReading.reading_end_date})
         </p>
-        <Card>
-          <div className='mb-4'>
-            <h3 className='mb-2 text-lg font-semibold'>Phase Voltage & Current</h3>
-
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Parameter</TableHead>
-                  <TableHead className='text-center'>R</TableHead>
-                  <TableHead className='text-center'>Y</TableHead>
-                  <TableHead className='text-center'>B</TableHead>
-                </TableRow>
-              </TableHeader>
-
-              <TableBody>
-                <TableRow>
-                  <TableCell className='font-medium'>Voltage (V)</TableCell>
-                  <TableCell className='text-center'>{meterReading.voltage_r ?? '-'}</TableCell>
-                  <TableCell className='text-center'>{meterReading.voltage_y ?? '-'}</TableCell>
-                  <TableCell className='text-center'>{meterReading.voltage_b ?? '-'}</TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell className='font-medium'>Current (A)</TableCell>
-                  <TableCell className='text-center'>{meterReading.current_r ?? '-'}</TableCell>
-                  <TableCell className='text-center'>{meterReading.current_y ?? '-'}</TableCell>
-                  <TableCell className='text-center'>{meterReading.current_b ?? '-'}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </div>
-        </Card>
 
         {readingsByMeter.map((meter) => (
           <div
@@ -141,10 +114,54 @@ export default function MeterReadingShowPage({
             <h2 className='mb-2 text-xl font-bold'>
               Meter: {meter.serial} ({meter.profile})
             </h2>
-            <h3 className='text-sm font-semibold'>MF: {meter.meter?.meter_mf}</h3>
+            <h3 className='text-sm font-semibold'>MF: {meter?.meterMF ?? '-'}</h3>
             <h3 className='text-sm font-semibold'>
               Meter Power Factor: {meter?.meterPf?.toFixed(2) ?? '-'}
             </h3>
+            <Card>
+              <div className='mb-4'>
+                <h3 className='mb-2 text-lg font-semibold'>Phase Voltage & Current</h3>
+
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Parameter</TableHead>
+                      <TableHead className='text-center'>R</TableHead>
+                      <TableHead className='text-center'>Y</TableHead>
+                      <TableHead className='text-center'>B</TableHead>
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className='font-medium'>Voltage (V)</TableCell>
+                      <TableCell className='text-center'>
+                        {meter.health.voltage_r ? meter.health.voltage_r.toFixed(2) : '-'}
+                      </TableCell>
+                      <TableCell className='text-center'>
+                        {meter.health.voltage_y ? meter.health.voltage_y.toFixed(2) : '-'}
+                      </TableCell>
+                      <TableCell className='text-center'>
+                        {meter.health.voltage_b ? meter.health.voltage_b.toFixed(2) : '-'}
+                      </TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell className='font-medium'>Current (A)</TableCell>
+                      <TableCell className='text-center'>
+                        {meter.health.current_r ? meter.health.current_r.toFixed(2) : '-'}
+                      </TableCell>
+                      <TableCell className='text-center'>
+                        {meter.health.current_y ? meter.health.current_y.toFixed(2) : '-'}
+                      </TableCell>
+                      <TableCell className='text-center'>
+                        {meter?.health?.current_b ? meter.health.current_b.toFixed(2) : '-'}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            </Card>
             <MeterReadingTable readings={meter.readings} />
           </div>
         ))}

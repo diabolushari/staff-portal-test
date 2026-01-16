@@ -12,6 +12,8 @@ import { Cpu, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { consumerNavItems } from '../../components/Navbar/navitems'
 import ConnectionMeterUpdateModal from '@/components/Connections/ConnectionMeter/ConnectionMeterUpdateModal'
+import ConnectionProfileUpdateModal from
+  '@/components/Connections/ConnectionMeter/ConnectionProfileUpdateModal'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import AddButton from '@/ui/button/AddButton'
 
@@ -23,6 +25,7 @@ interface ConnectionMeterListProps {
   change_reason: ParameterValues[]
   ctpt_status: ParameterValues[]
   ctpt_change_reason: ParameterValues[]
+  meter_profiles: ParameterValues[]
 }
 
 export default function ConnectionMeterList({
@@ -33,12 +36,16 @@ export default function ConnectionMeterList({
   change_reason,
   ctpt_status,
   ctpt_change_reason,
+  meter_profiles,
 }: Readonly<ConnectionMeterListProps>) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [deleteRelationId, setDeleteRelation] = useState<MeterConnectionMapping | null>(null)
   const [updateModalOpen, setUpdateModalOpen] = useState(false)
   const [isStatusChange, setIsStatusChange] = useState(false)
   const [meter, setMeter] = useState<MeterConnectionMapping | null>(null)
+  const [showProfileModal, setShowProfileModal] = useState(false)
+  const [selectedProfileMeter, setSelectedProfileMeter] =
+  useState<MeterConnectionMapping | null>(null)
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -84,6 +91,12 @@ export default function ConnectionMeterList({
     setMeter(meter)
   }
 
+ function handleMeterProfileChange(mapping: MeterConnectionMapping) {
+  setSelectedProfileMeter(mapping)
+  setShowProfileModal(true)
+}
+
+
   function handleCloseModal() {
     setUpdateModalOpen(false)
     setMeter(null)
@@ -128,6 +141,7 @@ export default function ConnectionMeterList({
                 onEdit={handleEditMeter}
                 onMeterStatusChange={handleMeterStatusChange}
                 onMeterChange={handleMeterChange}
+                onMeterProfileChange={handleMeterProfileChange}
                 changeReasons={ctpt_change_reason}
                 statuses={ctpt_status}
               />
@@ -158,6 +172,13 @@ export default function ConnectionMeterList({
             meter={meter}
           />
         )}
+        {showProfileModal && selectedProfileMeter && (
+        <ConnectionProfileUpdateModal
+          setShowModal={() => setShowProfileModal(false)}
+          meterMapping={selectedProfileMeter}
+          meterProfiles={meter_profiles}
+        /> 
+      )} 
       </div>
     </ConnectionsLayout>
   )

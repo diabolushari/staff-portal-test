@@ -106,7 +106,7 @@ export default function ProfileReadingForm({
               ...tzReading.values,
               final: value,
               diff: diff.toString(),
-              value: (meter?.meter.meter_mf ?? 0) * diff,
+              value: (meter?.meter_mf ?? 1) * diff,
             },
           }
         })
@@ -171,7 +171,7 @@ export default function ProfileReadingForm({
             values: {
               ...tzReading.values,
               diff: diff.toString(),
-              value: (meter?.meter.meter_mf ?? 0) * diff,
+              value: (meter?.meter_mf ?? 1) * diff,
             },
           }
         })

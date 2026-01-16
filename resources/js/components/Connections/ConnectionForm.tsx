@@ -35,6 +35,7 @@ interface Props {
   renewableTypes: ParameterValues[]
   indicators: ParameterValues[]
   generationTypes: ParameterValues[]
+  billingSides: ParameterValues[]
 }
 const formatDateForInput = (date?: string | Date) => {
   if (!date) return ''
@@ -58,6 +59,7 @@ export default function ConnectionForm({
   meteringTypes,
   generationTypes,
   indicators,
+  billingSides,
 }: Props) {
   console.log(connection)
   const [subCategories, setSubCategories] = useState<ParameterValues[]>([])
@@ -100,6 +102,7 @@ export default function ConnectionForm({
     no_of_main_meters: connection?.no_of_main_meters ?? '',
     remarks: connection?.remarks ?? '',
     application_no: connection?.application_no ?? '',
+    billing_side_id: connection?.billing_side_id ?? '',
     indicators: flagData,
     generation_types: generationData,
     prosumers: false,
@@ -327,6 +330,16 @@ export default function ConnectionForm({
             setValue={setFormValue('billing_process_id')}
             value={formData.billing_process_id}
             error={errors?.billing_process_id}
+            required
+          />
+          <SelectList
+            label='Billing Side'
+            list={billingSides}
+            dataKey='id'
+            displayKey='parameter_value'
+            setValue={setFormValue('billing_side_id')}
+            value={formData.billing_side_id}
+            error={errors?.billing_side_id}
             required
           />
           <SelectList

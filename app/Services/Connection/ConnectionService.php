@@ -140,6 +140,7 @@ class ConnectionService
         $grpcRequest->setOtherPurposes($request->otherPurposes ?? []);
         $grpcRequest->setConnectionCategoryId($request->connectionCategoryId);
         $grpcRequest->setConnectionSubcategoryId($request->connectionSubcategoryId);
+        $grpcRequest->setBillingSideId($request->billingSideId);
         if ($request->remarks) {
             $grpcRequest->setRemarks($request->remarks);
         }

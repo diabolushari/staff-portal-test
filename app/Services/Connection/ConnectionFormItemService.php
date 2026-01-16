@@ -118,6 +118,13 @@ class ConnectionFormItemService
             'Connection',
             'Renewable Type'
         );
+        $BillingSides = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Billing Side'
+        );
 
         return [
             'connectionTypes' => $connectionTypes->data,
@@ -134,6 +141,7 @@ class ConnectionFormItemService
             'renewableTypes' => $renewableTypes->data,
             'indicators' => $indicators->data,
             'generationTypes' => $generationTypes->data,
+            'billingSides' => $BillingSides->data,
         ];
     }
 }

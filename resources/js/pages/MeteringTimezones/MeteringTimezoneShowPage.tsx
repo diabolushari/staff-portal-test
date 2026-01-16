@@ -115,6 +115,7 @@ export default function MeteringTimezoneShowPage({
   }
 
   const handleAdd = () => {
+    console.log(timezone_type)
     setShowCreateModal(true)
     setSelectedType(timezone_type ?? null)
   }

@@ -33,6 +33,13 @@ class ConsumerController extends Controller
             'Connection',
             'Consumer Type'
         );
+        $consumerOwnershipTypes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Consumer Ownership Type'
+        );
         $districts = $this->geoRegionsService->getGeoRegions(
             'Administrative',
             'District'
@@ -42,8 +49,10 @@ class ConsumerController extends Controller
             'State'
         );
 
+
         return Inertia::render('Consumer/ConsumerForm', [
             'consumerTypes' => $consumerTypes->data,
+            'consumerOwnershipTypes' => $consumerOwnershipTypes->data,
             'districts' => $districts->data,
             'states' => $states->data,
         ]);
@@ -72,6 +81,13 @@ class ConsumerController extends Controller
             'Connection',
             'Consumer Type'
         );
+        $consumerOwnershipTypes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Consumer Ownership Type'
+        );
         $districts = $this->geoRegionsService->getGeoRegions(
             'Administrative',
             'District'
@@ -83,6 +99,7 @@ class ConsumerController extends Controller
 
         return Inertia::render('Consumer/ConsumerForm', [
             'consumerTypes' => $consumerTypes->data,
+            'consumerOwnershipTypes' => $consumerOwnershipTypes->data,
             'districts' => $districts->data,
             'states' => $states->data,
             'consumer' => $consumer->data,

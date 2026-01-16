@@ -233,12 +233,7 @@ class MeterReadingService
         }
 
         $protoRequest->setAnomalyId($request->anomalyId);
-        $protoRequest->setVoltageR($request->voltageR);
-        $protoRequest->setVoltageY($request->voltageY);
-        $protoRequest->setVoltageB($request->voltageB);
-        $protoRequest->setCurrentR($request->currentR);
-        $protoRequest->setCurrentY($request->currentY);
-        $protoRequest->setCurrentB($request->currentB);
+
         if ($request->remarks) {
             $protoRequest->setRemarks($request->remarks);
         }
@@ -324,6 +319,24 @@ class MeterReadingService
                 ]);
             }
             $protoMeterHealth->setMeterHealthId($meterHealth['meter_health_id']);
+            if (isset($meterHealth['voltage_r']) && $meterHealth['voltage_r'] != null) {
+                $protoMeterHealth->setVoltageR($meterHealth['voltage_r']);
+            }
+            if (isset($meterHealth['voltage_y']) && $meterHealth['voltage_y'] != null) {
+                $protoMeterHealth->setVoltageY($meterHealth['voltage_y']);
+            }
+            if (isset($meterHealth['voltage_b']) && $meterHealth['voltage_b'] != null) {
+                $protoMeterHealth->setVoltageB($meterHealth['voltage_b']);
+            }
+            if (isset($meterHealth['current_r']) && $meterHealth['current_r'] != null) {
+                $protoMeterHealth->setCurrentR($meterHealth['current_r']);
+            }
+            if (isset($meterHealth['current_y']) && $meterHealth['current_y'] != null) {
+                $protoMeterHealth->setCurrentY($meterHealth['current_y']);
+            }
+            if (isset($meterHealth['current_b']) && $meterHealth['current_b'] != null) {
+                $protoMeterHealth->setCurrentB($meterHealth['current_b']);
+            }
 
             foreach ($meterHealth['ctpts'] as $transformer) {
                 $ctptHealth = new CtptHealthFormMessage;
@@ -369,12 +382,6 @@ class MeterReadingService
 
         $protoRequest->setAnomalyId($request->anomalyId);
 
-        $protoRequest->setVoltageR($request->voltageR);
-        $protoRequest->setVoltageY($request->voltageY);
-        $protoRequest->setVoltageB($request->voltageB);
-        $protoRequest->setCurrentR($request->currentR);
-        $protoRequest->setCurrentY($request->currentY);
-        $protoRequest->setCurrentB($request->currentB);
         if ($request->remarks) {
             $protoRequest->setRemarks($request->remarks);
         }

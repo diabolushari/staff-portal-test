@@ -77,6 +77,7 @@ export interface MeterConnectionMapping {
   change_date?: string
   energise_date?: string
   meter_profile?: ParameterValues
+  meter_mf?: number
 }
 
 export interface DateTimeField {
@@ -167,6 +168,8 @@ export interface Connection {
   live_indicator: boolean
   metering_type_id: number | string
   metering_type: ParameterValues
+  billing_side_id: number | string
+  billing_side: ParameterValues
   multi_source_indicator: boolean
   multi_source_info: string | null
   open_access_type_id: number | string
@@ -213,12 +216,15 @@ export interface OfficeHierarchy {
 export interface Consumer {
   connection_id: number | string
   consumer_type_id: number | string
+  consumer_ownership_type_id: number | string
+  consumer_name?: string
   organization_name: string
   applicant_code: string
   consumer_pan: string
   consumer_tan?: string | null
   consumer_gstin?: string | null
   consumer_type: ParameterValues
+  consumer_ownership_type: ParameterValues
   consumer_cin: string
   virtual_account_number: string
   department_name_id: number | string
@@ -344,7 +350,6 @@ export interface Meter {
   decimal_digit_count: number | null
   programmable_pt_ratio: number | null
   programmable_ct_ratio: number | null
-  meter_mf: number | null
   warranty_period: number | null
   meter_constant: number | null
   batch_code: string | null
@@ -462,18 +467,26 @@ export interface MeterReading {
   anomaly_id: number
   meter_health_id: number
   ctpt_health_id: number
-  voltage_r: number
-  voltage_y: number
-  voltage_b: number
-  current_r: number
-  current_y: number
-  current_b: number
   remarks: string
   created_by: number
   updated_by: number
   is_active: boolean
   values: MeterReadingValue[]
   power_factors: MeterReadingPowerFactor[]
+  healths: MeterHealth[]
+}
+
+export interface MeterHealth {
+  id: number
+  meter_reading_id: number
+  meter_id: number
+  parameter_id: number
+  current_r: number
+  current_y: number
+  current_b: number
+  voltage_r: number
+  voltage_y: number
+  voltage_b: number
 }
 
 export interface MeterReadingValue {
@@ -595,6 +608,7 @@ export interface MeterWithTimezoneAndProfile {
   }[]
   reading_parameters: MeterProfileParameter[]
   meter_profile: ParameterValues
+  meter_mf: number | null
 }
 
 export interface BillingGroup {
@@ -637,29 +651,32 @@ export interface Bill {
   consumer: Consumer
 }
 
-export interface BillJobStatus {
-  billing_group: BillingGroup
+export interface BillGenerationJob {
+  id: number
+  billing_group_id: number
   reading_year_month: string
   bill_year_month: string
-  initilized_date: string
+  initialized_date: string
+
+  bill_generation_job_status: BillGenerationJobStatus[]
+  billing_group: BillingGroup
+
   total_connections: number
   total_bills: number
+  total_exceptions: number
+  total_pending: number
 }
-export interface BillJobGenerationStatus {
-  bill_job_generation_status_id: number
+export interface BillGenerationJobStatus {
+  version_id: number
+  bill_generation_job_status_id: number
   connection_id: number
-  reading_year_month: string
-  bill_year_month: string
-  bill_date: string
-  due_date: string
-  dc_date: string
-  initialized_date: string
   exception: string
   connection: Connection
+  bill?: Bill | null
 }
 export interface BillWithException {
   bills: Bill[]
-  exceptions: BillJobGenerationStatus[]
+  exceptions: BillGenerationJobStatus[]
 }
 
 export interface RegionOption {

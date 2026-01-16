@@ -26,6 +26,19 @@ message MeterReadingPowerFactorMessage {
   optional int32 updated_by = 8;
 }
 
+message MeterReadingHealthMessage {
+  int64 id = 1;
+  int64 meter_reading_id = 2;
+  int64 parameter_id = 3;
+  int64 meter_id = 4;
+  optional double current_r = 5;
+  optional double current_y = 6;
+  optional double current_b = 7;
+  optional double voltage_r = 8;
+  optional double voltage_y = 9;
+  optional double voltage_b = 10;
+}
+
 message ReadingValueMessage{
   int64 meter_reading_values_id = 1;
   int64 parameter_id = 2;
@@ -77,14 +90,6 @@ message MeterReadingMessage {
   string faulty_date = 10;
 
 
-  double voltage_r = 19;
-  double voltage_y = 20;
-  double voltage_b = 21;
-
-  double current_r = 22;
-  double current_y = 23;
-  double current_b = 24;
-
   string remarks = 25;
 
   int32 created_by = 26;
@@ -93,6 +98,8 @@ message MeterReadingMessage {
   bool is_active = 29;
   repeated ReadingValueMessage values = 30;
   repeated MeterReadingPowerFactorMessage power_factors = 31;
+  repeated MeterReadingHealthMessage healths = 32;
+  optional bool is_edit = 33;
 }
 
 // ----------- REQUEST/RESPONSE MESSAGES ----------
@@ -100,11 +107,19 @@ message MeterReadingMessage {
 message CtptHealthFormMessage {
   int64 ctpt_id = 1;
   int64 parameter_id = 2;
+  optional int64 ctpt_health_id = 3;
 }
 message MeterHealthFormMessage {
   int32 meter_id = 1;
   int64 meter_health_id = 2;
-  repeated CtptHealthFormMessage healths = 3;
+  double voltage_r = 3;
+  double voltage_y = 4;
+  double voltage_b = 5;
+  double current_r = 6;
+  double current_y = 7;
+  double current_b = 8;
+  repeated CtptHealthFormMessage healths = 9;
+  
 }
 
 // Create
@@ -117,12 +132,6 @@ message CreateMeterReadingRequest {
   string reading_start_date = 6;
   string reading_end_date = 7;
   optional string faulty_date = 8;
-  double voltage_r = 9;
-  double voltage_y = 10;
-  double voltage_b = 11;
-  double current_r = 12;
-  double current_y = 13;
-  double current_b = 14;
   string remarks = 15;
   int32 created_by = 16;
   bool is_active = 17;
@@ -144,12 +153,6 @@ message UpdateMeterReadingRequest {
   string reading_start_date = 7;
   string reading_end_date = 8;
   string faulty_date = 9;
-  double voltage_r = 10;
-  double voltage_y = 11;
-  double voltage_b = 12;
-  double current_r = 13;
-  double current_y = 14;
-  double current_b = 15;
   string remarks = 16;
   int32 updated_by = 17;
   bool is_active = 18;

@@ -5,6 +5,7 @@ namespace App\GrpcConverters\Metering;
 use App\GrpcConverters\Meter\MeterProtoConvertor;
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Services\Metering\MeteringParameterProfileService;
+use Proto\MeterReading\MeterReadingHealthMessage;
 use Proto\MeterReading\MeterReadingMessage;
 use Proto\MeterReading\MeterReadingPowerFactorMessage;
 use Proto\MeterReading\ReadingValueMessage;
@@ -28,6 +29,10 @@ class MeterReadingConverter
         foreach ($detail->getPowerFactors() as $powerFactor) {
             $powerFactors[] = MeterReadingConverter::toProto($powerFactor);
         }
+        $healths = [];
+        foreach ($detail->getHealths() as $health) {
+            $healths[] = MeterReadingConverter::meterReadingHealthToArray($health);
+        }
 
         return [
             'id' => $detail->getMeterReadingId(),
@@ -38,18 +43,13 @@ class MeterReadingConverter
             'single_reading' => $detail->getSingleReading(),
             'multiple_reading' => $detail->getMultipleReading(),
             'anomaly_id' => $detail->getAnomalyId(),
-            'voltage_r' => $detail->getVoltageR(),
-            'voltage_y' => $detail->getVoltageY(),
-            'voltage_b' => $detail->getVoltageB(),
-            'current_r' => $detail->getCurrentR(),
-            'current_y' => $detail->getCurrentY(),
-            'current_b' => $detail->getCurrentB(),
             'remarks' => $detail->getRemarks(),
             'created_by' => $detail->getCreatedBy(),
             'updated_by' => $detail->getUpdatedBy(),
             'is_active' => $detail->getIsActive(),
             'values' => $values,
             'power_factors' => $powerFactors,
+            'healths' => $healths,
         ];
     }
 
@@ -84,6 +84,22 @@ class MeterReadingConverter
             'updated_by' => $powerFactor->getUpdatedBy(),
             'created_ts' => $powerFactor->getCreatedTs(),
             'updated_ts' => $powerFactor->getUpdatedTs(),
+        ];
+    }
+
+    public static function meterReadingHealthToArray(MeterReadingHealthMessage $detail): array
+    {
+        return [
+            'id' => $detail->getId(),
+            'meter_reading_id' => $detail->getMeterReadingId(),
+            'meter_id' => $detail->getMeterId(),
+            'parameter_id' => $detail->getParameterId(),
+            'current_r' => $detail->getCurrentR(),
+            'current_y' => $detail->getCurrentY(),
+            'current_b' => $detail->getCurrentB(),
+            'voltage_r' => $detail->getVoltageR(),
+            'voltage_y' => $detail->getVoltageY(),
+            'voltage_b' => $detail->getVoltageB(),
         ];
     }
 }

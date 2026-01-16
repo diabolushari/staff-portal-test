@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package com.kseb.consumerservice.proto.billinggroup;
+package com.kseb.consumerservice.proto.billgenerationjob;
 
-option php_namespace = "Proto\\Bill";
+option php_namespace = "Proto\\BillGenerationJob";
 option php_metadata_namespace = "GPBMetadata";
 
 import "google/protobuf/timestamp.proto";
@@ -10,26 +10,38 @@ import "google/protobuf/struct.proto";
 import "billinggroup/billing_group.proto";
 import "billinggroup/billing_group_connection_rel.proto";
 import "billinggroup/bill.proto";
+import "connections/connections.proto";
 
 
 // --------------------- JOB STATUS MESSAGE ---------------------
 
 message BillGenerationJobStatusMessage {
-  BillingGroupMessage billing_group = 1;
-  int64 total_connections = 2;
-  int64 total_bills = 3;
-  string reading_year_month = 4;
-  string bill_year_month = 5;
-  string initilized_date = 6;
+  int64 version_id = 1;
+  int32 connection_id = 2;
+  int32 bill_generation_job_id = 3;
+  optional int32 bill_id = 4;
+  optional string status = 5;
+  optional bool is_exception = 6;
+  optional string job_started_ts = 7;
+  optional string job_completed_ts = 8;
+  optional string exception = 9;
+  optional string created_ts = 10;
+  optional int32 created_by = 11;
+  optional string deleted_ts = 12;
+  optional int32 deleted_by = 13;
+  optional com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 14;
+  optional com.kseb.consumerservice.proto.billinggroup.BillMessage bill = 15;
+  
 }
+
 
 // --------------------- GET REQUEST ---------------------
 
 message GetBillGenerationJobStatusRequest {
   int32 billing_group_id = 1;
-  optional string reading_year_month = 2;
+  optional string reading_year_month = 2;    // YYYY-MM
   optional string bill_year_month = 3;
-  optional string initilized_date = 4;
+  optional google.protobuf.Timestamp initilized_date = 4;
 }
 
 message GetBillGenerationJobStatusResponse {
@@ -60,6 +72,7 @@ message PaginatedBillGenerationJobStatusRequest {
   optional string sort_direction = 5; 
   optional int32 billing_group_id = 6;
   optional string reading_year_month = 7;
+  
 }
 
 message PaginatedBillGenerationJobStatusResponse {

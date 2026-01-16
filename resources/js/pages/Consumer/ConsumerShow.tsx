@@ -151,9 +151,27 @@ export default function ConsumerShow({
               />
             )}
             <InfoBlock
-              label='Organization Name'
-              value={safe(consumer.consumer.organization_name)}
+              label='Ownership Type'
+              value={consumer.consumer.consumer_ownership_type?.parameter_value}
             />
+            {consumer.consumer.consumer_name && (
+              <InfoBlock
+                label='Consumer Name'
+                value={safe(consumer.consumer.consumer_name)}
+              />
+            )}
+            {consumer.consumer.organization_name && (
+              <InfoBlock
+                label='Organization Name'
+                value={safe(consumer.consumer.organization_name)}
+              />
+            )}
+            {consumer.consumer.contact_person && (
+              <InfoBlock
+                label='Contact Person'
+                value={safe(consumer.consumer.contact_person)}
+              />
+            )}
             <InfoBlock
               label='Consumer CIN'
               value={safe(consumer.consumer.consumer_cin)}
@@ -173,10 +191,6 @@ export default function ConsumerShow({
             <InfoBlock
               label='Virtual Account Number'
               value={safe(consumer.consumer.virtual_account_number)}
-            />
-            <InfoBlock
-              label='Contact Person'
-              value={safe(consumer.consumer.contact_person)}
             />
           </div>
         </Card>

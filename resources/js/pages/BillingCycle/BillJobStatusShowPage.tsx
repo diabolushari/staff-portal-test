@@ -1,7 +1,12 @@
 import { billingNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import useCustomForm from '@/hooks/useCustomForm'
-import { Bill, BillingGroup, BillWithException } from '@/interfaces/data_interfaces'
+import {
+  Bill,
+  BillGenerationJob,
+  BillGenerationJobStatus,
+  BillWithException,
+} from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
@@ -10,11 +15,10 @@ import { getDisplayDate, getDisplayMonthYear } from '@/utils'
 import { router } from '@inertiajs/react'
 
 interface Props {
-  bills: BillWithException
-  billing_group: BillingGroup
+  data: BillGenerationJob
 }
 
-export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
+export default function BillJobStatusShowPage({ data }: Props) {
   const { formData, setFormValue } = useCustomForm({
     search: '',
   })
@@ -34,17 +38,34 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
       title: 'Billing Jobs',
       href: '/bills/job-status',
     },
-    {
-      title: `Bill Group ${billing_group?.name} Bills`,
-      href: `/bills/job-status/${billing_group?.billing_group_id}`,
-    },
   ]
+  const billJobStatuses = data.bill_generation_job_status ?? []
+
+  const bills = {
+    bills: billJobStatuses
+      .filter((item) => item.bill !== null)
+      .map((item) => ({
+        ...item.bill,
+        connection: item.connection,
+      })),
+
+    exceptions: billJobStatuses
+      .filter((item) => item.bill === null)
+      .map((item) => ({
+        connection: item.connection,
+        exception: item.exception,
+        reading_year_month: data.reading_year_month,
+        bill_year_month: data.bill_year_month,
+        initialized_date: data.initialized_date,
+        bill_job_generation_status_id: item.connection_id,
+      })),
+  }
 
   return (
     <MainLayout
       breadcrumb={breadcrumb}
       navItems={billingNavItems}
-      title={`Bill Cycle List for ${billing_group?.name}, December 2025`}
+      title={`Bill Cycle List for  December 2025`}
     >
       <div className='flex flex-col gap-4 p-4'>
         <div className='grid grid-cols-2 gap-4'>
@@ -77,7 +98,7 @@ export default function BillJobStatusShowPage({ bills, billing_group }: Props) {
           </div>
         </div>
         {bills?.bills?.length > 0 &&
-          bills?.bills?.map((bill: Bill) => (
+          bills?.bills?.map((bill) => (
             <Card className='mb-6 overflow-hidden rounded-lg border p-0 shadow-sm'>
               {/* Top Gray Header */}
               <div className='grid grid-cols-2 gap-4 bg-gray-200 px-6 py-4'>

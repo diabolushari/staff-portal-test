@@ -56,6 +56,7 @@ interface Props {
   indicators: ParameterValues[]
   connection?: Connection
   generationTypes: ParameterValues[]
+  billingSides: ParameterValues[]
 }
 
 export default function ConnectionsForm({
@@ -73,6 +74,7 @@ export default function ConnectionsForm({
   indicators,
   generationTypes,
   connection,
+  billingSides,
 }: Readonly<Props>) {
   return (
     <MainLayout
@@ -103,6 +105,7 @@ export default function ConnectionsForm({
           meteringTypes={meteringTypes}
           renewableTypes={renewableTypes}
           connection={connection}
+          billingSides={billingSides}
         />
       </div>
     </MainLayout>

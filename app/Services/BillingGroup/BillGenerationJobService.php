@@ -2,23 +2,24 @@
 
 namespace App\Services\BillingGroup;
 
+use App\GrpcConverters\Billing\BillGenerationJobConverter;
 use App\GrpcConverters\BillingGroup\BillingGroupProtoConvertor;
 use App\Services\Grpc\GrpcErrorService;
-use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
-use Proto\Bill\BillGenerationJobStatusMessage;
-use Proto\Bill\BillGenerationJobStatusServiceClient;
-use Proto\Bill\ListBillGenerationJobStatusRequest;
 use Grpc\ChannelCredentials;
-use Proto\Bill\PaginatedBillGenerationJobStatusRequest;
+use Proto\BillGenerationJob\BillGenerationJobMessage;
+use Proto\BillGenerationJob\BillGenerationJobServiceClient;
+use Proto\BillGenerationJob\GetBillGenerationJobRequest;
+use Proto\BillGenerationJob\ListBillGenerationJobRequest;
+use Proto\BillGenerationJob\PaginatedBillGenerationJobRequest;
 
-class BillingGenerateJobService
+class BillGenerationJobService
 {
-    private BillGenerationJobStatusServiceClient $client;
+    private BillGenerationJobServiceClient $client;
 
     public function __construct()
     {
-        $this->client = new BillGenerationJobStatusServiceClient(
+        $this->client = new BillGenerationJobServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
         );
@@ -28,14 +29,14 @@ class BillingGenerateJobService
         ?int $billingGroupId,
         ?string $readingYearMonth
     ): GrpcServiceResponse {
-        $request = new ListBillGenerationJobStatusRequest();
+        $request = new ListBillGenerationJobRequest();
         if ($billingGroupId) {
             $request->setBillingGroupId($billingGroupId);
         }
         if ($readingYearMonth) {
             $request->setReadingYearMonth($readingYearMonth);
         }
-        [$response, $status] = $this->client->listBillGenerationJobStatus($request)->wait();
+        [$response, $status] = $this->client->ListBillGenerationJob($request)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -47,7 +48,7 @@ class BillingGenerateJobService
 
         $data = [];
         foreach ($response->getData() as $message) {
-            $data[] = $this->BillGenerateMessageToArray($message);
+            $data[] = BillGenerationJobConverter::convertToArray($message);
         }
 
         return GrpcServiceResponse::success(
@@ -58,7 +59,7 @@ class BillingGenerateJobService
         );
     }
 
-    public function listPaginatedBillGenerationJobStatus(
+    public function listPaginatedBillGenerationJob(
         ?int $pageNumber = 1,
         ?int $pageSize = 5,
         ?string $search = null,
@@ -67,7 +68,7 @@ class BillingGenerateJobService
         ?int $billingGroupId = null,
         ?string $readingYearMonth = null,
     ): GrpcServiceResponse {
-        $request = new PaginatedBillGenerationJobStatusRequest();
+        $request = new PaginatedBillGenerationJobRequest();
         if ($pageNumber) {
             $request->setPageNumber($pageNumber);
         }
@@ -89,7 +90,7 @@ class BillingGenerateJobService
         if ($readingYearMonth) {
             $request->setReadingYearMonth($readingYearMonth);
         }
-        [$response, $status] = $this->client->PaginatedListBillGenerationJobStatus($request)->wait();
+        [$response, $status] = $this->client->PaginatedListBillGenerationJob($request)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -101,7 +102,7 @@ class BillingGenerateJobService
 
         $data = [];
         foreach ($response->getData() as $message) {
-            $data[] = $this->BillGenerateMessageToArray($message);
+            $data[] = BillGenerationJobConverter::convertToArray($message);
         }
         $pagination = [
             'bill_generation_job_status' => $data,
@@ -119,19 +120,25 @@ class BillingGenerateJobService
         );
     }
 
-    public function BillGenerateMessageToArray(BillGenerationJobStatusMessage $message): array
+    public function getBillGenerationJob(int $id): GrpcServiceResponse
     {
-        $billingGroup = $message->getBillingGroup();
-        if ($billingGroup) {
-            $billingGroup = BillingGroupProtoConvertor::convertToArray($billingGroup);
+        $request = new GetBillGenerationJobRequest();
+        $request->setId($id);
+        [$response, $status] = $this->client->GetBillGenerationJob($request)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
         }
-        return [
-            'billing_group' => $billingGroup,
-            'total_connections' => $message->getTotalConnections(),
-            'total_bills' => $message->getTotalBills(),
-            'reading_year_month' => $message->getReadingYearMonth(),
-            'bill_year_month' => $message->getBillYearMonth(),
-            'initilized_date' => $message->getInitilizedDate(),
-        ];
+
+        return GrpcServiceResponse::success(
+            BillGenerationJobConverter::convertToArray($response->getBillGenerationJob()),
+            $response,
+            $status->code,
+            $status->details
+        );
     }
 }

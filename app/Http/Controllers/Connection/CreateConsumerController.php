@@ -39,6 +39,13 @@ class CreateConsumerController extends Controller
             'Connection',
             'Consumer Type'
         );
+        $consumerOwnershipTypes = $this->parameterValueService->getParameterValues(
+            1,
+            10,
+            null,
+            'Connection',
+            'Consumer Ownership Type'
+        );
         $departments = $this->parameterValueService->getParameterValues(
             1,
             10,
@@ -62,6 +69,7 @@ class CreateConsumerController extends Controller
 
         return Inertia::render('Consumer/ConsumerForm', [
             'consumerTypes' => $consumerTypes->data,
+            'consumerOwnershipTypes' => $consumerOwnershipTypes->data,
             'districts' => $districts->data,
             'states' => $states->data,
             'connectionId' => $connectionId,

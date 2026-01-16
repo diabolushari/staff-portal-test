@@ -2,13 +2,16 @@ syntax = "proto3";
 
 package com.kseb.consumerservice.proto.metering;
 
+
+
+option php_namespace = "Proto\\Metering";
+option php_metadata_namespace = "GPBMetadata";
+
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "parameters/parameter-value.proto";
 import "metering/meter.proto";
 
-option php_namespace = "Proto\\Metering";
-option php_metadata_namespace = "GPBMetadata";
 
 service MeterConnectionMappingService {
   rpc CreateMeterConnectionMapping(CreateMeterConnectionMappingRequest) returns (MeterConnectionMappingResponse);
@@ -20,6 +23,8 @@ service MeterConnectionMappingService {
   rpc UpdateMeterConnectionStatus(UpdateMeterConnectionStatusRequest)
       returns (MeterConnectionMappingResponse);
   rpc UpdateMeterConnectionChangeReason(UpdateMeterConnectionChangeReasonRequest)
+      returns (MeterConnectionMappingResponse);
+  rpc UpdateMeterConnectionProfile(UpdateMeterConnectionProfileRequest)
       returns (MeterConnectionMappingResponse);
   rpc DeleteMeterConnectionMapping(DeleteMeterConnectionMappingRequest) returns (google.protobuf.Empty);
 }
@@ -56,6 +61,7 @@ message CreateMeterConnectionMappingRequest {
   repeated MeterTransformerRelFormRequest meter_transformers = 19;
   int32 timezone_type_id = 20;
   int32 profile_id = 21;
+  optional float meter_mf = 22;
 }
 
 message UpdateMeterConnectionMappingRequest {
@@ -78,6 +84,7 @@ message UpdateMeterConnectionMappingRequest {
   optional int32 sort_priority = 17;
   optional bool is_meter_reading_mandatory = 18;
   int32 profile_id = 19;
+  optional float meter_mf = 20;
 }
 
 
@@ -97,6 +104,13 @@ message UpdateMeterConnectionChangeReasonRequest {
   optional google.protobuf.Timestamp change_date = 3;
   optional int32 updated_by = 4;
 }
+
+message UpdateMeterConnectionProfileRequest {
+  int32 rel_id = 1;
+  int32 profile_id = 2;                 
+  optional int32 updated_by = 3;
+}
+
 
 
 message GetMeterConnectionMappingRequest {
@@ -143,7 +157,7 @@ message MeterConnectionMappingResponse {
   optional int32 sort_priority = 23;
   optional bool is_meter_reading_mandatory = 24;
   optional MeterResponse meter = 25;
-
+  optional float meter_mf = 26;
 }
 
 

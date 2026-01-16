@@ -12,11 +12,8 @@ export default function BillingJobList({
   isGroupNameVisible = true,
 }: Props) {
   const handleView = (item: BillJobStatus) => {
-    router.get(`/bills/job-status/${item.billing_group.billing_group_id}`, {
-      initialized_date: item?.initilized_date,
-      bill_year_month: item?.bill_year_month,
-      reading_year_month: item?.reading_year_month,
-    })
+    console.log(item)
+    router.get(`/bills/job-status/${item.id}`)
   }
   return (
     <div className='flex flex-col gap-4 p-8'>
@@ -24,7 +21,7 @@ export default function BillingJobList({
         <BillingJobCard
           key={index}
           month={job.reading_year_month}
-          groupName={isGroupNameVisible ? job.billing_group.name : undefined}
+          groupName={isGroupNameVisible ? job.billing_group?.name : undefined}
           completed={job.total_bills}
           total={job.total_connections}
           billYearMonth={job.bill_year_month}
