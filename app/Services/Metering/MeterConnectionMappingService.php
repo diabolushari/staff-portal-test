@@ -24,6 +24,7 @@ use Proto\Metering\MeterConnectionMappingResponse;
 use Proto\Metering\MeterConnectionMappingServiceClient;
 use Proto\Metering\MeterTransformerRelFormRequest;
 use Proto\Metering\UpdateMeterConnectionMappingRequest;
+use Proto\Metering\UpdateMeterConnectionProfileRequest;
 use Proto\Parameters\ParameterValueProto;
 
 class MeterConnectionMappingService
@@ -48,7 +49,7 @@ class MeterConnectionMappingService
         $request->setProfileId($data->meterProfileId);
         $request->setTimezoneTypeId($data->timezoneTypeId);
         $request->setMeterStatusId($data->meterStatusId);
-        if($data->meterMf !== null) {
+        if ($data->meterMf !== null) {
             $request->setMeterMf($data->meterMf);
         }
         if (isset($data->sortPriority)) {
@@ -271,6 +272,27 @@ class MeterConnectionMappingService
         }
 
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
+    }
+
+
+    public function updateMeterConnectionProfile(int $relId, int $profileId): GrpcServiceResponse
+    {
+        $request = new UpdateMeterConnectionProfileRequest();
+        $request->setRelId($relId);
+        $request->setProfileId($profileId);
+
+        [$response, $status] = $this->client->UpdateMeterConnectionProfile($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status, null, false),
+                $response,
+                $status->code,
+                $status->details,
+            );
+        }
+
+        return GrpcServiceResponse::success(self::meterConnectionMappingProtoToArray($response), $response, $status->code, $status->details);
     }
 
     /**

@@ -24,6 +24,7 @@ class CreateConnectionFormRequest extends Data
         public int $connectionCategoryId,
         public int $connectionSubcategoryId,
         public int $billingProcessId,
+        public int $billingSideId,
         public ?int $openAccessTypeId,
         public int $meteringTypeId,
         public int $phaseTypeId,

@@ -22,8 +22,8 @@ export default function ConnectionProfileUpdateModal({
     meter_profile_id: meterMapping.meter_profile?.id ?? '',
     _method: 'PUT',
   })
-    const { post, loading, errors } = useInertiaPost(
-    route('meter-connection-rel.update', meterMapping.rel_id),
+  const { post, loading, errors } = useInertiaPost(
+    route('meter-connection-profile-update', meterMapping.rel_id),
     {
       onComplete: () => setShowModal(false),
     }
@@ -34,11 +34,10 @@ export default function ConnectionProfileUpdateModal({
     post(formData)
   }
 
-   return (
+  return (
     <Modal
       setShowModal={() => setShowModal(false)}
       title='Update Meter Profile'
-      
     >
       <form
         className='flex flex-col gap-4'
@@ -51,6 +50,7 @@ export default function ConnectionProfileUpdateModal({
           setValue={setFormValue('meter_profile_id')}
           dataKey='id'
           displayKey='parameter_value'
+          error={errors.meter_profile_id}
         />
 
         <div className='flex justify-end gap-2'>

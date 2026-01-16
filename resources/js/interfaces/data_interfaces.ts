@@ -168,6 +168,8 @@ export interface Connection {
   live_indicator: boolean
   metering_type_id: number | string
   metering_type: ParameterValues
+  billing_side_id: number | string
+  billing_side: ParameterValues
   multi_source_indicator: boolean
   multi_source_info: string | null
   open_access_type_id: number | string
