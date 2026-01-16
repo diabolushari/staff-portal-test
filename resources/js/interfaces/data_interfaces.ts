@@ -77,6 +77,7 @@ export interface MeterConnectionMapping {
   change_date?: string
   energise_date?: string
   meter_profile?: ParameterValues
+  meter_mf?: number
 }
 
 export interface DateTimeField {

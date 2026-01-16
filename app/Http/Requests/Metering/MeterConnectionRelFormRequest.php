@@ -25,6 +25,7 @@ class MeterConnectionRelFormRequest extends Data
         public ?int $sortPriority,
         public bool $isMeterReadingMandatory,
         public string $energiseDate,
+        public ?string $meterMf,
         #[DataCollectionOf(MeterTransformerForm::class)]
         public ?DataCollection $meterTransformers = null
 

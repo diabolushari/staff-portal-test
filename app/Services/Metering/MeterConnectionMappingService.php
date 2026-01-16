@@ -48,6 +48,9 @@ class MeterConnectionMappingService
         $request->setProfileId($data->meterProfileId);
         $request->setTimezoneTypeId($data->timezoneTypeId);
         $request->setMeterStatusId($data->meterStatusId);
+        if($data->meterMf !== null) {
+            $request->setMeterMf($data->meterMf);
+        }
         if (isset($data->sortPriority)) {
             $request->setSortPriority($data->sortPriority);
         }
@@ -296,6 +299,7 @@ class MeterConnectionMappingService
             'meter_status' => self::transformParameterValueToArray($rel->getMeterStatus()),
             'faulty_date' => $faultyDate,
             'rectification_date' => $rectificationDate,
+            'meter_mf' => $rel->getMeterMf(),
             'sort_priority' => $rel->getSortPriority(),
             'is_meter_reading_mandatory' => $rel->getIsMeterReadingMandatory(),
             'change_reason' => self::transformParameterValueToArray($rel->getChangeReason()),

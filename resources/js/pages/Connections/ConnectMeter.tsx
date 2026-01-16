@@ -51,6 +51,8 @@ export default function ConnectMeter({
   const [showModal, setShowModal] = useState(false)
   const [selectedMeter, setSelectedMeter] = useState<Meter | null>(null)
   const [showMeterModal, setShowMeterModal] = useState(false)
+
+  const [selectedUseCategory, setSelectedUseCategory] = useState<ParameterValues | null>(null)
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     rel_id: '',
     connection_id: connection_id,
@@ -61,10 +63,12 @@ export default function ConnectMeter({
     timezone_type_id: '',
     sort_priority: '0',
     is_meter_reading_mandatory: false,
+    meter_mf: '',
     energise_date: '',
     _method: relation ? 'PUT' : undefined,
     meter_transformers: meterTransformers,
   })
+
 
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     relation
@@ -83,6 +87,20 @@ export default function ConnectMeter({
 
     post(formData)
   }
+
+  useEffect(() => {
+    if (formData.meter_use_category) {
+      const selectedCategory = useCategory.find(
+        (category) => category.id == Number(formData.meter_use_category)
+      )
+      if (selectedCategory) {
+        setSelectedUseCategory(selectedCategory)
+        if(selectedCategory.parameter_value == 'Energy Consumption'){
+          setFormValue('meter_mf')('')
+        }
+      }
+    }
+  }, [formData.meter_use_category, useCategory,setFormValue])
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -188,6 +206,16 @@ export default function ConnectMeter({
               error={errors.meter_use_category}
               required
             />
+            {selectedUseCategory?.parameter_value !== 'Energy Consumption' && (
+              <Input
+                type='number'
+                label='MF'
+                value={formData.meter_mf}
+                setValue={setFormValue('meter_mf')}
+                error={errors.meter_mf}
+              />
+            )}
+
             <SelectList
               label='Metering Profile'
               value={formData.meter_profile_id}
