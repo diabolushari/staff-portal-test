@@ -280,7 +280,7 @@ export default function ConnectionsShow({
                 label='Metering Type'
                 value={connection?.metering_type?.parameter_value}
               />
-              {connection.billing_side && (
+              {connection?.billing_side && (
                 <Field
                   label='Billing Side'
                   value={connection?.billing_side?.parameter_value}
