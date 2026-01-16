@@ -1,14 +1,14 @@
 import BillingJobList from '@/components/Billing/BillingCycle/BillingJobList'
 import BillingJobStatusSearchForm from '@/components/Billing/BillingCycle/BillingJobStatusSearchForm'
 import { billingNavItems } from '@/components/Navbar/navitems'
-import { BillJobStatus } from '@/interfaces/data_interfaces'
+import { BillGenerationJobStatus } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Pagination from '@/ui/Pagination/Pagination'
 import { Paginator } from '@/ui/ui_interfaces'
 
 interface Props {
-  bill_generation_job_status: Paginator<BillJobStatus>
+  bill_generation_job_status: Paginator<BillGenerationJobStatus>
   filters: {
     search: string
   }
