@@ -13,6 +13,7 @@ import "metering/meter-transformer.proto";
 import "metering/meter_timezone_type_rel.proto";
 
 
+
 service MeterService {
   rpc CreateMeter(MeterFormRequest) returns (google.protobuf.Empty);
   rpc GetMeter(GetMeterRequest) returns (MeterResponseMessage);
@@ -73,7 +74,6 @@ message MeterFormRequest {
   int32 decimal_digit_count = 18;
   optional float programmable_pt_ratio = 19;
   optional int32 programmable_ct_ratio = 20;
-  optional float meter_mf = 21;
   optional int32 warranty_period = 22;
   optional int32 meter_constant = 23;
   optional string batch_code = 24;
@@ -133,7 +133,6 @@ message MeterResponse {
   // --- Electrical configuration ---
   float programmable_pt_ratio = 28;
   int32 programmable_ct_ratio = 29;
-  optional float meter_mf = 30;
   optional int32 meter_constant = 31;
 
   int32 internal_ct_primary = 32;

@@ -56,6 +56,7 @@ message CreateMeterConnectionMappingRequest {
   repeated MeterTransformerRelFormRequest meter_transformers = 19;
   int32 timezone_type_id = 20;
   int32 profile_id = 21;
+  optional float meter_mf = 22;
 }
 
 message UpdateMeterConnectionMappingRequest {
@@ -78,6 +79,7 @@ message UpdateMeterConnectionMappingRequest {
   optional int32 sort_priority = 17;
   optional bool is_meter_reading_mandatory = 18;
   int32 profile_id = 19;
+  optional float meter_mf = 20;
 }
 
 
@@ -143,7 +145,7 @@ message MeterConnectionMappingResponse {
   optional int32 sort_priority = 23;
   optional bool is_meter_reading_mandatory = 24;
   optional MeterResponse meter = 25;
-
+  optional float meter_mf = 26;
 }
 
 

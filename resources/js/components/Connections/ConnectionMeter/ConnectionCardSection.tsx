@@ -101,7 +101,7 @@ export default function ConnectionCardSection({
 
             <div className='flex items-center gap-1.5'>
               <Wrench className='h-4 w-4 text-slate-500' />
-              <span>MF: {meterMapping.meter?.meter_mf}</span>
+              <span>MF: {meterMapping?.meter_mf}</span>
             </div>
 
             {meterMapping.effective_start_ts && (

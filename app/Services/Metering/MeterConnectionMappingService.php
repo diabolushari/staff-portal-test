@@ -312,6 +312,7 @@ class MeterConnectionMappingService
             'change_date' => $changeDate,
             'meter_profile' => $meterProfile,
             'energise_date' => $energiseDate,
+            'meter_mf' => $rel->getMeterMf(),
         ];
     }
 
