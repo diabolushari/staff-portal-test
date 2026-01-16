@@ -12,6 +12,7 @@ import ConsumerContactFolioModal from './ConsumerContactFolioModal'
 import useConnectionFlagForm from '../Connections/useConnectionFlagForm'
 import ConnectionFlagForm from '../Connections/ConnectionFlagForm'
 import AddressCard from '../Connections/AddressCard'
+import useFetchRecord from '@/hooks/useFetchRecord'
 
 interface Props {
   consumer_types: ParameterValues[]
@@ -122,7 +123,7 @@ export default function ConsumerFormComponent({
   const handleDepartmentField = (value: string) => {
     const consumerType = consumer_types.find((type) => type.id === Number(value))
     setFormValue('consumer_type_id')(value)
-    if (consumerType?.parameter_value.toLowerCase().includes('govt')) {
+    if (consumerType?.parameter_value.toLowerCase().includes('gov')) {
       setShowDepartmentField(true)
     } else {
       setShowDepartmentField(false)
@@ -165,6 +166,19 @@ export default function ConsumerFormComponent({
     }
   }, [consumer_ownership_types, formData.consumer_ownership_type_id])
 
+  const [consumerType, setConsumerType] = useState<ParameterValues | null>(null)
+
+  useEffect(() => {
+    if (formData.consumer_type_id) {
+      const type = consumer_types.find((type) => type.id === Number(formData.consumer_type_id))
+      setConsumerType(type || null)
+    }
+  }, [consumer_types, formData.consumer_type_id])
+
+  const [filteredDepartments] = useFetchRecord<ParameterValues[]>(
+    `/api/parameter-values?domain_name=Connection&parameter_name=Departments&attribute_name=attribute1Value&attribute_value=${consumerType?.parameter_value}`
+  )
+
   return (
     <form
       className='flex flex-col gap-6'
@@ -187,10 +201,10 @@ export default function ConsumerFormComponent({
                 error={errors?.consumer_type_id}
               />
             )}
-            {departments && showDepartmentField && (
+            {showDepartmentField && filteredDepartments && (
               <SelectList
                 label='Department'
-                list={departments}
+                list={filteredDepartments}
                 dataKey='id'
                 displayKey='parameter_value'
                 setValue={setFormValue('department_id')}
