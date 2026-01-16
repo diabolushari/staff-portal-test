@@ -47,7 +47,7 @@ class MeterConnectionMappingController extends Controller
             return $response->error ?? redirect()->back();
         }
 
-        return redirect()->route('connections.show', $request->connectionId)->with('success', 'Meter connection details updated successfully.');
+        return redirect()->route('connections.show', $request->connectionId)->with('message', 'Meter connection details updated successfully.');
     }
 
     public function destroy(int $relId): RedirectResponse

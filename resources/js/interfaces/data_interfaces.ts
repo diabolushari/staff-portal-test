@@ -77,7 +77,7 @@ export interface MeterConnectionMapping {
   change_date?: string
   energise_date?: string
   meter_profile?: ParameterValues
-  meter_mf?: number | null
+  meter_mf?: number
 }
 
 export interface DateTimeField {
@@ -168,6 +168,8 @@ export interface Connection {
   live_indicator: boolean
   metering_type_id: number | string
   metering_type: ParameterValues
+  billing_side_id: number | string
+  billing_side: ParameterValues
   multi_source_indicator: boolean
   multi_source_info: string | null
   open_access_type_id: number | string
@@ -214,12 +216,15 @@ export interface OfficeHierarchy {
 export interface Consumer {
   connection_id: number | string
   consumer_type_id: number | string
+  consumer_ownership_type_id: number | string
+  consumer_name?: string
   organization_name: string
   applicant_code: string
   consumer_pan: string
   consumer_tan?: string | null
   consumer_gstin?: string | null
   consumer_type: ParameterValues
+  consumer_ownership_type: ParameterValues
   consumer_cin: string
   virtual_account_number: string
   department_name_id: number | string

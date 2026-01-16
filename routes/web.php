@@ -41,6 +41,7 @@ use App\Http\Controllers\Metering\CreateMeterReadingController;
 use App\Http\Controllers\Metering\MeterConnectionMappingController;
 use App\Http\Controllers\Metering\MeterConnectionMappingCreateController;
 use App\Http\Controllers\Metering\MeterConnectionMappingEditController;
+use App\Http\Controllers\Metering\MeterConnectionProfileUpdateController;
 use App\Http\Controllers\Metering\MeterController;
 use App\Http\Controllers\Metering\MeterReadingController;
 use App\Http\Controllers\Metering\MeterTimezoneTypeRelController;
@@ -113,6 +114,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('connection/{id}/meter/create', MeterConnectionMappingCreateController::class)
         ->name('connection.meter.create');
     Route::resource('meter-connection-rel', MeterConnectionMappingController::class);
+    Route::put('meter-connection-profile-update/{id}', MeterConnectionProfileUpdateController::class)
+        ->name('meter-connection-profile-update');
     Route::post('meter-connection-rel/{id}', [MeterConnectionMappingController::class, 'update'])->name('meter-connection-rel.update');
     Route::get('connection/{id}/meter/edit', MeterConnectionMappingEditController::class)
         ->name('connection.meter.edit');

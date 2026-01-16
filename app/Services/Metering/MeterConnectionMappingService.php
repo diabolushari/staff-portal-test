@@ -24,6 +24,7 @@ use Proto\Metering\MeterConnectionMappingResponse;
 use Proto\Metering\MeterConnectionMappingServiceClient;
 use Proto\Metering\MeterTransformerRelFormRequest;
 use Proto\Metering\UpdateMeterConnectionMappingRequest;
+use Proto\Metering\UpdateMeterConnectionProfileRequest;
 use Proto\Parameters\ParameterValueProto;
 
 class MeterConnectionMappingService
@@ -48,6 +49,9 @@ class MeterConnectionMappingService
         $request->setProfileId($data->meterProfileId);
         $request->setTimezoneTypeId($data->timezoneTypeId);
         $request->setMeterStatusId($data->meterStatusId);
+        if ($data->meterMf !== null) {
+            $request->setMeterMf($data->meterMf);
+        }
         if (isset($data->sortPriority)) {
             $request->setSortPriority($data->sortPriority);
         }
@@ -270,6 +274,27 @@ class MeterConnectionMappingService
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
     }
 
+
+    public function updateMeterConnectionProfile(int $relId, int $profileId): GrpcServiceResponse
+    {
+        $request = new UpdateMeterConnectionProfileRequest();
+        $request->setRelId($relId);
+        $request->setProfileId($profileId);
+
+        [$response, $status] = $this->client->UpdateMeterConnectionProfile($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status, null, false),
+                $response,
+                $status->code,
+                $status->details,
+            );
+        }
+
+        return GrpcServiceResponse::success(self::meterConnectionMappingProtoToArray($response), $response, $status->code, $status->details);
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -296,6 +321,7 @@ class MeterConnectionMappingService
             'meter_status' => self::transformParameterValueToArray($rel->getMeterStatus()),
             'faulty_date' => $faultyDate,
             'rectification_date' => $rectificationDate,
+            'meter_mf' => $rel->getMeterMf(),
             'sort_priority' => $rel->getSortPriority(),
             'is_meter_reading_mandatory' => $rel->getIsMeterReadingMandatory(),
             'change_reason' => self::transformParameterValueToArray($rel->getChangeReason()),

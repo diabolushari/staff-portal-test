@@ -118,7 +118,12 @@ class ConsumerService
         $consumer = new ConsumerMessage;
         $consumer->setConnectionId($request->connectionId);
         $consumer->setConsumerTypeId($request->consumerTypeId);
-        $consumer->setOrganizationName($request->organizationName);
+        if($request->organizationName){
+            $consumer->setOrganizationName($request->organizationName);
+        }
+        $consumer->setConsumerOwnershipTypeId($request->consumerOwnershipTypeId);
+        $consumer->setConsumerName($request->consumerName);
+      
         if ($request->virtualAccountNumber) {
             $consumer->setVirtualAccountNumber($request->virtualAccountNumber);
         }
@@ -231,6 +236,7 @@ class ConsumerService
             'connection_id' => $consumer->getConnectionId(),
             'consumer_type_id' => $consumer->getConsumerTypeId(),
             'organization_name' => $consumer->getOrganizationName(),
+            'consumer_name' => $consumer->getConsumerName(),
             'consumer_pan' => $consumer->getConsumerPan(),
             'consumer_tan' => $consumer->getConsumerTan(),
             'consumer_gstin' => $consumer->getConsumerGstin(),
@@ -239,6 +245,7 @@ class ConsumerService
             'identity_info' => $consumer->getIdentityInfo(),
             'application_info' => $consumer->getApplicationInfo(),
             'consumer_type' => $this->parameterValueService->toArray($consumer->getConsumerType()),
+            'consumer_ownership_type' => $this->parameterValueService->toArray($consumer->getConsumerOwnershipType()),
             'consumer_cin' => $consumer->getConsumerCin(),
             'virtual_account_number' => $consumer->getVirtualAccountNumber(),
             'contact_person' => $consumer->getContactPerson(),
