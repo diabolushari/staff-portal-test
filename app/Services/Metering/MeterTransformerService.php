@@ -152,6 +152,10 @@ class MeterTransformerService
         $request->setMeterCtptId($id);
 
         [$response, $status] = $this->client->GetMeterTransformer($request)->wait();
+        $transformer = null;
+        if ($response->hasTransformer()) {
+            $transformer = $response->getTransformer();
+        }
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -163,7 +167,7 @@ class MeterTransformerService
         }
 
         return GrpcServiceResponse::success(
-            MeterTransformerProtoConvertor::convertToArray($response->getTransformer()),
+            MeterTransformerProtoConvertor::convertToArray($transformer),
             $response,
             $status->code,
             $status->details

@@ -143,3 +143,4 @@ service MeterTransformerService {
   rpc ListUnassignedMeterTransformersPaginated(ListUnassignedMeterTransformersPaginatedRequest) returns (MeterTransformerPaginatedListResponse);
   rpc ListMeterTransformersPaginated(MeterTransformerPaginatedListRequest) returns (MeterTransformerPaginatedListResponse);
 }
+
