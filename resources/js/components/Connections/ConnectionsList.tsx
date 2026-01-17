@@ -44,6 +44,11 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
                           Industry Name: {connection.consumer_profiles?.[0]?.organization_name}
                         </span>
                       )}
+                      {connection.consumer_profiles?.[0]?.consumer_name && (
+                        <span className='font-inter text-base leading-normal font-semibold text-black'>
+                          Consumer Name: {connection.consumer_profiles?.[0]?.consumer_name}
+                        </span>
+                      )}
                     </div>
 
                     <div className='flex w-full items-center gap-5'>
