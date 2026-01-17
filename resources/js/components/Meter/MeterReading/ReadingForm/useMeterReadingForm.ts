@@ -86,7 +86,7 @@ const getPreviousFinalReading = (
   }
 
   return (
-    lastMeterReading.values.find(
+    lastMeterReading?.values?.find(
       (readingValue) =>
         readingValue.meter_id === meterId &&
         readingValue.timezone_id === timezoneId &&
