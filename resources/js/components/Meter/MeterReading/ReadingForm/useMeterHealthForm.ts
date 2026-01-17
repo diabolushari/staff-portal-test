@@ -23,7 +23,6 @@ const storeInitialMetersHealthData = (
 ): MeterHealth[] => {
   const defaultMeterHealth = meterHealths.find((h) => h.parameter_value === 'Working')
   const defaultCTHealth = ctHealths.find((h) => h.parameter_value === 'Working')
-  console.log(latestMeterReading, metersWithTimezonesAndProfiles)
   return metersWithTimezonesAndProfiles.map((meter) => {
     return {
       meter_id: meter.meter_id,
@@ -37,17 +36,17 @@ const storeInitialMetersHealthData = (
         }
       }),
       voltage_r:
-        latestMeterReading?.healths.filter((h) => h.meter_id == meter.meter_id)[0]?.voltage_r ?? 0,
+        latestMeterReading?.healths?.filter((h) => h.meter_id == meter.meter_id)[0]?.voltage_r ?? 0,
       voltage_y:
-        latestMeterReading?.healths.filter((h) => h.meter_id == meter.meter_id)[0]?.voltage_y ?? 0,
+        latestMeterReading?.healths?.filter((h) => h.meter_id == meter.meter_id)[0]?.voltage_y ?? 0,
       voltage_b:
-        latestMeterReading?.healths.filter((h) => h.meter_id == meter.meter_id)[0]?.voltage_b ?? 0,
+        latestMeterReading?.healths?.filter((h) => h.meter_id == meter.meter_id)[0]?.voltage_b ?? 0,
       current_r:
-        latestMeterReading?.healths.filter((h) => h.meter_id == meter.meter_id)[0]?.current_r ?? 0,
+        latestMeterReading?.healths?.filter((h) => h.meter_id == meter.meter_id)[0]?.current_r ?? 0,
       current_y:
-        latestMeterReading?.healths.filter((h) => h.meter_id == meter.meter_id)[0]?.current_y ?? 0,
+        latestMeterReading?.healths?.filter((h) => h.meter_id == meter.meter_id)[0]?.current_y ?? 0,
       current_b:
-        latestMeterReading?.healths.filter((h) => h.meter_id == meter.meter_id)[0]?.current_b ?? 0,
+        latestMeterReading?.healths?.filter((h) => h.meter_id == meter.meter_id)[0]?.current_b ?? 0,
     }
   })
 }

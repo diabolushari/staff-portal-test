@@ -122,10 +122,12 @@ export default function MeterReadingCreatePage({
     latestMeterReading
   )
   const isFirstReading = useMemo(() => {
+    console.log(latestMeterReading, 'latestMeterReading')
     return latestMeterReading == null
   }, [latestMeterReading])
 
   const readingStartDate = useMemo(() => {
+    console.log(isFirstReading, 'firs treading, connection: ', connectionWithConsumer)
     if (isFirstReading) {
       return dayjs(connectionWithConsumer.connection?.connected_date).format('YYYY-MM-DD')
     }

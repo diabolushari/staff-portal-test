@@ -16,10 +16,10 @@ class MeterReadingConverter
     /**
      * @return array<string, mixed>
      */
-    public static function toArray(?MeterReadingMessage $detail): array
+    public static function toArray(?MeterReadingMessage $detail): ?array
     {
         if ($detail === null) {
-            return [];
+            return null;
         }
         $values = [];
         foreach ($detail->getValues() as $value) {
