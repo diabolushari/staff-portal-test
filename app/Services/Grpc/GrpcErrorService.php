@@ -13,7 +13,7 @@ class GrpcErrorService
     /**
      * Handle gRPC errors and return appropriate redirect response
      *
-     * @param  object{code: int, details?: string}  $status  The gRPC status object
+     * @param  object  $status  The gRPC status object
      */
     public static function handleErrorResponse($status, ?RedirectResponse $redirectResponse = null, bool $flashError = true): ?RedirectResponse
     {
@@ -57,7 +57,7 @@ class GrpcErrorService
     /**
      * Convert extracted gRPC errors to validation error format
      *
-     * @param  object{code: int, details?: string}  $status  The gRPC status object
+     * @param  object  $status  The gRPC status object
      * @return array<string, string> Associative array of field => error message
      */
     public static function convertToValidationError($status): array
@@ -127,10 +127,7 @@ class GrpcErrorService
     /**
      * Get user-friendly error message for non-validation errors
      *
-     * @param  object{
-     *   code: int,
-     *   details?: string,
-     * }  $status
+     * @param  object  $status
      */
     private static function getErrorMessage($status): string
     {
