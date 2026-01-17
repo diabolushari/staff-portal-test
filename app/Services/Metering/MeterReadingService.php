@@ -210,7 +210,9 @@ class MeterReadingService
             $value = MeterReadingConverter::meterReadingValuesToArray($value);
             $meterReadingValuesArray[] = $value;
         }
-        $meterReadingArray['values'] = $meterReadingValuesArray;
+        if (count($response->getValues()) > 0) {
+            $meterReadingArray['values'] = $meterReadingValuesArray;
+        }
 
         return GrpcServiceResponse::success($meterReadingArray, $response, $status->code, $status->details);
     }

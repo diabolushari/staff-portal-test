@@ -29,6 +29,7 @@ class ConnectionProtoConverter
      *    connection_category_id: int,
      *    connection_subcategory_id: int,
      *    billing_process_id: int,
+     *    billing_side_id: int,
      *    phase_type_id: int,
      *    solar_indicator: bool|null,
      *    open_access_type_id: int,

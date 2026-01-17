@@ -118,12 +118,12 @@ class ConsumerService
         $consumer = new ConsumerMessage;
         $consumer->setConnectionId($request->connectionId);
         $consumer->setConsumerTypeId($request->consumerTypeId);
-        if($request->organizationName){
+        if ($request->organizationName) {
             $consumer->setOrganizationName($request->organizationName);
         }
         $consumer->setConsumerOwnershipTypeId($request->consumerOwnershipTypeId);
         $consumer->setConsumerName($request->consumerName);
-      
+
         if ($request->virtualAccountNumber) {
             $consumer->setVirtualAccountNumber($request->virtualAccountNumber);
         }
@@ -235,6 +235,7 @@ class ConsumerService
         return [
             'connection_id' => $consumer->getConnectionId(),
             'consumer_type_id' => $consumer->getConsumerTypeId(),
+            'consumer_ownership_type_id' => $consumer->getConsumerOwnershipTypeId(),
             'organization_name' => $consumer->getOrganizationName(),
             'consumer_name' => $consumer->getConsumerName(),
             'consumer_pan' => $consumer->getConsumerPan(),

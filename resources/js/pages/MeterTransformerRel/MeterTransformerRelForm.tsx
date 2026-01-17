@@ -220,7 +220,7 @@ export default function MeterTransformerRelForm({
             />
             <Button
               type='submit'
-              label={isEditing ? 'Update Relation' : 'Create Relation'}
+              label={isEditing ? 'Update Relation' : 'Connect CTPT'}
               disabled={loading}
             />
           </div>
