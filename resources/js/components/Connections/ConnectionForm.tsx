@@ -63,7 +63,12 @@ export default function ConnectionForm({
 }: Props) {
   console.log(connection)
   const [subCategories, setSubCategories] = useState<ParameterValues[]>([])
-  const [category, setCategory] = useState<string>('')
+  const [category, setCategory] = useState<string>(
+    connection?.connection_category_id
+      ? connectionCategory.filter((category) => category.id == connection.connection_category_id)[0]
+          .parameter_value
+      : ''
+  )
 
   const { flagData, updateFlagData } = useConnectionFlagForm(indicators)
   const { generationData, updateGenerationData, updateGenerationSubTypeData } =
