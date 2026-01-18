@@ -1,23 +1,12 @@
 import MainLayout from '@/layouts/main-layout'
 import { billingNavItems } from '@/components/Navbar/navitems'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Card } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
+
 import Button from '@/ui/button/Button'
-import { router } from '@inertiajs/react'
-import { getDisplayDate, getDisplayMonthYear } from '@/utils'
+import { getDisplayMonthYear } from '@/utils'
 import { Bill, Connection, Consumer, Meter } from '@/interfaces/data_interfaces'
-import { Badge } from 'lucide-react'
 import StrongText from '@/typography/StrongText'
 import NormalText from '@/typography/NormalText'
-import ArrearsAndSummary from '@/components/Billing/Bill/BillSummary'
 import BillSummary from '@/components/Billing/Bill/BillSummary'
 import BillArrears from '@/components/Billing/Bill/BillArrears'
 import BillReadingDetails from '@/components/Billing/Bill/BillReadingDetails'
