@@ -13,7 +13,7 @@ export default function BillingJobList({
 }: Props) {
   const handleView = (item: BillGenerationJobStatus) => {
     console.log(item)
-    router.get(`/bills/job-status/${item.version_id}`)
+    router.get(`/bills/job-status/${item.id}`)
   }
   return (
     <div className='flex flex-col gap-4 p-8'>

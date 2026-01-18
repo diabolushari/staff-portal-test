@@ -667,7 +667,7 @@ export interface BillGenerationJob {
   total_pending: number
 }
 export interface BillGenerationJobStatus {
-  version_id: number
+  id: number
   bill_generation_job_status_id: number
   connection_id: number
   exception: string
