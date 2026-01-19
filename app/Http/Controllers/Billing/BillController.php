@@ -40,6 +40,8 @@ class BillController extends Controller
         $averageAndTotalKva = $this->billExportService->getAverageAndTotalKva($kvaValues);
         $averageAndTotalKwh = $this->billExportService->getAverageAndTotalKwh($kwhValues);
         $demand = $this->billExportService->calculateDemand($kvaValues, $bill?->data['connection']['contract_demand_kva_val'] ?? 0);
+        $totalDemandChargeRows = $this->billExportService->getTotolDemandChargeRows($computedProperties);
+        $totalEnergyChargeRows = $this->billExportService->getTotalEnergyChargeRows($computedProperties, $kwhValues);
 
 
         return Inertia::render('Bill/BillShowPage', [
@@ -59,6 +61,8 @@ class BillController extends Controller
             'averageAndTotalKva' => $averageAndTotalKva,
             'averageAndTotalKwh' => $averageAndTotalKwh,
             'demand' => $demand,
+            'totalDemandCharge' => $totalDemandChargeRows,
+            'totalEnergyCharge' => $totalEnergyChargeRows,
         ]);
     }
 }
