@@ -9,6 +9,7 @@ import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import {
   ConsumerData,
+  MeterConnectionMapping,
   MeterReading,
   MeterWithTimezoneAndProfile,
 } from '@/interfaces/data_interfaces'
@@ -121,6 +122,29 @@ export default function MeterReadingCreatePage({
     ctHealthTypes,
     latestMeterReading
   )
+
+  const getMeterEnergisedDate = (meterMappings: MeterConnectionMapping[] = []): string => {
+    if (!meterMappings.length) return ''
+
+    // 1️⃣ Try ENERGY_CONSUMPTION meter first
+    const energyMeter = meterMappings.find(
+      (m) =>
+        m.meter_use_category?.parameter_value?.toLowerCase() === 'energy_consumption' &&
+        m.energise_date
+    )
+
+    if (energyMeter?.energise_date) {
+      return dayjs(energyMeter.energise_date).format('YYYY-MM-DD')
+    }
+
+    // 2️⃣ Otherwise take the latest energised_date
+    const latestMeter = meterMappings
+      .filter((m) => m.energise_date)
+      .sort((a, b) => dayjs(b.energise_date!).valueOf() - dayjs(a.energise_date!).valueOf())[0]
+
+    return latestMeter?.energise_date ? dayjs(latestMeter.energise_date).format('YYYY-MM-DD') : ''
+  }
+
   const isFirstReading = useMemo(() => {
     console.log(latestMeterReading, 'latestMeterReading')
     return latestMeterReading == null
@@ -129,7 +153,7 @@ export default function MeterReadingCreatePage({
   const readingStartDate = useMemo(() => {
     console.log(isFirstReading, 'firs treading, connection: ', connectionWithConsumer)
     if (isFirstReading) {
-      return dayjs(connectionWithConsumer.connection?.connected_date).format('YYYY-MM-DD')
+      return getMeterEnergisedDate(connectionWithConsumer?.connection?.meter_mappings ?? [])
     }
     if (latestMeterReading?.reading_start_date == latestMeterReading?.reading_end_date) {
       return latestMeterReading?.reading_end_date
@@ -165,6 +189,7 @@ export default function MeterReadingCreatePage({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement> | undefined = undefined) => {
     event?.preventDefault()
+
     post({
       ...formData,
       readings_by_meter: readingValues,
