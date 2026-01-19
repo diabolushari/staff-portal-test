@@ -4,7 +4,6 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 import { Connection, OfficeWithHierarchy } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
-import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
 import ComboBox from '@/ui/form/ComboBox'
 import DatePicker from '@/ui/form/DatePicker'
@@ -19,6 +18,8 @@ import ConnectionFlagForm from './ConnectionFlagForm'
 import ConnectionGenerationTypeForm from './ConnectionGenerationTypeForm'
 import useConnectionFlagForm from './useConnectionFlagForm'
 import useConnectionGenerationForm from './useConnectionGenerationForm'
+import { router } from '@inertiajs/react'
+import { Button } from '../ui/button'
 
 interface Props {
   connection?: Connection
@@ -169,6 +170,43 @@ export default function ConnectionForm({
       onSubmit={handleSubmit}
       className='flex flex-col gap-6'
     >
+      <div className='flex'>
+        {connection && (
+          <>
+            <div className='flex items-center justify-between gap-4 rounded-lg border border-blue-300 bg-blue-50 px-4 py-3 text-sm text-blue-800'>
+              {/* Left: warning */}
+              <div className='flex items-center gap-3'>
+                <span className='flex h-5 w-5 items-center justify-center rounded-full border border-blue-400 text-xs font-bold'>
+                  i
+                </span>
+                <p>
+                  You are editing details of this connection. Please carefully review all changes
+                  before saving.
+                </p>
+              </div>
+
+              {/* Right: actions */}
+            </div>
+            <div className='flex justify-end gap-2 px-5 pt-2'>
+              <Button
+                variant='outline'
+                type='button'
+                onClick={() => router.get(route('connections.show', connection.connection_id))}
+              >
+                CANCEL
+              </Button>
+
+              <Button
+                type='submit'
+                disabled={loading}
+                variant='default'
+              >
+                SAVE
+              </Button>
+            </div>
+          </>
+        )}
+      </div>
       <Card>
         <div className='border-b-2 border-gray-200 py-3'>
           <StrongText className='text-base font-semibold'>Basic Information</StrongText>
@@ -445,15 +483,17 @@ export default function ConnectionForm({
       )}
 
       {/* Submit */}
-      <div className='flex justify-end'>
-        <Button
-          label='Submit'
-          type='submit'
-          disabled={loading}
-          processing={loading}
-          variant={loading ? 'loading' : 'primary'}
-        />
-      </div>
+      {!connection && (
+        <div className='flex justify-end'>
+          <Button
+            variant={'default'}
+            type='submit'
+            disabled={loading}
+          >
+            SUBMIT
+          </Button>
+        </div>
+      )}
     </form>
   )
 }

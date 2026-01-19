@@ -82,11 +82,16 @@ export default function ConnectionsForm({
       navItems={consumerNavItems}
       selectedItem='Connections'
       selectedTopNav='Consumers'
-      title={connection?.connection_id ? 'Update Connection' : 'Add Connection'}
+      title={connection?.connection_id ? 'Connection Details' : 'Add Connection'}
       description={
-        connection?.connection_id
-          ? 'Update Connection Details of ' + connection.consumer_number
-          : 'Add New Connection'
+        connection?.connection_id ? (
+          <>
+            Connection details for consumer number {'   '}
+            <span className='font-bold'>{connection?.consumer_number}</span>
+          </>
+        ) : (
+          'Add New Connection'
+        )
       }
     >
       <div>

@@ -136,10 +136,10 @@ export default function MeterTimeZoneForm({
         <StrongText className='text-sm font-medium text-gray-700'>To Time</StrongText>
         <div className='grid grid-cols-2 gap-4'>
           <Input
-            label='Hours (00-23)'
+            label='Hours (00-24)'
             type='number'
             min={0}
-            max={23}
+            max={24}
             setValue={(val) => handleTimeChange('to_hrs', val)}
             value={formData.to_hrs}
             placeholder='00'
