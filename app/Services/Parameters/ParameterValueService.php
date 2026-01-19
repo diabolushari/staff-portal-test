@@ -172,7 +172,7 @@ class ParameterValueService
         $proto->setAttribute3Value($request->attribute3Value ?? '');
         $proto->setAttribute4Value($request->attribute4Value ?? '');
         $proto->setAttribute5Value($request->attribute5Value ?? '');
-        $proto->setEffectiveStartDate($request->effectiveStartDate ?? date('Y-m-d'));
+        $proto->setEffectiveStartDate($request->effectiveStartDate ?? date('d-m-y'));
         $proto->setEffectiveEndDate($request->effectiveEndDate ?? '');
         $proto->setIsActive($request->isActive ?? true);
         $proto->setSortPriority($request->sortPriority ?? 0);
@@ -222,7 +222,7 @@ class ParameterValueService
         $proto->setAttribute3Value($formRequest->attribute3Value ?? '');
         $proto->setAttribute4Value($formRequest->attribute4Value ?? '');
         $proto->setAttribute5Value($formRequest->attribute5Value ?? '');
-        $proto->setEffectiveStartDate($formRequest->effectiveStartDate ?? date('Y-m-d'));
+        $proto->setEffectiveStartDate($formRequest->effectiveStartDate ?? date('d-m-y'));
         $proto->setEffectiveEndDate($formRequest->effectiveEndDate ?? '');
         $proto->setIsActive($formRequest->isActive ?? true);
         $proto->setSortPriority($formRequest->sortPriority ?? 0);

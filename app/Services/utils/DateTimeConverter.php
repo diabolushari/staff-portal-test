@@ -35,16 +35,16 @@ class DateTimeConverter
             return '';
         }
 
-        return date('Y-m-d H:i:s', $seconds);
+        return date('d-m-y H:i:s', $seconds);
     }
 
-    public static function converTimeStampToDate(?TimeStamp $timestamp):string
+    public static function converTimeStampToDate(?TimeStamp $timestamp): string
     {
         if ($timestamp === null) {
             return '';
         }
 
-       
+
 
         return date('Y-m-d');
     }

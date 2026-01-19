@@ -179,6 +179,7 @@ export default function ConnectionForm({
             setValue={setFormValue('application_no')}
             value={formData.application_no}
             error={errors?.application_no}
+            required
           />
           <SelectList
             label='Connection Type'

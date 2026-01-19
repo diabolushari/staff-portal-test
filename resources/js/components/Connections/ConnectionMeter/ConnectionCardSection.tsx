@@ -56,7 +56,7 @@ export default function ConnectionCardSection({
       setSelectedCtpt(null)
     }
   }, [change, updateStatus])
-  console.log(meterMapping)
+  console.log(meterTransformers)
 
   return (
     <div

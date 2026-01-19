@@ -314,19 +314,19 @@ class OfficeService
 
         // Format timestamps
         $effectiveStart = $office->getEffectiveStart()
-            ? $office->getEffectiveStart()->toDateTime()->format('Y-m-d')
+            ? $office->getEffectiveStart()->toDateTime()->format('d-m-y')
             : null;
 
         $effectiveEnd = $office->getEffectiveEnd()
-            ? $office->getEffectiveEnd()->toDateTime()->format('Y-m-d')
+            ? $office->getEffectiveEnd()->toDateTime()->format('d-m-y')
             : null;
 
         $createdAt = $office->getCreatedAt()
-            ? $office->getCreatedAt()->toDateTime()->format('Y-m-d H:i:s')
+            ? $office->getCreatedAt()->toDateTime()->format('d-m-y H:i:s')
             : null;
 
         $updatedAt = $office->getUpdatedAt()
-            ? $office->getUpdatedAt()->toDateTime()->format('Y-m-d H:i:s')
+            ? $office->getUpdatedAt()->toDateTime()->format('d-m-y H:i:s')
             : null;
 
         // Handle office type
