@@ -70,7 +70,7 @@ export default function ConnectionCardSection({
               href={`/meters/${meterMapping.meter_id}`}
               target='__blank'
             >
-              <h3 className='cursor-pointer text-lg font-semibold text-black'>
+              <h3 className='cursor-pointer text-lg font-semibold text-black hover:text-blue-600'>
                 {meterMapping.meter?.meter_serial}
               </h3>
             </a>
@@ -106,8 +106,10 @@ export default function ConnectionCardSection({
                 className='flex cursor-pointer items-center gap-1.5'
                 onClick={() => onMeterProfileChange(meterMapping)}
               >
-                Meter Profile:
-                <span>{meterMapping.meter_profile?.parameter_value}</span>
+                Metering Profile:
+                <span className='link-button-text'>
+                  {meterMapping.meter_profile?.parameter_value}
+                </span>
               </div>
             )}
 
@@ -200,7 +202,7 @@ export default function ConnectionCardSection({
                       >
                         <span className='font-medium text-slate-700'>Serial:</span>
 
-                        <span className='text-slate-600'>
+                        <span className='cursor-pointer text-slate-600 hover:text-blue-600'>
                           <b>{ctpt.ctpt?.ctpt_serial ?? 'N/A'}</b>
                         </span>
                       </a>
@@ -234,7 +236,9 @@ export default function ConnectionCardSection({
                     {ctpt.ctpt_energise_date && (
                       <div className='flex items-center gap-1'>
                         <Calendar className='h-3 w-3 text-slate-500' />
-                        <span className='text-slate-600'>Energized: {ctpt.ctpt_energise_date}</span>
+                        <span className='text-slate-600'>
+                          Energized: {getDisplayDate(ctpt.ctpt_energise_date)}
+                        </span>
                       </div>
                     )}
                   </div>

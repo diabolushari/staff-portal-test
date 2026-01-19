@@ -215,7 +215,7 @@ export default function MeterTransformerRelForm({
               type='button'
               label='Cancel'
               variant='secondary'
-              onClick={() => router.get('/meter-ctpt-rel')}
+              onClick={() => router.get(route('connection.meters', connection.connection_id))}
               disabled={loading}
             />
             <Button

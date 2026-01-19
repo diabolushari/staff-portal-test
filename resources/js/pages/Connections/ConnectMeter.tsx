@@ -69,7 +69,6 @@ export default function ConnectMeter({
     meter_transformers: meterTransformers,
   })
 
-
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     relation
       ? route('meter-connection-rel.update', connection_id)
@@ -95,12 +94,12 @@ export default function ConnectMeter({
       )
       if (selectedCategory) {
         setSelectedUseCategory(selectedCategory)
-        if(selectedCategory.parameter_value == 'Energy Consumption'){
+        if (selectedCategory.parameter_value == 'Energy Consumption') {
           setFormValue('meter_mf')('')
         }
       }
     }
-  }, [formData.meter_use_category, useCategory,setFormValue])
+  }, [formData.meter_use_category, useCategory, setFormValue])
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -265,7 +264,7 @@ export default function ConnectMeter({
               type='button'
               label='Cancel'
               variant='secondary'
-              onClick={() => router.get(route('connections.show', formData.connection_id))}
+              onClick={() => router.get(route('connection.meters', connection.connection_id))}
               disabled={loading}
             />
             <Button

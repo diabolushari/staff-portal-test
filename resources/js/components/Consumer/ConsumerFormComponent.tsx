@@ -319,17 +319,6 @@ export default function ConsumerFormComponent({
               error={errors?.pincode}
               required
             />
-            {states && (
-              <SelectList
-                label='State'
-                list={states}
-                dataKey='region_id'
-                displayKey='region_name'
-                setValue={setFormValue('state_id')}
-                value={formData.state_id}
-                required
-              />
-            )}
             {districts && (
               <SelectList
                 label='District'
@@ -338,6 +327,17 @@ export default function ConsumerFormComponent({
                 displayKey='region_name'
                 setValue={setFormValue('district_id')}
                 value={formData.district_id}
+                required
+              />
+            )}
+            {states && (
+              <SelectList
+                label='State'
+                list={states}
+                dataKey='region_id'
+                displayKey='region_name'
+                setValue={setFormValue('state_id')}
+                value={formData.state_id}
                 required
               />
             )}

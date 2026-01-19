@@ -5,6 +5,7 @@ import { router } from '@inertiajs/react'
 import { Calendar, Cpu, Hash, Zap } from 'lucide-react'
 import { useState } from 'react'
 import ActionButton from '../action-button'
+import { getDisplayDate } from '@/utils'
 
 interface Props {
   connections: Connection[]
@@ -94,7 +95,7 @@ export default function ConnectionsList({ connections }: Readonly<Props>) {
                     <div className='flex items-center gap-[3px]'>
                       <Calendar className='text-dark-gray h-3.5 w-3.5' />
                       <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                        Connected on: {new Date(connection.connected_date).toLocaleDateString()}
+                        Connected on: {getDisplayDate(connection.connected_date)}
                       </div>
                     </div>
                   </div>

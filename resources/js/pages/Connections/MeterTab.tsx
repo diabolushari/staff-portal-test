@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/card'
 import type { Meter, MeterAssignment } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
+import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 import {
   Barcode,
@@ -164,19 +165,19 @@ export function MeterTab({ meters, connectionId }: Readonly<MeterTabProps>) {
                         {meter.manufacture_date && (
                           <div className='flex items-center gap-1'>
                             <Calendar className='h-4 w-4 text-slate-500' />
-                            Mfg: {new Date(meter.manufacture_date).toLocaleDateString()}
+                            Mfg: {getDisplayDate(meter.manufacture_date)}
                           </div>
                         )}
                         {meter.supply_date && (
                           <div className='flex items-center gap-1'>
                             <Calendar className='h-4 w-4 text-slate-500' />
-                            Supply: {new Date(meter.supply_date).toLocaleDateString()}
+                            Supply: {getDisplayDate(meter.supply_date)}
                           </div>
                         )}
                         {relationship.faulty_date && (
                           <div className='flex items-center gap-1 text-red-600'>
                             <Calendar className='h-4 w-4 text-red-500' />
-                            Faulty: {new Date(relationship.faulty_date).toLocaleDateString()}
+                            Faulty: {getDisplayDate(relationship.faulty_date)}
                           </div>
                         )}
                       </div>

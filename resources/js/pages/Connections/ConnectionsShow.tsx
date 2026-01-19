@@ -29,7 +29,7 @@ export default function ConnectionsShow({
   primaryPurposes,
 }: Readonly<Props>) {
   const formatDate = (dateStr?: string | null) =>
-    dateStr ? new Date(dateStr).toLocaleDateString() : '-'
+    dateStr ? new Date(dateStr).toLocaleDateString('en-GB') : '-'
   const [editIndicator, setEditIndicator] = useState(false)
   const [editGeneration, setEditGeneration] = useState(false)
 

@@ -6,6 +6,7 @@ import { useState } from 'react'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import NormalText from '@/typography/NormalText'
 import StrongText from '@/typography/StrongText'
+import { getDisplayDate } from '@/utils'
 
 interface Props {
   tariff_configs: TariffConfig[]
@@ -53,9 +54,8 @@ export default function TariffConfigList({ tariff_configs }: Readonly<Props>) {
                   </div>
 
                   <div className='font-inter text-dark-gray text-sm'>
-                    Effective: {new Date(config.effective_start).toLocaleDateString()}
-                    {config.effective_end &&
-                      ` → ${new Date(config.effective_end).toLocaleDateString()}`}
+                    Effective: {getDisplayDate(config.effective_start)}
+                    {config.effective_end && ` → ${getDisplayDate(config.effective_end)}`}
                   </div>
                 </div>
               </div>

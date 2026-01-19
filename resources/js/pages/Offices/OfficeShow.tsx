@@ -67,7 +67,8 @@ export default function OfficeShow({
     },
   ]
 
-  const formatDate = (dateStr?: string) => (dateStr ? new Date(dateStr).toLocaleDateString() : '-')
+  const formatDate = (dateStr?: string) =>
+    dateStr ? new Date(dateStr).toLocaleDateString('en-GB') : '-'
 
   // Placeholder data for missing fields based on Figma design
   const placeholderData = {
