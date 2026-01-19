@@ -69,6 +69,57 @@ const calculatePowerFactor = (
     }
   })
 }
+const averagePowerfactor = (
+  readingValues: MeterReadingFormState[],
+  meterId: number,
+  meterProfiles: MeterProfileParameter[]
+): number | null => {
+  const kwhProfile = meterProfiles.find(
+    (p) =>
+      p.name.toLowerCase() === CONSUMPTION_PARAMETER_NAME.toLowerCase() && p.is_export === false
+  )
+
+  const kvahProfile = meterProfiles.find(
+    (p) => p.name.toLowerCase() === DEMAND_PARAMETER_NAME.toLowerCase() && p.is_export === false
+  )
+
+  if (!kwhProfile || !kvahProfile) {
+    return null
+  }
+
+  let totalKwh = 0
+  let totalKvah = 0
+
+  console.log(totalKvah, 'totalKvah')
+  console.log(totalKwh, 'totalKwh')
+  readingValues
+    .filter((r) => r.meter_id === meterId)
+    .forEach((reading) => {
+      reading.parameters.forEach((param) => {
+        // kWh
+        if (param.meter_parameter_id == kwhProfile.meter_parameter_id) {
+          console.log('kwh', param.readings)
+          param.readings.forEach((tz) => {
+            totalKwh += Number(tz.values?.diff) ?? 0
+          })
+        }
+
+        // kVAh
+        if (param.meter_parameter_id == kvahProfile.meter_parameter_id) {
+          console.log('kvah', param.readings)
+          param.readings.forEach((tz) => {
+            totalKvah += Number(tz.values?.diff) ?? 0
+          })
+        }
+      })
+    })
+
+  if (totalKvah === 0) {
+    return null
+  }
+
+  return Number((totalKwh / totalKvah).toFixed(4))
+}
 
 const calculateAveragePF = (powerFactors: PowerFactorData[]): string | null => {
   const allValid = powerFactors.every((pf) => pf.pf !== 'N/A')
@@ -132,7 +183,11 @@ export default function MeterReadingPreview({
       )
     : []
 
-  const averagePF = powerFactorData?.length > 0 ? calculateAveragePF(powerFactorData) : null
+  const averagePF = averagePowerfactor(
+    readingValues,
+    meterWithTimezoneAndProfile.meter_id,
+    meterWithTimezoneAndProfile.reading_parameters
+  )
 
   return (
     <div

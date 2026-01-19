@@ -96,7 +96,7 @@ export default function useMeterHealthForm(
   const updateRybValues = useCallback(
     (
       meterId: number,
-      value: number,
+      value: number | string,
       type: 'voltage_r' | 'voltage_y' | 'voltage_b' | 'current_r' | 'current_y' | 'current_b'
     ) => {
       setHealthData((oldValue) =>

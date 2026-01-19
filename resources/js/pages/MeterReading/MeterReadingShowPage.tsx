@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import dayjs from 'dayjs'
 
 interface ReadingsByMeter {
   meterId: number
@@ -102,8 +103,9 @@ export default function MeterReadingShowPage({
         <StrongText>Consumer Number: {connection.consumer_number}</StrongText>
         <h1 className='text-2xl font-bold'>Meter Reading</h1>
         <p className='text-sm text-gray-500'>
-          Date: {meterReading.metering_date} (From {meterReading.reading_start_date} to{' '}
-          {meterReading.reading_end_date})
+          Date: {dayjs(meterReading.metering_date).format('DD-MM-YYYY')} (From{' '}
+          {dayjs(meterReading.reading_start_date).format('DD-MM-YYYY')} to{' '}
+          {dayjs(meterReading.reading_end_date).format('DD-MM-YYYY')})
         </p>
 
         {readingsByMeter.map((meter) => (
@@ -115,9 +117,11 @@ export default function MeterReadingShowPage({
               Meter: {meter.serial} ({meter.profile})
             </h2>
             <h3 className='text-sm font-semibold'>MF: {meter?.meterMF ?? '-'}</h3>
-            <h3 className='text-sm font-semibold'>
-              Meter Power Factor: {meter?.meterPf?.toFixed(2) ?? '-'}
-            </h3>
+            {meter?.meterPf && (
+              <h3 className='text-sm font-semibold'>
+                Meter Power Factor: {meter?.meterPf?.toFixed(2) ?? '-'}
+              </h3>
+            )}
             <Card>
               <div className='mb-4'>
                 <h3 className='mb-2 text-lg font-semibold'>Phase Voltage & Current</h3>

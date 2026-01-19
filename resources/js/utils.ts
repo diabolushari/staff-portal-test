@@ -37,6 +37,21 @@ export const getTime = (date?: string): string => {
   return `${formattedHours}:${formattedMinutes} ${ampm}`
 }
 
+export const longMonthnames = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+]
+
 export const shortMonthNames = [
   'Jan',
   'Feb',
@@ -87,7 +102,11 @@ export const formatDate = (date: Date | null) => {
   return date.getFullYear() + '-' + month + '-' + day
 }
 
-export const getDisplayMonthYear = (date?: string | null) => {
+export const getDisplayMonthYear = (
+  date?: string | null,
+  longMonthNames: boolean = false,
+  capitalize: boolean = false
+) => {
   if (!date) {
     return ''
   }
@@ -101,7 +120,13 @@ export const getDisplayMonthYear = (date?: string | null) => {
   if (isNaN(month) || month < 1 || month > 12) {
     return ''
   }
-  return shortMonthNames[month - 1] + ' ' + splitUpdDate[0]
+  let value = longMonthNames
+    ? longMonthnames[month - 1] + ' ' + splitUpdDate[0]
+    : shortMonthNames[month - 1] + ' ' + splitUpdDate[0]
+  if (capitalize) {
+    value = value.charAt(0).toUpperCase() + value.slice(1)
+  }
+  return value
 }
 import dayjs from 'dayjs'
 

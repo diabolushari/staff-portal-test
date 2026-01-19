@@ -15,7 +15,7 @@ interface Props {
   profile: MeterProfileParameter
 }
 
-const rowLabels = ['initial', 'final', 'diff']
+const rowLabels = ['initial', 'final', 'diff', 'value']
 
 export default function MeterReadingValueTooltip({
   meterId,
@@ -51,10 +51,10 @@ export default function MeterReadingValueTooltip({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rowLabels.map((rowKey) => (
-            <TableRow key={rowKey}>
+          {rowLabels.map((rowKey, index) => (
+            <TableRow key={index}>
               <TableCell className='text-center font-medium text-black'>
-                {rowKey.charAt(0).toUpperCase() + rowKey.slice(1)}
+                {rowKey === 'value' ? 'Total' : rowKey.charAt(0).toUpperCase() + rowKey.slice(1)}
               </TableCell>
               {paramData?.readings?.map((tz) => (
                 <TableCell

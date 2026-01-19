@@ -16,7 +16,7 @@ class BillExportService
 
     public function getMainMeter(?int $connectionId): ?array
     {
-        $meter = null;
+        $meter = [];
         if (!$connectionId) {
             return $meter;
         }
@@ -24,7 +24,8 @@ class BillExportService
         if ($meterConnectionMapping) {
             foreach ($meterConnectionMapping as $mapping) {
                 if ($mapping['meter_profile']['parameter_value'] == 'Main Meter') {
-                    $meter = $mapping['meter'];
+                    $meter['meter'] = $mapping['meter'];
+                    $meter['meter_mf'] = $mapping['meter_mf'];
                 }
             }
         }
@@ -41,9 +42,12 @@ class BillExportService
         return $meterReading;
     }
 
-    public function filterReadingByParameter(array $meterReading, string $parameterName): array
+    public function filterReadingByParameter(?array $meterReading, ?string $parameterName): ?array
     {
         if (empty($meterReading)) {
+            return [];
+        }
+        if (empty($parameterName)) {
             return [];
         }
 
@@ -78,11 +82,12 @@ class BillExportService
 
         foreach ($chargeHeads as $item) {
             $name = $item['name'] ?? null;
+            $key = $this->toSnakeCase($name);
 
             if ($name && isset($item['results'][0])) {
-                $result[$name] = [
+                $result[$key] = [
                     'id'      => $item['id'],
-                    'name'    => $item['name'],
+                    'name'    => $name,
                     'result'  => $item['results'][0]['result'] ?? null,
                     'zoneId'  => $item['results'][0]['zoneId'] ?? null,
                 ];
@@ -99,12 +104,13 @@ class BillExportService
         foreach ($computed as $item) {
 
             $name = $item['name'];
+            $key = $this->toSnakeCase($name);
             $id = $item['id'];
             $results = $item['results'];
 
             // Single result → return flat form
             if (count($results) === 1) {
-                $normalized[$name] = [
+                $normalized[$key] = [
                     'id' => $id,
                     'name' => $name,
                     'result' => $results[0]['result'],
@@ -114,7 +120,7 @@ class BillExportService
 
             // Multiple → return zone result array
             else {
-                $normalized[$name] = [
+                $normalized[$key] = [
                     'id' => $id,
                     'name' => $name,
                     'result' => $results
@@ -125,8 +131,11 @@ class BillExportService
         return $normalized;
     }
 
-    public function getEnergyChargeRows(array $meter, array $computed, array $filteredkWhs): array
+    public function getEnergyChargeRows(?array $meter, ?array $computed, ?array $filteredkWhs): ?array
     {
+        if (empty($meter) || empty($computed) || empty($filteredkWhs)) {
+            return [];
+        }
         $mf = $meter['meter_mf'] ?? 1;
 
         // Get KWH rate from computed
@@ -171,8 +180,11 @@ class BillExportService
         ];
     }
 
-    public function getAverageAndTotalKva(array $filteredkVAs): array
+    public function getAverageAndTotalKva(?array $filteredkVAs): ?array
     {
+        if (empty($filteredkVAs)) {
+            return [];
+        }
         $totalKva = array_sum(array_column($filteredkVAs, 'difference'));
         if (count($filteredkVAs) == 0) {
             return [
@@ -186,8 +198,11 @@ class BillExportService
             'averageKva' => $averageKva
         ];
     }
-    public function getAverageAndTotalKwh(array $filteredkWhs): array
+    public function getAverageAndTotalKwh(?array $filteredkWhs): ?array
     {
+        if (empty($filteredkWhs)) {
+            return [];
+        }
         $totalKwh = array_sum(array_column($filteredkWhs, 'difference'));
         if (count($filteredkWhs) == 0) {
             return [
@@ -201,8 +216,11 @@ class BillExportService
             'averageKwh' => $averageKwh
         ];
     }
-    public function calculateDemand(array $kvaReadings, float $contractDemand): array
+    public function calculateDemand(?array $kvaReadings, float $contractDemand): ?array
     {
+        if (empty($kvaReadings)) {
+            return [];
+        }
         // Filter timezone readings
         $timezoneReadings = array_filter(
             $kvaReadings,
@@ -260,5 +278,12 @@ class BillExportService
                 'value' => $threshold
             ]
         ];
+    }
+
+    private function toSnakeCase(string $value): string
+    {
+        return strtolower(
+            preg_replace('/[^a-z0-9]+/i', '_', trim($value))
+        );
     }
 }

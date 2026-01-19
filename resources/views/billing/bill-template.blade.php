@@ -140,136 +140,42 @@
       <div class="sub" style="font-style: italic;">As per CHAPTER VII OF KERALA ELECTRICITY SUPPLY CODE - 2014</div>
     </div>
 
-    <!-- TOP 65/35 LAYOUT -->
-    <table width="100%" cellspacing="0" cellpadding="0" style="margin-top:3px; page-break-inside: avoid;">
-      <tr>
-        <td width="65%" style="vertical-align: top; padding-right:4px;">
-          <table class="small-table">
-            <tr>
-              <td><strong>Cons#</strong></td>
-              <td class="mono">{{ $connection['consumer_number'] ?? '-' }}</td>
-              <td><strong>Bill Date</strong></td>
-              <td>{{ \Carbon\Carbon::parse($bill['bill_date'])->format('d-m-Y') ?? '-' }}</td>
-            </tr>
-            <tr>
-              <td><strong>Due Date</strong></td>
-              <td>{{ \Carbon\Carbon::parse($bill['due_date'])->format('d-m-Y') ?? '-' }}</td>
-              <td><strong>DC Date</strong></td>
-              <td>{{ \Carbon\Carbon::parse($bill['dc_date'])->format('d-m-Y') ?? '-' }}</td>
-            </tr>
-            <tr>
-              <td><strong>LCN</strong></td>
-              <td>{{ $connection['consumer_legacy_code'] ?? '-' }}</td>
-              <td><strong>Tariff</strong></td>
-              <td>{{ $connection['tariff']['parameter_value'] ?? '-' }}</td>
-            </tr>
-            <tr>
+    <!-- Bill Summary -->
 
-              <td rowspan="4" style="width:55%; vertical-align: top; font-size: 13px;">
-                <strong>{{ $consumer['organization_name'] ?? '-' }}</strong><br>
+    @include('billing.bill-summary', [
+    'bill' => $bill,
+    'connection' => $connection,
+    'consumer' => $consumer
+    ])
 
-                {{ $consumer['contact_details'][0]['billing_address']['address_line1'] ?? '-' }}
-                {{ isset($consumer['contact_details'][0]['billing_address']['address_line2']) ? ', '.$consumer['contact_details'][0]['billing_address']['address_line2'] : '-' }}
-                {{ isset($consumer['contact_details'][0]['billing_address']['city_town_village']) ? ', '.$consumer['contact_details'][0]['billing_address']['city_town_village'] : '-' }}
-                {{ isset($consumer['contact_details'][0]['billing_address']['district']['name']) ? ', '.$consumer['contact_details'][0]['billing_address']['district']['name'] : '-' }}
-                <br>
-
-                {{ $consumer['contact_details'][0]['billing_address']['state']['name'] ?? '-' }}
-                {{ isset($consumer['contact_details'][0]['billing_address']['pincode']) ? ', '.$consumer['contact_details'][0]['billing_address']['pincode'] : '' }}
-                <br>
-
-                {{ $consumer['contact_details'][0]['contact_person'] ?? '-' }}
-                <br>
-
-                Mobile: {{ $consumer['contact_details'][0]['primary_phone'] ?? '--' }}
-              </td>
-
-
-              <td><strong>Bill.No</strong></td>
-              <td class="mono" style="border-right:1px solid #000;">{{ $bill['bill_id'] ?? '-' }}</td>
-              <td style="border-right: 0px; border-bottom: 0px;"></td>
-            </tr>
-            <tr>
-              <td><strong>CD</strong></td>
-              <td>256800</td>
-              <td style="border-right: 0px; border-bottom: 0px; border-top: 0px"></td>
-            </tr>
-            <tr>
-              <td><strong>Ver</strong></td>
-              <td>0</td>
-              <td style="border-right: 0px; border-bottom: 0px;border-top: 0px"></td>
-            </tr>
-            <tr>
-              <td><strong>BG</strong></td>
-              <td>0</td>
-              <td style="border-right: 0px; border-bottom: 0px;border-top: 0px"></td>
-            </tr>
-          </table>
-        </td>
-
-
-
-        <td width="35%" style="vertical-align: top;">
-          <table class="small-table">
-            <tr>
-              <th colspan="2" class="center">Bank / GST</th>
-            </tr>
-            <tr>
-              <td><strong>Virtual A/c No</strong></td>
-              <td>{{ $consumer['virtual_account_number'] ?? '-' }}</td>
-            </tr>
-            <tr>
-              <td><strong>GSTIN</strong></td>
-              <td>{{ $consumer['consumer_gstin'] ?? '' }}</td>
-            </tr>
-            <tr>
-              <td><i>Email: {{ $consumer['contact_details'][0]['primary_email'] ?? '' }}</i></td>
-            </tr>
-            <tr>
-              <td><strong>Supply Voltage</strong></td>
-              <td>{{ $connection['voltage']['parameter_value'] ?? '-' }}</td>
-            </tr>
-            <tr>
-              <td><strong>Billing Type</strong></td>
-              <td>{{ $connection['billing_process']['parameter_value'] ?? '-' }}</td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
 
     <!-- ARREARS SECTION -->
-    <div class="section">
-      <table class="grid">
-        <tr>
-          <th>Arrears</th>
-          <th>Date of Previous Reading</th>
-          <th>Date of Present Reading</th>
-          <th>Average MD (kVA)</th>
-          <th>Consumption (kWh)</th>
-          <th>PF</th>
-        </tr>
-        <tr>
-          <td>Disputed: - | Undisputed: -</td>
-          <td>{{ \Carbon\Carbon::parse($connection['previous_reading']['reading_end_date'])->format('F Y') ?? '-' }}</td>
-          <td>
-            {{ \Carbon\Carbon::parse($bill['reading_year_month'])->format('F Y') ?? '-' }}
-          </td>
 
-          <td class="center">{{ $averageAndTotalKva['averageKva'] ?? '-' }}</td>
-          <td class="center">{{ $averageAndTotalKwh['totalKwh'] ?? '-' }}</td>
-          <td class="center">{{ $computedProperties['Power Factor']['result'] ?? '-' }}</td>
-        </tr>
-        <tr>
-          <td colspan="2">Contract Demand (kVA): {{ $connection['contract_demand_kva_val'] ?? '' }} | 75% of CD: {{ $connection['contract_demand_kva_val'] * 0.75}} | 130% of CD: {{ $connection['contract_demand_kva_val'] * 1.30}}</td>
-          <td colspan="4">Connected Load (kW): {{ $connection['connected_load_kw_val'] ?? '' }} | Section: {{ $connection['service_office'] ? $connection['service_office']['office_name'] : '-' }} | Circle: -</td>
-        </tr>
-      </table>
-    </div>
+    @include('billing.bill-arrears', [
+    'bill' => $bill,
+    'connection' => $connection,
+    'consumer' => $consumer,
+    'meter' => $meter,
+    ])
+
+    @include('billing.bill-reading', [
+    'bill' => $bill,
+    'connection' => $connection,
+    'consumer' => $consumer,
+    'meter' => $meter,
+    'kwhValues' => $kwhValues,
+    'kvahValues' => $kvahValues,
+    'lagValues' => $lagValues,
+    'leadValues' => $leadValues,
+    'kvaValues' => $kvaValues,
+    ])
+
+
+
 
     <!-- READING DETAILS -->
     <div class="section">
-      <h3 style="margin:0 0 4px 0;">Reading Details of meter {{ $meter['meter_serial']}} - Working (KVA, KWh, KVAh & KVARh) for {{ $bill['reading_year_month'] ?? '' }}
+      <h3 style="margin:0 0 4px 0;">Reading Details of meter {{ $meter['meter']['meter_serial']}} - Working (KVA, KWh, KVAh & KVARh) for {{ $bill['reading_year_month'] ?? '' }}
       </h3>
 
 
@@ -297,7 +203,7 @@
 
 
 
-        @foreach($filteredkWhs as $index => $kWhRow)
+        @foreach($kwhValues as $index => $kWhRow)
         <tr>
           {{-- kWh Energy Consumption --}}
           <td>{{ $index + 1 }}</td>
@@ -309,8 +215,8 @@
 
           {{-- kVArh Lag and Lead --}}
           @php
-          $lagRow = $filteredLags[$index] ?? null;
-          $leadRow = $filteredLeads[$index] ?? null;
+          $lagRow = $lagValues[$index] ?? null;
+          $leadRow = $leadValues[$index] ?? null;
           @endphp
           <td>{{ $index + 1 }}</td>
           <td>{{ $lagRow['initial_reading'] ?? '-' }}</td>
@@ -325,12 +231,12 @@
 
         <tr class="total-row">
           <td colspan="4">Total</td>
-          <td class="right">{{ collect($filteredkWhs)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
+          <td class="right">{{ collect($kwhValues)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
           <td></td>
           <td colspan="4">Total kVARh (Lag)</td>
-          <td class="right">{{ collect($filteredLags)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
+          <td class="right">{{ collect($lagValues)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
           <td colspan="2">Total kVARh (Lead)</td>
-          <td>{{ collect($filteredLeads)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
+          <td>{{ collect($leadValues)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
         </tr>
       </table>
 
@@ -354,7 +260,7 @@
           <th></th>
         </tr>
 
-        @foreach($filteredKVAhs as $index => $kVAhRow)
+        @foreach($kvahValues as $index => $kVAhRow)
         <tr>
           {{-- Energy Consumption KVAh --}}
           <td>{{ $index + 1 }}</td> {{-- Zone number --}}
@@ -366,7 +272,7 @@
 
           {{-- Demand KVA Readings --}}
           @php
-          $kVAReading = $filteredkVAs[$index] ?? null;
+          $kVAReading = $kvaValues[$index] ?? null;
           @endphp
           <td class="center">{{ $kVAReading['difference'] ?? '-' }}</td>
           <td>{{ $meter['meter_mf'] ?? 1 }}</td>
@@ -379,10 +285,10 @@
 
         <tr class="total-row">
           <td colspan="4">Total</td>
-          <td class="right">{{ collect($filteredKVAhs)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
+          <td class="right">{{ collect($kvahValues)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
           <td></td>
           <td colspan="3">Total</td>
-          <td class="right">{{ collect($filteredkVAs)->sum(fn($r) => $r['difference'] * ($meter['meter_mf'] ?? 1)) }}</td>
+          <td class="right">{{ collect($kvaValues)->sum(fn($r) => $r['difference'] * ($meter['meter_mf'] ?? 1)) }}</td>
         </tr>
       </table>
 
@@ -391,197 +297,20 @@
     </div>
 
     <!-- INVOICE SECTION -->
-    <table width="100%" cellspacing="0" cellpadding="0" class="invoice">
-      <tr>
-        <td width="65%" style="padding-right:4px; vertical-align: top;">
-          <table class="grid">
 
-            <tr>
-              <th>1. Total Demand Charge</th>
-              <th>Unit</th>
-              <th>Rate</th>
-              <th>Amount (Rs)</th>
-            </tr>
-
-            @php
-            $kvaRate = $computedProperties['KVA RATE']['value'] ?? 0;
-            $subTotalDemand = 0;
-            @endphp
+    @include('billing.bill-invoice', [
+    'bill' => $bill,
+    'connection' => $connection,
+    'consumer' => $consumer,
+    'meter' => $meter,
+    'kwhValues' => $kwhValues,
+    'kvahValues' => $kvahValues,
+    'lagValues' => $lagValues,
+    'leadValues' => $leadValues,
+    'kvaValues' => $kvaValues,
+    ])
 
 
-            {{-- CASE 1: CONTRACT DEMAND --}}
-            @if($demand['is_contract_demand'] === true)
-
-            <tr>
-              <td>a. Contract Demand</td>
-              <td class="center">{{ $demand['result']['value'] ?? '-' }}</td>
-              <td class="right">{{ $computedProperties['KVA RATE']['result'] ?? '-' }}</td>
-              <td class="right">{{ $computedProperties['Demand Charge']['result'] ?? '-' }}</td>
-            </tr>
-            <tr>
-              <td>b. Excess Demand Charge</td>
-              <td class="center">{{ 0 }}</td>
-              <td class="right">{{ $computedProperties['KVA RATE']['result'] ?? '-'}}</td>
-              <td class="right">{{ $computedProperties['Excess Demand Charge']['result'] ?? '-' }}</td>
-            </tr>
-
-
-            {{-- CASE 2: TIME-ZONE BASED --}}
-            @else
-
-            @foreach($demand['result'] as $i => $zone)
-            @php
-            $label = chr(97 + $i); // a, b, c...
-            $unit = $zone['value'];
-            $amount = $unit * $computedProperties['KVA RATE']['result'] ?? 0;
-            $subTotalDemand += $amount;
-            @endphp
-
-            <tr>
-              <td>{{ $label }}. Demand Charge - {{ $zone['timezone'] ?? '-' }}</td>
-              <td class="center">{{ $unit ?? '-' }}</td>
-              <td class="right">{{ isset($computedProperties['KVA RATE']['result']) ? number_format($computedProperties['KVA RATE']['result'], 2) : 0 }}</td>
-              <td class="right">{{ number_format($amount, 2) }}</td>
-            </tr>
-
-            @endforeach
-            <tr>
-              <td>d. Excess Demand Charge</td>
-              <td class="center">{{ 0 }}</td>
-              <td class="right">{{ $kvaRate ?? '-' }}</td>
-              <td class="right">{{ isset($computedProperties['Excess Demand Charge']['result']) ? number_format($computedProperties['Excess Demand Charge']['result'], 2) : 0 }}</td>
-            </tr>
-
-            @endif
-
-
-            {{-- SUBTOTAL ROW --}}
-            <tr class="total-row">
-              <td>Sub Total</td>
-              <td></td>
-              <td></td>
-              <td class="right">{{ isset($chargeHeads['TOTAL DEMAND CHARGE']['result']) ? number_format($chargeHeads['TOTAL DEMAND CHARGE']['result'], 2) : 0 }}</td>
-            </tr>
-
-            <tr>
-              <td colspan="4"></td>
-            </tr>
-
-
-            {{-- YOUR ENERGY TABLE CONTINUES HERE --}}
-            @php
-            $rows = $energyChargeRows['energyChargeRows'] ?? [];
-            @endphp
-
-
-            <tr>
-              <th colspan="4">2. Total Energy Charges</th>
-            </tr>
-
-            @foreach($rows as $i => $row)
-            <tr>
-              <td>{{ chr(97 + $i) }}. {{ $row['label'] }} ({{ $row['units'] }} × {{ isset($row['rate']) ? number_format($row['rate'], 2) : 0 }})</td>
-              <td></td>
-              <td></td>
-              <td class="right">{{ isset($computedProperties['ENERGY CHARGE']['result'][$i]['result']) ? number_format($computedProperties['ENERGY CHARGE']['result'][$i]['result'], 2) : 0 }}</td>
-            </tr>
-            @endforeach
-
-            <tr class="total-row">
-              <td>Sub Total (a + b + c)</td>
-              <td></td>
-              <td></td>
-              <td class="right">{{ isset($chargeHeads['ENERGY CHARGE']['result']) ? number_format($chargeHeads['ENERGY CHARGE']['result'], 2) : 0 }}</td>
-            </tr>
-
-
-
-            <tr>
-              <td>3. PF Incentive / Disincentive</td>
-              <td></td>
-              <td></td>
-              <td class="right">{{$chargeHeads['Power Factor Incentive and Disincentive']['result'] ?? 0}}</td>
-            </tr>
-            @php
-            $totalEnergyCharge =
-            ($chargeHeads['ENERGY CHARGE']['result'] ?? 0)
-            + ($chargeHeads['Power Factor Incentive and Disincentive']['result'] ?? 0);
-            @endphp
-            <tr class="total-row">
-              <td>Total Energy Charge</td>
-              <td></td>
-              <td></td>
-              <td class="right">{{ isset($totalEnergyCharge) ? number_format($totalEnergyCharge, 2) : 0 }}</td>
-            </tr>
-
-            <tr>
-              <td colspan="4"></td>
-            </tr>
-            <tr>
-              <td>4. Energy Charges on Lighting load</td>
-              <td></td>
-              <td></td>
-              <td class="right">-0.00</td>
-            </tr>
-            <tr class="total-row">
-              <td>Total (add 1 to 9)</td>
-              <td></td>
-              <td></td>
-              <td class="right">{{ isset($totalEnergyCharge) ? number_format($totalEnergyCharge, 2) : 0 }}</td>
-            </tr>
-
-          </table>
-        </td>
-
-        <!-- RIGHT SIDE -->
-        <td width="35%" style="vertical-align: top;">
-          <table class="grid">
-            <tr>
-              <th>Other Charges</th>
-              <th class="right">Amount</th>
-            </tr>
-
-            <tr>
-              <td>Reconnection Fee</td>
-              <td class="right">0.00</td>
-            </tr>
-            <tr>
-              <td>Charges for Belated Payments</td>
-              <td class="right">0.00</td>
-            </tr>
-            <tr>
-              <td>Monthly Fuel Surcharge</td>
-              <td class="right">{{ isset($chargeHeads['Monthly Fuel Surcharge']['result']) ? number_format($chargeHeads['Monthly Fuel Surcharge']['result'], 2) : '-' }}</td>
-            </tr>
-            <tr>
-              <td>Green Energy Charge</td>
-              <td class="right">0.00</td>
-            </tr>
-
-            <tr class="total-row">
-              <td>UnDisputed Arr Amount</td>
-              <td class="right">00.00</td>
-            </tr>
-
-            <tr>
-              <td>Electricity Duty</td>
-              <td class="right"> {{ isset($chargeHeads['Electricity Duty']['result'])
-            ? number_format($chargeHeads['Electricity Duty']['result'], 2)
-            : '-' }}</td>
-            </tr>
-            <tr>
-              <td>Ele. Surcharge</td>
-              <td class="right">{{ isset($chargeHeads['Electricity Surcharge']['result']) ? number_format($chargeHeads['Electricity Surcharge']['result'], 2) : '-' }}</td>
-            </tr>
-
-            <tr class="total-row">
-              <td>Net Payable</td>
-              <td class="right">{{ isset($bill['bill_amount']) ? number_format($bill['bill_amount'], 2) : 0 }}</td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
 
     <div class="footer">
       <i>(Rupees {{ $bill['bill_amount'] ?? '-' }} Only)</i>

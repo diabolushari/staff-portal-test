@@ -40,11 +40,11 @@ class BillingPdfController extends Controller
         $averageAndTotalKwh = $this->billExportService->getAverageAndTotalKwh($kwhValues);
         $demand = $this->billExportService->calculateDemand($kvaValues, $bill->data['connection']['contract_demand_kva_val'] ?? null);
         $pdf = Pdf::loadView('billing/bill-template', [
-            'filteredkVAs' => $kvaValues ?? [],
-            'filteredKVAhs' => $kvahValues ?? [],
-            'filteredkWhs' => $kwhValues ?? [],
-            'filteredLags' => $lagValues ?? [],
-            'filteredLeads' => $leadValues ?? [],
+            'kvaValues' => $kvaValues ?? [],
+            'kvahValues' => $kvahValues ?? [],
+            'kwhValues' => $kwhValues ?? [],
+            'lagValues' => $lagValues ?? [],
+            'leadValues' => $leadValues ?? [],
             'bill' => $bill->data ?? [],
             'connection' => $bill->data['connection'] ?? [],
             'consumer' => $bill->data['connection']['consumer_profiles'][0] ?? [],
