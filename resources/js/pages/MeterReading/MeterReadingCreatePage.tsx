@@ -137,10 +137,10 @@ export default function MeterReadingCreatePage({
       return dayjs(energyMeter.energise_date).format('YYYY-MM-DD')
     }
 
-    // 2️⃣ Otherwise take the latest energised_date
+    // 2️⃣ Otherwise take the first energised_date
     const latestMeter = meterMappings
       .filter((m) => m.energise_date)
-      .sort((a, b) => dayjs(b.energise_date!).valueOf() - dayjs(a.energise_date!).valueOf())[0]
+      .sort((a, b) => dayjs(a.energise_date!).valueOf() - dayjs(b.energise_date!).valueOf())[0]
 
     return latestMeter?.energise_date ? dayjs(latestMeter.energise_date).format('YYYY-MM-DD') : ''
   }
