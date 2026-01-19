@@ -50,6 +50,40 @@ export interface ComputedProperties {
   excess_demand_charge: ComputedProperty
   power_factor: ComputedProperty
   zone_with_max_demand_value: ComputedProperty
+  _130_of_contract_demand: ComputedProperty
+  total_consumption_factory_lighting: ComputedProperty
+  total_consumption_colony_lighting: ComputedProperty
+  total_consumption_generator: ComputedProperty
+  excess_demand_rate: ComputedProperty
+  energy_charge_rates: ComputedProperty
+  electricity_surcharge_rate: ComputedProperty
+  self_generation_duty_rate: ComputedProperty
+}
+
+export interface TotalDemandChargeRow {
+  label: string
+  units: number
+  rate: number
+  amount: number
+}
+
+export interface TotalEnergyChargeRow {
+  label: string
+  units: number
+  rate: {
+    result: number
+    zoneId: number | null
+  }
+  amount: number
+}
+export interface TotalEnergyCharge {
+  title: string
+  rows: TotalEnergyChargeRow[]
+}
+
+export interface TotalDemandCharge {
+  title: string
+  rows: TotalDemandChargeRow[]
 }
 
 export interface ChargeHeads {
@@ -59,4 +93,6 @@ export interface ChargeHeads {
   monthly_fuel_surcharge: ChargeHeadItem
   power_factor_incentive_and_disincentive: ChargeHeadItem
   total_demand_charge: ChargeHeadItem
+  green_energy_charge: ChargeHeadItem
+  self_generation_duty: ChargeHeadItem
 }

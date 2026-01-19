@@ -180,6 +180,91 @@ class BillExportService
         ];
     }
 
+    public function getTotolDemandChargeRows(?array $computed): array
+    {
+        if (empty($computed)) {
+            return [];
+        }
+
+        $excessDemand = $computed['excess_demand'];
+        $zoneMaxDemand = $computed['zone_with_max_demand_value'] ?? [];
+        $contract75 = $computed['75_of_contract_demand'] ?? [];
+        $demandRate = $computed['kva_rate']['result'] ?? 0;
+        $excessDemandRate = $computed['excess_demand_rate']['result'] ?? 0;
+
+        if (!$excessDemand || empty($excessDemand['result'])) {
+            return [];
+        }
+
+        $rows = [];
+        $zonesCount = count($excessDemand['result']);
+
+        $useContractDemand =
+            empty($zoneMaxDemand['result']) ||
+            $zoneMaxDemand['result'] === 'Contract Demand';
+
+        foreach ($excessDemand['result'] as $index => $zoneData) {
+
+            $zoneId = $zoneData['zoneId'] ?? $index;
+
+            // ---------- Demand Charge (Normal / Peak / Off-Peak) ----------
+            $demandUnits = $useContractDemand
+                ? (float) ($contract75['result'] ?? 0)
+                : $zoneMaxDemand['result'];
+
+
+            $rows[] = [
+                'label' => $this->getZoneLabel($index, 'Demand Charge'),
+                'zone' => $zoneId,
+                'units' => $demandUnits,
+                'rate' => $demandRate,
+                'amount' => 0
+            ];
+
+            // ---------- Excess Demand Charge ----------
+            $excessUnits = (float) ($zoneData['result'] ?? 0);
+
+
+            $rows[] = [
+                'label' => $this->getZoneLabel($index, 'Excess Demand Charge'),
+                'zone' => $zoneId,
+                'units' => $excessUnits,
+                'rate' => $excessDemandRate,
+                'amount' => 0
+            ];
+        }
+
+        return [
+            'title' => 'Total Demand Charge',
+            'rows' => $rows,
+        ];
+    }
+
+    public function getTotalEnergyChargeRows(array $computed, array $kwhValues): ?array
+    {
+
+        if (empty($computed) || empty($kwhValues)) {
+            return [];
+        }
+        $totalEnergyChargeRows = [];
+        $energyCharges = $computed['energy_charges'];
+        $energyChargeRates = $computed['energy_charge_rates'];
+        foreach ($energyCharges['result'] as $index => $zoneData) {
+            $zoneId = $zoneData['zoneId'] ?? $index;
+            $totalEnergyChargeRows[] = [
+                'label' => $this->getZoneLabel($index, 'Energy Charge'),
+                'zone' => $zoneId,
+                'units' => $kwhValues[$index]['value'],
+                'rate' => $energyChargeRates['result'][$index],
+                'amount' => $zoneData['result']
+            ];
+        }
+        return [
+            'title' => 'Total Energy Charge',
+            'rows' => $totalEnergyChargeRows,
+        ];
+    }
+
     public function getAverageAndTotalKva(?array $filteredkVAs): ?array
     {
         if (empty($filteredkVAs)) {
@@ -285,5 +370,15 @@ class BillExportService
         return strtolower(
             preg_replace('/[^a-z0-9]+/i', '_', trim($value))
         );
+    }
+
+    private function getZoneLabel(int $index, string $base): string
+    {
+        return match ($index) {
+            0 => "{$base} - Normal",
+            1 => "{$base} - Peak",
+            2 => "{$base} - Off Peak",
+            default => "{$base} - Zone {$index}",
+        };
     }
 }

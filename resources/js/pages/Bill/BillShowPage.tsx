@@ -16,6 +16,8 @@ import {
   ChargeHeads,
   ComputedProperties,
   MeterWithMf,
+  TotalDemandCharge,
+  TotalEnergyCharge,
 } from '@/interfaces/bill_pdf_interfaces'
 
 interface BillShowPageProps {
@@ -29,6 +31,10 @@ interface BillShowPageProps {
   leadValues: BillMeterReadings[]
   chargeHeads: ChargeHeads
   computedProperties: ComputedProperties
+  totalDemandCharge: TotalDemandCharge
+  totalEnergyCharge: TotalEnergyCharge
+  averageAndTotalKva: { totalKva: number; averageKva: number }
+  averageAndTotalKwh: { averageKwh: number; totalKwh: number }
 }
 
 export default function BillShowPage({
@@ -42,6 +48,10 @@ export default function BillShowPage({
   leadValues,
   chargeHeads,
   computedProperties,
+  totalDemandCharge,
+  totalEnergyCharge,
+  averageAndTotalKva,
+  averageAndTotalKwh,
 }: BillShowPageProps) {
   const mf = meter?.meter_mf ?? 1
   console.log(computedProperties, 'computedProperties', chargeHeads, 'chargeHeads', meter, 'mf')
@@ -100,7 +110,16 @@ export default function BillShowPage({
           />
 
           {/* Final Charges */}
-          <BillInvoice chargeHeads={chargeHeads} />
+          <BillInvoice
+            chargeHeads={chargeHeads}
+            totalDemandChargeRows={totalDemandCharge}
+            totalEnergyChargeRows={totalEnergyCharge}
+            bill={bill}
+            computedProperties={computedProperties}
+            averageAndTotalKva={averageAndTotalKva}
+            averageAndTotalKwh={averageAndTotalKwh}
+            mf={mf}
+          />
 
           <div className='mt-6 text-center italic'>(Rupees {bill?.bill_amount ?? '-'})</div>
 

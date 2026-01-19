@@ -6,10 +6,41 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { ChargeHeads } from '@/interfaces/bill_pdf_interfaces'
+import {
+  ChargeHeads,
+  ComputedProperties,
+  TotalDemandCharge,
+  TotalDemandChargeRow,
+  TotalEnergyCharge,
+} from '@/interfaces/bill_pdf_interfaces'
+import { Bill } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 
-export default function BillInvoice({ chargeHeads }: { chargeHeads: ChargeHeads }) {
+export default function BillInvoice({
+  chargeHeads,
+  totalDemandChargeRows,
+  totalEnergyChargeRows,
+  bill,
+  computedProperties,
+  averageAndTotalKva,
+  averageAndTotalKwh,
+  mf,
+}: {
+  chargeHeads: ChargeHeads
+  totalDemandChargeRows: TotalDemandCharge
+  totalEnergyChargeRows: TotalEnergyCharge
+  bill: Bill
+  computedProperties: ComputedProperties
+  averageAndTotalKva: { averageKva: number; totalKva: number }
+  averageAndTotalKwh: { averageKwh: number; totalKwh: number }
+  mf: number
+}) {
+  const roundedOffAmount = (amount: number): { updatedAmount: number; roundOff: number } => {
+    const roundedAmount = Math.round(amount)
+    const roundOff = roundedAmount - amount
+    return { updatedAmount: roundedAmount, roundOff }
+  }
+
   return (
     <>
       <div className='flex items-center justify-center border border-black'>
@@ -38,17 +69,20 @@ export default function BillInvoice({ chargeHeads }: { chargeHeads: ChargeHeads 
                   1.Total Demand Charge
                 </TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell
-                  colSpan={2}
-                  className='border border-black'
-                >
-                  Timezone
-                </TableCell>
-                <TableCell className='border border-black'>Unit</TableCell>
-                <TableCell className='border border-black'>Rate</TableCell>
-                <TableCell className='border border-black'>Amount(Rs)</TableCell>
-              </TableRow>
+              {totalDemandChargeRows.rows?.map((row, index) => (
+                <TableRow key={index}>
+                  <TableCell
+                    colSpan={2}
+                    className='border border-black'
+                  >
+                    {row?.label}
+                  </TableCell>
+                  <TableCell className='border border-black'>{row?.units}</TableCell>
+                  <TableCell className='border border-black'>{row?.rate}</TableCell>
+                  <TableCell className='border border-black'>{row?.amount}</TableCell>
+                </TableRow>
+              ))}
+
               <TableRow>
                 <TableCell
                   className='border border-black font-bold'
@@ -71,17 +105,20 @@ export default function BillInvoice({ chargeHeads }: { chargeHeads: ChargeHeads 
                   2.Total Energy Charges
                 </TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell
-                  colSpan={2}
-                  className='border border-black'
-                >
-                  Timezone
-                </TableCell>
-                <TableCell className='border border-black'>Unit</TableCell>
-                <TableCell className='border border-black'>Rate</TableCell>
-                <TableCell className='border border-black'>Amount(Rs)</TableCell>
-              </TableRow>
+
+              {totalEnergyChargeRows?.rows?.map((row, index) => (
+                <TableRow key={index}>
+                  <TableCell
+                    colSpan={2}
+                    className='border border-black'
+                  >
+                    {row?.label}
+                  </TableCell>
+                  <TableCell className='border border-black'>{row?.units}</TableCell>
+                  <TableCell className='border border-black'>{row?.rate?.result}</TableCell>
+                  <TableCell className='border border-black'>{row?.amount}</TableCell>
+                </TableRow>
+              ))}
               <TableRow>
                 <TableCell
                   className='border border-black font-bold'
@@ -171,9 +208,15 @@ export default function BillInvoice({ chargeHeads }: { chargeHeads: ChargeHeads 
                 >
                   5. Electricity Duty
                 </TableCell>
-                <TableCell className='border border-black'>Unit</TableCell>
-                <TableCell className='border border-black'>Rate</TableCell>
-                <TableCell className='border border-black'>Amount(Rs)</TableCell>
+                <TableCell className='border border-black'>
+                  {chargeHeads.energy_charge.result}
+                </TableCell>
+                <TableCell className='border border-black'>
+                  {computedProperties?.electricity_duty_rate?.result ?? '-'}
+                </TableCell>
+                <TableCell className='border border-black'>
+                  {chargeHeads.electricity_duty.result}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell
@@ -182,9 +225,15 @@ export default function BillInvoice({ chargeHeads }: { chargeHeads: ChargeHeads 
                 >
                   6.Ele. Surcharge(*)
                 </TableCell>
-                <TableCell className='border border-black'>Unit</TableCell>
-                <TableCell className='border border-black'>Rate</TableCell>
-                <TableCell className='border border-black'>Amount(Rs)</TableCell>
+                <TableCell className='border border-black'>
+                  {averageAndTotalKwh?.totalKwh * mf}
+                </TableCell>
+                <TableCell className='border border-black'>
+                  {computedProperties?.electricity_surcharge_rate?.result ?? '-'}
+                </TableCell>
+                <TableCell className='border border-black'>
+                  {chargeHeads.electricity_surcharge.result}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell
@@ -193,9 +242,11 @@ export default function BillInvoice({ chargeHeads }: { chargeHeads: ChargeHeads 
                 >
                   7. Duty On Self Generated Energy
                 </TableCell>
-                <TableCell className='border border-black'>Unit</TableCell>
-                <TableCell className='border border-black'>Rate</TableCell>
-                <TableCell className='border border-black'>Amount(Rs)</TableCell>
+                <TableCell className='border border-black'>0</TableCell>
+                <TableCell className='border border-black'>
+                  {computedProperties?.self_generation_duty_rate?.result ?? '-'}
+                </TableCell>
+                <TableCell className='border border-black'>0.00</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell
@@ -240,33 +291,12 @@ export default function BillInvoice({ chargeHeads }: { chargeHeads: ChargeHeads 
               </TableCell>
               <TableCell className='border border-black text-right'>0.00</TableCell>
             </TableRow>
-
-            <TableRow>
-              <TableCell
-                colSpan={2}
-                className='border border-black'
-              >
-                Charges for Belated Payments
-              </TableCell>
-              <TableCell className='border border-black text-right'>1587.00</TableCell>
-            </TableRow>
-
             <TableRow>
               <TableCell
                 colSpan={2}
                 className='border border-black'
               >
                 LOW_VOLT_SUR
-              </TableCell>
-              <TableCell className='border border-black text-right'>117705.00</TableCell>
-            </TableRow>
-
-            <TableRow>
-              <TableCell
-                colSpan={2}
-                className='border border-black'
-              >
-                Monthly Fuel Surcharge
               </TableCell>
               <TableCell className='border border-black text-right'>0.00</TableCell>
             </TableRow>
@@ -276,9 +306,37 @@ export default function BillInvoice({ chargeHeads }: { chargeHeads: ChargeHeads 
                 colSpan={2}
                 className='border border-black'
               >
+                Charges for Belated Payments
+              </TableCell>
+              <TableCell className='border border-black text-right'>0.00</TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell
+                colSpan={2}
+                className='border border-black'
+              >
+                Monthly Fuel Surcharge
+              </TableCell>
+              <TableCell className='border border-black text-right'>
+                {Number(chargeHeads?.monthly_fuel_surcharge?.result)
+                  ? Number(chargeHeads?.monthly_fuel_surcharge?.result).toFixed(2)
+                  : '-'}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell
+                colSpan={2}
+                className='border border-black'
+              >
                 Green Energy Charge
               </TableCell>
-              <TableCell className='border border-black text-right'>14622.30</TableCell>
+              <TableCell className='border border-black text-right'>
+                {Number(chargeHeads?.green_energy_charge?.result)
+                  ? Number(chargeHeads?.green_energy_charge?.result).toFixed(2)
+                  : '-'}
+              </TableCell>
             </TableRow>
 
             {/* Spacer rows like printed bill */}
@@ -297,7 +355,9 @@ export default function BillInvoice({ chargeHeads }: { chargeHeads: ChargeHeads 
               >
                 10. Total (add 1 to 9)
               </TableCell>
-              <TableCell className='border border-black text-right font-bold'>334125.93</TableCell>
+              <TableCell className='border border-black text-right font-bold'>
+                {Number(bill?.bill_amount) ? Number(bill?.bill_amount).toFixed(2) : '-'}
+              </TableCell>
             </TableRow>
 
             <TableRow>
@@ -307,7 +367,9 @@ export default function BillInvoice({ chargeHeads }: { chargeHeads: ChargeHeads 
               >
                 Plus / Minus (Round off)
               </TableCell>
-              <TableCell className='border border-black text-right'>0.07</TableCell>
+              <TableCell className='border border-black text-right'>
+                {bill.bill_amount ? roundedOffAmount(Number(bill.bill_amount)).roundOff : '-'}
+              </TableCell>
             </TableRow>
 
             <TableRow>
@@ -317,7 +379,7 @@ export default function BillInvoice({ chargeHeads }: { chargeHeads: ChargeHeads 
               >
                 UnDisputed Arr Amount
               </TableCell>
-              <TableCell className='border border-black text-right'>1096.00</TableCell>
+              <TableCell className='border border-black text-right'>0.00</TableCell>
             </TableRow>
 
             <TableRow>
@@ -360,7 +422,9 @@ export default function BillInvoice({ chargeHeads }: { chargeHeads: ChargeHeads 
               >
                 Net Payable
               </TableCell>
-              <TableCell className='border border-black text-right'>335222.00</TableCell>
+              <TableCell className='border border-black text-right'>
+                {bill.bill_amount ? roundedOffAmount(Number(bill.bill_amount)).updatedAmount : '-'}
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>

@@ -146,12 +146,10 @@ export default function MeterReadingCreatePage({
   }
 
   const isFirstReading = useMemo(() => {
-    console.log(latestMeterReading, 'latestMeterReading')
     return latestMeterReading == null
   }, [latestMeterReading])
 
   const readingStartDate = useMemo(() => {
-    console.log(isFirstReading, 'firs treading, connection: ', connectionWithConsumer)
     if (isFirstReading) {
       return getMeterEnergisedDate(connectionWithConsumer?.connection?.meter_mappings ?? [])
     }
