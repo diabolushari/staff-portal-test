@@ -129,7 +129,7 @@ export default function MeterReadingCreatePage({
     // 1️⃣ Try ENERGY_CONSUMPTION meter first
     const energyMeter = meterMappings.find(
       (m) =>
-        m.meter_use_category?.parameter_value?.toLowerCase() === 'energy_consumption' &&
+        m.meter_use_category?.parameter_value?.toLowerCase() === 'energy consumption' &&
         m.energise_date
     )
 
