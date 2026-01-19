@@ -2,13 +2,14 @@
 
 namespace App\Services\Billing;
 
-use App\GrpcConverters\Billing\BillProtoConverter;
+use App\GrpcConverters\Billing\BillGenerationJobConverter;
 use App\Http\Requests\Billing\BillInitializeFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
 use Proto\Billing\BillInitializeRequest;
+use Proto\Billing\BillInitializeResponse;
 use Proto\Billing\BillInitializeServiceClient;
 
 class BillInitializeService
@@ -27,11 +28,11 @@ class BillInitializeService
     {
         $proto = new BillInitializeRequest;
         $proto->setConnectionIds($request->connectionIds);
-        $billMonth = DateTimeConverter::convertStringToTimestamp($request->billMonthYear . '-01 12:00:00');
+        $billMonth = DateTimeConverter::convertStringToTimestamp($request->billMonthYear.'-01 12:00:00');
         if ($billMonth != null) {
             $proto->setBillMonthYear($billMonth);
         }
-        $readingMonth = DateTimeConverter::convertStringToTimestamp($request->readingMonthYear . '-01 12:00:00');
+        $readingMonth = DateTimeConverter::convertStringToTimestamp($request->readingMonthYear.'-01 12:00:00');
         if ($readingMonth != null) {
             $proto->setReadingMonthYear($readingMonth);
         }
@@ -40,6 +41,7 @@ class BillInitializeService
             $proto->setBillDate($request->billDate);
         }
         $proto->setBillingGroupId($request->billingGroupId);
+        /** @var BillInitializeResponse $response */
         [$response, $status] = $this->client->InitializeBill($proto)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -50,12 +52,13 @@ class BillInitializeService
             );
         }
 
-        $bills = $response->getBills();
-        $billsArray = [];
-        foreach ($bills as $bill) {
-            $billsArray[] = BillProtoConverter::convertToBill($bill);
-        }
+        $job = $response->getBillGenerationJob();
 
-        return GrpcServiceResponse::success($billsArray, $response, $status->code, $status->details);
+        return GrpcServiceResponse::success(
+            BillGenerationJobConverter::convertToArray($job),
+            $response,
+            $status->code,
+            $status->details
+        );
     }
 }

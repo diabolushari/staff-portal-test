@@ -7,7 +7,7 @@ option php_metadata_namespace = "GPBMetadata";
 
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
-import "billinggroup/bill.proto";
+import "billgenerationjob/bill_generation_job.proto";
 
 message BillInitializeRequest {
   repeated int32 connection_ids = 1;
@@ -18,7 +18,7 @@ message BillInitializeRequest {
 }
 
 message BillInitializeResponse {
-  repeated com.kseb.consumerservice.proto.billinggroup.BillMessage bills = 1;
+  com.kseb.consumerservice.proto.billgenerationjob.BillGenerationJobMessage bill_generation_job = 1;
 }
 
 service BillInitializeService {

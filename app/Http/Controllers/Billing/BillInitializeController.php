@@ -26,10 +26,9 @@ class BillInitializeController extends Controller
         }
 
         return redirect()->route('job-status.show', [
-            'job_status' => $request->billingGroupId ?? null,
-            'bill_year_month' => $request->billMonthYear.'-01',
-            'reading_year_month' => $request->readingMonthYear.'-01',
-            'initialized_date' => now()->format('Y-m-d'),
-        ])->with(['message' => 'Bill initialized successfully']);
+            'job_status' => $response->data['id'] ?? null,
+        ])->with([
+            'message' => 'Bill initialized successfully',
+        ]);
     }
 }

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\BillingCycle;
 use App\Http\Controllers\Controller;
 use App\Services\Billing\BillService;
 use App\Services\BillingGroup\BillGenerationJobService;
-use App\Services\BillingGroup\BillingGenerateJobService;
 use App\Services\BillingGroup\BillingGroupService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -53,6 +52,7 @@ class BillJobStatusController extends Controller
     public function show(int $id, Request $request): Response
     {
         $response = $this->billingGenerateJobService->getBillGenerationJob($id);
+
         return Inertia::render('BillingCycle/BillJobStatusShowPage', [
             'data' => $response->data ?? [],
         ]);
