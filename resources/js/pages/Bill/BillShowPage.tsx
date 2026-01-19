@@ -1,34 +1,34 @@
-import MainLayout from '@/layouts/main-layout'
 import { billingNavItems } from '@/components/Navbar/navitems'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
+import MainLayout from '@/layouts/main-layout'
 
-import Button from '@/ui/button/Button'
-import { getDisplayMonthYear } from '@/utils'
-import { Bill, Connection, Consumer, Meter } from '@/interfaces/data_interfaces'
-import StrongText from '@/typography/StrongText'
-import NormalText from '@/typography/NormalText'
-import BillSummary from '@/components/Billing/Bill/BillSummary'
 import BillArrears from '@/components/Billing/Bill/BillArrears'
-import BillReadingDetails from '@/components/Billing/Bill/BillReadingDetails'
 import BillInvoice from '@/components/Billing/Bill/BillInvoice'
+import BillReadingDetails from '@/components/Billing/Bill/BillReadingDetails'
+import BillSummary from '@/components/Billing/Bill/BillSummary'
 import {
-  BillMeterReadings,
+  BillMeterReading,
   ChargeHeads,
   ComputedProperties,
   MeterWithMf,
   TotalDemandCharge,
   TotalEnergyCharge,
 } from '@/interfaces/bill_pdf_interfaces'
+import { Bill, Connection } from '@/interfaces/data_interfaces'
+import NormalText from '@/typography/NormalText'
+import StrongText from '@/typography/StrongText'
+import Button from '@/ui/button/Button'
+import { getDisplayMonthYear } from '@/utils'
 
 interface BillShowPageProps {
   bill: Bill
   meter: MeterWithMf
   connection: Connection
-  kwhValues: BillMeterReadings[]
-  kvahValues: BillMeterReadings[]
-  kvaValues: BillMeterReadings[]
-  lagValues: BillMeterReadings[]
-  leadValues: BillMeterReadings[]
+  kwhValues: BillMeterReading[]
+  kvahValues: BillMeterReading[]
+  kvaValues: BillMeterReading[]
+  lagValues: BillMeterReading[]
+  leadValues: BillMeterReading[]
   chargeHeads: ChargeHeads
   computedProperties: ComputedProperties
   totalDemandCharge: TotalDemandCharge
@@ -54,7 +54,7 @@ export default function BillShowPage({
   averageAndTotalKwh,
 }: BillShowPageProps) {
   const mf = meter?.meter_mf ?? 1
-  console.log(computedProperties, 'computedProperties', chargeHeads, 'chargeHeads', meter, 'mf')
+
   return (
     <MainLayout
       navItems={billingNavItems}

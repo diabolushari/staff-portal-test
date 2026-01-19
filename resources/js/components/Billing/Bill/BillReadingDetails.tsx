@@ -1,4 +1,3 @@
-import { getDisplayMonthYear } from '@/utils'
 import {
   Table,
   TableBody,
@@ -7,17 +6,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { BillMeterReadings, MeterWithMf } from '@/interfaces/bill_pdf_interfaces'
+import { BillMeterReading, MeterWithMf } from '@/interfaces/bill_pdf_interfaces'
 import { Bill } from '@/interfaces/data_interfaces'
+import { getDisplayMonthYear } from '@/utils'
 
 interface BillReadingDetailsProps {
   bill: Bill
   meter: MeterWithMf
-  kwhValues: BillMeterReadings[]
-  kvahValues: BillMeterReadings[]
-  kvaValues: BillMeterReadings[]
-  lagValues: BillMeterReadings[]
-  leadValues: BillMeterReadings[]
+  kwhValues: BillMeterReading[]
+  kvahValues: BillMeterReading[]
+  kvaValues: BillMeterReading[]
+  lagValues: BillMeterReading[]
+  leadValues: BillMeterReading[]
 }
 
 export default function BillReadingDetails({
@@ -28,7 +28,7 @@ export default function BillReadingDetails({
   kvaValues,
   lagValues,
   leadValues,
-}: BillReadingDetailsProps) {
+}: Readonly<BillReadingDetailsProps>) {
   const mf = meter?.meter_mf ?? 1
   return (
     <div className='mb-4 border border-black p-3 text-xs'>
@@ -91,9 +91,6 @@ export default function BillReadingDetails({
 
           <TableBody>
             {kwhValues?.map((kwh, i) => {
-              const lag = lagValues?.[i] ?? {}
-              const lead = leadValues?.[i] ?? {}
-
               return (
                 <TableRow key={i}>
                   {/* kWh */}
@@ -119,13 +116,13 @@ export default function BillReadingDetails({
                     colSpan={2}
                     className='border border-black text-center'
                   >
-                    {mf}
+                    {kwh?.meter_mf}
                   </TableCell>
                   <TableCell
                     colSpan={2}
                     className='border border-black text-right'
                   >
-                    {(kwh?.difference ?? 0) * mf}
+                    {kwh.value}
                   </TableCell>
 
                   {/* kVARh LAG */}
@@ -146,7 +143,7 @@ export default function BillReadingDetails({
                 colSpan={2}
                 className='border border-black text-right'
               >
-                {kwhValues?.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0)}
+                {kwhValues?.reduce((s, r) => s + (r?.value ?? 0), 0)}
               </TableCell>
             </TableRow>
           </TableBody>
@@ -189,9 +186,9 @@ export default function BillReadingDetails({
                   <TableCell className='border border-black'>{i + 1}</TableCell>
                   <TableCell className='border border-black'>{lag?.final_reading ?? 0}</TableCell>
                   <TableCell className='border border-black'>{lag?.initial_reading ?? 0}</TableCell>
-                  <TableCell className='border border-black'>{mf}</TableCell>
+                  <TableCell className='border border-black'>{lag?.meter_mf}</TableCell>
                   <TableCell className='border border-black text-right'>
-                    {(lag?.difference ?? 0) * mf}
+                    {lag?.value ?? 0}
                   </TableCell>
 
                   {/* kVARh LEAD */}
@@ -202,7 +199,7 @@ export default function BillReadingDetails({
                     {lead?.initial_reading ?? 0}
                   </TableCell>
                   <TableCell className='border border-black text-right'>
-                    {(lead?.difference ?? 0) * mf}
+                    {lead?.value ?? 0}
                   </TableCell>
                 </TableRow>
               )
@@ -216,7 +213,7 @@ export default function BillReadingDetails({
                 Total kVARh (Lag)
               </TableCell>
               <TableCell className='border border-black text-right'>
-                {lagValues?.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0)}
+                {lagValues?.reduce((s, r) => s + (r?.value ?? 0), 0)}
               </TableCell>
 
               {/* kVARh Lead total */}
@@ -230,7 +227,7 @@ export default function BillReadingDetails({
                 colSpan={3}
                 className='border border-black text-right'
               >
-                {leadValues?.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0)}
+                {leadValues?.reduce((s, r) => s + (r?.value ?? 0), 0)}
               </TableCell>
             </TableRow>
           </TableBody>
@@ -272,10 +269,8 @@ export default function BillReadingDetails({
                   <TableCell className='border border-black'>
                     {kvah?.initial_reading ?? '-'}
                   </TableCell>
-                  <TableCell className='border border-black'>{mf}</TableCell>
-                  <TableCell className='border border-black'>
-                    {(kvah?.difference ?? 0) * mf}
-                  </TableCell>
+                  <TableCell className='border border-black'>{kvah?.meter_mf}</TableCell>
+                  <TableCell className='border border-black'>{kvah?.value ?? 0}</TableCell>
                 </TableRow>
               )
             })}
@@ -315,10 +310,8 @@ export default function BillReadingDetails({
                   <TableCell className='border border-black text-center'>
                     {kva?.final_reading ?? '-'}
                   </TableCell>
-                  <TableCell className='border border-black'>{mf}</TableCell>
-                  <TableCell className='border border-black'>
-                    {kva?.final_reading ? (kva.final_reading * mf).toFixed(2) : '-'}
-                  </TableCell>
+                  <TableCell className='border border-black'>{kva.meter_mf}</TableCell>
+                  <TableCell className='border border-black'>{kva.value.toFixed(2) ?? 0}</TableCell>
                 </TableRow>
               )
             })}
@@ -329,7 +322,7 @@ export default function BillReadingDetails({
               >
                 5. Factory lighting
               </TableCell>
-              <TableCell className='border border-black'>--</TableCell>
+              <TableCell className='border border-black'>0</TableCell>
             </TableRow>
             <TableRow className='bg-gray-100 font-bold'>
               <TableCell
@@ -338,7 +331,7 @@ export default function BillReadingDetails({
               >
                 6. Colony lighting
               </TableCell>
-              <TableCell className='border border-black'>--</TableCell>
+              <TableCell className='border border-black'>0</TableCell>
             </TableRow>
             <TableRow className='bg-gray-100 font-bold'>
               <TableCell
@@ -347,7 +340,7 @@ export default function BillReadingDetails({
               >
                 7. Generator
               </TableCell>
-              <TableCell className='border border-black'>--</TableCell>
+              <TableCell className='border border-black'>0</TableCell>
             </TableRow>
           </TableBody>
         </Table>

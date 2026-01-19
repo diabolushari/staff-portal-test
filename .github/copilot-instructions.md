@@ -1,402 +1,49 @@
-# KSEB Staff Portal - AI Coding Assistant Instructions
-
-## Architecture Overview
-
-This is a **Laravel + React (Inertia.js) + gRPC microservices** application for KSEB (Kerala State Electricity Board) staff portal. The frontend is React with TypeScript, backend is Laravel PHP, and communication with external services happens via gRPC.
-
-### Key Architectural Patterns
-
-- **Frontend**: React + TypeScript + Inertia.js (SPA-like with server-side routing)
-- **Backend**: Laravel 12 with gRPC client integration
-- **Protocol Buffers**: `.proto` files in `protos/` generate PHP classes in `generated/`
-- **Styling**: TailwindCSS v4 + Radix UI components
-- **Testing**: Pest PHP testing framework
-
-## Development Workflow
-
-### gRPC Code Generation
-
-- **Always run** `./scripts/generate-grpc.sh` after modifying `.proto` files
-- Generated PHP classes go to `generated/Proto/` and `generated/GPBMetadata/`
-- The script automatically refreshes Composer autoloader
-
-### Development Server
-
-```bash
-# Start all services (server, queue, logs, vite)
-composer dev
-
-# With SSR
-composer dev:ssr
-```
-
-### Frontend Development
-
-- Pages are in `resources/js/pages/` following Inertia conventions
-- Use `npm run dev` for hot reloading
-- Components follow TailwindCSS + Radix UI patterns
-
-## Critical Code Patterns
-
-### gRPC Client Pattern
-
-Controllers instantiate gRPC clients in `__construct()`:
-
-```php
-public function __construct()
-{
-    $this->client = new ParameterDefinitionServiceClient(env('GRPC_HOST'), [
-        'credentials' => ChannelCredentials::createInsecure()
-    ]);
-}
-```
-
-### gRPC Error Handling
-
-Use `GrpcErrorHandler::extractError($status)` to parse structured gRPC errors from `grpc-status-details-bin` metadata. Supports Google's standard error types (`ErrorInfo`, `BadRequest`).
-
-### Inertia Data Flow
-
-Controllers return Inertia responses:
-
-```php
-return Inertia::render('Parameters/ParameterDefinition/ParameterDefinitionIndex', [
-    'parameterDefinitions' => $parameterDefinitions,
-]);
-```
-
-### Proto Message Mapping
-
-Manual mapping between Laravel requests and Protocol Buffer messages:
-
-```php
-$definition = new ParameterDefinitionProto();
-$definition->setParameterName($request->parameterName);
-// ... more setters
-```
-
-## File Organization
-
-- **Controllers**: Domain-organized in `app/Http/Controllers/{Domain}/`
-- **gRPC Services**: `app/Services/Grpc/`
-- **Proto Definitions**: `protos/{domain}/` (e.g., `protos/parameters/`)
-- **Generated Classes**: `generated/Proto/{Domain}/` and `generated/GPBMetadata/`
-- **Frontend Pages**: `resources/js/pages/{Domain}/`
-- **Form Requests**: `app/Http/Requests/{Domain}/`
-
-## Key Dependencies
-
-- **gRPC**: `grpc/grpc`, `google/protobuf`, `google/common-protos`
-- **Frontend**: `@inertiajs/react`, `@radix-ui/*`, TailwindCSS v4
-- **Laravel**: Inertia.js, Spatie Laravel Data, Ziggy (route helpers)
-- **Testing**: Pest PHP with Laravel plugin
-
-## Environment Requirements
-
-- PHP 8.2+ with `ext-grpc` extension
-- `protoc` compiler and `grpc_php_plugin` for code generation
-- Node.js for frontend tooling
-
-## Common Tasks
-
-1. **Adding new gRPC service**: Create `.proto` → run `generate-grpc.sh` → create controller → create Inertia pages
-2. **Frontend components**: Use existing Radix UI patterns and TailwindCSS utilities
-3. **Testing**: Use Pest syntax with Laravel-specific helpers
-4. **Debugging**: Check `php artisan pail` logs for real-time application logs
-
-## Naming Conventions
-
-- **Proto packages**: `com.kseb.consumerservice.proto.{domain}`
-- **PHP namespaces**: `Proto\{Domain}` for generated classes
-- **Controllers**: `{Entity}Controller` in domain folders
-- **Inertia pages**: `{Domain}/{Entity}/{Action}` structure
-
-===
-
-<laravel-boost-guidelines>
-=== .ai/backend-guidelines rules ===
-
-<h2>Project Structure & Architecture</h2>
-<ul>
-    <li>Group backend classes by feature inside default Laravel folders (Controllers, Models, Services, Requests,
-        Policies, etc.).</li>
-    <li>Use final classes for controllers, services, actions, requests, models to prevent unintended inheritance.</li>
-    <li>Prefer read-only promoted constructor properties for dependencies; avoid public mutable state.</li>
-    <li>No business logic inside controllers; delegate to small single-purpose service/action classes.</li>
-    <li>Keep classes focused: max ~300 lines; methods &lt;= 80 lines (strive for much smaller).</li>
-</ul>
-
-<h2>Naming & Conventions</h2>
-<ul>
-    <li>PascalCase class names; singular nouns (e.g. <code>ProjectInstance</code>, <code>ReferenceDataParameter</code>).
-    </li>
-    <li>Method names in camelCase starting with a verb (e.g. <code>storeRecord</code>, <code>verifySecondValue</code>).
-    </li>
-    <li>Boolean method prefixes: is / has / can / should (e.g. <code>isAuthorized</code>, <code>hasSecondValue</code>).
-    </li>
-    <li>Constants in UPPER_SNAKE_CASE.</li>
-    <li>Use imported class names instead of fully-qualified inline references.</li>
-</ul>
-
-<h2>Class Design & Dependencies</h2>
-<ul>
-    <li>Inject dependencies via constructor (property promotion) — never instantiate heavy collaborators inline.</li>
-    <li>Prefer interfaces for abstractions that may change (e.g. external gateways, complex domain services).</li>
-    <li>Keep service classes single-action; compose multiple services for orchestration.</li>
-    <li>Use value objects or enums for constrained primitives instead of raw strings/ints.</li>
-</ul>
-
-<h2>Type Safety & Data Handling</h2>
-<ul>
-    <li>Explicitly type every parameter & return; if impossible, document using PHPDoc with precise shapes.</li>
-    <li>Document array shapes with PHPDoc; extract DTOs (Spatie Data) for multi-dimensional structures.</li>
-    <li>Prefer DTOs over associative arrays for request/response boundaries.</li>
-    <li>Use enums for fixed sets; value objects (e.g. Money, Email) for domain invariants.</li>
-</ul>
-
-<h2>Validation & Authorization</h2>
-<ul>
-    <li>Never consume request input before validation.</li>
-    <li>Use Spatie Data attribute validation for structured form/data requests; Form Requests only for simple or legacy
-        cases.</li>
-    <li>Centralize authorization via policies / Gate::allows inside Data::authorize when following project pattern.</li>
-    <li>Prefer <code>Gate::authorize()</code> or policy helpers over manual conditionals.</li>
-</ul>
-
-<h2>Error Handling</h2>
-<ul>
-    <li>Wrap persistence mutations in try/catch; convert user-facing validation branches into ErrorResponse objects.
-    </li>
-    <li>Surface unexpected exceptions through <code>ExceptionMessage::getMessage()</code> for production safety.</li>
-</ul>
-
-<h2>Database & Performance</h2>
-<ul>
-    <li>Use Eloquent ORM and relationships; avoid raw queries unless justified for performance.</li>
-    <li>Prevent N+1 via eager loading (select only required columns).</li>
-    <li>Chunk large data operations; queue long-running tasks instead of blocking HTTP cycle.</li>
-    <li>Add indexes for frequently filtered columns; analyze slow queries before optimizing code paths.</li>
-    <li>Use caching strategically for read-heavy, slow-to-compute aggregates.</li>
-</ul>
-
-<h2>Security</h2>
-<ul>
-    <li>Route groups must enforce authentication for any state-changing endpoint.</li>
-    <li>Avoid using <code>env()</code> outside config files; read via <code>config()</code>.</li>
-    <li>Validate file uploads and use centralized FileSaver abstraction.</li>
-</ul>
-
-<h2>Middleware & Cross-Cutting Concerns</h2>
-<ul>
-    <li>Implement custom middleware for recurring concerns (feature flags, subscription state) rather than scattering
-        checks.</li>
-    <li>Keep middleware lean—delegate heavy logic to services.</li>
-</ul>
-
-
-<h2>Documentation & Maintainability</h2>
-<ul>
-    <li>Prefer self-expressive naming over inline comments; reserve comments for clarifying domain rules.</li>
-</ul>
-
-
-=== .ai/frontend-guidelines rules ===
-
-<h2>Structure & Organization</h2>
-<ul>
-    <li>Organize code by feature inside domain folders (Components, Hooks, Pages, Layout, Libs, DataStructures, ui for
-        shadcn).</li>
-    <li>Keep reusable cross-feature components in a shared directory; avoid duplication.</li>
-    <li>All shadcn components live under <code>ui</code> retaining original filenames.</li>
-    <li>Use kebab-case (preferred) or camelCase for file & folder names; components/pages keep PascalCase exports.</li>
-</ul>
-
-<h2>Component Design</h2>
-<ul>
-    <li>Single responsibility per component; extract reusable UI fragments promptly.</li>
-    <li>Do not nest component declarations inside other components; declare at module top scope.</li>
-    <li>Avoid ternary or switch for conditional rendering; use logical <code>&amp;&amp;</code> blocks or separate
-        functions/components.</li>
-    <li>Props must be readonly (TypeScript <code>readonly</code> or inferred immutability).</li>
-    <li>Co-locate feature interfaces/types in a single <code>types.ts</code> (or similar) file per feature.</li>
-</ul>
-
-<h2>Hooks & State</h2>
-<ul>
-    <li>Encapsulate data fetching / complex state in custom hooks instead of inline useEffect logic in components.</li>
-    <li>Custom hook names start with <code>use</code> and describe purpose (e.g. <code>useProjectMetrics</code>).</li>
-    <li>Call hooks only at top level of components or other hooks (never in conditions/loops).</li>
-    <li>Don't pass hook functions themselves as props—expose derived callbacks/state values instead.</li>
-    <li>Use Inertia's <code>usePage</code> to access page props.</li>
-</ul>
-
-<h2>Performance</h2>
-<ul>
-    <li>Memoize expensive calculations with <code>useMemo</code>; stable callback props via <code>useCallback</code>.
-    </li>
-    <li>Always supply dependency arrays; never omit them.</li>
-    <li>Wrap pure presentational components with <code>React.memo</code> when prop churn risks re-render cost.</li>
-    <li>Reserve <code>useLayoutEffect</code> only for pre-paint DOM measurements.</li>
-</ul>
-
-<h2>Data & Logic</h2>
-<ul>
-    <li>Use nullish coalescing <code>??</code> instead of logical OR for defaulting.</li>
-    <li>Favor custom hooks over ad-hoc effects for side-effects & fetching.</li>
-    <li>Use <code>useSyncExternalStore</code> for subscription-based external sources.</li>
-    <li>All JSON fields use snake_case; map to camelCase in TypeScript layer if desired (centralize mapping).</li>
-</ul>
-
-<h2>Routing</h2>
-<ul>
-    <li>Use global <code>route()</code> helper (Ziggy) without importing from ziggy-js.</li>
-</ul>
-
-<h2>Styling</h2>
-<ul>
-    <li>Prefer Tailwind <code>gap-*</code> utilities over space-* where layout allows.</li>
-</ul>
-
-<h2>Naming</h2>
-<ul>
-    <li>Components & enums in PascalCase (enum members UPPER_SNAKE_CASE).</li>
-    <li>Variables, functions, and props in camelCase; boolean prefixed with is/has/can/should.</li>
-    <li>Event handlers prefixed with handle / on (e.g. <code>handleSubmit</code>).</li>
-    <li>Context provider files use <code>-context</code> suffix.</li>
-    <li>Use single-letter generic type params (T, U, V...).</li>
-</ul>
-
-<h2>TypeScript</h2>
-<ul>
-    <li>All component props must be typed via interfaces or type aliases.</li>
-    <li>Define hook return types explicitly when not inferred clearly.</li>
-    <li>Use enums for discrete sets; discriminated unions for variant states.</li>
-</ul>
-
-
-=== foundation rules ===
-
-# Laravel Boost Guidelines
-
-The Laravel Boost guidelines are specifically curated by Laravel maintainers for this application. These guidelines should be followed closely to enhance the user's satisfaction building Laravel applications.
-
-## Foundational Context
-This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
-
-- php - 8.4.16
-- inertiajs/inertia-laravel (INERTIA) - v2
-- laravel/framework (LARAVEL) - v12
-- laravel/prompts (PROMPTS) - v0
-- tightenco/ziggy (ZIGGY) - v2
-- larastan/larastan (LARASTAN) - v3
-- laravel/mcp (MCP) - v0
-- laravel/pint (PINT) - v1
-- laravel/sail (SAIL) - v1
-- pestphp/pest (PEST) - v3
-- phpunit/phpunit (PHPUNIT) - v11
-- @inertiajs/react (INERTIA) - v2
-- react (REACT) - v19
-- tailwindcss (TAILWINDCSS) - v4
-- eslint (ESLINT) - v9
-- prettier (PRETTIER) - v3
-
-## Conventions
-- You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, naming.
-- Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
-- Check for existing components to reuse before writing a new one.
-
-## Verification Scripts
-- Do not create verification scripts or tinker when tests cover that functionality and prove it works. Unit and feature tests are more important.
-
-## Application Structure & Architecture
-- Stick to existing directory structure - don't create new base folders without approval.
-- Do not change the application's dependencies without approval.
-
-## Frontend Bundling
-- If the user doesn't see a frontend change reflected in the UI, it could mean they need to run `npm run build`, `npm run dev`, or `composer run dev`. Ask them.
-
-## Replies
-- Be concise in your explanations - focus on what's important rather than explaining obvious details.
-
-## Documentation Files
-- You must only create documentation files if explicitly requested by the user.
-
-
-=== boost rules ===
-
-## Laravel Boost
-- Laravel Boost is an MCP server that comes with powerful tools designed specifically for this application. Use them.
-
-## Artisan
-- Use the `list-artisan-commands` tool when you need to call an Artisan command to double check the available parameters.
-
-## URLs
-- Whenever you share a project URL with the user you should use the `get-absolute-url` tool to ensure you're using the correct scheme, domain / IP, and port.
-
-## Tinker / Debugging
-- You should use the `tinker` tool when you need to execute PHP to debug code or query Eloquent models directly.
-- Use the `database-query` tool when you only need to read from the database.
-
-## Reading Browser Logs With the `browser-logs` Tool
-- You can read browser logs, errors, and exceptions using the `browser-logs` tool from Boost.
-- Only recent browser logs will be useful - ignore old logs.
-
-## Searching Documentation (Critically Important)
-- Boost comes with a powerful `search-docs` tool you should use before any other approaches. This tool automatically passes a list of installed packages and their versions to the remote Boost API, so it returns only version-specific documentation specific for the user's circumstance. You should pass an array of packages to filter on if you know you need docs for particular packages.
-- The 'search-docs' tool is perfect for all Laravel related packages, including Laravel, Inertia, Livewire, Filament, Tailwind, Pest, Nova, Nightwatch, etc.
-- You must use this tool to search for Laravel-ecosystem documentation before falling back to other approaches.
-- Search the documentation before making code changes to ensure we are taking the correct approach.
-- Use multiple, broad, simple, topic based queries to start. For example: `['rate limiting', 'routing rate limiting', 'routing']`.
-- Do not add package names to queries - package information is already shared. For example, use `test resource table`, not `filament 4 test resource table`.
-
-### Available Search Syntax
-- You can and should pass multiple queries at once. The most relevant results will be returned first.
-
-1. Simple Word Searches with auto-stemming - query=authentication - finds 'authenticate' and 'auth'
-2. Multiple Words (AND Logic) - query=rate limit - finds knowledge containing both "rate" AND "limit"
-3. Quoted Phrases (Exact Position) - query="infinite scroll" - Words must be adjacent and in that order
-4. Mixed Queries - query=middleware "rate limit" - "middleware" AND exact phrase "rate limit"
-5. Multiple Queries - queries=["authentication", "middleware"] - ANY of these terms
-
-
-=== php rules ===
-
-## PHP
-
-- Always use curly braces for control structures, even if it has one line.
-
-### Constructors
-- Use PHP 8 constructor property promotion in `__construct()`.
-    - <code-snippet>public function __construct(public GitHub $github) { }</code-snippet>
-- Do not allow empty `__construct()` methods with zero parameters.
-
-### Type Declarations
-- Always use explicit return type declarations for methods and functions.
-- Use appropriate PHP type hints for method parameters.
-
-<code-snippet name="Explicit Return Types and Method Params" lang="php">
-protected function isAccessible(User $user, ?string $path = null): bool
-{
-    ...
-}
-</code-snippet>
-
-## Comments
-- Prefer PHPDoc blocks over comments. Never use comments within the code itself unless there is something _very_ complex going on.
-
-## PHPDoc Blocks
-- Add useful array shape type definitions for arrays when appropriate.
-
-## Enums
-- Typically, keys in an Enum should be TitleCase. For example: `FavoritePerson`, `BestLake`, `Monthly`.
-
-
-=== tests rules ===
-
-## Test Enforcement
-
-- Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
-- Run the minimum number of tests needed to ensure code quality and speed. Use `php artisan test` with a specific filename or filter.
+## KSEB Staff Portal — AI Playbook
+
+### Snapshot
+- Laravel 12 backend + React 19 / TypeScript + Inertia v2 frontend; gRPC to external services.
+- Proto sources in `protos/`; generated PHP stubs in `generated/Proto/` and metadata in `generated/GPBMetadata/`.
+- Styling: Tailwind v4 + Radix UI primitives; routing via Ziggy `route()` helper.
+
+### Daily Commands
+- Dev stack (app + queue + logs + Vite): `composer dev`; with SSR: `composer dev:ssr`.
+- Frontend only: `npm run dev`; builds: `npm run build` / `npm run build:ssr`.
+- gRPC regen (required after any `.proto` change): `./scripts/generate-grpc.sh` (also refreshes autoload).
+- Tests: `php artisan test` (filter with `--filter=` or file path); formatters: `vendor/bin/pint --dirty`, `npm run lint`, `npm run format`, `npm run types`.
+
+### Backend Patterns
+- Domain folders: controllers in `app/Http/Controllers/{Domain}/`, requests in `app/Http/Requests/{Domain}/`, services (including gRPC) in `app/Services/`.
+- gRPC client setup lives in controller constructors using `ChannelCredentials::createInsecure()` with `GRPC_HOST`; map requests to proto messages manually via setters.
+- Error handling: pass gRPC status to `GrpcErrorHandler::extractError($status)` for structured errors.
+- Inertia responses come from controllers: `Inertia::render('Domain/Feature/Action', [...])`.
+- Laravel 12 layout: middleware/providers configured in `bootstrap/app.php` and `bootstrap/providers.php`; no `app/Console/Kernel.php`.
+
+### Frontend Patterns
+- Pages in `resources/js/pages/{Domain}/`; shared components in `resources/js/components/` and `resources/js/components/ui/` (Radix-based).
+- Use `route()` globally (Ziggy) for links; favor `useForm` from Inertia for forms and avoid conditional hook calls.
+- Prefer Tailwind `gap-*` layout spacing; keep props readonly and types co-located in feature `types.ts`/`interfaces` files.
+
+### Data & Integration Notes
+- JSON payloads use snake_case from backend; map to camelCase on the TS side when needed.
+- When touching gRPC: update `.proto` → run regenerate script → commit generated PHP alongside changes.
+- gRPC errors often live in `grpc-status-details-bin`; let the helper decode Google standard errors (`ErrorInfo`, `BadRequest`).
+
+### Testing & Quality
+- Tests are Pest v3 in `tests/Feature` and `tests/Unit`; prefer focused `php artisan test tests/Feature/FooTest.php` or `--filter=`.
+- New validation should use Form Requests or Spatie Data (check existing domain pattern) and be covered by Pest datasets for variants.
+
+### Conventions
+- Controllers/services/requests are `final`, camelCase methods, PascalCase classes; enums TitleCase members; avoid inline `env()` (use `config()` except gRPC host in constructors per existing pattern).
+- Respect existing indentation (PHP 4 spaces; JS/TS 2). Reuse existing components before creating new ones.
+
+### Debugging
+- Logs: `php artisan pail --timeout=0` for live backend logs; use Boost `browser-logs` for frontend errors.
+- Use Boost `search-docs` for Laravel/Inertia/Tailwind references; `tinker` or `database-query` for quick backend checks.
+
+### Gotchas
+- Forgetting gRPC regen breaks autoload/types; always run the script when proto changes.
+- Tailwind v4 uses `@import "tailwindcss";` (no legacy `@tailwind` directives).
+- SSR dev needs `composer dev:ssr`; restart if Vite manifest errors appear.
 
 
 === inertia-laravel/core rules ===

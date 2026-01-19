@@ -10,7 +10,6 @@ import {
   ChargeHeads,
   ComputedProperties,
   TotalDemandCharge,
-  TotalDemandChargeRow,
   TotalEnergyCharge,
 } from '@/interfaces/bill_pdf_interfaces'
 import { Bill } from '@/interfaces/data_interfaces'
@@ -35,6 +34,8 @@ export default function BillInvoice({
   averageAndTotalKwh: { averageKwh: number; totalKwh: number }
   mf: number
 }) {
+  console.log(totalDemandChargeRows)
+
   const roundedOffAmount = (amount: number): { updatedAmount: number; roundOff: number } => {
     const roundedAmount = Math.round(amount)
     const roundOff = roundedAmount - amount

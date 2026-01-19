@@ -2,7 +2,6 @@
 
 namespace App\Services\Billing;
 
-use App\Services\GrpcServiceResponse;
 use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterReadingService;
 
@@ -17,7 +16,7 @@ class BillExportService
     public function getMainMeter(?int $connectionId): ?array
     {
         $meter = [];
-        if (!$connectionId) {
+        if (! $connectionId) {
             return $meter;
         }
         $meterConnectionMapping = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($connectionId)->data;
@@ -29,16 +28,18 @@ class BillExportService
                 }
             }
         }
+
         return $meter;
     }
 
     public function getMeterReading(?int $connectionId, ?string $yearMonth): ?array
     {
         $meterReading = null;
-        if (!$connectionId) {
+        if (! $connectionId) {
             return $meterReading;
         }
         $meterReading = $this->meterReadingService->listMeterReadings(null, null, null, $connectionId, $yearMonth)->data;
+
         return $meterReading;
     }
 
@@ -61,14 +62,15 @@ class BillExportService
             })
             ->map(function ($item) {
                 return [
-                    'timezone'          => $item['time_zone']['parameter_value'] ?? null, // Normal / Peak / Off Peak
-                    'timezone_code'     => $item['time_zone']['parameter_code'] ?? null,
-                    'initial_reading'   => $item['initial_reading'],
-                    'final_reading'     => $item['final_reading'],
-                    'difference'        => $item['difference'],
-                    'value'             => $item['value'],
-                    'parameter_id'      => $item['meter_profile_parameter']['meter_parameter_id'] ?? null,
-                    'parameter_name'    => $item['meter_profile_parameter']['name'] ?? null,
+                    'timezone' => $item['time_zone']['parameter_value'] ?? null, // Normal / Peak / Off Peak
+                    'timezone_code' => $item['time_zone']['parameter_code'] ?? null,
+                    'initial_reading' => $item['initial_reading'],
+                    'final_reading' => $item['final_reading'],
+                    'difference' => $item['difference'],
+                    'meter_mf' => $item['meter_mf'] ?? null,
+                    'value' => $item['value'],
+                    'parameter_id' => $item['meter_profile_parameter']['meter_parameter_id'] ?? null,
+                    'parameter_name' => $item['meter_profile_parameter']['name'] ?? null,
                     'parameter_display' => $item['meter_profile_parameter']['display_name'] ?? null,
                 ];
             })
@@ -86,10 +88,10 @@ class BillExportService
 
             if ($name && isset($item['results'][0])) {
                 $result[$key] = [
-                    'id'      => $item['id'],
-                    'name'    => $name,
-                    'result'  => $item['results'][0]['result'] ?? null,
-                    'zoneId'  => $item['results'][0]['zoneId'] ?? null,
+                    'id' => $item['id'],
+                    'name' => $name,
+                    'result' => $item['results'][0]['result'] ?? null,
+                    'zoneId' => $item['results'][0]['zoneId'] ?? null,
                 ];
             }
         }
@@ -123,7 +125,7 @@ class BillExportService
                 $normalized[$key] = [
                     'id' => $id,
                     'name' => $name,
-                    'result' => $results
+                    'result' => $results,
                 ];
             }
         }
@@ -165,10 +167,10 @@ class BillExportService
             $amount = $diff * $kwhRate;
 
             $energyChargeRows[] = [
-                'label'  => "Energy charges - {$zone}",
-                'units'  => $diff,
-                'rate'   => number_format($displayRate, 5),
-                'amount' => number_format($amount, 2)
+                'label' => "Energy charges - {$zone}",
+                'units' => $diff,
+                'rate' => number_format($displayRate, 5),
+                'amount' => number_format($amount, 2),
             ];
 
             $subTotal += $amount;
@@ -176,7 +178,7 @@ class BillExportService
 
         return [
             'energyChargeRows' => $energyChargeRows,
-            'subTotal' => $subTotal
+            'subTotal' => $subTotal,
         ];
     }
 
@@ -187,56 +189,73 @@ class BillExportService
         }
 
         $excessDemand = $computed['excess_demand'];
-        $zoneMaxDemand = $computed['zone_with_max_demand_value'] ?? [];
+        $zoneWithMaxDemand = $computed['zone_with_max_demand_value'] ?? [];
+        $recordedMaxDemand = $computed['recorded_max_demand'] ?? [];
         $contract75 = $computed['75_of_contract_demand'] ?? [];
         $demandRate = $computed['kva_rate']['result'] ?? 0;
         $excessDemandRate = $computed['excess_demand_rate']['result'] ?? 0;
+        $demandChargeHead = $computed['demand_charge'] ?? [];
+        $excessDemandHead = $computed['excess_demand_charge'] ?? [];
 
-        if (!$excessDemand || empty($excessDemand['result'])) {
+        if (! $excessDemand || empty($excessDemand['result'])) {
             return [];
         }
 
-        $rows = [];
+        $demandRows = [];
+        $excessRows = [];
         $zonesCount = count($excessDemand['result']);
 
         $useContractDemand =
-            empty($zoneMaxDemand['result']) ||
-            $zoneMaxDemand['result'] === 'Contract Demand';
+            empty($zoneWithMaxDemand['result']) ||
+            $zoneWithMaxDemand['result'] === 'Contract Demand';
+
+        $demandUnits = $useContractDemand
+               ? (float) ($contract75['result'] ?? 0)
+               : (float) ($recordedMaxDemand['result'] ?? 0);
+
+        $zoneWithMaxExcessDemand = null;
+        $previousMax = 0;
+        foreach ($excessDemand['result'] as $index => $zoneData) {
+            $zoneId = $zoneData['zoneId'] ?? $index;
+            if ((float) ($zoneData['result'] ?? 0) > $previousMax) {
+                $previousMax = (float) ($zoneData['result'] ?? 0);
+                $zoneWithMaxExcessDemand = $zoneId;
+            }
+        }
 
         foreach ($excessDemand['result'] as $index => $zoneData) {
 
             $zoneId = $zoneData['zoneId'] ?? $index;
+            $units = 0;
+            $demandChargeAmount = 0;
 
-            // ---------- Demand Charge (Normal / Peak / Off-Peak) ----------
-            $demandUnits = $useContractDemand
-                ? (float) ($contract75['result'] ?? 0)
-                : $zoneMaxDemand['result'];
+            if (($useContractDemand && $zoneId == 1) || (! $useContractDemand && $zoneId == $zoneWithMaxDemand['result'])) {
+                $units = $demandUnits;
+                $demandChargeAmount = $demandChargeHead ? (float) ($demandChargeHead['result'] ?? 0) : 0;
+            }
 
-
-            $rows[] = [
+            $demandRows[] = [
                 'label' => $this->getZoneLabel($index, 'Demand Charge'),
                 'zone' => $zoneId,
-                'units' => $demandUnits,
+                'units' => $units,
                 'rate' => $demandRate,
-                'amount' => 0
+                'amount' => $demandChargeAmount,
             ];
 
-            // ---------- Excess Demand Charge ----------
             $excessUnits = (float) ($zoneData['result'] ?? 0);
 
-
-            $rows[] = [
+            $excessRows[] = [
                 'label' => $this->getZoneLabel($index, 'Excess Demand Charge'),
                 'zone' => $zoneId,
-                'units' => $excessUnits,
+                'units' => $zoneId == $zoneWithMaxExcessDemand ? $excessUnits : 0,
                 'rate' => $excessDemandRate,
-                'amount' => 0
+                'amount' => $zoneId == $zoneWithMaxExcessDemand ? (float) ($excessDemandHead['result'] ?? 0) : 0,
             ];
         }
 
         return [
             'title' => 'Total Demand Charge',
-            'rows' => $rows,
+            'rows' => array_merge($demandRows, $excessRows),
         ];
     }
 
@@ -256,9 +275,10 @@ class BillExportService
                 'zone' => $zoneId,
                 'units' => $kwhValues[$index]['value'],
                 'rate' => $energyChargeRates['result'][$index],
-                'amount' => $zoneData['result']
+                'amount' => $zoneData['result'],
             ];
         }
+
         return [
             'title' => 'Total Energy Charge',
             'rows' => $totalEnergyChargeRows,
@@ -274,15 +294,17 @@ class BillExportService
         if (count($filteredkVAs) == 0) {
             return [
                 'totalKva' => 0,
-                'averageKva' => 0
+                'averageKva' => 0,
             ];
         }
         $averageKva = $totalKva / count($filteredkVAs);
+
         return [
             'totalKva' => $totalKva,
-            'averageKva' => $averageKva
+            'averageKva' => $averageKva,
         ];
     }
+
     public function getAverageAndTotalKwh(?array $filteredkWhs): ?array
     {
         if (empty($filteredkWhs)) {
@@ -292,15 +314,17 @@ class BillExportService
         if (count($filteredkWhs) == 0) {
             return [
                 'totalKwh' => 0,
-                'averageKwh' => 0
+                'averageKwh' => 0,
             ];
         }
         $averageKwh = $totalKwh / count($filteredkWhs);
+
         return [
             'totalKwh' => $totalKwh,
-            'averageKwh' => $averageKwh
+            'averageKwh' => $averageKwh,
         ];
     }
+
     public function calculateDemand(?array $kvaReadings, float $contractDemand): ?array
     {
         if (empty($kvaReadings)) {
@@ -309,12 +333,12 @@ class BillExportService
         // Filter timezone readings
         $timezoneReadings = array_filter(
             $kvaReadings,
-            fn($r) => !empty($r['timezone_code'])
+            fn ($r) => ! empty($r['timezone_code'])
         );
 
         $threshold = $contractDemand * 0.75;
 
-        if (!empty($timezoneReadings)) {
+        if (! empty($timezoneReadings)) {
 
             // Priority order
             $orderedZones = ['Peak', 'Normal', 'OffPeak'];
@@ -344,13 +368,13 @@ class BillExportService
                 foreach ($orderedZones as $zone) {
                     $result[] = [
                         'timezone' => $zone,
-                        'value' => ($zone === $selectedZone) ? $maxValue : 0
+                        'value' => ($zone === $selectedZone) ? $maxValue : 0,
                     ];
                 }
 
                 return [
                     'is_contract_demand' => false,
-                    'result' => $result
+                    'result' => $result,
                 ];
             }
         }
@@ -360,8 +384,8 @@ class BillExportService
             'is_contract_demand' => true,
             'result' => [
                 'timezone' => null,
-                'value' => $threshold
-            ]
+                'value' => $threshold,
+            ],
         ];
     }
 

@@ -63,6 +63,7 @@ class MeterReadingConverter
             'initial_reading' => $detail->getInitialReading(),
             'final_reading' => $detail->getFinalReading(),
             'difference' => $detail->getDifference(),
+            'meter_mf' => $detail->getMeterMf(),
             'value' => $detail->getMulValue(),
             'created_by' => $detail->getCreatedBy(),
             'updated_by' => $detail->getUpdatedBy(),

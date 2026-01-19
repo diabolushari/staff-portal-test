@@ -5,12 +5,13 @@ export interface MeterWithMf {
   meter_mf: number
 }
 
-export interface BillMeterReadings {
+export interface BillMeterReading {
   timezone: string | null
   timezone_code: string | null
   initial_reading: number
   final_reading: number
   difference: number
+  meter_mf: number | null
   value: number
   parameter_id: string | null
   parameter_name: string | null

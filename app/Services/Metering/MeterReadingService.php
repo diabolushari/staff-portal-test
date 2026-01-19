@@ -192,7 +192,7 @@ class MeterReadingService
 
     public function latestMeterReading(int $connectionId, ?string $readingMonthYear = null): GrpcServiceResponse
     {
-        $protoRequest = new LatestMeterReadingRequest();
+        $protoRequest = new LatestMeterReadingRequest;
         $protoRequest->setConnectionId($connectionId);
 
         [$response, $status] = $this->client->LatestMeterReading($protoRequest)->wait();
@@ -317,7 +317,7 @@ class MeterReadingService
 
             if ($meterHealth['meter_health_id'] == null) {
                 throw ValidationException::withMessages([
-                    'meter_health_id' => ['Meter health is required. for meter :' . $meterHealth['meter_serial']],
+                    'meter_health_id' => ['Meter health is required. for meter :'.$meterHealth['meter_serial']],
                 ]);
             }
             $protoMeterHealth->setMeterHealthId($meterHealth['meter_health_id']);
@@ -347,7 +347,7 @@ class MeterReadingService
 
                 if ($transformer['health'] == null) {
                     throw ValidationException::withMessages([
-                        'ctpt_health_id' => ['CTPT health is required. for meter CTPT :' . $transformer['ctpt_serial']],
+                        'ctpt_health_id' => ['CTPT health is required. for meter CTPT :'.$transformer['ctpt_serial']],
                     ]);
                 }
 
@@ -467,7 +467,6 @@ class MeterReadingService
      */
     public function toArray(MeterReadingMessage $detail): array
     {
-
         return MeterReadingConverter::toArray($detail);
     }
 

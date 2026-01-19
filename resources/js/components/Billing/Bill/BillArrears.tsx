@@ -1,5 +1,7 @@
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@/components/ui/table'
-import { BillMeterReadings, ComputedProperties } from '@/interfaces/bill_pdf_interfaces'
+import { useMemo } from 'react'
+
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
+import { BillMeterReading, ComputedProperties } from '@/interfaces/bill_pdf_interfaces'
 import { Bill, Connection } from '@/interfaces/data_interfaces'
 import { getDisplayDate } from '@/utils'
 
@@ -13,11 +15,23 @@ export default function BillArrears({
 }: {
   bill: Bill
   connection: Connection
-  kvaValues: BillMeterReadings[]
-  kwhValues: BillMeterReadings[]
+  kvaValues: BillMeterReading[]
+  kwhValues: BillMeterReading[]
   mf: number
   computedProperties: ComputedProperties
 }) {
+  const totalConsumption = useMemo(() => {
+    if (!kwhValues?.length) {
+      return null
+    }
+
+    return kwhValues.reduce((sum, reading) => sum + (reading?.value ?? 0), 0)
+  }, [kwhValues])
+
+  const recordedMaxDemand = useMemo(() => {
+    return computedProperties?.recorded_max_demand?.result as string
+  }, [computedProperties])
+
   return (
     <Table className='border border-black text-xs'>
       <TableBody>
@@ -153,15 +167,11 @@ export default function BillArrears({
           />
 
           <TableCell className='border border-black text-center'>
-            {kvaValues?.length
-              ? (
-                  kvaValues.reduce((s, r) => s + (r?.difference ?? 0), 0) / kvaValues.length
-                ).toFixed(2)
-              : '-'}
+            {recordedMaxDemand ?? '-'}
           </TableCell>
 
           <TableCell className='border border-black text-center'>
-            {kwhValues?.length ? kwhValues.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0) : '-'}
+            {totalConsumption !== null ? totalConsumption : '-'}
           </TableCell>
 
           <TableCell className='border border-black text-center'>
