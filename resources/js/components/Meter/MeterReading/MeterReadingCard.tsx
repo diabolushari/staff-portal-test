@@ -9,6 +9,7 @@ import NormalText from '@/typography/NormalText'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
 import { router } from '@inertiajs/react'
+import dayjs from 'dayjs'
 import { useMemo } from 'react'
 
 interface Props {
@@ -69,10 +70,11 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
       <div className='flex justify-between'>
         <div className='flex flex-col'>
           <StrongText className='mb-2 text-lg font-semibold'>
-            Meter Reading: {meterReading?.metering_date}
+            Meter Reading: {dayjs(meterReading?.metering_date).format('DD-MM-YYYY')}
           </StrongText>
           <NormalText>
-            {meterReading?.reading_start_date} to {meterReading?.reading_end_date}
+            {dayjs(meterReading?.reading_start_date).format('DD-MM-YYYY')} to{' '}
+            {dayjs(meterReading?.reading_end_date).format('DD-MM-YYYY')}
           </NormalText>
         </div>
         <Button
@@ -89,19 +91,20 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
           <div
             key={summary.meterId}
             className='flex flex-col gap-2 rounded-lg border bg-gray-50 p-3'
-            className='flex flex-col gap-2 rounded-lg border bg-gray-50 p-3'
           >
             <StrongText className='text-md font-semibold'>
               Meter Serial: {summary.serial}({summary.meterProfile?.parameter_value})
             </StrongText>
-            <NormalText>
-              Power Factor:{' '}
-              {summary.meter_pf?.average_power_factor != null
-                ? summary.meter_pf?.average_power_factor.toFixed(
-                    summary.meter?.decimal_digit_count ?? 3
-                  )
-                : '-'}
-            </NormalText>
+            {summary.meter_pf && (
+              <NormalText>
+                Power Factor:{' '}
+                {summary.meter_pf?.average_power_factor != null
+                  ? summary.meter_pf?.average_power_factor.toFixed(
+                      summary.meter?.decimal_digit_count ?? 3
+                    )
+                  : '-'}
+              </NormalText>
+            )}
 
             <div className='mt-1 text-sm text-gray-700'>
               {summary?.kva ? (
