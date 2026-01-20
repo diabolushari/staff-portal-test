@@ -18,7 +18,7 @@ import { Bill, Connection } from '@/interfaces/data_interfaces'
 import NormalText from '@/typography/NormalText'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
-import { getDisplayMonthYear } from '@/utils'
+import { getDisplayMonthYear, numberToWords } from '@/utils'
 
 interface BillShowPageProps {
   bill: Bill
@@ -123,7 +123,9 @@ export default function BillShowPage({
             kwhValues={kwhValues}
           />
 
-          <div className='mt-6 text-center italic'>(Rupees {bill?.bill_amount ?? '-'})</div>
+          <div className='mt-6 text-center italic'>
+            (Rupees {numberToWords(Math.round(bill?.bill_amount ?? 0))})
+          </div>
 
           <div className='mt-8 border-t border-black pt-2 text-right font-bold'>
             SPECIAL OFFICER (REVENUE)
