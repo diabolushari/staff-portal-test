@@ -85,7 +85,7 @@ export default function BillArrears({
             colSpan={2}
             className='border border-black font-semibold'
           >
-            {getDisplayDate(connection?.latest_meter_reading?.metering_date) ?? '-'}
+            {getDisplayDate(connection?.latest_meter_reading?.reading_end_date) ?? '-'}
           </TableCell>
           <TableCell className='flex border border-black p-0'>
             <div className='border border-black p-1'>Supply Voltage </div>{' '}

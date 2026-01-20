@@ -36,10 +36,10 @@ export default function BillInvoice({
 }) {
   console.log(totalDemandChargeRows)
 
-  const roundedOffAmount = (amount: number): { updatedAmount: number; roundOff: number } => {
+  const roundedOffAmount = (amount: number): { updatedAmount: string; roundOff: string } => {
     const roundedAmount = Math.round(amount)
     const roundOff = roundedAmount - amount
-    return { updatedAmount: roundedAmount, roundOff }
+    return { updatedAmount: roundedAmount.toFixed(2), roundOff: roundOff.toFixed(2) }
   }
 
   return (
