@@ -189,5 +189,5 @@ Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
 
 // pdf download
 Route::get('pdf-download/{billId}', [BillingPdfController::class, 'index'])->name('pdf-download');
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';
