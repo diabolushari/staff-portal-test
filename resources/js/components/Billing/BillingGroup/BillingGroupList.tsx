@@ -52,6 +52,9 @@ export default function BillingGroupList({ billingGroups }: Props) {
                   <div className='font-inter text-sm leading-[20px] text-gray-600'>
                     {billingGroup?.description}
                   </div>
+                  <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                    Connection Count: <b>{billingGroup?.connection_count}</b>
+                  </div>
                 </div>
               </div>
 
