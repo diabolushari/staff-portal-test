@@ -308,6 +308,9 @@
     'lagValues' => $lagValues,
     'leadValues' => $leadValues,
     'kvaValues' => $kvaValues,
+    'chargeHeads' => $chargeHeads,
+    'totalDemandChargeRows' => $totalDemandChargeRows,
+    'totalEnergyChargeRows' => $totalEnergyChargeRows,
     ])
 
 
