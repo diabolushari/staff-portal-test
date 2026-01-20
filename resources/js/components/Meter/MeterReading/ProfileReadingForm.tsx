@@ -106,7 +106,9 @@ export default function ProfileReadingForm({
               ...tzReading.values,
               final: value,
               diff: diff.toString(),
-              value: (meter?.meter_mf ?? 1) * diff,
+              value: Number((meter?.meter_mf ?? 1) * diff).toFixed(
+                meter?.meter.decimal_digit_count ?? 2
+              ),
             },
           }
         })
@@ -280,6 +282,7 @@ export default function ProfileReadingForm({
                 maxReadingValue={maxValue}
                 isFirstReading={isFirstReading}
                 updateInitialReading={updateInitialValue}
+                mf={meter?.meter_mf ?? 1}
               />
             </div>
             <div className='mt-4 flex justify-end gap-2'>

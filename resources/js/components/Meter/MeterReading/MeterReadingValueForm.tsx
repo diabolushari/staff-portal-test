@@ -13,6 +13,7 @@ interface Props {
   maxReadingValue: number
   isFirstReading: boolean
   updateInitialReading: (tzId: number, value: string) => void
+  mf: number
 }
 
 export default function MeterReadingValueForm({
@@ -25,6 +26,7 @@ export default function MeterReadingValueForm({
   isFirstReading,
   errors,
   updateInitialReading,
+  mf,
 }: Readonly<Props>) {
   return (
     <div className='rounded border bg-white p-4'>
@@ -141,7 +143,7 @@ export default function MeterReadingValueForm({
         {/* Import / Export */}
         <>
           <div className='p-2 text-sm font-medium'>
-            {profileParameter.is_export ? 'Export' : 'Import'} (MF: {meter.meter_mf})
+            {profileParameter.is_export ? 'Export' : 'Import'} (MF: {mf})
           </div>
           {parameterReadingValues?.map((tz) => (
             <div

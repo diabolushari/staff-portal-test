@@ -36,17 +36,29 @@ const storeInitialMetersHealthData = (
         }
       }),
       voltage_r:
-        latestMeterReading?.healths?.filter((h) => h.meter_id == meter.meter_id)[0]?.voltage_r ?? 0,
+        latestMeterReading?.healths
+          ?.filter((h) => h.meter_id == meter.meter_id)[0]
+          ?.voltage_r.toFixed(2) ?? 0,
       voltage_y:
-        latestMeterReading?.healths?.filter((h) => h.meter_id == meter.meter_id)[0]?.voltage_y ?? 0,
+        latestMeterReading?.healths
+          ?.filter((h) => h.meter_id == meter.meter_id)[0]
+          ?.voltage_y.toFixed(2) ?? 0,
       voltage_b:
-        latestMeterReading?.healths?.filter((h) => h.meter_id == meter.meter_id)[0]?.voltage_b ?? 0,
+        latestMeterReading?.healths
+          ?.filter((h) => h.meter_id == meter.meter_id)[0]
+          ?.voltage_b.toFixed(2) ?? 0,
       current_r:
-        latestMeterReading?.healths?.filter((h) => h.meter_id == meter.meter_id)[0]?.current_r ?? 0,
+        latestMeterReading?.healths
+          ?.filter((h) => h.meter_id == meter.meter_id)[0]
+          ?.current_r.toFixed(2) ?? 0,
       current_y:
-        latestMeterReading?.healths?.filter((h) => h.meter_id == meter.meter_id)[0]?.current_y ?? 0,
+        latestMeterReading?.healths
+          ?.filter((h) => h.meter_id == meter.meter_id)[0]
+          ?.current_y.toFixed(2) ?? 0,
       current_b:
-        latestMeterReading?.healths?.filter((h) => h.meter_id == meter.meter_id)[0]?.current_b ?? 0,
+        latestMeterReading?.healths
+          ?.filter((h) => h.meter_id == meter.meter_id)[0]
+          ?.current_b.toFixed(2) ?? 0,
     }
   })
 }
