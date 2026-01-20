@@ -19,6 +19,7 @@ interface BillReadingDetailsProps {
   lagValues: BillMeterReading[]
   leadValues: BillMeterReading[]
   computedProperties: ComputedProperties
+  selfGenerationkwhValues: BillMeterReading[]
 }
 
 export default function BillReadingDetails({
@@ -30,6 +31,7 @@ export default function BillReadingDetails({
   lagValues,
   leadValues,
   computedProperties,
+  selfGenerationkwhValues,
 }: Readonly<BillReadingDetailsProps>) {
   const mf = meter?.meter_mf ?? 1
   return (
@@ -372,7 +374,8 @@ export default function BillReadingDetails({
                 colSpan={2}
                 className='border border-black text-right'
               >
-                {Number(computedProperties.total_consumption_generator.result).toFixed(2) ?? '-'}
+                {selfGenerationkwhValues?.reduce((s, r) => s + (r?.value ?? 0), 0).toFixed(2) ??
+                  '-'}
               </TableCell>
             </TableRow>
           </TableBody>

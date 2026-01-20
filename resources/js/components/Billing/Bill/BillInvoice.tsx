@@ -73,7 +73,7 @@ export default function BillInvoice({
                     colSpan={2}
                     className='border border-black'
                   >
-                    {row?.label}
+                    {String.fromCharCode(97 + index)}. {row?.label}
                   </TableCell>
                   <TableCell className='border border-black'>{row?.units}</TableCell>
                   <TableCell className='border border-black'>
@@ -114,7 +114,7 @@ export default function BillInvoice({
                     colSpan={2}
                     className='border border-black'
                   >
-                    {row?.label}
+                    {String.fromCharCode(97 + index)}. {row?.label}
                   </TableCell>
                   <TableCell className='border border-black'>{row?.units}</TableCell>
                   <TableCell className='border border-black'>
