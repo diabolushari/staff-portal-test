@@ -15,7 +15,6 @@ import "billinggroup/billing_group_connection_rel.proto";
 
 
 
-
 message BillingGroupConnectionRelFormMessage {
   int64 version_id = 1;
   int32 connection_id = 2;
@@ -48,6 +47,7 @@ message BillingGroupMessage {
 
   // Nested child list (same as meterreading.values)
   repeated BillingGroupConnectionRelMessage connections = 12;
+  int32 connection_count = 13;
 }
 
 
@@ -107,7 +107,6 @@ message GetBillingGroupRequest {
   optional string search = 3;
 }
 
-
 message GetBillingGroupResponse {
   BillingGroupMessage group = 1;
  // repeated BillingGroupConnectionRelMessage connections = 2;
@@ -135,6 +134,7 @@ message ListBillingGroupRequest {
   optional int32 billing_group_id = 4;
   optional bool is_active = 5;
 }
+
 message ListBillingGroupResponse {
   repeated BillingGroupMessage groups = 1;
 }

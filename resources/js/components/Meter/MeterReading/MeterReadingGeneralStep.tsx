@@ -23,8 +23,8 @@ export default function MeterReadingGeneralStep({
   latestMeterReading,
   isFirstReading,
 }: Props) {
-  const maxDate = dayjs().format('YYYY-MM-DD')
-  const maxDateForReadingStartDate = dayjs(maxDate).subtract(1, 'day').format('YYYY-MM-DD')
+  const maxDate = dayjs().format('DD-MM-YYYY')
+  const maxDateForReadingStartDate = dayjs(maxDate).subtract(1, 'day').format('DD-MM-YYYY')
   return (
     <>
       <div className='mb-6 flex items-center justify-between'>

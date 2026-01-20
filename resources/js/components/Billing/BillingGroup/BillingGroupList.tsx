@@ -1,7 +1,6 @@
 import ActionButton from '@/components/action-button'
 import { BillingGroup } from '@/interfaces/data_interfaces'
 import DeleteModal from '@/ui/Modal/DeleteModal'
-import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 import { useState } from 'react'
 
@@ -30,7 +29,7 @@ export default function BillingGroupList({ billingGroups }: Props) {
       <div className='flex flex-col px-7 pb-7'>
         {billingGroups?.map((billingGroup, index) => (
           <div
-            key={billingGroup?.billing_group_id ?? index} // unique key fallback
+            key={billingGroup?.billing_group_id ?? index}
             className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
             onClick={() =>
               router.get(
@@ -44,13 +43,16 @@ export default function BillingGroupList({ billingGroups }: Props) {
               <div className='flex flex-1 flex-col gap-2.5 p-[10px]'>
                 <div className='flex flex-col gap-1'>
                   <div className='flex items-center gap-2'>
-                    <div className='font-inter cursor-pointer text-base leading-normal font-semibold text-black underline'>
+                    <div className='font-inter cursor-pointer text-base leading-normal font-semibold text-black'>
                       {billingGroup?.name ?? 'Unnamed Group'}
                     </div>
                   </div>
 
                   <div className='font-inter text-sm leading-[20px] text-gray-600'>
                     {billingGroup?.description}
+                  </div>
+                  <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                    Connection Count: <b>{billingGroup?.connection_count}</b>
                   </div>
                 </div>
               </div>

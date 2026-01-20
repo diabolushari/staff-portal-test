@@ -16,6 +16,7 @@ class BillingGroupProtoConvertor
      *     version_id: int,
      *     billing_group_id: int,
      *     name: string,
+     *     connection_count: int,
      *     description: string|null,
      *     effective_start: string|null,
      *     effective_end: string|null,
@@ -34,15 +35,15 @@ class BillingGroupProtoConvertor
         }
 
         $effectiveStart = $g->getEffectiveStart()
-            ? $g->getEffectiveStart()->toDateTime()->format('d-m-y H:i:s')
+            ? $g->getEffectiveStart()->toDateTime()->format('Y-m-d H:i:s')
             : null;
 
         $effectiveEnd = ($g->hasEffectiveEnd() && $g->getEffectiveEnd())
-            ? $g->getEffectiveEnd()->toDateTime()->format('d-m-y H:i:s')
+            ? $g->getEffectiveEnd()->toDateTime()->format('Y-m-d H:i:s')
             : null;
 
         $deletedTs = $g->getDeletedTs()
-            ? $g->getDeletedTs()->toDateTime()->format('d-m-y H:i:s')
+            ? $g->getDeletedTs()->toDateTime()->format('Y-m-d H:i:s')
             : null;
 
         $connections = [];
@@ -54,6 +55,7 @@ class BillingGroupProtoConvertor
             'version_id' => $g->getVersionId(),
             'billing_group_id' => $g->getBillingGroupId(),
             'name' => $g->getName(),
+            'connection_count' => $g->getConnectionCount(),
             'description' => $g->hasDescription() ? $g->getDescription() : null,
             'effective_start' => $effectiveStart,
             'effective_end' => $effectiveEnd,

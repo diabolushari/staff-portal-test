@@ -96,10 +96,16 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
       selectedItem='Billing Groups'
       navItems={billingNavItems}
       title={billingGroup?.name ?? ''}
+      description={
+        <>
+          <span>Billing group of {'  '}</span>
+          <span className='font-semibold'>{billingGroup?.name}</span>
+        </>
+      }
     >
       <div className='flex justify-end gap-2'>
         <Button
-          variant={addConnectionComponent ? 'danger' : 'default'}
+          variant={addConnectionComponent ? 'danger' : 'tertiary'}
           label={addConnectionComponent ? 'Close' : 'Add Member'}
           onClick={() => setAddConnectionComponent(!addConnectionComponent)}
         />
@@ -129,6 +135,7 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
               <Button
                 label='Search'
                 type='submit'
+                variant='secondary'
               />
             </div>
           </form>
@@ -158,35 +165,35 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
                     onClick={() => handleOnClickConnection(conn?.connection_id)}
                   >
                     <div>
-                      <h4 className='text-sm text-gray-500'>Consumer Number</h4>
-                      <p className='text-lg font-semibold'>{conn?.connection?.consumer_number}</p>
+                      <span className='context-menu-item'>Consumer Number</span>
+                      <p className='ghost-button-text'>{conn?.connection?.consumer_number}</p>
                     </div>
 
                     <div>
-                      <h4 className='text-sm text-gray-500'>Type</h4>
-                      <p className='text-lg'>
+                      <span className='context-menu-item'>Type</span>
+                      <p className='ghost-button-text'>
                         {conn?.connection?.connection_type?.parameter_value}
                       </p>
                     </div>
 
                     <div>
-                      <h4 className='text-sm text-gray-500'>Name</h4>
-                      <p className='text-lg'>
+                      <span className='context-menu-item'>Name</span>
+                      <p className='ghost-button-text'>
                         {conn?.connection?.consumer_profiles?.[0]?.organization_name ?? '-'}
                       </p>
                     </div>
 
                     <div>
-                      <h4 className='text-sm text-gray-500'>Purpose</h4>
-                      <p className='text-lg'>
+                      <span className='context-menu-item'>Purpose</span>
+                      <p className='ghost-button-text'>
                         {conn?.connection?.primary_purpose?.parameter_value}
                       </p>
                     </div>
                   </Card>
                   <Card>
                     <div>
-                      <h4 className='text-sm text-gray-500'>Latest Meter Reading</h4>
-                      <p className='text-lg font-semibold'>
+                      <span className='context-menu-item'>Latest Meter Reading</span>
+                      <p className='ghost-button-text'>
                         {formatMeterReadingMonth(
                           conn?.connection?.latest_meter_reading?.reading_start_date,
                           conn?.connection?.latest_meter_reading?.reading_end_date

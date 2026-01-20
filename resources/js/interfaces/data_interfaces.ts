@@ -624,6 +624,7 @@ export interface BillingGroup {
   created_at?: string
   updated_at?: string
   connections: BillingGroupConnection[]
+  connection_count: number
 }
 export interface BillingGroupConnection {
   version_id: number
