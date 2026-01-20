@@ -45,10 +45,7 @@ export default function BillSummary({ bill, connection }: { bill: Bill; connecti
             {connection?.tariff?.parameter_value ?? '-'}
           </TableCell>
           <TableCell className='border border-black'>CD</TableCell>
-          <TableCell className='border border-black'>
-            {' '}
-            {connection?.contract_demand_kva_val ?? '-'}
-          </TableCell>
+          <TableCell className='border border-black'> 0.00</TableCell>
           <TableCell className='border border-black'>BG</TableCell>
           <TableCell className='border border-black'>--</TableCell>
         </TableRow>
@@ -89,7 +86,7 @@ export default function BillSummary({ bill, connection }: { bill: Bill; connecti
             colSpan={6}
             className='border border-black text-sm'
           >
-            <NormalText>Virtual Account No:</NormalText>{' '}
+            <NormalText>SBI Virtual A/c No(IFS Code:SBIN0070493):</NormalText>{' '}
             {connection?.consumer_profiles?.[0]?.virtual_account_number ?? '-'}
           </TableCell>
         </TableRow>

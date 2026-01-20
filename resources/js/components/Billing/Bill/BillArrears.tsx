@@ -54,7 +54,7 @@ export default function BillArrears({
             colSpan={2}
             className='border border-black font-semibold'
           >
-            {getDisplayDate(connection?.previous_reading?.metering_date) ?? '-'}
+            {getDisplayDate(connection?.previous_reading?.reading_end_date) ?? '-'}
           </TableCell>
           <TableCell
             colSpan={1}

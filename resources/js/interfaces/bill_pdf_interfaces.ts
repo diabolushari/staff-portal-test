@@ -59,6 +59,7 @@ export interface ComputedProperties {
   energy_charge_rates: ComputedProperty
   electricity_surcharge_rate: ComputedProperty
   self_generation_duty_rate: ComputedProperty
+  electricity_duty_rate: ComputedProperty
 }
 
 export interface TotalDemandChargeRow {
@@ -96,4 +97,6 @@ export interface ChargeHeads {
   total_demand_charge: ChargeHeadItem
   green_energy_charge: ChargeHeadItem
   self_generation_duty: ChargeHeadItem
+  colony_lighting: ChargeHeadItem
+  factory_lighting: ChargeHeadItem
 }

@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { BillMeterReading, MeterWithMf } from '@/interfaces/bill_pdf_interfaces'
+import { BillMeterReading, ComputedProperties, MeterWithMf } from '@/interfaces/bill_pdf_interfaces'
 import { Bill } from '@/interfaces/data_interfaces'
 import { getDisplayMonthYear } from '@/utils'
 
@@ -18,6 +18,7 @@ interface BillReadingDetailsProps {
   kvaValues: BillMeterReading[]
   lagValues: BillMeterReading[]
   leadValues: BillMeterReading[]
+  computedProperties: ComputedProperties
 }
 
 export default function BillReadingDetails({
@@ -28,6 +29,7 @@ export default function BillReadingDetails({
   kvaValues,
   lagValues,
   leadValues,
+  computedProperties,
 }: Readonly<BillReadingDetailsProps>) {
   const mf = meter?.meter_mf ?? 1
   return (
@@ -283,7 +285,21 @@ export default function BillReadingDetails({
                 Total
               </TableCell>
               <TableCell className='border border-black'>
-                {kvahValues?.reduce((s, r) => s + (r?.difference ?? 0) * mf, 0) ?? '-'}
+                {kvahValues?.reduce((s, r) => s + (r?.value ?? 0), 0) ?? '-'}
+              </TableCell>
+            </TableRow>
+            <TableRow className='bg-gray-100'>
+              <TableCell
+                colSpan={3}
+                className='border border-black'
+              >
+                Average Pf:
+              </TableCell>
+              <TableCell
+                colSpan={2}
+                className='border border-black'
+              >
+                --
               </TableCell>
             </TableRow>
           </TableBody>
@@ -315,32 +331,49 @@ export default function BillReadingDetails({
                 </TableRow>
               )
             })}
-            <TableRow className='bg-gray-100 font-bold'>
+            <TableRow className='bg-gray-100'>
               <TableCell
-                colSpan={4}
+                colSpan={2}
                 className='border border-black font-bold'
               >
                 5. Factory lighting
               </TableCell>
-              <TableCell className='border border-black'>0</TableCell>
-            </TableRow>
-            <TableRow className='bg-gray-100 font-bold'>
               <TableCell
-                colSpan={4}
+                colSpan={2}
+                className='border border-black text-right'
+              >
+                {Number(computedProperties.total_consumption_factory_lighting.result).toFixed(2) ??
+                  '-'}
+              </TableCell>
+            </TableRow>
+            <TableRow className='bg-gray-100'>
+              <TableCell
+                colSpan={2}
                 className='border border-black font-bold'
               >
                 6. Colony lighting
               </TableCell>
-              <TableCell className='border border-black'>0</TableCell>
-            </TableRow>
-            <TableRow className='bg-gray-100 font-bold'>
               <TableCell
-                colSpan={4}
+                colSpan={2}
+                className='border border-black text-right'
+              >
+                {Number(computedProperties.total_consumption_colony_lighting.result).toFixed(2) ??
+                  '-'}
+              </TableCell>
+            </TableRow>
+            <TableRow className='bg-gray-100'>
+              <TableCell
+                colSpan={2}
                 className='border border-black font-bold'
               >
                 7. Generator
               </TableCell>
-              <TableCell className='border border-black'>0</TableCell>
+              <TableCell
+                colSpan={2}
+                className='border border-black text-right'
+              >
+                {Number(computedProperties.total_consumption_generator.result).toFixed(2) ?? '-'}
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>
