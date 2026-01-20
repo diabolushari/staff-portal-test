@@ -22,7 +22,7 @@ export default function PowerFactorBar({ powerFactorsByMeter, averagePF }: Props
       {averagePF && (
         <Card className='min-w-[140px] flex-shrink-0 border-2 border-blue-500 bg-gradient-to-b from-blue-50 to-blue-100 p-3 text-center shadow-md'>
           <strong className='text-blue-800'>Average</strong>
-          <div className='text-lg font-bold text-blue-700'>{averagePF}</div>
+          <div className='text-lg font-bold text-blue-700'>{Number(averagePF).toFixed(2)}</div>
         </Card>
       )}
     </div>
