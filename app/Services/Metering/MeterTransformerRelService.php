@@ -12,6 +12,7 @@ use Google\Protobuf\GPBEmpty;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Proto\Metering\GetMeterTransformerRelByCtptIdRequest;
 use Proto\Metering\GetMeterTransformerRelByMeterIdRequest;
 use Proto\Metering\ListAssignedToMetersRequest;
@@ -25,7 +26,7 @@ use Proto\Metering\MeterTransformerRelUpdateStatusRequest;
 class MeterTransformerRelService
 {
     private MeterTransformerRelServiceClient $client;
-  
+
 
     public function __construct()
     {
@@ -260,7 +261,7 @@ class MeterTransformerRelService
         );
     }
 
- 
+
 
     public function updateRelation(array $data, $id): GrpcServiceResponse
     {
@@ -280,18 +281,17 @@ class MeterTransformerRelService
             $request->setCtptChangeDate($this->toProtoTimestamp($data['ctpt_change_date']));
         }
         if (! empty($data['status_id'])) {
-        if (! empty($data['status_id'])) {
-        $request->setStatusId($data['status_id']);
-         }
-         if (! empty($data['change_reason_id'])) {
+            if (! empty($data['status_id'])) {
+                $request->setStatusId($data['status_id']);
+            }
+            if (! empty($data['change_reason_id'])) {
+                $request->setChangeReasonId($data['change_reason_id']);
+            }
+        }
+        if (! empty($data['change_reason_id'])) {
             $request->setChangeReasonId($data['change_reason_id']);
-         }
-       
-         }
-         if (! empty($data['change_reason_id'])) {
-            $request->setChangeReasonId($data['change_reason_id']);
-         }
-       
+        }
+
         $request->setUpdatedBy($data['updated_by'] ?? auth()->id());
 
         [$response, $status] = $this->client->UpdateMeterTransformerRel($request)->wait();
@@ -332,13 +332,13 @@ class MeterTransformerRelService
     }
 
 
-    public function updateRelationStatus(array $data):GrpcServiceResponse
+    public function updateRelationStatus(array $data): GrpcServiceResponse
     {
         $request = new MeterTransformerRelUpdateStatusRequest();
         $request->setVersionId($data['ctpt_version_id']);
         $request->setStatusId($data['status_id']);
         $request->setFaultyDate(DateTimeConverter::convertStringToTimestamp($data['faulty_date']));
-      
+
 
         [$response, $status] = $this->client->UpdateMeterTransformerRelStatus($request)->wait();
 

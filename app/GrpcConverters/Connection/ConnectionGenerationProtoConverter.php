@@ -26,10 +26,10 @@ class ConnectionGenerationProtoConverter
             'generation_type' => ParameterValueProtoConvertor::convertToArray($generationType->getGenerationType()),
             'generation_sub_type' => ParameterValueProtoConvertor::convertToArray($generationType->getGenerationSubType()),
             'effective_start' => $generationType->getEffectiveStart()
-                ? $generationType->getEffectiveStart()->toDateTime()->format('Y-m-d')
+                ? $generationType->getEffectiveStart()->toDateTime()->format('d-m-Y')
                 : null,
             'effective_end' => $generationType->getEffectiveEnd()
-                ? $generationType->getEffectiveEnd()->toDateTime()->format('Y-m-d')
+                ? $generationType->getEffectiveEnd()->toDateTime()->format('d-m-Y')
                 : null,
             'is_current' => $generationType->getIsCurrent(),
             'created_by' => $generationType->getCreatedBy() ?: null,

@@ -85,10 +85,16 @@ class MeterConnectionMappingService
 
                 // ctpt_energise_date
                 if ($transformer->ctptEnergiseDate !== null) {
-                    $energise = new Timestamp;
-                    $energise->fromDateTime(new \DateTime($transformer->ctptEnergiseDate));
+                    $dateTime = $transformer->ctptEnergiseDate instanceof \DateTimeInterface
+                        ? $transformer->ctptEnergiseDate
+                        : new \DateTime($transformer->ctptEnergiseDate);
+
+                    $energise = new Timestamp();
+                    $energise->fromDateTime($dateTime);
+
                     $transformer_proto->setCtptEnergiseDate($energise);
                 }
+
 
                 // ctpt_change_date
                 if ($transformer->ctptChangeDate !== null) {
@@ -300,18 +306,18 @@ class MeterConnectionMappingService
      */
     public function meterConnectionMappingProtoToArray(MeterConnectionMappingResponse $rel): array
     {
-        $faultyDate = $rel->getFaultyDate() ? $rel->getFaultyDate()->toDateTime()->format('Y-m-d') : null;
-        $rectificationDate = $rel->getRectificationDate() ? $rel->getRectificationDate()->toDateTime()->format('Y-m-d') : null;
-        $effectiveStartTs = $rel->getEffectiveStartTs() ? $rel->getEffectiveStartTs()->toDateTime()->format('Y-m-d H:i:s') : null;
-        $effectiveEndTs = $rel->getEffectiveEndTs() ? $rel->getEffectiveEndTs()->toDateTime()->format('Y-m-d H:i:s') : null;
-        $createdTs = $rel->getCreatedTs() ? $rel->getCreatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
-        $updatedTs = $rel->getUpdatedTs() ? $rel->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
+        $faultyDate = $rel->getFaultyDate() ? $rel->getFaultyDate()->toDateTime()->format('d-m-y') : null;
+        $rectificationDate = $rel->getRectificationDate() ? $rel->getRectificationDate()->toDateTime()->format('d-m-y') : null;
+        $effectiveStartTs = $rel->getEffectiveStartTs() ? $rel->getEffectiveStartTs()->toDateTime()->format('d-m-y H:i:s') : null;
+        $effectiveEndTs = $rel->getEffectiveEndTs() ? $rel->getEffectiveEndTs()->toDateTime()->format('d-m-y H:i:s') : null;
+        $createdTs = $rel->getCreatedTs() ? $rel->getCreatedTs()->toDateTime()->format('d-m-y H:i:s') : null;
+        $updatedTs = $rel->getUpdatedTs() ? $rel->getUpdatedTs()->toDateTime()->format('d-m-y H:i:s') : null;
         $meter = MeterProtoConvertor::convertToArray($rel->getMeter());
-        $noticeDate = $rel->getNoticeDate() ? $rel->getNoticeDate()->toDateTime()->format('Y-m-d') : null;
-        $intimationDate = $rel->getIntimationDate() ? $rel->getIntimationDate()->toDateTime()->format('Y-m-d') : null;
-        $changeDate = $rel->getChangeDate() ? $rel->getChangeDate()->toDateTime()->format('Y-m-d') : null;
+        $noticeDate = $rel->getNoticeDate() ? $rel->getNoticeDate()->toDateTime()->format('d-m-y') : null;
+        $intimationDate = $rel->getIntimationDate() ? $rel->getIntimationDate()->toDateTime()->format('d-m-y') : null;
+        $changeDate = $rel->getChangeDate() ? $rel->getChangeDate()->toDateTime()->format('d-m-y') : null;
         $meterProfile = ParameterValueProtoConvertor::convertToArray($rel->getProfile());
-        $energiseDate = $rel->getEnergiseDate() ? $rel->getEnergiseDate()->toDateTime()->format('Y-m-d') : null;
+        $energiseDate = $rel->getEnergiseDate() ? $rel->getEnergiseDate()->toDateTime()->format('d-m-y') : null;
         return [
             'version_id' => $rel->getVersionId(),
             'rel_id' => $rel->getRelId(),

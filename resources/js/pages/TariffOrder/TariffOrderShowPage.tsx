@@ -7,6 +7,7 @@ import Field from '@/components/ui/field'
 import TariffConfigTable from '@/components/Tariff/TariffConfig/TariffConfigTable'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import ShowPageCard from '@/ui/Card/ShowPageCard'
+import { getDisplayDate } from '@/utils'
 
 export default function TariffOrderShowPage({
   tariff_order,
@@ -55,17 +56,17 @@ export default function TariffOrderShowPage({
           <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
             <Field
               label='Published Date'
-              value={new Date(tariff_order?.published_date).toLocaleDateString()}
+              value={getDisplayDate(tariff_order?.published_date)}
             />
 
             <Field
               label='Effective Start'
-              value={new Date(tariff_order?.effective_start).toLocaleDateString()}
+              value={getDisplayDate(tariff_order?.effective_start)}
             />
 
             <Field
               label='Effective End'
-              value={new Date(tariff_order?.effective_end || '').toLocaleDateString()}
+              value={getDisplayDate(tariff_order?.effective_end)}
             />
 
             <div>
