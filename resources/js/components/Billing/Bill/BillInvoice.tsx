@@ -31,7 +31,7 @@ export default function BillInvoice({
   computedProperties: ComputedProperties
   kwhValues: BillMeterReading[]
 }) {
-  console.log(totalDemandChargeRows)
+  console.log(chargeHeads)
 
   const roundedOffAmount = (amount: number): { updatedAmount: string; roundOff: string } => {
     const roundedAmount = Math.round(amount)
@@ -148,10 +148,12 @@ export default function BillInvoice({
                 </TableCell>
                 <TableCell className='border border-black text-right'>
                   {Number.isNaN(
-                    Number(chargeHeads.power_factor_incentive_and_disincentive.result)
-                  ) || chargeHeads.power_factor_incentive_and_disincentive.result === null
+                    Number(chargeHeads.power_factor_incentive_and_disincentive?.result)
+                  ) || chargeHeads.power_factor_incentive_and_disincentive?.result === null
                     ? '-'
-                    : Number(chargeHeads.power_factor_incentive_and_disincentive.result).toFixed(2)}
+                    : Number(chargeHeads.power_factor_incentive_and_disincentive?.result)?.toFixed(
+                        2
+                      )}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -164,12 +166,12 @@ export default function BillInvoice({
                 <TableCell className='border border-black text-right'>
                   {Number.isNaN(Number(chargeHeads.energy_charge.result)) ||
                   chargeHeads.energy_charge.result === null ||
-                  Number.isNaN(Number(chargeHeads.power_factor_incentive_and_disincentive.result))
+                  Number.isNaN(Number(chargeHeads.power_factor_incentive_and_disincentive?.result))
                     ? '-'
                     : (
                         Number(chargeHeads.energy_charge.result) +
-                        Number(chargeHeads.power_factor_incentive_and_disincentive.result)
-                      ).toFixed(2)}
+                        Number(chargeHeads.power_factor_incentive_and_disincentive?.result)
+                      )?.toFixed(2)}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -274,11 +276,16 @@ export default function BillInvoice({
                 >
                   7. Duty On Self Generated Energy
                 </TableCell>
-                <TableCell className='border border-black'>0</TableCell>
+                <TableCell className='border border-black'>
+                  {Number(computedProperties?.total_consumption_generator?.result)?.toFixed(2) ??
+                    '-'}
+                </TableCell>
                 <TableCell className='border border-black'>
                   {Number(computedProperties?.self_generation_duty_rate?.result)?.toFixed(2) ?? '-'}
                 </TableCell>
-                <TableCell className='border border-black'>0.00</TableCell>
+                <TableCell className='border border-black'>
+                  {Number(chargeHeads?.self_generation_duty?.result)?.toFixed(2) ?? '0'}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell
