@@ -160,19 +160,19 @@ class MeterTimezoneTypeRelService
     public static function meterTimezoneTypeRelProtoToArray(MeterTimezoneTypeRel $rel): array
     {
         $effectiveStartTs = $rel->getEffectiveStartTs()
-            ? $rel->getEffectiveStartTs()->toDateTime()->format('y-m-d H:i:s')
+            ? $rel->getEffectiveStartTs()->toDateTime()->format('Y-m-d H:i:s')
             : null;
 
         $effectiveEndTs = $rel->getEffectiveEndTs()
-            ? $rel->getEffectiveEndTs()->toDateTime()->format('y-m-d H:i:s')
+            ? $rel->getEffectiveEndTs()->toDateTime()->format('Y-m-d H:i:s')
             : null;
 
         $createdTs = $rel->getCreatedTs()
-            ? $rel->getCreatedTs()->toDateTime()->format('y-m-d H:i:s')
+            ? $rel->getCreatedTs()->toDateTime()->format('Y-m-d H:i:s')
             : null;
 
         $updatedTs = $rel->getUpdatedTs()
-            ? $rel->getUpdatedTs()->toDateTime()->format('y-m-d H:i:s')
+            ? $rel->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s')
             : null;
 
         return [

@@ -12,8 +12,7 @@ import { Cpu, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { consumerNavItems } from '../../components/Navbar/navitems'
 import ConnectionMeterUpdateModal from '@/components/Connections/ConnectionMeter/ConnectionMeterUpdateModal'
-import ConnectionProfileUpdateModal from
-  '@/components/Connections/ConnectionMeter/ConnectionProfileUpdateModal'
+import ConnectionProfileUpdateModal from '@/components/Connections/ConnectionMeter/ConnectionProfileUpdateModal'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import AddButton from '@/ui/button/AddButton'
 
@@ -44,8 +43,9 @@ export default function ConnectionMeterList({
   const [isStatusChange, setIsStatusChange] = useState(false)
   const [meter, setMeter] = useState<MeterConnectionMapping | null>(null)
   const [showProfileModal, setShowProfileModal] = useState(false)
-  const [selectedProfileMeter, setSelectedProfileMeter] =
-  useState<MeterConnectionMapping | null>(null)
+  const [selectedProfileMeter, setSelectedProfileMeter] = useState<MeterConnectionMapping | null>(
+    null
+  )
 
   const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -91,18 +91,17 @@ export default function ConnectionMeterList({
     setMeter(meter)
   }
 
- function handleMeterProfileChange(mapping: MeterConnectionMapping) {
-  setSelectedProfileMeter(mapping)
-  setShowProfileModal(true)
-}
-
+  function handleMeterProfileChange(mapping: MeterConnectionMapping) {
+    setSelectedProfileMeter(mapping)
+    setShowProfileModal(true)
+  }
 
   function handleCloseModal() {
     setUpdateModalOpen(false)
     setMeter(null)
     setIsStatusChange(false)
   }
-
+  console.log(connection?.meter_mappings)
   return (
     <ConnectionsLayout
       connectionId={connection_id}
@@ -173,12 +172,12 @@ export default function ConnectionMeterList({
           />
         )}
         {showProfileModal && selectedProfileMeter && (
-        <ConnectionProfileUpdateModal
-          setShowModal={() => setShowProfileModal(false)}
-          meterMapping={selectedProfileMeter}
-          meterProfiles={meter_profiles}
-        /> 
-      )} 
+          <ConnectionProfileUpdateModal
+            setShowModal={() => setShowProfileModal(false)}
+            meterMapping={selectedProfileMeter}
+            meterProfiles={meter_profiles}
+          />
+        )}
       </div>
     </ConnectionsLayout>
   )

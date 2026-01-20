@@ -43,6 +43,7 @@ export default function ConnectionCardSection({
   onMeterProfileChange,
   statuses,
 }: Readonly<Props>) {
+  console.log(meterMapping)
   const meterTransformers = ctptRelations.filter((ctpt) => ctpt.meter_id === meterMapping.meter_id)
 
   const [change, setChange] = useState<boolean>(false)

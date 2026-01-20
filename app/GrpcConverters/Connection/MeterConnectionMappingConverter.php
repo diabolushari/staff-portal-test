@@ -47,16 +47,16 @@ class MeterConnectionMappingConverter
      */
     public function meterConnectionMappingProtoToArray(MeterConnectionMappingResponse $rel): array
     {
-        $faultyDate = $rel->getFaultyDate() ? $rel->getFaultyDate()->toDateTime()->format('y-m-d') : null;
-        $rectificationDate = $rel->getRectificationDate() ? $rel->getRectificationDate()->toDateTime()->format('y-m-d') : null;
-        $effectiveStartTs = $rel->getEffectiveStartTs() ? $rel->getEffectiveStartTs()->toDateTime()->format('y-m-d H:i:s') : null;
-        $effectiveEndTs = $rel->getEffectiveEndTs() ? $rel->getEffectiveEndTs()->toDateTime()->format('y-m-d H:i:s') : null;
-        $createdTs = $rel->getCreatedTs() ? $rel->getCreatedTs()->toDateTime()->format('y-m-d H:i:s') : null;
-        $updatedTs = $rel->getUpdatedTs() ? $rel->getUpdatedTs()->toDateTime()->format('y-m-d H:i:s') : null;
+        $faultyDate = $rel->getFaultyDate() ? $rel->getFaultyDate()->toDateTime()->format('Y-m-d') : null;
+        $rectificationDate = $rel->getRectificationDate() ? $rel->getRectificationDate()->toDateTime()->format('Y-m-d') : null;
+        $effectiveStartTs = $rel->getEffectiveStartTs() ? $rel->getEffectiveStartTs()->toDateTime()->format('Y-m-d H:i:s') : null;
+        $effectiveEndTs = $rel->getEffectiveEndTs() ? $rel->getEffectiveEndTs()->toDateTime()->format('Y-m-d H:i:s') : null;
+        $createdTs = $rel->getCreatedTs() ? $rel->getCreatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
+        $updatedTs = $rel->getUpdatedTs() ? $rel->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
         $meter = MeterProtoConvertor::convertToArray($rel->getMeter());
-        $noticeDate = $rel->getNoticeDate() ? $rel->getNoticeDate()->toDateTime()->format('y-m-d') : null;
-        $intimationDate = $rel->getIntimationDate() ? $rel->getIntimationDate()->toDateTime()->format('y-m-d') : null;
-        $changeDate = $rel->getChangeDate() ? $rel->getChangeDate()->toDateTime()->format('y-m-d') : null;
+        $noticeDate = $rel->getNoticeDate() ? $rel->getNoticeDate()->toDateTime()->format('Y-m-d') : null;
+        $intimationDate = $rel->getIntimationDate() ? $rel->getIntimationDate()->toDateTime()->format('Y-m-d') : null;
+        $changeDate = $rel->getChangeDate() ? $rel->getChangeDate()->toDateTime()->format('Y-m-d') : null;
         return [
             'version_id' => $rel->getVersionId(),
             'rel_id' => $rel->getRelId(),

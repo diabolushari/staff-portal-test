@@ -323,10 +323,10 @@ class MeteringParameterProfileService
                 'created_by' => $parameter->getCreatedBy(),
                 'updated_by' => $parameter->getUpdatedBy(),
                 'effective_start_date' => $parameter->getEffectiveStartDate()
-                    ? $parameter->getEffectiveStartDate()->toDateTime()->format('y-m-d H:i:s')
+                    ? $parameter->getEffectiveStartDate()->toDateTime()->format('Y-m-d H:i:s')
                     : null,
                 'effective_end_date' => $parameter->getEffectiveEndDate()
-                    ? $parameter->getEffectiveEndDate()->toDateTime()->format('y-m-d H:i:s')
+                    ? $parameter->getEffectiveEndDate()->toDateTime()->format('Y-m-d H:i:s')
                     : null,
             ];
         }

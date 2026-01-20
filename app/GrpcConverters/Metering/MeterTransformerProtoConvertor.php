@@ -41,7 +41,7 @@ class MeterTransformerProtoConvertor
         }
 
         $manufactureDate = ($t->hasManufactureDate() && $t->getManufactureDate())
-            ? $t->getManufactureDate()->toDateTime()->format('y-m-d')
+            ? $t->getManufactureDate()->toDateTime()->format('Y-m-d')
             : null;
 
         $createdTs = $t->getCreatedTs()

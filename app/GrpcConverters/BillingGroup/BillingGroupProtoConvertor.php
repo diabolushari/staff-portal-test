@@ -34,15 +34,15 @@ class BillingGroupProtoConvertor
         }
 
         $effectiveStart = $g->getEffectiveStart()
-            ? $g->getEffectiveStart()->toDateTime()->format('y-m-d H:i:s')
+            ? $g->getEffectiveStart()->toDateTime()->format('Y-m-d H:i:s')
             : null;
 
         $effectiveEnd = ($g->hasEffectiveEnd() && $g->getEffectiveEnd())
-            ? $g->getEffectiveEnd()->toDateTime()->format('y-m-d H:i:s')
+            ? $g->getEffectiveEnd()->toDateTime()->format('Y-m-d H:i:s')
             : null;
 
         $deletedTs = $g->getDeletedTs()
-            ? $g->getDeletedTs()->toDateTime()->format('y-m-d H:i:s')
+            ? $g->getDeletedTs()->toDateTime()->format('Y-m-d H:i:s')
             : null;
 
         $connections = [];

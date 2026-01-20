@@ -35,7 +35,7 @@ class DateTimeConverter
             return '';
         }
 
-        return date('y-m-d H:i:s', $seconds);
+        return date('Y-m-d H:i:s', $seconds);
     }
 
     public static function converTimeStampToDate(?TimeStamp $timestamp): string
