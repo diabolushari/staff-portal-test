@@ -4,6 +4,7 @@ namespace App\Services\Billing;
 
 use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterReadingService;
+use Spatie\LaravelData\Attributes\Validation\InArray;
 
 class BillExportService
 {
@@ -74,7 +75,7 @@ class BillExportService
         // Each reading object contains "values"
         $values = collect($meterReading[0]['values'] ?? []);
 
-        return $values
+        $unsortedValues = $values
             ->filter(function ($value) use ($parameterName, $energyConsumptionMeterId) {
 
                 $parameterMatch =
@@ -101,10 +102,28 @@ class BillExportService
                     'parameter_display' => $item['meter_profile_parameter']['display_name'] ?? null,
                 ];
             })
-            ->sortBy('timezone_id')   // ✅ SORT HERE
-            ->values()                // reset array keys
+            ->values()
             ->toArray();
+
+
+        $sortedValues = [];
+        $timeZoneNames = ['normal', 'peak', 'off peak'];
+        foreach ($timeZoneNames as $timeZoneName) {
+            foreach ($unsortedValues as $value) {
+                if (strtolower($value['timezone']) == $timeZoneName) {
+                    $sortedValues[] = $value;
+                }
+            }
+        }
+        foreach ($unsortedValues as $value) {
+            if (!in_array(strtolower($value['timezone']), $timeZoneNames)) {
+                $sortedValues[] = $value;
+            }
+        }
+
+        return $sortedValues;
     }
+
 
 
 
