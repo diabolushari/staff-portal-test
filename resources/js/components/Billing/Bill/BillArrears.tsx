@@ -43,7 +43,7 @@ export default function BillArrears({
             colSpan={6}
             className='border border-black text-center font-semibold'
           >
-            Arrears as on {'-'}
+            Arrears as on {getDisplayDate(bill?.bill_date) ?? '-'}
           </TableCell>
 
           <TableCell
@@ -69,9 +69,9 @@ export default function BillArrears({
         {/* ───── Row 2 : Disputed / Undisputed + Present Reading + Voltage ───── */}
         <TableRow>
           <TableCell className='border border-black'>Disputed</TableCell>
-          <TableCell className='border border-black text-right'>-</TableCell>
+          <TableCell className='border border-black text-right'>0.00</TableCell>
           <TableCell className='border border-black'>Undisputed</TableCell>
-          <TableCell className='border border-black text-right'>-</TableCell>
+          <TableCell className='border border-black text-right'>0.00</TableCell>
           <TableCell
             colSpan={2}
             className='border border-black'
