@@ -35,6 +35,7 @@ interface BillShowPageProps {
   totalEnergyCharge: TotalEnergyCharge
   averageAndTotalKva: { totalKva: number; averageKva: number }
   averageAndTotalKwh: { averageKwh: number; totalKwh: number }
+  selfGenerationkwhValues: BillMeterReading[]
 }
 
 export default function BillShowPage({
@@ -52,6 +53,7 @@ export default function BillShowPage({
   totalEnergyCharge,
   averageAndTotalKva,
   averageAndTotalKwh,
+  selfGenerationkwhValues,
 }: BillShowPageProps) {
   const mf = meter?.meter_mf ?? 1
 
@@ -64,6 +66,15 @@ export default function BillShowPage({
       selectedItem='Bill Details'
     >
       <div className='bg-white'>
+        <div className='flex items-center justify-end'>
+          {' '}
+          <Button
+            onClick={() => {
+              window.open(`/pdf-download/${bill?.bill_id}`)
+            }}
+            label='Download'
+          />
+        </div>
         <div className='flex flex-col items-center justify-center gap-1'>
           <StrongText className='text-2xl font-bold'>
             KERALA STATE ELECTRICITY BOARD LIMITED
@@ -74,15 +85,6 @@ export default function BillShowPage({
 
           <StrongText className='text-3xl font-bold'>{`DEMAND CUM DISCONNECTION NOTICE FOR ${getDisplayMonthYear(bill?.bill_date, true, true)}`}</StrongText>
           <NormalText>(As per CHAPTER VII OF KERALA ELECTRICITY SUPPLY CODE -2014)</NormalText>
-        </div>
-        <div className='flex items-center justify-end'>
-          {' '}
-          <Button
-            onClick={() => {
-              window.open(`/pdf-download/${bill?.bill_id}`)
-            }}
-            label='Download'
-          />
         </div>
 
         {/* Main Bill Container - Like Original PDF */}
@@ -108,6 +110,7 @@ export default function BillShowPage({
             lagValues={lagValues}
             leadValues={leadValues}
             computedProperties={computedProperties}
+            selfGenerationkwhValues={selfGenerationkwhValues}
           />
 
           {/* Final Charges */}
@@ -117,9 +120,7 @@ export default function BillShowPage({
             totalEnergyChargeRows={totalEnergyCharge}
             bill={bill}
             computedProperties={computedProperties}
-            averageAndTotalKva={averageAndTotalKva}
-            averageAndTotalKwh={averageAndTotalKwh}
-            mf={mf}
+            kwhValues={kwhValues}
           />
 
           <div className='mt-6 text-center italic'>(Rupees {bill?.bill_amount ?? '-'})</div>

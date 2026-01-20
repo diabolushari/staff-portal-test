@@ -13,7 +13,7 @@ class BillExportService
         private readonly MeterReadingService $meterReadingService
     ) {}
 
-    public function getMainMeter(?int $connectionId): ?array
+    public function getEnergyConsumptionMeter(?int $connectionId): ?array
     {
         $meter = [];
         if (! $connectionId) {
@@ -22,7 +22,26 @@ class BillExportService
         $meterConnectionMapping = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($connectionId)->data;
         if ($meterConnectionMapping) {
             foreach ($meterConnectionMapping as $mapping) {
-                if ($mapping['meter_profile']['parameter_value'] == 'Main Meter') {
+                if (strtolower($mapping['meter_use_category']['parameter_value']) == 'energy consumption') {
+                    $meter['meter'] = $mapping['meter'];
+                    $meter['meter_mf'] = $mapping['meter_mf'];
+                }
+            }
+        }
+
+        return $meter;
+    }
+
+    public function getSelfGenerationMeter(?int $connectionId): ?array
+    {
+        $meter = [];
+        if (! $connectionId) {
+            return $meter;
+        }
+        $meterConnectionMapping = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($connectionId)->data;
+        if ($meterConnectionMapping) {
+            foreach ($meterConnectionMapping as $mapping) {
+                if (strtolower($mapping['meter_use_category']['parameter_value']) == 'self generation') {
                     $meter['meter'] = $mapping['meter'];
                     $meter['meter_mf'] = $mapping['meter_mf'];
                 }
@@ -43,12 +62,12 @@ class BillExportService
         return $meterReading;
     }
 
-    public function filterReadingByParameter(?array $meterReading, ?string $parameterName): ?array
-    {
-        if (empty($meterReading)) {
-            return [];
-        }
-        if (empty($parameterName)) {
+    public function filterReadingByParameter(
+        ?array $meterReading,
+        ?string $parameterName,
+        $energyConsumptionMeterId
+    ): ?array {
+        if (empty($meterReading) || empty($parameterName) || empty($energyConsumptionMeterId)) {
             return [];
         }
 
@@ -56,27 +75,34 @@ class BillExportService
         $values = collect($meterReading[0]['values'] ?? []);
 
         return $values
-            ->filter(function ($value) use ($parameterName) {
-                // Match based on meter_profile_parameter.name (kva, kwh, kvarh_lead etc.)
-                return strtolower($value['meter_profile_parameter']['name'] ?? '') === strtolower($parameterName);
+            ->filter(function ($value) use ($parameterName, $energyConsumptionMeterId) {
+
+                $parameterMatch =
+                    strtolower($value['meter_profile_parameter']['name'] ?? '') === strtolower($parameterName);
+
+                $meterMatch =
+                    ($value['meter_id'] ?? null) == $energyConsumptionMeterId;
+
+                return $parameterMatch && $meterMatch;
             })
             ->map(function ($item) {
                 return [
-                    'timezone' => $item['time_zone']['parameter_value'] ?? null, // Normal / Peak / Off Peak
-                    'timezone_code' => $item['time_zone']['parameter_code'] ?? null,
-                    'initial_reading' => $item['initial_reading'],
-                    'final_reading' => $item['final_reading'],
-                    'difference' => $item['difference'],
-                    'meter_mf' => $item['meter_mf'] ?? null,
-                    'value' => $item['value'],
-                    'parameter_id' => $item['meter_profile_parameter']['meter_parameter_id'] ?? null,
-                    'parameter_name' => $item['meter_profile_parameter']['name'] ?? null,
+                    'timezone'         => $item['time_zone']['parameter_value'] ?? null,
+                    'timezone_code'    => $item['time_zone']['parameter_code'] ?? null,
+                    'initial_reading'  => $item['initial_reading'] ?? null,
+                    'final_reading'    => $item['final_reading'] ?? null,
+                    'difference'       => $item['difference'] ?? null,
+                    'meter_mf'         => $item['meter_mf'] ?? null,
+                    'value'            => $item['value'] ?? null,
+                    'parameter_id'     => $item['meter_profile_parameter']['meter_parameter_id'] ?? null,
+                    'parameter_name'   => $item['meter_profile_parameter']['name'] ?? null,
                     'parameter_display' => $item['meter_profile_parameter']['display_name'] ?? null,
                 ];
             })
             ->values()
             ->toArray();
     }
+
 
     public function getChargeHeads(array $chargeHeads): array
     {
@@ -210,8 +236,8 @@ class BillExportService
             $zoneWithMaxDemand['result'] === 'Contract Demand';
 
         $demandUnits = $useContractDemand
-               ? (float) ($contract75['result'] ?? 0)
-               : (float) ($recordedMaxDemand['result'] ?? 0);
+            ? (float) ($contract75['result'] ?? 0)
+            : (float) ($recordedMaxDemand['result'] ?? 0);
 
         $zoneWithMaxExcessDemand = null;
         $previousMax = 0;
@@ -333,7 +359,7 @@ class BillExportService
         // Filter timezone readings
         $timezoneReadings = array_filter(
             $kvaReadings,
-            fn ($r) => ! empty($r['timezone_code'])
+            fn($r) => ! empty($r['timezone_code'])
         );
 
         $threshold = $contractDemand * 0.75;
@@ -391,6 +417,8 @@ class BillExportService
 
     private function toSnakeCase(string $value): string
     {
+
+
         return strtolower(
             preg_replace('/[^a-z0-9]+/i', '_', trim($value))
         );

@@ -7,6 +7,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import {
+  BillMeterReading,
   ChargeHeads,
   ComputedProperties,
   TotalDemandCharge,
@@ -21,18 +22,14 @@ export default function BillInvoice({
   totalEnergyChargeRows,
   bill,
   computedProperties,
-  averageAndTotalKva,
-  averageAndTotalKwh,
-  mf,
+  kwhValues,
 }: {
   chargeHeads: ChargeHeads
   totalDemandChargeRows: TotalDemandCharge
   totalEnergyChargeRows: TotalEnergyCharge
   bill: Bill
   computedProperties: ComputedProperties
-  averageAndTotalKva: { averageKva: number; totalKva: number }
-  averageAndTotalKwh: { averageKwh: number; totalKwh: number }
-  mf: number
+  kwhValues: BillMeterReading[]
 }) {
   console.log(totalDemandChargeRows)
 
@@ -76,7 +73,7 @@ export default function BillInvoice({
                     colSpan={2}
                     className='border border-black'
                   >
-                    {row?.label}
+                    {String.fromCharCode(97 + index)}. {row?.label}
                   </TableCell>
                   <TableCell className='border border-black'>{row?.units}</TableCell>
                   <TableCell className='border border-black'>
@@ -117,7 +114,7 @@ export default function BillInvoice({
                     colSpan={2}
                     className='border border-black'
                   >
-                    {row?.label}
+                    {String.fromCharCode(97 + index)}. {row?.label}
                   </TableCell>
                   <TableCell className='border border-black'>{row?.units}</TableCell>
                   <TableCell className='border border-black'>
@@ -260,7 +257,7 @@ export default function BillInvoice({
                   6.Ele. Surcharge(*)
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {averageAndTotalKwh?.totalKwh * mf}
+                  {kwhValues?.reduce((s, r) => s + (r?.value ?? 0), 0)}
                 </TableCell>
                 <TableCell className='border border-black'>
                   {Number(computedProperties?.electricity_surcharge_rate?.result)?.toFixed(2) ??

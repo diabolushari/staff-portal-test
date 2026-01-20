@@ -19,9 +19,11 @@ class BillController extends Controller
     {
 
         $bill = $this->billService->getBill($id);
-        $meter = null;
+        $energyMeter = null;
+        $selfGenerationMeter = null;
         if (isset($bill?->data['connection_id']) && $bill->data['connection_id']) {
-            $meter = $this->billExportService->getMainMeter($bill->data['connection_id']);
+            $energyMeter = $this->billExportService->getEnergyConsumptionMeter($bill->data['connection_id']);
+            $selfGenerationMeter = $this->billExportService->getSelfGenerationMeter($bill->data['connection_id']);
         }
         $meterReading = null;
 
@@ -29,14 +31,15 @@ class BillController extends Controller
             $meterReading = $this->billExportService->getMeterReading($bill->data['connection_id'], $bill->data['reading_year_month']);
         }
 
-        $kvaValues = $this->billExportService->filterReadingByParameter($meterReading, 'kva');
-        $kvahValues = $this->billExportService->filterReadingByParameter($meterReading, 'kvah');
-        $kwhValues = $this->billExportService->filterReadingByParameter($meterReading, 'kwh');
-        $lagValues = $this->billExportService->filterReadingByParameter($meterReading, 'kVA(R)h Lag');
-        $leadValues = $this->billExportService->filterReadingByParameter($meterReading, 'kVA(R)h Lead');
+        $selfGenerationkwhValues = $this->billExportService->filterReadingByParameter($meterReading, 'kwh', $selfGenerationMeter['meter']['meter_id'] ?? null);
+        $kvaValues = $this->billExportService->filterReadingByParameter($meterReading, 'kva', $energyMeter['meter']['meter_id'] ?? null);
+        $kvahValues = $this->billExportService->filterReadingByParameter($meterReading, 'kvah', $energyMeter['meter']['meter_id'] ?? null);
+        $kwhValues = $this->billExportService->filterReadingByParameter($meterReading, 'kwh', $energyMeter['meter']['meter_id'] ?? null);
+        $lagValues = $this->billExportService->filterReadingByParameter($meterReading, 'kVA(R)h Lag', $energyMeter['meter']['meter_id'] ?? null);
+        $leadValues = $this->billExportService->filterReadingByParameter($meterReading, 'kVA(R)h Lead', $energyMeter['meter']['meter_id'] ?? null);
         $chargeHeads = $this->billExportService->getChargeHeads($bill->data['charge_heads'] ?? []);
         $computedProperties = $this->billExportService->getComputedProperties($bill->data['computed_properties'] ?? []);
-        $energyChargeRows = $this->billExportService->getEnergyChargeRows($meter, $computedProperties, $kwhValues);
+        $energyChargeRows = $this->billExportService->getEnergyChargeRows($energyMeter, $computedProperties, $kwhValues);
         $averageAndTotalKva = $this->billExportService->getAverageAndTotalKva($kvaValues);
         $averageAndTotalKwh = $this->billExportService->getAverageAndTotalKwh($kwhValues);
         $demand = $this->billExportService->calculateDemand($kvaValues, $bill?->data['connection']['contract_demand_kva_val'] ?? 0);
@@ -45,7 +48,7 @@ class BillController extends Controller
 
         return Inertia::render('Bill/BillShowPage', [
             'bill' => $bill->data,
-            'meter' => $meter,
+            'meter' => $energyMeter,
             'meterReading' => $meterReading,
             'kvaValues' => $kvaValues,
             'kvahValues' => $kvahValues,
@@ -62,6 +65,7 @@ class BillController extends Controller
             'demand' => $demand,
             'totalDemandCharge' => $totalDemandChargeRows,
             'totalEnergyCharge' => $totalEnergyChargeRows,
+            'selfGenerationkwhValues' => $selfGenerationkwhValues,
         ]);
     }
 }
