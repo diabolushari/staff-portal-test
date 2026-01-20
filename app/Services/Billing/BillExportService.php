@@ -417,6 +417,8 @@ class BillExportService
 
     private function toSnakeCase(string $value): string
     {
+
+
         return strtolower(
             preg_replace('/[^a-z0-9]+/i', '_', trim($value))
         );

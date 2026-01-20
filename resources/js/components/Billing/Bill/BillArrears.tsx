@@ -20,6 +20,8 @@ export default function BillArrears({
   mf: number
   computedProperties: ComputedProperties
 }) {
+  console.log(computedProperties)
+
   const totalConsumption = useMemo(() => {
     if (!kwhValues?.length) {
       return null
@@ -131,14 +133,10 @@ export default function BillArrears({
             {connection?.contract_demand_kva_val ?? '-'}
           </TableCell>
           <TableCell className='border border-black text-center'>
-            {connection?.contract_demand_kva_val
-              ? (connection.contract_demand_kva_val * 0.75).toFixed(2)
-              : '-'}
+            {Number(computedProperties?.['75_of_contract_demand'].result).toFixed(2) ?? '-'}
           </TableCell>
           <TableCell className='border border-black text-center'>
-            {connection?.contract_demand_kva_val
-              ? (connection.contract_demand_kva_val * 1.3).toFixed(2)
-              : '-'}
+            {Number(computedProperties?.['130_of_contract_demand'].result).toFixed(2) ?? '-'}
           </TableCell>
           <TableCell
             colSpan={3}
