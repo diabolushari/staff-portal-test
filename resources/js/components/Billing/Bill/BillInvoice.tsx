@@ -224,7 +224,15 @@ export default function BillInvoice({
                   Sub Total(a+b)
                 </TableCell>
                 <TableCell className='border border-black text-right'>
-                  {Number(chargeHeads.energy_charge.result)?.toFixed(2) ?? '-'}
+                  {Number.isNaN(Number(chargeHeads.colony_lighting.result)) ||
+                  chargeHeads.colony_lighting.result === null ||
+                  Number.isNaN(Number(chargeHeads.factory_lighting.result)) ||
+                  chargeHeads.factory_lighting.result === null
+                    ? '-'
+                    : (
+                        Number(chargeHeads.colony_lighting.result) +
+                        Number(chargeHeads.factory_lighting.result)
+                      ).toFixed(2)}
                 </TableCell>
               </TableRow>
               <TableRow>
