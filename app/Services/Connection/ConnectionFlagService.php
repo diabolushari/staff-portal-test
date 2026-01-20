@@ -40,25 +40,25 @@ class ConnectionFlagService
             'flag_id' => $flag->getFlagId(),
 
             'effective_start' => $flag->getEffectiveStart()
-                ? $flag->getEffectiveStart()->toDateTime()->format('d-m-y')
+                ? $flag->getEffectiveStart()->toDateTime()->format('y-m-d')
                 : null,
 
             'effective_end' => $flag->getEffectiveEnd()
-                ? $flag->getEffectiveEnd()->toDateTime()->format('d-m-y')
+                ? $flag->getEffectiveEnd()->toDateTime()->format('y-m-d')
                 : null,
 
             'is_current' => $flag->getIsCurrent(),
 
             'created_at' => $flag->getCreatedTs()
-                ? $flag->getCreatedTs()->toDateTime()->format('d-m-y H:i:s')
+                ? $flag->getCreatedTs()->toDateTime()->format('y-m-d H:i:s')
                 : null,
 
             'updated_at' => $flag->getUpdatedTs()
-                ? $flag->getUpdatedTs()->toDateTime()->format('d-m-y H:i:s')
+                ? $flag->getUpdatedTs()->toDateTime()->format('y-m-d H:i:s')
                 : null,
 
             'deleted_at' => $flag->getDeletedTs()
-                ? $flag->getDeletedTs()->toDateTime()->format('d-m-y H:i:s')
+                ? $flag->getDeletedTs()->toDateTime()->format('y-m-d H:i:s')
                 : null,
 
             'created_by' => $flag->getCreatedBy() ?: null,

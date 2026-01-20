@@ -56,19 +56,19 @@ class OfficeProtoConvertor
 
         // Format timestamps
         $effectiveStart = $office->getEffectiveStart()
-            ? $office->getEffectiveStart()->toDateTime()->format('d-m-y')
+            ? $office->getEffectiveStart()->toDateTime()->format('y-m-d')
             : null;
 
         $effectiveEnd = $office->getEffectiveEnd()
-            ? $office->getEffectiveEnd()->toDateTime()->format('d-m-y')
+            ? $office->getEffectiveEnd()->toDateTime()->format('y-m-d')
             : null;
 
         $createdAt = $office->getCreatedAt()
-            ? $office->getCreatedAt()->toDateTime()->format('d-m-y H:i:s')
+            ? $office->getCreatedAt()->toDateTime()->format('y-m-d H:i:s')
             : null;
 
         $updatedAt = $office->getUpdatedAt()
-            ? $office->getUpdatedAt()->toDateTime()->format('d-m-y H:i:s')
+            ? $office->getUpdatedAt()->toDateTime()->format('y-m-d H:i:s')
             : null;
 
         // Handle office type
