@@ -1,4 +1,3 @@
-{{-- ================= Invoice ================= --}}
 <div class="invoice">
 
     <div class="center" style="font-weight:bold;font-size:14px;border:1px solid #000;padding:4px;">
@@ -7,7 +6,8 @@
 
     <table class="grid">
         <tr>
-            {{-- ================= LEFT : Main Invoice ================= --}}
+
+            {{-- ================= LEFT : MAIN INVOICE ================= --}}
             <td style="width:66%;vertical-align:top;padding:0;">
 
                 <table class="grid">
@@ -21,124 +21,131 @@
                     </thead>
 
                     <tbody>
-                        {{-- 1. Total Demand Charge --}}
+
+                        {{-- 1. TOTAL DEMAND CHARGE --}}
                         <tr>
                             <td colspan="5">1. Total Demand Charge</td>
                         </tr>
 
+                        @foreach($totalDemandChargeRows['rows'] ?? [] as $i => $row)
                         <tr>
-                            <td colspan="2">Timezone</td>
-                            <td>Unit</td>
-                            <td>Rate</td>
-                            <td>Amount (Rs)</td>
+                            <td colspan="2">{{ chr(97+$i) }}. {{ $row['label'] }}</td>
+                            <td class="right">{{ $row['units'] }}</td>
+                            <td class="right">{{ is_numeric($row['rate'] ?? null) ? number_format($row['rate'], 2) : '-' }}</td>
+                            <td class="right">{{ is_numeric($row['amount'] ?? null) ? number_format($row['amount'], 2) : '-' }}</td>
                         </tr>
+                        @endforeach
 
                         <tr class="total-row">
                             <td colspan="4">Sub Total (a+b+c+d+e+f)</td>
-                            <td class="right">
-                                {{ is_numeric($chargeHeads['total_demand_charge']['result'] ?? null)
-                                    ? number_format($chargeHeads['total_demand_charge']['result'], 2)
-                                    : '-' }}
-                            </td>
+                            <td class="right">{{ is_numeric($chargeHeads['total_demand_charge']['result'] ?? null) ? number_format($chargeHeads['total_demand_charge']['result'], 2) : '-' }}</td>
                         </tr>
 
-                        {{-- 2. Total Energy Charges --}}
+                        {{-- 2. TOTAL ENERGY CHARGES --}}
                         <tr>
                             <td colspan="5">2. Total Energy Charges</td>
                         </tr>
 
+                        @foreach($totalEnergyChargeRows['rows'] ?? [] as $i => $row)
                         <tr>
-                            <td colspan="2">Timezone</td>
-                            <td>Unit</td>
-                            <td>Rate</td>
-                            <td>Amount (Rs)</td>
+                            <td colspan="2">{{ chr(97+$i) }}. {{ $row['label'] }}</td>
+                            <td class="right">{{ $row['units'] }}</td>
+                            <td class="right">{{ is_numeric($row['rate']['result'] ?? null) ? number_format($row['rate']['result'], 2) : '-' }}</td>
+                            <td class="right">{{ is_numeric($row['amount'] ?? null) ? number_format($row['amount'], 2) : '-' }}</td>
                         </tr>
+                        @endforeach
 
                         <tr class="total-row">
                             <td colspan="4">Sub Total (a+b+c)</td>
-                            <td class="right">
-                                {{ is_numeric($chargeHeads['energy_charge']['result'] ?? null)
-                                    ? number_format($chargeHeads['energy_charge']['result'], 2)
-                                    : '-' }}
-                            </td>
+                            <td class="right">{{ is_numeric($chargeHeads['energy_charge']['result'] ?? null) ? number_format($chargeHeads['energy_charge']['result'], 2) : '-' }}</td>
                         </tr>
 
-                        {{-- 3. PF Incentive / Disincentive --}}
+                        {{-- 3. PF INCENTIVE / DISINCENTIVE --}}
                         <tr>
                             <td colspan="4">3. PF Incentive / Disincentive</td>
                             <td class="right">
-                                {{ is_numeric($chargeHeads['power_factor_incentive_and_disincentive']['result'] ?? null)
-                                    ? number_format($chargeHeads['power_factor_incentive_and_disincentive']['result'], 2)
-                                    : '-' }}
+                                {{ is_numeric($chargeHeads['power_factor_incentive_and_disincentive']['result'] ?? null) ? number_format($chargeHeads['power_factor_incentive_and_disincentive']['result'], 2) : '-' }}
                             </td>
                         </tr>
 
-                        {{-- Total Energy Charge --}}
+                        {{-- TOTAL ENERGY CHARGE --}}
                         <tr class="total-row">
                             <td colspan="4">Total Energy Charge</td>
                             <td class="right">
-                                {{ is_numeric($chargeHeads['energy_charge']['result'] ?? null)
-                                    ? number_format($chargeHeads['energy_charge']['result'], 2)
-                                    : '-' }}
+                                @php
+                                $ec = $chargeHeads['energy_charge']['result'] ?? null;
+                                $pf = $chargeHeads['power_factor_incentive_and_disincentive']['result'] ?? null;
+                                @endphp
+                                {{ (is_numeric($ec) && is_numeric($pf)) ? number_format($ec + $pf, 2) : '-' }}
                             </td>
                         </tr>
 
-                        {{-- 4. Lighting --}}
+                        {{-- 4. LIGHTING LOAD --}}
                         <tr>
                             <td colspan="5">4. Energy Charges on Lighting load</td>
                         </tr>
 
                         <tr>
                             <td colspan="2">a. Factory lighting</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
+                            <td class="right">{{ is_numeric($computedProperties['total_consumption_factory_lighting']['result'] ?? null) ? number_format($computedProperties['total_consumption_factory_lighting']['result'], 2) : '-' }}</td>
+                            <td class="right">0.02</td>
+                            <td class="right">{{ is_numeric($chargeHeads['factory_lighting']['result'] ?? null) ? number_format($chargeHeads['factory_lighting']['result'], 2) : '-' }}</td>
                         </tr>
 
                         <tr>
                             <td colspan="2">b. Colony lighting</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
+                            <td class="right">{{ is_numeric($computedProperties['total_consumption_colony_lighting']['result'] ?? null) ? number_format($computedProperties['total_consumption_colony_lighting']['result'], 2) : '-' }}</td>
+                            <td class="right">0.02</td>
+                            <td class="right">{{ is_numeric($chargeHeads['colony_lighting']['result'] ?? null) ? number_format($chargeHeads['colony_lighting']['result'], 2) : '-' }}</td>
                         </tr>
 
                         <tr class="total-row">
                             <td colspan="4">Sub Total (a+b)</td>
-                            <td class="right">-</td>
+                            <td class="right">
+                                @php
+                                $f = $chargeHeads['factory_lighting']['result'] ?? null;
+                                $c = $chargeHeads['colony_lighting']['result'] ?? null;
+                                @endphp
+                                {{ (is_numeric($f) && is_numeric($c)) ? number_format($f + $c, 2) : '-' }}
+                            </td>
                         </tr>
 
-                        {{-- 5–8 --}}
+                        {{-- 5. ELECTRICITY DUTY --}}
                         <tr>
                             <td colspan="2">5. Electricity Duty</td>
-                            <td>Unit</td>
-                            <td>Rate</td>
-                            <td>Amount (Rs)</td>
+                            <td class="right">{{ is_numeric($chargeHeads['energy_charge']['result'] ?? null) ? number_format($chargeHeads['energy_charge']['result'], 2) : '-' }}</td>
+                            <td class="right">{{ is_numeric($computedProperties['electricity_duty_rate']['result'] ?? null) ? number_format($computedProperties['electricity_duty_rate']['result'], 2) : '-' }}</td>
+                            <td class="right">{{ is_numeric($chargeHeads['electricity_duty']['result'] ?? null) ? number_format($chargeHeads['electricity_duty']['result'], 2) : '-' }}</td>
                         </tr>
 
+                        {{-- 6. SURCHARGE --}}
                         <tr>
                             <td colspan="2">6. Ele. Surcharge (*)</td>
-                            <td>Unit</td>
-                            <td>Rate</td>
-                            <td>Amount (Rs)</td>
+                            <td class="right">{{ '-' }}</td>
+                            <td class="right">{{ is_numeric($computedProperties['electricity_surcharge_rate']['result'] ?? null) ? number_format($computedProperties['electricity_surcharge_rate']['result'], 2) : '-' }}</td>
+                            <td class="right">{{ is_numeric($chargeHeads['electricity_surcharge']['result'] ?? null) ? number_format($chargeHeads['electricity_surcharge']['result'], 2) : '-' }}</td>
                         </tr>
 
+                        {{-- 7. SELF GENERATION --}}
                         <tr>
                             <td colspan="2">7. Duty On Self Generated Energy</td>
-                            <td>Unit</td>
-                            <td>Rate</td>
-                            <td>Amount (Rs)</td>
+                            <td class="right">{{ is_numeric($computedProperties['total_consumption_generator']['result'] ?? null) ? number_format($computedProperties['total_consumption_generator']['result'], 2) : '-' }}</td>
+                            <td class="right">{{ is_numeric($computedProperties['self_generation_duty_rate']['result'] ?? null) ? number_format($computedProperties['self_generation_duty_rate']['result'], 2) : '-' }}</td>
+                            <td class="right">{{ is_numeric($chargeHeads['self_generation_duty']['result'] ?? null) ? number_format($chargeHeads['self_generation_duty']['result'], 2) : '-' }}</td>
                         </tr>
 
+                        {{-- 8. PENALTY --}}
                         <tr>
                             <td colspan="4">8. Penalty for non-segregation of light load</td>
                             <td class="right">-</td>
                         </tr>
+
                     </tbody>
                 </table>
 
             </td>
 
-            {{-- ================= RIGHT : Summary ================= --}}
+            {{-- ================= RIGHT : SUMMARY ================= --}}
             <td style="width:34%;vertical-align:top;padding:0;">
 
                 <table class="grid">
@@ -150,6 +157,7 @@
                     </thead>
 
                     <tbody>
+
                         <tr class="total-row">
                             <td colspan="3">9. Other Charges</td>
                         </tr>
@@ -158,76 +166,49 @@
                             <td colspan="2">Reconnection Fee</td>
                             <td class="right">0.00</td>
                         </tr>
-
-                        <tr>
-                            <td colspan="2">Charges for Belated Payments</td>
-                            <td class="right">1587.00</td>
-                        </tr>
-
                         <tr>
                             <td colspan="2">LOW_VOLT_SUR</td>
-                            <td class="right">117705.00</td>
+                            <td class="right">0.00</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Belated Payment</td>
+                            <td class="right">0.00</td>
                         </tr>
 
                         <tr>
                             <td colspan="2">Monthly Fuel Surcharge</td>
-                            <td class="right">0.00</td>
+                            <td class="right">{{ is_numeric($chargeHeads['monthly_fuel_surcharge']['result'] ?? null) ? number_format($chargeHeads['monthly_fuel_surcharge']['result'], 2) : '-' }}</td>
                         </tr>
 
                         <tr>
                             <td colspan="2">Green Energy Charge</td>
-                            <td class="right">14622.30</td>
-                        </tr>
-
-                        <tr>
-                            <td colspan="3" style="height:12px;"></td>
+                            <td class="right">{{ is_numeric($chargeHeads['green_energy_charge']['result'] ?? null) ? number_format($chargeHeads['green_energy_charge']['result'], 2) : '-' }}</td>
                         </tr>
 
                         <tr class="total-row">
                             <td colspan="2">10. Total (add 1 to 9)</td>
-                            <td class="right">334125.93</td>
+                            <td class="right">{{ is_numeric($bill['bill_amount'] ?? null) ? number_format($bill['bill_amount'], 2) : '-' }}</td>
                         </tr>
 
                         <tr>
-                            <td colspan="2">Plus / Minus (Round off)</td>
-                            <td class="right">0.07</td>
-                        </tr>
-
-                        <tr>
-                            <td colspan="2">UnDisputed Arr Amount</td>
-                            <td class="right">1096.00</td>
-                        </tr>
-
-                        <tr>
-                            <td colspan="2">ACD_FY Assessment</td>
-                            <td class="right">0.00</td>
-                        </tr>
-
-                        <tr>
-                            <td rowspan="3" class="center">Less</td>
-                            <td>1. Advance / Credit</td>
-                            <td class="right">0.00</td>
-                        </tr>
-
-                        <tr>
-                            <td>2. CD Interest</td>
-                            <td class="right">0.00</td>
-                        </tr>
-
-                        <tr>
-                            <td>3. CD / Oth Ref</td>
-                            <td class="right">0.00</td>
+                            <td colspan="2">Round Off</td>
+                            <td class="right">
+                                @php
+                                $r = round($bill['bill_amount'] ?? 0,2) - ($bill['bill_amount'] ?? 0);
+                                @endphp
+                                {{ number_format($r,2) }}
+                            </td>
                         </tr>
 
                         <tr class="total-row">
                             <td colspan="2">Net Payable</td>
-                            <td class="right">335222.00</td>
+                            <td class="right">{{ number_format(round($bill['bill_amount'] ?? 0),2) }}</td>
                         </tr>
+
                     </tbody>
                 </table>
 
             </td>
         </tr>
     </table>
-
 </div>

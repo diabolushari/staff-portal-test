@@ -262,7 +262,7 @@ export default function BillInvoice({
                   {kwhValues?.reduce((s, r) => s + (r?.value ?? 0), 0)}
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(computedProperties?.electricity_surcharge_rate?.result)?.toFixed(2) ??
+                  {Number(computedProperties?.electricity_surcharge_rate?.result)?.toFixed(3) ??
                     '-'}
                 </TableCell>
                 <TableCell className='border border-black'>

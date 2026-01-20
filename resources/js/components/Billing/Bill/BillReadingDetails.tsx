@@ -34,6 +34,7 @@ export default function BillReadingDetails({
   selfGenerationkwhValues,
 }: Readonly<BillReadingDetailsProps>) {
   const mf = meter?.meter_mf ?? 1
+  console.log(kwhValues)
   return (
     <div className='mb-4 border border-black p-3 text-xs'>
       <div className='mb-2 flex items-center justify-center'>

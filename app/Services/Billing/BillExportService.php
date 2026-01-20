@@ -4,6 +4,7 @@ namespace App\Services\Billing;
 
 use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterReadingService;
+use Spatie\LaravelData\Attributes\Validation\InArray;
 
 class BillExportService
 {
@@ -66,7 +67,7 @@ class BillExportService
         ?array $meterReading,
         ?string $parameterName,
         $energyConsumptionMeterId
-    ): ?array {
+    ): array {
         if (empty($meterReading) || empty($parameterName) || empty($energyConsumptionMeterId)) {
             return [];
         }
@@ -74,7 +75,7 @@ class BillExportService
         // Each reading object contains "values"
         $values = collect($meterReading[0]['values'] ?? []);
 
-        return $values
+        $unsortedValues = $values
             ->filter(function ($value) use ($parameterName, $energyConsumptionMeterId) {
 
                 $parameterMatch =
@@ -82,26 +83,48 @@ class BillExportService
 
                 $meterMatch =
                     ($value['meter_id'] ?? null) == $energyConsumptionMeterId;
+                $parameterIsExport = $value['meter_profile_parameter']['is_export'] ?? false;
 
-                return $parameterMatch && $meterMatch;
+                return $parameterMatch && $meterMatch && !$parameterIsExport;
             })
             ->map(function ($item) {
                 return [
-                    'timezone'         => $item['time_zone']['parameter_value'] ?? null,
-                    'timezone_code'    => $item['time_zone']['parameter_code'] ?? null,
-                    'initial_reading'  => $item['initial_reading'] ?? null,
-                    'final_reading'    => $item['final_reading'] ?? null,
-                    'difference'       => $item['difference'] ?? null,
-                    'meter_mf'         => $item['meter_mf'] ?? null,
-                    'value'            => $item['value'] ?? null,
-                    'parameter_id'     => $item['meter_profile_parameter']['meter_parameter_id'] ?? null,
-                    'parameter_name'   => $item['meter_profile_parameter']['name'] ?? null,
+                    'timezone_id'       => $item['timezone_id'] ?? null,
+                    'timezone'          => $item['time_zone']['parameter_value'] ?? null,
+                    'timezone_code'     => $item['time_zone']['parameter_code'] ?? null,
+                    'initial_reading'   => $item['initial_reading'] ?? null,
+                    'final_reading'     => $item['final_reading'] ?? null,
+                    'difference'        => $item['difference'] ?? null,
+                    'meter_mf'          => $item['meter_mf'] ?? null,
+                    'value'             => $item['value'] ?? null,
+                    'parameter_id'      => $item['meter_profile_parameter']['meter_parameter_id'] ?? null,
+                    'parameter_name'    => $item['meter_profile_parameter']['name'] ?? null,
                     'parameter_display' => $item['meter_profile_parameter']['display_name'] ?? null,
                 ];
             })
             ->values()
             ->toArray();
+
+
+        $sortedValues = [];
+        $timeZoneNames = ['normal', 'peak', 'off peak'];
+        foreach ($timeZoneNames as $timeZoneName) {
+            foreach ($unsortedValues as $value) {
+                if (strtolower($value['timezone']) == $timeZoneName) {
+                    $sortedValues[] = $value;
+                }
+            }
+        }
+        foreach ($unsortedValues as $value) {
+            if (!in_array(strtolower($value['timezone']), $timeZoneNames)) {
+                $sortedValues[] = $value;
+            }
+        }
+
+        return $sortedValues;
     }
+
+
 
 
     public function getChargeHeads(array $chargeHeads): array
