@@ -53,7 +53,7 @@ export default function MeterReadingShowPage({
       href: '/',
     },
     { title: 'Connections', href: `/connections/${Number(connectionId)}` },
-    { title: 'Connection', href: `/connections/${Number(connectionId)}` },
+    { title: connection?.consumer_number, href: `/connections/${Number(connectionId)}` },
     { title: 'Meter Reading', href: `/connection/${Number(connectionId)}/meter-reading` },
     {
       title: 'Show',

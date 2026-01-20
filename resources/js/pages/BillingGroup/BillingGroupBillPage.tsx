@@ -6,6 +6,7 @@ import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
+import { getDisplayDate, getDisplayMonthYear } from '@/utils'
 import { router } from '@inertiajs/react'
 
 interface Props {
@@ -105,28 +106,32 @@ export default function BillingGroupBillPage({ bills, billing_group }: Props) {
             <div className='grid grid-cols-2 gap-4'>
               <div className='grid grid-cols-2 gap-y-4 px-6 py-5'>
                 <div>
-                  <p className='font-medium text-gray-700'>{bill?.bill_year_month}</p>
+                  <p className='font-medium text-gray-700'>
+                    {getDisplayMonthYear(bill?.bill_year_month)}
+                  </p>
                   <p className='text-xs text-gray-500'>Bill Month & Year</p>
                 </div>
 
                 <div>
-                  <p className='col-span-2 font-medium text-gray-700'>{bill?.reading_year_month}</p>
+                  <p className='col-span-2 font-medium text-gray-700'>
+                    {getDisplayMonthYear(bill?.reading_year_month)}
+                  </p>
                   <p className='text-xs text-gray-500'>Reading Month & Year</p>
                 </div>
                 <div>
-                  <p className='font-medium text-gray-700'>{bill?.bill_date}</p>
+                  <p className='font-medium text-gray-700'>{getDisplayDate(bill?.bill_date)}</p>
                   <p className='text-xs text-gray-500'>Bill Date</p>
                 </div>
 
                 <div>
-                  <p className='font-medium text-gray-700'>{bill.due_date}</p>
+                  <p className='font-medium text-gray-700'>{getDisplayDate(bill.due_date)}</p>
                   <p className='text-xs text-gray-500'>Due Date</p>
                 </div>
               </div>
               <div className='grid grid-cols-2 gap-y-4 py-5'>
                 <div className='flex flex-col gap-4'>
                   <div>
-                    <p className='font-medium text-gray-700'>{bill?.dc_date}</p>
+                    <p className='font-medium text-gray-700'>{getDisplayDate(bill?.dc_date)}</p>
                     <p className='text-xs text-gray-500'>DC Date</p>
                   </div>
                   <div>

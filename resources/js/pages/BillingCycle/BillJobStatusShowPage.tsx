@@ -1,12 +1,7 @@
 import { billingNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import useCustomForm from '@/hooks/useCustomForm'
-import {
-  Bill,
-  BillGenerationJob,
-  BillGenerationJobStatus,
-  BillWithException,
-} from '@/interfaces/data_interfaces'
+import { Bill, BillGenerationJob } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
@@ -217,17 +212,23 @@ export default function BillJobStatusShowPage({ data }: Props) {
                   {/* Body */}
                   <div className='grid grid-cols-3 gap-4 px-6 py-4'>
                     <div>
-                      <p className='font-medium text-gray-700'>{ex.reading_year_month}</p>
+                      <p className='font-medium text-gray-700'>
+                        {getDisplayMonthYear(ex.reading_year_month)}
+                      </p>
                       <p className='text-xs text-gray-500'>Reading Month</p>
                     </div>
 
                     <div>
-                      <p className='font-medium text-gray-700'>{ex.bill_year_month}</p>
+                      <p className='font-medium text-gray-700'>
+                        {getDisplayMonthYear(ex.bill_year_month)}
+                      </p>
                       <p className='text-xs text-gray-500'>Bill Month</p>
                     </div>
 
                     <div>
-                      <p className='font-medium text-gray-700'>{ex.initialized_date}</p>
+                      <p className='font-medium text-gray-700'>
+                        {getDisplayDate(ex.initialized_date)}
+                      </p>
                       <p className='text-xs text-gray-500'>Initialized Date</p>
                     </div>
                   </div>
