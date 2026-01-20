@@ -107,6 +107,7 @@ export default function BillShowPage({
             kvaValues={kvaValues}
             lagValues={lagValues}
             leadValues={leadValues}
+            computedProperties={computedProperties}
           />
 
           {/* Final Charges */}

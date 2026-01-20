@@ -36,10 +36,10 @@ export default function BillInvoice({
 }) {
   console.log(totalDemandChargeRows)
 
-  const roundedOffAmount = (amount: number): { updatedAmount: number; roundOff: number } => {
+  const roundedOffAmount = (amount: number): { updatedAmount: string; roundOff: string } => {
     const roundedAmount = Math.round(amount)
     const roundOff = roundedAmount - amount
-    return { updatedAmount: roundedAmount, roundOff }
+    return { updatedAmount: roundedAmount.toFixed(2), roundOff: roundOff.toFixed(2) }
   }
 
   return (
@@ -79,8 +79,12 @@ export default function BillInvoice({
                     {row?.label}
                   </TableCell>
                   <TableCell className='border border-black'>{row?.units}</TableCell>
-                  <TableCell className='border border-black'>{row?.rate}</TableCell>
-                  <TableCell className='border border-black'>{row?.amount}</TableCell>
+                  <TableCell className='border border-black'>
+                    {Number(row?.rate).toFixed(2)}
+                  </TableCell>
+                  <TableCell className='border border-black'>
+                    {Number(row?.amount).toFixed(2)}
+                  </TableCell>
                 </TableRow>
               ))}
 
@@ -116,8 +120,12 @@ export default function BillInvoice({
                     {row?.label}
                   </TableCell>
                   <TableCell className='border border-black'>{row?.units}</TableCell>
-                  <TableCell className='border border-black'>{row?.rate?.result}</TableCell>
-                  <TableCell className='border border-black'>{row?.amount}</TableCell>
+                  <TableCell className='border border-black'>
+                    {Number(row?.rate?.result).toFixed(2)}
+                  </TableCell>
+                  <TableCell className='border border-black'>
+                    {Number(row?.amount).toFixed(2)}
+                  </TableCell>
                 </TableRow>
               ))}
               <TableRow>
@@ -158,9 +166,13 @@ export default function BillInvoice({
                 </TableCell>
                 <TableCell className='border border-black text-right'>
                   {Number.isNaN(Number(chargeHeads.energy_charge.result)) ||
-                  chargeHeads.energy_charge.result === null
+                  chargeHeads.energy_charge.result === null ||
+                  Number.isNaN(Number(chargeHeads.power_factor_incentive_and_disincentive.result))
                     ? '-'
-                    : Number(chargeHeads.energy_charge.result).toFixed(2)}
+                    : (
+                        Number(chargeHeads.energy_charge.result) +
+                        Number(chargeHeads.power_factor_incentive_and_disincentive.result)
+                      ).toFixed(2)}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -178,9 +190,15 @@ export default function BillInvoice({
                 >
                   a.Factory lighting
                 </TableCell>
-                <TableCell className='border border-black'>-</TableCell>
-                <TableCell className='border border-black'>-</TableCell>
-                <TableCell className='border border-black'>-</TableCell>
+                <TableCell className='border border-black'>
+                  {Number(computedProperties.total_consumption_factory_lighting.result).toFixed(
+                    2
+                  ) ?? '-'}
+                </TableCell>
+                <TableCell className='border border-black'>0.02</TableCell>
+                <TableCell className='border border-black'>
+                  {Number(chargeHeads.factory_lighting.result).toFixed(2) ?? '-'}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell
@@ -189,9 +207,14 @@ export default function BillInvoice({
                 >
                   b. Colony lighting
                 </TableCell>
-                <TableCell className='border border-black'>-</TableCell>
-                <TableCell className='border border-black'>-</TableCell>
-                <TableCell className='border border-black'>-</TableCell>
+                <TableCell className='border border-black'>
+                  {Number(computedProperties.total_consumption_colony_lighting.result).toFixed(2) ??
+                    '-'}
+                </TableCell>
+                <TableCell className='border border-black'>0.02</TableCell>
+                <TableCell className='border border-black'>
+                  {Number(chargeHeads.colony_lighting.result).toFixed(2) ?? '-'}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell
@@ -200,7 +223,17 @@ export default function BillInvoice({
                 >
                   Sub Total(a+b)
                 </TableCell>
-                <TableCell className='border border-black text-right'>-</TableCell>
+                <TableCell className='border border-black text-right'>
+                  {Number.isNaN(Number(chargeHeads.colony_lighting.result)) ||
+                  chargeHeads.colony_lighting.result === null ||
+                  Number.isNaN(Number(chargeHeads.factory_lighting.result)) ||
+                  chargeHeads.factory_lighting.result === null
+                    ? '-'
+                    : (
+                        Number(chargeHeads.colony_lighting.result) +
+                        Number(chargeHeads.factory_lighting.result)
+                      ).toFixed(2)}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell
@@ -210,13 +243,13 @@ export default function BillInvoice({
                   5. Electricity Duty
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {chargeHeads.energy_charge.result}
+                  {Number(chargeHeads.energy_charge.result)?.toFixed(2) ?? '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {computedProperties?.electricity_duty_rate?.result ?? '-'}
+                  {Number(computedProperties?.electricity_duty_rate?.result)?.toFixed(2) ?? '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {chargeHeads.electricity_duty.result}
+                  {Number(chargeHeads.electricity_duty.result)?.toFixed(2) ?? '-'}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -230,10 +263,11 @@ export default function BillInvoice({
                   {averageAndTotalKwh?.totalKwh * mf}
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {computedProperties?.electricity_surcharge_rate?.result ?? '-'}
+                  {Number(computedProperties?.electricity_surcharge_rate?.result)?.toFixed(2) ??
+                    '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {chargeHeads.electricity_surcharge.result}
+                  {Number(chargeHeads.electricity_surcharge.result)?.toFixed(2) ?? '-'}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -245,7 +279,7 @@ export default function BillInvoice({
                 </TableCell>
                 <TableCell className='border border-black'>0</TableCell>
                 <TableCell className='border border-black'>
-                  {computedProperties?.self_generation_duty_rate?.result ?? '-'}
+                  {Number(computedProperties?.self_generation_duty_rate?.result)?.toFixed(2) ?? '-'}
                 </TableCell>
                 <TableCell className='border border-black'>0.00</TableCell>
               </TableRow>
@@ -261,174 +295,182 @@ export default function BillInvoice({
             </TableBody>
           </Table>
         </div>
-        <Table className='w-full border border-black text-xs'>
-          <TableHeader>
-            <TableRow>
-              <TableHead
-                colSpan={2}
-                className='border border-black'
-              />
-              <TableHead className='border border-black text-right'>Amount (Rs)</TableHead>
-            </TableRow>
-          </TableHeader>
+        <div className='flex h-full flex-col border border-black'>
+          <Table className='w-full border border-black text-xs'>
+            <TableHeader>
+              <TableRow>
+                <TableHead
+                  colSpan={2}
+                  className='border border-black'
+                />
+                <TableHead className='border border-black text-right'>Amount (Rs)</TableHead>
+              </TableRow>
+            </TableHeader>
 
-          <TableBody>
-            {/* 9. Other Charges */}
-            <TableRow>
-              <TableCell
-                colSpan={3}
-                className='border border-black font-bold'
-              >
-                9. Other Charges
-              </TableCell>
-            </TableRow>
+            <TableBody>
+              {/* 9. Other Charges */}
+              <TableRow>
+                <TableCell
+                  colSpan={3}
+                  className='border border-black font-bold'
+                >
+                  9. Other Charges
+                </TableCell>
+              </TableRow>
 
-            <TableRow>
-              <TableCell
-                colSpan={2}
-                className='border border-black'
-              >
-                Reconnection Fee
-              </TableCell>
-              <TableCell className='border border-black text-right'>0.00</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell
-                colSpan={2}
-                className='border border-black'
-              >
-                LOW_VOLT_SUR
-              </TableCell>
-              <TableCell className='border border-black text-right'>0.00</TableCell>
-            </TableRow>
+              <TableRow>
+                <TableCell
+                  colSpan={2}
+                  className='border border-black'
+                >
+                  Reconnection Fee
+                </TableCell>
+                <TableCell className='border border-black text-right'>0.00</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell
+                  colSpan={2}
+                  className='border border-black'
+                >
+                  LOW_VOLT_SUR
+                </TableCell>
+                <TableCell className='border border-black text-right'>0.00</TableCell>
+              </TableRow>
 
-            <TableRow>
-              <TableCell
-                colSpan={2}
-                className='border border-black'
-              >
-                Charges for Belated Payments
-              </TableCell>
-              <TableCell className='border border-black text-right'>0.00</TableCell>
-            </TableRow>
+              <TableRow>
+                <TableCell
+                  colSpan={2}
+                  className='border border-black'
+                >
+                  Charges for Belated Payments
+                </TableCell>
+                <TableCell className='border border-black text-right'>0.00</TableCell>
+              </TableRow>
 
-            <TableRow>
-              <TableCell
-                colSpan={2}
-                className='border border-black'
-              >
-                Monthly Fuel Surcharge
-              </TableCell>
-              <TableCell className='border border-black text-right'>
-                {Number(chargeHeads?.monthly_fuel_surcharge?.result)
-                  ? Number(chargeHeads?.monthly_fuel_surcharge?.result).toFixed(2)
-                  : '-'}
-              </TableCell>
-            </TableRow>
+              <TableRow>
+                <TableCell
+                  colSpan={2}
+                  className='border border-black'
+                >
+                  Monthly Fuel Surcharge
+                </TableCell>
+                <TableCell className='border border-black text-right'>
+                  {Number(chargeHeads?.monthly_fuel_surcharge?.result)
+                    ? Number(chargeHeads?.monthly_fuel_surcharge?.result).toFixed(2)
+                    : '-'}
+                </TableCell>
+              </TableRow>
 
-            <TableRow>
-              <TableCell
-                colSpan={2}
-                className='border border-black'
-              >
-                Green Energy Charge
-              </TableCell>
-              <TableCell className='border border-black text-right'>
-                {Number(chargeHeads?.green_energy_charge?.result)
-                  ? Number(chargeHeads?.green_energy_charge?.result).toFixed(2)
-                  : '-'}
-              </TableCell>
-            </TableRow>
+              <TableRow>
+                <TableCell
+                  colSpan={2}
+                  className='border border-black'
+                >
+                  Green Energy Charge
+                </TableCell>
+                <TableCell className='border border-black text-right'>
+                  {Number(chargeHeads?.green_energy_charge?.result)
+                    ? Number(chargeHeads?.green_energy_charge?.result).toFixed(2)
+                    : '-'}
+                </TableCell>
+              </TableRow>
 
-            {/* Spacer rows like printed bill */}
-            <TableRow>
-              <TableCell
-                colSpan={3}
-                className='h-6 border border-black'
-              />
-            </TableRow>
+              {/* Spacer rows like printed bill */}
+              <TableRow>
+                <TableCell
+                  colSpan={3}
+                  className='h-6 border border-black'
+                />
+              </TableRow>
 
-            {/* 10. Total */}
-            <TableRow>
-              <TableCell
-                colSpan={2}
-                className='border border-black font-bold'
-              >
-                10. Total (add 1 to 9)
-              </TableCell>
-              <TableCell className='border border-black text-right font-bold'>
-                {Number(bill?.bill_amount) ? Number(bill?.bill_amount).toFixed(2) : '-'}
-              </TableCell>
-            </TableRow>
+              {/* 10. Total */}
+            </TableBody>
+          </Table>
+          <div className='mt-auto w-full border'>
+            <Table>
+              <TableRow>
+                <TableCell
+                  colSpan={2}
+                  className='border border-black font-bold'
+                >
+                  10. Total (add 1 to 9)
+                </TableCell>
+                <TableCell className='border border-black text-right font-bold'>
+                  {Number(bill?.bill_amount) ? Number(bill?.bill_amount).toFixed(2) : '-'}
+                </TableCell>
+              </TableRow>
 
-            <TableRow>
-              <TableCell
-                colSpan={2}
-                className='border border-black'
-              >
-                Plus / Minus (Round off)
-              </TableCell>
-              <TableCell className='border border-black text-right'>
-                {bill.bill_amount ? roundedOffAmount(Number(bill.bill_amount)).roundOff : '-'}
-              </TableCell>
-            </TableRow>
+              <TableRow>
+                <TableCell
+                  colSpan={2}
+                  className='border border-black'
+                >
+                  Plus / Minus (Round off)
+                </TableCell>
+                <TableCell className='border border-black text-right'>
+                  {bill.bill_amount ? roundedOffAmount(Number(bill.bill_amount)).roundOff : '-'}
+                </TableCell>
+              </TableRow>
 
-            <TableRow>
-              <TableCell
-                colSpan={2}
-                className='border border-black'
-              >
-                UnDisputed Arr Amount
-              </TableCell>
-              <TableCell className='border border-black text-right'>0.00</TableCell>
-            </TableRow>
+              <TableRow>
+                <TableCell
+                  colSpan={2}
+                  className='border border-black'
+                >
+                  UnDisputed Arr Amount
+                </TableCell>
+                <TableCell className='border border-black text-right'>0.00</TableCell>
+              </TableRow>
 
-            <TableRow>
-              <TableCell
-                colSpan={2}
-                className='border border-black'
-              >
-                ACD_FY Assessment
-              </TableCell>
-              <TableCell className='border border-black text-right'>0.00</TableCell>
-            </TableRow>
+              <TableRow>
+                <TableCell
+                  colSpan={2}
+                  className='border border-black'
+                >
+                  ACD_FY Assessment
+                </TableCell>
+                <TableCell className='border border-black text-right'>0.00</TableCell>
+              </TableRow>
 
-            {/* Less section */}
-            <TableRow>
-              <TableCell
-                rowSpan={3}
-                className='border border-black align-top'
-              >
-                Less
-              </TableCell>
-              <TableCell className='border border-black'>1. Advance / Credit</TableCell>
-              <TableCell className='border border-black text-right'>0.00</TableCell>
-            </TableRow>
+              {/* Less section */}
+              <TableRow>
+                <TableCell
+                  rowSpan={3}
+                  className='border border-black align-top'
+                >
+                  Less
+                </TableCell>
+                <TableCell className='border border-black'>1. Advance / Credit</TableCell>
+                <TableCell className='border border-black text-right'>0.00</TableCell>
+              </TableRow>
 
-            <TableRow>
-              <TableCell className='border border-black'>2. CD Interest</TableCell>
-              <TableCell className='border border-black text-right'>0.00</TableCell>
-            </TableRow>
+              <TableRow>
+                <TableCell className='border border-black'>2. CD Interest</TableCell>
+                <TableCell className='border border-black text-right'>0.00</TableCell>
+              </TableRow>
 
-            <TableRow>
-              <TableCell className='border border-black'>3. CD / Oth Ref</TableCell>
-              <TableCell className='border border-black text-right'>0.00</TableCell>
-            </TableRow>
+              <TableRow>
+                <TableCell className='border border-black'>3. CD / Oth Ref</TableCell>
+                <TableCell className='border border-black text-right'>0.00</TableCell>
+              </TableRow>
 
-            {/* Net Payable */}
-            <TableRow className='text-base font-bold'>
-              <TableCell
-                colSpan={2}
-                className='border border-black'
-              >
-                Net Payable
-              </TableCell>
-              <TableCell className='border border-black text-right'>
-                {bill.bill_amount ? roundedOffAmount(Number(bill.bill_amount)).updatedAmount : '-'}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+              {/* Net Payable */}
+              <TableRow className='text-base font-bold'>
+                <TableCell
+                  colSpan={2}
+                  className='border border-black'
+                >
+                  Net Payable
+                </TableCell>
+                <TableCell className='border border-black text-right'>
+                  {bill.bill_amount
+                    ? roundedOffAmount(Number(bill.bill_amount)).updatedAmount
+                    : '-'}
+                </TableCell>
+              </TableRow>
+            </Table>
+          </div>
+        </div>
       </div>
     </>
   )
