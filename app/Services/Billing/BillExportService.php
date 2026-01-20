@@ -66,7 +66,7 @@ class BillExportService
         ?array $meterReading,
         ?string $parameterName,
         $energyConsumptionMeterId
-    ): ?array {
+    ): array {
         if (empty($meterReading) || empty($parameterName) || empty($energyConsumptionMeterId)) {
             return [];
         }
@@ -82,26 +82,30 @@ class BillExportService
 
                 $meterMatch =
                     ($value['meter_id'] ?? null) == $energyConsumptionMeterId;
+                $parameterIsExport = $value['meter_profile_parameter']['is_export'] ?? false;
 
-                return $parameterMatch && $meterMatch;
+                return $parameterMatch && $meterMatch && !$parameterIsExport;
             })
             ->map(function ($item) {
                 return [
-                    'timezone'         => $item['time_zone']['parameter_value'] ?? null,
-                    'timezone_code'    => $item['time_zone']['parameter_code'] ?? null,
-                    'initial_reading'  => $item['initial_reading'] ?? null,
-                    'final_reading'    => $item['final_reading'] ?? null,
-                    'difference'       => $item['difference'] ?? null,
-                    'meter_mf'         => $item['meter_mf'] ?? null,
-                    'value'            => $item['value'] ?? null,
-                    'parameter_id'     => $item['meter_profile_parameter']['meter_parameter_id'] ?? null,
-                    'parameter_name'   => $item['meter_profile_parameter']['name'] ?? null,
+                    'timezone_id'       => $item['timezone_id'] ?? null,
+                    'timezone'          => $item['time_zone']['parameter_value'] ?? null,
+                    'timezone_code'     => $item['time_zone']['parameter_code'] ?? null,
+                    'initial_reading'   => $item['initial_reading'] ?? null,
+                    'final_reading'     => $item['final_reading'] ?? null,
+                    'difference'        => $item['difference'] ?? null,
+                    'meter_mf'          => $item['meter_mf'] ?? null,
+                    'value'             => $item['value'] ?? null,
+                    'parameter_id'      => $item['meter_profile_parameter']['meter_parameter_id'] ?? null,
+                    'parameter_name'    => $item['meter_profile_parameter']['name'] ?? null,
                     'parameter_display' => $item['meter_profile_parameter']['display_name'] ?? null,
                 ];
             })
-            ->values()
+            ->sortBy('timezone_id')   // ✅ SORT HERE
+            ->values()                // reset array keys
             ->toArray();
     }
+
 
 
     public function getChargeHeads(array $chargeHeads): array
