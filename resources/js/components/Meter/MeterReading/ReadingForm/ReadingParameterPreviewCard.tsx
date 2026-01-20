@@ -34,7 +34,13 @@ export default function ReadingParameterPreviewCard({
     (p) => p.meter_parameter_id === profile.meter_parameter_id
   )
   const hasData = paramData?.readings?.some((r) => r.values?.final || r.values?.diff)
-
+  const totalValue =
+    profile.is_cumulative && paramData?.readings?.length
+      ? paramData.readings.reduce((sum, r) => {
+          return sum + Number(r.values?.value ?? 0)
+        }, 0)
+      : null
+  console.log(paramData?.readings)
   return (
     <Card
       key={profile.meter_parameter_id}
@@ -53,25 +59,57 @@ export default function ReadingParameterPreviewCard({
         </Badge>
       </div>
       <div
-        className={`mt-2 space-y-1 text-sm text-gray-600 ${
+        className={`mt-2 text-sm text-gray-600 ${
           meterWithTimezoneAndProfile?.timezones?.length > 2
             ? 'scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent pr-1'
             : ''
         }`}
         style={{ scrollBehavior: 'smooth' }}
       >
+        {/* Header */}
+        <div className='grid grid-cols-5 gap-2 border-b border-gray-200 pb-1 font-medium text-gray-700'>
+          <span></span>
+          <span className='text-right'>IR</span>
+          <span className='text-right'>FR</span>
+          <span className='text-right'>DIFF</span>
+          <span className='text-right'>VALUE</span>
+        </div>
+
+        {/* Rows */}
         {paramData?.readings?.map((r) => {
           return (
             <div
               key={r.timezone_id}
-              className='flex justify-between border-b border-gray-100 py-1 last:border-0'
+              className='grid grid-cols-5 gap-2 border-b border-gray-100 py-1 last:border-0'
             >
               <span>{r.timezone_name}</span>
-              <span className='font-medium text-gray-800'>{r.values.final}</span>
+
+              <span className='text-right font-medium text-gray-800'>
+                {r.values?.initial || '-'}
+              </span>
+
+              <span className='text-right font-medium text-gray-800'>{r.values?.final || '-'}</span>
+
+              <span className={`text-right font-medium`}>{r.values?.diff || '-'}</span>
+              <span className={`text-right font-medium`}>
+                {Number(r.values?.value)?.toFixed(2) || '-'}
+              </span>
             </div>
           )
         })}
+        {profile.is_cumulative && totalValue !== null && (
+          <div className='mt-2 grid grid-cols-5 gap-2 pt-2 font-semibold text-gray-800'>
+            <span>Total</span>
+
+            <span className='text-right'></span>
+            <span className='text-right'></span>
+            <span className='text-right'></span>
+
+            <span className='text-right'>{totalValue.toFixed(2)}</span>
+          </div>
+        )}
       </div>
+
       <Tooltip>
         <TooltipTrigger>
           <Info className='absolute top-2 right-2 h-5 w-5 text-gray-400 hover:text-gray-600' />
