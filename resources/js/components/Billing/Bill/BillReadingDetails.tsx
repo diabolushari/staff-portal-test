@@ -301,7 +301,7 @@ export default function BillReadingDetails({
                 colSpan={2}
                 className='border border-black'
               >
-                --
+                {Number(computedProperties?.power_factor?.result).toFixed(2) ?? '-'}
               </TableCell>
             </TableRow>
           </TableBody>
