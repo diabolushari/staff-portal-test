@@ -15,6 +15,7 @@ import {
 } from '@/interfaces/bill_pdf_interfaces'
 import { Bill } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
+import { numberToWords } from '@/utils'
 
 export default function BillInvoice({
   chargeHeads,
@@ -23,6 +24,7 @@ export default function BillInvoice({
   bill,
   computedProperties,
   kwhValues,
+  selfGenerationkwhValues,
 }: {
   chargeHeads: ChargeHeads
   totalDemandChargeRows: TotalDemandCharge
@@ -30,13 +32,17 @@ export default function BillInvoice({
   bill: Bill
   computedProperties: ComputedProperties
   kwhValues: BillMeterReading[]
+  selfGenerationkwhValues: BillMeterReading[]
 }) {
   console.log(chargeHeads)
 
   const roundedOffAmount = (amount: number): { updatedAmount: string; roundOff: string } => {
     const roundedAmount = Math.round(amount)
     const roundOff = roundedAmount - amount
-    return { updatedAmount: roundedAmount.toFixed(2), roundOff: roundOff.toFixed(2) }
+    return {
+      updatedAmount: roundedAmount.toFixed(2),
+      roundOff: (roundOff > 0 ? '+' : '') + roundOff.toFixed(2),
+    }
   }
 
   return (
@@ -245,7 +251,7 @@ export default function BillInvoice({
                   {Number(chargeHeads.energy_charge.result)?.toFixed(2) ?? '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(computedProperties?.electricity_duty_rate?.result)?.toFixed(2) ?? '-'}
+                  {Number(computedProperties?.electricity_duty_rate?.result)?.toFixed(3) ?? '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
                   {Number(chargeHeads.electricity_duty.result)?.toFixed(2) ?? '-'}
@@ -277,11 +283,12 @@ export default function BillInvoice({
                   7. Duty On Self Generated Energy
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(computedProperties?.total_consumption_generator?.result)?.toFixed(2) ??
-                    '-'}
+                  {Number(
+                    selfGenerationkwhValues?.reduce((s, r) => s + (r?.value ?? 0), 0)
+                  )?.toFixed(2) ?? '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(computedProperties?.self_generation_duty_rate?.result)?.toFixed(2) ?? '-'}
+                  {Number(computedProperties?.self_generation_duty_rate?.result)?.toFixed(3) ?? '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
                   {Number(chargeHeads?.self_generation_duty?.result)?.toFixed(2) ?? '0'}
@@ -474,6 +481,38 @@ export default function BillInvoice({
               </TableRow>
             </Table>
           </div>
+        </div>
+        <div className='col-span-12 w-full border border-black'>
+          <Table>
+            <TableRow>
+              <TableCell
+                colSpan={12}
+                className='border border-black font-bold italic'
+              >
+                ( {numberToWords(Number(roundedOffAmount(Number(bill.bill_amount)).updatedAmount))}{' '}
+                )
+              </TableCell>
+            </TableRow>
+          </Table>
+        </div>
+        <div className='col-span-12 w-full border border-black'>
+          <Table className='w-full'>
+            <TableRow>
+              <TableCell
+                colSpan={8}
+                className='border border-black'
+              >
+                E & O.E
+              </TableCell>
+              <TableCell
+                colSpan={4}
+                className='border border-black text-left font-bold italic'
+              >
+                Balance Advance at Credit, if any
+              </TableCell>
+              <TableCell className='border border-black text-right'></TableCell>
+            </TableRow>
+          </Table>
         </div>
       </div>
     </>

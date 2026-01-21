@@ -296,7 +296,7 @@ export default function BillReadingDetails({
                 colSpan={3}
                 className='border border-black'
               >
-                Average Pf:
+                Ave.PF=KWh/KVAh
               </TableCell>
               <TableCell
                 colSpan={2}

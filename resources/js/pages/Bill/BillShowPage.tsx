@@ -65,7 +65,7 @@ export default function BillShowPage({
       leftBarTitle='Billing'
       selectedItem='Bill Details'
     >
-      <div className='bg-white'>
+      <div className='overflow-hidden bg-white'>
         <div className='flex items-center justify-end'>
           {' '}
           <Button
@@ -121,6 +121,7 @@ export default function BillShowPage({
             bill={bill}
             computedProperties={computedProperties}
             kwhValues={kwhValues}
+            selfGenerationkwhValues={selfGenerationkwhValues}
           />
 
           <div className='mt-6 text-center italic'>
