@@ -184,6 +184,9 @@
                             <td colspan="2">Green Energy Charge</td>
                             <td class="right">{{ is_numeric($chargeHeads['green_energy_charge']['result'] ?? null) ? number_format($chargeHeads['green_energy_charge']['result'], 2) : '-' }}</td>
                         </tr>
+                        <tr>
+                            <td colspan="3" style="height:165px;"></td>
+                        </tr>
 
                         <tr class="total-row">
                             <td colspan="2">10. Total (add 1 to 9)</td>
@@ -194,23 +197,54 @@
                         $billAmount = (float) ($bill['bill_amount'] ?? 0);
                         $netPayable = round($billAmount);
                         $roundOff = $netPayable - $billAmount;
-
                         $sign = $roundOff > 0 ? '+' : '';
                         @endphp
 
+                        <!-- Plus / Minus (Round off) -->
                         <tr>
-                            <td colspan="2">Round Off</td>
-                            <td class="right">
-                                {{ $sign . number_format($roundOff, 2) }}
+                            <td colspan="2" class="border">Plus / Minus (Round off)</td>
+                            <td class="border right">
+                                {{ $billAmount ? $sign . number_format($roundOff, 2) : '-' }}
                             </td>
                         </tr>
 
-
-
-                        <tr class="total-row">
-                            <td colspan="2">Net Payable</td>
-                            <td class="right">{{ number_format(round($bill['bill_amount'] ?? 0),2) }}</td>
+                        <!-- Undisputed Arr Amount -->
+                        <tr>
+                            <td colspan="2" class="border">UnDisputed Arr Amount</td>
+                            <td class="border right">0.00</td>
                         </tr>
+
+                        <!-- ACD_FY Assessment -->
+                        <tr>
+                            <td colspan="2" class="border">ACD_FY Assessment</td>
+                            <td class="border right">0.00</td>
+                        </tr>
+
+                        <!-- Less Section -->
+                        <tr>
+                            <td rowspan="3" class="border top">Less</td>
+                            <td class="border">1. Advance / Credit</td>
+                            <td class="border right">0.00</td>
+                        </tr>
+
+                        <tr>
+                            <td class="border">2. CD Interest</td>
+                            <td class="border right">0.00</td>
+                        </tr>
+
+                        <tr>
+                            <td class="border">3. CD / Oth Ref</td>
+                            <td class="border right">0.00</td>
+                        </tr>
+
+                        <!-- Net Payable -->
+                        <tr class="total-row">
+                            <td colspan="2" class="border bold">Net Payable</td>
+                            <td class="border right bold">
+                                {{ $billAmount ? number_format($netPayable, 2) : '-' }}
+                            </td>
+                        </tr>
+
 
                     </tbody>
                 </table>
