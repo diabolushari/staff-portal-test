@@ -2,22 +2,22 @@
     /* ===== Reading Layout ===== */
     .reading-wrapper {
         border: 1px solid #000;
-        padding: 4px;
-        margin-top: 4px;
+        padding: 0px;
+        margin-top: 0;
         font-size: 10px;
     }
 
     .reading-title {
         text-align: center;
         font-weight: bold;
-        margin-bottom: 4px;
+        margin-bottom: 0;
     }
 
     .reading-row {
         width: 100%;
         display: table;
         table-layout: fixed;
-        margin-bottom: 4px;
+        margin-bottom: 0;
     }
 
     .reading-cell {
@@ -40,7 +40,7 @@
     .reading-grid th,
     .reading-grid td {
         border: 1px solid #000;
-        padding: 3px;
+        padding: 2px;
         vertical-align: middle;
     }
 

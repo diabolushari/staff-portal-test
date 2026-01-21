@@ -137,7 +137,7 @@
                         {{-- 8. PENALTY --}}
                         <tr>
                             <td colspan="4">8. Penalty for non-segregation of light load</td>
-                            <td class="right">-</td>
+                            <td class="right">0</td>
                         </tr>
 
                     </tbody>
@@ -190,15 +190,22 @@
                             <td class="right">{{ is_numeric($bill['bill_amount'] ?? null) ? number_format($bill['bill_amount'], 2) : '-' }}</td>
                         </tr>
 
+                        @php
+                        $billAmount = (float) ($bill['bill_amount'] ?? 0);
+                        $netPayable = round($billAmount);
+                        $roundOff = $netPayable - $billAmount;
+
+                        $sign = $roundOff > 0 ? '+' : '';
+                        @endphp
+
                         <tr>
                             <td colspan="2">Round Off</td>
                             <td class="right">
-                                @php
-                                $r = round($bill['bill_amount'] ?? 0,2) - ($bill['bill_amount'] ?? 0);
-                                @endphp
-                                {{ number_format($r,2) }}
+                                {{ $sign . number_format($roundOff, 2) }}
                             </td>
                         </tr>
+
+
 
                         <tr class="total-row">
                             <td colspan="2">Net Payable</td>
