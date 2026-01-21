@@ -90,10 +90,10 @@ export default function BillInvoice({
                   Sub Total(a+b+c+d+e+f)
                 </TableCell>
                 <TableCell className='border border-black text-right'>
-                  {Number.isNaN(Number(chargeHeads.total_demand_charge.result)) ||
-                  chargeHeads.total_demand_charge.result === null
+                  {Number.isNaN(Number(chargeHeads?.total_demand_charge?.result)) ||
+                  chargeHeads?.total_demand_charge?.result === null
                     ? '-'
-                    : Number(chargeHeads.total_demand_charge.result).toFixed(2)}
+                    : Number(chargeHeads?.total_demand_charge?.result).toFixed(2)}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -115,7 +115,7 @@ export default function BillInvoice({
                   </TableCell>
                   <TableCell className='border border-black'>{row?.units}</TableCell>
                   <TableCell className='border border-black'>
-                    {Number(row?.rate?.result).toFixed(2)}
+                    {Number(row?.rate?.result).toFixed(4)}
                   </TableCell>
                   <TableCell className='border border-black'>
                     {Number(row?.amount).toFixed(2)}
@@ -130,10 +130,10 @@ export default function BillInvoice({
                   Sub Total(a+b+c)
                 </TableCell>
                 <TableCell className='border border-black text-right'>
-                  {Number.isNaN(Number(chargeHeads.energy_charge.result)) ||
-                  chargeHeads.energy_charge.result === null
+                  {Number.isNaN(Number(chargeHeads?.energy_charge?.result)) ||
+                  chargeHeads?.energy_charge?.result === null
                     ? '-'
-                    : Number(chargeHeads.energy_charge.result).toFixed(2)}
+                    : Number(chargeHeads?.energy_charge?.result).toFixed(2)}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -161,12 +161,12 @@ export default function BillInvoice({
                   Total Energy Charge
                 </TableCell>
                 <TableCell className='border border-black text-right'>
-                  {Number.isNaN(Number(chargeHeads.energy_charge.result)) ||
-                  chargeHeads.energy_charge.result === null ||
-                  Number.isNaN(Number(chargeHeads.power_factor_incentive_and_disincentive?.result))
+                  {Number.isNaN(Number(chargeHeads?.energy_charge?.result)) ||
+                  chargeHeads?.energy_charge?.result === null ||
+                  Number.isNaN(Number(chargeHeads?.power_factor_incentive_and_disincentive?.result))
                     ? '-'
                     : (
-                        Number(chargeHeads.energy_charge.result) +
+                        Number(chargeHeads?.energy_charge?.result) +
                         Number(chargeHeads.power_factor_incentive_and_disincentive?.result)
                       )?.toFixed(2)}
                 </TableCell>
@@ -187,13 +187,15 @@ export default function BillInvoice({
                   a.Factory lighting
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(computedProperties.total_consumption_factory_lighting.result).toFixed(
+                  {Number(computedProperties?.total_consumption_factory_lighting?.result).toFixed(
                     2
                   ) ?? '-'}
                 </TableCell>
-                <TableCell className='border border-black'>0.02</TableCell>
                 <TableCell className='border border-black'>
-                  {Number(chargeHeads.factory_lighting.result).toFixed(2) ?? '-'}
+                  {Number(computedProperties?.factory_lighting_unit_rate?.result).toFixed(2) ?? '-'}
+                </TableCell>
+                <TableCell className='border border-black'>
+                  {Number(chargeHeads?.factory_lighting?.result).toFixed(2) ?? '-'}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -204,12 +206,15 @@ export default function BillInvoice({
                   b. Colony lighting
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(computedProperties.total_consumption_colony_lighting.result).toFixed(2) ??
-                    '-'}
+                  {Number(computedProperties?.total_consumption_colony_lighting?.result).toFixed(
+                    2
+                  ) ?? '-'}
                 </TableCell>
-                <TableCell className='border border-black'>0.02</TableCell>
                 <TableCell className='border border-black'>
-                  {Number(chargeHeads.colony_lighting.result).toFixed(2) ?? '-'}
+                  {Number(computedProperties?.colony_lighting_unit_rate?.result).toFixed(2) ?? '-'}
+                </TableCell>
+                <TableCell className='border border-black'>
+                  {Number(chargeHeads?.colony_lighting?.result).toFixed(2) ?? '-'}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -220,14 +225,14 @@ export default function BillInvoice({
                   Sub Total(a+b)
                 </TableCell>
                 <TableCell className='border border-black text-right'>
-                  {Number.isNaN(Number(chargeHeads.colony_lighting.result)) ||
-                  chargeHeads.colony_lighting.result === null ||
-                  Number.isNaN(Number(chargeHeads.factory_lighting.result)) ||
-                  chargeHeads.factory_lighting.result === null
+                  {Number.isNaN(Number(chargeHeads?.colony_lighting?.result)) ||
+                  chargeHeads?.colony_lighting?.result === null ||
+                  Number.isNaN(Number(chargeHeads?.factory_lighting?.result)) ||
+                  chargeHeads?.factory_lighting?.result === null
                     ? '-'
                     : (
-                        Number(chargeHeads.colony_lighting.result) +
-                        Number(chargeHeads.factory_lighting.result)
+                        Number(chargeHeads?.colony_lighting?.result) +
+                        Number(chargeHeads?.factory_lighting?.result)
                       ).toFixed(2)}
                 </TableCell>
               </TableRow>
@@ -239,13 +244,13 @@ export default function BillInvoice({
                   5. Electricity Duty
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(chargeHeads.energy_charge.result)?.toFixed(2) ?? '-'}
+                  {Number(chargeHeads?.energy_charge?.result)?.toFixed(2) ?? '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
                   {Number(computedProperties?.electricity_duty_rate?.result)?.toFixed(3) ?? '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(chargeHeads.electricity_duty.result)?.toFixed(2) ?? '-'}
+                  {Number(chargeHeads?.electricity_duty?.result)?.toFixed(2) ?? '-'}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -263,7 +268,7 @@ export default function BillInvoice({
                     '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(chargeHeads.electricity_surcharge.result)?.toFixed(2) ?? '-'}
+                  {Number(chargeHeads?.electricity_surcharge?.result)?.toFixed(2) ?? '-'}
                 </TableCell>
               </TableRow>
               <TableRow>

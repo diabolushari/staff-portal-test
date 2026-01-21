@@ -50,7 +50,7 @@
                         <tr>
                             <td colspan="2">{{ chr(97+$i) }}. {{ $row['label'] }}</td>
                             <td class="right">{{ $row['units'] }}</td>
-                            <td class="right">{{ is_numeric($row['rate']['result'] ?? null) ? number_format($row['rate']['result'], 2) : '-' }}</td>
+                            <td class="right">{{ is_numeric($row['rate']['result'] ?? null) ? number_format($row['rate']['result'], 4) : '-' }}</td>
                             <td class="right">{{ is_numeric($row['amount'] ?? null) ? number_format($row['amount'], 2) : '-' }}</td>
                         </tr>
                         @endforeach
@@ -88,14 +88,14 @@
                         <tr>
                             <td colspan="2">a. Factory lighting</td>
                             <td class="right">{{ is_numeric($computedProperties['total_consumption_factory_lighting']['result'] ?? null) ? number_format($computedProperties['total_consumption_factory_lighting']['result'], 2) : '-' }}</td>
-                            <td class="right">0.02</td>
+                            <td class="right">0.2</td>
                             <td class="right">{{ is_numeric($chargeHeads['factory_lighting']['result'] ?? null) ? number_format($chargeHeads['factory_lighting']['result'], 2) : '-' }}</td>
                         </tr>
 
                         <tr>
                             <td colspan="2">b. Colony lighting</td>
                             <td class="right">{{ is_numeric($computedProperties['total_consumption_colony_lighting']['result'] ?? null) ? number_format($computedProperties['total_consumption_colony_lighting']['result'], 2) : '-' }}</td>
-                            <td class="right">0.02</td>
+                            <td class="right">0.2</td>
                             <td class="right">{{ is_numeric($chargeHeads['colony_lighting']['result'] ?? null) ? number_format($chargeHeads['colony_lighting']['result'], 2) : '-' }}</td>
                         </tr>
 
@@ -106,7 +106,7 @@
                                 $f = $chargeHeads['factory_lighting']['result'] ?? null;
                                 $c = $chargeHeads['colony_lighting']['result'] ?? null;
                                 @endphp
-                                {{ (is_numeric($f) && is_numeric($c)) ? number_format($f + $c, 2) : '-' }}
+                                {{ (is_numeric($f) && is_numeric($c)) ? number_format($f + $c, 3) : '-' }}
                             </td>
                         </tr>
 
@@ -114,30 +114,30 @@
                         <tr>
                             <td colspan="2">5. Electricity Duty</td>
                             <td class="right">{{ is_numeric($chargeHeads['energy_charge']['result'] ?? null) ? number_format($chargeHeads['energy_charge']['result'], 2) : '-' }}</td>
-                            <td class="right">{{ is_numeric($computedProperties['electricity_duty_rate']['result'] ?? null) ? number_format($computedProperties['electricity_duty_rate']['result'], 2) : '-' }}</td>
+                            <td class="right">{{ is_numeric($computedProperties['electricity_duty_rate']['result'] ?? null) ? number_format($computedProperties['electricity_duty_rate']['result'], 3) : '-' }}</td>
                             <td class="right">{{ is_numeric($chargeHeads['electricity_duty']['result'] ?? null) ? number_format($chargeHeads['electricity_duty']['result'], 2) : '-' }}</td>
                         </tr>
 
                         {{-- 6. SURCHARGE --}}
                         <tr>
                             <td colspan="2">6. Ele. Surcharge (*)</td>
-                            <td class="right">{{ '-' }}</td>
-                            <td class="right">{{ is_numeric($computedProperties['electricity_surcharge_rate']['result'] ?? null) ? number_format($computedProperties['electricity_surcharge_rate']['result'], 2) : '-' }}</td>
+                            <td class="right">{{collect($kwhValues)->sum('value') }}</td>
+                            <td class="right">{{ is_numeric($computedProperties['electricity_surcharge_rate']['result'] ?? null) ? number_format($computedProperties['electricity_surcharge_rate']['result'], 3) : '-' }}</td>
                             <td class="right">{{ is_numeric($chargeHeads['electricity_surcharge']['result'] ?? null) ? number_format($chargeHeads['electricity_surcharge']['result'], 2) : '-' }}</td>
                         </tr>
 
                         {{-- 7. SELF GENERATION --}}
                         <tr>
                             <td colspan="2">7. Duty On Self Generated Energy</td>
-                            <td class="right">{{ is_numeric($computedProperties['total_consumption_generator']['result'] ?? null) ? number_format($computedProperties['total_consumption_generator']['result'], 2) : '-' }}</td>
-                            <td class="right">{{ is_numeric($computedProperties['self_generation_duty_rate']['result'] ?? null) ? number_format($computedProperties['self_generation_duty_rate']['result'], 2) : '-' }}</td>
+                            <td class="right">{{ collect($selfGenerationkwhValues)->sum('value') }}</td>
+                            <td class="right">{{ is_numeric($computedProperties['self_generation_duty_rate']['result'] ?? null) ? number_format($computedProperties['self_generation_duty_rate']['result'], 3) : '-' }}</td>
                             <td class="right">{{ is_numeric($chargeHeads['self_generation_duty']['result'] ?? null) ? number_format($chargeHeads['self_generation_duty']['result'], 2) : '-' }}</td>
                         </tr>
 
                         {{-- 8. PENALTY --}}
                         <tr>
                             <td colspan="4">8. Penalty for non-segregation of light load</td>
-                            <td class="right">-</td>
+                            <td class="right">0</td>
                         </tr>
 
                     </tbody>
@@ -190,15 +190,22 @@
                             <td class="right">{{ is_numeric($bill['bill_amount'] ?? null) ? number_format($bill['bill_amount'], 2) : '-' }}</td>
                         </tr>
 
+                        @php
+                        $billAmount = (float) ($bill['bill_amount'] ?? 0);
+                        $netPayable = round($billAmount);
+                        $roundOff = $netPayable - $billAmount;
+
+                        $sign = $roundOff > 0 ? '+' : '';
+                        @endphp
+
                         <tr>
                             <td colspan="2">Round Off</td>
                             <td class="right">
-                                @php
-                                $r = round($bill['bill_amount'] ?? 0,2) - ($bill['bill_amount'] ?? 0);
-                                @endphp
-                                {{ number_format($r,2) }}
+                                {{ $sign . number_format($roundOff, 2) }}
                             </td>
                         </tr>
+
+
 
                         <tr class="total-row">
                             <td colspan="2">Net Payable</td>

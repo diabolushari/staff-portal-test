@@ -14,7 +14,7 @@
         <td><strong>{{ \Carbon\Carbon::parse($bill['dc_date'])->format('d-m-Y') ?? '-' }}</strong></td>
 
         <td>Bill No</td>
-        <td class="mono"><strong>{{ $bill['bill_id'] ?? '-' }}</strong></td>
+        <td class="mono"><strong>{{ $bill['bill_number'] ?? '-' }}</strong></td>
     </tr>
 
     <!-- ROW 2 -->
@@ -26,10 +26,10 @@
         <td colspan="3">{{ $connection['tariff']['parameter_value'] ?? '-' }}</td>
 
         <td>CD</td>
-        <td><strong>{{ $connection['contract_demand_kva_val'] ?? '-' }}</strong></td>
+        <td><strong>00.0</strong></td>
 
         <td>BG</td>
-        <td>-</td>
+        <td>0</td>
     </tr>
 
     <!-- ROW 3 : ADDRESS + VIRTUAL ACCOUNT -->
@@ -53,7 +53,7 @@
 
         <!-- RIGHT -->
         <td colspan="5">
-            <strong>Virtual Account No:</strong>
+            <strong>SBI Virtual A/c No(IFS Code:SBIN0070493)-</strong>
             {{ $consumer['virtual_account_number'] ?? '-' }}
         </td>
     </tr>
