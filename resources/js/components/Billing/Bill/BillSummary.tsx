@@ -29,7 +29,7 @@ export default function BillSummary({ bill, connection }: { bill: Bill; connecti
             colSpan={2}
             className='border border-black font-bold'
           >
-            {bill?.bill_id ?? '-'}
+            {bill?.bill_number ?? '-'}
           </TableCell>
         </TableRow>
         <TableRow>

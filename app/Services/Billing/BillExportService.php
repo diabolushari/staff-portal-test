@@ -447,6 +447,32 @@ class BillExportService
         );
     }
 
+    public function generateBillNumber(array $billData): string
+    {
+        // 1️⃣ Connection type → prefix
+        $connectionType = strtolower(
+            $billData['connection']['connection_type']['parameter_value'] ?? ''
+        );
+
+        $connectionPrefix = match ($connectionType) {
+            'ht'  => '2',
+            'eht' => '1',
+            default => '0', // fallback safety
+        };
+
+        // 2️⃣ Service office code (4 digits)
+        $officeCode = $billData['connection']['service_office']['office_code'] ?? '0000';
+        $officeCode = str_pad($officeCode, 4, '0', STR_PAD_LEFT);
+
+        // 3️⃣ Serial number from bill_id → 8 digits
+        $billId = $billData['bill_id'] ?? 0;
+        $serialNumber = str_pad($billId, 8, '0', STR_PAD_LEFT);
+
+        // 4️⃣ Final bill number
+        return $connectionPrefix . $officeCode . $serialNumber;
+    }
+
+
     private function getZoneLabel(int $index, string $base): string
     {
         return match ($index) {

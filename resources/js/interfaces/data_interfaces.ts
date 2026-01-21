@@ -634,6 +634,7 @@ export interface BillingGroupConnection {
 }
 export interface Bill {
   bill_id: number
+  bill_number?: string
   connection_id: number
   reading_year_month: string
   bill_year_month: string
