@@ -1,7 +1,3 @@
-import { billingNavItems } from '@/components/Navbar/navitems'
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
-import MainLayout from '@/layouts/main-layout'
-
 import BillArrears from '@/components/Billing/Bill/BillArrears'
 import BillInvoice from '@/components/Billing/Bill/BillInvoice'
 import BillReadingDetails from '@/components/Billing/Bill/BillReadingDetails'
@@ -18,7 +14,7 @@ import { Bill, Connection } from '@/interfaces/data_interfaces'
 import NormalText from '@/typography/NormalText'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
-import { getDisplayMonthYear, numberToWords, roundedOffAmount } from '@/utils'
+import { getDisplayMonthYear } from '@/utils'
 
 interface BillShowPageProps {
   bill: Bill
@@ -58,14 +54,8 @@ export default function BillShowPage({
   const mf = meter?.meter_mf ?? 1
 
   return (
-    <MainLayout
-      navItems={billingNavItems}
-      title=''
-      breadcrumb={[]}
-      leftBarTitle='Billing'
-      selectedItem='Bill Details'
-    >
-      <div className='overflow-hidden bg-white'>
+    <div className='flex w-full justify-center bg-white p-4'>
+      <div className='w-full xl:w-[1500px]'>
         <div className='flex items-center justify-end'>
           {' '}
           <Button
@@ -143,6 +133,6 @@ export default function BillShowPage({
           </div>
         </div>
       </div>
-    </MainLayout>
+    </div>
   )
 }

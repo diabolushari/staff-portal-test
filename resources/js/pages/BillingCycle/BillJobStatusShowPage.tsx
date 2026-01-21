@@ -6,8 +6,7 @@ import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
-import { getDisplayDate, getDisplayMonthYear } from '@/utils'
-import { router } from '@inertiajs/react'
+import { cn, getDisplayDate, getDisplayMonthYear } from '@/utils'
 
 interface Props {
   data: BillGenerationJob
@@ -22,8 +21,9 @@ export default function BillJobStatusShowPage({ data }: Props) {
     e.preventDefault()
   }
   const handleViewBillClick = (bill: Bill) => {
-    router.get(route('bills.show', bill?.bill_id))
+    window.open(route('bills.show', bill?.bill_id), '_blank')
   }
+
   const breadcrumb: BreadcrumbItem[] = [
     {
       title: 'Home',
@@ -61,6 +61,8 @@ export default function BillJobStatusShowPage({ data }: Props) {
       breadcrumb={breadcrumb}
       navItems={billingNavItems}
       title={`Bill Cycle List for  December 2025`}
+      selectedItem='Jobs'
+      selectedTopNav='Billing'
     >
       <div className='flex flex-col gap-4 p-4'>
         <div className='grid grid-cols-2 gap-4'>
@@ -80,45 +82,41 @@ export default function BillJobStatusShowPage({ data }: Props) {
               <Button
                 label='Search'
                 type='submit'
+                variant='secondary'
               />
             </div>
           </form>
-          <div className='mt-6 flex justify-end gap-2'>
-            <div>
-              <Button
-                onClick={() => {}}
-                label='Go'
-              />
-            </div>
-          </div>
         </div>
         {bills?.bills?.length > 0 &&
           bills?.bills?.map((bill) => (
-            <Card className='mb-6 overflow-hidden rounded-lg border p-0 shadow-sm'>
+            <Card
+              className='mb-6 overflow-hidden rounded-lg border p-0 shadow-sm'
+              key={bill?.bill_id}
+            >
               {/* Top Gray Header */}
               <div className='grid grid-cols-2 gap-4 bg-gray-200 px-6 py-4'>
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <p className='font-medium text-gray-700'>
+                    <p className='context-menu-item py-2'>Name 123</p>
+                    <p className='ghost-button-text'>
                       {bill?.connection?.consumer_profiles?.[0]?.organization_name ?? '-'}
                     </p>
-                    <p className='text-xs text-gray-500'>Name</p>
                   </div>
 
                   <div>
-                    <p className='font-medium text-gray-700'>{bill?.bill_amount}</p>
-                    <p className='text-xs text-gray-500'>Bill Amount</p>
+                    <p className='context-menu-item py-2'>Bill Amount</p>
+                    <p className='ghost-button-text'>{Number(bill?.bill_amount).toFixed(2)}</p>
                   </div>
 
                   <div>
-                    <p className='font-medium text-gray-700'>{bill?.connection?.consumer_number}</p>
-                    <p className='text-xs text-gray-500'>Consumer Number</p>
+                    <p className='context-menu-item py-2'>Consumer Number</p>
+                    <p className='ghost-button-text'>{bill?.connection?.consumer_number}</p>
                   </div>
                   <div>
-                    <p className='font-medium text-gray-700'>
+                    <p className='context-menu-item py-2'>Type</p>
+                    <p className='ghost-button-text'>
                       {bill?.connection?.connection_type?.parameter_value}
                     </p>
-                    <p className='text-xs text-gray-500'>Type</p>
                   </div>
                 </div>
               </div>
@@ -127,39 +125,39 @@ export default function BillJobStatusShowPage({ data }: Props) {
               <div className='grid grid-cols-2 gap-4'>
                 <div className='grid grid-cols-2 gap-y-4 px-6 py-5'>
                   <div>
-                    <p className='font-medium text-gray-700'>
+                    <p className='context-menu-item py-2'>Bill Month & Year</p>
+                    <p className='ghost-button-text'>
                       {getDisplayMonthYear(bill?.bill_year_month)}
                     </p>
-                    <p className='text-xs text-gray-500'>Bill Month & Year</p>
                   </div>
 
                   <div>
-                    <p className='col-span-2 font-medium text-gray-700'>
+                    <p className='context-menu-item py-2'>Reading Month & Year</p>
+                    <p className='ghost-button-text col-span-2'>
                       {getDisplayMonthYear(bill?.reading_year_month)}
                     </p>
-                    <p className='text-xs text-gray-500'>Reading Month & Year</p>
                   </div>
                   <div>
-                    <p className='font-medium text-gray-700'>{getDisplayDate(bill?.bill_date)}</p>
-                    <p className='text-xs text-gray-500'>Bill Date</p>
+                    <p className='context-menu-item py-2'>Bill Date</p>
+                    <p className='ghost-button-text'>{getDisplayDate(bill?.bill_date)}</p>
                   </div>
 
                   <div>
-                    <p className='font-medium text-gray-700'>{getDisplayDate(bill?.due_date)}</p>
-                    <p className='text-xs text-gray-500'>Due Date</p>
+                    <p className='context-menu-item py-2'>Due Date</p>
+                    <p className='ghost-button-text'>{getDisplayDate(bill?.due_date)}</p>
                   </div>
                 </div>
                 <div className='grid grid-cols-2 gap-y-4 py-5'>
                   <div className='flex flex-col gap-4'>
                     <div>
-                      <p className='font-medium text-gray-700'>{getDisplayDate(bill?.dc_date)}</p>
-                      <p className='text-xs text-gray-500'>DC Date</p>
+                      <p className='context-menu-item py-2'>DC Date</p>
+                      <p className='ghost-button-text'>{getDisplayDate(bill?.dc_date)}</p>
                     </div>
                     <div>
                       {bill?.remarks && (
                         <>
-                          <p className='font-medium text-gray-700'>{bill?.remarks}</p>
-                          <p className='text-xs text-gray-500'>Remarks</p>
+                          <p className='context-menu-item py-2'>Remarks</p>
+                          <p className='ghost-button-text'>{bill?.remarks}</p>
                         </>
                       )}
                     </div>
@@ -169,10 +167,18 @@ export default function BillJobStatusShowPage({ data }: Props) {
 
               {/* Footer */}
               <div className='flex justify-end border-t px-6 py-4'>
-                <Button
-                  label='View Bill'
-                  onClick={() => handleViewBillClick(bill)}
-                />
+                <a
+                  className={cn(
+                    'lgButtonText flex items-center justify-center px-10 py-2 tracking-wider capitalize transition duration-150' +
+                      ' ease-in-out focus:ring-4 focus:outline-hidden',
+                    'bg-kseb-primary primary-button-text rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors'
+                  )}
+                  href={route('bills.show', bill?.bill_id)}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  View Bill
+                </a>
               </div>
             </Card>
           ))}
@@ -192,44 +198,40 @@ export default function BillJobStatusShowPage({ data }: Props) {
                   {/* Header */}
                   <div className='grid grid-cols-3 gap-4 px-6 py-3'>
                     <div>
-                      <p className='font-medium text-gray-800'>{ex.connection?.consumer_number}</p>
-                      <p className='text-xs text-gray-500'>Consumer Number</p>
+                      <p className='context-menu-item py-2'>Consumer Number</p>
+                      <p className='ghost-button-text'>{ex.connection?.consumer_number}</p>
                     </div>
 
                     <div>
-                      <p className='font-medium text-gray-800'>
+                      <p className='context-menu-item py-2'>Consumer Name</p>
+                      <p className='ghost-button-text'>
                         {ex.connection?.consumer_profiles?.[0]?.organization_name}
                       </p>
-                      <p className='text-xs text-gray-500'>Consumer Name</p>
                     </div>
 
                     <div>
                       <p className='font-medium text-red-700'>Exception</p>
-                      <p className='text-xs text-gray-500'>{ex?.exception}</p>
+                      <p className='ghost-button-text'>{ex?.exception}</p>
                     </div>
                   </div>
 
                   {/* Body */}
                   <div className='grid grid-cols-3 gap-4 px-6 py-4'>
                     <div>
-                      <p className='font-medium text-gray-700'>
+                      <p className='context-menu-item py-2'>Reading Month</p>
+                      <p className='ghost-button-text'>
                         {getDisplayMonthYear(ex.reading_year_month)}
                       </p>
-                      <p className='text-xs text-gray-500'>Reading Month</p>
                     </div>
 
                     <div>
-                      <p className='font-medium text-gray-700'>
-                        {getDisplayMonthYear(ex.bill_year_month)}
-                      </p>
-                      <p className='text-xs text-gray-500'>Bill Month</p>
+                      <p className='context-menu-item py-2'>Bill Month</p>
+                      <p className='ghost-button-text'>{getDisplayMonthYear(ex.bill_year_month)}</p>
                     </div>
 
                     <div>
-                      <p className='font-medium text-gray-700'>
-                        {getDisplayDate(ex.initialized_date)}
-                      </p>
-                      <p className='text-xs text-gray-500'>Initialized Date</p>
+                      <p className='context-menu-item py-2'>Initialized Date</p>
+                      <p className='ghost-button-text'>{getDisplayDate(ex.initialized_date)}</p>
                     </div>
                   </div>
 
