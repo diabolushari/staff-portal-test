@@ -18,7 +18,7 @@ import { Bill, Connection } from '@/interfaces/data_interfaces'
 import NormalText from '@/typography/NormalText'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
-import { getDisplayMonthYear, numberToWords } from '@/utils'
+import { getDisplayMonthYear, numberToWords, roundedOffAmount } from '@/utils'
 
 interface BillShowPageProps {
   bill: Bill
@@ -153,10 +153,13 @@ export default function BillShowPage({
                 </TableCell>
                 <TableCell>
                   <strong>Bill No:</strong>{' '}
-                  <span className='font-mono'>{bill?.bill_id ?? '-'}</span>
+                  <span className='font-mono'>{bill?.bill_number ?? '-'}</span>
                 </TableCell>
                 <TableCell>
-                  <strong>Rs:</strong> <span className='font-mono'>{bill?.bill_amount ?? '-'}</span>
+                  <strong>Rs:</strong>{' '}
+                  <span className='font-mono'>
+                    {roundedOffAmount(bill?.bill_amount).updatedAmount ?? '-'}
+                  </span>
                 </TableCell>
               </TableRow>
             </TableBody>

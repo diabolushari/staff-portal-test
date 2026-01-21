@@ -15,7 +15,7 @@ import {
 } from '@/interfaces/bill_pdf_interfaces'
 import { Bill } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
-import { numberToWords } from '@/utils'
+import { numberToWords, roundedOffAmount } from '@/utils'
 
 export default function BillInvoice({
   chargeHeads,
@@ -35,15 +35,6 @@ export default function BillInvoice({
   selfGenerationkwhValues: BillMeterReading[]
 }) {
   console.log(chargeHeads)
-
-  const roundedOffAmount = (amount: number): { updatedAmount: string; roundOff: string } => {
-    const roundedAmount = Math.round(amount)
-    const roundOff = roundedAmount - amount
-    return {
-      updatedAmount: roundedAmount.toFixed(2),
-      roundOff: (roundOff > 0 ? '+' : '') + roundOff.toFixed(2),
-    }
-  }
 
   return (
     <>

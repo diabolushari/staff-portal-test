@@ -224,3 +224,12 @@ export const numberToWords = (amount: number): string => {
 
   return words + ' Only'
 }
+
+export const roundedOffAmount = (amount: number): { updatedAmount: string; roundOff: string } => {
+  const roundedAmount = Math.round(amount)
+  const roundOff = roundedAmount - amount
+  return {
+    updatedAmount: roundedAmount.toFixed(2),
+    roundOff: (roundOff > 0 ? '+' : '') + roundOff.toFixed(2),
+  }
+}
