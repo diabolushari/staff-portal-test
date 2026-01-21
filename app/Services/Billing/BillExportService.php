@@ -232,10 +232,22 @@ class BillExportService
         ];
     }
 
-    public function getTotolDemandChargeRows(?array $computed): array
+    public function getTotolDemandChargeRows(?array $computed, ?array $kvaValues): array
     {
         if (empty($computed)) {
             return [];
+        }
+
+        $maxKvaIndex = 1;
+        $maxKvaValue = -INF;
+
+        foreach ($kvaValues as $index => $kva) {
+            $value = (float) ($kva['value'] ?? 0);
+
+            if ($value > $maxKvaValue) {
+                $maxKvaValue = $value;
+                $maxKvaIndex = $index + 1;
+            }
         }
 
         $excessDemand = $computed['excess_demand'];
@@ -279,7 +291,7 @@ class BillExportService
             $units = 0;
             $demandChargeAmount = 0;
 
-            if (($useContractDemand && $zoneId == 1) || (! $useContractDemand && $zoneId == $zoneWithMaxDemand['result'])) {
+            if (($useContractDemand && $zoneId == $maxKvaIndex) || (! $useContractDemand && $zoneId == $zoneWithMaxDemand['result'])) {
                 $units = $demandUnits;
                 $demandChargeAmount = $demandChargeHead ? (float) ($demandChargeHead['result'] ?? 0) : 0;
             }
@@ -314,6 +326,7 @@ class BillExportService
         if (empty($computed) || empty($kwhValues)) {
             return [];
         }
+
 
         $totalEnergyChargeRows = [];
         $energyCharges = $computed['energy_charges'];
@@ -493,7 +506,14 @@ class BillExportService
             default => "{$base} - Zone {$index}",
         };
     }
-    private function getAmountInWords(?float $amount): array
+
+    /**
+     * Convert amount to words
+     * 
+     * @param ?float $amount
+     * @return array
+     */
+    public function getAmountInWords(?float $amount): array
     {
         if ($amount === null) {
             return [

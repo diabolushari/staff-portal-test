@@ -42,7 +42,7 @@ class BillingPdfController extends Controller
         $energyChargeRows = $this->billExportService->getEnergyChargeRows($energyMeter, $computedProperties, $kwhValues);
         $averageAndTotalKva = $this->billExportService->getAverageAndTotalKva($kvaValues);
         $averageAndTotalKwh = $this->billExportService->getAverageAndTotalKwh($kwhValues);
-        $totalDemandChargeRows = $this->billExportService->getTotolDemandChargeRows($computedProperties);
+        $totalDemandChargeRows = $this->billExportService->getTotolDemandChargeRows($computedProperties, $kvaValues);
         $totalEnergyChargeRows = $this->billExportService->getTotalEnergyChargeRows($computedProperties, $kwhValues);
         $demand = $this->billExportService->calculateDemand($kvaValues, $bill->data['connection']['contract_demand_kva_val'] ?? null);
         $billNumber = $this->billExportService->generateBillNumber($bill->data);
