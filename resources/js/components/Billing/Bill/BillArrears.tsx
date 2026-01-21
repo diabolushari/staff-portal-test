@@ -182,7 +182,7 @@ export default function BillArrears({
             colSpan={3}
             className='border border-black'
           >
-            Circle : {connection?.service_office?.office_name ?? '-'}
+            Circle : {connection?.admin_office?.office_name ?? '-'}
           </TableCell>
         </TableRow>
       </TableBody>
