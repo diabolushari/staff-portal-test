@@ -191,7 +191,7 @@ export default function BillInvoice({
                     2
                   ) ?? '-'}
                 </TableCell>
-                <TableCell className='border border-black'>0.02</TableCell>
+                <TableCell className='border border-black'>0.2</TableCell>
                 <TableCell className='border border-black'>
                   {Number(chargeHeads.factory_lighting.result).toFixed(2) ?? '-'}
                 </TableCell>
@@ -207,7 +207,7 @@ export default function BillInvoice({
                   {Number(computedProperties.total_consumption_colony_lighting.result).toFixed(2) ??
                     '-'}
                 </TableCell>
-                <TableCell className='border border-black'>0.02</TableCell>
+                <TableCell className='border border-black'>0.2</TableCell>
                 <TableCell className='border border-black'>
                   {Number(chargeHeads.colony_lighting.result).toFixed(2) ?? '-'}
                 </TableCell>

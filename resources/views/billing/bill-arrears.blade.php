@@ -6,7 +6,7 @@
     @endphp
     <tr>
         <td colspan="6" class="center">
-            <strong>Arrears as on</strong> -
+            <strong>Arrears as on</strong> {{ \Carbon\Carbon::parse($connection['previous_reading']['reading_end_date'])->format('d-m-Y') ?? '-' }}
         </td>
 
         <td colspan="3">
@@ -14,10 +14,7 @@
         </td>
 
         <td colspan="2" class="center">
-            {{ isset($connection['previous_reading']['
-reading_end_date'])
-        ? \Carbon\Carbon::parse($connection['previous_reading']['reading_end_date'])->format('d-m-Y')
-        : '-' }}
+            {{ \Carbon\Carbon::parse($connection['previous_reading']['reading_end_date'])->format('d-m-Y') ?? '-' }}
         </td>
 
         <td>
@@ -28,9 +25,9 @@ reading_end_date'])
     {{-- ───────── Row 2 : Disputed / Undisputed + Present Reading + Voltage ───────── --}}
     <tr>
         <td>Disputed</td>
-        <td class="right">-</td>
+        <td class="right">0</td>
         <td>Undisputed</td>
-        <td class="right">-</td>
+        <td class="right">0</td>
         <td colspan="2"></td>
 
         <td colspan="3">
@@ -38,9 +35,7 @@ reading_end_date'])
         </td>
 
         <td colspan="2" class="center">
-            {{ isset($connection['latest_meter_reading']['metering_date'])
-        ? \Carbon\Carbon::parse($connection['latest_meter_reading']['metering_date'])->format('d-m-Y')
-        : '-' }}
+            {{ \Carbon\Carbon::parse($connection['latest_meter_reading']['reading_end_date'])->format('d-m-Y') ?? '-' }}
         </td>
 
         <td>
@@ -130,7 +125,7 @@ reading_end_date'])
 
         <td colspan="3">
             <strong>Circle:</strong>
-            {{ $connection['service_office']['office_name'] ?? '-' }}
+            {{ $connection['admin_office']['office_name'] ?? '-' }}
         </td>
     </tr>
 

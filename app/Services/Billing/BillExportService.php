@@ -447,9 +447,12 @@ class BillExportService
         );
     }
 
-    public function generateBillNumber(array $billData): string
+    public function generateBillNumber(?array $billData): string
     {
         // 1️⃣ Connection type → prefix
+        if ($billData == null) {
+            return '0';
+        };
         $connectionType = strtolower(
             $billData['connection']['connection_type']['parameter_value'] ?? ''
         );

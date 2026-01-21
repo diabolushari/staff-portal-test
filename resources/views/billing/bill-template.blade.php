@@ -6,11 +6,6 @@
   <title>KSEB HT Consumer Bill</title>
 
   <style>
-    @page {
-      size: A4;
-      margin: 6mm;
-    }
-
     body {
       font-family: Arial, Helvetica, sans-serif;
       font-size: 11px;
@@ -50,15 +45,61 @@
       margin-top: 4px;
     }
 
-    table {
-      page-break-inside: avoid;
+    @media print {
+
+      /* Allow tables to split naturally */
+      table {
+        page-break-inside: auto;
+      }
+
+      tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+
+      thead {
+        display: table-header-group;
+        /* repeat header on next page */
+      }
+
+      tfoot {
+        display: table-footer-group;
+      }
+
+      /* Prevent headings from being left alone */
+      h1,
+      h2,
+      h3,
+      h4 {
+        page-break-after: avoid;
+      }
+
+      /* Allow content blocks to split */
+      .section,
+      .invoice {
+        page-break-inside: auto;
+      }
+
+      /* Nested tables inside invoice should also break */
+      .invoice table {
+        page-break-inside: auto;
+      }
+
+      .invoice tbody {
+        page-break-inside: auto;
+      }
+
+      /* Force new page only when YOU want */
+      .page-break {
+        page-break-before: always;
+      }
     }
+
 
     .small-table,
     .grid {
       width: 100%;
       border-collapse: collapse;
-      page-break-inside: avoid;
     }
 
     .small-table td,
@@ -80,14 +121,13 @@
       border: 1px solid #000;
       padding: 4px;
       margin-top: 4px;
-      page-break-inside: avoid;
     }
 
     .invoice {
       border: 1px solid #000;
       padding: 4px;
       margin-top: 4px;
-      page-break-inside: avoid;
+
     }
 
     .total-row {
@@ -98,12 +138,10 @@
     .footer {
       margin-top: 4px;
       font-size: 9.5px;
-      page-break-inside: avoid;
     }
 
     .signature-row {
       margin-top: 12px;
-      page-break-inside: avoid;
     }
 
     .signature {
@@ -158,6 +196,8 @@
     'meter' => $meter,
     ])
 
+
+
     @include('billing.bill-reading', [
     'bill' => $bill,
     'connection' => $connection,
@@ -168,133 +208,9 @@
     'lagValues' => $lagValues,
     'leadValues' => $leadValues,
     'kvaValues' => $kvaValues,
+    'selfGenerationkwhValues' => $selfGenerationkwhValues,
     ])
 
-
-
-
-    <!-- READING DETAILS -->
-    <div class="section">
-      <h3 style="margin:0 0 4px 0;">Reading Details of meter {{ $meter['meter']['meter_serial']}} - Working (KVA, KWh, KVAh & KVARh) for {{ $bill['reading_year_month'] ?? '' }}
-      </h3>
-
-
-      <table class="grid" style="page-break-inside: avoid;">
-        <tr>
-          <th colspan="6">1. Energy Consumption (kWh)</th>
-          <th colspan="8">3. Energy Consumption (KVARh) Lag and kVARh (Lead)</th>
-        </tr>
-        <tr>
-          <th>Zone</th>
-          <th>FR</th>
-          <th>IR</th>
-          <th>MF</th>
-          <th>Units</th>
-          <th></th>
-          <th>Zone</th>
-          <th>FR</th>
-          <th>IR</th>
-          <th>MF</th>
-          <th>Units</th>
-          <th>FR</th>
-          <th>IR</th>
-          <th>Units</th>
-        </tr>
-
-
-
-        @foreach($kwhValues as $index => $kWhRow)
-        <tr>
-          {{-- kWh Energy Consumption --}}
-          <td>{{ $index + 1 }}</td>
-          <td>{{ $kWhRow['final_reading'] ?? '-' }}</td>
-          <td>{{ $kWhRow['initial_reading'] ?? '-' }}</td>
-          <td>{{ $meter['meter_mf'] ?? '-' }}</td>
-          <td class="right">{{ $kWhRow['difference'] * ($meter['meter_mf'] ?? 1) }}</td>
-          <td></td>
-
-          {{-- kVArh Lag and Lead --}}
-          @php
-          $lagRow = $lagValues[$index] ?? null;
-          $leadRow = $leadValues[$index] ?? null;
-          @endphp
-          <td>{{ $index + 1 }}</td>
-          <td>{{ $lagRow['initial_reading'] ?? '-' }}</td>
-          <td>{{ $lagRow['final_reading'] ?? '-' }}</td>
-          <td>{{ $meter['meter_mf'] ?? '-' }}</td>
-          <td class="right">{{ ($lagRow['difference'] ?? 0) * ($meter['meter_mf'] ?? 1) }}</td>
-          <td>{{ $leadRow['initial_reading'] ?? '-' }}</td>
-          <td>{{ $leadRow['final_reading'] ?? '-' }}</td>
-          <td class="right">{{ ($leadRow['difference'] ?? 0) * ($meter['meter_mf'] ?? 1) }}</td>
-        </tr>
-        @endforeach
-
-        <tr class="total-row">
-          <td colspan="4">Total</td>
-          <td class="right">{{ collect($kwhValues)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
-          <td></td>
-          <td colspan="4">Total kVARh (Lag)</td>
-          <td class="right">{{ collect($lagValues)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
-          <td colspan="2">Total kVARh (Lead)</td>
-          <td>{{ collect($leadValues)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
-        </tr>
-      </table>
-
-
-      <table class="grid" style="margin-top:4px; page-break-inside: avoid;">
-        <tr>
-          <th colspan="6">2. Energy Consumption (KVAh)</th>
-          <th colspan="4">4. Demand (KVA) Readings</th>
-        </tr>
-
-        <tr>
-          <th>Zone</th>
-          <th>FR</th>
-          <th>IR</th>
-          <th>MF</th>
-          <th>Units</th>
-          <th></th>
-          <th>Reading</th>
-          <th>MF</th>
-          <th>Units</th>
-          <th></th>
-        </tr>
-
-        @foreach($kvahValues as $index => $kVAhRow)
-        <tr>
-          {{-- Energy Consumption KVAh --}}
-          <td>{{ $index + 1 }}</td> {{-- Zone number --}}
-          <td>{{ $kVAhRow['initial_reading'] ?? '-' }}</td>
-          <td>{{ $kVAhRow['final_reading'] ?? '-' }}</td>
-          <td>{{ $meter['meter_mf'] ?? 1 }}</td> {{-- MF, adjust if needed --}}
-          <td class="right">{{ $kVAhRow['difference'] * ($meter['meter_mf'] ?? 1) }}</td>
-          <td></td>
-
-          {{-- Demand KVA Readings --}}
-          @php
-          $kVAReading = $kvaValues[$index] ?? null;
-          @endphp
-          <td class="center">{{ $kVAReading['difference'] ?? '-' }}</td>
-          <td>{{ $meter['meter_mf'] ?? 1 }}</td>
-          <td class="right">
-            {{ ($kVAReading['difference'] ?? 0) * ($meter['meter_mf'] ?? 1) }}
-          </td>
-          <td></td>
-        </tr>
-        @endforeach
-
-        <tr class="total-row">
-          <td colspan="4">Total</td>
-          <td class="right">{{ collect($kvahValues)->sum('difference') * ($meter['meter_mf'] ?? 1) }}</td>
-          <td></td>
-          <td colspan="3">Total</td>
-          <td class="right">{{ collect($kvaValues)->sum(fn($r) => $r['difference'] * ($meter['meter_mf'] ?? 1)) }}</td>
-        </tr>
-      </table>
-
-
-
-    </div>
 
     <!-- INVOICE SECTION -->
 
@@ -311,6 +227,8 @@
     'chargeHeads' => $chargeHeads,
     'totalDemandChargeRows' => $totalDemandChargeRows,
     'totalEnergyChargeRows' => $totalEnergyChargeRows,
+    'selfGenerationkwhValues' => $selfGenerationkwhValues,
+
     ])
 
 
