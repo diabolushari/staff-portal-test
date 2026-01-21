@@ -111,7 +111,6 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
     }
   }
 
-  console.log(formData.selectedConnections)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -178,7 +177,7 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
             <h2 className='text-xl font-semibold'>Connected Consumers</h2>
 
             <CheckBox
-              label='Select All Consumers'
+              label='Select All'
               toggleValue={handleSelectAllToggle}
               value={selectAll}
             />

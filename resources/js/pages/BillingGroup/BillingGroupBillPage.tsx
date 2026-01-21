@@ -87,7 +87,9 @@ export default function BillingGroupBillPage({ bills, billing_group }: Props) {
                 </div>
 
                 <div>
-                  <p className='font-medium text-gray-700'>{bill?.bill_amount}</p>
+                  <p className='font-medium text-gray-700'>
+                    {Number(bill?.bill_amount).toFixed(2)}
+                  </p>
                   <p className='text-xs text-gray-500'>Bill Amount</p>
                 </div>
 
