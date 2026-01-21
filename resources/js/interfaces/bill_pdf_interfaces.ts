@@ -60,6 +60,8 @@ export interface ComputedProperties {
   electricity_surcharge_rate: ComputedProperty
   self_generation_duty_rate: ComputedProperty
   electricity_duty_rate: ComputedProperty
+  colony_lighting_unit_rate: ComputedProperty
+  factory_lighting_unit_rate: ComputedProperty
 }
 
 export interface TotalDemandChargeRow {
