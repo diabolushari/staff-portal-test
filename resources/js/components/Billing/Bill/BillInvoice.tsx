@@ -15,6 +15,7 @@ import {
 } from '@/interfaces/bill_pdf_interfaces'
 import { Bill } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
+import { numberToWords, roundedOffAmount } from '@/utils'
 
 export default function BillInvoice({
   chargeHeads,
@@ -23,6 +24,7 @@ export default function BillInvoice({
   bill,
   computedProperties,
   kwhValues,
+  selfGenerationkwhValues,
 }: {
   chargeHeads: ChargeHeads
   totalDemandChargeRows: TotalDemandCharge
@@ -30,14 +32,9 @@ export default function BillInvoice({
   bill: Bill
   computedProperties: ComputedProperties
   kwhValues: BillMeterReading[]
+  selfGenerationkwhValues: BillMeterReading[]
 }) {
   console.log(chargeHeads)
-
-  const roundedOffAmount = (amount: number): { updatedAmount: string; roundOff: string } => {
-    const roundedAmount = Math.round(amount)
-    const roundOff = roundedAmount - amount
-    return { updatedAmount: roundedAmount.toFixed(2), roundOff: roundOff.toFixed(2) }
-  }
 
   return (
     <>
@@ -93,10 +90,10 @@ export default function BillInvoice({
                   Sub Total(a+b+c+d+e+f)
                 </TableCell>
                 <TableCell className='border border-black text-right'>
-                  {Number.isNaN(Number(chargeHeads.total_demand_charge.result)) ||
-                  chargeHeads.total_demand_charge.result === null
+                  {Number.isNaN(Number(chargeHeads?.total_demand_charge?.result)) ||
+                  chargeHeads?.total_demand_charge?.result === null
                     ? '-'
-                    : Number(chargeHeads.total_demand_charge.result).toFixed(2)}
+                    : Number(chargeHeads?.total_demand_charge?.result).toFixed(2)}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -118,7 +115,7 @@ export default function BillInvoice({
                   </TableCell>
                   <TableCell className='border border-black'>{row?.units}</TableCell>
                   <TableCell className='border border-black'>
-                    {Number(row?.rate?.result).toFixed(2)}
+                    {Number(row?.rate?.result).toFixed(4)}
                   </TableCell>
                   <TableCell className='border border-black'>
                     {Number(row?.amount).toFixed(2)}
@@ -133,10 +130,10 @@ export default function BillInvoice({
                   Sub Total(a+b+c)
                 </TableCell>
                 <TableCell className='border border-black text-right'>
-                  {Number.isNaN(Number(chargeHeads.energy_charge.result)) ||
-                  chargeHeads.energy_charge.result === null
+                  {Number.isNaN(Number(chargeHeads?.energy_charge?.result)) ||
+                  chargeHeads?.energy_charge?.result === null
                     ? '-'
-                    : Number(chargeHeads.energy_charge.result).toFixed(2)}
+                    : Number(chargeHeads?.energy_charge?.result).toFixed(2)}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -164,12 +161,12 @@ export default function BillInvoice({
                   Total Energy Charge
                 </TableCell>
                 <TableCell className='border border-black text-right'>
-                  {Number.isNaN(Number(chargeHeads.energy_charge.result)) ||
-                  chargeHeads.energy_charge.result === null ||
-                  Number.isNaN(Number(chargeHeads.power_factor_incentive_and_disincentive?.result))
+                  {Number.isNaN(Number(chargeHeads?.energy_charge?.result)) ||
+                  chargeHeads?.energy_charge?.result === null ||
+                  Number.isNaN(Number(chargeHeads?.power_factor_incentive_and_disincentive?.result))
                     ? '-'
                     : (
-                        Number(chargeHeads.energy_charge.result) +
+                        Number(chargeHeads?.energy_charge?.result) +
                         Number(chargeHeads.power_factor_incentive_and_disincentive?.result)
                       )?.toFixed(2)}
                 </TableCell>
@@ -190,13 +187,15 @@ export default function BillInvoice({
                   a.Factory lighting
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(computedProperties.total_consumption_factory_lighting.result).toFixed(
+                  {Number(computedProperties?.total_consumption_factory_lighting?.result).toFixed(
                     2
                   ) ?? '-'}
                 </TableCell>
-                <TableCell className='border border-black'>0.02</TableCell>
                 <TableCell className='border border-black'>
-                  {Number(chargeHeads.factory_lighting.result).toFixed(2) ?? '-'}
+                  {Number(computedProperties?.factory_lighting_unit_rate?.result).toFixed(2) ?? '-'}
+                </TableCell>
+                <TableCell className='border border-black'>
+                  {Number(chargeHeads?.factory_lighting?.result).toFixed(2) ?? '-'}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -207,12 +206,15 @@ export default function BillInvoice({
                   b. Colony lighting
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(computedProperties.total_consumption_colony_lighting.result).toFixed(2) ??
-                    '-'}
+                  {Number(computedProperties?.total_consumption_colony_lighting?.result).toFixed(
+                    2
+                  ) ?? '-'}
                 </TableCell>
-                <TableCell className='border border-black'>0.02</TableCell>
                 <TableCell className='border border-black'>
-                  {Number(chargeHeads.colony_lighting.result).toFixed(2) ?? '-'}
+                  {Number(computedProperties?.colony_lighting_unit_rate?.result).toFixed(2) ?? '-'}
+                </TableCell>
+                <TableCell className='border border-black'>
+                  {Number(chargeHeads?.colony_lighting?.result).toFixed(2) ?? '-'}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -223,14 +225,14 @@ export default function BillInvoice({
                   Sub Total(a+b)
                 </TableCell>
                 <TableCell className='border border-black text-right'>
-                  {Number.isNaN(Number(chargeHeads.colony_lighting.result)) ||
-                  chargeHeads.colony_lighting.result === null ||
-                  Number.isNaN(Number(chargeHeads.factory_lighting.result)) ||
-                  chargeHeads.factory_lighting.result === null
+                  {Number.isNaN(Number(chargeHeads?.colony_lighting?.result)) ||
+                  chargeHeads?.colony_lighting?.result === null ||
+                  Number.isNaN(Number(chargeHeads?.factory_lighting?.result)) ||
+                  chargeHeads?.factory_lighting?.result === null
                     ? '-'
                     : (
-                        Number(chargeHeads.colony_lighting.result) +
-                        Number(chargeHeads.factory_lighting.result)
+                        Number(chargeHeads?.colony_lighting?.result) +
+                        Number(chargeHeads?.factory_lighting?.result)
                       ).toFixed(2)}
                 </TableCell>
               </TableRow>
@@ -242,13 +244,13 @@ export default function BillInvoice({
                   5. Electricity Duty
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(chargeHeads.energy_charge.result)?.toFixed(2) ?? '-'}
+                  {Number(chargeHeads?.energy_charge?.result)?.toFixed(2) ?? '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(computedProperties?.electricity_duty_rate?.result)?.toFixed(2) ?? '-'}
+                  {Number(computedProperties?.electricity_duty_rate?.result)?.toFixed(3) ?? '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(chargeHeads.electricity_duty.result)?.toFixed(2) ?? '-'}
+                  {Number(chargeHeads?.electricity_duty?.result)?.toFixed(2) ?? '-'}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -266,7 +268,7 @@ export default function BillInvoice({
                     '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(chargeHeads.electricity_surcharge.result)?.toFixed(2) ?? '-'}
+                  {Number(chargeHeads?.electricity_surcharge?.result)?.toFixed(2) ?? '-'}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -277,11 +279,12 @@ export default function BillInvoice({
                   7. Duty On Self Generated Energy
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(computedProperties?.total_consumption_generator?.result)?.toFixed(2) ??
-                    '-'}
+                  {Number(
+                    selfGenerationkwhValues?.reduce((s, r) => s + (r?.value ?? 0), 0)
+                  )?.toFixed(2) ?? '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(computedProperties?.self_generation_duty_rate?.result)?.toFixed(2) ?? '-'}
+                  {Number(computedProperties?.self_generation_duty_rate?.result)?.toFixed(3) ?? '-'}
                 </TableCell>
                 <TableCell className='border border-black'>
                   {Number(chargeHeads?.self_generation_duty?.result)?.toFixed(2) ?? '0'}
@@ -474,6 +477,38 @@ export default function BillInvoice({
               </TableRow>
             </Table>
           </div>
+        </div>
+        <div className='col-span-12 w-full border border-black'>
+          <Table>
+            <TableRow>
+              <TableCell
+                colSpan={12}
+                className='border border-black font-bold italic'
+              >
+                ( {numberToWords(Number(roundedOffAmount(Number(bill.bill_amount)).updatedAmount))}{' '}
+                )
+              </TableCell>
+            </TableRow>
+          </Table>
+        </div>
+        <div className='col-span-12 w-full border border-black'>
+          <Table className='w-full'>
+            <TableRow>
+              <TableCell
+                colSpan={8}
+                className='border border-black'
+              >
+                E & O.E
+              </TableCell>
+              <TableCell
+                colSpan={4}
+                className='border border-black text-left font-bold italic'
+              >
+                Balance Advance at Credit, if any
+              </TableCell>
+              <TableCell className='border border-black text-right'></TableCell>
+            </TableRow>
+          </Table>
         </div>
       </div>
     </>

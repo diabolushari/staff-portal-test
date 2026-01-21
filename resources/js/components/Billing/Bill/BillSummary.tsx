@@ -29,7 +29,7 @@ export default function BillSummary({ bill, connection }: { bill: Bill; connecti
             colSpan={2}
             className='border border-black font-bold'
           >
-            {bill?.bill_id ?? '-'}
+            {bill?.bill_number ?? '-'}
           </TableCell>
         </TableRow>
         <TableRow>
@@ -47,7 +47,7 @@ export default function BillSummary({ bill, connection }: { bill: Bill; connecti
           <TableCell className='border border-black'>CD</TableCell>
           <TableCell className='border border-black'> 0.00</TableCell>
           <TableCell className='border border-black'>BG</TableCell>
-          <TableCell className='border border-black'>--</TableCell>
+          <TableCell className='border border-black'>0</TableCell>
         </TableRow>
         {/* Address + Virtual Account + GSTIN */}
         <TableRow>
