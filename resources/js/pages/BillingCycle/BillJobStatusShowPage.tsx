@@ -6,8 +6,7 @@ import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
-import { getDisplayDate, getDisplayMonthYear } from '@/utils'
-import { router } from '@inertiajs/react'
+import { cn, getDisplayDate, getDisplayMonthYear } from '@/utils'
 
 interface Props {
   data: BillGenerationJob
@@ -22,8 +21,9 @@ export default function BillJobStatusShowPage({ data }: Props) {
     e.preventDefault()
   }
   const handleViewBillClick = (bill: Bill) => {
-    router.get(route('bills.show', bill?.bill_id))
+    window.open(route('bills.show', bill?.bill_id), '_blank')
   }
+
   const breadcrumb: BreadcrumbItem[] = [
     {
       title: 'Home',
@@ -89,12 +89,15 @@ export default function BillJobStatusShowPage({ data }: Props) {
         </div>
         {bills?.bills?.length > 0 &&
           bills?.bills?.map((bill) => (
-            <Card className='mb-6 overflow-hidden rounded-lg border p-0 shadow-sm'>
+            <Card
+              className='mb-6 overflow-hidden rounded-lg border p-0 shadow-sm'
+              key={bill?.bill_id}
+            >
               {/* Top Gray Header */}
               <div className='grid grid-cols-2 gap-4 bg-gray-200 px-6 py-4'>
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <p className='context-menu-item py-2'>Name</p>
+                    <p className='context-menu-item py-2'>Name 123</p>
                     <p className='ghost-button-text'>
                       {bill?.connection?.consumer_profiles?.[0]?.organization_name ?? '-'}
                     </p>
@@ -164,10 +167,18 @@ export default function BillJobStatusShowPage({ data }: Props) {
 
               {/* Footer */}
               <div className='flex justify-end border-t px-6 py-4'>
-                <Button
-                  label='View Bill'
-                  onClick={() => handleViewBillClick(bill)}
-                />
+                <a
+                  className={cn(
+                    'lgButtonText flex items-center justify-center px-10 py-2 tracking-wider capitalize transition duration-150' +
+                      ' ease-in-out focus:ring-4 focus:outline-hidden',
+                    'bg-kseb-primary primary-button-text rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors'
+                  )}
+                  href={route('bills.show', bill?.bill_id)}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  View Bill
+                </a>
               </div>
             </Card>
           ))}
