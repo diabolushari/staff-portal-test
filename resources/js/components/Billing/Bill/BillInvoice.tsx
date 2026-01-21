@@ -115,7 +115,7 @@ export default function BillInvoice({
                   </TableCell>
                   <TableCell className='border border-black'>{row?.units}</TableCell>
                   <TableCell className='border border-black'>
-                    {Number(row?.rate?.result).toFixed(2)}
+                    {Number(row?.rate?.result).toFixed(4)}
                   </TableCell>
                   <TableCell className='border border-black'>
                     {Number(row?.amount).toFixed(2)}
@@ -191,7 +191,9 @@ export default function BillInvoice({
                     2
                   ) ?? '-'}
                 </TableCell>
-                <TableCell className='border border-black'>{Number(computedProperties?.factory_lighting_unit_rate?.result).toFixed(2) ?? '-'}computedProperties?.factory_lighting_unit_rate?.result}</TableCell>
+                <TableCell className='border border-black'>
+                  {Number(computedProperties?.factory_lighting_unit_rate?.result).toFixed(2) ?? '-'}
+                </TableCell>
                 <TableCell className='border border-black'>
                   {Number(chargeHeads?.factory_lighting?.result).toFixed(2) ?? '-'}
                 </TableCell>
@@ -204,10 +206,13 @@ export default function BillInvoice({
                   b. Colony lighting
                 </TableCell>
                 <TableCell className='border border-black'>
-                  {Number(computedProperties?.total_consumption_colony_lighting?.result).toFixed(2) ??
-                    '-'}
+                  {Number(computedProperties?.total_consumption_colony_lighting?.result).toFixed(
+                    2
+                  ) ?? '-'}
                 </TableCell>
-                <TableCell className='border border-black'>{Number(computedProperties?.colony_lighting_unit_rate?.result).toFixed(2) ?? '-'}computedProperties?.colony_lighting_unit_rate?.result}</TableCell>
+                <TableCell className='border border-black'>
+                  {Number(computedProperties?.colony_lighting_unit_rate?.result).toFixed(2) ?? '-'}
+                </TableCell>
                 <TableCell className='border border-black'>
                   {Number(chargeHeads?.colony_lighting?.result).toFixed(2) ?? '-'}
                 </TableCell>
