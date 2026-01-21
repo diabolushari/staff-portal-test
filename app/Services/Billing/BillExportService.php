@@ -4,6 +4,7 @@ namespace App\Services\Billing;
 
 use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterReadingService;
+use NumberFormatter;
 use Spatie\LaravelData\Attributes\Validation\InArray;
 
 class BillExportService
@@ -231,10 +232,22 @@ class BillExportService
         ];
     }
 
-    public function getTotolDemandChargeRows(?array $computed): array
+    public function getTotolDemandChargeRows(?array $computed, ?array $kvaValues): array
     {
         if (empty($computed)) {
             return [];
+        }
+
+        $maxKvaIndex = 1;
+        $maxKvaValue = -INF;
+
+        foreach ($kvaValues as $index => $kva) {
+            $value = (float) ($kva['value'] ?? 0);
+
+            if ($value > $maxKvaValue) {
+                $maxKvaValue = $value;
+                $maxKvaIndex = $index + 1;
+            }
         }
 
         $excessDemand = $computed['excess_demand'];
@@ -278,7 +291,7 @@ class BillExportService
             $units = 0;
             $demandChargeAmount = 0;
 
-            if (($useContractDemand && $zoneId == 1) || (! $useContractDemand && $zoneId == $zoneWithMaxDemand['result'])) {
+            if (($useContractDemand && $zoneId == $maxKvaIndex) || (! $useContractDemand && $zoneId == $zoneWithMaxDemand['result'])) {
                 $units = $demandUnits;
                 $demandChargeAmount = $demandChargeHead ? (float) ($demandChargeHead['result'] ?? 0) : 0;
             }
@@ -313,6 +326,7 @@ class BillExportService
         if (empty($computed) || empty($kwhValues)) {
             return [];
         }
+
 
         $totalEnergyChargeRows = [];
         $energyCharges = $computed['energy_charges'];
@@ -491,5 +505,33 @@ class BillExportService
             2 => "{$base} - Off Peak",
             default => "{$base} - Zone {$index}",
         };
+    }
+
+    /**
+     * Convert amount to words
+     * 
+     * @param ?float $amount
+     * @return array
+     */
+    public function getAmountInWords(?float $amount): array
+    {
+        if ($amount === null) {
+            return [
+                'amount_rounded' => null,
+                'amount_words' => '-',
+            ];
+        }
+
+        // Round amount
+        $rounded = round($amount);
+
+        // Convert to words (Indian format)
+        $formatter = new NumberFormatter('en_IN', NumberFormatter::SPELLOUT);
+        $words = $formatter->format($rounded);
+
+        return [
+            'amount_rounded' => $rounded,
+            'amount_words' => ucfirst($words) . ' rupees only',
+        ];
     }
 }

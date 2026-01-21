@@ -43,7 +43,7 @@ class BillController extends Controller
         $averageAndTotalKva = $this->billExportService->getAverageAndTotalKva($kvaValues);
         $averageAndTotalKwh = $this->billExportService->getAverageAndTotalKwh($kwhValues);
         $demand = $this->billExportService->calculateDemand($kvaValues, $bill?->data['connection']['contract_demand_kva_val'] ?? 0);
-        $totalDemandChargeRows = $this->billExportService->getTotolDemandChargeRows($computedProperties);
+        $totalDemandChargeRows = $this->billExportService->getTotolDemandChargeRows($computedProperties, $kvaValues);
         $totalEnergyChargeRows = $this->billExportService->getTotalEnergyChargeRows($computedProperties, $kwhValues);
         $billNumber = $this->billExportService->generateBillNumber($bill->data);
         $billWithNumber = null;
