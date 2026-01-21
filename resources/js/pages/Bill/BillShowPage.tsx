@@ -123,47 +123,24 @@ export default function BillShowPage({
             kwhValues={kwhValues}
             selfGenerationkwhValues={selfGenerationkwhValues}
           />
-
-          <div className='mt-6 text-center italic'>
-            (Rupees {numberToWords(Math.round(bill?.bill_amount ?? 0))})
-          </div>
-
-          <div className='mt-8 border-t border-black pt-2 text-right font-bold'>
-            SPECIAL OFFICER (REVENUE)
-          </div>
         </div>
 
         {/* Footer Outside Border */}
-        <div className='mt-4 border-t-2 border-black pt-4 text-xs'>
-          <p className='italic'>
-            1. As per Regulation 130 of Kerala Electricity Supply Code 2014 any complaint regarding
-            accuracy of a bill shall be first taken up with the officer designated to issue the bill
-            (Special Officer(Revenue)). For Enquiry, please contact: 0471 2514323, 2514262.
-          </p>
-          <p className='mt-2 italic'>
-            2. The connection will be disconnected without further notice, if the amount is not
-            remitted on or before the DC date above.
-          </p>
-          <Table className='mt-4 text-xs'>
-            <TableBody>
-              <TableRow>
-                <TableCell>
-                  <strong>Cons#:</strong>{' '}
-                  <span className='font-mono'>{connection?.consumer_number ?? '-'}</span>
-                </TableCell>
-                <TableCell>
-                  <strong>Bill No:</strong>{' '}
-                  <span className='font-mono'>{bill?.bill_number ?? '-'}</span>
-                </TableCell>
-                <TableCell>
-                  <strong>Rs:</strong>{' '}
-                  <span className='font-mono'>
-                    {roundedOffAmount(bill?.bill_amount).updatedAmount ?? '-'}
-                  </span>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+        <div className='border border-black text-xs'>
+          <div className='border border-black'>
+            <p className=''>
+              1. As per Regulation 130 of Kerala Electricity Supply Code 2014 any complaint
+              regarding accuracy of a bill shall be first taken up with the officer designated to
+              issue the bill (Special Officer(Revenue)). For Enquiry, please contact: 0471 2514323,
+              2514262.
+            </p>
+          </div>
+          <div className='border border-black'>
+            <p className=''>
+              2. The connection will be disconnected without further notice, if the amount is not
+              remitted on or before the DC date above.
+            </p>
+          </div>
         </div>
       </div>
     </MainLayout>
