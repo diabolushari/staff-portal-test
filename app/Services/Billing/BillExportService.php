@@ -259,8 +259,8 @@ class BillExportService
             $zoneWithMaxDemand['result'] === 'Contract Demand';
 
         $demandUnits = $useContractDemand
-            ? (float) ($contract75['result'] ?? 0)
-            : (float) ($recordedMaxDemand['result'] ?? 0);
+            ? (float) round($contract75['result'] ?? 0)
+            : (float) round($recordedMaxDemand['result'] ?? 0);
 
         $zoneWithMaxExcessDemand = null;
         $previousMax = 0;
@@ -286,7 +286,7 @@ class BillExportService
             $demandRows[] = [
                 'label' => $this->getZoneLabel($index, 'Demand Charge'),
                 'zone' => $zoneId,
-                'units' => $units,
+                'units' => round($units),
                 'rate' => $demandRate,
                 'amount' => $demandChargeAmount,
             ];
@@ -296,7 +296,7 @@ class BillExportService
             $excessRows[] = [
                 'label' => $this->getZoneLabel($index, 'Excess Demand Charge'),
                 'zone' => $zoneId,
-                'units' => $zoneId == $zoneWithMaxExcessDemand ? $excessUnits : 0,
+                'units' => $zoneId == $zoneWithMaxExcessDemand ? round($excessUnits) : 0,
                 'rate' => $excessDemandRate,
                 'amount' => $zoneId == $zoneWithMaxExcessDemand ? (float) ($excessDemandHead['result'] ?? 0) : 0,
             ];
@@ -310,21 +310,27 @@ class BillExportService
 
     public function getTotalEnergyChargeRows(array $computed, array $kwhValues): ?array
     {
-
         if (empty($computed) || empty($kwhValues)) {
             return [];
         }
+
         $totalEnergyChargeRows = [];
         $energyCharges = $computed['energy_charges'];
         $energyChargeRates = $computed['energy_charge_rates'];
+
         foreach ($energyCharges['result'] as $index => $zoneData) {
             $zoneId = $zoneData['zoneId'] ?? $index;
+
+            // Round the units
+            $units = $kwhValues[$index]['value'] ?? 0;
+            $roundedUnits = round($units); // rounds .5 and above up, below .5 down
+
             $totalEnergyChargeRows[] = [
                 'label' => $this->getZoneLabel($index, 'Energy Charge'),
                 'zone' => $zoneId,
-                'units' => $kwhValues[$index]['value'],
-                'rate' => $energyChargeRates['result'][$index],
-                'amount' => $zoneData['result'],
+                'units' => $roundedUnits,
+                'rate' => $energyChargeRates['result'][$index] ?? 0,
+                'amount' => $zoneData['result'] ?? 0,
             ];
         }
 
@@ -333,6 +339,7 @@ class BillExportService
             'rows' => $totalEnergyChargeRows,
         ];
     }
+
 
     public function getAverageAndTotalKva(?array $filteredkVAs): ?array
     {

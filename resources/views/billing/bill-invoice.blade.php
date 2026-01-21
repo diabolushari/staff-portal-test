@@ -50,7 +50,7 @@
                         <tr>
                             <td colspan="2">{{ chr(97+$i) }}. {{ $row['label'] }}</td>
                             <td class="right">{{ $row['units'] }}</td>
-                            <td class="right">{{ is_numeric($row['rate']['result'] ?? null) ? number_format($row['rate']['result'], 2) : '-' }}</td>
+                            <td class="right">{{ is_numeric($row['rate']['result'] ?? null) ? number_format($row['rate']['result'], 4) : '-' }}</td>
                             <td class="right">{{ is_numeric($row['amount'] ?? null) ? number_format($row['amount'], 2) : '-' }}</td>
                         </tr>
                         @endforeach
