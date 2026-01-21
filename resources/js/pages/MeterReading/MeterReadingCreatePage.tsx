@@ -20,6 +20,7 @@ import Button from '@/ui/button/Button'
 import { useMemo, useState } from 'react'
 import ErrorBanner from '@/ui/Errors/ErrorBanner'
 import dayjs from 'dayjs'
+import { getDisplayDate } from '@/utils'
 
 export interface MeterReadingForm extends MeterReading {
   reading_type: string
@@ -235,7 +236,7 @@ export default function MeterReadingCreatePage({
         title: 'Readings',
         status: 'default',
         cardTitle: `Readings for ${connectionWithConsumer?.consumer?.organization_name ?? connectionWithConsumer?.connection?.consumer_number}`,
-        cardSubtitle: `${formData.reading_start_date} to ${formData.reading_end_date}`,
+        cardSubtitle: `${getDisplayDate(formData.reading_start_date)} to ${getDisplayDate(formData.reading_end_date)}`,
       },
     ]
   }, [connectionWithConsumer, formData, errors])

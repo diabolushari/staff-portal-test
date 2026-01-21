@@ -13,7 +13,7 @@ import Input from '@/ui/form/Input'
 import MonthPicker from '@/ui/form/MonthPicker'
 import { formatMeterReadingMonth } from '@/utils'
 import { router } from '@inertiajs/react'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import BillingGroupAddConnection from './BillingGroupAddConnection'
 import dayjs from 'dayjs'
 
@@ -29,7 +29,6 @@ export interface PageProps {
 }
 
 export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProps>) {
-  console.log(billingGroup)
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Home',
@@ -70,12 +69,17 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
     const updatedSelectedConnections = formData.selectedConnections.includes(connectionId)
       ? formData.selectedConnections.filter((id) => id !== connectionId)
       : [...formData.selectedConnections, connectionId]
+
     setFormValue('selectedConnections')(updatedSelectedConnections)
+
+    setSelectAll(updatedSelectedConnections.length === connection_ids.length)
+
     if (latestReadingDate) {
       const readingDate = dayjs(latestReadingDate).format('YYYY-MM')
       const currentReadingDate = formData.oldestReadingDate
         ? dayjs(formData.oldestReadingDate).format('YYYY-MM')
-        : dayjs(latestReadingDate).format('YYYY-MM')
+        : readingDate
+
       if (readingDate <= currentReadingDate) {
         setFormValue('oldestReadingDate')(latestReadingDate.toString())
       }
@@ -89,6 +93,25 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
       })
     )
   }
+
+  const [selectAll, setSelectAll] = useState<boolean>(false)
+
+  const connection_ids = useMemo<number[]>(
+    () => billingGroup?.connections?.map((c) => c.connection_id) || [],
+    [billingGroup?.connections]
+  )
+
+  const handleSelectAllToggle = () => {
+    if (selectAll) {
+      setFormValue('selectedConnections')([])
+      setSelectAll(false)
+    } else {
+      setFormValue('selectedConnections')(connection_ids)
+      setSelectAll(true)
+    }
+  }
+
+  console.log(formData.selectedConnections)
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -150,8 +173,16 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
         </div>
       )}
       {billingGroup?.connections && billingGroup?.connections?.length > 0 && (
-        <div className='mt-6'>
-          <h2 className='mb-4 text-xl font-semibold'>Connected Consumers</h2>
+        <div className=''>
+          <div className='mt-6 flex items-center justify-between p-2'>
+            <h2 className='text-xl font-semibold'>Connected Consumers</h2>
+
+            <CheckBox
+              label='Select All Consumers'
+              toggleValue={handleSelectAllToggle}
+              value={selectAll}
+            />
+          </div>
 
           {billingGroup?.connections?.map((conn: BillingGroupConnection) => (
             <div
@@ -212,7 +243,7 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
                         conn?.connection?.latest_meter_reading?.reading_end_date
                       )
                     }
-                    value={formData?.selectedConnection?.includes(conn?.connection_id)}
+                    value={formData.selectedConnections.includes(conn.connection_id)}
                   />
                 </div>
               </div>

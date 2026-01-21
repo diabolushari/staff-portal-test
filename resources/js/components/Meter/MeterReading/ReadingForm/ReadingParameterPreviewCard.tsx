@@ -67,11 +67,10 @@ export default function ReadingParameterPreviewCard({
         style={{ scrollBehavior: 'smooth' }}
       >
         {/* Header */}
-        <div className='grid grid-cols-5 gap-2 border-b border-gray-200 pb-1 font-medium text-gray-700'>
+        <div className='grid grid-cols-4 gap-2 border-b border-gray-200 pb-1 font-medium text-gray-700'>
           <span></span>
           <span className='text-right'>IR</span>
           <span className='text-right'>FR</span>
-          <span className='text-right'>DIFF</span>
           <span className='text-right'>VALUE</span>
         </div>
 
@@ -80,28 +79,24 @@ export default function ReadingParameterPreviewCard({
           return (
             <div
               key={r.timezone_id}
-              className='grid grid-cols-5 gap-2 border-b border-gray-100 py-1 last:border-0'
+              className='grid grid-cols-4 gap-2 border-b border-gray-100 py-1 last:border-0'
             >
               <span>{r.timezone_name}</span>
 
-              <span className='text-right font-medium text-gray-800'>
-                {r.values?.initial || '-'}
-              </span>
+              <span className='text-right font-medium text-gray-800'>{r.values?.initial || 0}</span>
 
-              <span className='text-right font-medium text-gray-800'>{r.values?.final || '-'}</span>
+              <span className='text-right font-medium text-gray-800'>{r.values?.final || 0}</span>
 
-              <span className={`text-right font-medium`}>{r.values?.diff || '-'}</span>
               <span className={`text-right font-medium`}>
-                {Number(r.values?.value)?.toFixed(2) || '-'}
+                {Number(r.values?.value)?.toFixed(2) || 0}
               </span>
             </div>
           )
         })}
         {profile.is_cumulative && totalValue !== null && (
-          <div className='mt-2 grid grid-cols-5 gap-2 pt-2 font-semibold text-gray-800'>
+          <div className='mt-2 grid grid-cols-4 gap-2 pt-2 font-semibold text-gray-800'>
             <span>Total</span>
 
-            <span className='text-right'></span>
             <span className='text-right'></span>
             <span className='text-right'></span>
 
