@@ -14,8 +14,9 @@
         </td>
 
         <td colspan="2" class="center">
-            {{ isset($connection['previous_reading']['metering_date'])
-        ? \Carbon\Carbon::parse($connection['previous_reading']['metering_date'])->format('d-m-Y')
+            {{ isset($connection['previous_reading']['
+reading_end_date'])
+        ? \Carbon\Carbon::parse($connection['previous_reading']['reading_end_date'])->format('d-m-Y')
         : '-' }}
         </td>
 
