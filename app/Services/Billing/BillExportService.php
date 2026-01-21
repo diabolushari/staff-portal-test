@@ -4,6 +4,7 @@ namespace App\Services\Billing;
 
 use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterReadingService;
+use NumberFormatter;
 use Spatie\LaravelData\Attributes\Validation\InArray;
 
 class BillExportService
@@ -491,5 +492,26 @@ class BillExportService
             2 => "{$base} - Off Peak",
             default => "{$base} - Zone {$index}",
         };
+    }
+    private function getAmountInWords(?float $amount): array
+    {
+        if ($amount === null) {
+            return [
+                'amount_rounded' => null,
+                'amount_words' => '-',
+            ];
+        }
+
+        // Round amount
+        $rounded = round($amount);
+
+        // Convert to words (Indian format)
+        $formatter = new NumberFormatter('en_IN', NumberFormatter::SPELLOUT);
+        $words = $formatter->format($rounded);
+
+        return [
+            'amount_rounded' => $rounded,
+            'amount_words' => ucfirst($words) . ' rupees only',
+        ];
     }
 }

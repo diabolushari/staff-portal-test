@@ -234,7 +234,7 @@
 
 
     <div class="footer">
-      <i>(Rupees {{ $bill['bill_amount'] ?? '-' }} Only)</i>
+      <i>(Rupees {{ $amountInWords['amount_words'] ?? '-' }} Only)</i>
       <div class="signature">SPECIAL OFFICER (REVENUE)</div>
     </div>
   </div>
