@@ -47,7 +47,7 @@
             {{ $consumer['contact_details'][0]['billing_address']['state']['name'] ?? '-' }} -
             {{ $consumer['contact_details'][0]['billing_address']['pincode'] ?? '-' }}<br>
 
-            {{ $consumer['contact_details'][0]['contact_person'] ?? '-' }},
+            {{ $consumer['contact_person'] ?? '-' }},
             Phone: {{ $consumer['contact_details'][0]['primary_phone'] ?? '-' }}
         </td>
 
