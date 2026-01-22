@@ -1,13 +1,14 @@
 import React from 'react'
 import { FormFieldProp } from '../ui_interfaces'
 import ErrorText from '@/typography/ErrorText'
+import DatePicker from 'react-datepicker'
 
 interface DatePickerProp extends FormFieldProp {
   min?: string
   max?: string
 }
 
-export default function DatePicker({
+export default function Datepicker({
   label,
   value,
   error,
@@ -18,6 +19,24 @@ export default function DatePicker({
   disabled = false,
   required,
 }: DatePickerProp) {
+  const safeDate = (value?: string | Date | null): Date | null => {
+    if (!value) return null
+
+    if (value instanceof Date) {
+      return isNaN(value.getTime()) ? null : value
+    }
+
+    const date = new Date(value)
+    return isNaN(date.getTime()) ? null : date
+  }
+
+  const formatForDB = (date: Date): string => {
+    const yyyy = date.getFullYear()
+    const mm = String(date.getMonth() + 1).padStart(2, '0')
+    const dd = String(date.getDate()).padStart(2, '0')
+
+    return `${yyyy}-${mm}-${dd}`
+  }
   return (
     <>
       <div className='flex flex-col'>
@@ -27,15 +46,15 @@ export default function DatePicker({
           </label>
         )}
 
-        <input
-          type='date'
-          value={value}
-          min={min}
-          max={max}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder={placeholder}
-          className='rounded-sm border border-gray-300 bg-transparent p-2 text-sm text-gray-800 shadow-xs focus:border-indigo-700 focus:outline-hidden disabled:bg-gray-100'
+        <DatePicker
+          selected={safeDate(value)}
+          onChange={(date: Date | null) => setValue(date ? formatForDB(date) : null)}
+          placeholderText={placeholder}
+          minDate={safeDate(min)}
+          maxDate={safeDate(max)}
           disabled={disabled}
+          dateFormat='dd/MM/yyyy'
+          className='rounded border px-3 py-2'
         />
         {error && <ErrorText>{error}</ErrorText>}
       </div>

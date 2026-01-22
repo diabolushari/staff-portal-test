@@ -2,13 +2,13 @@ import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { BillingRule, BillingRuleJson } from '@/interfaces/data_interfaces'
 import Button from '@/ui/button/Button'
-import DatePicker from '@/ui/form/DatePicker'
 import FileInput from '@/ui/form/FileInput'
 import Input from '@/ui/form/Input'
 import { formatDateForInput } from '@/utils/DateConverter'
 import { Card } from '../ui/card'
 import StrongText from '@/typography/StrongText'
 import React, { useEffect, useState } from 'react'
+import Datepicker from '@/ui/form/DatePicker'
 
 export default function BillingForm({ billingRule }: { billingRule?: BillingRule }) {
   const [billingRuleJson, setBillingRuleJson] = useState<BillingRuleJson | null>(
@@ -89,13 +89,13 @@ export default function BillingForm({ billingRule }: { billingRule?: BillingRule
             error={errors?.billing_rule}
           />
 
-          <DatePicker
+          <Datepicker
             label='Effective Start'
             setValue={setFormValue('effective_start')}
             value={formData.effective_start}
             error={errors?.effective_start}
           />
-          <DatePicker
+          <Datepicker
             label='Effective End'
             setValue={setFormValue('effective_end')}
             value={formData.effective_end}
