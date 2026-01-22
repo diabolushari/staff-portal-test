@@ -4,7 +4,11 @@ import {
   MeterReading,
   MeterReadingValue,
 } from '@/interfaces/data_interfaces'
-import { CONSUMPTION_PARAMETER_NAME, DEMAND_PARAMETER_NAME } from '@/types/constants'
+import {
+  CONSUMPTION_PARAMETER_NAME,
+  DEMAND_PARAMETER_NAME,
+  KVA_PARAMETER_NAME,
+} from '@/types/constants'
 import NormalText from '@/typography/NormalText'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
@@ -26,14 +30,14 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
         meterReading?.values?.filter((v: MeterReadingValue) => v.meter_id === meter?.meter_id) ?? []
 
       const kvaValues = filteredValues.filter(
-        (v) => v.meter_profile_parameter?.name.toLowerCase() == DEMAND_PARAMETER_NAME.toLowerCase()
+        (v) => v.meter_profile_parameter?.name.toLowerCase() == KVA_PARAMETER_NAME.toLowerCase()
       )
       console.log(kvaValues)
       let kvaMax = null
       if (kvaValues?.length > 0) {
         kvaMax = kvaValues.reduce(
           (max: MeterReadingValue | null, curr: MeterReadingValue | null) => {
-            return (curr?.final_reading ?? 0) > (max?.final_reading ?? 0) ? curr : max
+            return (curr?.value ?? 0) > (max?.value ?? 0) ? curr : max
           },
           null
         )
@@ -43,9 +47,10 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
         .filter(
           (v) =>
             v.meter_profile_parameter?.name.toLowerCase() ===
-            CONSUMPTION_PARAMETER_NAME.toLowerCase()
+              CONSUMPTION_PARAMETER_NAME.toLowerCase() &&
+            v.meter_profile_parameter?.is_export == false
         )
-        .reduce((sum, v) => sum + (v.final_reading ?? 0), 0)
+        .reduce((sum, v) => sum + (v.value ?? 0), 0)
 
       return {
         meterId: meter?.meter_id,
@@ -55,8 +60,7 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
         meterProfile: meterWithConn?.meter_profile,
         kva: kvaMax
           ? {
-              value: kvaMax.final_reading ?? 0,
-              timezone: kvaMax.time_zone?.parameter_value ?? '-',
+              value: kvaMax.value ?? 0,
               timezone: kvaMax.time_zone?.parameter_value ?? '-',
             }
           : null,
