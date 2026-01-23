@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\BillingGroupListApiController;
 use App\Http\Controllers\Api\Connections\PartiesListApiController;
 use App\Http\Controllers\Api\GetOfficeByCodeApiController;
 use App\Http\Controllers\Api\GetOfficeByIdApiController;
@@ -168,6 +169,7 @@ Route::get('api/office/code/{office_code}', GetOfficeByCodeApiController::class)
 Route::get('api/parties', PartiesListApiController::class);
 Route::get('api/unassigned-transformers', UnassignedTransformersApiController::class);
 Route::get('api/unassigned-meters', UnassignedMetersApiController::class);
+Route::get('api/billing-groups', BillingGroupListApiController::class);
 Route::get('api/tariff-order/{id}/download', TariffOrderDownloadApiController::class)->name('tariff-order.download');
 
 Route::get('consumer-test', function (SystemModuleService $service) {
@@ -189,5 +191,5 @@ Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
 
 // pdf download
 Route::get('pdf-download/{billId}', [BillingPdfController::class, 'index'])->name('pdf-download');
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

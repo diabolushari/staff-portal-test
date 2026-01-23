@@ -108,6 +108,10 @@ export const billingNavItems: MainNav = {
           title: 'Jobs',
           href: '/bills/job-status',
         },
+        {
+          title: 'Bills',
+          href: '/bills',
+        },
       ],
     },
   ],

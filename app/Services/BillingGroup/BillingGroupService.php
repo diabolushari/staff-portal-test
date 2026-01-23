@@ -29,26 +29,31 @@ class BillingGroupService
         );
     }
 
-    public function listPaginatedBillingGroups(?int $page = 1, ?int $pageSize = 10, ?string $search = null, ?int $billingGroupId = null,
-    ?string $sortBy = null, ?string $sortDirection = null): GrpcServiceResponse
-    {
+    public function listPaginatedBillingGroups(
+        ?int $page = 1,
+        ?int $pageSize = 10,
+        ?string $search = null,
+        ?int $billingGroupId = null,
+        ?string $sortBy = null,
+        ?string $sortDirection = null
+    ): GrpcServiceResponse {
         $req = new BillingGroupPaginatedListRequest();
-        if($page !== null) {
+        if ($page !== null) {
             $req->setPageNumber($page);
         }
-        if($pageSize !== null) {
+        if ($pageSize !== null) {
             $req->setPageSize($pageSize);
         }
-        if($search !== null) {
+        if ($search !== null) {
             $req->setSearch($search);
         }
-        if($billingGroupId !== null) {
+        if ($billingGroupId !== null) {
             $req->setBillingGroupId($billingGroupId);
         }
-        if($sortBy !== null) {
+        if ($sortBy !== null) {
             $req->setSortBy($sortBy);
         }
-        if($sortDirection !== null) {
+        if ($sortDirection !== null) {
             $req->setSortDirection($sortDirection);
         }
 
@@ -112,10 +117,10 @@ class BillingGroupService
     {
         $req = new UpdateBillingGroupRequest;
 
-        if($input->versionId !== null) {
+        if ($input->versionId !== null) {
             $req->setVersionId($input->versionId);
         }
-        if($input->billingGroupId !== null) {
+        if ($input->billingGroupId !== null) {
             $req->setBillingGroupId($input->billingGroupId);
         }
         $req->setName($input->name);
@@ -145,10 +150,10 @@ class BillingGroupService
     public function getBillingGroup(?int $versionId = null, ?int $billingGroupId = null): GrpcServiceResponse
     {
         $req = new GetBillingGroupRequest;
-        if($versionId !== null) {
+        if ($versionId !== null) {
             $req->setVersionId($versionId);
         }
-        if($billingGroupId !== null) {
+        if ($billingGroupId !== null) {
             $req->setBillingGroupId($billingGroupId);
         }
 
@@ -196,10 +201,12 @@ class BillingGroupService
         );
     }
 
-    public function listBillingGroups(): GrpcServiceResponse
+    public function listBillingGroups(?string $search = null): GrpcServiceResponse
     {
         $req = new ListBillingGroupRequest;
-
+        if ($search !== null) {
+            $req->setSearch($search);
+        }
 
         [$response, $status] = $this->client->ListBillingGroup($req)->wait();
 
