@@ -22,13 +22,11 @@ class BillController extends Controller
 
     public function index(Request $request): Response
     {
-        $search = $request->input('search') ?? null;
+        $connectionId = $request->input('connection_id') ?? null;
         $billingGroupId = $request->input('group_id') ?? null;
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 10;
-        $sortBy = $request->input('sort_by') ?? null;
-        $sortDirection = $request->input('sort_direction') ?? null;
-        $response = $this->billGeneraionJobStatusService->paginatedListBillGenerationJobStatus($pageNumber, $pageSize, $search, $sortBy, $sortDirection, $billingGroupId);
+        $response = $this->billGeneraionJobStatusService->paginatedListBillGenerationJobStatus($pageNumber, $pageSize, null, null, null, $billingGroupId, $connectionId);
 
         $paginated = null;
         if (! empty($response->data)) {
@@ -43,12 +41,10 @@ class BillController extends Controller
         return Inertia::render('Bill/BillIndexPage', [
             'billGenerationJobStatuses' => $paginated,
             'filters' => [
-                'search' => $search,
+                'connectionId' => $connectionId,
                 'billingGroupId' => $billingGroupId,
                 'pageNumber' => $pageNumber,
                 'pageSize' => $pageSize,
-                'sortBy' => $sortBy,
-                'sortDirection' => $sortDirection,
             ],
         ]);
     }

@@ -29,7 +29,8 @@ class BillGeneraionJobStatusService
         ?string $search = null,
         ?string $sortBy = null,
         ?string $sortDirection = null,
-        ?string $billingGroupId = null
+        ?string $billingGroupId = null,
+        ?int $connectionId = null
     ): GrpcServiceResponse {
         $proto = new PaginatedBillGenerationJobStatusRequest();
         if ($pageNumber) {
@@ -49,6 +50,9 @@ class BillGeneraionJobStatusService
         }
         if ($billingGroupId) {
             $proto->setBillingGroupId($billingGroupId);
+        }
+        if ($connectionId) {
+            $proto->setConnectionId($connectionId);
         }
 
         [$response, $status] = $this->client->PaginatedListBillGenerationJobStatus($proto)->wait();

@@ -93,6 +93,7 @@ message PaginatedBillGenerationJobStatusRequest {
   optional string sort_direction = 5; 
   optional int32 billing_group_id = 6;
   optional string reading_year_month = 7;
+  optional int32 connection_id = 8;
   
 }
 

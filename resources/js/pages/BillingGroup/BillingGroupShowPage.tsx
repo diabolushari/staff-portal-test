@@ -2,7 +2,11 @@ import BillInitializeModal from '@/components/Billing/BillingGroup/BillInitializ
 import { billingNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import useCustomForm from '@/hooks/useCustomForm'
-import { BillingGroup, BillingGroupConnection, BillJobStatus } from '@/interfaces/data_interfaces'
+import {
+  BillGenerationJobStatus,
+  BillingGroup,
+  BillingGroupConnection,
+} from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import DeleteModal from '@/ui/Modal/DeleteModal'
@@ -25,7 +29,7 @@ export interface BillingGroupConnectionRelForm {
 
 export interface PageProps {
   billingGroup: BillingGroup
-  billingGenerateJobStatus: BillJobStatus[]
+  billingGenerateJobStatus: BillGenerationJobStatus[]
 }
 
 export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProps>) {
@@ -85,6 +89,17 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
       }
     }
   }
+  const getOldestReadingDate = (connections: BillingGroupConnection[]) => {
+    const dates = connections
+      .map((c) => c?.connection?.latest_meter_reading?.reading_end_date)
+      .filter(Boolean)
+
+    if (dates.length === 0) return ''
+
+    return dates.reduce((oldest, current) =>
+      dayjs(current).isBefore(dayjs(oldest)) ? current : oldest
+    )
+  }
 
   const handleOnClickConnection = (connectionId: number) => {
     router.get(
@@ -104,9 +119,16 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
   const handleSelectAllToggle = () => {
     if (selectAll) {
       setFormValue('selectedConnections')([])
+      setFormValue('oldestReadingDate')('')
       setSelectAll(false)
     } else {
       setFormValue('selectedConnections')(connection_ids)
+
+      const oldestDate = getOldestReadingDate(billingGroup.connections)
+      if (oldestDate) {
+        setFormValue('oldestReadingDate')(oldestDate)
+      }
+
       setSelectAll(true)
     }
   }

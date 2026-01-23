@@ -38,6 +38,10 @@ export default function BillListCard({
               </div>
             </div>
             |
+            <div className='flex items-center gap-2'>
+              <StrongText>{connection.consumer_legacy_code}</StrongText>
+            </div>
+            |
             <div>
               {connection.consumer_profiles?.[0]?.organization_name && (
                 <span className='font-inter text-base leading-normal text-black'>

@@ -7,16 +7,25 @@ export default function BillList({ data }: { data: BillGenerationJobStatus[] }) 
     return <div className='mt-10 text-center text-gray-500'>No bills found</div>
   }
 
+  const sortedData = [...data].sort((a, b) => {
+    const aHasBill = Boolean(a.bill?.bill_id)
+    const bHasBill = Boolean(b.bill?.bill_id)
+
+    return Number(bHasBill) - Number(aHasBill)
+  })
+
   return (
     <div className='space-y-4'>
-      {data.map((status) => (
+      {sortedData.map((status) => (
         <BillListCard
-          key={status.bill?.bill_id}
+          key={status.bill?.bill_id ?? status.id}
           status={status}
           onView={() => {
-            // navigate to bill detail
-            if (!status.bill?.bill_id) return
-            router.get(`/bills/${status.bill?.bill_id}`)
+            if (!status.bill?.bill_id) {
+              router.get(`connection/${Number(status?.connection?.connection_id)}/meter-reading`)
+            } else {
+              router.get(`/bills/${status?.bill?.bill_id}`)
+            }
           }}
         />
       ))}
