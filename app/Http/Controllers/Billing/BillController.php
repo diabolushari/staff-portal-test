@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Billing;
 
 use App\Http\Controllers\Controller;
+use App\Services\BillGenerationJob\BillGeneraionJobStatusService;
 use App\Services\Billing\BillExportService;
 use App\Services\Billing\BillService;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -12,8 +15,43 @@ class BillController extends Controller
 {
     public function __construct(
         private readonly BillService $billService,
-        private readonly BillExportService $billExportService
+        private readonly BillExportService $billExportService,
+        private readonly BillGeneraionJobStatusService $billGeneraionJobStatusService
     ) {}
+
+
+    public function index(Request $request): Response
+    {
+        $search = $request->input('search') ?? null;
+        $billingGroupId = $request->input('group_id') ?? null;
+        $pageNumber = $request->input('page') ?? 1;
+        $pageSize = $request->input('page_size') ?? 10;
+        $sortBy = $request->input('sort_by') ?? null;
+        $sortDirection = $request->input('sort_direction') ?? null;
+        $response = $this->billGeneraionJobStatusService->paginatedListBillGenerationJobStatus($pageNumber, $pageSize, $search, $sortBy, $sortDirection, $billingGroupId);
+
+        $paginated = null;
+        if (! empty($response->data)) {
+            $paginated = new LengthAwarePaginator(
+                $response->data['data'],
+                $response->data['total_count'],
+                $response->data['page_size'],
+                $response->data['page_number'],
+                ['path' => request()->url()]
+            );
+        }
+        return Inertia::render('Bill/BillIndexPage', [
+            'billGenerationJobStatuses' => $paginated,
+            'filters' => [
+                'search' => $search,
+                'billingGroupId' => $billingGroupId,
+                'pageNumber' => $pageNumber,
+                'pageSize' => $pageSize,
+                'sortBy' => $sortBy,
+                'sortDirection' => $sortDirection,
+            ],
+        ]);
+    }
 
     public function show(int $id): Response
     {

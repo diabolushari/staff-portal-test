@@ -29,6 +29,7 @@ class BillGenerationJobStatusConverter
             'exception' => $billJobGenerationStatus->getException() ? $billJobGenerationStatus->getException() : '',
             'connection' => $billJobGenerationStatus->getConnection() ? ConnectionProtoConverter::convertToArray($billJobGenerationStatus->getConnection()) : null,
             'bill' => $billJobGenerationStatus->getBill() ? BillProtoConverter::convertToArray($billJobGenerationStatus->getBill()) : null,
+            'bill_generation_job' => $billJobGenerationStatus->getBillGenerationJob() ? BillGenerationJobConverter::convertStatusProtoToArray($billJobGenerationStatus->getBillGenerationJob()) : null,
         ];
     }
 }

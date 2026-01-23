@@ -675,6 +675,10 @@ export interface BillGenerationJobStatus {
   exception: string
   connection: Connection
   bill?: Bill | null
+  bill_generation_job: BillGenerationJob
+  status: string
+  is_exception: boolean
+  job_completed_ts: string
 }
 export interface BillWithException {
   bills: Bill[]
