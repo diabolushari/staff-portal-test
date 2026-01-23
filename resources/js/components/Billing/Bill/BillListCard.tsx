@@ -1,9 +1,9 @@
 import { Card } from '@/components/ui/card'
+import { BillGenerationJobStatus } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
-import { cn, getDisplayDate } from '@/utils'
+import { getDisplayDate } from '@/utils'
 import dayjs from 'dayjs'
 import { AlertTriangleIcon, CalendarDaysIcon } from 'lucide-react'
-import { BillGenerationJobStatus } from '@/interfaces/data_interfaces'
 
 export default function BillListCard({
   status,
@@ -23,7 +23,7 @@ export default function BillListCard({
       <div className='flex justify-between'>
         <div className='w-full'>
           {/* ================= BILL HEADER ================= */}
-          <div className='flex items-center gap-2'>
+          <div className='flex flex-wrap items-center gap-2'>
             <div className='flex items-center gap-2'>
               <StrongText>{status?.bill_generation_job?.billing_group?.name}</StrongText>
             </div>
