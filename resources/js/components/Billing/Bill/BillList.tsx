@@ -1,6 +1,6 @@
+import { BillGenerationJobStatus } from '@/interfaces/data_interfaces'
 import { router } from '@inertiajs/react'
 import BillListCard from './BillListCard'
-import { BillGenerationJobStatus } from '@/interfaces/data_interfaces'
 
 export default function BillList({ data }: { data: BillGenerationJobStatus[] }) {
   if (!data?.length) {
@@ -14,19 +14,21 @@ export default function BillList({ data }: { data: BillGenerationJobStatus[] }) 
     return Number(bHasBill) - Number(aHasBill)
   })
 
+  const handleCardClick = (status: BillGenerationJobStatus) => {
+    if (!status.bill?.bill_id) {
+      router.get(`connection/${Number(status?.connection?.connection_id)}/meter-reading`)
+    } else {
+      window.open(`/bills/${status?.bill?.bill_id}`, '_blank')
+    }
+  }
+
   return (
     <div className='space-y-4'>
       {sortedData.map((status) => (
         <BillListCard
           key={status.bill?.bill_id ?? status.id}
           status={status}
-          onView={() => {
-            if (!status.bill?.bill_id) {
-              router.get(`connection/${Number(status?.connection?.connection_id)}/meter-reading`)
-            } else {
-              router.get(`/bills/${status?.bill?.bill_id}`)
-            }
-          }}
+          onView={() => handleCardClick(status)}
         />
       ))}
     </div>
