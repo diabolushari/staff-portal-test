@@ -36,8 +36,8 @@ export default function BillReadingDetails({
   const mf = meter?.meter_mf ?? 1
   console.log(kwhValues)
   return (
-    <div className='mb-4 border border-black p-3 text-xs'>
-      <div className='mb-2 flex items-center justify-center'>
+    <div className='mb-2 text-xs'>
+      <div className='flex items-center justify-center border border-black p-2'>
         <h3 className='font-bold'>
           Reading Details of meter {meter?.meter?.meter_serial ?? '-'} - Working (KVA, KWh, KVAh &
           KVARh) for {getDisplayMonthYear(bill?.reading_year_month) ?? '-'}

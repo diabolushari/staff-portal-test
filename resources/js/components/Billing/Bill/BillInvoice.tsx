@@ -303,7 +303,7 @@ export default function BillInvoice({
           </Table>
         </div>
         <div className='flex h-full flex-col border border-black'>
-          <Table className='w-full border border-black text-xs'>
+          <Table className='w-full border border-black'>
             <TableHeader>
               <TableRow>
                 <TableHead
@@ -319,7 +319,7 @@ export default function BillInvoice({
               <TableRow>
                 <TableCell
                   colSpan={3}
-                  className='border border-black font-bold'
+                  className='border border-black font-semibold'
                 >
                   9. Other Charges
                 </TableCell>
@@ -383,12 +383,6 @@ export default function BillInvoice({
               </TableRow>
 
               {/* Spacer rows like printed bill */}
-              <TableRow>
-                <TableCell
-                  colSpan={3}
-                  className='h-6 border border-black'
-                />
-              </TableRow>
 
               {/* 10. Total */}
             </TableBody>
