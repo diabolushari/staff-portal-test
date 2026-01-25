@@ -14,7 +14,7 @@ export default function BillListCard({
 }) {
   const bill = status?.bill
   const connection = status?.connection
-  console.log(bill)
+
   return (
     <Card
       className='cursor-pointer transition-all duration-150 ease-in-out hover:scale-101'

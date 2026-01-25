@@ -46,7 +46,7 @@ export default function BillReadingDetails({
 
       {/* kWh + kVARh */}
       <div className='grid grid-cols-2'>
-        <Table className='mb-3 w-full border border-black text-xs'>
+        <Table className='mb-0 w-full border border-black text-xs'>
           <TableHeader>
             {/* SECTION TITLES */}
             <TableRow>
@@ -59,7 +59,7 @@ export default function BillReadingDetails({
             </TableRow>
 
             {/* COLUMN HEADERS */}
-            <TableRow>
+            <TableRow className='font-bold italic'>
               {/* kWh (LEFT HALF) */}
               <TableHead
                 colSpan={2}
@@ -153,7 +153,7 @@ export default function BillReadingDetails({
             </TableRow>
           </TableBody>
         </Table>
-        <Table className='p-0'>
+        <Table className='mb-0 p-0 text-xs'>
           <TableHeader>
             {/* SECTION TITLES */}
             <TableRow>
@@ -171,16 +171,16 @@ export default function BillReadingDetails({
               </TableHead>
             </TableRow>
             <TableRow>
-              <TableHead className='border border-black'>Zone</TableHead>
-              <TableHead className='border border-black'>FR</TableHead>
-              <TableHead className='border border-black'>IR</TableHead>
-              <TableHead className='border border-black'>MF</TableHead>
-              <TableHead className='border border-black'>Units</TableHead>
+              <TableHead className='border border-black font-bold italic'>Zone</TableHead>
+              <TableHead className='border border-black font-bold italic'>FR</TableHead>
+              <TableHead className='border border-black font-bold italic'>IR</TableHead>
+              <TableHead className='border border-black font-bold italic'>MF</TableHead>
+              <TableHead className='border border-black font-bold italic'>Units</TableHead>
 
               {/* kVARh LEAD (1/3 of right half) */}
-              <TableHead className='border border-black'>FR</TableHead>
-              <TableHead className='border border-black'>IR</TableHead>
-              <TableHead className='border border-black'>Units</TableHead>
+              <TableHead className='border border-black font-bold italic'>FR</TableHead>
+              <TableHead className='border border-black font-bold italic'>IR</TableHead>
+              <TableHead className='border border-black font-bold italic'>Units</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -252,12 +252,12 @@ export default function BillReadingDetails({
               </TableHead>
             </TableRow>
 
-            <TableRow>
-              <TableHead className='border border-black'>Zone</TableHead>
-              <TableHead className='border border-black'>FR</TableHead>
-              <TableHead className='border border-black'>IR</TableHead>
-              <TableHead className='border border-black'>MF</TableHead>
-              <TableHead className='border border-black'>Units</TableHead>
+            <TableRow className='font-bold italic'>
+              <TableCell className='border border-black'>Zone</TableCell>
+              <TableCell className='border border-black'>FR</TableCell>
+              <TableCell className='border border-black'>IR</TableCell>
+              <TableCell className='border border-black'>MF</TableCell>
+              <TableCell className='border border-black'>Units</TableCell>
             </TableRow>
           </TableHeader>
 
@@ -266,7 +266,10 @@ export default function BillReadingDetails({
               const kva = kvaValues?.[i] ?? {}
 
               return (
-                <TableRow key={i}>
+                <TableRow
+                  key={i}
+                  className=''
+                >
                   <TableCell className='border border-black'>{i + 1}</TableCell>
                   <TableCell className='border border-black'>
                     {kvah?.final_reading ?? '-'}
@@ -316,9 +319,9 @@ export default function BillReadingDetails({
               >
                 4. Demand (kVA)
               </TableHead>
-              <TableHead className='border border-black'>Readings</TableHead>
-              <TableHead className='border border-black'>MF</TableHead>
-              <TableHead className='border border-black'>Units</TableHead>
+              <TableHead className='border border-black font-bold italic'>Readings</TableHead>
+              <TableHead className='border border-black font-bold italic'>MF</TableHead>
+              <TableHead className='border border-black font-bold italic'>Units</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
