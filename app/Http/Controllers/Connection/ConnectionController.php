@@ -105,6 +105,13 @@ class ConnectionController extends Controller
             'Connection',
             'Primary Purpose'
         );
+        $greenEnergyTypes = $this->parameterValueService->getParameterValues(
+            null,
+            null,
+            null,
+            'Connection',
+            'Green Energy Type'
+        );
         if ($connection->hasValidationError()) {
             if ($connection->error) {
                 return $connection->error;
@@ -122,6 +129,7 @@ class ConnectionController extends Controller
             'indicators' => $indicators->data,
             'generationTypes' => $generationTypes->data,
             'primaryPurposes' => $primaryPurposes->data,
+            'greenEnergyTypes' => $greenEnergyTypes->data,
         ]);
     }
 

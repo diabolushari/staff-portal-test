@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.consumers;
+
+option java_multiple_files = true;
+option java_package = "com.kseb.consumerservice.proto.consumers";
+option java_outer_classname = "GreenEnergyProto";
+
+option php_namespace = "Proto\\Consumers";
+option php_metadata_namespace = "GPBMetadata";
+
+
+import "google/protobuf/empty.proto";
+import "parameters/parameter-value.proto";
+
+message GreenEnergyMessage {
+  int32 id = 1;
+  int32 connection_id = 2;
+  int32 green_energy_type_id = 3;
+  double percentage = 4;
+  string remarks = 5;
+  int32 created_by = 6;
+  int32 updated_by = 7;
+  bool is_active = 8;
+  optional string effective_start_ts = 9;
+  optional string effective_end_ts = 10;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto green_energy_type = 11;
+}
+
+message CreateGreenEnergyMessage {
+  int32 connection_id = 1;
+  int32 green_energy_type_id = 2;
+  double percentage = 3;
+  string remarks = 4;
+  bool is_active = 5;
+  optional string effective_start_ts = 6;
+  optional string effective_end_ts = 7;
+  int32 created_by = 8;
+}
+
+message CreateGreenEnergyRequest {
+  repeated CreateGreenEnergyMessage green_energy = 1;
+}
+
+message CreateGreenEnergyResponse {
+  repeated GreenEnergyMessage green_energy = 1;
+}
+message DeleteGreenEnergyRequest {
+  int32 id = 1;
+}
+
+service GreenEnergyService {
+  rpc CreateGreenEnergy(CreateGreenEnergyRequest) returns (CreateGreenEnergyResponse);
+  rpc DeleteGreenEnergy(DeleteGreenEnergyRequest) returns (google.protobuf.Empty);
+}
