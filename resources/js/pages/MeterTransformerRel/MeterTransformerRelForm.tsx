@@ -13,7 +13,7 @@ import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
 import Card from '@/ui/Card/Card'
-import DatePicker from '@/ui/form/DatePicker'
+import Datepicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
@@ -77,7 +77,7 @@ export default function MeterTransformerRelForm({
     _method: isEditing ? 'PUT' : undefined,
     connection_id: connection.connection_id.toString() ?? '',
   })
-
+  
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     isEditing ? `/meter-ctpt-rel/${relation?.version_id}` : '/meter-ctpt-rel'
   )
@@ -165,11 +165,12 @@ export default function MeterTransformerRelForm({
                 disabled
               />
               <div className='grid grid-cols-1 md:col-span-2 md:grid-cols-2'>
-                <DatePicker
+                <Datepicker
                   label='CT/PT Energise Date'
                   value={formData.ctpt_energise_date}
                   setValue={setFormValue('ctpt_energise_date')}
                   error={errors.ctpt_energise_date}
+                  placeholder='dd/mm/yyyy'
                 />
               </div>
               {statuses != null && (

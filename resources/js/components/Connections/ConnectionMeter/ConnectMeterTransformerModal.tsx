@@ -4,7 +4,7 @@ import { MeterTransformer } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
-import DatePicker from '@/ui/form/DatePicker'
+import Datepicker from '@/ui/form/DatePicker'
 import SelectList from '@/ui/form/SelectList'
 import Modal from '@/ui/Modal/Modal'
 import dayjs from 'dayjs'
@@ -93,17 +93,18 @@ export default function ConnectMeterTransformerModal({
             <StrongText className='text-base font-semibold'>Dates</StrongText>
           </div>
           <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
-            <DatePicker
+            <Datepicker
               label='Faulty Date'
               value={formData.faulty_date}
               setValue={setFormValue('faulty_date')}
+              placeholder='dd/mm/yyyy'
             />
-            <DatePicker
+            <Datepicker
               label='CT/PT Energise Date'
               value={formData.ctpt_energise_date}
               setValue={setFormValue('ctpt_energise_date')}
             />
-            <DatePicker
+            <Datepicker
               label='CT/PT Change Date'
               value={formData.ctpt_change_date}
               setValue={setFormValue('ctpt_change_date')}

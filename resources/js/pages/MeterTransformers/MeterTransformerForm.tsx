@@ -8,7 +8,7 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import Button from '@/ui/button/Button'
 import FormCard from '@/ui/Card/FormCard'
-import DatePicker from '@/ui/form/DatePicker'
+import Datepicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
@@ -225,11 +225,12 @@ export default function MeterTransformerForm({
             />
           )}
 
-          <DatePicker
+          <Datepicker
             label='Manufacture Date'
             value={formData.manufacture_date}
             setValue={setFormValue('manufacture_date')}
             error={errors.manufacture_date}
+            placeholder='dd/mm/yyyy'
           />
         </FormCard>
 

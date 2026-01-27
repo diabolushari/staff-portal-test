@@ -1,10 +1,10 @@
 import Field from '@/components/ui/field'
 import { ConsumerData } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
-import DatePicker from '@/ui/form/DatePicker'
 import RadioGroup from '@/ui/form/RadioGroup'
 import { ConnectionDetailTooltip } from './ConnectionDetailTooltip'
 import dayjs from 'dayjs'
+import Datepicker from '@/ui/form/DatePicker'
 
 interface Props {
   connectionWithConsumer: ConsumerData
@@ -59,7 +59,7 @@ export default function MeterReadingGeneralStep({
         <div className='col-span-3'>
           <div className='grid gap-4 md:grid-cols-2'>
             <div className='col-span-2 grid md:grid-cols-2'>
-              <DatePicker
+              <Datepicker
                 label='Meter Reading Date'
                 value={formData.metering_date}
                 setValue={setFormValue('metering_date')}
@@ -68,7 +68,7 @@ export default function MeterReadingGeneralStep({
               />
             </div>
 
-            <DatePicker
+            <Datepicker
               label='Billing Period Start'
               value={formData.reading_start_date}
               setValue={(value) => {
@@ -81,7 +81,7 @@ export default function MeterReadingGeneralStep({
               disabled={latestMeterReading?.reading_end_date}
               max={maxDateForReadingStartDate}
             />
-            <DatePicker
+            <Datepicker
               label='Billing Period End'
               value={formData.reading_end_date}
               setValue={setFormValue('reading_end_date')}

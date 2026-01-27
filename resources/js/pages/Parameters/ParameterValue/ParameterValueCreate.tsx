@@ -9,7 +9,7 @@ import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
 import FormCard from '@/ui/Card/FormCard'
 import CheckBox from '@/ui/form/CheckBox'
-import DatePicker from '@/ui/form/DatePicker'
+import Datepicker from '@/ui/form/DatePicker'
 import DynamicSelectList from '@/ui/form/DynamicSelectList'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
@@ -202,7 +202,7 @@ export default function ParameterValueCreate({ parameter_value, definitions, dom
 
         {selectedDefinition?.is_effective_date_driven && (
           <div className='flex flex-col'>
-            <DatePicker
+            <Datepicker
               label='Effective Start Date'
               value={formData.effective_start_date}
               setValue={setFormValue('effective_start_date')}
@@ -212,7 +212,7 @@ export default function ParameterValueCreate({ parameter_value, definitions, dom
         )}
         {selectedDefinition?.is_effective_date_driven && (
           <div className='flex flex-col'>
-            <DatePicker
+            <Datepicker
               label='Effective End Date'
               value={formData.effective_end_date}
               setValue={setFormValue('effective_end_date')}
