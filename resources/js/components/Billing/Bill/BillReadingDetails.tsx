@@ -36,8 +36,8 @@ export default function BillReadingDetails({
   const mf = meter?.meter_mf ?? 1
   console.log(kwhValues)
   return (
-    <div className='mb-4 border border-black p-3 text-xs'>
-      <div className='mb-2 flex items-center justify-center'>
+    <div className='mb-2 text-xs'>
+      <div className='flex items-center justify-center border border-black p-2'>
         <h3 className='font-bold'>
           Reading Details of meter {meter?.meter?.meter_serial ?? '-'} - Working (KVA, KWh, KVAh &
           KVARh) for {getDisplayMonthYear(bill?.reading_year_month) ?? '-'}
@@ -46,7 +46,7 @@ export default function BillReadingDetails({
 
       {/* kWh + kVARh */}
       <div className='grid grid-cols-2'>
-        <Table className='mb-3 w-full border border-black text-xs'>
+        <Table className='mb-0 w-full border border-black text-xs'>
           <TableHeader>
             {/* SECTION TITLES */}
             <TableRow>
@@ -59,38 +59,38 @@ export default function BillReadingDetails({
             </TableRow>
 
             {/* COLUMN HEADERS */}
-            <TableRow>
+            <TableRow className='text-center font-bold italic'>
               {/* kWh (LEFT HALF) */}
-              <TableHead
-                colSpan={2}
-                className='border border-black'
+              <TableCell
+                colSpan={1}
+                className='w-12 border border-black text-center'
               >
                 Zone
-              </TableHead>
-              <TableHead
+              </TableCell>
+              <TableCell
                 colSpan={3}
-                className='border border-black'
+                className='border border-black text-center'
               >
                 FR
-              </TableHead>
-              <TableHead
+              </TableCell>
+              <TableCell
                 colSpan={3}
-                className='border border-black'
+                className='border border-black text-center'
               >
                 IR
-              </TableHead>
-              <TableHead
+              </TableCell>
+              <TableCell
                 colSpan={2}
-                className='border border-black'
+                className='border border-black text-center'
               >
                 MF
-              </TableHead>
-              <TableHead
+              </TableCell>
+              <TableCell
                 colSpan={2}
-                className='border border-black'
+                className='border border-black text-center'
               >
                 Units
-              </TableHead>
+              </TableCell>
             </TableRow>
           </TableHeader>
 
@@ -100,8 +100,8 @@ export default function BillReadingDetails({
                 <TableRow key={i}>
                   {/* kWh */}
                   <TableCell
-                    colSpan={2}
-                    className='border border-black text-center'
+                    colSpan={1}
+                    className='w-12 border border-black text-center'
                   >
                     {i + 1}
                   </TableCell>
@@ -109,19 +109,19 @@ export default function BillReadingDetails({
                     colSpan={3}
                     className='border border-black text-right'
                   >
-                    {kwh?.final_reading ?? 0}
+                    {kwh?.final_reading.toFixed(2) ?? 0}
                   </TableCell>
                   <TableCell
                     colSpan={3}
                     className='border border-black text-right'
                   >
-                    {kwh?.initial_reading ?? 0}
+                    {kwh?.initial_reading.toFixed(2) ?? 0}
                   </TableCell>
                   <TableCell
                     colSpan={2}
                     className='border border-black text-center'
                   >
-                    {kwh?.meter_mf}
+                    {kwh?.meter_mf?.toFixed(4) ?? 0}
                   </TableCell>
                   <TableCell
                     colSpan={2}
@@ -139,7 +139,7 @@ export default function BillReadingDetails({
             <TableRow className='bg-gray-100 font-bold'>
               {/* kWh total */}
               <TableCell
-                colSpan={10}
+                colSpan={9}
                 className='border border-black text-right'
               >
                 Total
@@ -153,34 +153,34 @@ export default function BillReadingDetails({
             </TableRow>
           </TableBody>
         </Table>
-        <Table className='p-0'>
+        <Table className='mb-0 p-0 text-xs'>
           <TableHeader>
             {/* SECTION TITLES */}
-            <TableRow>
+            <TableRow className='border border-black'>
               <TableHead
-                colSpan={4}
-                className='border border-black text-center font-bold'
+                colSpan={5}
+                className='text-center font-bold'
               >
                 3. Energy Consumption (kVARh) Lag &
               </TableHead>
               <TableHead
                 colSpan={4}
-                className='border border-black text-center font-bold'
+                className='text-center font-bold'
               >
                 Consumption (kVARh) Lead
               </TableHead>
             </TableRow>
-            <TableRow>
-              <TableHead className='border border-black'>Zone</TableHead>
-              <TableHead className='border border-black'>FR</TableHead>
-              <TableHead className='border border-black'>IR</TableHead>
-              <TableHead className='border border-black'>MF</TableHead>
-              <TableHead className='border border-black'>Units</TableHead>
+            <TableRow className='text-center font-bold italic'>
+              <TableCell className='w-12 border border-black font-bold italic'>Zone</TableCell>
+              <TableCell className='border border-black font-bold italic'>FR</TableCell>
+              <TableCell className='border border-black font-bold italic'>IR</TableCell>
+              <TableCell className='border border-black font-bold italic'>MF</TableCell>
+              <TableCell className='border border-black font-bold italic'>Units</TableCell>
 
               {/* kVARh LEAD (1/3 of right half) */}
-              <TableHead className='border border-black'>FR</TableHead>
-              <TableHead className='border border-black'>IR</TableHead>
-              <TableHead className='border border-black'>Units</TableHead>
+              <TableCell className='border border-black font-bold italic'>FR</TableCell>
+              <TableCell className='border border-black font-bold italic'>IR</TableCell>
+              <TableCell className='border border-black font-bold italic'>Units</TableCell>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -188,10 +188,16 @@ export default function BillReadingDetails({
               const lead = leadValues?.[i] ?? {}
               return (
                 <TableRow key={i}>
-                  <TableCell className='border border-black'>{i + 1}</TableCell>
-                  <TableCell className='border border-black'>{lag?.final_reading ?? 0}</TableCell>
-                  <TableCell className='border border-black'>{lag?.initial_reading ?? 0}</TableCell>
-                  <TableCell className='border border-black'>{lag?.meter_mf}</TableCell>
+                  <TableCell className='w-12 border border-black text-center'>{i + 1}</TableCell>
+                  <TableCell className='border border-black text-right'>
+                    {lag?.final_reading ?? 0}
+                  </TableCell>
+                  <TableCell className='border border-black text-right'>
+                    {lag?.initial_reading ?? 0}
+                  </TableCell>
+                  <TableCell className='border border-black text-center'>
+                    {lag?.meter_mf?.toFixed(4) ?? 0}
+                  </TableCell>
                   <TableCell className='border border-black text-right'>
                     {lag?.value ?? 0}
                   </TableCell>
@@ -252,12 +258,12 @@ export default function BillReadingDetails({
               </TableHead>
             </TableRow>
 
-            <TableRow>
-              <TableHead className='border border-black'>Zone</TableHead>
-              <TableHead className='border border-black'>FR</TableHead>
-              <TableHead className='border border-black'>IR</TableHead>
-              <TableHead className='border border-black'>MF</TableHead>
-              <TableHead className='border border-black'>Units</TableHead>
+            <TableRow className='text-center font-bold italic'>
+              <TableCell className='w-12 border border-black text-center'>Zone</TableCell>
+              <TableCell className='border border-black text-center'>FR</TableCell>
+              <TableCell className='border border-black text-center'>IR</TableCell>
+              <TableCell className='border border-black text-center'>MF</TableCell>
+              <TableCell className='border border-black text-center'>Units</TableCell>
             </TableRow>
           </TableHeader>
 
@@ -266,16 +272,23 @@ export default function BillReadingDetails({
               const kva = kvaValues?.[i] ?? {}
 
               return (
-                <TableRow key={i}>
-                  <TableCell className='border border-black'>{i + 1}</TableCell>
-                  <TableCell className='border border-black'>
+                <TableRow
+                  key={i}
+                  className=''
+                >
+                  <TableCell className='border border-black text-center'>{i + 1}</TableCell>
+                  <TableCell className='border border-black text-right'>
                     {kvah?.final_reading ?? '-'}
                   </TableCell>
-                  <TableCell className='border border-black'>
+                  <TableCell className='border border-black text-right'>
                     {kvah?.initial_reading ?? '-'}
                   </TableCell>
-                  <TableCell className='border border-black'>{kvah?.meter_mf}</TableCell>
-                  <TableCell className='border border-black'>{kvah?.value ?? 0}</TableCell>
+                  <TableCell className='border border-black text-center'>
+                    {kvah?.meter_mf?.toFixed(4) ?? 0}
+                  </TableCell>
+                  <TableCell className='border border-black text-right'>
+                    {kvah?.value ?? 0}
+                  </TableCell>
                 </TableRow>
               )
             })}
@@ -309,28 +322,36 @@ export default function BillReadingDetails({
         </Table>
         <Table className='border border-black text-xs'>
           <TableHeader>
-            <TableRow>
+            <TableRow className='text-center'>
               <TableHead
                 colSpan={0}
                 className='border border-black font-bold'
               >
                 4. Demand (kVA)
               </TableHead>
-              <TableHead className='border border-black'>Readings</TableHead>
-              <TableHead className='border border-black'>MF</TableHead>
-              <TableHead className='border border-black'>Units</TableHead>
+              <TableHead className='border border-black text-center font-bold italic'>
+                Readings
+              </TableHead>
+              <TableHead className='border border-black text-center font-bold italic'>MF</TableHead>
+              <TableHead className='border border-black text-center font-bold italic'>
+                Units
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {kvaValues?.map((kva, i) => {
               return (
                 <TableRow key={i}>
-                  <TableCell className='border border-black'>{i + 1}</TableCell>
-                  <TableCell className='border border-black text-center'>
+                  <TableCell className='border border-black text-center'>{i + 1}</TableCell>
+                  <TableCell className='border border-black text-right'>
                     {kva?.final_reading ?? '-'}
                   </TableCell>
-                  <TableCell className='border border-black'>{kva.meter_mf}</TableCell>
-                  <TableCell className='border border-black'>{kva.value.toFixed(2) ?? 0}</TableCell>
+                  <TableCell className='border border-black text-center'>
+                    {kva?.meter_mf?.toFixed(4) ?? 0}
+                  </TableCell>
+                  <TableCell className='border border-black text-right'>
+                    {kva?.value.toFixed(2) ?? 0}
+                  </TableCell>
                 </TableRow>
               )
             })}

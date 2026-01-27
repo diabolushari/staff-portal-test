@@ -16,24 +16,32 @@ export default function BillSearchForm({
     pageSize: number
     sortBy: string
     sortDirection: string
+    connection: Connection | null
+    billingGroup: BillingGroup | null
   }
 }) {
-  const [selectedGroup, setSelectedGroup] = useState<BillingGroup | null>(null)
-  const [selectedConnection, setSelectedConnection] = useState<Connection | null>(null)
+  const [selectedGroup, setSelectedGroup] = useState<BillingGroup | null>(
+    filters?.billingGroup ?? null
+  )
+  const [selectedConnection, setSelectedConnection] = useState<Connection | null>(
+    filters?.connection ?? null
+  )
   useEffect(() => {
     if (selectedGroup) {
       setFormValue('group_id')(selectedGroup.billing_group_id.toString())
+    } else {
+      setFormValue('group_id')('')
     }
     if (selectedConnection) {
       setFormValue('connection_id')(selectedConnection.connection_id.toString())
+    } else {
+      setFormValue('connection_id')('')
     }
   }, [selectedGroup, selectedConnection])
   const { formData, setFormValue, setAll } = useCustomForm({
     connection_id: filters?.connectionId ?? '',
     group_id: filters?.billingGroupId ?? '',
   })
-
-  const isFirstRender = useRef(true)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -43,25 +51,6 @@ export default function BillSearchForm({
       replace: true,
     })
   }
-
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-
-    router.get(
-      '/bills',
-      {
-        connection_id: formData.connection_id,
-        group_id: formData.group_id,
-      },
-      {
-        preserveState: true,
-        replace: true,
-      }
-    )
-  }, [formData.connection_id, formData.group_id])
 
   return (
     <div>

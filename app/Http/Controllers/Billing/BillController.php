@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Services\BillGenerationJob\BillGeneraionJobStatusService;
 use App\Services\Billing\BillExportService;
 use App\Services\Billing\BillService;
+use App\Services\BillingGroup\BillingGroupService;
+use App\Services\Connection\ConnectionService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
@@ -16,7 +18,9 @@ class BillController extends Controller
     public function __construct(
         private readonly BillService $billService,
         private readonly BillExportService $billExportService,
-        private readonly BillGeneraionJobStatusService $billGeneraionJobStatusService
+        private readonly BillGeneraionJobStatusService $billGeneraionJobStatusService,
+        private readonly BillingGroupService $billingGroupService,
+        private readonly ConnectionService $connectionService,
     ) {}
 
 
@@ -27,7 +31,14 @@ class BillController extends Controller
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 10;
         $response = $this->billGeneraionJobStatusService->paginatedListBillGenerationJobStatus($pageNumber, $pageSize, null, null, null, $billingGroupId, $connectionId);
-
+        $connection = null;
+        if ($connectionId) {
+            $connection = $this->connectionService->getConnection($connectionId);
+        }
+        $billingGroup = null;
+        if ($billingGroupId) {
+            $billingGroup = $this->billingGroupService->getBillingGroup(null, $billingGroupId);
+        }
         $paginated = null;
         if (! empty($response->data)) {
             $paginated = new LengthAwarePaginator(
@@ -45,6 +56,8 @@ class BillController extends Controller
                 'billingGroupId' => $billingGroupId,
                 'pageNumber' => $pageNumber,
                 'pageSize' => $pageSize,
+                'connection' => $connection->data ?? null,
+                'billingGroup' => $billingGroup->data ?? null,
             ],
         ]);
     }
