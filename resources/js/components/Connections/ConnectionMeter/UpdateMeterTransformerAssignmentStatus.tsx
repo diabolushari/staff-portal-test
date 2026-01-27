@@ -3,7 +3,7 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 import { MeterTransformerAssignment } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
-import DatePicker from '@/ui/form/DatePicker'
+import Datepicker from '@/ui/form/DatePicker'
 import SelectList from '@/ui/form/SelectList'
 import Modal from '@/ui/Modal/Modal'
 
@@ -55,11 +55,12 @@ const UpdateMeterTransformerAssignmentStatus = ({
           error={errors.status_id}
         />
 
-        <DatePicker
+        <Datepicker
           label='Faulty Date'
           value={formData.faulty_date}
           setValue={setFormValue('faulty_date')}
           error={errors.faulty_date}
+          placeholder='dd/mm/yyyy'
         />
 
         <div className='pt-2'>

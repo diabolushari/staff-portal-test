@@ -7,7 +7,7 @@ import Button from '@/ui/button/Button'
 import FormCard from '@/ui/Card/FormCard'
 import CheckBox from '@/ui/form/CheckBox'
 import ComboBox from '@/ui/form/ComboBox'
-import DatePicker from '@/ui/form/DatePicker'
+import Datepicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
@@ -76,6 +76,7 @@ export default function MeterForm({
     pt_count: meter?.pt_count ?? '',
     _method: meter ? 'PUT' : 'POST',
   })
+  console.log(formData)
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     meter ? route('meters.update', meter?.meter_id) : route('meters.store'),
     {
@@ -361,17 +362,19 @@ export default function MeterForm({
           min={0}
         />
 
-        <DatePicker
+        <Datepicker
           label='Manufacture Date'
           value={formData.manufacture_date}
           setValue={setFormValue('manufacture_date')}
           error={errors.manufacture_date}
+          placeholder='dd/mm/yyyy'
         />
-        <DatePicker
+        <Datepicker
           label='Supply Date'
           value={formData.supply_date}
           setValue={setFormValue('supply_date')}
           error={errors.supply_date}
+          placeholder='dd/mm/yyyy'
         />
       </FormCard>
       <div className='flex justify-end gap-3 border-t pt-6'>

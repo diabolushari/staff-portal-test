@@ -2,6 +2,7 @@ import React from 'react'
 import { FormFieldProp } from '../ui_interfaces'
 import ErrorText from '@/typography/ErrorText'
 import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
 interface DatePickerProp extends FormFieldProp {
   min?: string

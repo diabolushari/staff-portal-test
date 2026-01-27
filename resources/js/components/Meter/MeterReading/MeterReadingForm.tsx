@@ -4,7 +4,7 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
-import DatePicker from '@/ui/form/DatePicker'
+import Datepicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import RadioGroup from '@/ui/form/RadioGroup'
 import SelectList from '@/ui/form/SelectList'
@@ -44,6 +44,7 @@ export default function MeterReadingForm({
     current_y: '',
     remarks: '',
   })
+  
   const { post, errors } = useInertiaPost<typeof formData>(route('meter-reading.store'))
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -113,19 +114,19 @@ export default function MeterReadingForm({
             value={formData.anomaly_id}
             error={errors.anomaly_id}
           />
-          <DatePicker
+          <Datepicker
             label='Metering Date'
             value={formData.metering_date}
             setValue={setFormValue('metering_date')}
             error={errors.metering_date}
           />
-          <DatePicker
+          <Datepicker
             label='Reading Start Date'
             value={formData.reading_start_date}
             setValue={setFormValue('reading_start_date')}
             error={errors.reading_start_date}
           />
-          <DatePicker
+          <Datepicker
             label='Reading End Date'
             value={formData.reading_end_date}
             setValue={setFormValue('reading_end_date')}

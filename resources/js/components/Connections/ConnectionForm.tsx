@@ -19,7 +19,7 @@ import useConnectionFlagForm from './useConnectionFlagForm'
 import useConnectionGenerationForm from './useConnectionGenerationForm'
 import { router } from '@inertiajs/react'
 import { Button } from '../ui/button'
-import Date from '@/ui/form/Date'
+
 import Datepicker from '@/ui/form/DatePicker'
 
 interface Props {

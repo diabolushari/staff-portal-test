@@ -3,7 +3,7 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 import { Meter, MeterConnectionMapping } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
-import DatePicker from '@/ui/form/DatePicker'
+import Datepicker from '@/ui/form/DatePicker'
 import SelectList from '@/ui/form/SelectList'
 import Modal from '@/ui/Modal/Modal'
 
@@ -70,12 +70,12 @@ export default function ConnectionMeterUpdateModal({
                 dataKey='id'
                 displayKey='parameter_value'
               />
-              <DatePicker
+              <Datepicker
                 label='Notice Date'
                 value={formData.notice_date}
                 setValue={setFormValue('notice_date')}
               />
-              <DatePicker
+              <Datepicker
                 label='Intimation Date'
                 value={formData.intimation_date}
                 setValue={setFormValue('intimation_date')}
@@ -91,10 +91,11 @@ export default function ConnectionMeterUpdateModal({
                 dataKey='id'
                 displayKey='parameter_value'
               />
-              <DatePicker
+              <Datepicker
                 label='Change Date'
                 value={formData.change_date}
                 setValue={setFormValue('change_date')}
+                placeholder='dd/mm/yyyy'
               />
             </div>
           )}
