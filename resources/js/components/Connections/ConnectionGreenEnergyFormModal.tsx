@@ -49,7 +49,7 @@ const ConnectionGreenEnergyFormModal = ({ connection, setShowModal, greenEnergyT
         onSubmit={handleSubmit}
         className='flex flex-col space-y-4'
       >
-        <div>
+        <div className='flex flex-col gap-2'>
           <SelectList
             label='Green Energy Type'
             required
@@ -77,7 +77,6 @@ const ConnectionGreenEnergyFormModal = ({ connection, setShowModal, greenEnergyT
           />
           <Datepicker
             label='Effective End Date'
-            required
             setValue={setFormValue('effective_end_date')}
             value={formData.effective_end_date}
             error={errors?.effective_end_date}
