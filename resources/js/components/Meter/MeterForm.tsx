@@ -76,7 +76,7 @@ export default function MeterForm({
     pt_count: meter?.pt_count ?? '',
     _method: meter ? 'PUT' : 'POST',
   })
-  console.log(formData)
+  
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     meter ? route('meters.update', meter?.meter_id) : route('meters.store'),
     {

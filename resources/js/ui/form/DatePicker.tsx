@@ -49,7 +49,7 @@ export default function Datepicker({
 
         <DatePicker
           selected={safeDate(value)}
-          onChange={(date: Date | null) => setValue(date ? formatForDB(date) : null)}
+          onChange={(date: Date | null) => setValue(date ? formatForDB(date) : '')}
           placeholderText={placeholder}
           minDate={safeDate(min)}
           maxDate={safeDate(max)}

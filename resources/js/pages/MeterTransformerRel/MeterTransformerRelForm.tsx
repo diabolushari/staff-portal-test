@@ -17,7 +17,6 @@ import Datepicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { router } from '@inertiajs/react'
-import { c } from 'node_modules/framer-motion/dist/types.d-Bq-Qm38R'
 import React, { useMemo, useState } from 'react'
 
 interface MeterTransformerRelFormProps {

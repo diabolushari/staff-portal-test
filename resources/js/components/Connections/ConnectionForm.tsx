@@ -114,7 +114,6 @@ export default function ConnectionForm({
     generation_types: generationData,
     prosumers: false,
   })
-  console.log(formData)
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     connection ? route('connections.update', connection.connection_id) : route('connections.store'),
