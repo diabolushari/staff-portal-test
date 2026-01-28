@@ -4,9 +4,8 @@ namespace App\GrpcConverters\Connection;
 
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Http\Requests\Connections\ConnectionGreenEnergyFormRequest;
-use App\Services\utils\DateTimeConverter;
-use Proto\Consumers\CreateGreenEnergyMessage;
-use Proto\Consumers\GreenEnergyMessage;
+use Proto\GreenEnergy\CreateGreenEnergyMessage;
+use Proto\GreenEnergy\GreenEnergyMessage;
 
 class ConnectionGreenEnergyConverter
 {
@@ -18,7 +17,6 @@ class ConnectionGreenEnergyConverter
         if ($greenEnergy === null) {
             return null;
         }
-
         return [
             'id' => $greenEnergy->getId(),
             'connection_id' => $greenEnergy->getConnectionId(),
@@ -44,12 +42,12 @@ class ConnectionGreenEnergyConverter
         $msg->setConnectionId($request->connectionId);
         $msg->setGreenEnergyTypeId($request->greenEnergyTypeId);
         $msg->setPercentage($request->percentage);
-        $effectiveStart = DateTimeConverter::convertStringToTimestamp($request->effectiveStart);
-        $msg->setEffectiveStartTs($effectiveStart);
+        if ($request->effectiveStart) {
 
-        if ($request->effectiveEnd !== null) {
-            $effectiveEnd = DateTimeConverter::convertStringToTimestamp($request->effectiveEnd);
-            $msg->setEffectiveEndTs($effectiveEnd);
+            $msg->setEffectiveStartTs($request->effectiveStart);
+        }
+        if ($request->effectiveEnd) {
+            $msg->setEffectiveEndTs($request->effectiveEnd);
         }
         if ($request->remarks) {
             $msg->setRemarks($request->remarks);

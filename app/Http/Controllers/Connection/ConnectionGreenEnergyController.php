@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Connection;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Connections\ConnectionGreenEnergyFormRequest;
 use App\Services\Connection\ConnectionGreenEnergyService;
+use Illuminate\Support\Facades\Log;
 
 class ConnectionGreenEnergyController extends Controller
 {

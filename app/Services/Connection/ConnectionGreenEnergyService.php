@@ -8,15 +8,15 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
-use Proto\Consumers\CreateGreenEnergyMessage;
-use Proto\Consumers\CreateGreenEnergyRequest;
-use Proto\Consumers\GreenEnergyServiceClient;
+use Illuminate\Support\Facades\Log;
+use Proto\GreenEnergy\CreateGreenEnergyRequest;
+use Proto\GreenEnergy\GreenEnergyServiceClient;
 
 class ConnectionGreenEnergyService
 {
     private GreenEnergyServiceClient $client;
 
-    public function __construct()
+    public function __construct(private readonly ConnectionGreenEnergyConverter $connectionGreenEnergyService,)
     {
         $this->client = new GreenEnergyServiceClient(
             config('app.consumer_service_grpc_host'),
@@ -30,13 +30,14 @@ class ConnectionGreenEnergyService
 
     public function create(ConnectionGreenEnergyFormRequest $request): GrpcServiceResponse
     {
-        $greenEnergy = ConnectionGreenEnergyConverter::formToGrpcMessage($request);
+        $greenEnergy = $this->connectionGreenEnergyService->formToGrpcMessage($request);
 
         $grpcRequest = new CreateGreenEnergyRequest();
         $grpcRequest->setGreenEnergy([$greenEnergy]);
-
+        Log::info('Reached service file');
         [$response, $status] =
             $this->client->CreateGreenEnergy($grpcRequest)->wait();
+        dd($response, $status);
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -48,7 +49,7 @@ class ConnectionGreenEnergyService
         }
 
         return GrpcServiceResponse::success(
-            ConnectionGreenEnergyConverter::convertToArray($response->getGreenEnergy()),
+            $this->connectionGreenEnergyService->convertToArray($response->getGreenEnergy()),
             $response,
             $status->code,
             $status->details

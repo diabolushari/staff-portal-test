@@ -21,11 +21,12 @@ const ConnectionGreenEnergyFormModal = ({ connection, setShowModal, greenEnergyT
     connection_id: connection.connection_id,
     green_energy_type_id: '',
     percentage: '',
-    effective_start_date: '',
-    effective_end_date: '',
+    effective_start: '',
+    effective_end: '',
     remarks: '',
     is_active: true,
   })
+  console.log(formData)
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     route('connection-green-energy'),
@@ -71,15 +72,15 @@ const ConnectionGreenEnergyFormModal = ({ connection, setShowModal, greenEnergyT
           <Datepicker
             label='Effective Start Date'
             required
-            setValue={setFormValue('effective_start_date')}
-            value={formData.effective_start_date}
-            error={errors?.effective_start_date}
+            setValue={setFormValue('effective_start')}
+            value={formData.effective_start}
+            error={errors?.effective_start}
           />
           <Datepicker
             label='Effective End Date'
-            setValue={setFormValue('effective_end_date')}
-            value={formData.effective_end_date}
-            error={errors?.effective_end_date}
+            setValue={setFormValue('effective_end')}
+            value={formData.effective_end}
+            error={errors?.effective_end}
           />
           <TextArea
             label='Remarks'

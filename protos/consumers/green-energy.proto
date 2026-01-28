@@ -1,12 +1,9 @@
 syntax = "proto3";
 
-package com.kseb.consumerservice.grpc.consumers;
+package com.kseb.consumerservice.proto.greenenergy;
 
-option java_multiple_files = true;
-option java_package = "com.kseb.consumerservice.proto.consumers";
-option java_outer_classname = "GreenEnergyProto";
 
-option php_namespace = "Proto\\Consumers";
+option php_namespace = "Proto\\GreenEnergy";
 option php_metadata_namespace = "GPBMetadata";
 
 
