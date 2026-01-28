@@ -2,7 +2,7 @@ import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { BillingGroup } from '@/interfaces/data_interfaces'
 import Button from '@/ui/button/Button'
-import DatePicker from '@/ui/form/DatePicker'
+import Datepicker from '@/ui/form/DatePicker'
 import MonthPicker from '@/ui/form/MonthPicker'
 import Modal from '@/ui/Modal/Modal'
 import dayjs from 'dayjs'
@@ -86,19 +86,19 @@ export default function BillInitializeModal({
           setValue={setFormValue('bill_month_year')}
           error={errors?.bill_month_year}
         />
-        <DatePicker
+        <Datepicker
           label='Bill Date'
           value={formData.bill_date}
           setValue={handleBillDateChange}
           error={errors?.bill_date}
         />
-        <DatePicker
+        <Datepicker
           label='Due Date'
           value={formData.due_date}
           setValue={setFormValue('due_date')}
           error={errors?.due_date}
         />
-        <DatePicker
+        <Datepicker
           label='DC Date'
           value={formData.dc_date}
           setValue={setFormValue('dc_date')}

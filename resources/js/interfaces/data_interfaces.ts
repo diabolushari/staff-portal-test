@@ -205,6 +205,19 @@ export interface Connection {
   connection_flags?: ConnectionFlag[]
   connection_generation_types?: ConnectionGenerationType[]
   previous_reading: MeterReading
+  green_energy?: ConnectionGreenEnergy[]
+}
+
+export interface ConnectionGreenEnergy {
+  connection_id: number | string
+  green_energy_type_id: number | string
+  green_energy_type: ParameterValues
+  percentage:number
+  id:number
+  is_active:boolean
+  remarks?:string
+  effective_start:string
+  effective_end:string
 }
 
 export interface OfficeHierarchy {

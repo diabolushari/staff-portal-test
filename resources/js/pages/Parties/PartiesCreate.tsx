@@ -5,7 +5,7 @@ import { Party } from '@/interfaces/parties'
 import MainLayout from '@/layouts/main-layout'
 import Button from '@/ui/button/Button'
 import Card from '@/ui/Card/Card'
-import DatePicker from '@/ui/form/DatePicker'
+import Datepicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
@@ -229,12 +229,12 @@ export default function PartiesCreate({ partyTypes, partyStatus, party }: Partie
             {renderSection(
               'Validity Period',
               <>
-                <DatePicker
+                <Datepicker
                   label='Effective Start Date'
                   value={formData.effective_start}
                   setValue={setFormValue('effective_start')}
                 />
-                <DatePicker
+                <Datepicker
                   label='Effective End Date'
                   value={formData.effective_end}
                   setValue={setFormValue('effective_end')}

@@ -1,11 +1,11 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import Input from '@/ui/form/Input'
-import DatePicker from '@/ui/form/DatePicker'
 import FileInput from '@/ui/form/FileInput'
 import Button from '@/ui/button/Button'
 import { TariffOrder } from '@/interfaces/data_interfaces'
 import FormCard from '@/ui/Card/FormCard'
+import Datepicker from '@/ui/form/DatePicker'
 
 interface PageProps {
   tariffOrder: TariffOrder
@@ -70,19 +70,19 @@ export default function TariffOrderForm({ tariffOrder }: Readonly<PageProps>) {
           }
           error={errors?.reference_document}
         />
-        <DatePicker
+        <Datepicker
           label='From Date'
           setValue={setFormValue('effective_start')}
           value={formData.effective_start}
           error={errors?.effective_start}
         />
-        <DatePicker
+        <Datepicker
           label='To Date'
           setValue={setFormValue('effective_end')}
           value={formData.effective_end}
           error={errors?.effective_end}
         />
-        <DatePicker
+        <Datepicker
           label='Published Date'
           setValue={setFormValue('published_date')}
           value={formData.published_date}

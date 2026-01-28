@@ -3,7 +3,7 @@ import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
-import DatePicker from '@/ui/form/DatePicker'
+
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { consumerNavItems } from '@/components/Navbar/navitems'
@@ -22,6 +22,7 @@ import { BreadcrumbItem } from '@/types'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import ConnectMeterTransformerModal from '@/components/Connections/ConnectionMeter/ConnectMeterTransformerModal'
 import SelectUnassignedMeterModal from '@/components/Connections/ConnectionMeter/SelectUnassignedMeterModal'
+import Datepicker from '@/ui/form/DatePicker'
 
 export default function ConnectMeter({
   connection_id,
@@ -68,7 +69,7 @@ export default function ConnectMeter({
     _method: relation ? 'PUT' : undefined,
     meter_transformers: meterTransformers,
   })
-
+console.log(formData)
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     relation
       ? route('meter-connection-rel.update', connection_id)
@@ -244,11 +245,12 @@ export default function ConnectMeter({
               setValue={setFormValue('sort_priority')}
               error={errors.sort_priority}
             />
-            <DatePicker
+            <Datepicker
               label='Energise Date'
               value={formData.energise_date}
               setValue={setFormValue('energise_date')}
               error={errors.energise_date}
+              placeholder='dd/mm/yyyy'
             />
 
             <CheckBox

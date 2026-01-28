@@ -3,7 +3,7 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 import { MeterTransformerAssignment } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
-import DatePicker from '@/ui/form/DatePicker'
+import Datepicker from '@/ui/form/DatePicker'
 import SelectList from '@/ui/form/SelectList'
 import Modal from '@/ui/Modal/Modal'
 
@@ -57,11 +57,12 @@ const ChangeMeterTransformerAssignment = ({
           error={errors.change_reason_id}
         />
 
-        <DatePicker
+        <Datepicker
           label='CT/PT Change Date'
           value={formData.ctpt_change_date}
           setValue={setFormValue('ctpt_change_date')}
           error={errors.ctpt_change_date}
+          placeholder='dd/mm/yyyy'
         />
 
         <div className='pt-2'>

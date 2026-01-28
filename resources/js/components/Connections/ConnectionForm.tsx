@@ -6,7 +6,6 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
 import CheckBox from '@/ui/form/CheckBox'
 import ComboBox from '@/ui/form/ComboBox'
-import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import MultiSelectList from '@/ui/form/MultiSelect'
 import SelectList from '@/ui/form/SelectList'
@@ -20,6 +19,8 @@ import useConnectionFlagForm from './useConnectionFlagForm'
 import useConnectionGenerationForm from './useConnectionGenerationForm'
 import { router } from '@inertiajs/react'
 import { Button } from '../ui/button'
+
+import Datepicker from '@/ui/form/DatePicker'
 
 interface Props {
   connection?: Connection
@@ -267,7 +268,7 @@ export default function ConnectionForm({
             error={errors?.tariff_type_id}
             required
           />
-          <DatePicker
+          <Datepicker
             label='Connection Date'
             setValue={setFormValue('connected_date')}
             value={formData.connected_date}

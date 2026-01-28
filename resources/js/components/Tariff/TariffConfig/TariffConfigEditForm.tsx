@@ -5,7 +5,7 @@ import { TariffConfig, TariffOrder } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
-import DatePicker from '@/ui/form/DatePicker'
+import Datepicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 
@@ -40,6 +40,7 @@ export default function TariffConfigEditForm({
     energy_charge_kwh: tariff_config.energy_charge_kwh.toString() ?? 0,
     _method: 'PUT',
   })
+  
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     route('tariff-configs.update', tariff_config.tariff_config_id)
   )
@@ -115,12 +116,12 @@ export default function TariffConfigEditForm({
             value={formData.energy_charge_kwh}
             setValue={setFormValue('energy_charge_kwh')}
           />
-          <DatePicker
+          <Datepicker
             label='Effective Start'
             value={formData.effective_start}
             setValue={setFormValue('effective_start')}
           />
-          <DatePicker
+          <Datepicker
             label='Effective End'
             value={formData.effective_end}
             setValue={setFormValue('effective_end')}

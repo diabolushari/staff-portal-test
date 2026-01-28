@@ -5,7 +5,7 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import { Party } from '@/interfaces/parties'
 import Button from '@/ui/button/Button'
 import ComboBox from '@/ui/form/ComboBox'
-import DatePicker from '@/ui/form/DatePicker'
+import Datepicker from '@/ui/form/DatePicker'
 import SelectList from '@/ui/form/SelectList'
 import Modal from '@/ui/Modal/Modal'
 import dayjs from 'dayjs'
@@ -84,14 +84,14 @@ export default function ConnectionPartiesFormModal({
             error={errors.party_relation_type_id}
           />
         )}
-        <DatePicker
+        <Datepicker
           label='From Date'
           value={formData.effective_start}
           setValue={setFormValue('effective_start')}
           error={errors.effective_start}
           required
         />
-        <DatePicker
+        <Datepicker
           label='To Date'
           value={formData.effective_end}
           setValue={setFormValue('effective_end')}
