@@ -65,6 +65,7 @@ use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
 use App\Http\Controllers\Tariff\TariffConfigController;
 use App\Http\Controllers\Tariff\TariffOrderController;
+use App\Http\Controllers\VariableRate\VariableRateController;
 use App\Http\Requests\SystemModule\SystemModuleFormRequest;
 use App\Services\SystemModule\SystemModuleService;
 use Illuminate\Support\Facades\Route;
@@ -139,6 +140,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('tariff-configs', TariffConfigController::class);
     Route::get('tariff-order/{tariffOrderId}/config/create', [TariffConfigController::class, 'create'])
         ->name('tariff-config.create');
+    Route::resource('variable-rates', VariableRateController::class);
 
     Route::resource('billing-rules', BillingRuleController::class);
     Route::resource('billing-groups', BillingGroupController::class);

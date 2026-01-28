@@ -16,6 +16,7 @@ interface PageProps {
   descriptionLabel?: string
   parameterValue?: ParameterValues
   definitionId?: number
+  large?: boolean
 }
 
 export default function ParameterValueModal({
@@ -27,6 +28,7 @@ export default function ParameterValueModal({
   descriptionLabel,
   parameterValue,
   definitionId,
+  large = false,
 }: PageProps) {
   const { formData, setFormValue } = useCustomForm({
     definition_id: definition?.id ?? definitionId ?? '',
@@ -64,7 +66,7 @@ export default function ParameterValueModal({
     <Modal
       title={title ?? 'Parameter Value'}
       setShowModal={onClose}
-      large={true}
+      large={large}
     >
       <div className='flex flex-col gap-2'>
         <Input
@@ -153,7 +155,7 @@ export default function ParameterValueModal({
             processing={loading}
             disabled={loading}
             type='submit'
-            variant={loading ? 'loading' : 'default'}
+            variant={loading ? 'loading' : 'primary'}
           />
         </div>
       </div>

@@ -702,3 +702,17 @@ export interface MeterProfileParameter {
   profile: ParameterValues | null
   profile_id: number
 }
+
+export interface VariableRate {
+  id: number
+  variable_name_id: string
+  rate: string
+  effective_start: string
+  effective_end: string
+  deleted_at?: string
+  created_by?: number
+  updated_by?: number
+  created_at?: string
+  updated_at?: string
+  variable_name: ParameterValues
+}
