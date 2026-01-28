@@ -25,12 +25,8 @@ class ConnectionGreenEnergyConverter
             'percentage' => $greenEnergy->getPercentage(),
             'remarks' => $greenEnergy->getRemarks(),
             'is_active' => $greenEnergy->getIsActive(),
-            'effective_start' => $greenEnergy->getEffectiveStartTs()
-                ? \Carbon\Carbon::createFromTimestamp($greenEnergy->getEffectiveStartTs())->format('Y-m-d')
-                : null,
-            'effective_end' => $greenEnergy->getEffectiveEndTs()
-                ? \Carbon\Carbon::createFromTimestamp($greenEnergy->getEffectiveEndTs())->format('Y-m-d')
-                : null,
+            'effective_start' => $greenEnergy->getEffectiveStartTs(),
+            'effective_end' => $greenEnergy->getEffectiveEndTs(),
             'created_by' => $greenEnergy->getCreatedBy() ?: null,
             'updated_by' => $greenEnergy->getUpdatedBy() ?: null,
         ];

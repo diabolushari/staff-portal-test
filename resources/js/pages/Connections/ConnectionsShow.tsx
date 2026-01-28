@@ -13,6 +13,7 @@ import { router } from '@inertiajs/react'
 import { useMemo, useState } from 'react'
 import { groupFlagsBySection } from '../Consumer/ConsumerShow'
 import ConnectionGreenEnergyFormModal from '@/components/Connections/ConnectionGreenEnergyFormModal'
+import { getDisplayDate } from '@/utils'
 
 interface Props {
   connection: Connection
@@ -31,6 +32,7 @@ export default function ConnectionsShow({
   primaryPurposes,
   greenEnergyTypes,
 }: Readonly<Props>) {
+  console.log(connection)
   const formatDate = (dateStr?: string | null) =>
     dateStr ? new Date(dateStr).toLocaleDateString('en-GB') : '-'
   const [editIndicator, setEditIndicator] = useState(false)
@@ -348,6 +350,39 @@ export default function ConnectionsShow({
                       />
                     </>
                   ))}
+                </div>
+              </Card>
+            ))}
+          {connection.green_energy &&
+            connection.green_energy.length > 0 &&
+            connection.green_energy.map((greenEnergy) => (
+              <Card className='rounded-lg p-5'>
+                <div className='mb-6 flex items-center justify-between'>
+                  <StrongText className='text-base font-semibold text-[#252c32]'>
+                    {greenEnergy.green_energy_type.parameter_value}
+                  </StrongText>
+                </div>
+                <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
+                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                  <Field
+                    label='Percentage'
+                    value={greenEnergy.percentage}
+                  />
+                  {greenEnergy.remarks && (
+                    <Field
+                      label='Remarks'
+                      value={greenEnergy.remarks}
+                    />
+                  )}
+                  <Field
+                    label='Effective Start Date'
+                    value={getDisplayDate(greenEnergy.effective_start)}
+                  />
+                  <Field
+                    label='Effective End Date'
+                    value={getDisplayDate(greenEnergy.effective_end)}
+                  />
                 </div>
               </Card>
             ))}

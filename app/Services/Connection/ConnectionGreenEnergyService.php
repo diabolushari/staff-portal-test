@@ -5,10 +5,8 @@ namespace App\Services\Connection;
 use App\GrpcConverters\Connection\ConnectionGreenEnergyConverter;
 use App\Http\Requests\Connections\ConnectionGreenEnergyFormRequest;
 use App\Services\Grpc\GrpcErrorService;
-use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
-use Illuminate\Support\Facades\Log;
 use Proto\GreenEnergy\CreateGreenEnergyRequest;
 use Proto\GreenEnergy\GreenEnergyServiceClient;
 
@@ -34,10 +32,10 @@ class ConnectionGreenEnergyService
 
         $grpcRequest = new CreateGreenEnergyRequest();
         $grpcRequest->setGreenEnergy([$greenEnergy]);
-        Log::info('Reached service file');
+
         [$response, $status] =
             $this->client->CreateGreenEnergy($grpcRequest)->wait();
-        dd($response, $status);
+
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -48,8 +46,13 @@ class ConnectionGreenEnergyService
             );
         }
 
+        $greenEnergyArray = [];
+        foreach ($response->getGreenEnergy() as $greenEnergy) {
+            $greenEnergyArray[] = $this->connectionGreenEnergyService->convertToArray($greenEnergy);
+        }
+
         return GrpcServiceResponse::success(
-            $this->connectionGreenEnergyService->convertToArray($response->getGreenEnergy()),
+            $greenEnergyArray,
             $response,
             $status->code,
             $status->details
