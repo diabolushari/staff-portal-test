@@ -9,6 +9,7 @@ import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
 import Modal from '@/ui/Modal/Modal'
+import { useCallback } from 'react'
 
 interface Props {
   connection: Connection
@@ -26,12 +27,15 @@ const ConnectionGreenEnergyFormModal = ({ connection, setShowModal, greenEnergyT
     remarks: '',
     is_active: true,
   })
-  console.log(formData)
+
+  const onComplete = useCallback(() => {
+    setShowModal(false)
+  }, [setShowModal])
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     route('connection-green-energy'),
     {
-      onComplete: () => setShowModal(false),
+      onComplete,
     }
   )
 
@@ -43,7 +47,7 @@ const ConnectionGreenEnergyFormModal = ({ connection, setShowModal, greenEnergyT
   return (
     <Modal
       title='Connection Green Energy Form'
-      setShowModal={() => setShowModal}
+      setShowModal={setShowModal}
       showClosButton
     >
       <form

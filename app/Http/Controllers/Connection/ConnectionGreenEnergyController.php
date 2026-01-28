@@ -5,17 +5,13 @@ namespace App\Http\Controllers\Connection;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Connections\ConnectionGreenEnergyFormRequest;
 use App\Services\Connection\ConnectionGreenEnergyService;
-use Illuminate\Support\Facades\Log;
 
 class ConnectionGreenEnergyController extends Controller
 {
-
-
     public function __construct(
         private readonly ConnectionGreenEnergyService $connectionGreenEnergyService,
-
-
     ) {}
+
     public function __invoke(ConnectionGreenEnergyFormRequest $request)
     {
 
@@ -26,6 +22,7 @@ class ConnectionGreenEnergyController extends Controller
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
         }
+
         return back()->with('message', 'Green energy created successfully');
     }
 }

@@ -17,6 +17,7 @@ class ConnectionGreenEnergyConverter
         if ($greenEnergy === null) {
             return null;
         }
+
         return [
             'id' => $greenEnergy->getId(),
             'connection_id' => $greenEnergy->getConnectionId(),
@@ -34,25 +35,21 @@ class ConnectionGreenEnergyConverter
 
     public function formToGrpcMessage(ConnectionGreenEnergyFormRequest $request): CreateGreenEnergyMessage
     {
-        $msg = new CreateGreenEnergyMessage();
+        $msg = new CreateGreenEnergyMessage;
         $msg->setConnectionId($request->connectionId);
         $msg->setGreenEnergyTypeId($request->greenEnergyTypeId);
         $msg->setPercentage($request->percentage);
-        if ($request->effectiveStart) {
+        if ($request->effectiveStart != null) {
 
             $msg->setEffectiveStartTs($request->effectiveStart);
         }
-        if ($request->effectiveEnd) {
+        if ($request->effectiveEnd != null) {
             $msg->setEffectiveEndTs($request->effectiveEnd);
         }
-        if ($request->remarks) {
+        if ($request->remarks != null) {
             $msg->setRemarks($request->remarks);
         }
-
-        if ($request->isActive) {
-            $msg->setIsActive($request->isActive);
-        }
-
+        $msg->setIsActive($request->isActive);
 
         return $msg;
     }

@@ -1,5 +1,6 @@
 import ConnectionFlagModal from '@/components/Connections/ConnectionFlagModal'
 import ConnectionGenerationFormModal from '@/components/Connections/ConnectionGenerationFormModal'
+import ConnectionGreenEnergyFormModal from '@/components/Connections/ConnectionGreenEnergyFormModal'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
@@ -9,11 +10,10 @@ import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import StrongText from '@/typography/StrongText'
 import AddButton from '@/ui/button/AddButton'
 import EditButton from '@/ui/button/EditButton'
+import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 import { useMemo, useState } from 'react'
 import { groupFlagsBySection } from '../Consumer/ConsumerShow'
-import ConnectionGreenEnergyFormModal from '@/components/Connections/ConnectionGreenEnergyFormModal'
-import { getDisplayDate } from '@/utils'
 
 interface Props {
   connection: Connection
@@ -356,7 +356,10 @@ export default function ConnectionsShow({
           {connection.green_energy &&
             connection.green_energy.length > 0 &&
             connection.green_energy.map((greenEnergy) => (
-              <Card className='rounded-lg p-5'>
+              <Card
+                className='rounded-lg p-5'
+                key={greenEnergy.id}
+              >
                 <div className='mb-6 flex items-center justify-between'>
                   <StrongText className='text-base font-semibold text-[#252c32]'>
                     {greenEnergy.green_energy_type.parameter_value}

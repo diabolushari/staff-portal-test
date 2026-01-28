@@ -14,7 +14,7 @@ class ConnectionGreenEnergyService
 {
     private GreenEnergyServiceClient $client;
 
-    public function __construct(private readonly ConnectionGreenEnergyConverter $connectionGreenEnergyService,)
+    public function __construct(private readonly ConnectionGreenEnergyConverter $connectionGreenEnergyService)
     {
         $this->client = new GreenEnergyServiceClient(
             config('app.consumer_service_grpc_host'),
@@ -22,20 +22,15 @@ class ConnectionGreenEnergyService
         );
     }
 
-
-
-
-
     public function create(ConnectionGreenEnergyFormRequest $request): GrpcServiceResponse
     {
         $greenEnergy = $this->connectionGreenEnergyService->formToGrpcMessage($request);
 
-        $grpcRequest = new CreateGreenEnergyRequest();
+        $grpcRequest = new CreateGreenEnergyRequest;
         $grpcRequest->setGreenEnergy([$greenEnergy]);
 
         [$response, $status] =
             $this->client->CreateGreenEnergy($grpcRequest)->wait();
-
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
