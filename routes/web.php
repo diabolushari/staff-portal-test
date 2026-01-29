@@ -25,6 +25,7 @@ use App\Http\Controllers\BillingGroup\ConsumerNumberApiController;
 use App\Http\Controllers\Connection\ConnectionController;
 use App\Http\Controllers\Connection\ConnectionFlagController;
 use App\Http\Controllers\Connection\ConnectionGenerationController;
+use App\Http\Controllers\Connection\ConnectionGreenEnergyController;
 use App\Http\Controllers\Connection\ConnectionsPartyController;
 use App\Http\Controllers\Connection\ConsumerController;
 use App\Http\Controllers\Connection\CreateConsumerController;
@@ -95,6 +96,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('connection.consumer.create');
     Route::resource('connection-flag', ConnectionFlagController::class);
     Route::resource('connection-generation', ConnectionGenerationController::class);
+
+    Route::post('connection-green-energy', ConnectionGreenEnergyController::class)
+        ->name('connection-green-energy');
 
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)
         ->name('offices.update-contacts');

@@ -155,6 +155,11 @@ class ConnectionProtoConverter
             $connectionGenerationArray = ConnectionGenerationProtoConverter::convertToArray($connectionGeneration);
             $connectionGenerationArrays[] = $connectionGenerationArray;
         }
+        $greenEnergyArrays = [];
+        foreach ($connection->getGreenEnergy() as $greenEnergy) {
+            $greenEnergyArray = ConnectionGreenEnergyConverter::convertToArray($greenEnergy);
+            $greenEnergyArrays[] = $greenEnergyArray;
+        }
         $meterreadingConverter = app(MeterReadingService::class);
         $latestMeterReading = $connection->getLatestMeterReading();
         $latestMeterReadingArray = null;
@@ -233,7 +238,7 @@ class ConnectionProtoConverter
             'connection_generation_types' => $connectionGenerationArrays,
             'no_of_main_meters' => $connection->getNoOfMainMeters(),
             'previous_reading' => $previousMeterReadingArray,
-
+            'green_energy' => $greenEnergyArrays,
         ];
     }
 }

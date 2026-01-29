@@ -285,8 +285,10 @@ class MeteringTimezoneController extends Controller
         $response = $this->meteringTimezoneService->updateMeteringTimezone($data);
 
         if ($response->hasValidationError()) {
-            return redirect()->back()->withErrors($response->error)->withInput();
-        }
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
+        };
 
         return redirect()->back()->with('message', 'Meter timezone updated successfully.');
     }

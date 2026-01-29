@@ -1,5 +1,6 @@
 import ConnectionFlagModal from '@/components/Connections/ConnectionFlagModal'
 import ConnectionGenerationFormModal from '@/components/Connections/ConnectionGenerationFormModal'
+import ConnectionGreenEnergyFormModal from '@/components/Connections/ConnectionGreenEnergyFormModal'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
@@ -9,6 +10,7 @@ import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import StrongText from '@/typography/StrongText'
 import AddButton from '@/ui/button/AddButton'
 import EditButton from '@/ui/button/EditButton'
+import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 import { useMemo, useState } from 'react'
 import { groupFlagsBySection } from '../Consumer/ConsumerShow'
@@ -19,6 +21,7 @@ interface Props {
   indicators: ParameterValues[]
   generationTypes: ParameterValues[]
   primaryPurposes: ParameterValues[]
+  greenEnergyTypes: ParameterValues[]
 }
 
 export default function ConnectionsShow({
@@ -27,11 +30,14 @@ export default function ConnectionsShow({
   indicators,
   generationTypes,
   primaryPurposes,
+  greenEnergyTypes,
 }: Readonly<Props>) {
+  console.log(connection)
   const formatDate = (dateStr?: string | null) =>
     dateStr ? new Date(dateStr).toLocaleDateString('en-GB') : '-'
   const [editIndicator, setEditIndicator] = useState(false)
   const [editGeneration, setEditGeneration] = useState(false)
+  const [addGreenEnergy, setAddGreenEnergy] = useState<boolean>(false)
 
   const breadcrumbs = useMemo(
     () => [
@@ -60,6 +66,9 @@ export default function ConnectionsShow({
   const handleGeneration = () => {
     setEditGeneration(!editGeneration)
   }
+  const handleAddGreenEnergy = () => {
+    setAddGreenEnergy(!addGreenEnergy)
+  }
 
   const otherPurposesLabel = useMemo(() => {
     if (!connection?.other_purposes?.length) {
@@ -69,8 +78,6 @@ export default function ConnectionsShow({
     const purposeMap = new Map(
       primaryPurposes.map((purpose) => [purpose.id, purpose.parameter_value])
     )
-
-    console.log('purposeMap', purposeMap)
 
     const labels = connection.other_purposes
       .map((purposeId) => purposeMap.get(Number(purposeId)))
@@ -346,6 +353,42 @@ export default function ConnectionsShow({
                 </div>
               </Card>
             ))}
+          {connection.green_energy &&
+            connection.green_energy.length > 0 &&
+            connection.green_energy.map((greenEnergy) => (
+              <Card
+                className='rounded-lg p-5'
+                key={greenEnergy.id}
+              >
+                <div className='mb-6 flex items-center justify-between'>
+                  <StrongText className='text-base font-semibold text-[#252c32]'>
+                    {greenEnergy.green_energy_type.parameter_value}
+                  </StrongText>
+                </div>
+                <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
+
+                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                  <Field
+                    label='Percentage'
+                    value={greenEnergy.percentage}
+                  />
+                  {greenEnergy.remarks && (
+                    <Field
+                      label='Remarks'
+                      value={greenEnergy.remarks}
+                    />
+                  )}
+                  <Field
+                    label='Effective Start Date'
+                    value={getDisplayDate(greenEnergy.effective_start)}
+                  />
+                  <Field
+                    label='Effective End Date'
+                    value={getDisplayDate(greenEnergy.effective_end)}
+                  />
+                </div>
+              </Card>
+            ))}
           <div className='flex gap-4'>
             {connectionGroupedFlags?.length === 0 && indicators.length > 0 && (
               <AddButton
@@ -360,6 +403,10 @@ export default function ConnectionsShow({
                   buttonText='Add Generation'
                 />
               )}
+            <AddButton
+              onClick={() => handleAddGreenEnergy()}
+              buttonText='Add Green Energy'
+            />
           </div>
           {editIndicator && (
             <ConnectionFlagModal
@@ -375,6 +422,13 @@ export default function ConnectionsShow({
               setShowModal={setEditGeneration}
               generationTypes={generationTypes}
               initialGenerationData={connection?.connection_generation_types}
+            />
+          )}
+          {addGreenEnergy && (
+            <ConnectionGreenEnergyFormModal
+              connection={connection}
+              setShowModal={setAddGreenEnergy}
+              greenEnergyTypes={greenEnergyTypes}
             />
           )}
           {/* Dates */}
