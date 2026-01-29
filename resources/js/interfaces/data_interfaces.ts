@@ -382,6 +382,7 @@ export interface Meter {
 
   transformers: MeterTransformerAssignment[]
   has_meter_reading?: boolean
+  meter_timezone_type_rel: MeterTimezoneType[]
 }
 
 export interface MeterTransformer {

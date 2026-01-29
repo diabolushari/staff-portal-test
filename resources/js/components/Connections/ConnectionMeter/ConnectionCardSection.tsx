@@ -99,6 +99,15 @@ export default function ConnectionCardSection({
                 <span>{meterMapping.meter_use_category?.parameter_value}</span>
               </div>
             )}
+            {meterMapping?.meter?.meter_timezone_type_rel &&
+              meterMapping?.meter?.meter_timezone_type_rel?.length > 0 && (
+                <div className='flex items-center gap-1.5'>
+                  <Settings className='h-4 w-4 text-slate-500' />
+                  <span>
+                    {meterMapping?.meter?.meter_timezone_type_rel[0].timezone_type?.parameter_value}
+                  </span>
+                </div>
+              )}
             {meterMapping.meter_profile != null && (
               <div
                 className='flex cursor-pointer items-center gap-1.5'
