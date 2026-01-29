@@ -5,6 +5,7 @@ namespace App\Http\Controllers\VariableRate;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VariableRate\VariableRateFormRequest;
 use App\Services\Parameters\ParameterDefinitionService;
+use App\Services\Parameters\ParameterValueService;
 use App\Services\VariableRate\VariableRateService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ class VariableRateController extends Controller
 {
     public function __construct(
         private VariableRateService $variableRateService,
-        private ParameterDefinitionService $parameterDefinitionService
+        private ParameterDefinitionService $parameterDefinitionService,
+        private ParameterValueService $parameterValueService
     ) {}
 
     public function index(Request $request): Response
@@ -26,13 +28,19 @@ class VariableRateController extends Controller
         $orderDescriptor = $request->input('search') ?? null;
         $orderBy = $request->input('order_by') ?? null;
         $orderDirection = $request->input('order_direction') ?? null;
+        $variableNameId = $request->input('variable_name_id') ?? null;
+        $variableName = null;
+        if (! empty($variableNameId)) {
+            $variableName = $this->parameterValueService->getParameterValue($variableNameId)->data;
+        }
 
         $variableRateResponse = $this->variableRateService->listPaginatedVariableRates(
             $pageNumber,
             $pageSize,
             $orderBy,
             $orderDescriptor,
-            $orderDirection
+            $orderDirection,
+            $variableNameId
         );
         $paginated = null;
         if (! empty($variableRateResponse->data)) {
@@ -60,22 +68,31 @@ class VariableRateController extends Controller
                 'search' => $orderDescriptor,
                 'order_by' => $orderBy,
                 'order_direction' => $orderDirection,
+                'oldVariableName' => $variableName,
             ],
         ]);
     }
 
     public function store(VariableRateFormRequest $request): RedirectResponse
     {
-        $this->variableRateService->createVariableRate($request);
+        $response = $this->variableRateService->createVariableRate($request);
 
-        return redirect()->route('variable-rates.index');
+        if ($response->hasValidationError()) {
+            return redirect()->back()->withErrors($response->error ?? 'Unknown error')->withInput();
+        }
+
+        return redirect()->back()->with('message', 'Variable rate created successfully.');
     }
 
     public function update(VariableRateFormRequest $request): RedirectResponse
     {
-        $this->variableRateService->updateVariableRate($request);
+        $response = $this->variableRateService->updateVariableRate($request);
 
-        return redirect()->route('variable-rates.index');
+        if ($response->hasValidationError()) {
+            return redirect()->back()->withErrors($response->error ?? 'Unknown error')->withInput();
+        }
+
+        return redirect()->back()->with('message', 'Variable rate updated successfully.');
     }
 
     public function destroy(int $id): RedirectResponse

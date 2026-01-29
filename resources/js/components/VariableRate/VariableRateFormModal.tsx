@@ -56,26 +56,28 @@ export default function VariableRateFormModal({ setShowModal, switchForm, rate }
     >
       <form onSubmit={handleSubmit}>
         <div className='flex flex-col gap-4'>
-          <ComboBox
-            label='Variable Rate'
-            value={selectedVariableRate}
-            setValue={setSelectedVariableRate}
-            placeholder='Search Variable Rate'
-            dataKey='id'
-            displayKey='parameter_value'
-            displayValue2='parameter_code'
-            url='/api/parameter-values?domain_name=Billing&parameter_name=Variable Rate&attribute_value='
-            error={errors.variable_name_id}
-          />
-          <div className='flex justify-end'>
-            <Button
-              label='Add Variable Name'
-              variant='link'
-              onClick={() => switchForm(false)}
+          <div>
+            <ComboBox
+              label='Variable Name'
+              value={selectedVariableRate}
+              setValue={setSelectedVariableRate}
+              placeholder='Eg: Green Energy'
+              dataKey='id'
+              displayKey='parameter_value'
+              displayValue2='parameter_code'
+              url='/api/parameter-values?domain_name=Billing&parameter_name=Variable Rate&attribute_value='
+              error={errors.variable_name_id}
             />
+            <div className='flex justify-end'>
+              <Button
+                label='Add Variable Name'
+                variant='link'
+                onClick={() => switchForm(false)}
+              />
+            </div>
           </div>
           <Input
-            label='Variable Rate'
+            label='Rate'
             value={formData.rate}
             setValue={setFormValue('rate')}
             error={errors.rate}

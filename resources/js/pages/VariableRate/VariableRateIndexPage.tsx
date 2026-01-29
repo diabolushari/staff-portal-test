@@ -4,11 +4,12 @@ import { BreadcrumbItem } from '@/types'
 import { useState } from 'react'
 import VariableRateFormModal from '@/components/VariableRate/VariableRateFormModal'
 import ParameterValueModal from '@/components/Parameter/ParameterValue/ParameterValueModal'
-import { ParameterDefinition } from '@/interfaces/parameter_types'
+import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
 import { Paginator } from '@/ui/ui_interfaces'
 import { VariableRate } from '@/interfaces/data_interfaces'
 import VariableRateList from '@/components/VariableRate/VariableRateList'
 import Pagination from '@/ui/Pagination/Pagination'
+import VariableRateSearch from '@/components/VariableRate/VariableSerachForm'
 
 interface PageProps {
   variableRateParameter: ParameterDefinition
@@ -17,6 +18,7 @@ interface PageProps {
     search: string | null
     order_by: string | null
     order_direction: string | null
+    oldVariableName: ParameterValues | null
   }
 }
 
@@ -61,6 +63,7 @@ export default function VariableRateIndexPage({
       title='Variable Rate'
       addBtnClick={handleAddBtnClick}
     >
+      <VariableRateSearch filters={filters} />
       <VariableRateList
         variableRates={variableRates.data}
         handleEdit={handleEdit}

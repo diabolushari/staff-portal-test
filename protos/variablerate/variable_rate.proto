@@ -87,6 +87,7 @@ message VariableRatePaginatedListRequest {
   int32 page_size = 3;
   optional string sort_by = 4;
   optional string sort_direction = 5;
+  optional int32 variable_name_id = 6;
 }
 
 message VariableRatePaginatedListResponse {

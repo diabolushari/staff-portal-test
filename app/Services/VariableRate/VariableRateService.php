@@ -79,7 +79,7 @@ class VariableRateService
         );
     }
 
-    public function listPaginatedVariableRates(?int $pageNumber = 1, ?int $pageSize = 10, ?string $search = null, ?string $sortBy = 'id', ?string $sortOrder = 'asc'): GrpcServiceResponse
+    public function listPaginatedVariableRates(?int $pageNumber = 1, ?int $pageSize = 10, ?string $search = null, ?string $sortBy = 'id', ?string $sortOrder = 'asc', ?int $variableNameId = null): GrpcServiceResponse
     {
         $variableRateRequest = new VariableRatePaginatedListRequest();
         if ($pageNumber !== null) {
@@ -96,6 +96,9 @@ class VariableRateService
         }
         if ($sortOrder !== null) {
             $variableRateRequest->setSortDirection($sortOrder);
+        }
+        if ($variableNameId !== null) {
+            $variableRateRequest->setVariableNameId($variableNameId);
         }
         [$response, $status] = $this->client->ListVariableRatesPaginated($variableRateRequest)->wait();
 
