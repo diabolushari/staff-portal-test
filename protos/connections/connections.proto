@@ -151,16 +151,23 @@ message ListConnectionsResponse {
 }
 
 message ListConnectionsPaginatedRequest {
-  optional string connection_type = 1;
+  optional int32 connection_type_id = 1;
   optional string search = 2;
   optional string consumer_number = 3;
   optional int32 office_code = 4;
   optional int32 consumer_type_id = 5;
   optional int32 primary_purpose_id = 6;
-  int32 page_number = 7;
-  int32 page_size = 8;
-  optional string sort_by = 9;
-  optional string sort_direction = 10;
+  optional int32 tariff_id = 7;
+  optional string consumer_legacy_code = 8;
+  optional string organisation_name = 9;
+  optional string consumer_name = 10;
+  optional int64 primary_phone = 11;
+  optional string from_date = 12;
+  optional string to_date = 13;
+  int32 page_number = 14;
+  int32 page_size = 15;
+  optional string sort_by = 16;
+  optional string sort_direction = 17;
 }
 message ListConnectionsPaginatedResponse {
   repeated ConnectionMessage items = 1;

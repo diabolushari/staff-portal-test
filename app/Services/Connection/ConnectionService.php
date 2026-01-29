@@ -75,7 +75,14 @@ class ConnectionService
         ?string $consumerNumber = null,
         ?int $officeCode = null,
         ?int $connectionPurposeId = null,
-        ?int $consumerTypeId = null
+        ?int $connectionTypeId = null,
+        ?int $tariffId = null,
+        ?string $consumerLegacyCode = null,
+        ?string $organisationName = null,
+        ?string $consumerName = null,
+        ?string $fromDate = null,
+        ?string $toDate = null,
+        ?int $primaryPhone = null
     ): GrpcServiceResponse {
         $request = new ListConnectionsPaginatedRequest;
 
@@ -94,8 +101,29 @@ class ConnectionService
         if ($connectionPurposeId) {
             $request->setPrimaryPurposeId($connectionPurposeId);
         }
-        if ($consumerTypeId) {
-            $request->setConsumerTypeId($consumerTypeId);
+        if ($connectionTypeId) {
+            $request->setConnectionTypeId($connectionTypeId);
+        }
+        if ($tariffId) {
+            $request->setTariffId($tariffId);
+        }
+        if ($consumerLegacyCode) {
+            $request->setConsumerLegacyCode($consumerLegacyCode);
+        }
+        if ($organisationName) {
+            $request->setOrganisationName($organisationName);
+        }
+        if ($consumerName) {
+            $request->setConsumerName($consumerName);
+        }
+        if ($fromDate) {
+            $request->setFromDate($fromDate);
+        }
+        if ($toDate) {
+            $request->setToDate($toDate);
+        }
+        if ($primaryPhone) {
+            $request->setPrimaryPhone($primaryPhone);
         }
 
         [$response, $status] = $this->client->ListConnectionsPaginated($request)->wait();
