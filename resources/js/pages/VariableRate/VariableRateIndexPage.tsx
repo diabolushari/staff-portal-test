@@ -77,7 +77,7 @@ export default function VariableRateIndexPage({
           rate={selectedRate}
         />
       )}
-      {showParameterValueModal && variableRateParameter && (
+      {showParameterValueModal && (
         <ParameterValueModal
           onClose={handleSwitchForm}
           definition={variableRateParameter}
@@ -85,6 +85,7 @@ export default function VariableRateIndexPage({
           valueLabel='Variable Name'
           descriptionLabel='Description'
           title='Variable Name'
+          warningMessage='Please Create a Definition named "Variable Name" on Billing domain'
         />
       )}
     </MainLayout>
