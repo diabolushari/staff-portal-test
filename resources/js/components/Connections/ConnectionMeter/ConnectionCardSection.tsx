@@ -20,7 +20,6 @@ import { getDisplayDate } from '@/utils'
 
 interface Props {
   meterMapping: MeterConnectionMapping
-  ctptRelations: MeterTransformerAssignment[]
   connectionId: number
   onDelete: (mapping: MeterConnectionMapping) => void
   onEdit: (mappingId: number) => void
@@ -33,7 +32,6 @@ interface Props {
 
 export default function ConnectionCardSection({
   meterMapping,
-  ctptRelations,
   connectionId,
   changeReasons,
   onDelete,
@@ -43,7 +41,7 @@ export default function ConnectionCardSection({
   onMeterProfileChange,
   statuses,
 }: Readonly<Props>) {
-  const meterTransformers = ctptRelations.filter((ctpt) => ctpt.meter_id === meterMapping.meter_id)
+  const meterTransformers = meterMapping.meter?.transformers
 
   const [change, setChange] = useState<boolean>(false)
 
@@ -171,7 +169,7 @@ export default function ConnectionCardSection({
           <div className='flex items-center gap-2'>
             <Plug className='h-4 w-4 text-slate-600' />
             <span className='text-sm font-semibold text-slate-700'>
-              CT/PT Transformers ({meterTransformers.length})
+              CT/PT Transformers ({meterTransformers?.length})
             </span>
           </div>
           <Button
@@ -185,59 +183,59 @@ export default function ConnectionCardSection({
           </Button>
         </div>
       </div>
-      {meterTransformers.length > 0 && (
+      {meterTransformers?.length > 0 && (
         <div className='mt-3'>
           <div className='grid gap-3'>
-            {meterTransformers.map((ctpt) => (
+            {meterTransformers?.map((ctpt) => (
               <div
-                key={ctpt.version_id}
+                key={ctpt?.ctpt_id}
                 className='rounded-lg border border-slate-200 bg-slate-50 p-3 shadow-sm'
               >
                 <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-center'>
                   <div className='flex flex-wrap items-center gap-4 text-sm'>
                     <div className='flex items-center gap-1'>
                       <a
-                        href={`/meter-ctpt/${ctpt.ctpt_id}`}
+                        href={`/meter-ctpt/${ctpt?.ctpt_id}`}
                         target='__blank'
                       >
                         <span className='font-medium text-slate-700'>Serial:</span>
 
                         <span className='cursor-pointer text-slate-600 hover:text-blue-600'>
-                          <b>{ctpt.ctpt?.ctpt_serial ?? 'N/A'}</b>
+                          <b>{ctpt?.ctpt?.ctpt_serial ?? 'N/A'}</b>
                         </span>
                       </a>
                     </div>
                     <div className='flex items-center gap-1'>
                       <span className='font-medium text-slate-700'>Type:</span>
                       <span className='text-slate-600'>
-                        {ctpt.ctpt?.type?.parameter_value ?? 'N/A'}
+                        {ctpt?.ctpt?.type?.parameter_value ?? 'N/A'}
                       </span>
                     </div>
-                    {ctpt.ctpt?.ratio_primary_value != null &&
-                      ctpt.ctpt?.ratio_secondary_value != null && (
+                    {ctpt?.ctpt?.ratio_primary_value != null &&
+                      ctpt?.ctpt?.ratio_secondary_value != null && (
                         <div className='flex items-center gap-1'>
                           <span className='font-medium text-slate-700'>Ratio:</span>
                           <span className='text-slate-600'>
-                            {ctpt.ctpt?.ratio_primary_value} / {ctpt.ctpt?.ratio_secondary_value}
+                            {ctpt?.ctpt?.ratio_primary_value} / {ctpt?.ctpt?.ratio_secondary_value}
                           </span>
                         </div>
                       )}
-                    {ctpt.status?.parameter_value != null && (
+                    {ctpt?.status?.parameter_value != null && (
                       <div
                         className={`rounded-full px-2 py-1 ${
-                          ctpt.status?.parameter_value === 'Active'
+                          ctpt?.status?.parameter_value === 'Active'
                             ? 'bg-green-100 text-green-800'
                             : 'bg-gray-100 text-gray-800'
                         }`}
                       >
-                        <span className='text-xs font-medium'>{ctpt.status?.parameter_value}</span>
+                        <span className='text-xs font-medium'>{ctpt?.status?.parameter_value}</span>
                       </div>
                     )}
-                    {ctpt.ctpt_energise_date && (
+                    {ctpt?.ctpt_energise_date && (
                       <div className='flex items-center gap-1'>
                         <Calendar className='h-3 w-3 text-slate-500' />
                         <span className='text-slate-600'>
-                          Energized: {getDisplayDate(ctpt.ctpt_energise_date)}
+                          Energized: {getDisplayDate(ctpt?.ctpt_energise_date)}
                         </span>
                       </div>
                     )}
