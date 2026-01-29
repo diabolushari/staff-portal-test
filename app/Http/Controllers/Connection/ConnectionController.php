@@ -164,6 +164,13 @@ class ConnectionController extends Controller
             'Connection',
             'Green Energy Type'
         );
+        $agreementAuthorities = $this->parameterValueService->getParameterValues(
+            null,
+            null,
+            null,
+            'Connection',
+            'Agreement Authority'
+        );
         if ($connection->hasValidationError()) {
             if ($connection->error) {
                 return $connection->error;
@@ -182,6 +189,7 @@ class ConnectionController extends Controller
             'generationTypes' => $generationTypes->data,
             'primaryPurposes' => $primaryPurposes->data,
             'greenEnergyTypes' => $greenEnergyTypes->data,
+            'agreementAuthorities' => $agreementAuthorities->data,
         ]);
     }
 

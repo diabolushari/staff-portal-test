@@ -9,28 +9,50 @@ import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
 import Modal from '@/ui/Modal/Modal'
+import { id } from 'date-fns/locale'
 import { useCallback } from 'react'
 
 interface Props {
   connection: Connection
   setShowModal: (show: boolean) => void
   greenEnergyTypes: ParameterValues[]
+  agreementAuthorities: ParameterValues[]
+  greenEnergy?: {
+    id: number
+    green_energy_type_id: number
+    agreement_authority_id: number
+    percentage: number
+    effective_start: string
+    effective_end: string
+    remarks: string
+    is_active: boolean
+  }
 }
 
-const ConnectionGreenEnergyFormModal = ({ connection, setShowModal, greenEnergyTypes }: Props) => {
+const ConnectionGreenEnergyFormModal = ({
+  connection,
+  setShowModal,
+  greenEnergyTypes,
+  agreementAuthorities,
+  greenEnergy,
+}: Props) => {
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
+    id: greenEnergy?.id ?? null,
     connection_id: connection.connection_id,
-    green_energy_type_id: '',
-    percentage: '',
-    effective_start: '',
-    effective_end: '',
-    remarks: '',
-    is_active: true,
+    green_energy_type_id: greenEnergy?.green_energy_type_id ?? '',
+    agreement_authority_id: greenEnergy?.agreement_authority_id ?? '',
+    percentage: greenEnergy?.percentage ?? '',
+    effective_start: greenEnergy?.effective_start ?? '',
+    effective_end: greenEnergy?.effective_end ?? '',
+    remarks: greenEnergy?.remarks ?? '',
+    is_active: greenEnergy?.is_active ?? true,
   })
 
   const onComplete = useCallback(() => {
     setShowModal(false)
   }, [setShowModal])
+
+  const isEdit = Boolean(greenEnergy)
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
     route('connection-green-energy'),
@@ -64,6 +86,16 @@ const ConnectionGreenEnergyFormModal = ({ connection, setShowModal, greenEnergyT
             setValue={setFormValue('green_energy_type_id')}
             value={formData.green_energy_type_id}
             error={errors?.green_energy_type_id}
+          />
+          <SelectList
+            label='Agreement Authority'
+            required
+            list={agreementAuthorities}
+            dataKey='id'
+            displayKey='parameter_value'
+            setValue={setFormValue('agreement_authority_id')}
+            value={formData.agreement_authority_id}
+            error={errors?.agreement_authority_id}
           />
           <Input
             type='number'

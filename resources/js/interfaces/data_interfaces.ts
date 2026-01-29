@@ -212,6 +212,8 @@ export interface ConnectionGreenEnergy {
   connection_id: number | string
   green_energy_type_id: number | string
   green_energy_type: ParameterValues
+  agreement_authority_id: number | string
+  agreement_authority: ParameterValues
   percentage:number
   id:number
   is_active:boolean
