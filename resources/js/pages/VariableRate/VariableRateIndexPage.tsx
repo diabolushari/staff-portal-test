@@ -9,7 +9,7 @@ import { Paginator } from '@/ui/ui_interfaces'
 import { VariableRate } from '@/interfaces/data_interfaces'
 import VariableRateList from '@/components/VariableRate/VariableRateList'
 import Pagination from '@/ui/Pagination/Pagination'
-import VariableRateSearch from '@/components/VariableRate/VariableSerachForm'
+import VariableRateSearch from '@/components/VariableRate/VariableSearchForm'
 
 interface PageProps {
   variableRateParameter: ParameterDefinition

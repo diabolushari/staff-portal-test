@@ -1,4 +1,3 @@
-import { Alert } from '@/components/ui/alert'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
@@ -74,8 +73,7 @@ export default function ParameterValueModal({
     >
       {warningMessage && !definition && (
         <div className='flex'>
-          {' '}
-          {warningMessage}{' '}
+          {warningMessage}
           <Button
             label='Create'
             onClick={() => router.get(route('parameter-definition.index'))}

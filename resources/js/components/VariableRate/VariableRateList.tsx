@@ -14,7 +14,6 @@ interface Props {
 export default function VariableRateList({ variableRates, handleEdit }: Readonly<Props>) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [selectedRate, setSelectedRate] = useState<VariableRate | null>(null)
-  const [editModalOpen, setEditModalOpen] = useState(false)
 
   const handleDelete = (rate: VariableRate) => {
     setDeleteModalOpen(true)
@@ -27,8 +26,7 @@ export default function VariableRateList({ variableRates, handleEdit }: Readonly
         {variableRates?.map((rate) => (
           <div
             key={rate.id}
-            className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
-            onClick={() => router.get(route('variable-rates.show', rate.id))}
+            className='mb-4 rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
           >
             <div className='flex items-start justify-between'>
               <div className='flex flex-1 flex-col gap-2.5 p-[10px]'>

@@ -29,7 +29,6 @@ export default function VariableRateSearch({ filters }: Readonly<Props>) {
   }
   useEffect(() => {
     if (!selectedVariableRate) return
-    setSelectedVariableRate(selectedVariableRate)
     setFormValue('variable_name_id')(selectedVariableRate?.id?.toString() ?? '')
   }, [selectedVariableRate])
 
@@ -60,7 +59,7 @@ export default function VariableRateSearch({ filters }: Readonly<Props>) {
 
               <Button
                 label='Search'
-                type='submit'
+                type='button'
                 onClick={(e) => handleSubmit(e)}
               />
               {filterApplied && (

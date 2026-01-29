@@ -25,7 +25,7 @@ class VariableRateController extends Controller
     {
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 10;
-        $orderDescriptor = $request->input('search') ?? null;
+        $search = $request->input('search') ?? null;
         $orderBy = $request->input('order_by') ?? null;
         $orderDirection = $request->input('order_direction') ?? null;
         $variableNameId = $request->input('variable_name_id') ?? null;
@@ -37,8 +37,8 @@ class VariableRateController extends Controller
         $variableRateResponse = $this->variableRateService->listPaginatedVariableRates(
             $pageNumber,
             $pageSize,
+            $search,
             $orderBy,
-            $orderDescriptor,
             $orderDirection,
             $variableNameId
         );
