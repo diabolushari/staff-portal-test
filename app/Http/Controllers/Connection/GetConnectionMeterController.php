@@ -4,9 +4,6 @@ namespace App\Http\Controllers\Connection;
 
 use App\Http\Controllers\Controller;
 use App\Services\Connection\ConnectionService;
-use App\Services\Metering\MeterConnectionMappingService;
-use App\Services\Metering\MeterService;
-use App\Services\Metering\MeterTransformerRelService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -15,11 +12,9 @@ use Inertia\Response;
 class GetConnectionMeterController extends Controller
 {
     public function __construct(
-        protected MeterConnectionMappingService $meterConnectionMappingService,
-        protected MeterService $meterService,
-        protected ConnectionService $connectionService,
-        protected MeterTransformerRelService $meterTransformerRelService,
-        protected ParameterValueService $parameterValueService,
+
+        private ConnectionService $connectionService,
+        private ParameterValueService $parameterValueService,
     ) {}
 
     public function __invoke(int $id): Response|RedirectResponse

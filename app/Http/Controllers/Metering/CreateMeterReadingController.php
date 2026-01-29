@@ -4,13 +4,10 @@ namespace App\Http\Controllers\Metering;
 
 use App\Http\Controllers\Controller;
 use App\Services\Connection\ConnectionService;
-use App\Services\Connection\ConsumerService;
-use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeteringParameterProfileService;
 use App\Services\Metering\MeterReadingService;
 use App\Services\Metering\MeterService;
 use App\Services\Metering\MeterTimezoneTypeRelService;
-use App\Services\Metering\MeterTransformerRelService;
 use App\Services\MeteringTimezone\MeteringTimezoneService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\Request;
