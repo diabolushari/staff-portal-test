@@ -7,7 +7,7 @@ import ComboBox from '@/ui/form/ComboBox'
 import DatePicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import Modal from '@/ui/Modal/Modal'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 interface PageProps {
   setShowModal: (showModal: boolean) => void
@@ -24,12 +24,15 @@ export default function VariableRateFormModal({ setShowModal, switchForm, rate }
     effective_end: rate?.effective_end ?? '',
     _method: rate ? 'put' : 'post',
   })
+
+  const onComplete = useCallback(() => {
+    setShowModal(false)
+  }, [setShowModal])
+
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     rate ? route('variable-rates.update', rate.id) : route('variable-rates.store'),
     {
-      onComplete: () => {
-        setShowModal(false)
-      },
+      onComplete,
     }
   )
 
@@ -64,7 +67,7 @@ export default function VariableRateFormModal({ setShowModal, switchForm, rate }
               dataKey='id'
               displayKey='parameter_value'
               displayValue2='parameter_code'
-              url='/api/parameter-values?domain_name=Billing&parameter_name=Variable Rate&attribute_value='
+              url='/api/parameter-values?domain_name=Billing&parameter_name=Variable Name&attribute_value='
               error={errors.variable_name_id}
             />
             <div className='flex justify-end'>

@@ -56,16 +56,15 @@ class VariableRateController extends Controller
         $variableRateParameter = $this->parameterDefinitionService->getParameterDefinition(
             null,
             'Billing',
-            'Variable Rate',
+            'Variable Name',
             'Billing'
         );
-
 
         return Inertia::render('VariableRate/VariableRateIndexPage', [
             'variableRateParameter' => $variableRateParameter->data,
             'variableRates' => $paginated ?? [],
             'filters' => [
-                'search' => $orderDescriptor,
+                'search' => $search,
                 'order_by' => $orderBy,
                 'order_direction' => $orderDirection,
                 'oldVariableName' => $variableName,
@@ -78,7 +77,7 @@ class VariableRateController extends Controller
         $response = $this->variableRateService->createVariableRate($request);
 
         if ($response->hasValidationError()) {
-            return redirect()->back()->withErrors($response->error ?? 'Unknown error')->withInput();
+            return $response->error ?? redirect()->back()->with(['error' => 'Unknown error']);
         }
 
         return redirect()->back()->with('message', 'Variable rate created successfully.');
