@@ -193,23 +193,28 @@ class ParameterDefinitionService
             );
         }
 
-        $domain = $response->getDomain() ?? null;
+        $definitionResponse = $response->getDefinition();
+
+        if ($definitionResponse === null) {
+            return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
+        }
+        $domain = $definitionResponse->getDomain();
         $domainArray = null;
         if ($domain !== null) {
             $domainArray = $this->parameterDomainGrpcConverter->convertToArray($domain);
         }
 
         $definition = [
-            'id' => $response->getId(),
-            'parameter_name' => $response->getParameterName(),
-            'attribute1_name' => $response->getAttribute1Name(),
-            'attribute2_name' => $response->getAttribute2Name(),
-            'attribute3_name' => $response->getAttribute3Name(),
-            'attribute4_name' => $response->getAttribute4Name(),
-            'attribute5_name' => $response->getAttribute5Name(),
-            'is_effective_date_driven' => $response->getIsEffectiveDateDriven(),
+            'id' => $definitionResponse->getId(),
+            'parameter_name' => $definitionResponse->getParameterName(),
+            'attribute1_name' => $definitionResponse->getAttribute1Name(),
+            'attribute2_name' => $definitionResponse->getAttribute2Name(),
+            'attribute3_name' => $definitionResponse->getAttribute3Name(),
+            'attribute4_name' => $definitionResponse->getAttribute4Name(),
+            'attribute5_name' => $definitionResponse->getAttribute5Name(),
+            'is_effective_date_driven' => $definitionResponse->getIsEffectiveDateDriven(),
             'domain' => $domainArray,
-            'domain_id' => $response->getDomainId(),
+            'domain_id' => $definitionResponse->getDomainId(),
         ];
 
         return GrpcServiceResponse::success($definition, $response, $status->code, $status->details);

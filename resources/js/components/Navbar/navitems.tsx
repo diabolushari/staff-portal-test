@@ -202,5 +202,10 @@ export const meteringBillingNavItems: MainNav = {
       href: '/billing-rules',
       icon: '',
     },
+    {
+      title: 'Variable Rate',
+      href: '/variable-rates',
+      icon: '',
+    },
   ],
 }

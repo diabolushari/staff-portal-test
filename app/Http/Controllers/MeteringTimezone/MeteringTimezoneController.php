@@ -288,7 +288,7 @@ class MeteringTimezoneController extends Controller
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
-        };
+        }
 
         return redirect()->back()->with('message', 'Meter timezone updated successfully.');
     }
