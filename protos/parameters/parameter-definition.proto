@@ -26,6 +26,8 @@ message ParameterDefinitionProto  {
   string attribute4_name = 8;
   string attribute5_name = 9;
   com.kseb.consumerservice.proto.parameters.ParameterDomainProto domain = 10;
+  optional int32 created_by = 11;
+  optional int32 updated_by = 12;
 }
 
 // ------------ REQUEST/RESPONSE ------------
@@ -56,11 +58,15 @@ message ParameterDefinitionPaginatedListResponse {
   int32 total_pages = 5;
 }
 
+message ParameterDefinitionGetResponse {
+ optional ParameterDefinitionProto definition = 1;
+}
+
 
 // ------------ SERVICE ------------
 service ParameterDefinitionService {
   rpc CreateParameterDefinition (CreateParameterDefinitionRequest)  returns (ParameterDefinitionProto);
-  rpc GetParameterDefinition    (GetParameterDefinitionRequest)     returns (ParameterDefinitionProto);
+  rpc GetParameterDefinition    (GetParameterDefinitionRequest)     returns (ParameterDefinitionGetResponse);
   rpc UpdateParameterDefinition (UpdateParameterDefinitionRequest)  returns (ParameterDefinitionProto);
   rpc DeleteParameterDefinition (DeleteParameterDefinitionRequest)  returns (google.protobuf.Empty);
   rpc ListParameterDefinitions  (ListParameterDefinitionsRequest)   returns (ListParameterDefinitionsResponse);

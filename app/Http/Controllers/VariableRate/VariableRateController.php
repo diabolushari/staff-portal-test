@@ -98,6 +98,6 @@ class VariableRateController extends Controller
     {
         $this->variableRateService->deleteVariableRate($id);
 
-        return redirect()->route('variable-rates.index');
+        return redirect()->back()->with(['message' => 'Variable Rate deleted successfuly']);
     }
 }

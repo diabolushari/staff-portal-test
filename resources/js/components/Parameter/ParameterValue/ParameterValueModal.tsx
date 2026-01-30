@@ -75,7 +75,7 @@ export default function ParameterValueModal({
         <div className='flex'>
           {warningMessage}
           <Button
-            label='Create'
+            label='Go To Definition'
             onClick={() => router.get(route('parameter-definition.index'))}
             variant='link'
           />
