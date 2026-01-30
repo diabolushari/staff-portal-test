@@ -88,7 +88,7 @@ class VariableRateController extends Controller
         $response = $this->variableRateService->updateVariableRate($request);
 
         if ($response->hasValidationError()) {
-            return redirect()->back()->withErrors($response->error ?? 'Unknown error')->withInput();
+            return $response->error ?? redirect()->back()->with(['error' => 'Unknown error']);
         }
 
         return redirect()->back()->with('message', 'Variable rate updated successfully.');
