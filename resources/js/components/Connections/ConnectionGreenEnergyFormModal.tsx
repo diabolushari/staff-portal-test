@@ -1,6 +1,6 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { Connection } from '@/interfaces/data_interfaces'
+import { Connection, ConnectionGreenEnergy } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
@@ -9,7 +9,6 @@ import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
 import Modal from '@/ui/Modal/Modal'
-import { id } from 'date-fns/locale'
 import { useCallback } from 'react'
 
 interface Props {
@@ -17,16 +16,7 @@ interface Props {
   setShowModal: (show: boolean) => void
   greenEnergyTypes: ParameterValues[]
   agreementAuthorities: ParameterValues[]
-  greenEnergy?: {
-    id: number
-    green_energy_type_id: number
-    agreement_authority_id: number
-    percentage: number
-    effective_start: string
-    effective_end: string
-    remarks: string
-    is_active: boolean
-  }
+  greenEnergy?: ConnectionGreenEnergy
 }
 
 const ConnectionGreenEnergyFormModal = ({
@@ -52,10 +42,10 @@ const ConnectionGreenEnergyFormModal = ({
     setShowModal(false)
   }, [setShowModal])
 
-  const isEdit = Boolean(greenEnergy)
-
   const { post, errors, loading } = useInertiaPost<typeof formData>(
-    route('connection-green-energy'),
+    greenEnergy?.id
+      ? route('connection-green-energy.update', greenEnergy.id)
+      : route('connection-green-energy'),
     {
       onComplete,
     }

@@ -16,6 +16,7 @@ import { useMemo, useState } from 'react'
 import { groupFlagsBySection } from '../Consumer/ConsumerShow'
 import ActionButton from '@/components/action-button'
 import DeleteModal from '@/ui/Modal/DeleteModal'
+import ConnectionGreenEnergyCard from '@/components/Connections/ConnectionGreenEnergyCard'
 
 interface Props {
   connection: Connection
@@ -93,18 +94,6 @@ export default function ConnectionsShow({
 
     return labels.join(', ')
   }, [connection?.other_purposes, primaryPurposes])
-
-  const [editGreenEnergy, setEditGreenEnergy] = useState(false)
-  const [selectedGreenEnergy, setSelectedGreenEnergy] = useState<ConnectionGreenEnergy | null>(null)
-
-  const handleEditGreenEnergy = (ge: ConnectionGreenEnergy) => {
-    setSelectedGreenEnergy(ge)
-    setEditGreenEnergy(true)
-  }
-
-  const [deleteGreenEnergy, setDeleteGreenEnergy] = useState<ConnectionGreenEnergy | null>(null)
-
-  console.log(connection)
 
   return (
     <ConnectionsLayout
@@ -367,56 +356,13 @@ export default function ConnectionsShow({
                 </div>
               </Card>
             ))}
-          <Card className='rounded-lg p-5'>
-            <div className='mb-6 flex items-center justify-between'>
-              <StrongText className='text-base font-semibold text-[#252c32]'>
-                Green Energy Details
-              </StrongText>
-            </div>
-            {connection?.green_energy &&
-              connection?.green_energy?.length > 0 &&
-              connection?.green_energy?.map((greenEnergy) => (
-                <>
-                  <div className='flex justify-end'>
-                    <ActionButton
-                      onEdit={() => handleEditGreenEnergy(greenEnergy)}
-                      onDelete={() => setDeleteGreenEnergy(greenEnergy)}
-                    />
-                  </div>
-                  <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
-
-                  <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                    <Field
-                      label='Green Energy Type'
-                      value={greenEnergy.green_energy_type.parameter_value}
-                    />
-                    <Field
-                      label='Agreement Authority'
-                      value={greenEnergy.agreement_authority.parameter_value}
-                    />
-
-                    <Field
-                      label='Percentage'
-                      value={greenEnergy.percentage}
-                    />
-                    {greenEnergy.remarks && (
-                      <Field
-                        label='Remarks'
-                        value={greenEnergy.remarks}
-                      />
-                    )}
-                    <Field
-                      label='From Date'
-                      value={getDisplayDate(greenEnergy.effective_start)}
-                    />
-                    <Field
-                      label='TO Date'
-                      value={getDisplayDate(greenEnergy.effective_end)}
-                    />
-                  </div>
-                </>
-              ))}
-          </Card>
+          {connection?.green_energy && connection?.green_energy?.length > 0 && (
+            <ConnectionGreenEnergyCard
+              connection={connection}
+              greenEnergyTypes={greenEnergyTypes}
+              agreementAuthorities={agreementAuthorities}
+            />
+          )}
           <div className='flex gap-4'>
             {connectionGroupedFlags?.length === 0 && indicators.length > 0 && (
               <AddButton
@@ -458,22 +404,6 @@ export default function ConnectionsShow({
               setShowModal={setAddGreenEnergy}
               greenEnergyTypes={greenEnergyTypes}
               agreementAuthorities={agreementAuthorities}
-            />
-          )}
-          {editGreenEnergy && selectedGreenEnergy && (
-            <ConnectionGreenEnergyFormModal
-              connection={connection}
-              setShowModal={setEditGreenEnergy}
-              greenEnergyTypes={greenEnergyTypes}
-              agreementAuthorities={agreementAuthorities}
-              greenEnergy={selectedGreenEnergy}
-            />
-          )}
-          {deleteGreenEnergy && (
-            <DeleteModal
-              title={`Delete Green Energy (${deleteGreenEnergy.green_energy_type.parameter_value})`}
-              setShowModal={() => setDeleteGreenEnergy(null)}
-              url={route('connections.green-energy.destroy', deleteGreenEnergy.id)}
             />
           )}
 
