@@ -7,6 +7,7 @@ import Input from '@/ui/form/Input'
 import TextArea from '@/ui/form/TextArea'
 import Modal from '@/ui/Modal/Modal'
 import { router } from '@inertiajs/react'
+import { useCallback } from 'react'
 
 interface PageProps {
   onClose: () => void

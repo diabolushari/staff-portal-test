@@ -1,7 +1,7 @@
 import MainLayout from '@/layouts/main-layout'
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import { BreadcrumbItem } from '@/types'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import VariableRateFormModal from '@/components/VariableRate/VariableRateFormModal'
 import ParameterValueModal from '@/components/Parameter/ParameterValue/ParameterValueModal'
 import { ParameterDefinition, ParameterValues } from '@/interfaces/parameter_types'
@@ -41,9 +41,9 @@ export default function VariableRateIndexPage({
   const [showModal, setShowModal] = useState(false)
   const [showParameterValueModal, setShowParameterValueModal] = useState<boolean>(false)
   const [selectedRate, setSelectedRate] = useState<VariableRate | null>(null)
-  const handleSwitchForm = () => {
+  const handleSwitchForm = useCallback(() => {
     setShowParameterValueModal(!showParameterValueModal)
-  }
+  }, [showParameterValueModal])
   const handleAddBtnClick = () => {
     setShowModal(true)
   }
@@ -85,7 +85,7 @@ export default function VariableRateIndexPage({
           valueLabel='Variable Name'
           descriptionLabel='Description'
           title='Variable Name'
-          warningMessage='Please Create a Definition named "Variable Name" on Billing domain'
+          warningMessage='No parameter definition found for "Variable Name". Create this definition in the Billing domain before proceeding.'
         />
       )}
     </MainLayout>
