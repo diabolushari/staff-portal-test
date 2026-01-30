@@ -318,6 +318,7 @@ class MeterConnectionMappingService
         $changeDate = $rel->getChangeDate() ? $rel->getChangeDate()->toDateTime()->format('Y-m-d') : null;
         $meterProfile = ParameterValueProtoConvertor::convertToArray($rel->getProfile());
         $energiseDate = $rel->getEnergiseDate() ? $rel->getEnergiseDate()->toDateTime()->format('Y-m-d') : null;
+
         return [
             'version_id' => $rel->getVersionId(),
             'rel_id' => $rel->getRelId(),

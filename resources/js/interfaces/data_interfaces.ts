@@ -212,12 +212,12 @@ export interface ConnectionGreenEnergy {
   connection_id: number | string
   green_energy_type_id: number | string
   green_energy_type: ParameterValues
-  percentage:number
-  id:number
-  is_active:boolean
-  remarks?:string
-  effective_start:string
-  effective_end:string
+  percentage: number
+  id: number
+  is_active: boolean
+  remarks?: string
+  effective_start: string
+  effective_end: string
 }
 
 export interface OfficeHierarchy {
@@ -380,8 +380,9 @@ export interface Meter {
   created_by: number | null
   updated_by: number | null
 
-  transformers: MeterTransformer[]
+  transformers: MeterTransformerAssignment[]
   has_meter_reading?: boolean
+  meter_timezone_type_rel: MeterTimezoneType[]
 }
 
 export interface MeterTransformer {

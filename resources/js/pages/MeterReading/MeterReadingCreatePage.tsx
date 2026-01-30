@@ -38,9 +38,7 @@ interface Step {
 interface Props {
   connectionWithConsumer: ConsumerData
   meterHealthTypes: ParameterValues[]
-  ctptHealthTypes: ParameterValues[]
   ctHealthTypes: ParameterValues[]
-  ptHealthTypes: ParameterValues[]
   anomalyTypes: ParameterValues[]
   metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
   latestMeterReading: MeterReading
@@ -78,9 +76,7 @@ const getMonthEnd = (dateStr: string, isFirstReading: boolean) => {
 export default function MeterReadingCreatePage({
   connectionWithConsumer,
   meterHealthTypes,
-  ctptHealthTypes,
   ctHealthTypes,
-  ptHealthTypes,
   anomalyTypes,
   metersWithTimezonesAndProfiles,
   latestMeterReading,
@@ -306,9 +302,7 @@ export default function MeterReadingCreatePage({
                   setFormValue={setFormValue}
                   latestMeterReading={latestMeterReading}
                   meterHealthTypes={meterHealthTypes}
-                  ctptHealthTypes={ctptHealthTypes}
                   ctHealthTypes={ctHealthTypes}
-                  ptHealthTypes={ptHealthTypes}
                   updateMeterHealth={updateMeterHealth}
                   updateCTPTHealth={updateCTPTHealth}
                   setIsOnParameterForm={setIsOnParameterForm}

@@ -18,9 +18,7 @@ interface Props {
   setIsOnParameterForm: (value: boolean) => void
   latestMeterReading: MeterReading
   meterHealthTypes: ParameterValues[]
-  ctptHealthTypes: ParameterValues[]
   ctHealthTypes: ParameterValues[]
-  ptHealthTypes: ParameterValues[]
   readingValues: MeterReadingFormState[]
   updateReading: (meterId: number, parameterId: number, newReading: TimezoneReadingState[]) => void
   updateMeterHealth: (meterHealthId: number, meter: Meter) => void
@@ -35,9 +33,7 @@ export default function MeterReadingsStep({
   updateMeterHealth,
   updateCTPTHealth,
   meterHealthTypes,
-  ctptHealthTypes,
   ctHealthTypes,
-  ptHealthTypes,
   readingValues,
   updateReading,
   healthData,
@@ -133,9 +129,7 @@ export default function MeterReadingsStep({
             <MeterReadingPreview
               healthData={healthData}
               meterHealthTypes={meterHealthTypes}
-              ctptHealthTypes={ctptHealthTypes}
               ctHealthTypes={ctHealthTypes}
-              ptHealthTypes={ptHealthTypes}
               updateMeterHealth={updateMeterHealth}
               updateCTPTHealth={updateCTPTHealth}
               meterIdx={meterIdx}

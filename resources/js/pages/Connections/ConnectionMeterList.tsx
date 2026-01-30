@@ -19,7 +19,6 @@ import AddButton from '@/ui/button/AddButton'
 interface ConnectionMeterListProps {
   connection_id: number
   connection: Connection
-  ctpt_relations: MeterTransformerAssignment[]
   status: ParameterValues[]
   change_reason: ParameterValues[]
   ctpt_status: ParameterValues[]
@@ -30,7 +29,6 @@ interface ConnectionMeterListProps {
 export default function ConnectionMeterList({
   connection_id,
   connection,
-  ctpt_relations,
   status,
   change_reason,
   ctpt_status,
@@ -134,7 +132,6 @@ export default function ConnectionMeterList({
               <ConnectionCardSection
                 key={mapping.rel_id}
                 meterMapping={mapping}
-                ctptRelations={ctpt_relations}
                 connectionId={connection_id}
                 onDelete={handleDeleteMeter}
                 onEdit={handleEditMeter}

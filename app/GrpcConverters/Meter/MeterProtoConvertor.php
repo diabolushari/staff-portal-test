@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\GrpcConverters\Meter;
 
 use App\GrpcConverters\Metering\MeterTransformerProtoConvertor;
+use App\GrpcConverters\Metering\MeterTransformerRelProtoConvertor;
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Http\Requests\Metering\MeterFormRequest;
+use App\Services\Metering\MeterTimezoneTypeRelService;
 use Proto\Consumers\MeterFormRequest as ConsumersMeterFormRequest;
 use Proto\Consumers\MeterResponse;
 
@@ -71,7 +73,11 @@ class MeterProtoConvertor
         }
         $transformers = [];
         foreach ($meter->getTransformers() as $transformer) {
-            $transformers[] = MeterTransformerProtoConvertor::convertToArray($transformer);
+            $transformers[] = MeterTransformerRelProtoConvertor::convertToArray($transformer);
+        }
+        $meterTimezoneTypeRels = [];
+        foreach ($meter->getMeterTimezoneTypeRel() as $meterTimezoneTypeRel) {
+            $meterTimezoneTypeRels[] = MeterTimezoneTypeRelService::meterTimezoneTypeRelProtoToArray($meterTimezoneTypeRel);
         }
 
         return [
@@ -119,6 +125,7 @@ class MeterProtoConvertor
             'updated_by' => $meter->getUpdatedBy(),
             'transformers' => $transformers,
             'has_meter_reading' => $meter->getHasMeterReading(),
+            'meter_timezone_type_rel' => $meterTimezoneTypeRels,
         ];
     }
 
