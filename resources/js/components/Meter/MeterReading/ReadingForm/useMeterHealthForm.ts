@@ -30,9 +30,9 @@ const storeInitialMetersHealthData = (
       meter_serial: meter.meter.meter_serial,
       ctpts: meter.meter.transformers.map((ctpt) => {
         return {
-          ctpt_id: ctpt.meter_ctpt_id,
+          ctpt_id: ctpt.ctpt?.meter_ctpt_id ?? '',
           health: defaultCTHealth?.id ?? '',
-          ctpt_serial: ctpt.ctpt_serial,
+          ctpt_serial: ctpt.ctpt?.ctpt_serial ?? '',
         }
       }),
       voltage_r:

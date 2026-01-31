@@ -13,7 +13,6 @@ import "metering/meter-transformer.proto";
 import "metering/meter_timezone_type_rel.proto";
 
 
-
 service MeterService {
   rpc CreateMeter(MeterFormRequest) returns (google.protobuf.Empty);
   rpc GetMeter(GetMeterRequest) returns (MeterResponseMessage);
@@ -91,6 +90,25 @@ message DeleteMeterRequest {
   int32 meter_id = 1;
 }
 
+message MeterTransformerMappingMessage {
+  int32 version_id = 1;
+  int64 ctpt_id = 2;
+  com.kseb.consumerservice.proto.metering.MeterTransformerMessage ctpt = 3;
+  int64 meter_id = 4;
+  optional google.protobuf.Timestamp faulty_date = 5;
+  optional google.protobuf.Timestamp ctpt_energise_date = 6;
+  optional google.protobuf.Timestamp ctpt_change_date = 7;
+  int64 status_id = 8;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto status = 9;
+  optional int64 change_reason_id = 10;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto change_reason = 11;
+  google.protobuf.Timestamp created_ts = 12;
+  google.protobuf.Timestamp updated_ts = 13;
+  int32 created_by = 14;
+  int32 updated_by = 15;
+
+}
+
 message MeterResponse {
 
   // --- Core identifiers ---
@@ -154,8 +172,9 @@ message MeterResponse {
   optional int32 updated_by = 43;
 
   // --- Relations ---
-  repeated com.kseb.consumerservice.proto.metering.MeterTransformerMessage transformers = 44;
+  repeated MeterTransformerMappingMessage transformers = 44;
   optional bool has_meter_reading = 45;
+  repeated MeterTimezoneTypeRel meter_timezone_type_rel = 46;
 }
 
 message MeterResponseMessage {

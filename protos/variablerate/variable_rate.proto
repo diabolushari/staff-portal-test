@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.variablerate;
+
+option php_namespace = "Proto\\Variablerate";
+option php_metadata_namespace = "GPBMetadata";
+
+import "parameters/parameter-value.proto";
+
+
+
+message VariableRateMessage {
+  int64 id = 1;
+  int32 variable_name_id = 2;
+  double rate = 3;
+  string effective_start = 4;
+  string effective_end = 5;
+  string created_ts = 6;
+  string updated_ts = 7;
+  string deleted_ts = 8;
+  int32 created_by = 9;
+  int32 updated_by = 10;
+  int32 deleted_by = 11;
+  bool is_active = 12;
+   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto variable_name = 15;
+}
+
+// ----------------- FORM / CREATE / UPDATE -----------------
+message VariableRateFormMessage {
+  optional int64 id = 1;
+  int32 variable_name_id = 2;
+  double rate = 3;
+  string effective_start = 4;
+  string effective_end = 5;
+  optional int32 created_by = 6;
+  optional int32 updated_by = 7;
+  optional int32 deleted_by = 8;
+
+}
+
+message CreateVariableRateRequest {
+  VariableRateFormMessage variable_rate = 1;
+}
+
+message CreateVariableRateResponse {
+  VariableRateMessage variable_rate = 1;
+}
+
+// ----------------- UPDATE -----------------
+message UpdateVariableRateRequest {
+  VariableRateFormMessage variable_rate = 1;
+}
+
+message UpdateVariableRateResponse {
+  VariableRateMessage variable_rate = 1;
+}
+
+// ----------------- GET -----------------
+message GetVariableRateRequest {
+  int64 id = 1;
+}
+message GetVariableRateResponse {
+  VariableRateMessage variable_rate = 1;
+}
+
+// ----------------- DELETE -----------------
+message DeleteVariableRateRequest {
+  int64 id = 1;
+  optional int32 deleted_by = 2;
+}
+message DeleteVariableRateResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListVariableRateRequest {
+  optional string search = 1;
+}
+
+message ListVariableRateResponse {
+  repeated VariableRateMessage variable_rates = 1;
+}
+
+message VariableRatePaginatedListRequest {
+  optional string search = 1;
+  int32 page_number = 2;
+  int32 page_size = 3;
+  optional string sort_by = 4;
+  optional string sort_direction = 5;
+  optional int32 variable_name_id = 6;
+}
+
+message VariableRatePaginatedListResponse {
+  repeated VariableRateMessage variable_rates = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
+// ----------------- SERVICE -----------------
+service VariableRateService {
+  rpc CreateVariableRate (CreateVariableRateRequest) returns (CreateVariableRateResponse);
+  rpc UpdateVariableRate (UpdateVariableRateRequest) returns (UpdateVariableRateResponse);
+  rpc GetVariableRate (GetVariableRateRequest) returns (GetVariableRateResponse);
+  rpc DeleteVariableRate (DeleteVariableRateRequest) returns (DeleteVariableRateResponse);
+  rpc ListVariableRates (ListVariableRateRequest) returns (ListVariableRateResponse);
+  rpc ListVariableRatesPaginated (VariableRatePaginatedListRequest) returns (VariableRatePaginatedListResponse);
+}

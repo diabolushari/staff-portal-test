@@ -4,13 +4,10 @@ namespace App\Http\Controllers\Metering;
 
 use App\Http\Controllers\Controller;
 use App\Services\Connection\ConnectionService;
-use App\Services\Connection\ConsumerService;
-use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeteringParameterProfileService;
 use App\Services\Metering\MeterReadingService;
 use App\Services\Metering\MeterService;
 use App\Services\Metering\MeterTimezoneTypeRelService;
-use App\Services\Metering\MeterTransformerRelService;
 use App\Services\MeteringTimezone\MeteringTimezoneService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\Request;
@@ -22,14 +19,11 @@ class CreateMeterReadingController extends Controller
     public function __construct(
         private ConnectionService $connectionService,
         private ParameterValueService $parameterService,
-        private ConsumerService $consumerService,
-        private MeterConnectionMappingService $meterConnectionMappingService,
         private MeterTimezoneTypeRelService $meterTimezoneTypeRelService,
         private MeteringTimezoneService $meteringTimezoneService,
         private MeteringParameterProfileService $meteringParameterProfileService,
         private MeterService $meterService,
         private MeterReadingService $meterReadingService,
-        private MeterTransformerRelService $meterTransformerRelService
     ) {}
 
     public function __invoke(Request $request, int $connectionId): Response
@@ -41,13 +35,7 @@ class CreateMeterReadingController extends Controller
             'Meter',
             'Meter Health',
         );
-        $ctptHealthTypes = $this->parameterService->getParameterValues(
-            1,
-            100,
-            null,
-            'Meter',
-            'Meter CTPT Health',
-        );
+
         $ctHealthTypes = $this->parameterService->getParameterValues(
             1,
             100,
@@ -55,13 +43,7 @@ class CreateMeterReadingController extends Controller
             'CTPT',
             'CT-Health Type',
         );
-        $ptHealthTypes = $this->parameterService->getParameterValues(
-            1,
-            100,
-            null,
-            'CTPT',
-            'PT-Health Type',
-        );
+
 
         $anomalyTypes = $this->parameterService->getParameterValues(
             1,
@@ -72,27 +54,15 @@ class CreateMeterReadingController extends Controller
         );
 
         $connection = $this->connectionService->getConnection($connectionId);
-        $consumer = $this->consumerService->getConsumer($connectionId);
-        $meterConnectionRel = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($connectionId);
         $metersWithTimezonesAndProfiles = [];
         $meterTimezoneTypeRel = [];
         $timeZoneNames = [];
         $latestMeterReading = $this->meterReadingService->latestMeterReading($connectionId);
-        $meterIds = [];
-        if ($meterConnectionRel->data != null) {
-            $meterIds = array_map(fn($mapping) => $mapping['meter_id'], $meterConnectionRel->data);
-        }
 
-        $ctptRelations = [];
-        $ctptResponse = $this->meterTransformerRelService->listAssignedToMeters($meterIds);
-        if (! $ctptResponse->hasValidationError()) {
-            $ctptRelations = $ctptResponse->data;
-        }
-
-        if ($meterConnectionRel->data) {
+        if ($connection->data['meter_mappings'] && count($connection->data['meter_mappings']) > 0) {
             $meterWithTimezoneAndProfile = [];
 
-            foreach ($meterConnectionRel->data as $meterConnectionRel) {
+            foreach ($connection->data['meter_mappings'] as $meterConnectionRel) {
                 $meterWithTimezoneAndProfile['meter_id'] = $meterConnectionRel['meter_id'];
                 $meter = $this->meterService->getMeter($meterConnectionRel['meter_id']);
                 $meterWithTimezoneAndProfile['meter'] = $meter->data;
@@ -132,16 +102,14 @@ class CreateMeterReadingController extends Controller
         return Inertia::render('MeterReading/MeterReadingCreatePage', [
             'connectionWithConsumer' => [
                 'connection' => $connection->data,
-                'consumer' => $consumer->data['consumer'] ?? null,
+                'consumer' => $connection->data['consumer_profiles'][0] ?? null,
             ],
             'meterHealthTypes' => $meterHealthTypes->data,
-            'ctptHealthTypes' => $ctptHealthTypes->data,
             'anomalyTypes' => $anomalyTypes->data,
             'timeZoneNames' => $timeZoneNames,
             'metersWithTimezonesAndProfiles' => $metersWithTimezonesAndProfiles,
             'latestMeterReading' => $latestMeterReading->data,
             'ctHealthTypes' => $ctHealthTypes->data,
-            'ptHealthTypes' => $ptHealthTypes->data,
             'editMode' => false,
         ]);
     }
