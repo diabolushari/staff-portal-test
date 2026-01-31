@@ -8,6 +8,8 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
 use Proto\GreenEnergy\CreateGreenEnergyRequest;
+use Proto\GreenEnergy\UpdateGreenEnergyRequest;
+use Proto\GreenEnergy\DeleteGreenEnergyRequest;
 use Proto\GreenEnergy\GreenEnergyServiceClient;
 
 class ConnectionGreenEnergyService
@@ -27,7 +29,7 @@ class ConnectionGreenEnergyService
         $greenEnergy = $this->connectionGreenEnergyService->formToGrpcMessage($request);
 
         $grpcRequest = new CreateGreenEnergyRequest;
-        $grpcRequest->setGreenEnergy([$greenEnergy]);
+        $grpcRequest->setGreenEnergy($greenEnergy);
 
         [$response, $status] =
             $this->client->CreateGreenEnergy($grpcRequest)->wait();
@@ -41,10 +43,8 @@ class ConnectionGreenEnergyService
             );
         }
 
-        $greenEnergyArray = [];
-        foreach ($response->getGreenEnergy() as $greenEnergy) {
-            $greenEnergyArray[] = $this->connectionGreenEnergyService->convertToArray($greenEnergy);
-        }
+        $greenEnergyArray = $this->connectionGreenEnergyService->convertToArray($response->getGreenEnergy());
+       
 
         return GrpcServiceResponse::success(
             $greenEnergyArray,
@@ -53,4 +53,61 @@ class ConnectionGreenEnergyService
             $status->details
         );
     }
+
+    public function update(ConnectionGreenEnergyFormRequest $request, int $id): GrpcServiceResponse
+    {
+        $greenEnergy =
+            $this->connectionGreenEnergyService
+                ->formToGrpcUpdateMessage($request, $id);
+
+        $grpcRequest = new UpdateGreenEnergyRequest;
+        $grpcRequest->setGreenEnergy($greenEnergy);
+
+        [$response, $status] =
+            $this->client->UpdateGreenEnergy($grpcRequest)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success(
+            $this->connectionGreenEnergyService
+                ->convertToArray($response->getGreenEnergy()),
+            $response,
+            $status->code,
+            $status->details
+        );
+    }
+
+    public function deleteGreenEnergy(int $id): GrpcServiceResponse
+    {
+        $grpcRequest = new DeleteGreenEnergyRequest();
+        $grpcRequest->setId($id);
+
+        [$response, $status] =
+            $this->client->DeleteGreenEnergy($grpcRequest)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success(
+            null,
+            $response,
+            $status->code,
+            $status->details
+        );
+    }
+
+
 }

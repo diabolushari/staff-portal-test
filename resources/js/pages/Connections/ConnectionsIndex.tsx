@@ -2,6 +2,7 @@ import ConnectionIndexSearch from '@/components/Connections/ConnectionIndexSearc
 import ConnectionsList from '@/components/Connections/ConnectionsList'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Connection, OfficeWithHierarchy } from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Pagination from '@/ui/Pagination/Pagination'
@@ -22,6 +23,16 @@ interface Props {
   connections: Paginator<Connection>
   oldOffice?: OfficeWithHierarchy
   oldConsumerNumber?: string
+  oldConnectionTypeId?: string
+  oldTariffId?: string
+  oldFromDate?: string
+  oldToDate?: string
+  oldConsumerName?: string
+  oldOrganisationName?: string
+  oldConsumerLegacyCode?: string
+  oldPrimaryPhone?: string
+  connectionTypes: ParameterValues[]
+  tariffs: ParameterValues[]
   filters: {
     consumerNumber: string
   }
@@ -31,6 +42,16 @@ export default function ConnectionsIndex({
   connections,
   oldOffice,
   oldConsumerNumber,
+  oldConnectionTypeId,
+  oldTariffId,
+  oldFromDate,
+  oldToDate,
+  connectionTypes,
+  tariffs,
+  oldConsumerName,
+  oldOrganisationName,
+  oldPrimaryPhone,
+  oldConsumerLegacyCode,
 }: Readonly<Props>) {
   return (
     <MainLayout
@@ -51,6 +72,16 @@ export default function ConnectionsIndex({
       <ConnectionIndexSearch
         oldOffice={oldOffice}
         oldConsumerNumber={oldConsumerNumber}
+        oldConnectionTypeId={oldConnectionTypeId}
+        oldTariffId={oldTariffId}
+        oldFromDate={oldFromDate}
+        oldToDate={oldToDate}
+        connectionTypes={connectionTypes}
+        tariffs={tariffs}
+        oldConsumerName={oldConsumerName}
+        oldOrganisationName={oldOrganisationName}
+        oldConsumerLegacyCode={oldConsumerLegacyCode}
+        oldPrimaryPhone={oldPrimaryPhone}
       />
       <div>{connections && <ConnectionsList connections={connections.data} />}</div>
       <div>{connections && <Pagination pagination={connections} />}</div>

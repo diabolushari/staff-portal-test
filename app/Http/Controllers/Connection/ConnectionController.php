@@ -31,7 +31,34 @@ class ConnectionController extends Controller
         $pageSize = $request->input('page_size') ?? 5;
         $consumerNumber = $request->input('consumer_number') ?? null;
         $officeCode = $request->input('office_code') ?? null;
-        $connections = $this->connectionService->listPaginatedConnections($pageNumber, $pageSize, $consumerNumber, $officeCode);
+        $consumerLegacyCode = $request->input('consumer_legacy_code') ?? null;
+        $consumerName = $request->input('consumer_name') ?? null;
+        $organisationName = $request->input('organisation_name') ?? null;
+        $connectionTypeId = $request->input('connection_type_id') ?? null;
+        $tariffId = $request->input('tariff_id') ?? null;
+        $fromDate = $request->input('from_date') ?? null;
+        $toDate = $request->input('to_date') ?? null;
+        $primaryPhone = $request->input('primary_phone') ?? null;
+
+        $connections = $this->connectionService->listPaginatedConnections(
+            pageNumber: $pageNumber,
+            pageSize: $pageSize,
+            consumerNumber: $consumerNumber,
+            officeCode: $officeCode,
+            consumerLegacyCode: $consumerLegacyCode,
+            consumerName: $consumerName,
+            organisationName: $organisationName,
+            connectionTypeId: $connectionTypeId,
+            tariffId: $tariffId,
+            fromDate: $fromDate,
+            toDate: $toDate,
+            primaryPhone: $primaryPhone,
+        );
+        if ($connections->hasValidationError()) {
+            return $connections->error ?? redirect()->back()->withErrors([
+                'message' => $connections->statusDetails ?? 'Unknown error',
+            ]);
+        }
         $paginated = null;
 
         if (! empty($connections->data)) {
@@ -44,17 +71,42 @@ class ConnectionController extends Controller
             );
         }
 
+        $connectionTypes = $this->parameterValueService->getParameterValues(
+            null,
+            null,
+            null,
+            'Connection',
+            'Connection Type'
+        )->data;
+       
+        $tariffs = $this->parameterValueService->getParameterValues(
+            null,
+            null,
+            null,
+            'Connection',
+            'Tariff'
+        )->data;
+
+         $office = null;
+
         if ($officeCode) {
             $office = $this->officeService->getOffice(null, $officeCode)->data;
         }
 
         return Inertia::render('Connections/ConnectionsIndex', [
             'connections' => $paginated,
+            'connectionTypes' => $connectionTypes,
+            'tariffs' => $tariffs,
             'oldConsumerNumber' => $consumerNumber,
             'oldOffice' => $office ?? null,
-            'filters' => [
-                'consumerNumber' => $consumerNumber,
-            ],
+            'oldConnectionTypeId' => $connectionTypeId,
+            'oldTariffId'         => $tariffId,
+            'oldFromDate' => $fromDate,
+            'oldToDate' => $toDate,
+            'oldConsumerName' => $consumerName,
+            'oldOrganisationName' => $organisationName,
+            'oldConsumerLegacyCode' => $consumerLegacyCode,
+            'oldPrimaryPhone' => $primaryPhone,
         ]);
     }
 
@@ -112,6 +164,13 @@ class ConnectionController extends Controller
             'Connection',
             'Green Energy Type'
         );
+        $agreementAuthorities = $this->parameterValueService->getParameterValues(
+            null,
+            null,
+            null,
+            'Connection',
+            'Agreement Authority'
+        );
         if ($connection->hasValidationError()) {
             if ($connection->error) {
                 return $connection->error;
@@ -130,6 +189,7 @@ class ConnectionController extends Controller
             'generationTypes' => $generationTypes->data,
             'primaryPurposes' => $primaryPurposes->data,
             'greenEnergyTypes' => $greenEnergyTypes->data,
+            'agreementAuthorities' => $agreementAuthorities->data,
         ]);
     }
 

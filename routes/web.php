@@ -100,6 +100,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('connection-green-energy', ConnectionGreenEnergyController::class)
         ->name('connection-green-energy');
+    Route::post('connection-green-energy/{id}', [ConnectionGreenEnergyController::class, 'update'])
+        ->name('connection-green-energy.update');
+    Route::delete('/connections/green-energy/{id}', [ConnectionGreenEnergyController::class, 'destroy'])
+        ->name('connections.green-energy.destroy');
+
 
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)
         ->name('offices.update-contacts');
