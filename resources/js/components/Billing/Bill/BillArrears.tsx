@@ -35,13 +35,13 @@ export default function BillArrears({
   }, [computedProperties])
 
   return (
-    <Table className='overflow-hidden border border-black text-xs'>
+    <Table className='overflow-hidden border border-black'>
       <TableBody className='overflow-hidden'>
         {/* ───── Row 1 : Arrears + Reading Dates + Email ───── */}
         <TableRow>
           <TableCell
             colSpan={6}
-            className='border border-black text-center font-semibold'
+            className='border border-black text-center'
           >
             Arrears as on {getDisplayDate(connection?.previous_reading?.reading_end_date) ?? '-'}
           </TableCell>
@@ -54,7 +54,7 @@ export default function BillArrears({
           </TableCell>
           <TableCell
             colSpan={2}
-            className='border border-black font-semibold'
+            className='border border-black'
           >
             {getDisplayDate(connection?.previous_reading?.reading_end_date) ?? '-'}
           </TableCell>
