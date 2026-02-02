@@ -84,17 +84,17 @@ export default function ReadingParameterPreviewCard({
                   <span>{r.timezone_name}</span>
 
                   <span className='text-right font-medium text-gray-800'>
-                    {r.values?.initial || '-'}
+                    {r.values?.initial || 0}
                   </span>
 
                   <span className='text-right font-medium text-gray-800'>
-                    {r.values?.final || '-'}
+                    {r.values?.final || 0}
                   </span>
 
                   <span className='text-right font-medium'>
                     {r.values?.value !== undefined && r.values?.value !== null
                       ? Number(r.values.value).toFixed(2)
-                      : '-'}
+                      : 0}
                   </span>
                 </div>
               )
@@ -128,13 +128,13 @@ export default function ReadingParameterPreviewCard({
                   <span>{r.timezone_name}</span>
 
                   <span className='text-right font-medium text-gray-800'>
-                    {r.values?.final || '-'}
+                    {r.values?.final || 0}
                   </span>
 
                   <span className='text-right font-medium'>
                     {r.values?.value !== undefined && r.values?.value !== null
                       ? Number(r.values.value).toFixed(2)
-                      : '-'}
+                      : 0}
                   </span>
                 </div>
               )
