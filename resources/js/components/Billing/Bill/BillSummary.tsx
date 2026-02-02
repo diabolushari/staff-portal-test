@@ -5,49 +5,39 @@ import { getDisplayDate } from '@/utils'
 
 export default function BillSummary({ bill, connection }: { bill: Bill; connection: Connection }) {
   return (
-    <Table className=''>
+    <Table className='bill-table'>
       <TableBody>
         <TableRow>
-          <TableCell className='border-2 border-black p-0 px-1 text-sm'>Cons#</TableCell>
-          <TableCell className='border border-black font-bold'>
-            {connection?.consumer_number ?? '-'}
-          </TableCell>
-          <TableCell className='border border-black p-0 px-1 text-sm'>Bill Date</TableCell>
-          <TableCell className='border border-black font-bold'>
-            {getDisplayDate(bill?.bill_date) ?? '-'}
-          </TableCell>
-          <TableCell className='border border-black p-0 px-1 text-sm'>Due Date</TableCell>
-          <TableCell className='border border-black font-bold'>
-            {getDisplayDate(bill?.due_date) ?? '-'}
-          </TableCell>
-          <TableCell className='border border-black p-0 px-1 text-sm'>DC Date</TableCell>
-          <TableCell className='border border-black font-bold'>
-            {getDisplayDate(bill?.dc_date) ?? '-'}
-          </TableCell>
-          <TableCell className='border border-black p-0 px-1 text-sm'>Bill.No</TableCell>
+          <TableCell className=''>Cons#</TableCell>
+          <TableCell className=''>{connection?.consumer_number ?? '-'}</TableCell>
+          <TableCell className=''>Bill Date</TableCell>
+          <TableCell className='font-semibold'>{getDisplayDate(bill?.bill_date) ?? '-'}</TableCell>
+          <TableCell className=''>Due Date</TableCell>
+          <TableCell className='font-semibold'>{getDisplayDate(bill?.due_date) ?? '-'}</TableCell>
+          <TableCell className=''>DC Date</TableCell>
+          <TableCell className='font-semibold'>{getDisplayDate(bill?.dc_date) ?? '-'}</TableCell>
+          <TableCell className=''>Bill.No</TableCell>
           <TableCell
             colSpan={2}
-            className='border border-black font-bold'
+            className=''
           >
             {bill?.bill_number ?? '-'}
           </TableCell>
         </TableRow>
         <TableRow>
-          <TableCell className='border border-black text-sm'>LCN</TableCell>
-          <TableCell className='border border-black'>
-            {connection?.consumer_legacy_code ?? '-'}
-          </TableCell>
-          <TableCell className='border border-black text-sm'>Tariff</TableCell>
+          <TableCell className=''>LCN</TableCell>
+          <TableCell className=''>{connection?.consumer_legacy_code ?? '-'}</TableCell>
+          <TableCell className=''>Tariff</TableCell>
           <TableCell
             colSpan={4}
-            className='border border-black'
+            className=''
           >
             {connection?.tariff?.parameter_value ?? '-'}
           </TableCell>
-          <TableCell className='border border-black text-sm'>CD</TableCell>
-          <TableCell className='border border-black'> 0.00</TableCell>
-          <TableCell className='border border-black text-sm'>BG</TableCell>
-          <TableCell className='border border-black'>0</TableCell>
+          <TableCell className=''>CD</TableCell>
+          <TableCell className=''> 0.00</TableCell>
+          <TableCell className=''>BG</TableCell>
+          <TableCell className=''>0</TableCell>
         </TableRow>
         {/* Address + Virtual Account + GSTIN */}
         <TableRow>
@@ -55,7 +45,7 @@ export default function BillSummary({ bill, connection }: { bill: Bill; connecti
           <TableCell
             rowSpan={4}
             colSpan={5}
-            className='border border-black align-top text-sm'
+            className='bill-table td'
           >
             {connection?.consumer_profiles?.[0]?.organization_name ?? '-'} <br />
             {connection?.consumer_profiles?.[0]?.contact_details?.[0]?.billing_address
@@ -85,7 +75,6 @@ export default function BillSummary({ bill, connection }: { bill: Bill; connecti
           <TableCell
             colSpan={6}
             rowSpan={1}
-            className='border border-black text-sm'
           >
             <NormalText>SBI Virtual A/c No(IFS Code:SBIN0070493):</NormalText>{' '}
             {connection?.consumer_profiles?.[0]?.virtual_account_number ?? '-'}
@@ -97,7 +86,6 @@ export default function BillSummary({ bill, connection }: { bill: Bill; connecti
           <TableCell
             colSpan={6}
             rowSpan={4}
-            className='border border-black text-sm'
           >
             <NormalText>Consumer GSTIN:</NormalText>{' '}
             {connection?.consumer_profiles?.[0]?.consumer_gstin ?? '-'}

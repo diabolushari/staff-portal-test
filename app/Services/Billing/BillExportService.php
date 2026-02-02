@@ -67,7 +67,8 @@ class BillExportService
     public function filterReadingByParameter(
         ?array $meterReading,
         ?string $parameterName,
-        $energyConsumptionMeterId
+        $energyConsumptionMeterId,
+        ?array $timeZones
     ): array {
         if (empty($meterReading) || empty($parameterName) || empty($energyConsumptionMeterId)) {
             return [];
@@ -108,21 +109,16 @@ class BillExportService
 
 
         $sortedValues = [];
-        $timeZoneNames = ['normal', 'peak', 'off peak'];
+        $timeZoneNames = $timeZones['result'] ?? [];
         foreach ($timeZoneNames as $timeZoneName) {
             foreach ($unsortedValues as $value) {
-                if (strtolower($value['timezone']) == $timeZoneName) {
+                if (strtolower($value['timezone']) == strtolower($timeZoneName['result'])) {
                     $sortedValues[] = $value;
                 }
             }
         }
-        foreach ($unsortedValues as $value) {
-            if (!in_array(strtolower($value['timezone']), $timeZoneNames)) {
-                $sortedValues[] = $value;
-            }
-        }
 
-        return $sortedValues;
+        return $sortedValues ? $sortedValues : $unsortedValues;
     }
 
 
@@ -183,56 +179,7 @@ class BillExportService
         return $normalized;
     }
 
-    public function getEnergyChargeRows(?array $meter, ?array $computed, ?array $filteredkWhs): ?array
-    {
-        if (empty($meter) || empty($computed) || empty($filteredkWhs)) {
-            return [];
-        }
-        $mf = $meter['meter_mf'] ?? 1;
-
-        // Get KWH rate from computed
-        $kwhRate = $computed['KWH RATE']['result'] ?? 0;
-
-        $energyChargeRows = [];
-        $subTotal = 0;
-
-        foreach ($filteredkWhs as $item) {
-
-            $zone = $item['timezone'];      // Normal / Peak / Off peak
-            $diff = $item['difference'];
-            if ($zone == 'Normal') {
-                $diff *= $mf;
-            }
-            if ($zone == 'Peak') {
-                $diff *= $mf * 1.5;
-            }
-            if ($zone == 'Off Peak') {
-                $diff *= $mf * 0.75;
-            }    // Raw consumption
-
-            // Rate displayed to UI (kwhRate × MF)
-            $displayRate = $kwhRate;
-
-            // Actual charge calculation
-            $amount = $diff * $kwhRate;
-
-            $energyChargeRows[] = [
-                'label' => "Energy charges - {$zone}",
-                'units' => $diff,
-                'rate' => number_format($displayRate, 5),
-                'amount' => number_format($amount, 2),
-            ];
-
-            $subTotal += $amount;
-        }
-
-        return [
-            'energyChargeRows' => $energyChargeRows,
-            'subTotal' => $subTotal,
-        ];
-    }
-
-    public function getTotolDemandChargeRows(?array $computed, ?array $kvaValues): array
+    public function getTotolDemandChargeRows(?array $computed, ?array $kvaValues, ?array $timeZones): array
     {
         if (empty($computed)) {
             return [];
@@ -297,7 +244,7 @@ class BillExportService
             }
 
             $demandRows[] = [
-                'label' => $this->getZoneLabel($index, 'Demand Charge'),
+                'label' => $this->getZoneLabel($index, 'Demand Charge', $timeZones['result'] ?? null),
                 'zone' => $zoneId,
                 'units' => round($units),
                 'rate' => $demandRate,
@@ -307,7 +254,7 @@ class BillExportService
             $excessUnits = (float) ($zoneData['result'] ?? 0);
 
             $excessRows[] = [
-                'label' => $this->getZoneLabel($index, 'Excess Demand Charge'),
+                'label' => $this->getZoneLabel($index, 'Excess Demand Charge', $timeZones['result'] ?? null),
                 'zone' => $zoneId,
                 'units' => $zoneId == $zoneWithMaxExcessDemand ? round($excessUnits) : 0,
                 'rate' => $excessDemandRate,
@@ -321,7 +268,7 @@ class BillExportService
         ];
     }
 
-    public function getTotalEnergyChargeRows(array $computed, array $kwhValues): ?array
+    public function getTotalEnergyChargeRows(array $computed, array $kwhValues, ?array $timezones): ?array
     {
         if (empty($computed) || empty($kwhValues)) {
             return [];
@@ -340,7 +287,7 @@ class BillExportService
             $roundedUnits = round($units); // rounds .5 and above up, below .5 down
 
             $totalEnergyChargeRows[] = [
-                'label' => $this->getZoneLabel($index, 'Energy Charge'),
+                'label' => $this->getZoneLabel($index, 'Energy Charge', $timezones['result'] ?? null),
                 'zone' => $zoneId,
                 'units' => $roundedUnits,
                 'rate' => $energyChargeRates['result'][$index] ?? 0,
@@ -496,16 +443,22 @@ class BillExportService
         return $connectionPrefix . $officeCode . $serialNumber;
     }
 
-
-    private function getZoneLabel(int $index, string $base): string
+    private function getZoneLabel(int $index, string $base, ?array $timezones): string
     {
-        return match ($index) {
-            0 => "{$base} - Normal",
-            1 => "{$base} - Peak",
-            2 => "{$base} - Off Peak",
-            default => "{$base} - Zone {$index}",
-        };
+        $defaultZones = [
+            'Normal',
+            'Peak',
+            'Off Peak',
+        ];
+
+        return "{$base} - " . (
+            $timezones[$index]['result']
+            ?? $defaultZones[$index]
+            ?? "Zone {$index}"
+        );
     }
+
+
 
     /**
      * Convert amount to words
@@ -533,5 +486,29 @@ class BillExportService
             'amount_rounded' => $rounded,
             'amount_words' => ucfirst($words) . ' rupees only',
         ];
+    }
+
+    public function splitTimeZones(?array $computedProperty): array|null
+    {
+        if ($computedProperty == null) {
+            return null;
+        }
+        $value = $computedProperty['result'] ?? null;
+
+        if (!$value || !is_string($value)) {
+            return $computedProperty;
+        }
+
+        $zones = array_map(
+            fn($item) => [
+                'result' => trim($item),
+                'zoneId' => null,
+            ],
+            explode(',', $value)
+        );
+
+        $computedProperty['result'] = $zones;
+
+        return $computedProperty;
     }
 }

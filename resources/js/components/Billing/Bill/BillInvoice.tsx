@@ -43,7 +43,7 @@ export default function BillInvoice({
       </div>
       <div className='grid grid-cols-3'>
         <div className='col-span-2'>
-          <Table>
+          <Table className='bill-table w-full'>
             <TableHeader>
               <TableRow className='p-0'>
                 <TableHead
@@ -303,7 +303,7 @@ export default function BillInvoice({
           </Table>
         </div>
         <div className='flex h-full flex-col border border-black'>
-          <Table className='w-full border border-black'>
+          <Table className='bill-table w-full border border-black'>
             <TableHeader>
               <TableRow>
                 <TableHead
@@ -325,62 +325,37 @@ export default function BillInvoice({
                 </TableCell>
               </TableRow>
 
-              <TableRow>
-                <TableCell
-                  colSpan={2}
-                  className='border border-black'
-                >
-                  Reconnection Fee
-                </TableCell>
-                <TableCell className='border border-black text-right'>0.00</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell
-                  colSpan={2}
-                  className='border border-black'
-                >
-                  LOW_VOLT_SUR
-                </TableCell>
-                <TableCell className='border border-black text-right'>0.00</TableCell>
-              </TableRow>
+              {Number(chargeHeads?.monthly_fuel_surcharge?.result) > 0 && (
+                <TableRow>
+                  <TableCell
+                    colSpan={2}
+                    className='border border-black'
+                  >
+                    Monthly Fuel Surcharge
+                  </TableCell>
+                  <TableCell className='border border-black text-right'>
+                    {Number(chargeHeads?.monthly_fuel_surcharge?.result)
+                      ? Number(chargeHeads?.monthly_fuel_surcharge?.result).toFixed(2)
+                      : '-'}
+                  </TableCell>
+                </TableRow>
+              )}
 
-              <TableRow>
-                <TableCell
-                  colSpan={2}
-                  className='border border-black'
-                >
-                  Charges for Belated Payments
-                </TableCell>
-                <TableCell className='border border-black text-right'>0.00</TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell
-                  colSpan={2}
-                  className='border border-black'
-                >
-                  Monthly Fuel Surcharge
-                </TableCell>
-                <TableCell className='border border-black text-right'>
-                  {Number(chargeHeads?.monthly_fuel_surcharge?.result)
-                    ? Number(chargeHeads?.monthly_fuel_surcharge?.result).toFixed(2)
-                    : '-'}
-                </TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell
-                  colSpan={2}
-                  className='border border-black'
-                >
-                  Green Energy Charge
-                </TableCell>
-                <TableCell className='border border-black text-right'>
-                  {Number(chargeHeads?.green_energy_charge?.result)
-                    ? Number(chargeHeads?.green_energy_charge?.result).toFixed(2)
-                    : '-'}
-                </TableCell>
-              </TableRow>
+              {Number(chargeHeads?.green_energy_charge?.result) > 0 && (
+                <TableRow>
+                  <TableCell
+                    colSpan={2}
+                    className='border border-black'
+                  >
+                    Green Energy Charge
+                  </TableCell>
+                  <TableCell className='border border-black text-right'>
+                    {Number(chargeHeads?.green_energy_charge?.result)
+                      ? Number(chargeHeads?.green_energy_charge?.result).toFixed(2)
+                      : '-'}
+                  </TableCell>
+                </TableRow>
+              )}
 
               {/* Spacer rows like printed bill */}
 
@@ -388,7 +363,7 @@ export default function BillInvoice({
             </TableBody>
           </Table>
           <div className='mt-auto w-full border'>
-            <Table>
+            <Table className='bill-table'>
               <TableRow>
                 <TableCell
                   colSpan={2}
@@ -473,7 +448,7 @@ export default function BillInvoice({
           </div>
         </div>
         <div className='col-span-12 w-full border border-black'>
-          <Table>
+          <Table className='bill-table'>
             <TableRow>
               <TableCell
                 colSpan={12}
@@ -486,7 +461,7 @@ export default function BillInvoice({
           </Table>
         </div>
         <div className='col-span-12 w-full border border-black'>
-          <Table className='w-full'>
+          <Table className='bill-table w-full'>
             <TableRow>
               <TableCell
                 colSpan={8}
