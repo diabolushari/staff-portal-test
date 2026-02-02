@@ -483,12 +483,19 @@ class BillExportService
             'Off Peak',
         ];
 
-        return "{$base} - " . (
+        // If timezones exist and index is OUTSIDE their count → do not allow
+        if (!empty($timezones) && !array_key_exists($index, $timezones)) {
+            return '';
+        }
+
+        $label =
             $timezones[$index]['result']
             ?? $defaultZones[$index]
-            ?? "Zone {$index}"
-        );
+            ?? "Zone {$index}";
+
+        return "{$base} - {$label}";
     }
+
 
 
 
