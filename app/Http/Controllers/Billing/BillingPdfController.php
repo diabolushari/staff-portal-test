@@ -30,21 +30,20 @@ class BillingPdfController extends Controller
         if ($bill?->data['connection_id']) {
             $meterReading = $this->billExportService->getMeterReading($bill->data['connection_id'], $bill->data['reading_year_month']);
         }
-
-        $selfGenerationkwhValues = $this->billExportService->filterReadingByParameter($meterReading, 'kwh', $selfGenerationMeter['meter']['meter_id'] ?? null);
-        $kvaValues   = $this->billExportService->filterReadingByParameter($meterReading, 'kva', $energyMeter['meter']['meter_id'] ?? null);
-        $kvahValues  = $this->billExportService->filterReadingByParameter($meterReading, 'kvah', $energyMeter['meter']['meter_id'] ?? null);
-        $kwhValues   = $this->billExportService->filterReadingByParameter($meterReading, 'kwh', $energyMeter['meter']['meter_id'] ?? null);
-        $lagValues   = $this->billExportService->filterReadingByParameter($meterReading, 'kVA(R)h Lag', $energyMeter['meter']['meter_id'] ?? null);
-        $leadValues  = $this->billExportService->filterReadingByParameter($meterReading, 'kVA(R)h Lead', $energyMeter['meter']['meter_id'] ?? null);
         $chargeHeads = $this->billExportService->getChargeHeads($bill->data['charge_heads'] ?? []);
         $computedProperties = $this->billExportService->getComputedProperties($bill->data['computed_properties'] ?? []);
-        $energyChargeRows = $this->billExportService->getEnergyChargeRows($energyMeter, $computedProperties, $kwhValues);
+        $timezones = $this->billExportService->splitTimeZones($computedProperties['timezones'] ?? []);
+        $selfGenerationkwhValues = $this->billExportService->filterReadingByParameter($meterReading, 'kwh', $selfGenerationMeter['meter']['meter_id'] ?? null, $timezones);
+        $kvaValues = $this->billExportService->filterReadingByParameter($meterReading, 'kva', $energyMeter['meter']['meter_id'] ?? null, $timezones);
+        $kvahValues = $this->billExportService->filterReadingByParameter($meterReading, 'kvah', $energyMeter['meter']['meter_id'] ?? null, $timezones);
+        $kwhValues = $this->billExportService->filterReadingByParameter($meterReading, 'kwh', $energyMeter['meter']['meter_id'] ?? null, $timezones);
+        $lagValues = $this->billExportService->filterReadingByParameter($meterReading, 'kVA(R)h Lag', $energyMeter['meter']['meter_id'] ?? null, $timezones);
+        $leadValues = $this->billExportService->filterReadingByParameter($meterReading, 'kVA(R)h Lead', $energyMeter['meter']['meter_id'] ?? null, $timezones);
         $averageAndTotalKva = $this->billExportService->getAverageAndTotalKva($kvaValues);
         $averageAndTotalKwh = $this->billExportService->getAverageAndTotalKwh($kwhValues);
-        $totalDemandChargeRows = $this->billExportService->getTotolDemandChargeRows($computedProperties, $kvaValues);
-        $totalEnergyChargeRows = $this->billExportService->getTotalEnergyChargeRows($computedProperties, $kwhValues);
-        $demand = $this->billExportService->calculateDemand($kvaValues, $bill->data['connection']['contract_demand_kva_val'] ?? null);
+        $demand = $this->billExportService->calculateDemand($kvaValues, $bill?->data['connection']['contract_demand_kva_val'] ?? 0);
+        $totalDemandChargeRows = $this->billExportService->getTotolDemandChargeRows($computedProperties, $kvaValues, $timezones);
+        $totalEnergyChargeRows = $this->billExportService->getTotalEnergyChargeRows($computedProperties, $kwhValues, $timezones);
         $billNumber = $this->billExportService->generateBillNumber($bill->data);
         $billWithNumber = null;
         if ($bill->data) {
@@ -64,7 +63,6 @@ class BillingPdfController extends Controller
             'meter' => $energyMeter ?? [],
             'chargeHeads' => $chargeHeads,
             'computedProperties' => $computedProperties,
-            'energyChargeRows' => $energyChargeRows,
             'averageAndTotalKva' => $averageAndTotalKva,
             'averageAndTotalKwh' => $averageAndTotalKwh,
             'demand' => $demand,

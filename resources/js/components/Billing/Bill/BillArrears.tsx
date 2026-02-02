@@ -47,13 +47,13 @@ export default function BillArrears({
           </TableCell>
 
           <TableCell
-            colSpan={3}
+            colSpan={2}
             className='border border-black'
           >
             Date of Previous Reading
           </TableCell>
           <TableCell
-            colSpan={2}
+            colSpan={1}
             className='border border-black font-semibold'
           >
             {getDisplayDate(connection?.previous_reading?.reading_end_date) ?? '-'}
@@ -74,13 +74,13 @@ export default function BillArrears({
           <TableCell className='border border-black text-right'>0.00</TableCell>
 
           <TableCell
-            colSpan={3}
+            colSpan={4}
             className='border border-black'
           >
             Date of Present Reading
           </TableCell>
           <TableCell
-            colSpan={2}
+            colSpan={1}
             className='border border-black font-semibold'
           >
             {getDisplayDate(connection?.latest_meter_reading?.reading_end_date) ?? '-'}

@@ -97,7 +97,6 @@
 .bill-table th,
 .bill-table td {
   border: 1px solid #000;
-  padding: 2px 4px;
   vertical-align: top;
 }
 
@@ -153,7 +152,6 @@
   }
   td, th {
     border:1px solid #000;
-    padding:2px 4px;
     vertical-align:top;
   }
   .center { text-align:center; }
