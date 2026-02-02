@@ -91,6 +91,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 11px;
+
 }
 
 .bill-table th,
@@ -138,7 +139,7 @@
     color:#000;
   }
   .page {
-    width:220mm;
+    width:90%;
     min-height:297mm;
     margin:auto;
     background:#fff;

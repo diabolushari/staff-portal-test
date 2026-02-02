@@ -54,7 +54,7 @@ export default function BillShowPage({
   const mf = meter?.meter_mf ?? 1
 
   return (
-    <div className='page bill-root bill-page'>
+    <div className='page bill-root bill-page w-full'>
       <div className='flex items-center justify-end'>
         {' '}
         <Button

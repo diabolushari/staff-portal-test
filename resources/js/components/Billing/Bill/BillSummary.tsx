@@ -5,7 +5,7 @@ import { getDisplayDate } from '@/utils'
 
 export default function BillSummary({ bill, connection }: { bill: Bill; connection: Connection }) {
   return (
-    <Table className=''>
+    <Table className='bill-table'>
       <TableBody>
         <TableRow>
           <TableCell className=''>Cons#</TableCell>
@@ -45,7 +45,7 @@ export default function BillSummary({ bill, connection }: { bill: Bill; connecti
           <TableCell
             rowSpan={4}
             colSpan={5}
-            className='align-top'
+            className='bill-table td'
           >
             {connection?.consumer_profiles?.[0]?.organization_name ?? '-'} <br />
             {connection?.consumer_profiles?.[0]?.contact_details?.[0]?.billing_address

@@ -43,7 +43,7 @@ export default function BillReadingDetails({
   const mf = meter?.meter_mf ?? 1
   console.log(timeZones, 'timezoens')
   return (
-    <div className='mb-2 text-xs'>
+    <div className='mb-2'>
       <div className='flex items-center justify-center border border-black p-2'>
         <h3 className='font-bold'>
           Reading Details of meter {meter?.meter?.meter_serial ?? '-'} - Working (KVA, KWh, KVAh &
@@ -53,7 +53,7 @@ export default function BillReadingDetails({
 
       {/* kWh + kVARh */}
       <div className='grid grid-cols-2'>
-        <Table className='mb-0 w-full border border-black text-xs'>
+        <Table className='bill-table mb-0 w-full border border-black'>
           <TableHeader>
             {/* SECTION TITLES */}
             <TableRow>
@@ -162,7 +162,7 @@ export default function BillReadingDetails({
             </TableRow>
           </TableBody>
         </Table>
-        <Table className='mb-0 p-0 text-xs'>
+        <Table className='bill-table'>
           <TableHeader>
             {/* SECTION TITLES */}
             <TableRow className='border border-black'>
@@ -260,7 +260,7 @@ export default function BillReadingDetails({
 
       {/* kVAh + Demand */}
       <div className='grid grid-cols-2'>
-        <Table className='w-full border border-black text-xs'>
+        <Table className='bill-table w-full border border-black'>
           <TableHeader>
             <TableRow>
               <TableHead
@@ -337,7 +337,7 @@ export default function BillReadingDetails({
             </TableRow>
           </TableBody>
         </Table>
-        <Table className='border border-black text-xs'>
+        <Table className='bill-table border border-black'>
           <TableHeader>
             <TableRow className='text-center'>
               <TableHead
