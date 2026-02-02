@@ -35,8 +35,8 @@ export default function BillArrears({
   }, [computedProperties])
 
   return (
-    <Table className='overflow-hidden border border-black text-xs'>
-      <TableBody className='overflow-hidden'>
+    <Table className='bill-table border border-black'>
+      <TableBody>
         {/* ───── Row 1 : Arrears + Reading Dates + Email ───── */}
         <TableRow>
           <TableCell
@@ -72,10 +72,6 @@ export default function BillArrears({
           <TableCell className='border border-black text-right'>0.00</TableCell>
           <TableCell className='border border-black'>Undisputed</TableCell>
           <TableCell className='border border-black text-right'>0.00</TableCell>
-          <TableCell
-            colSpan={2}
-            className='border border-black'
-          />
 
           <TableCell
             colSpan={3}

@@ -43,7 +43,7 @@ export default function BillInvoice({
       </div>
       <div className='grid grid-cols-3'>
         <div className='col-span-2'>
-          <Table>
+          <Table className='bill-table w-full'>
             <TableHeader>
               <TableRow className='p-0'>
                 <TableHead
@@ -303,7 +303,7 @@ export default function BillInvoice({
           </Table>
         </div>
         <div className='flex h-full flex-col border border-black'>
-          <Table className='w-full border border-black'>
+          <Table className='bill-table w-full border border-black'>
             <TableHeader>
               <TableRow>
                 <TableHead
@@ -363,7 +363,7 @@ export default function BillInvoice({
             </TableBody>
           </Table>
           <div className='mt-auto w-full border'>
-            <Table>
+            <Table className='bill-table'>
               <TableRow>
                 <TableCell
                   colSpan={2}
@@ -448,7 +448,7 @@ export default function BillInvoice({
           </div>
         </div>
         <div className='col-span-12 w-full border border-black'>
-          <Table>
+          <Table className='bill-table'>
             <TableRow>
               <TableCell
                 colSpan={12}
@@ -461,7 +461,7 @@ export default function BillInvoice({
           </Table>
         </div>
         <div className='col-span-12 w-full border border-black'>
-          <Table className='w-full'>
+          <Table className='bill-table w-full'>
             <TableRow>
               <TableCell
                 colSpan={8}
