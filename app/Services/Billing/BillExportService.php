@@ -206,13 +206,10 @@ class BillExportService
         $demandChargeHead = $computed['demand_charge'] ?? [];
         $excessDemandHead = $computed['excess_demand_charge'] ?? [];
 
-        if (! $excessDemand || empty($excessDemand['result'])) {
-            return [];
-        }
 
         $demandRows = [];
         $excessRows = [];
-        $zonesCount = count($excessDemand['result']);
+
 
         $useContractDemand =
             empty($zoneWithMaxDemand['result']) ||
@@ -224,41 +221,59 @@ class BillExportService
 
         $zoneWithMaxExcessDemand = null;
         $previousMax = 0;
-        foreach ($excessDemand['result'] as $index => $zoneData) {
-            $zoneId = $zoneData['zoneId'] ?? $index;
-            if ((float) ($zoneData['result'] ?? 0) > $previousMax) {
-                $previousMax = (float) ($zoneData['result'] ?? 0);
-                $zoneWithMaxExcessDemand = $zoneId;
+
+        if (gettype($excessDemand['result']) == 'array') {
+            foreach ($excessDemand['result'] as $index => $zoneData) {
+                $zoneId = $zoneData['zoneId'] ?? $index;
+                if ((float) ($zoneData['result'] ?? 0) > $previousMax) {
+                    $previousMax = (float) ($zoneData['result'] ?? 0);
+                    $zoneWithMaxExcessDemand = $zoneId;
+                }
             }
         }
 
-        foreach ($excessDemand['result'] as $index => $zoneData) {
+        if (gettype($excessDemand['result']) == 'array') {
+            foreach ($excessDemand['result'] as $index => $zoneData) {
 
-            $zoneId = $zoneData['zoneId'] ?? $index;
-            $units = 0;
-            $demandChargeAmount = 0;
+                $zoneId = $zoneData['zoneId'] ?? $index;
+                $units = 0;
+                $demandChargeAmount = 0;
 
-            if (($useContractDemand && $zoneId == $maxKvaIndex) || (! $useContractDemand && $zoneId == $zoneWithMaxDemand['result'])) {
-                $units = $demandUnits;
-                $demandChargeAmount = $demandChargeHead ? (float) ($demandChargeHead['result'] ?? 0) : 0;
+                if (($useContractDemand && $zoneId == $maxKvaIndex) || (! $useContractDemand && $zoneId == $zoneWithMaxDemand['result'])) {
+                    $units = $demandUnits;
+                    $demandChargeAmount = $demandChargeHead ? (float) ($demandChargeHead['result'] ?? 0) : 0;
+                }
+
+                $demandRows[] = [
+                    'label' => $this->getZoneLabel($index, 'Demand Charge', $timeZones['result'] ?? null),
+                    'zone' => $zoneId,
+                    'units' => round($units),
+                    'rate' => $demandRate,
+                    'amount' => $demandChargeAmount,
+                ];
+
+                $excessUnits = (float) ($zoneData['result'] ?? 0);
+
+                $excessRows[] = [
+                    'label' => $this->getZoneLabel($index, 'Excess Demand Charge', $timeZones['result'] ?? null),
+                    'zone' => $zoneId,
+                    'units' => $zoneId == $zoneWithMaxExcessDemand ? round($excessUnits) : 0,
+                    'rate' => $excessDemandRate,
+                    'amount' => $zoneId == $zoneWithMaxExcessDemand ? (float) ($excessDemandHead['result'] ?? 0) : 0,
+                ];
             }
-
-            $demandRows[] = [
-                'label' => $this->getZoneLabel($index, 'Demand Charge', $timeZones['result'] ?? null),
-                'zone' => $zoneId,
-                'units' => round($units),
-                'rate' => $demandRate,
-                'amount' => $demandChargeAmount,
-            ];
-
-            $excessUnits = (float) ($zoneData['result'] ?? 0);
-
-            $excessRows[] = [
-                'label' => $this->getZoneLabel($index, 'Excess Demand Charge', $timeZones['result'] ?? null),
-                'zone' => $zoneId,
-                'units' => $zoneId == $zoneWithMaxExcessDemand ? round($excessUnits) : 0,
-                'rate' => $excessDemandRate,
-                'amount' => $zoneId == $zoneWithMaxExcessDemand ? (float) ($excessDemandHead['result'] ?? 0) : 0,
+        } else {
+            return [
+                'title' => 'Total Demand Charge',
+                'rows' => [
+                    [
+                        'label' => 'Demand Charge',
+                        'zone' => 'All',
+                        'units' => round($demandUnits),
+                        'rate' => $demandRate,
+                        'amount' => $demandChargeHead['result'],
+                    ],
+                ],
             ];
         }
 
@@ -267,6 +282,7 @@ class BillExportService
             'rows' => array_merge($demandRows, $excessRows),
         ];
     }
+
 
     public function getTotalEnergyChargeRows(array $computed, array $kwhValues, ?array $timezones): ?array
     {
@@ -278,6 +294,22 @@ class BillExportService
         $totalEnergyChargeRows = [];
         $energyCharges = $computed['energy_charges'];
         $energyChargeRates = $computed['energy_charge_rates'];
+
+        if (gettype($energyCharges['result']) == 'string') {
+            $sumOfUnits = array_sum(array_column($kwhValues, 'value'));
+            return [
+                'label' => 'Total Energy Charge',
+                'rows' => [
+                    [
+                        'label' => 'Energy Charge',
+                        'zone' => 'All',
+                        'units' => round($sumOfUnits),
+                        'rate' => $energyChargeRates['result'][0] ?? 0,
+                        'amount' => $energyCharges['result'],
+                    ],
+                ],
+            ];
+        }
 
         foreach ($energyCharges['result'] as $index => $zoneData) {
             $zoneId = $zoneData['zoneId'] ?? $index;
@@ -451,12 +483,19 @@ class BillExportService
             'Off Peak',
         ];
 
-        return "{$base} - " . (
+        // If timezones exist and index is OUTSIDE their count → do not allow
+        if (!empty($timezones) && !array_key_exists($index, $timezones)) {
+            return '';
+        }
+
+        $label =
             $timezones[$index]['result']
             ?? $defaultZones[$index]
-            ?? "Zone {$index}"
-        );
+            ?? "Zone {$index}";
+
+        return "{$base} - {$label}";
     }
+
 
 
 

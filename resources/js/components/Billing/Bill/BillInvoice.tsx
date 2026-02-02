@@ -35,6 +35,11 @@ export default function BillInvoice({
   selfGenerationkwhValues: BillMeterReading[]
 }) {
   console.log(chargeHeads)
+  const subTotalLabel = totalEnergyChargeRows?.rows
+    ?.map((_, index) => String.fromCharCode(97 + index))
+    .join('+')
+  const buildAlphaSum = (count?: number) =>
+    Array.from({ length: count ?? 0 }, (_, i) => String.fromCharCode(97 + i)).join('+')
 
   return (
     <>
@@ -87,7 +92,7 @@ export default function BillInvoice({
                   className='border border-black font-bold'
                   colSpan={4}
                 >
-                  Sub Total(a+b+c+d+e+f)
+                  Sub Total({buildAlphaSum(totalDemandChargeRows.rows?.length)})
                 </TableCell>
                 <TableCell className='border border-black text-right'>
                   {Number.isNaN(Number(chargeHeads?.total_demand_charge?.result)) ||
@@ -127,7 +132,7 @@ export default function BillInvoice({
                   className='border border-black font-bold'
                   colSpan={4}
                 >
-                  Sub Total(a+b+c)
+                  Sub Total ({buildAlphaSum(totalEnergyChargeRows?.rows?.length)})
                 </TableCell>
                 <TableCell className='border border-black text-right'>
                   {Number.isNaN(Number(chargeHeads?.energy_charge?.result)) ||

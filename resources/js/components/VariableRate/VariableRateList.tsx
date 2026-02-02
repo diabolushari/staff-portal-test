@@ -26,7 +26,7 @@ export default function VariableRateList({ variableRates, handleEdit }: Readonly
         {variableRates?.map((rate) => (
           <div
             key={rate.id}
-            className='mb-4 rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
+            className='mb-4 rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0'
           >
             <div className='flex items-start justify-between'>
               <div className='flex flex-1 flex-col gap-2.5 p-[10px]'>
@@ -34,9 +34,6 @@ export default function VariableRateList({ variableRates, handleEdit }: Readonly
                   <div className='flex items-center gap-2'>
                     <div className='font-inter text-base font-semibold text-black'>
                       {rate.variable_name?.parameter_value}
-                    </div>
-                    <div className='rounded-[50px] bg-green-100 px-2.5 py-px'>
-                      <div className='font-inter text-xs text-green-800'>#{rate?.id}</div>
                     </div>
                   </div>
 
