@@ -23,6 +23,18 @@ interface Props {
   setIsOnParameterForm: (isOnParameterForm: boolean) => void
 }
 
+const isOutside20Percent = (initial: number, diff: number) => {
+  if (initial === 0) return false
+  const percentage = (diff / initial) * 100
+  return Math.abs(percentage) > 20
+}
+
+const getPercentageChange = (initialDiff: number, lastDiff: number) => {
+  if (initialDiff === 0) return 0
+  const diffChange = lastDiff - initialDiff
+  return (diffChange / initialDiff) * 100
+}
+
 export default function ProfileReadingForm({
   activeProfile,
   readingValues,
@@ -35,6 +47,8 @@ export default function ProfileReadingForm({
 }: Readonly<Props>) {
   const [currentReadingState, setCurrentReadingState] = useState<TimezoneReadingState[]>([])
   const [readingErrors, setReadingErrors] = useState<Record<string, string | undefined>>({})
+  const [readingWarnings, setReadingWarnings] = useState<Record<string, string | undefined>>({})
+  const [showWarningModal, setShowWarningModal] = useState(false)
 
   const { meter, selectedParameter, parameterReading } = useMemo(() => {
     if (activeProfile == null) {
@@ -250,10 +264,36 @@ export default function ProfileReadingForm({
         }
       }
     })
+    const warnings: Record<string, string | undefined> = {}
+    let hasWarnings = false
+
+    currentReadingState.forEach((reading) => {
+      const initialDiff = Number(reading.values.lastReadingDiff)
+      const diff = Number(reading.values.diff)
+
+      if (!Number.isNaN(initialDiff) && !Number.isNaN(diff) && initialDiff > 0) {
+        const percentage = getPercentageChange(initialDiff, diff)
+
+        if (Math.abs(percentage) >= 20) {
+          const direction = percentage > 0 ? 'higher' : 'lower'
+          const absPercent = Math.abs(percentage).toFixed(2)
+
+          warnings[`${reading.timezone_id}.diff`] =
+            `Difference is ${absPercent}% ${direction} than previous reading. (Previous: ${initialDiff} -> Current: ${diff})`
+          hasWarnings = true
+        }
+      }
+    })
+
+    setReadingWarnings(warnings)
 
     setReadingErrors(errors)
     if (hasErrors) {
       showError('Please fix the highlighted reading values.')
+      return
+    }
+    if (hasWarnings) {
+      setShowWarningModal(true)
       return
     }
 
@@ -283,6 +323,7 @@ export default function ProfileReadingForm({
                 isFirstReading={isFirstReading}
                 updateInitialReading={updateInitialValue}
                 mf={meter?.meter_mf ?? 1}
+                warnings={readingWarnings}
               />
             </div>
             <div className='mt-4 flex justify-end gap-2'>
@@ -300,6 +341,38 @@ export default function ProfileReadingForm({
                 label='UPDATE READING'
               />
             </div>
+            {showWarningModal && (
+              <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
+                <div className='w-full max-w-md rounded-lg bg-white p-6'>
+                  <h3 className='text-lg font-semibold text-yellow-600'>Warning detected</h3>
+
+                  <p className='mt-2 text-sm text-gray-700'>
+                    Some readings differ by more than ±20%. Are you sure you want to continue?
+                  </p>
+
+                  <div className='mt-4 flex justify-end gap-2'>
+                    <Button
+                      variant='secondary'
+                      label='Cancel'
+                      onClick={() => setShowWarningModal(false)}
+                    />
+                    <Button
+                      variant='primary'
+                      label='Continue & Save'
+                      onClick={() => {
+                        setShowWarningModal(false)
+                        updateReading(
+                          meter!.meter_id,
+                          selectedParameter!.meter_parameter_id,
+                          currentReadingState
+                        )
+                        setActiveProfile(null)
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </Card>
         </div>
       )}

@@ -27,6 +27,7 @@ export interface TimezoneReadingState {
     final: string
     initial: number
     value: number
+    lastReadingDiff: number
   }
 }
 
@@ -53,6 +54,7 @@ function transformToFormData(
             final: match?.final_reading?.toString() ?? '0',
             diff: match?.difference?.toString() ?? '0',
             value: 0,
+            lastReadingDiff: match?.difference ?? 0,
           },
         }
       })
@@ -92,6 +94,27 @@ const getPreviousFinalReading = (
         readingValue.timezone_id === timezoneId &&
         readingValue.parameter_id === parameterId
     )?.final_reading ?? 0
+  )
+}
+
+const getPreviousDiffReading = (
+  lastMeterReading: MeterReading | null,
+  meterId: number,
+  parameterId: number,
+  timezoneId: number
+) => {
+  if (lastMeterReading == null) {
+    console.log('latest reading not found')
+    return 0
+  }
+
+  return (
+    lastMeterReading?.values?.find(
+      (readingValue) =>
+        readingValue.meter_id === meterId &&
+        readingValue.timezone_id === timezoneId &&
+        readingValue.parameter_id === parameterId
+    )?.difference ?? 0
   )
 }
 
@@ -139,6 +162,12 @@ export default function useMeterReadingForm(
                 ),
             final: lastMeterReading ? '' : 0,
             diff: lastMeterReading ? '' : 0,
+            lastReadingDiff: getPreviousDiffReading(
+              lastMeterReading,
+              meter.meter_id,
+              profile.meter_parameter_id,
+              tz.timezone_id
+            ),
             value: 0,
           },
         })),

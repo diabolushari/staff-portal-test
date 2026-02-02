@@ -62,6 +62,7 @@ export interface ComputedProperties {
   electricity_duty_rate: ComputedProperty
   colony_lighting_unit_rate: ComputedProperty
   factory_lighting_unit_rate: ComputedProperty
+  time_zones: ComputedProperty
 }
 
 export interface TotalDemandChargeRow {

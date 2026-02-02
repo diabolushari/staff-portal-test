@@ -2,6 +2,7 @@ import { Meter, MeterProfileParameter } from '@/interfaces/data_interfaces'
 import Input from '@/ui/form/Input'
 import { TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
 import ErrorText from '@/typography/ErrorText'
+import WarningText from '@/typography/WarningText'
 
 interface Props {
   parameterReadingValues: TimezoneReadingState[]
@@ -14,6 +15,7 @@ interface Props {
   isFirstReading: boolean
   updateInitialReading: (tzId: number, value: string) => void
   mf: number
+  warnings: Record<string, string | undefined>
 }
 
 export default function MeterReadingValueForm({
@@ -27,6 +29,7 @@ export default function MeterReadingValueForm({
   errors,
   updateInitialReading,
   mf,
+  warnings,
 }: Readonly<Props>) {
   return (
     <div className='rounded border bg-white p-4'>
@@ -66,6 +69,9 @@ export default function MeterReadingValueForm({
                 />
                 {errors?.[`${tz.timezone_id}.initial`] && (
                   <ErrorText>{errors[`${tz.timezone_id}.initial`]}</ErrorText>
+                )}
+                {warnings?.[`${tz.timezone_id}.initial`] && (
+                  <WarningText>{warnings[`${tz.timezone_id}.initial`]}</WarningText>
                 )}
               </div>
             ))}
@@ -114,6 +120,9 @@ export default function MeterReadingValueForm({
               {errors?.[`${tz.timezone_id}.final`] && (
                 <ErrorText>{errors[`${tz.timezone_id}.final`]}</ErrorText>
               )}
+              {warnings?.[`${tz.timezone_id}.final`] && (
+                <WarningText>{warnings[`${tz.timezone_id}.final`]}</WarningText>
+              )}
             </div>
           ))}
         </>
@@ -135,6 +144,9 @@ export default function MeterReadingValueForm({
                   setValue={() => {}}
                   error={errors?.[`${tz.timezone_id}.diff`]}
                 />
+                {warnings?.[`${tz.timezone_id}.diff`] && (
+                  <WarningText>{warnings[`${tz.timezone_id}.diff`]}</WarningText>
+                )}
               </div>
             ))}
           </>
