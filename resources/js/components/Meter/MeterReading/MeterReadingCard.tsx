@@ -103,9 +103,7 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
               <NormalText>
                 Power Factor:{' '}
                 {summary.meter_pf?.average_power_factor != null
-                  ? summary.meter_pf?.average_power_factor.toFixed(
-                      summary.meter?.decimal_digit_count ?? 3
-                    )
+                  ? summary.meter_pf?.average_power_factor.toFixed(2)
                   : '-'}
               </NormalText>
             )}
