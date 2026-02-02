@@ -138,7 +138,7 @@ export default function MeterReadingShowPage({
 
                   <TableBody>
                     <TableRow>
-                      <TableCell className='font-medium'>Voltage (V)</TableCell>
+                      <TableCell className='font-medium'>Voltage (kV)</TableCell>
                       <TableCell className='text-center'>
                         {meter.health.voltage_r ? meter.health.voltage_r.toFixed(2) : '-'}
                       </TableCell>

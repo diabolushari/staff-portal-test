@@ -133,7 +133,7 @@ export default function ProfileReadingForm({
             ...tzReading.values,
             initial: value,
             final: value,
-            diff: '0',
+            diff: 0,
             value: 0,
           },
         }

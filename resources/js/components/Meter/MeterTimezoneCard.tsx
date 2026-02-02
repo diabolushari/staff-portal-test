@@ -1,5 +1,4 @@
 import Button from '@/ui/button/Button'
-
 import { Card } from '../ui/card'
 import { Meter, MeterTimezoneType } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'

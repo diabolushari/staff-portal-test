@@ -40,7 +40,6 @@ export default function ReadingParameterPreviewCard({
           return sum + Number(r.values?.value ?? 0)
         }, 0)
       : null
-  console.log(paramData?.readings)
   return (
     <Card
       key={profile.meter_parameter_id}
@@ -66,42 +65,81 @@ export default function ReadingParameterPreviewCard({
         }`}
         style={{ scrollBehavior: 'smooth' }}
       >
-        {/* Header */}
-        <div className='grid grid-cols-4 gap-2 border-b border-gray-200 pb-1 font-medium text-gray-700'>
-          <span></span>
-          <span className='text-right'>IR</span>
-          <span className='text-right'>FR</span>
-          <span className='text-right'>VALUE</span>
-        </div>
-
-        {/* Rows */}
-        {paramData?.readings?.map((r) => {
-          return (
-            <div
-              key={r.timezone_id}
-              className='grid grid-cols-4 gap-2 border-b border-gray-100 py-1 last:border-0'
-            >
-              <span>{r.timezone_name}</span>
-
-              <span className='text-right font-medium text-gray-800'>{r.values?.initial || 0}</span>
-
-              <span className='text-right font-medium text-gray-800'>{r.values?.final || 0}</span>
-
-              <span className={`text-right font-medium`}>
-                {Number(r.values?.value)?.toFixed(2) || 0}
-              </span>
+        {profile.is_cumulative ? (
+          <>
+            {/* Header */}
+            <div className='grid grid-cols-4 gap-2 border-b border-gray-200 pb-1 font-medium text-gray-700'>
+              <span></span>
+              <span className='text-right'>IR</span>
+              <span className='text-right'>FR</span>
+              <span className='text-right'>DIFF x MF</span>
             </div>
-          )
-        })}
-        {profile.is_cumulative && totalValue !== null && (
-          <div className='mt-2 grid grid-cols-4 gap-2 pt-2 font-semibold text-gray-800'>
-            <span>Total</span>
+            {/* Rows */}
+            {paramData?.readings?.map((r) => {
+              return (
+                <div
+                  key={r.timezone_id}
+                  className='grid grid-cols-4 gap-2 border-b border-gray-100 py-1 last:border-0'
+                >
+                  <span>{r.timezone_name}</span>
 
-            <span className='text-right'></span>
-            <span className='text-right'></span>
+                  <span className='text-right font-medium text-gray-800'>
+                    {r.values?.initial || '-'}
+                  </span>
 
-            <span className='text-right'>{totalValue.toFixed(2)}</span>
-          </div>
+                  <span className='text-right font-medium text-gray-800'>
+                    {r.values?.final || '-'}
+                  </span>
+
+                  <span className='text-right font-medium'>
+                    {r.values?.value !== undefined && r.values?.value !== null
+                      ? Number(r.values.value).toFixed(2)
+                      : '-'}
+                  </span>
+                </div>
+              )
+            })}
+            {profile.is_cumulative && totalValue !== null && (
+              <div className='mt-2 grid grid-cols-4 gap-2 pt-2 font-semibold text-gray-800'>
+                <span>Total</span>
+
+                <span className='text-right'></span>
+                <span className='text-right'></span>
+
+                <span className='text-right'>{totalValue.toFixed(2) || '-'}</span>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            {/* Header */}
+            <div className='grid grid-cols-3 gap-2 border-b border-gray-200 pb-1 font-medium text-gray-700'>
+              <span></span>
+              <span className='text-right'>FR</span>
+              <span className='text-right'>DIFF x MF</span>
+            </div>
+            {/* Rows */}
+            {paramData?.readings?.map((r) => {
+              return (
+                <div
+                  key={r.timezone_id}
+                  className='grid grid-cols-3 gap-2 border-b border-gray-100 py-1 last:border-0'
+                >
+                  <span>{r.timezone_name}</span>
+
+                  <span className='text-right font-medium text-gray-800'>
+                    {r.values?.final || '-'}
+                  </span>
+
+                  <span className='text-right font-medium'>
+                    {r.values?.value !== undefined && r.values?.value !== null
+                      ? Number(r.values.value).toFixed(2)
+                      : '-'}
+                  </span>
+                </div>
+              )
+            })}
+          </>
         )}
       </div>
 
