@@ -83,6 +83,19 @@
     }
 </style>
 
+@php
+function zoneLabel($zoneName, $index) {
+$standardZones = ['normal', 'peak', 'off peak', 'offpeak'];
+
+if (in_array(strtolower(trim($zoneName ?? '')), $standardZones)) {
+return $index + 1; // show index (1-based)
+}
+
+return $zoneName ?: ($index + 1);
+}
+@endphp
+
+
 <div class="reading-wrapper">
 
     <div class="reading-title">
@@ -123,7 +136,7 @@
                 <tbody>
                     @foreach($kwhValues as $i => $kwh)
                     <tr>
-                        <td colspan="2" class="center">{{ $i + 1 }}</td>
+                        <td colspan="2" class="center">{{ zoneLabel($kwh['timezone'], $i) }}</td>
                         <td colspan="3" class="right">{{ $kwh['final_reading'] ?? 0 }}</td>
                         <td colspan="3" class="right">{{ $kwh['initial_reading'] ?? 0 }}</td>
                         <td colspan="2" class="center">{{ $kwh['meter_mf'] ?? 1 }}</td>
@@ -176,7 +189,7 @@
                     @foreach($lagValues as $i => $lag)
                     @php $lead = $leadValues[$i] ?? []; @endphp
                     <tr>
-                        <td class="center">{{ $i + 1 }}</td>
+                        <td class="center">{{ zoneLabel($lag['timezone'], $i) }}</td>
                         <td class="right">{{ $lag['final_reading'] ?? 0 }}</td>
                         <td class="right">{{ $lag['initial_reading'] ?? 0 }}</td>
                         <td class="center">{{ $lag['meter_mf'] ?? 1 }}</td>
@@ -231,7 +244,7 @@
                 <tbody>
                     @foreach($kvahValues as $i => $kvah)
                     <tr>
-                        <td class="center">{{ $i + 1 }}</td>
+                        <td class="center">{{ zoneLabel($kvah['timezone'], $i) }}</td>
                         <td class="right">{{ $kvah['final_reading'] ?? '-' }}</td>
                         <td class="right">{{ $kvah['initial_reading'] ?? '-' }}</td>
                         <td class="center">{{ $kvah['meter_mf'] ?? 1 }}</td>
@@ -279,7 +292,7 @@
                 <tbody>
                     @foreach($kvaValues as $i => $kva)
                     <tr>
-                        <td class="center">{{ $i + 1 }}</td>
+                        <td class="center">{{ zoneLabel($kva['timezone'], $i) }}</td>
                         <td class="center">{{ $kva['final_reading'] ?? '-' }}</td>
                         <td class="center">{{ $kva['meter_mf'] ?? 1 }}</td>
                         <td class="right">{{ number_format($kva['value'] ?? 0, 2) }}</td>
