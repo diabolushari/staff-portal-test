@@ -317,7 +317,7 @@ export default function BillReadingDetails({
               >
                 Total
               </TableCell>
-              <TableCell className='border border-black'>
+              <TableCell className='border border-black text-right'>
                 {kvahValues?.reduce((s, r) => s + (r?.value ?? 0), 0) ?? '-'}
               </TableCell>
             </TableRow>
