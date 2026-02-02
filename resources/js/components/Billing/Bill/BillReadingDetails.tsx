@@ -6,7 +6,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { BillMeterReading, ComputedProperties, MeterWithMf } from '@/interfaces/bill_pdf_interfaces'
+import {
+  BillMeterReading,
+  ComputedProperties,
+  ComputedProperty,
+  MeterWithMf,
+} from '@/interfaces/bill_pdf_interfaces'
 import { Bill } from '@/interfaces/data_interfaces'
 import { getDisplayMonthYear } from '@/utils'
 
@@ -20,6 +25,7 @@ interface BillReadingDetailsProps {
   leadValues: BillMeterReading[]
   computedProperties: ComputedProperties
   selfGenerationkwhValues: BillMeterReading[]
+  timeZones?: ComputedProperty
 }
 
 export default function BillReadingDetails({
@@ -32,9 +38,10 @@ export default function BillReadingDetails({
   leadValues,
   computedProperties,
   selfGenerationkwhValues,
+  timeZones,
 }: Readonly<BillReadingDetailsProps>) {
   const mf = meter?.meter_mf ?? 1
-  console.log(kwhValues)
+  console.log(timeZones, 'timezoens')
   return (
     <div className='mb-2 text-xs'>
       <div className='flex items-center justify-center border border-black p-2'>
@@ -103,7 +110,9 @@ export default function BillReadingDetails({
                     colSpan={1}
                     className='w-12 border border-black text-center'
                   >
-                    {i + 1}
+                    {timeZones?.result[i]?.result && timeZones.result.length <= 2
+                      ? `${timeZones?.result[i]?.result}`
+                      : i + 1}
                   </TableCell>
                   <TableCell
                     colSpan={3}
@@ -188,7 +197,11 @@ export default function BillReadingDetails({
               const lead = leadValues?.[i] ?? {}
               return (
                 <TableRow key={i}>
-                  <TableCell className='w-12 border border-black text-center'>{i + 1}</TableCell>
+                  <TableCell className='w-12 border border-black text-center'>
+                    {timeZones?.result[i]?.result && timeZones.result.length <= 2
+                      ? `${timeZones?.result[i]?.result}`
+                      : i + 1}
+                  </TableCell>
                   <TableCell className='border border-black text-right'>
                     {lag?.final_reading ?? 0}
                   </TableCell>
@@ -276,7 +289,11 @@ export default function BillReadingDetails({
                   key={i}
                   className=''
                 >
-                  <TableCell className='border border-black text-center'>{i + 1}</TableCell>
+                  <TableCell className='border border-black text-center'>
+                    {timeZones?.result[i]?.result && timeZones.result.length <= 2
+                      ? `${timeZones?.result[i]?.result}`
+                      : i + 1}
+                  </TableCell>
                   <TableCell className='border border-black text-right'>
                     {kvah?.final_reading ?? '-'}
                   </TableCell>
@@ -300,7 +317,7 @@ export default function BillReadingDetails({
               >
                 Total
               </TableCell>
-              <TableCell className='border border-black'>
+              <TableCell className='border border-black text-right'>
                 {kvahValues?.reduce((s, r) => s + (r?.value ?? 0), 0) ?? '-'}
               </TableCell>
             </TableRow>
@@ -342,7 +359,11 @@ export default function BillReadingDetails({
             {kvaValues?.map((kva, i) => {
               return (
                 <TableRow key={i}>
-                  <TableCell className='border border-black text-center'>{i + 1}</TableCell>
+                  <TableCell className='border border-black text-center'>
+                    {timeZones?.result[i]?.result && timeZones.result.length <= 2
+                      ? `${timeZones?.result[i]?.result}`
+                      : i + 1}
+                  </TableCell>
                   <TableCell className='border border-black text-right'>
                     {kva?.final_reading ?? '-'}
                   </TableCell>

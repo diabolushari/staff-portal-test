@@ -325,62 +325,37 @@ export default function BillInvoice({
                 </TableCell>
               </TableRow>
 
-              <TableRow>
-                <TableCell
-                  colSpan={2}
-                  className='border border-black'
-                >
-                  Reconnection Fee
-                </TableCell>
-                <TableCell className='border border-black text-right'>0.00</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell
-                  colSpan={2}
-                  className='border border-black'
-                >
-                  LOW_VOLT_SUR
-                </TableCell>
-                <TableCell className='border border-black text-right'>0.00</TableCell>
-              </TableRow>
+              {Number(chargeHeads?.monthly_fuel_surcharge?.result) > 0 && (
+                <TableRow>
+                  <TableCell
+                    colSpan={2}
+                    className='border border-black'
+                  >
+                    Monthly Fuel Surcharge
+                  </TableCell>
+                  <TableCell className='border border-black text-right'>
+                    {Number(chargeHeads?.monthly_fuel_surcharge?.result)
+                      ? Number(chargeHeads?.monthly_fuel_surcharge?.result).toFixed(2)
+                      : '-'}
+                  </TableCell>
+                </TableRow>
+              )}
 
-              <TableRow>
-                <TableCell
-                  colSpan={2}
-                  className='border border-black'
-                >
-                  Charges for Belated Payments
-                </TableCell>
-                <TableCell className='border border-black text-right'>0.00</TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell
-                  colSpan={2}
-                  className='border border-black'
-                >
-                  Monthly Fuel Surcharge
-                </TableCell>
-                <TableCell className='border border-black text-right'>
-                  {Number(chargeHeads?.monthly_fuel_surcharge?.result)
-                    ? Number(chargeHeads?.monthly_fuel_surcharge?.result).toFixed(2)
-                    : '-'}
-                </TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell
-                  colSpan={2}
-                  className='border border-black'
-                >
-                  Green Energy Charge
-                </TableCell>
-                <TableCell className='border border-black text-right'>
-                  {Number(chargeHeads?.green_energy_charge?.result)
-                    ? Number(chargeHeads?.green_energy_charge?.result).toFixed(2)
-                    : '-'}
-                </TableCell>
-              </TableRow>
+              {Number(chargeHeads?.green_energy_charge?.result) > 0 && (
+                <TableRow>
+                  <TableCell
+                    colSpan={2}
+                    className='border border-black'
+                  >
+                    Green Energy Charge
+                  </TableCell>
+                  <TableCell className='border border-black text-right'>
+                    {Number(chargeHeads?.green_energy_charge?.result)
+                      ? Number(chargeHeads?.green_energy_charge?.result).toFixed(2)
+                      : '-'}
+                  </TableCell>
+                </TableRow>
+              )}
 
               {/* Spacer rows like printed bill */}
 

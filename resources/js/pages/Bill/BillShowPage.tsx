@@ -6,6 +6,7 @@ import {
   BillMeterReading,
   ChargeHeads,
   ComputedProperties,
+  ComputedProperty,
   MeterWithMf,
   TotalDemandCharge,
   TotalEnergyCharge,
@@ -32,6 +33,7 @@ interface BillShowPageProps {
   averageAndTotalKva: { totalKva: number; averageKva: number }
   averageAndTotalKwh: { averageKwh: number; totalKwh: number }
   selfGenerationkwhValues: BillMeterReading[]
+  timeZones: ComputedProperty
 }
 
 export default function BillShowPage({
@@ -50,6 +52,7 @@ export default function BillShowPage({
   averageAndTotalKva,
   averageAndTotalKwh,
   selfGenerationkwhValues,
+  timeZones,
 }: BillShowPageProps) {
   const mf = meter?.meter_mf ?? 1
 
@@ -101,6 +104,7 @@ export default function BillShowPage({
             leadValues={leadValues}
             computedProperties={computedProperties}
             selfGenerationkwhValues={selfGenerationkwhValues}
+            timeZones={timeZones}
           />
 
           {/* Final Charges */}
