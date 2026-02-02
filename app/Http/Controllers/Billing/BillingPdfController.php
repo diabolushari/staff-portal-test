@@ -52,11 +52,11 @@ class BillingPdfController extends Controller
         };
         $amountInWords = $this->billExportService->getAmountInWords($bill->data['bill_amount'] ?? null);
         $pdf = Pdf::loadView('billing/bill-template', [
-            'kvaValues' => $kvaValues ?? [],
-            'kvahValues' => $kvahValues ?? [],
-            'kwhValues' => $kwhValues ?? [],
-            'lagValues' => $lagValues ?? [],
-            'leadValues' => $leadValues ?? [],
+            'kvaValues' => $kvaValues,
+            'kvahValues' => $kvahValues,
+            'kwhValues' => $kwhValues,
+            'lagValues' => $lagValues,
+            'leadValues' => $leadValues,
             'bill' => $billWithNumber ?? [],
             'connection' => $bill->data['connection'] ?? [],
             'consumer' => $bill->data['connection']['consumer_profiles'][0] ?? [],
