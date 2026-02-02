@@ -59,18 +59,29 @@ const getToday = () => {
 
 const getMonthEnd = (dateStr: string, isFirstReading: boolean) => {
   if (!dateStr) return ''
+
   if (isFirstReading) {
     return dateStr
   }
+
+  const start = dayjs(dateStr)
+
+  // End of start month
+  const endOfThisMonth = start.endOf('month')
+
+  //  If start date is already the last day of this month
+  if (start.isSame(endOfThisMonth, 'day')) {
+    return start.add(1, 'month').endOf('month').format('YYYY-MM-DD')
+  }
+
   const today = dayjs()
-  const date = new Date(dateStr)
-  const year = date.getFullYear()
-  const month = date.getMonth() + 1
-  const lastDay = new Date(year, month, +1)
-  if (today.isBefore(lastDay)) {
+
+  // Normal behavior
+  if (today.isBefore(endOfThisMonth)) {
     return today.format('YYYY-MM-DD')
   }
-  return lastDay.toISOString().split('T')[0]
+
+  return endOfThisMonth.format('YYYY-MM-DD')
 }
 
 export default function MeterReadingCreatePage({
