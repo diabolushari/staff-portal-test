@@ -212,12 +212,14 @@ export interface ConnectionGreenEnergy {
   connection_id: number | string
   green_energy_type_id: number | string
   green_energy_type: ParameterValues
-  percentage: number
-  id: number
-  is_active: boolean
-  remarks?: string
-  effective_start: string
-  effective_end: string
+  agreement_authority_id: number | string
+  agreement_authority: ParameterValues
+  percentage:number
+  id:number
+  is_active:boolean
+  remarks?:string
+  effective_start:string
+  effective_end:string
 }
 
 export interface OfficeHierarchy {

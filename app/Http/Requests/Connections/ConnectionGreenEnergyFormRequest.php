@@ -10,8 +10,10 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class ConnectionGreenEnergyFormRequest extends Data
 {
     public function __construct(
+        public ?int $id,
         public int $connectionId,
         public int $greenEnergyTypeId,
+        public ?int $agreementAuthorityId,
         public float $percentage,
         public string $effectiveStart,
         public ?string $effectiveEnd,

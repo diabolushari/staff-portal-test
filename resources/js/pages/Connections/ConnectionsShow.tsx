@@ -4,7 +4,7 @@ import ConnectionGreenEnergyFormModal from '@/components/Connections/ConnectionG
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
-import type { Connection } from '@/interfaces/data_interfaces'
+import type { Connection, ConnectionGreenEnergy } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import StrongText from '@/typography/StrongText'
@@ -14,6 +14,9 @@ import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 import { useMemo, useState } from 'react'
 import { groupFlagsBySection } from '../Consumer/ConsumerShow'
+import ActionButton from '@/components/action-button'
+import DeleteModal from '@/ui/Modal/DeleteModal'
+import ConnectionGreenEnergyCard from '@/components/Connections/ConnectionGreenEnergyCard'
 
 interface Props {
   connection: Connection
@@ -22,6 +25,7 @@ interface Props {
   generationTypes: ParameterValues[]
   primaryPurposes: ParameterValues[]
   greenEnergyTypes: ParameterValues[]
+  agreementAuthorities: ParameterValues[]
 }
 
 export default function ConnectionsShow({
@@ -31,6 +35,7 @@ export default function ConnectionsShow({
   generationTypes,
   primaryPurposes,
   greenEnergyTypes,
+  agreementAuthorities,
 }: Readonly<Props>) {
   console.log(connection)
   const formatDate = (dateStr?: string | null) =>
@@ -89,8 +94,6 @@ export default function ConnectionsShow({
 
     return labels.join(', ')
   }, [connection?.other_purposes, primaryPurposes])
-
-  console.log(connection)
 
   return (
     <ConnectionsLayout
@@ -353,42 +356,13 @@ export default function ConnectionsShow({
                 </div>
               </Card>
             ))}
-          {connection.green_energy &&
-            connection.green_energy.length > 0 &&
-            connection.green_energy.map((greenEnergy) => (
-              <Card
-                className='rounded-lg p-5'
-                key={greenEnergy.id}
-              >
-                <div className='mb-6 flex items-center justify-between'>
-                  <StrongText className='text-base font-semibold text-[#252c32]'>
-                    {greenEnergy.green_energy_type.parameter_value}
-                  </StrongText>
-                </div>
-                <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
-
-                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                  <Field
-                    label='Percentage'
-                    value={greenEnergy.percentage}
-                  />
-                  {greenEnergy.remarks && (
-                    <Field
-                      label='Remarks'
-                      value={greenEnergy.remarks}
-                    />
-                  )}
-                  <Field
-                    label='Effective Start Date'
-                    value={getDisplayDate(greenEnergy.effective_start)}
-                  />
-                  <Field
-                    label='Effective End Date'
-                    value={getDisplayDate(greenEnergy.effective_end)}
-                  />
-                </div>
-              </Card>
-            ))}
+          {connection?.green_energy && connection?.green_energy?.length > 0 && (
+            <ConnectionGreenEnergyCard
+              connection={connection}
+              greenEnergyTypes={greenEnergyTypes}
+              agreementAuthorities={agreementAuthorities}
+            />
+          )}
           <div className='flex gap-4'>
             {connectionGroupedFlags?.length === 0 && indicators.length > 0 && (
               <AddButton
@@ -429,8 +403,10 @@ export default function ConnectionsShow({
               connection={connection}
               setShowModal={setAddGreenEnergy}
               greenEnergyTypes={greenEnergyTypes}
+              agreementAuthorities={agreementAuthorities}
             />
           )}
+
           {/* Dates */}
         </div>
       </div>
