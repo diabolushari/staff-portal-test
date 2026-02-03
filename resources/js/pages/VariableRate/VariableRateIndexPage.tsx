@@ -60,7 +60,7 @@ export default function VariableRateIndexPage({
       leftBarTitle='Variable Rate'
       selectedItem='Variable Rate'
       addBtnText='Rate'
-      title='Variable Rate'
+      title='Variable Rates'
       addBtnClick={handleAddBtnClick}
     >
       <VariableRateSearch filters={filters} />

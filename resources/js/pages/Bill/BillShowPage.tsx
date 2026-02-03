@@ -53,6 +53,8 @@ export default function BillShowPage({
 }: BillShowPageProps) {
   const mf = meter?.meter_mf ?? 1
 
+  console.log('kwhValues', kwhValues)
+
   return (
     <div className='page bill-root bill-page w-full'>
       <div className='flex items-center justify-end'>
