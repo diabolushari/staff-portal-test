@@ -46,21 +46,21 @@ export default function MeterReadingObservationStep({
             <div className='grid gap-4 md:grid-cols-3'>
               <Input
                 key={meter.meter_id}
-                label='Voltage R'
+                label='Voltage R (kV)'
                 value={meter.voltage_r}
                 setValue={(value) => updateRybValues(meter.meter_id, value, 'voltage_r')}
                 type='number'
                 error={errors?.voltage_r}
               />
               <Input
-                label='Voltage Y'
+                label='Voltage Y (kV)'
                 value={meter.voltage_y}
                 setValue={(value) => updateRybValues(meter.meter_id, value, 'voltage_y')}
                 type='number'
                 error={errors?.voltage_y}
               />
               <Input
-                label='Voltage B'
+                label='Voltage B (kV)'
                 value={meter.voltage_b}
                 setValue={(value) => updateRybValues(meter.meter_id, value, 'voltage_b')}
                 type='number'
@@ -68,21 +68,21 @@ export default function MeterReadingObservationStep({
               />
 
               <Input
-                label='Current R'
+                label='Current R (A)'
                 value={meter.current_r}
                 setValue={(value) => updateRybValues(meter.meter_id, value, 'current_r')}
                 type='number'
                 error={errors?.current_r}
               />
               <Input
-                label='Current Y'
+                label='Current Y (A)'
                 value={meter.current_y}
                 setValue={(value) => updateRybValues(meter.meter_id, value, 'current_y')}
                 type='number'
                 error={errors?.current_y}
               />
               <Input
-                label='Current B'
+                label='Current B (A)'
                 value={meter.current_b}
                 setValue={(value) => updateRybValues(meter.meter_id, value, 'current_b')}
                 type='number'
