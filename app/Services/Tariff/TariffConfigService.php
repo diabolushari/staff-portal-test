@@ -154,7 +154,9 @@ class TariffConfigService
         $msg->setTariffOrderId($request->tariffOrderId);
         $msg->setConnectionTariffId($request->connectionTariff);
         $msg->setConsumptionLowerLimit($request->consumptionLowerLimit);
-        $msg->setConsumptionUpperLimit($request->consumptionUpperLimit);
+        if ($request->consumptionUpperLimit) {
+            $msg->setConsumptionUpperLimit($request->consumptionUpperLimit);
+        }
         $msg->setDemandChargeKva($request->demandChargeKva);
         $msg->setEnergyChargeKwh($request->energyChargeKwh);
         $msg->setEffectiveStart($request->effectiveStart);

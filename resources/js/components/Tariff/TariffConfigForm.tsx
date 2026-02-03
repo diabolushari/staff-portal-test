@@ -104,7 +104,6 @@ export default function TariffConfigForm({
             value={formData.consumption_upper_limit}
             setValue={setFormValue('consumption_upper_limit')}
             error={errors.consumption_upper_limit}
-            required
           />
 
           <Input
