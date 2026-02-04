@@ -47,6 +47,7 @@ class TariffConfigService
 
         [$response, $status] = $this->client->listTariffConfigPaginated($grpcRequest)->wait();
 
+
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -170,14 +171,15 @@ class TariffConfigService
      */
     public function tariffConfigMessageToArray(TariffConfigMessage $msg): array
     {
+
         return [
             'tariff_config_id' => $msg->getTariffConfigId(),
             'tariff_order_id' => $msg->getTariffOrderId(),
             'connection_tariff' => $this->parameterValueService->toArray($msg->getConnectionTariff()),
-            'consumption_lower_limit' => $msg->getConsumptionLowerLimit(),
-            'consumption_upper_limit' => $msg->getConsumptionUpperLimit(),
-            'demand_charge_kva' => $msg->getDemandChargeKva(),
-            'energy_charge_kwh' => $msg->getEnergyChargeKwh(),
+            'consumption_lower_limit' => $msg->getConsumptionLowerLimit() ?? null,
+            'consumption_upper_limit' => $msg->hasConsumptionUpperLimit() ? $msg->getConsumptionUpperLimit() : null,
+            'demand_charge_kva' => $msg->getDemandChargeKva() ?? null,
+            'energy_charge_kwh' => $msg->getEnergyChargeKwh() ?? null,
             'tariff_order' => $msg->getTariffOrder() ? $this->tariffOrderService->tariffMessageToArray($msg->getTariffOrder()) : null,
             'effective_start' => $msg->getEffectiveStart(),
             'effective_end' => $msg->getEffectiveEnd(),
@@ -194,6 +196,7 @@ class TariffConfigService
         foreach ($configs as $item) {
             $array[] = $this->tariffConfigMessageToArray($item);
         }
+
 
         return [
             'tariff_configs' => $array,

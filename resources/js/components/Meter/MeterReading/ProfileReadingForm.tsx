@@ -137,15 +137,18 @@ export default function ProfileReadingForm({
         if (tzReading.timezone_id !== timeZoneId) {
           return tzReading
         }
-        const valueAsNumber = Number.parseFloat(value)
-        if (value != '' && Number.isNaN(valueAsNumber)) {
+        const normalizedValue = value === '' ? '0' : value
+        const valueAsNumber = Number.parseFloat(normalizedValue)
+
+        if (Number.isNaN(valueAsNumber)) {
           return tzReading
         }
+
         return {
           ...tzReading,
           values: {
             ...tzReading.values,
-            initial: value,
+            initial: normalizedValue,
             final: value,
             diff: 0,
             value: 0,
