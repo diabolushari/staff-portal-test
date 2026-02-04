@@ -60,28 +60,13 @@ const getToday = () => {
 const getMonthEnd = (dateStr: string, isFirstReading: boolean) => {
   if (!dateStr) return ''
 
+  // First reading use the same date
   if (isFirstReading) {
-    return dateStr
+    return dayjs(dateStr).format('YYYY-MM-DD')
   }
 
-  const start = dayjs(dateStr)
-
-  // End of start month
-  const endOfThisMonth = start.endOf('month')
-
-  //  If start date is already the last day of this month
-  if (start.isSame(endOfThisMonth, 'day')) {
-    return start.add(1, 'month').endOf('month').format('YYYY-MM-DD')
-  }
-
-  const today = dayjs()
-
-  // Normal behavior
-  if (today.isBefore(endOfThisMonth)) {
-    return today.format('YYYY-MM-DD')
-  }
-
-  return endOfThisMonth.format('YYYY-MM-DD')
+  // Not first reading end of that month
+  return dayjs(dateStr).endOf('month').format('YYYY-MM-DD')
 }
 
 export default function MeterReadingCreatePage({
@@ -161,9 +146,9 @@ export default function MeterReadingCreatePage({
     if (isFirstReading) {
       return getMeterEnergisedDate(connectionWithConsumer?.connection?.meter_mappings ?? [])
     }
-    if (latestMeterReading?.reading_start_date == latestMeterReading?.reading_end_date) {
-      return latestMeterReading?.reading_end_date
-    }
+    // if (latestMeterReading?.reading_start_date == latestMeterReading?.reading_end_date) {
+    //   return latestMeterReading?.reading_end_date
+    // }
 
     return getNextDay(latestMeterReading?.reading_end_date) ?? ''
   }, [isFirstReading, latestMeterReading?.reading_end_date, connectionWithConsumer])

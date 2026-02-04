@@ -137,6 +137,11 @@ export default function MeterReadingsStep({
               formData={formData}
               readingValues={readingValues}
               setActiveProfile={setActiveProfile}
+              metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
+              updateReading={updateReading}
+              isFirstReading={isFirstReading}
+              hasMultipleMeters={hasMultipleMeters}
+              setIsOnParameterForm={setIsOnParameterForm}
             />
           )}
 
