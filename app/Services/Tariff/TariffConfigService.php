@@ -65,9 +65,8 @@ class TariffConfigService
 
         $configs = $this->configFormToGrpcMessage($request);
 
-        $grpcRequest = new CreateTariffConfigRequest();
+        $grpcRequest = new CreateTariffConfigRequest;
         $grpcRequest->setConfig($configs);
-
 
         [$response, $status] = $this->client->createTariffConfig($grpcRequest)->wait();
 
@@ -155,7 +154,7 @@ class TariffConfigService
         $msg->setTariffOrderId($request->tariffOrderId);
         $msg->setConnectionTariffId($request->connectionTariff);
         $msg->setConsumptionLowerLimit($request->consumptionLowerLimit);
-        if ($request->consumptionUpperLimit) {
+        if ($request->consumptionUpperLimit !== null) {
             $msg->setConsumptionUpperLimit($request->consumptionUpperLimit);
         }
         $msg->setDemandChargeKva($request->demandChargeKva);
