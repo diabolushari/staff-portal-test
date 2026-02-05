@@ -4,7 +4,11 @@ import DeleteModal from '@/ui/Modal/DeleteModal'
 import { AnimatePresence } from 'framer-motion'
 import { useCallback, useState } from 'react'
 import { route } from 'ziggy-js'
-import { metadataNavItems } from '@/components/Navbar/navitems'
+import {
+  metadataNavItems,
+  meteringBillingNavItems,
+  meterNavItems,
+} from '@/components/Navbar/navitems'
 import AddButton from '@/ui/button/AddButton'
 import { PurposeInfo } from '@/interfaces/data_interfaces'
 import { Paginator } from '@/ui/ui_interfaces'
@@ -38,8 +42,8 @@ export default function PurposeInfoIndexPage({
       href: '/settings-page',
     },
     {
-      title: 'Purpose Informations',
-      href: '/purpose-info',
+      title: 'Tariff Mappings',
+      href: '/tariff-mappings',
     },
   ]
 
@@ -54,21 +58,21 @@ export default function PurposeInfoIndexPage({
   }
 
   const handleAddClick = () => {
-    router.get(route('purpose-info.create'))
+    router.get(route('tariff-mappings.create'))
   }
 
   const handleEditClick = (purposeInfo: PurposeInfo) => {
-    router.get(route('purpose-info.edit', purposeInfo.id))
+    router.get(route('tariff-mappings.edit', purposeInfo.id))
   }
 
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
-      navItems={metadataNavItems}
-      selectedItem='Purpose Informations'
-      title='Purpose Informations'
+      navItems={meteringBillingNavItems}
+      selectedItem='Tariff Mappings'
+      title='Tariff Mappings'
       addBtnClick={handleAddClick}
-      addBtnText='Purpose Information'
+      addBtnText='Tariff Mapping'
     >
       <PurposeInfoSearchForm
         oldPurpose={oldPurpose}
@@ -101,7 +105,7 @@ export default function PurposeInfoIndexPage({
           <DeleteModal
             setShowModal={setShowDeleteModal}
             title='Confirm Deletion'
-            url={route('purpose-info.destroy', purposeInfoToDelete.id)}
+            url={route('tariff-mappings.destroy', purposeInfoToDelete.id)}
             onSuccess={handleDeleteSuccess}
           >
             <div className='text-gray-700'>Are you sure you want to delete ?</div>

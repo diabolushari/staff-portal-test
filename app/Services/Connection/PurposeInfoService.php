@@ -5,12 +5,13 @@ namespace App\Services\Connection;
 use App\GrpcConverters\Connection\PurposeInfoConverter;
 use App\Http\Requests\Connections\PurposeInfoFormRequest;
 use App\Services\Grpc\GrpcErrorService;
-use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Proto\Connections\PurposeInfoServiceClient;
 use Grpc\ChannelCredentials;
 use Proto\Connections\DeletePurposeInfoRequest;
 use Proto\Connections\GetPurposeInfoRequest;
+use Proto\Connections\GetTariffWihtPurposeAndDateRequest;
+use Proto\Connections\GetTariffWithPurposeAndDateRequest;
 use Proto\Connections\ListPurposeInfoPaginatedRequest;
 use Proto\Connections\ListPurposeInfoRequest;
 
@@ -182,5 +183,33 @@ class PurposeInfoService
         }
 
         return GrpcServiceResponse::success([], $response, $status->code, $status->details);
+    }
+
+    public function getTariffWithPurposeAndDate(?int $purposeId, ?string $date): GrpcServiceResponse
+    {
+        $grpcRequest = new GetTariffWithPurposeAndDateRequest();
+        if ($purposeId) {
+            $grpcRequest->setPurposeId($purposeId);
+        }
+        if ($date) {
+            $grpcRequest->setDate($date);
+        }
+        [$response, $status] = $this->client->getTariffWithPurposeAndDate($grpcRequest)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $purposeInfoList = $response->getPurposeInfos();
+        $purposeInfoArray = [];
+        foreach ($purposeInfoList as $purposeInfo) {
+            $purposeInfoArray[] = PurposeInfoConverter::toArray($purposeInfo);
+        }
+
+        return GrpcServiceResponse::success($purposeInfoArray, $response, $status->code, $status->details);
     }
 }

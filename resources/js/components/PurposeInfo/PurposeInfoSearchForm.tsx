@@ -58,7 +58,7 @@ export default function PurposeInfoSearchForm({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    router.get(route('purpose-info.index'), formData)
+    router.get(route('tariff-mappings.index'), formData)
   }
 
   return (
@@ -120,7 +120,7 @@ export default function PurposeInfoSearchForm({
                     label='Clear Filters'
                     type='button'
                     variant='link'
-                    onClick={() => router.get(route('purpose-info.index'))}
+                    onClick={() => router.get(route('tariff-mappings.index'))}
                   />
                 </div>
               )}
