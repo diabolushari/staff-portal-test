@@ -14,7 +14,7 @@ class TariffConfigFormRequest extends Data
         public int $tariffOrderId,
         public int $connectionTariff,
         public int $consumptionLowerLimit,
-        public int $consumptionUpperLimit,
+        public ?int $consumptionUpperLimit,
         public float $demandChargeKva,
         public float $energyChargeKwh,
         public string $effectiveStart,
