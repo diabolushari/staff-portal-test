@@ -17,10 +17,12 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import ErrorBanner from '@/ui/Errors/ErrorBanner'
 import dayjs from 'dayjs'
 import { getDisplayDate } from '@/utils'
+import { ProfileReadingFormRef } from '@/components/Meter/MeterReading/ProfileReadingForm'
+import { MeterReadingPreviewRef } from '@/components/Meter/MeterReading/MeterReadingPreview'
 
 export interface MeterReadingForm extends MeterReading {
   reading_type: string
@@ -103,6 +105,11 @@ export default function MeterReadingCreatePage({
     ]
   }, [connectionWithConsumer])
 
+  const [activeProfile, setActiveProfile] = useState<{
+    meterIdx: number
+    profileIdx: number
+  } | null>(null)
+
   const { readingValues, updateReading } = useMeterReadingForm(
     metersWithTimezonesAndProfiles,
     latestMeterReading,
@@ -178,14 +185,47 @@ export default function MeterReadingCreatePage({
 
   const [activeStep, setActiveStep] = useState(0)
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement> | undefined = undefined) => {
+  const previewRefs = useRef<Record<number, MeterReadingPreviewRef | null>>({})
+  const accordionOpen = () => {
+    Object.values(previewRefs.current).forEach((ref) => {
+      ref?.expandAll()
+    })
+  }
+
+  const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault()
 
-    post({
-      ...formData,
-      readings_by_meter: readingValues,
-      meter_health: healthData,
-      multiple_reading: false,
+    // 1️⃣ Expand all accordions
+    accordionOpen()
+
+    // 2️⃣ Wait for UI to update, then validate
+    requestAnimationFrame(() => {
+      let firstErrorProfile: { meterIdx: number; profileIdx: number } | null = null
+
+      Object.entries(profileRefs.current).forEach(([key, ref]) => {
+        if (!ref) return
+
+        const isValid = ref.handleUpdate()
+
+        if (!isValid && !firstErrorProfile) {
+          const [meterIdx, profileIdx] = key.split('-').map(Number)
+          firstErrorProfile = { meterIdx, profileIdx }
+        }
+      })
+
+      if (firstErrorProfile) {
+        setIsOnParameterForm(false)
+        setActiveStep(2)
+        return
+      }
+
+      // 3️⃣ Submit only if valid
+      post({
+        ...formData,
+        readings_by_meter: readingValues,
+        meter_health: healthData,
+        multiple_reading: false,
+      })
     })
   }
 
@@ -244,6 +284,8 @@ export default function MeterReadingCreatePage({
       actionUrl: route('connections.show', connectionWithConsumer?.connection?.connection_id),
     }
   }, [connectionWithConsumer])
+
+  const profileRefs = useRef<Record<string, ProfileReadingFormRef | null>>({})
 
   return (
     <MainLayout
@@ -304,6 +346,10 @@ export default function MeterReadingCreatePage({
                   setIsOnParameterForm={setIsOnParameterForm}
                   isFirstReading={isFirstReading}
                   isOnparameterForm={isOnParamaterForm}
+                  profileRefs={profileRefs}
+                  activeProfile={activeProfile}
+                  setActiveProfile={setActiveProfile}
+                  previewRefs={previewRefs}
                 />
               )}
             </Stepper>
@@ -332,7 +378,7 @@ export default function MeterReadingCreatePage({
                   onClick={() => handleSubmit()}
                 />
               )}
-              {activeStep === steps.length - 1 && !isOnParamaterForm && (
+              {activeStep === steps.length - 1 && (
                 <Button
                   type='submit'
                   label='Submit'
