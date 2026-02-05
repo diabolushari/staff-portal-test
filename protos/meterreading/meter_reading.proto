@@ -100,6 +100,7 @@ message MeterReadingMessage {
   repeated MeterReadingPowerFactorMessage power_factors = 31;
   repeated MeterReadingHealthMessage healths = 32;
   optional bool is_edit = 33;
+  optional bool is_bill_generated = 34;
 }
 
 // ----------- REQUEST/RESPONSE MESSAGES ----------
