@@ -4,11 +4,7 @@ import {
   MeterReading,
   MeterReadingValue,
 } from '@/interfaces/data_interfaces'
-import {
-  CONSUMPTION_PARAMETER_NAME,
-  DEMAND_PARAMETER_NAME,
-  KVA_PARAMETER_NAME,
-} from '@/types/constants'
+import { CONSUMPTION_PARAMETER_NAME, KVA_PARAMETER_NAME } from '@/types/constants'
 import NormalText from '@/typography/NormalText'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
@@ -88,6 +84,7 @@ export default function MeterReadingCard({ meterReading, meters }: Readonly<Prop
             )
           }
           label='View'
+          variant='secondary'
         />
       </div>
       <div className='mt-4 space-y-4'>

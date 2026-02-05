@@ -42,6 +42,7 @@ export default function TariffConfigTable({
     setSelectedTariffConfig(tariffConfig)
     setAddTariffConfig(true)
   }
+  console.log(tariff_configs)
 
   return (
     <CustomCard
@@ -71,10 +72,10 @@ export default function TariffConfigTable({
               <TableRow key={config.tariff_config_id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{config.connection_tariff?.parameter_value || '-'}</TableCell>
-                <TableCell>{config.consumption_lower_limit}</TableCell>
-                <TableCell>{config.consumption_upper_limit}</TableCell>
-                <TableCell>{config.demand_charge_kva}</TableCell>
-                <TableCell>{config.energy_charge_kwh}</TableCell>
+                <TableCell>{config.consumption_lower_limit ?? '-'}</TableCell>
+                <TableCell>{config.consumption_upper_limit ?? '-'}</TableCell>
+                <TableCell>{config.demand_charge_kva ?? '-'}</TableCell>
+                <TableCell>{config.energy_charge_kwh ?? '-'}</TableCell>
                 <TableCell>{getDisplayDate(config.effective_start)}</TableCell>
                 <TableCell>{getDisplayDate(config.effective_end)}</TableCell>
 

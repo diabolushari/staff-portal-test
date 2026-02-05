@@ -1,7 +1,6 @@
 import {
   Meter,
   MeterProfileParameter,
-  MeterTransformer,
   MeterTransformerAssignment,
   MeterWithTimezoneAndProfile,
 } from '@/interfaces/data_interfaces'
@@ -13,7 +12,11 @@ import SelectList from '@/ui/form/SelectList'
 import PowerFactorBar from './MeterPowerFactor'
 import ReadingParameterPreviewCard from './ReadingForm/ReadingParameterPreviewCard'
 import { MeterHealth } from './ReadingForm/useMeterHealthForm'
-import { MeterReadingFormState } from './ReadingForm/useMeterReadingForm'
+import { MeterReadingFormState, TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
+import AccordionItem from '@/ui/Accordian/AccordianItem'
+import ProfileReadingForm from './ProfileReadingForm'
+import Button from '@/ui/button/Button'
+import { useRef, useState } from 'react'
 
 interface PowerFactorData {
   timezone_name: string
@@ -138,6 +141,10 @@ const calculateAveragePF = (powerFactors: PowerFactorData[]): string | null => {
 interface Props {
   meterIdx: number
   meterWithTimezoneAndProfile: MeterWithTimezoneAndProfile
+  metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
+  updateReading: (meterId: number, parameterId: number, newReading: TimezoneReadingState[]) => void
+  isFirstReading: boolean
+  hasMultipleMeters: boolean
   formData: MeterReadingForm
   readingValues: MeterReadingFormState[]
   healthData: MeterHealth[]
@@ -151,6 +158,7 @@ interface Props {
   ) => void
   meterHealthTypes: ParameterValues[]
   ctHealthTypes: ParameterValues[]
+  setIsOnParameterForm: (value: boolean) => void
 }
 
 export default function MeterReadingPreview({
@@ -160,9 +168,14 @@ export default function MeterReadingPreview({
   readingValues,
   updateMeterHealth,
   updateCTPTHealth,
+  metersWithTimezonesAndProfiles,
+  updateReading,
+  isFirstReading,
+  hasMultipleMeters,
   setActiveProfile,
   meterHealthTypes,
   ctHealthTypes,
+  setIsOnParameterForm,
 }: Readonly<Props>) {
   const hasImportKwh = meterWithTimezoneAndProfile.reading_parameters.some(
     (p) =>
@@ -187,6 +200,15 @@ export default function MeterReadingPreview({
     meterWithTimezoneAndProfile.meter_id,
     meterWithTimezoneAndProfile.reading_parameters
   )
+
+  const [openProfiles, setOpenProfiles] = useState<Set<number>>(new Set())
+  const allProfileIds = meterWithTimezoneAndProfile.reading_parameters.map(
+    (p) => p.meter_parameter_id
+  )
+
+  const expandAll = openProfiles.size === allProfileIds.length
+
+  const previewRef = useRef<HTMLDivElement | null>(null)
 
   return (
     <div
@@ -282,19 +304,76 @@ export default function MeterReadingPreview({
           )}
         </div>
       </div>
+      <div
+        className='p-2'
+        ref={previewRef}
+      >
+        <div
+          className='flex justify-end p-5'
+          onClick={(e) => {
+            e.stopPropagation()
+          }}
+        >
+          <Button
+            label={expandAll ? 'Collapse All' : 'Expand All'}
+            variant='tertiary'
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
 
-      <div className='grid gap-4 md:grid-cols-2'>
-        {meterWithTimezoneAndProfile?.reading_parameters?.map((profile, pIdx: number) => (
-          <ReadingParameterPreviewCard
-            key={profile.meter_parameter_id}
-            meterWithTimezoneAndProfile={meterWithTimezoneAndProfile}
-            readingValues={readingValues}
-            profile={profile}
-            profileIndex={pIdx}
-            meterIndex={meterIdx}
-            setActiveProfile={setActiveProfile}
+              if (expandAll) {
+                setOpenProfiles(new Set())
+              } else {
+                setOpenProfiles(new Set(allProfileIds))
+              }
+              requestAnimationFrame(() => {
+                previewRef.current?.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start',
+                })
+              })
+            }}
           />
-        ))}
+        </div>
+        <div className='grid gap-4 md:grid-cols-1'>
+          {meterWithTimezoneAndProfile.reading_parameters.map((profile, pIdx) => {
+            const isOpen = openProfiles.has(profile.meter_parameter_id)
+
+            return (
+              <ReadingParameterPreviewCard
+                key={profile.meter_parameter_id}
+                isOpen={isOpen}
+                onToggle={(open) => {
+                  setOpenProfiles((prev) => {
+                    const next = new Set(prev)
+                    if (open) {
+                      next.add(profile.meter_parameter_id)
+                    } else {
+                      next.delete(profile.meter_parameter_id)
+                    }
+                    return next
+                  })
+                }}
+                meterWithTimezoneAndProfile={meterWithTimezoneAndProfile}
+                readingValues={readingValues}
+                profile={profile}
+                profileIndex={pIdx}
+                meterIndex={meterIdx}
+              >
+                <ProfileReadingForm
+                  activeProfile={{ meterIdx, profileIdx: pIdx }}
+                  metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
+                  updateReading={updateReading}
+                  readingValues={readingValues}
+                  setActiveProfile={() => {}}
+                  isFirstReading={isFirstReading}
+                  hasMultipleMeters={hasMultipleMeters}
+                  setIsOnParameterForm={setIsOnParameterForm}
+                />
+              </ReadingParameterPreviewCard>
+            )
+          })}
+        </div>
       </div>
 
       {shouldShowPowerFactor && averagePF !== null && (
