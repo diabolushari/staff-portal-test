@@ -214,12 +214,12 @@ export interface ConnectionGreenEnergy {
   green_energy_type: ParameterValues
   agreement_authority_id: number | string
   agreement_authority: ParameterValues
-  percentage:number
-  id:number
-  is_active:boolean
-  remarks?:string
-  effective_start:string
-  effective_end:string
+  percentage: number
+  id: number
+  is_active: boolean
+  remarks?: string
+  effective_start: string
+  effective_end: string
 }
 
 export interface OfficeHierarchy {
@@ -731,4 +731,20 @@ export interface VariableRate {
   created_at?: string
   updated_at?: string
   variable_name: ParameterValues
+}
+
+export interface PurposeInfo {
+  id: number
+  purpose_id: number
+  tariff_id: number
+  is_non_dps: boolean
+  effective_start: string
+  effective_end: string
+  deleted_at?: string
+  created_by?: number
+  updated_by?: number
+  created_at?: string
+  updated_at?: string
+  purpose: ParameterValues
+  tariff: ParameterValues
 }
