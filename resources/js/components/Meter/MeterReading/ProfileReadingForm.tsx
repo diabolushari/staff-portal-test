@@ -209,7 +209,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
 
     const handleUpdate = () => {
       if (meter == null || selectedParameter == null || parameterReading == null) {
-        return true
+        return
       }
       const errors: Record<string, string | undefined> = {}
       const integerDigits = meter.meter.digit_count ?? 0
@@ -220,7 +220,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
         if (reading.values.final === '') {
           errors[`${reading.timezone_id}.final`] = 'Final reading is required.'
           hasErrors = true
-          return
+          return false
         }
 
         const finalAsNumber = Number.parseFloat(reading.values.final)
@@ -228,19 +228,19 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
         if (Number.isNaN(finalAsNumber)) {
           errors[`${reading.timezone_id}.final`] = 'Final reading must be a number.'
           hasErrors = true
-          return
+          return false
         }
         if (finalAsNumber < 0) {
           errors[`${reading.timezone_id}.final`] = 'Final reading must not be less than 0.'
           hasErrors = true
-          return
+          return false
         }
 
         if (Number.isNaN(diffAsNumber) || diffAsNumber < 0) {
           errors[`${reading.timezone_id}.diff`] =
             'Final reading must not be less than Initial reading.'
           hasErrors = true
-          return
+          return false
         }
 
         const isValidFinal = verifyFinalReadingDigits(
@@ -254,7 +254,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
           errors[`${reading.timezone_id}.final`] =
             `Final reading can only have up to ${integerDigits} digits${decimalHint}.`
           hasErrors = true
-          return
+          return false
         }
 
         if (
@@ -272,49 +272,19 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
           ) {
             errors[`${reading.timezone_id}.diff`] = 'kVAh should be greater than kWh.'
             hasErrors = true
+            return false
           }
         }
       })
-      const warnings: Record<string, string | undefined> = {}
-      let hasWarnings = false
-
-      currentReadingState.forEach((reading) => {
-        const initialDiff = Number(reading.values.lastReadingDiff)
-        const diff = Number(reading.values.diff)
-
-        if (!Number.isNaN(initialDiff) && !Number.isNaN(diff) && initialDiff > 0) {
-          const percentage = getPercentageChange(initialDiff, diff)
-
-          if (Math.abs(percentage) >= 20) {
-            const direction = percentage > 0 ? 'higher' : 'lower'
-            const absPercent = Math.abs(percentage).toFixed(2)
-
-            warnings[`${reading.timezone_id}.diff`] =
-              `Difference is ${absPercent}% ${direction} than previous reading. (Previous: ${initialDiff} -> Current: ${diff})`
-            hasWarnings = true
-          }
-        }
-      })
-
-      setReadingWarnings(warnings)
 
       setReadingErrors(errors)
       if (hasErrors) {
         showError('Please fix the highlighted reading values.')
-
-        setIsOnParameterForm(true)
-        setActiveProfile(activeProfile)
-
-        return false
-      }
-      if (hasWarnings) {
-        setShowWarningModal(true)
         return false
       }
 
       updateReading(meter.meter_id, selectedParameter.meter_parameter_id, currentReadingState)
       setActiveProfile(null)
-
       return true
     }
 
