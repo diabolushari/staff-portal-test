@@ -63,7 +63,7 @@ export default function VariableRateFormModal({ setShowModal, switchForm, rate }
               label='Variable Name'
               value={selectedVariableRate}
               setValue={setSelectedVariableRate}
-              placeholder='Eg: Green Energy'
+              placeholder='Search Variable Name'
               dataKey='id'
               displayKey='parameter_value'
               displayValue2='parameter_code'

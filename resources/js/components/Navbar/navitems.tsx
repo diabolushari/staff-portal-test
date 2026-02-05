@@ -170,7 +170,7 @@ export const metadataNavItems: MainNav = {
 }
 
 export const meteringBillingNavItems: MainNav = {
-  label: 'Manage Meter',
+  label: 'Metering & Billing Configurations',
   items: [
     {
       title: 'Timezone Groups',
@@ -198,13 +198,18 @@ export const meteringBillingNavItems: MainNav = {
       icon: '',
     },
     {
-      title: 'Billing Rule',
+      title: 'Billing Rules',
       href: '/billing-rules',
       icon: '',
     },
     {
-      title: 'Variable Rate',
+      title: 'Variable Rates',
       href: '/variable-rates',
+      icon: '',
+    },
+    {
+      title: 'Tariff Mappings',
+      href: '/tariff-mappings',
       icon: '',
     },
   ],

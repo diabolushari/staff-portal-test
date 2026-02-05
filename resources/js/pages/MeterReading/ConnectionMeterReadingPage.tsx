@@ -5,7 +5,7 @@ import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { BreadcrumbItem } from '@/types'
 import StrongText from '@/typography/StrongText'
 import { router } from '@inertiajs/react'
-import { Cpu, Plus } from 'lucide-react'
+import { Cpu } from 'lucide-react'
 
 import MeterReadingCard from '@/components/Meter/MeterReading/MeterReadingCard'
 import Pagination from '@/ui/Pagination/Pagination'

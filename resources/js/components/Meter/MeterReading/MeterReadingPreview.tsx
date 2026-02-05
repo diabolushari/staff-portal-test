@@ -1,7 +1,6 @@
 import {
   Meter,
   MeterProfileParameter,
-  MeterTransformer,
   MeterTransformerAssignment,
   MeterWithTimezoneAndProfile,
 } from '@/interfaces/data_interfaces'
@@ -13,7 +12,10 @@ import SelectList from '@/ui/form/SelectList'
 import PowerFactorBar from './MeterPowerFactor'
 import ReadingParameterPreviewCard from './ReadingForm/ReadingParameterPreviewCard'
 import { MeterHealth } from './ReadingForm/useMeterHealthForm'
-import { MeterReadingFormState } from './ReadingForm/useMeterReadingForm'
+import { MeterReadingFormState, TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
+import ProfileReadingForm, { ProfileReadingFormRef } from './ProfileReadingForm'
+import Button from '@/ui/button/Button'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 interface PowerFactorData {
   timezone_name: string
@@ -138,11 +140,16 @@ const calculateAveragePF = (powerFactors: PowerFactorData[]): string | null => {
 interface Props {
   meterIdx: number
   meterWithTimezoneAndProfile: MeterWithTimezoneAndProfile
+  metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
+  updateReading: (meterId: number, parameterId: number, newReading: TimezoneReadingState[]) => void
+  isFirstReading: boolean
+  hasMultipleMeters: boolean
   formData: MeterReadingForm
   readingValues: MeterReadingFormState[]
   healthData: MeterHealth[]
   updateMeterHealth: (statusId: number, meter: Meter) => void
   updateCTPTHealth: (meterId: number, ctptId: number, statusId: number) => void
+  activeProfile: { meterIdx: number; profileIdx: number } | null
   setActiveProfile: (
     profile: {
       meterIdx: number
@@ -151,162 +158,257 @@ interface Props {
   ) => void
   meterHealthTypes: ParameterValues[]
   ctHealthTypes: ParameterValues[]
+  setIsOnParameterForm: (value: boolean) => void
+  profileRefs: React.MutableRefObject<Record<string, ProfileReadingFormRef | null>>
 }
 
-export default function MeterReadingPreview({
-  meterIdx,
-  meterWithTimezoneAndProfile,
-  healthData,
-  readingValues,
-  updateMeterHealth,
-  updateCTPTHealth,
-  setActiveProfile,
-  meterHealthTypes,
-  ctHealthTypes,
-}: Readonly<Props>) {
-  const hasImportKwh = meterWithTimezoneAndProfile.reading_parameters.some(
-    (p) =>
-      p.name.toLowerCase() === CONSUMPTION_PARAMETER_NAME.toLowerCase() && p.is_export === false
-  )
-  const hasImportKvah = meterWithTimezoneAndProfile.reading_parameters.some(
-    (p) => p.name.toLowerCase() === DEMAND_PARAMETER_NAME.toLowerCase() && p.is_export === false
-  )
-  const shouldShowPowerFactor = hasImportKwh && hasImportKvah
+export interface MeterReadingPreviewRef {
+  expandAll: () => void
+}
+const MeterReadingPreview = forwardRef<MeterReadingPreviewRef, Props>(
+  (
+    {
+      meterIdx,
+      meterWithTimezoneAndProfile,
+      healthData,
+      readingValues,
+      updateMeterHealth,
+      updateCTPTHealth,
+      metersWithTimezonesAndProfiles,
+      updateReading,
+      isFirstReading,
+      hasMultipleMeters,
+      setActiveProfile,
+      meterHealthTypes,
+      ctHealthTypes,
+      setIsOnParameterForm,
+      profileRefs,
+    },
+    ref
+  ) => {
+    const hasImportKwh = meterWithTimezoneAndProfile.reading_parameters.some(
+      (p) =>
+        p.name.toLowerCase() === CONSUMPTION_PARAMETER_NAME.toLowerCase() && p.is_export === false
+    )
+    const hasImportKvah = meterWithTimezoneAndProfile.reading_parameters.some(
+      (p) => p.name.toLowerCase() === DEMAND_PARAMETER_NAME.toLowerCase() && p.is_export === false
+    )
+    const shouldShowPowerFactor = hasImportKwh && hasImportKvah
 
-  const powerFactorData = shouldShowPowerFactor
-    ? calculatePowerFactor(
-        readingValues,
-        meterWithTimezoneAndProfile.meter_id,
-        meterWithTimezoneAndProfile.timezones,
-        meterWithTimezoneAndProfile.reading_parameters
-      )
-    : []
+    const powerFactorData = shouldShowPowerFactor
+      ? calculatePowerFactor(
+          readingValues,
+          meterWithTimezoneAndProfile.meter_id,
+          meterWithTimezoneAndProfile.timezones,
+          meterWithTimezoneAndProfile.reading_parameters
+        )
+      : []
 
-  const averagePF = averagePowerfactor(
-    readingValues,
-    meterWithTimezoneAndProfile.meter_id,
-    meterWithTimezoneAndProfile.reading_parameters
-  )
+    const averagePF = averagePowerfactor(
+      readingValues,
+      meterWithTimezoneAndProfile.meter_id,
+      meterWithTimezoneAndProfile.reading_parameters
+    )
 
-  return (
-    <div
-      key={meterWithTimezoneAndProfile.meter_id}
-      className='flex flex-col gap-4'
-    >
-      <StrongText className='mb-2 block'>
-        Meter {meterWithTimezoneAndProfile.meter.meter_serial}
-      </StrongText>
-      <span className='text-sm text-gray-500'>
-        Multiplication Factor: {meterWithTimezoneAndProfile.meter_mf}
-      </span>
-      <div className='flex flex-col gap-2'>
-        {meterHealthTypes && (
-          <div className='flex items-center gap-2'>
-            <SelectList
-              label='Meter Health'
-              value={
-                healthData.find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
-                  ?.meter_health_id ?? ''
+    const [openProfiles, setOpenProfiles] = useState<Set<number>>(new Set())
+
+    const allProfileIds = meterWithTimezoneAndProfile.reading_parameters.map(
+      (p) => p.meter_parameter_id
+    )
+
+    useImperativeHandle(ref, () => ({
+      expandAll() {
+        setOpenProfiles(new Set(allProfileIds))
+      },
+    }))
+
+    const expandAll = openProfiles.size === allProfileIds.length
+
+    const previewRef = useRef<HTMLDivElement | null>(null)
+
+    return (
+      <div
+        key={meterWithTimezoneAndProfile.meter_id}
+        className='flex flex-col gap-4'
+      >
+        <StrongText className='mb-2 block'>
+          Meter {meterWithTimezoneAndProfile.meter.meter_serial}
+        </StrongText>
+        <span className='text-sm text-gray-500'>
+          Multiplication Factor: {meterWithTimezoneAndProfile.meter_mf}
+        </span>
+        <div className='flex flex-col gap-2'>
+          {meterHealthTypes && (
+            <div className='flex items-center gap-2'>
+              <SelectList
+                label='Meter Health'
+                value={
+                  healthData.find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
+                    ?.meter_health_id ?? ''
+                }
+                setValue={(value) =>
+                  updateMeterHealth(Number(value), meterWithTimezoneAndProfile.meter)
+                }
+                list={meterHealthTypes}
+                dataKey='id'
+                displayKey='parameter_value'
+              />
+            </div>
+          )}
+
+          <StrongText className='mt-4 mb-2 block'>CT / PT Transformers</StrongText>
+
+          <div className='grid grid-cols-1 gap-3 md:grid-cols-2'>
+            {meterWithTimezoneAndProfile.meter.transformers.map(
+              (ctpt: MeterTransformerAssignment) => {
+                const existingHealth = healthData
+                  .find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
+                  ?.ctpts?.find((c) => c.ctpt_id === ctpt.ctpt?.meter_ctpt_id)?.health
+
+                return (
+                  <div
+                    key={ctpt.ctpt?.meter_ctpt_id}
+                    className='rounded-lg border border-slate-200 bg-slate-50 p-3 shadow-sm'
+                  >
+                    <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-center'>
+                      {/* LEFT SIDE — Same info layout as ConnectionCardSection */}
+                      <div className='flex flex-wrap items-center gap-4 text-sm'>
+                        <div className='flex items-center gap-1'>
+                          <span className='font-medium text-slate-700'>Serial:</span>
+                          <span className='text-slate-600'>{ctpt.ctpt?.ctpt_serial ?? 'N/A'}</span>
+                        </div>
+
+                        <div className='flex items-center gap-1'>
+                          <span className='font-medium text-slate-700'>Type:</span>
+                          <span className='text-slate-600'>
+                            {ctpt.ctpt?.type?.parameter_value ?? 'N/A'}
+                          </span>
+                        </div>
+
+                        {ctpt.ctpt?.ratio_primary_value != null &&
+                          ctpt.ctpt?.ratio_secondary_value != null && (
+                            <div className='flex items-center gap-1'>
+                              <span className='font-medium text-slate-700'>Ratio:</span>
+                              <span className='text-slate-600'>
+                                {ctpt.ctpt?.ratio_primary_value} /{' '}
+                                {ctpt.ctpt?.ratio_secondary_value}
+                              </span>
+                            </div>
+                          )}
+                      </div>
+
+                      {/* RIGHT SIDE — The SelectList for health */}
+                      <div className='flex shrink-0 gap-2'>
+                        <SelectList
+                          label='CT/PT Health'
+                          value={existingHealth ?? ''}
+                          setValue={(value) =>
+                            updateCTPTHealth(
+                              meterWithTimezoneAndProfile.meter_id,
+                              ctpt.ctpt?.meter_ctpt_id ?? 0,
+                              Number(value)
+                            )
+                          }
+                          list={ctHealthTypes}
+                          dataKey='id'
+                          displayKey='parameter_value'
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )
               }
-              setValue={(value) =>
-                updateMeterHealth(Number(value), meterWithTimezoneAndProfile.meter)
-              }
-              list={meterHealthTypes}
-              dataKey='id'
-              displayKey='parameter_value'
+            )}
+          </div>
+        </div>
+        <div
+          className='p-2'
+          ref={previewRef}
+        >
+          <div
+            className='flex justify-end p-5'
+            onClick={(e) => {
+              e.stopPropagation()
+            }}
+          >
+            <Button
+              label={expandAll ? 'Collapse All' : 'Expand All'}
+              variant='tertiary'
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+
+                if (expandAll) {
+                  setOpenProfiles(new Set())
+                } else {
+                  setOpenProfiles(new Set(allProfileIds))
+                }
+                requestAnimationFrame(() => {
+                  previewRef.current?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                  })
+                })
+              }}
+            />
+          </div>
+          <div className='grid gap-4 md:grid-cols-1'>
+            {meterWithTimezoneAndProfile.reading_parameters.map((profile, pIdx) => {
+              const isOpen = openProfiles.has(profile.meter_parameter_id)
+
+              return (
+                <ReadingParameterPreviewCard
+                  key={profile.meter_parameter_id}
+                  isOpen={isOpen}
+                  onToggle={(open) => {
+                    setOpenProfiles((prev) => {
+                      const next = new Set(prev)
+                      if (open) {
+                        next.add(profile.meter_parameter_id)
+                      } else {
+                        next.delete(profile.meter_parameter_id)
+                      }
+                      return next
+                    })
+                  }}
+                  meterWithTimezoneAndProfile={meterWithTimezoneAndProfile}
+                  readingValues={readingValues}
+                  profile={profile}
+                  profileIndex={pIdx}
+                  meterIndex={meterIdx}
+                >
+                  <ProfileReadingForm
+                    ref={(el) => {
+                      profileRefs.current[`${meterIdx}-${pIdx}`] = el
+                    }}
+                    activeProfile={{ meterIdx, profileIdx: pIdx }}
+                    metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
+                    updateReading={updateReading}
+                    readingValues={readingValues}
+                    setActiveProfile={() => {}}
+                    isFirstReading={isFirstReading}
+                    hasMultipleMeters={hasMultipleMeters}
+                    setIsOnParameterForm={setIsOnParameterForm}
+                  />
+                </ReadingParameterPreviewCard>
+              )
+            })}
+          </div>
+        </div>
+
+        {shouldShowPowerFactor && averagePF !== null && (
+          <div className='mt-6'>
+            <StrongText className='mb-3'>Power Factor</StrongText>
+            <PowerFactorBar
+              powerFactorsByMeter={{ factors: powerFactorData }}
+              meterId={meterWithTimezoneAndProfile.meter_id}
+              averagePF={averagePF}
             />
           </div>
         )}
-
-        <StrongText className='mt-4 mb-2 block'>CT / PT Transformers</StrongText>
-
-        <div className='grid grid-cols-1 gap-3 md:grid-cols-2'>
-          {meterWithTimezoneAndProfile.meter.transformers.map(
-            (ctpt: MeterTransformerAssignment) => {
-              const existingHealth = healthData
-                .find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
-                ?.ctpts?.find((c) => c.ctpt_id === ctpt.ctpt?.meter_ctpt_id)?.health
-
-              return (
-                <div
-                  key={ctpt.ctpt?.meter_ctpt_id}
-                  className='rounded-lg border border-slate-200 bg-slate-50 p-3 shadow-sm'
-                >
-                  <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-center'>
-                    {/* LEFT SIDE — Same info layout as ConnectionCardSection */}
-                    <div className='flex flex-wrap items-center gap-4 text-sm'>
-                      <div className='flex items-center gap-1'>
-                        <span className='font-medium text-slate-700'>Serial:</span>
-                        <span className='text-slate-600'>{ctpt.ctpt?.ctpt_serial ?? 'N/A'}</span>
-                      </div>
-
-                      <div className='flex items-center gap-1'>
-                        <span className='font-medium text-slate-700'>Type:</span>
-                        <span className='text-slate-600'>
-                          {ctpt.ctpt?.type?.parameter_value ?? 'N/A'}
-                        </span>
-                      </div>
-
-                      {ctpt.ctpt?.ratio_primary_value != null &&
-                        ctpt.ctpt?.ratio_secondary_value != null && (
-                          <div className='flex items-center gap-1'>
-                            <span className='font-medium text-slate-700'>Ratio:</span>
-                            <span className='text-slate-600'>
-                              {ctpt.ctpt?.ratio_primary_value} / {ctpt.ctpt?.ratio_secondary_value}
-                            </span>
-                          </div>
-                        )}
-                    </div>
-
-                    {/* RIGHT SIDE — The SelectList for health */}
-                    <div className='flex shrink-0 gap-2'>
-                      <SelectList
-                        label='CT/PT Health'
-                        value={existingHealth ?? ''}
-                        setValue={(value) =>
-                          updateCTPTHealth(
-                            meterWithTimezoneAndProfile.meter_id,
-                            ctpt.ctpt?.meter_ctpt_id ?? 0,
-                            Number(value)
-                          )
-                        }
-                        list={ctHealthTypes}
-                        dataKey='id'
-                        displayKey='parameter_value'
-                      />
-                    </div>
-                  </div>
-                </div>
-              )
-            }
-          )}
-        </div>
       </div>
+    )
+  }
+)
 
-      <div className='grid gap-4 md:grid-cols-2'>
-        {meterWithTimezoneAndProfile?.reading_parameters?.map((profile, pIdx: number) => (
-          <ReadingParameterPreviewCard
-            key={profile.meter_parameter_id}
-            meterWithTimezoneAndProfile={meterWithTimezoneAndProfile}
-            readingValues={readingValues}
-            profile={profile}
-            profileIndex={pIdx}
-            meterIndex={meterIdx}
-            setActiveProfile={setActiveProfile}
-          />
-        ))}
-      </div>
-
-      {shouldShowPowerFactor && averagePF !== null && (
-        <div className='mt-6'>
-          <StrongText className='mb-3'>Power Factor</StrongText>
-          <PowerFactorBar
-            powerFactorsByMeter={{ factors: powerFactorData }}
-            meterId={meterWithTimezoneAndProfile.meter_id}
-            averagePF={averagePF}
-          />
-        </div>
-      )}
-    </div>
-  )
-}
+export default MeterReadingPreview
