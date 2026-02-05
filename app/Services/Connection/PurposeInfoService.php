@@ -5,6 +5,7 @@ namespace App\Services\Connection;
 use App\GrpcConverters\Connection\PurposeInfoConverter;
 use App\Http\Requests\Connections\PurposeInfoFormRequest;
 use App\Services\Grpc\GrpcErrorService;
+use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Proto\Connections\PurposeInfoServiceClient;
 use Grpc\ChannelCredentials;
@@ -54,6 +55,10 @@ class PurposeInfoService
         ?string $search = null,
         ?string $orderBy = null,
         ?string $orderDirection = 'asc',
+        ?int $purposeId = null,
+        ?int $tariffId = null,
+        ?string $fromDate = null,
+        ?string $toDate = null,
     ) {
         $grpcRequest = new ListPurposeInfoPaginatedRequest();
 
@@ -72,6 +77,20 @@ class PurposeInfoService
         if ($orderDirection) {
             $grpcRequest->setSortDirection($orderDirection);
         }
+        if ($purposeId) {
+            $grpcRequest->setPurposeId($purposeId);
+        }
+        if ($tariffId) {
+            $grpcRequest->setTariffId($tariffId);
+        }
+        if ($fromDate) {
+            $grpcRequest->setFromDate($fromDate);
+        }
+        if ($toDate) {
+            $grpcRequest->setToDate($toDate);
+        }
+
+
         [$response, $status] = $this->client->listPurposeInfoPaginated($grpcRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(

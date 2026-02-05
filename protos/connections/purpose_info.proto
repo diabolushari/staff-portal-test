@@ -64,6 +64,9 @@ message ListPurposeInfoPaginatedRequest {
   optional string sort_direction = 4;
     optional string search = 5;
   optional int32 purpose_id = 6;
+  optional int32 tariff_id = 7;
+  optional string from_date = 8;
+  optional string to_date = 9;
 }
 message ListPurposeInfoPaginatedResponse {
   repeated PurposeInfoMessage purpose_infos = 1;
