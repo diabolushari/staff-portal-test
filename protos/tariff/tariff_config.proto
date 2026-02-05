@@ -20,7 +20,7 @@ message TariffConfigMessage {
   com.kseb.consumerservice.proto.parameters.ParameterValueProto connection_tariff = 6;
 
   double consumption_lower_limit = 7;
-  double consumption_upper_limit = 8;
+  optional double consumption_upper_limit = 8;
 
   double demand_charge_kva = 9;
   double energy_charge_kwh = 10;

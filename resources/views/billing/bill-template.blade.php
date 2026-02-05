@@ -7,7 +7,7 @@
 
   <style>
     body {
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: 'DM Sans', Arial, Helvetica, sans-serif;
       font-size: 11px;
       margin: 0;
       padding: 0;
@@ -164,6 +164,19 @@
       font-family: "Courier New";
     }
   </style>
+  <style>
+    .header {
+      font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    }
+
+    .kseb-title {
+      font-weight: 400;
+      font-style: normal;
+      font-size: 22px;
+      /* Regular only */
+    }
+  </style>
+
 </head>
 
 <body>
@@ -171,7 +184,7 @@
 
     <!-- HEADER -->
     <div class="header">
-      <h1>KERALA STATE ELECTRICITY BOARD LIMITED</h1>
+      <div class="kseb-title">KERALA STATE ELECTRICITY BOARD LIMITED</div>
       <div class="sub">Office of the Special Officer (Revenue), Pattom, Thiruvananthapuram</div>
       <div class="title">DEMAND CUM DISCONNECTION NOTICE FOR {{ \Carbon\Carbon::parse($bill['bill_year_month'])->format('F Y') }}
       </div>

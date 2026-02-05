@@ -94,6 +94,7 @@ class TariffOrderController extends Controller
             pageSize: $pageSize,
             tariffOrderId: $response->data['tariff_order_id'] ?? null
         );
+
         $paginated = null;
         if (! empty($tariffConfigs->data)) {
             $paginated = new LengthAwarePaginator(
