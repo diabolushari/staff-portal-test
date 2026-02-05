@@ -209,7 +209,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
 
     const handleUpdate = () => {
       if (meter == null || selectedParameter == null || parameterReading == null) {
-        return
+        return true
       }
       const errors: Record<string, string | undefined> = {}
       const integerDigits = meter.meter.digit_count ?? 0
