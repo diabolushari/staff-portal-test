@@ -164,6 +164,11 @@ export const metadataNavItems: MainNav = {
           href: '/system-module',
           icon: '',
         },
+        {
+          title: 'Purpose Informations',
+          href: '/purpose-info',
+          icon: '',
+        },
       ],
     },
   ],

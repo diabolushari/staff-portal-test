@@ -35,6 +35,7 @@ use App\Http\Controllers\Connection\GetConnectionPartyController;
 use App\Http\Controllers\Connection\GetConsumerController;
 use App\Http\Controllers\Connection\MeterConnectionMappingUpdateChangeController;
 use App\Http\Controllers\Connection\MeterConnectionMappingUpdateStatusController;
+use App\Http\Controllers\Connection\PurposeInfoController;
 use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
@@ -150,6 +151,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('tariff-order/{tariffOrderId}/config/create', [TariffConfigController::class, 'create'])
         ->name('tariff-config.create');
     Route::resource('variable-rates', VariableRateController::class);
+    Route::resource('purpose-info', PurposeInfoController::class);
 
     Route::resource('billing-rules', BillingRuleController::class);
     Route::resource('billing-groups', BillingGroupController::class);
