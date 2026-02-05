@@ -102,4 +102,5 @@ export interface ChargeHeads {
   self_generation_duty: ChargeHeadItem
   colony_lighting: ChargeHeadItem
   factory_lighting: ChargeHeadItem
+  lt_surcharge: ChargeHeadItem
 }
