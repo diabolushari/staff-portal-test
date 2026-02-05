@@ -361,6 +361,21 @@ export default function BillInvoice({
                   </TableCell>
                 </TableRow>
               )}
+              {Number(chargeHeads?.lt_surcharge?.result) > 0 && (
+                <TableRow>
+                  <TableCell
+                    colSpan={2}
+                    className='border border-black'
+                  >
+                    LOW_VOLT_SUR
+                  </TableCell>
+                  <TableCell className='border border-black text-right'>
+                    {Number(chargeHeads?.lt_surcharge?.result)
+                      ? Number(chargeHeads?.lt_surcharge?.result).toFixed(2)
+                      : '-'}
+                  </TableCell>
+                </TableRow>
+              )}
 
               {/* Spacer rows like printed bill */}
 

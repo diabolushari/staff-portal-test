@@ -143,6 +143,7 @@ class MeterProfileParameterController extends Controller
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 10;
         $profileId = $id;
+        $meterProfileParameter = $this->parameterDefinitionService->getParameterDefinition(null, 'Meter', 'Meter Profile', 'Consumer');
         $response = $this->meterProfileParameterService->listMeteringProfileParameters(
             $pageNumber,
             $pageSize,
@@ -181,6 +182,7 @@ class MeterProfileParameterController extends Controller
             'meterProfileParameter' => $paginated,
             'profileId' => $profileId,
             'profile' => $profile->data,
+            'definition' => $meterProfileParameter->data,
         ]);
     }
 

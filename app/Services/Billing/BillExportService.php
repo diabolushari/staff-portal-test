@@ -15,16 +15,17 @@ class BillExportService
         private readonly MeterReadingService $meterReadingService
     ) {}
 
-    public function getEnergyConsumptionMeter(?int $connectionId): ?array
+    public function getEnergyConsumptionMeter(?int $connectionId, ?array $meterUseCategory): ?array
     {
         $meter = [];
         if (! $connectionId) {
             return $meter;
         }
+        $useCategory = $meterUseCategory['result'] ?? 'Energy Consumption';
         $meterConnectionMapping = $this->meterConnectionMappingService->getMeterConnectionMappingByConnectionId($connectionId)->data;
         if ($meterConnectionMapping) {
             foreach ($meterConnectionMapping as $mapping) {
-                if (strtolower($mapping['meter_use_category']['parameter_value']) == 'energy consumption') {
+                if (strtolower($mapping['meter_use_category']['parameter_value']) == strtolower($useCategory)) {
                     $meter['meter'] = $mapping['meter'];
                     $meter['meter_mf'] = $mapping['meter_mf'];
                 }

@@ -92,6 +92,7 @@ export default function BillShowPage({
         <BillSummary
           bill={bill}
           connection={connection}
+          tariff={computedProperties.tariff}
         />
         <BillArrears
           bill={bill}
