@@ -210,9 +210,9 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
       [maxValue, meter]
     )
 
-    const handleUpdate = (skipWarnings = false) => {
+    const handleUpdate = () => {
       if (meter == null || selectedParameter == null || parameterReading == null) {
-        return true
+        return
       }
       const errors: Record<string, string | undefined> = {}
       const integerDigits = meter.meter.digit_count ?? 0
@@ -223,7 +223,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
         if (reading.values.final === '') {
           errors[`${reading.timezone_id}.final`] = 'Final reading is required.'
           hasErrors = true
-          return false
+          return
         }
 
         const finalAsNumber = Number.parseFloat(reading.values.final)
@@ -231,19 +231,19 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
         if (Number.isNaN(finalAsNumber)) {
           errors[`${reading.timezone_id}.final`] = 'Final reading must be a number.'
           hasErrors = true
-          return false
+          return
         }
         if (finalAsNumber < 0) {
           errors[`${reading.timezone_id}.final`] = 'Final reading must not be less than 0.'
           hasErrors = true
-          return false
+          return
         }
 
         if (Number.isNaN(diffAsNumber) || diffAsNumber < 0) {
           errors[`${reading.timezone_id}.diff`] =
             'Final reading must not be less than Initial reading.'
           hasErrors = true
-          return false
+          return
         }
 
         const isValidFinal = verifyFinalReadingDigits(
@@ -257,7 +257,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
           errors[`${reading.timezone_id}.final`] =
             `Final reading can only have up to ${integerDigits} digits${decimalHint}.`
           hasErrors = true
-          return false
+          return
         }
 
         if (
@@ -302,19 +302,17 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
       setReadingWarnings(warnings)
 
       setReadingErrors(errors)
-
       if (hasErrors) {
         showError('Please fix the highlighted reading values.')
-        return { hasErrors: true, hasWarnings: false }
+        return
       }
-
-      if (hasWarnings && !skipWarnings) {
-        return { hasErrors: false, hasWarnings: true }
+      if (hasWarnings) {
+        setShowWarningModal(true)
+        return
       }
 
       updateReading(meter.meter_id, selectedParameter.meter_parameter_id, currentReadingState)
       setActiveProfile(null)
-      return { hasErrors: false, hasWarnings: false }
     }
 
     useImperativeHandle(ref, () => ({
@@ -351,10 +349,42 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
                   onClick={() => handleUpdate()}
                   type='button'
                   label='Update'
-                  variant='link'
+                  variant='secondary'
                 />
               </div>
             </Card>
+          </div>
+        )}
+        {showWarningModal && (
+          <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
+            <div className='w-full max-w-md rounded-lg bg-white p-6'>
+              <h3 className='text-lg font-semibold text-yellow-600'>Warning detected</h3>
+
+              <p className='mt-2 text-sm text-gray-700'>
+                Some readings differ by more than ±20%. Are you sure you want to continue?
+              </p>
+
+              <div className='mt-4 flex justify-end gap-2'>
+                <Button
+                  variant='secondary'
+                  label='Cancel'
+                  onClick={() => setShowWarningModal(false)}
+                />
+                <Button
+                  variant='primary'
+                  label='Continue & Save'
+                  onClick={() => {
+                    setShowWarningModal(false)
+                    updateReading(
+                      meter!.meter_id,
+                      selectedParameter!.meter_parameter_id,
+                      currentReadingState
+                    )
+                    setActiveProfile(null)
+                  }}
+                />
+              </div>
+            </div>
           </div>
         )}
       </>
