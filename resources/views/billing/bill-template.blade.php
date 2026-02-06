@@ -197,7 +197,7 @@
     'bill' => $bill,
     'connection' => $connection,
     'consumer' => $consumer,
-    'tariff' => $computedProperties['tariff'],
+    'tariff' => $computedProperties['tariff'] ?? null,
     ])
 
 
