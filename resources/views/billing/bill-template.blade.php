@@ -196,7 +196,8 @@
     @include('billing.bill-summary', [
     'bill' => $bill,
     'connection' => $connection,
-    'consumer' => $consumer
+    'consumer' => $consumer,
+    'tariff' => $computedProperties['tariff'] ?? null,
     ])
 
 

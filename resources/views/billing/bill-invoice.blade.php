@@ -211,7 +211,16 @@
                     <td class="right">{{ number_format($greenEnergy, 2) }}</td>
                 </tr>
                 @endif
+                @php
+                $ltSurcharge = $chargeHeads['lt_surcharge']['result'] ?? null;
+                @endphp
 
+                @if(is_numeric($ltSurcharge) && $ltSurcharge != 0)
+                <tr>
+                    <td colspan="2">LOW_VOLT_SUR</td>
+                    <td class="right">{{ number_format($ltSurcharge, 2) }}</td>
+                </tr>
+                @endif
                 <tr>
                     <td colspan="3" style="height:165px;"></td>
                 </tr>

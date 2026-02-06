@@ -22,7 +22,7 @@ class ListParameterValuesApiController extends Controller
         $attributeValue = $request->query('attribute_value');
         $search = $request->query('search');
 
-        $res = $this->client->getParameterValues(null, null, null, $domainName, $parameterName, $attributeName, $attributeValue);
+        $res = $this->client->getParameterValues(null, null, $search, $domainName, $parameterName, $attributeName, $attributeValue);
 
         return response()->json($res->data);
     }

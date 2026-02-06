@@ -1,7 +1,7 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useFetchRecord from '@/hooks/useFetchRecord'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { Connection, OfficeWithHierarchy } from '@/interfaces/data_interfaces'
+import { Connection, OfficeWithHierarchy, PurposeInfo } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import StrongText from '@/typography/StrongText'
 import CheckBox from '@/ui/form/CheckBox'
@@ -27,7 +27,6 @@ interface Props {
   connectionTypes: ParameterValues[]
   connectionStatus: ParameterValues[]
   voltageTypes: ParameterValues[]
-  tariffTypes: ParameterValues[]
   connectionCategory: ParameterValues[]
   billingProcesses: ParameterValues[]
   phaseTypes: ParameterValues[]
@@ -53,7 +52,6 @@ export default function ConnectionForm({
   connectionTypes,
   connectionStatus,
   voltageTypes,
-  tariffTypes,
   connectionCategory,
   billingProcesses,
   phaseTypes,
@@ -71,6 +69,7 @@ export default function ConnectionForm({
           .parameter_value
       : ''
   )
+  const [tariff, setTariff] = useState<PurposeInfo[] | null>(null)
 
   const { flagData, updateFlagData } = useConnectionFlagForm(indicators)
   const { generationData, updateGenerationData, updateGenerationSubTypeData } =
@@ -152,12 +151,19 @@ export default function ConnectionForm({
   const [subCategoryData] = useFetchRecord<ParameterValues[]>(
     '/api/parameter-values?attribute_name=attribute1Value&attribute_value=' + category
   )
+  const [tariffData] = useFetchRecord<PurposeInfo[]>(
+    '/api/connections/get-tariffs?date=' +
+      formData.connected_date +
+      '&purpose_id=' +
+      formData.primary_purpose_id
+  )
 
   useEffect(() => {
     if (subCategoryData) {
       setSubCategories(subCategoryData)
     }
   }, [subCategoryData])
+
   useEffect(() => {
     if (Number(formData?.light_load_kw_val) >= 0 && Number(formData?.power_load_kw_val) >= 0) {
       setFormValue('connected_load_kw_val')(
@@ -165,7 +171,25 @@ export default function ConnectionForm({
       )
     }
   }, [formData?.light_load_kw_val, formData?.power_load_kw_val])
+  useEffect(() => {
+    if (tariffData) {
+      setTariff(tariffData)
+      setFormValue('tariff_type_id')(tariffData[0]?.tariff_id ?? '')
+    }
+  }, [tariffData])
 
+  const handleSetTariff = (tariffId: string) => {
+    setFormValue('tariff_type_id')(tariffId)
+  }
+  useEffect(() => {
+    if (tariffData && billingProcesses) {
+      const nonDpsValue = tariffData[0]?.is_non_dps ? 'non-dps' : 'dps'
+      const billingProcess = billingProcesses.find(
+        (item) => item.parameter_value.toLowerCase() === nonDpsValue
+      )
+      setFormValue('billing_process_id')(billingProcess?.id ?? '')
+    }
+  }, [tariffData, billingProcesses])
   return (
     <form
       onSubmit={handleSubmit}
@@ -258,16 +282,7 @@ export default function ConnectionForm({
             error={errors?.voltage_type_id}
             required
           />
-          <SelectList
-            label='Tariff Type'
-            list={tariffTypes}
-            dataKey='id'
-            displayKey='parameter_value'
-            setValue={setFormValue('tariff_type_id')}
-            value={formData.tariff_type_id}
-            error={errors?.tariff_type_id}
-            required
-          />
+
           <Datepicker
             label='Connection Date'
             setValue={setFormValue('connected_date')}
@@ -335,6 +350,39 @@ export default function ConnectionForm({
         </div>
         <div className='mt-6 grid grid-cols-1 gap-6 p-4 md:grid-cols-2'>
           <SelectList
+            label='Primary Purpose'
+            list={primaryPurposes}
+            dataKey='id'
+            displayKey='parameter_value'
+            setValue={setFormValue('primary_purpose_id')}
+            value={formData.primary_purpose_id}
+            error={errors?.primary_purpose_id}
+            required
+          />
+
+          {tariff && tariff?.length > 0 && (
+            <SelectList
+              label='Tariff Type'
+              list={tariff}
+              dataKey='tariff_id'
+              displayKey='tariff_name'
+              setValue={handleSetTariff}
+              value={formData.tariff_type_id}
+              error={errors?.tariff_type_id}
+              required
+            />
+          )}
+          <SelectList
+            label='Billing Process'
+            list={billingProcesses}
+            dataKey='id'
+            displayKey='parameter_value'
+            setValue={setFormValue('billing_process_id')}
+            value={formData.billing_process_id}
+            error={errors?.billing_process_id}
+            required
+          />
+          <SelectList
             label='Connection Category'
             list={connectionCategory}
             dataKey='id'
@@ -368,16 +416,6 @@ export default function ConnectionForm({
           />
 
           <SelectList
-            label='Billing Process'
-            list={billingProcesses}
-            dataKey='id'
-            displayKey='parameter_value'
-            setValue={setFormValue('billing_process_id')}
-            value={formData.billing_process_id}
-            error={errors?.billing_process_id}
-            required
-          />
-          <SelectList
             label='Billing Side'
             list={billingSides}
             dataKey='id'
@@ -397,16 +435,7 @@ export default function ConnectionForm({
             error={errors?.phase_type_id}
             required
           />
-          <SelectList
-            label='Primary Purpose'
-            list={primaryPurposes}
-            dataKey='id'
-            displayKey='parameter_value'
-            setValue={setFormValue('primary_purpose_id')}
-            value={formData.primary_purpose_id}
-            error={errors?.primary_purpose_id}
-            required
-          />
+
           <MultiSelectList
             label='Other Purposes'
             list={otherPurposeList}

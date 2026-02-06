@@ -54,7 +54,7 @@ export default function VariableRateSearch({ filters }: Readonly<Props>) {
                 dataKey='id'
                 displayKey='parameter_value'
                 displayValue2='parameter_code'
-                url='/api/parameter-values?domain_name=Billing&parameter_name=Variable Name&attribute_value='
+                url='/api/parameter-values?domain_name=Billing&parameter_name=Variable Name&search='
               />
 
               <Button
