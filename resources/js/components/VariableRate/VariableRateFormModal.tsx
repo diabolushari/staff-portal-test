@@ -67,7 +67,7 @@ export default function VariableRateFormModal({ setShowModal, switchForm, rate }
               dataKey='id'
               displayKey='parameter_value'
               displayValue2='parameter_code'
-              url='/api/parameter-values?domain_name=Billing&parameter_name=Variable Name&attribute_value='
+              url='/api/parameter-values?domain_name=Billing&parameter_name=Variable Name&search='
               error={errors.variable_name_id}
             />
             <div className='flex justify-end'>
