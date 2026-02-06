@@ -36,6 +36,7 @@ export interface FormFieldProp {
   min?: number
   max?: number
   className?: string
+  step?: string | number
 }
 
 export interface CheckboxProp {

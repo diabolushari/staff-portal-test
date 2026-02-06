@@ -21,6 +21,7 @@ export default function Input({
   className = '',
   min,
   max,
+  step,
 }: Readonly<FormFieldProp>) {
   const handleKeydown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (preventFormSubmit && event.key === 'Enter') {
@@ -60,6 +61,7 @@ export default function Input({
           disabled={disabled}
           readOnly={readonly}
           required={required}
+          step={step ?? undefined}
         />
 
         {showClearButton && value && (
