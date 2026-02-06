@@ -18,6 +18,7 @@ interface CustomCardProps {
   addButtonText?: string
   onAddClick?: () => void
   onEditClick?: () => void
+  centerSlot?: ReactNode
 }
 
 export default function CustomCard({
@@ -29,6 +30,7 @@ export default function CustomCard({
   className = '',
   onAddClick,
   onEditClick,
+  centerSlot,
 }: CustomCardProps) {
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
@@ -37,6 +39,8 @@ export default function CustomCard({
           {title && (
             <StrongText className='text-2xl font-semibold text-[#252c32]'>{title}</StrongText>
           )}
+
+          {centerSlot && <div className='flex flex-1 justify-center'>{centerSlot}</div>}
 
           <div className='flex cursor-pointer gap-2'>
             {(addButton || onAddClick) && (
