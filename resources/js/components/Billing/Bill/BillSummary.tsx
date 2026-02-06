@@ -11,7 +11,7 @@ export default function BillSummary({
 }: {
   bill: Bill
   connection: Connection
-  tariff: ComputedProperty
+  tariff?: ComputedProperty
 }) {
   return (
     <Table className='bill-table'>
@@ -41,7 +41,7 @@ export default function BillSummary({
             colSpan={4}
             className=''
           >
-            {tariff?.result ?? '-'}
+            {tariff?.result ?? connection?.tariff?.parameter_value ?? '-'}
           </TableCell>
           <TableCell className=''>CD</TableCell>
           <TableCell className=''> 0.00</TableCell>

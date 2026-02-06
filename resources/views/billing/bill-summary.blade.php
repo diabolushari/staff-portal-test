@@ -23,7 +23,7 @@
         <td>{{ $connection['consumer_legacy_code'] ?? '-' }}</td>
 
         <td>Tariff</td>
-        <td colspan="3">{{ $tariff['result'] ?? '-' }}</td>
+        <td colspan="3">{{ $tariff['result'] ?? $connection['tariff']['parameter_value'] ?? '-' }}</td>
 
         <td>CD</td>
         <td><strong>00.0</strong></td>
