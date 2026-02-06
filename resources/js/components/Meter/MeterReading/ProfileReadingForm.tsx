@@ -2,7 +2,7 @@ import { Card } from '@/components/ui/card'
 import { MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
 import MeterReadingValueForm from './MeterReadingValueForm'
 import { MeterReadingFormState, TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
 import { showError } from '@/ui/alerts'
@@ -35,350 +35,333 @@ const getPercentageChange = (initialDiff: number, lastDiff: number) => {
   return (diffChange / initialDiff) * 100
 }
 
-export default function ProfileReadingForm({
-  activeProfile,
-  readingValues,
-  metersWithTimezonesAndProfiles,
-  updateReading,
-  setActiveProfile,
-  isFirstReading,
-  hasMultipleMeters,
-  setIsOnParameterForm,
-}: Readonly<Props>) {
-  const [currentReadingState, setCurrentReadingState] = useState<TimezoneReadingState[]>([])
-  const [readingErrors, setReadingErrors] = useState<Record<string, string | undefined>>({})
-  const [readingWarnings, setReadingWarnings] = useState<Record<string, string | undefined>>({})
-  const [showWarningModal, setShowWarningModal] = useState(false)
+export interface ProfileReadingFormRef {
+  handleUpdate: () => boolean
+}
 
-  const { meter, selectedParameter, parameterReading } = useMemo(() => {
-    if (activeProfile == null) {
-      return {
-        meter: null,
-        profile: null,
-        parameterReading: null,
+const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
+  (
+    {
+      activeProfile,
+      readingValues,
+      metersWithTimezonesAndProfiles,
+      updateReading,
+      setActiveProfile,
+      isFirstReading,
+      hasMultipleMeters,
+      setIsOnParameterForm,
+    },
+    ref
+  ) => {
+    const [currentReadingState, setCurrentReadingState] = useState<TimezoneReadingState[]>([])
+    const [readingErrors, setReadingErrors] = useState<Record<string, string | undefined>>({})
+    const [readingWarnings, setReadingWarnings] = useState<Record<string, string | undefined>>({})
+    const [showWarningModal, setShowWarningModal] = useState(false)
+
+    const { meter, selectedParameter, parameterReading } = useMemo(() => {
+      if (activeProfile == null) {
+        return {
+          meter: null,
+          profile: null,
+          parameterReading: null,
+        }
       }
-    }
 
-    const meter = metersWithTimezonesAndProfiles[activeProfile.meterIdx]
-    const selectedParameter = meter.reading_parameters[activeProfile.profileIdx]
-    const meterReadingData = readingValues.find((m) => m.meter_id === meter.meter_id)
-    const parameterReading = meterReadingData?.parameters.find(
-      (p) => p.meter_parameter_id === selectedParameter.meter_parameter_id
-    )
+      const meter = metersWithTimezonesAndProfiles[activeProfile.meterIdx]
+      const selectedParameter = meter.reading_parameters[activeProfile.profileIdx]
+      const meterReadingData = readingValues.find((m) => m.meter_id === meter.meter_id)
+      const parameterReading = meterReadingData?.parameters.find(
+        (p) => p.meter_parameter_id === selectedParameter.meter_parameter_id
+      )
 
-    return {
-      meter,
-      selectedParameter,
-      parameterReading,
-    }
-  }, [activeProfile, readingValues, metersWithTimezonesAndProfiles])
-
-  useEffect(() => {
-    if (parameterReading == null) {
-      return
-    }
-    const timezoneReadingStates = parameterReading.readings.map((reading) => {
       return {
-        ...reading,
-        values: {
-          ...reading.values,
-        },
+        meter,
+        selectedParameter,
+        parameterReading,
       }
-    })
-    setCurrentReadingState(timezoneReadingStates)
-  }, [parameterReading])
+    }, [activeProfile, readingValues, metersWithTimezonesAndProfiles])
 
-  const maxValue = useMemo(() => {
-    const integerDigits = meter?.meter.digit_count ?? 0
-    const decimalDigits = meter?.meter.decimal_digit_count ?? 0
-    return Number.parseFloat(
-      `${'9'.repeat(integerDigits)}${decimalDigits > 0 ? `.${'9'.repeat(2)}` : ''}`
-    )
-  }, [meter])
-
-  const updateData = useCallback(
-    (timeZoneId: number, value: string) => {
-      const valueAsNumber = Number.parseFloat(value)
-      if (value != '' && Number.isNaN(valueAsNumber)) {
-        showError('Invalid value')
+    useEffect(() => {
+      if (parameterReading == null) {
         return
       }
+      const timezoneReadingStates = parameterReading.readings.map((reading) => {
+        return {
+          ...reading,
+          values: {
+            ...reading.values,
+          },
+        }
+      })
+      setCurrentReadingState(timezoneReadingStates)
+    }, [parameterReading])
+
+    const maxValue = useMemo(() => {
+      const integerDigits = meter?.meter.digit_count ?? 0
+      const decimalDigits = meter?.meter.decimal_digit_count ?? 0
+      return Number.parseFloat(
+        `${'9'.repeat(integerDigits)}${decimalDigits > 0 ? `.${'9'.repeat(2)}` : ''}`
+      )
+    }, [meter])
+
+    const updateData = useCallback(
+      (timeZoneId: number, value: string) => {
+        const valueAsNumber = Number.parseFloat(value)
+        if (value != '' && Number.isNaN(valueAsNumber)) {
+          showError('Invalid value')
+          return
+        }
+        setCurrentReadingState((prevState) => {
+          return prevState.map((tzReading) => {
+            if (tzReading.timezone_id !== timeZoneId) {
+              return tzReading
+            }
+            let diff: number
+            if (tzReading.isRotation) {
+              diff = Math.ceil(maxValue) - tzReading.values.initial + valueAsNumber
+            } else {
+              diff = valueAsNumber - tzReading.values.initial
+            }
+            return {
+              ...tzReading,
+              values: {
+                ...tzReading.values,
+                final: value,
+                diff: diff.toString(),
+                value: Number((meter?.meter_mf ?? 1) * diff).toFixed(
+                  meter?.meter.decimal_digit_count ?? 2
+                ),
+              },
+            }
+          })
+        })
+      },
+      [meter, maxValue]
+    )
+
+    const updateInitialValue = useCallback((timeZoneId: number, value: string) => {
       setCurrentReadingState((prevState) => {
         return prevState.map((tzReading) => {
           if (tzReading.timezone_id !== timeZoneId) {
             return tzReading
           }
-          let diff: number
-          if (tzReading.isRotation) {
-            diff = Math.ceil(maxValue) - tzReading.values.initial + valueAsNumber
-          } else {
-            diff = valueAsNumber - tzReading.values.initial
-          }
-          return {
-            ...tzReading,
-            values: {
-              ...tzReading.values,
-              final: value,
-              diff: diff.toString(),
-              value: Number((meter?.meter_mf ?? 1) * diff).toFixed(
-                meter?.meter.decimal_digit_count ?? 2
-              ),
-            },
-          }
-        })
-      })
-    },
-    [meter, maxValue]
-  )
+          const normalizedValue = value === '' ? '0' : value
+          const valueAsNumber = Number.parseFloat(normalizedValue)
 
-  const updateInitialValue = useCallback((timeZoneId: number, value: string) => {
-    setCurrentReadingState((prevState) => {
-      return prevState.map((tzReading) => {
-        if (tzReading.timezone_id !== timeZoneId) {
-          return tzReading
-        }
-        const normalizedValue = value === '' ? '0' : value
-        const valueAsNumber = Number.parseFloat(normalizedValue)
-
-        if (Number.isNaN(valueAsNumber)) {
-          return tzReading
-        }
-
-        return {
-          ...tzReading,
-          values: {
-            ...tzReading.values,
-            initial: normalizedValue,
-            final: value,
-            diff: 0,
-            value: 0,
-          },
-        }
-      })
-    })
-  }, [])
-
-  const toggleRotation = useCallback(
-    (timezoneId: number) => {
-      setCurrentReadingState((prevState) => {
-        return prevState.map((tzReading) => {
-          if (tzReading.timezone_id !== timezoneId) {
+          if (Number.isNaN(valueAsNumber)) {
             return tzReading
           }
-          if (tzReading.values.final === '') {
-            return {
-              ...tzReading,
-              isRotation: !tzReading.isRotation,
-            }
-          }
-          const finalValue = Number.parseFloat(tzReading.values.final)
-          if (Number.isNaN(finalValue)) {
-            return {
-              ...tzReading,
-              isRotation: !tzReading.isRotation,
-            }
-          }
-          let diff: number
-          if (!tzReading.isRotation) {
-            diff = Math.ceil(maxValue) - tzReading.values.initial + finalValue
-          } else {
-            diff = finalValue - tzReading.values.initial
-          }
+
           return {
             ...tzReading,
-            isRotation: !tzReading.isRotation,
             values: {
               ...tzReading.values,
-              diff: diff.toString(),
-              value: (meter?.meter_mf ?? 1) * diff,
+              initial: normalizedValue,
+              final: value,
+              diff: 0,
+              value: 0,
             },
           }
         })
       })
-    },
-    [maxValue, meter]
-  )
+    }, [])
 
-  const handleUpdate = () => {
-    if (meter == null || selectedParameter == null || parameterReading == null) {
-      return
-    }
-    const errors: Record<string, string | undefined> = {}
-    const integerDigits = meter.meter.digit_count ?? 0
-    const decimalDigits = meter.meter.decimal_digit_count ?? 0
-    let hasErrors = false
+    const toggleRotation = useCallback(
+      (timezoneId: number) => {
+        setCurrentReadingState((prevState) => {
+          return prevState.map((tzReading) => {
+            if (tzReading.timezone_id !== timezoneId) {
+              return tzReading
+            }
+            if (tzReading.values.final === '') {
+              return {
+                ...tzReading,
+                isRotation: !tzReading.isRotation,
+              }
+            }
+            const finalValue = Number.parseFloat(tzReading.values.final)
+            if (Number.isNaN(finalValue)) {
+              return {
+                ...tzReading,
+                isRotation: !tzReading.isRotation,
+              }
+            }
+            let diff: number
+            if (!tzReading.isRotation) {
+              diff = Math.ceil(maxValue) - tzReading.values.initial + finalValue
+            } else {
+              diff = finalValue - tzReading.values.initial
+            }
+            return {
+              ...tzReading,
+              isRotation: !tzReading.isRotation,
+              values: {
+                ...tzReading.values,
+                diff: diff.toString(),
+                value: (meter?.meter_mf ?? 1) * diff,
+              },
+            }
+          })
+        })
+      },
+      [maxValue, meter]
+    )
 
-    currentReadingState.forEach((reading) => {
-      if (reading.values.final === '') {
-        errors[`${reading.timezone_id}.final`] = 'Final reading is required.'
-        hasErrors = true
-        return
+    const handleUpdate = () => {
+      if (meter == null || selectedParameter == null || parameterReading == null) {
+        return true
       }
+      const errors: Record<string, string | undefined> = {}
+      const integerDigits = meter.meter.digit_count ?? 0
+      const decimalDigits = meter.meter.decimal_digit_count ?? 0
+      let hasErrors = false
 
-      const finalAsNumber = Number.parseFloat(reading.values.final)
-      const diffAsNumber = Number.parseFloat(reading.values.diff)
-      if (Number.isNaN(finalAsNumber)) {
-        errors[`${reading.timezone_id}.final`] = 'Final reading must be a number.'
-        hasErrors = true
-        return
-      }
-      if (finalAsNumber < 0) {
-        errors[`${reading.timezone_id}.final`] = 'Final reading must not be less than 0.'
-        hasErrors = true
-        return
-      }
-
-      if (Number.isNaN(diffAsNumber) || diffAsNumber < 0) {
-        errors[`${reading.timezone_id}.diff`] =
-          'Final reading must not be less than Initial reading.'
-        hasErrors = true
-        return
-      }
-
-      const isValidFinal = verifyFinalReadingDigits(
-        reading.values.final,
-        integerDigits,
-        decimalDigits
-      )
-
-      if (!isValidFinal) {
-        const decimalHint = decimalDigits > 0 ? ` and ${decimalDigits} decimals` : ''
-        errors[`${reading.timezone_id}.final`] =
-          `Final reading can only have up to ${integerDigits} digits${decimalHint}.`
-        hasErrors = true
-        return
-      }
-
-      if (
-        selectedParameter.name.toLowerCase() === CONSUMPTION_PARAMETER_NAME.toLowerCase() ||
-        selectedParameter.name.toLowerCase() === DEMAND_PARAMETER_NAME.toLowerCase()
-      ) {
-        if (
-          !verifyApparentEnergy(
-            reading.timezone_id,
-            selectedParameter.name,
-            Number(reading.values.diff),
-            meter,
-            readingValues
-          )
-        ) {
-          errors[`${reading.timezone_id}.diff`] = 'kVAh should be greater than kWh.'
+      currentReadingState.forEach((reading) => {
+        if (reading.values.final === '') {
+          errors[`${reading.timezone_id}.final`] = 'Final reading is required.'
           hasErrors = true
+          return false
         }
-      }
-    })
-    const warnings: Record<string, string | undefined> = {}
-    let hasWarnings = false
 
-    currentReadingState.forEach((reading) => {
-      const initialDiff = Number(reading.values.lastReadingDiff)
-      const diff = Number(reading.values.diff)
-
-      if (!Number.isNaN(initialDiff) && !Number.isNaN(diff) && initialDiff > 0) {
-        const percentage = getPercentageChange(initialDiff, diff)
-
-        if (Math.abs(percentage) >= 20) {
-          const direction = percentage > 0 ? 'higher' : 'lower'
-          const absPercent = Math.abs(percentage).toFixed(2)
-
-          warnings[`${reading.timezone_id}.diff`] =
-            `Difference is ${absPercent}% ${direction} than previous reading. (Previous: ${initialDiff} -> Current: ${diff})`
-          hasWarnings = true
+        const finalAsNumber = Number.parseFloat(reading.values.final)
+        const diffAsNumber = Number.parseFloat(reading.values.diff)
+        if (Number.isNaN(finalAsNumber)) {
+          errors[`${reading.timezone_id}.final`] = 'Final reading must be a number.'
+          hasErrors = true
+          return false
         }
+        if (finalAsNumber < 0) {
+          errors[`${reading.timezone_id}.final`] = 'Final reading must not be less than 0.'
+          hasErrors = true
+          return false
+        }
+
+        if (Number.isNaN(diffAsNumber) || diffAsNumber < 0) {
+          errors[`${reading.timezone_id}.diff`] =
+            'Final reading must not be less than Initial reading.'
+          hasErrors = true
+          return false
+        }
+
+        const isValidFinal = verifyFinalReadingDigits(
+          reading.values.final,
+          integerDigits,
+          decimalDigits
+        )
+
+        if (!isValidFinal) {
+          const decimalHint = decimalDigits > 0 ? ` and ${decimalDigits} decimals` : ''
+          errors[`${reading.timezone_id}.final`] =
+            `Final reading can only have up to ${integerDigits} digits${decimalHint}.`
+          hasErrors = true
+          return false
+        }
+
+        if (
+          selectedParameter.name.toLowerCase() === CONSUMPTION_PARAMETER_NAME.toLowerCase() ||
+          selectedParameter.name.toLowerCase() === DEMAND_PARAMETER_NAME.toLowerCase()
+        ) {
+          if (
+            !verifyApparentEnergy(
+              reading.timezone_id,
+              selectedParameter.name,
+              Number(reading.values.diff),
+              meter,
+              readingValues
+            )
+          ) {
+            errors[`${reading.timezone_id}.diff`] = 'kVAh should be greater than kWh.'
+            hasErrors = true
+            return false
+          }
+        }
+      })
+
+      setReadingErrors(errors)
+      if (hasErrors) {
+        showError('Please fix the highlighted reading values.')
+        return false
       }
-    })
 
-    setReadingWarnings(warnings)
-
-    setReadingErrors(errors)
-    if (hasErrors) {
-      showError('Please fix the highlighted reading values.')
-      return
-    }
-    if (hasWarnings) {
-      setShowWarningModal(true)
-      return
+      updateReading(meter.meter_id, selectedParameter.meter_parameter_id, currentReadingState)
+      setActiveProfile(null)
+      return true
     }
 
-    updateReading(meter.meter_id, selectedParameter.meter_parameter_id, currentReadingState)
-    setActiveProfile(null)
-  }
+    useImperativeHandle(ref, () => ({
+      handleUpdate,
+    }))
 
-  return (
-    <>
-      {meter == null || selectedParameter == null || parameterReading == null ? null : (
-        <div className='flex flex-col gap-4'>
-          <Card className='p-4'>
-            <StrongText>{selectedParameter?.display_name}</StrongText>
-            <div
-              className={`mt-2 ${
-                parameterReading?.readings?.length > 2 ? 'overflow-y-auto pr-2' : ''
-              }`}
-            >
-              <MeterReadingValueForm
-                parameterReadingValues={currentReadingState ?? []}
-                onChange={updateData}
-                onToggleRotation={toggleRotation}
-                meter={meter.meter}
-                profileParameter={selectedParameter}
-                errors={readingErrors}
-                maxReadingValue={maxValue}
-                isFirstReading={isFirstReading}
-                updateInitialReading={updateInitialValue}
-                mf={meter?.meter_mf ?? 1}
-                warnings={readingWarnings}
-              />
-            </div>
-            <div className='mt-4 flex justify-end gap-2'>
-              <Button
-                variant='secondary'
-                onClick={() => {
-                  setActiveProfile(null)
-                  hasMultipleMeters ? setIsOnParameterForm(true) : setIsOnParameterForm(true)
-                }}
-                label='Cancel'
-              />
-              <Button
-                onClick={handleUpdate}
-                type='button'
-                label='UPDATE READING'
-              />
-            </div>
-            {showWarningModal && (
-              <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
-                <div className='w-full max-w-md rounded-lg bg-white p-6'>
-                  <h3 className='text-lg font-semibold text-yellow-600'>Warning detected</h3>
+    return (
+      <>
+        {meter == null || selectedParameter == null || parameterReading == null ? null : (
+          <div className='flex flex-col gap-4'>
+            <Card className='p-4'>
+              <StrongText>{selectedParameter?.display_name}</StrongText>
+              <div
+                className={`mt-2 ${
+                  parameterReading?.readings?.length > 2 ? 'overflow-y-auto pr-2' : ''
+                }`}
+              >
+                <MeterReadingValueForm
+                  parameterReadingValues={currentReadingState ?? []}
+                  onChange={updateData}
+                  onToggleRotation={toggleRotation}
+                  meter={meter.meter}
+                  profileParameter={selectedParameter}
+                  errors={readingErrors}
+                  maxReadingValue={maxValue}
+                  isFirstReading={isFirstReading}
+                  updateInitialReading={updateInitialValue}
+                  mf={meter?.meter_mf ?? 1}
+                  warnings={readingWarnings}
+                />
+              </div>
+              <div className='mt-4 flex justify-end gap-2'>
+                <Button
+                  onClick={handleUpdate}
+                  type='button'
+                  label='Validate Entry'
+                  variant='link'
+                />
+              </div>
+              {showWarningModal && (
+                <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
+                  <div className='w-full max-w-md rounded-lg bg-white p-6'>
+                    <h3 className='text-lg font-semibold text-yellow-600'>Warning detected</h3>
 
-                  <p className='mt-2 text-sm text-gray-700'>
-                    Some readings differ by more than ±20%. Are you sure you want to continue?
-                  </p>
+                    <p className='mt-2 text-sm text-gray-700'>
+                      Some readings differ by more than ±20%. Are you sure you want to continue?
+                    </p>
 
-                  <div className='mt-4 flex justify-end gap-2'>
-                    <Button
-                      variant='secondary'
-                      label='Cancel'
-                      onClick={() => setShowWarningModal(false)}
-                    />
-                    <Button
-                      variant='primary'
-                      label='Continue & Save'
-                      onClick={() => {
-                        setShowWarningModal(false)
-                        updateReading(
-                          meter!.meter_id,
-                          selectedParameter!.meter_parameter_id,
-                          currentReadingState
-                        )
-                        setActiveProfile(null)
-                      }}
-                    />
+                    <div className='mt-4 flex justify-end gap-2'>
+                      <Button
+                        variant='secondary'
+                        label='Cancel'
+                        onClick={() => setShowWarningModal(false)}
+                      />
+                      <Button
+                        variant='primary'
+                        label='Continue & Save'
+                        onClick={() => {
+                          setShowWarningModal(false)
+                          updateReading(
+                            meter!.meter_id,
+                            selectedParameter!.meter_parameter_id,
+                            currentReadingState
+                          )
+                          setActiveProfile(null)
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </Card>
-        </div>
-      )}
-    </>
-  )
-}
+              )}
+            </Card>
+          </div>
+        )}
+      </>
+    )
+  }
+)
+export default ProfileReadingForm

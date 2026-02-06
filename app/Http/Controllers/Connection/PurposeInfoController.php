@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Connection;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Connections\PurposeInfoFormRequest;
 use App\Services\Connection\PurposeInfoService;
+use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -16,7 +17,8 @@ class PurposeInfoController extends Controller
 {
 
     public function __construct(
-        private PurposeInfoService $purposeInfoService
+        private PurposeInfoService $purposeInfoService,
+        private ParameterValueService $parameterValueService
     ) {}
 
     public function index(Request $request): Response
@@ -26,8 +28,12 @@ class PurposeInfoController extends Controller
         $search = $request->input('search');
         $orderBy = $request->input('sort_by');
         $orderDirection = $request->input('sort_direction', 'asc');
+        $purposeId = $request->input('purpose_id');
+        $tariffId = $request->input('tariff_id');
+        $fromDate = $request->input('from_date');
+        $toDate = $request->input('to_date');
 
-        $purposeInfoList = $this->purposeInfoService->listPaginatedPurposeInfo($page, $pageSize, $search, $orderBy, $orderDirection);
+        $purposeInfoList = $this->purposeInfoService->listPaginatedPurposeInfo($page, $pageSize, $search, $orderBy, $orderDirection, $purposeId, $tariffId, $fromDate, $toDate);
         $paginatedPuropseInfo = null;
         if ($purposeInfoList->data) {
             $paginatedPuropseInfo = new LengthAwarePaginator(
@@ -38,8 +44,20 @@ class PurposeInfoController extends Controller
                 ['path' => request()->url()]
             );
         }
+        $olfPurpse  = null;
+        $oldTariff = null;
+        if ($purposeId) {
+            $olfPurpse = $this->parameterValueService->getParameterValue($purposeId, null);
+        }
+        if ($tariffId) {
+            $oldTariff = $this->parameterValueService->getParameterValue($tariffId, null);
+        }
         return Inertia::render('PurposeInfo/PurposeInfoIndexPage', [
             'purposeInfo' => $paginatedPuropseInfo,
+            'oldPurpose' => $olfPurpse->data ?? null,
+            'oldTariff' => $oldTariff->data ?? null,
+            'oldFromDate' => $fromDate,
+            'oldToDate' => $toDate,
         ]);
     }
 

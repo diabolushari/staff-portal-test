@@ -1,9 +1,18 @@
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
+import { ComputedProperty } from '@/interfaces/bill_pdf_interfaces'
 import { Bill, Connection } from '@/interfaces/data_interfaces'
 import NormalText from '@/typography/NormalText'
 import { getDisplayDate } from '@/utils'
 
-export default function BillSummary({ bill, connection }: { bill: Bill; connection: Connection }) {
+export default function BillSummary({
+  bill,
+  connection,
+  tariff,
+}: {
+  bill: Bill
+  connection: Connection
+  tariff?: ComputedProperty
+}) {
   return (
     <Table className='bill-table'>
       <TableBody>
@@ -32,7 +41,7 @@ export default function BillSummary({ bill, connection }: { bill: Bill; connecti
             colSpan={4}
             className=''
           >
-            {connection?.tariff?.parameter_value ?? '-'}
+            {tariff?.result ?? connection?.tariff?.parameter_value ?? '-'}
           </TableCell>
           <TableCell className=''>CD</TableCell>
           <TableCell className=''> 0.00</TableCell>

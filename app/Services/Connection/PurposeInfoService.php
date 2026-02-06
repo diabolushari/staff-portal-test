@@ -10,6 +10,8 @@ use Proto\Connections\PurposeInfoServiceClient;
 use Grpc\ChannelCredentials;
 use Proto\Connections\DeletePurposeInfoRequest;
 use Proto\Connections\GetPurposeInfoRequest;
+use Proto\Connections\GetTariffWihtPurposeAndDateRequest;
+use Proto\Connections\GetTariffWithPurposeAndDateRequest;
 use Proto\Connections\ListPurposeInfoPaginatedRequest;
 use Proto\Connections\ListPurposeInfoRequest;
 
@@ -54,6 +56,10 @@ class PurposeInfoService
         ?string $search = null,
         ?string $orderBy = null,
         ?string $orderDirection = 'asc',
+        ?int $purposeId = null,
+        ?int $tariffId = null,
+        ?string $fromDate = null,
+        ?string $toDate = null,
     ) {
         $grpcRequest = new ListPurposeInfoPaginatedRequest();
 
@@ -72,6 +78,20 @@ class PurposeInfoService
         if ($orderDirection) {
             $grpcRequest->setSortDirection($orderDirection);
         }
+        if ($purposeId) {
+            $grpcRequest->setPurposeId($purposeId);
+        }
+        if ($tariffId) {
+            $grpcRequest->setTariffId($tariffId);
+        }
+        if ($fromDate) {
+            $grpcRequest->setFromDate($fromDate);
+        }
+        if ($toDate) {
+            $grpcRequest->setToDate($toDate);
+        }
+
+
         [$response, $status] = $this->client->listPurposeInfoPaginated($grpcRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -163,5 +183,33 @@ class PurposeInfoService
         }
 
         return GrpcServiceResponse::success([], $response, $status->code, $status->details);
+    }
+
+    public function getTariffWithPurposeAndDate(?int $purposeId, ?string $date): GrpcServiceResponse
+    {
+        $grpcRequest = new GetTariffWithPurposeAndDateRequest();
+        if ($purposeId) {
+            $grpcRequest->setPurposeId($purposeId);
+        }
+        if ($date) {
+            $grpcRequest->setDate($date);
+        }
+        [$response, $status] = $this->client->getTariffWithPurposeAndDate($grpcRequest)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $purposeInfoList = $response->getPurposeInfos();
+        $purposeInfoArray = [];
+        foreach ($purposeInfoList as $purposeInfo) {
+            $purposeInfoArray[] = PurposeInfoConverter::toArray($purposeInfo);
+        }
+
+        return GrpcServiceResponse::success($purposeInfoArray, $response, $status->code, $status->details);
     }
 }

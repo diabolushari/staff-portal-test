@@ -1,9 +1,9 @@
 import { Meter, MeterReading, MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
-import React, { useEffect, useMemo, useState } from 'react'
-import MeterReadingPreview from './MeterReadingPreview'
-import ProfileReadingForm from './ProfileReadingForm'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import MeterReadingPreview, { MeterReadingPreviewRef } from './MeterReadingPreview'
+import { ProfileReadingFormRef } from './ProfileReadingForm'
 import { MeterHealth } from './ReadingForm/useMeterHealthForm'
 import { MeterReadingFormState, TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
 import Button from '@/ui/button/Button'
@@ -25,6 +25,10 @@ interface Props {
   updateCTPTHealth: (meterId: number, ctptId: number, healthId: number) => void
   isFirstReading: boolean
   isOnparameterForm: boolean
+  profileRefs: React.MutableRefObject<Record<string, ProfileReadingFormRef | null>>
+  activeProfile: { meterIdx: number; profileIdx: number } | null
+  setActiveProfile: (profile: { meterIdx: number; profileIdx: number } | null) => void
+  previewRefs: React.MutableRefObject<Record<number, MeterReadingPreviewRef | null>>
 }
 
 export default function MeterReadingsStep({
@@ -38,8 +42,11 @@ export default function MeterReadingsStep({
   updateReading,
   healthData,
   setIsOnParameterForm,
-  isOnparameterForm,
   isFirstReading,
+  profileRefs,
+  activeProfile,
+  setActiveProfile,
+  previewRefs,
 }: Readonly<Props>) {
   const isSingleMeter = metersWithTimezonesAndProfiles.length === 1
 
@@ -47,11 +54,6 @@ export default function MeterReadingsStep({
   const [hasMultipleMeters, setHasMultipleMeters] = useState<boolean>(
     metersWithTimezonesAndProfiles.length > 1
   )
-
-  const [activeProfile, setActiveProfile] = useState<{
-    meterIdx: number
-    profileIdx: number
-  } | null>(null)
 
   useEffect(() => {
     if (hasMultipleMeters) {
@@ -136,27 +138,20 @@ export default function MeterReadingsStep({
               meterWithTimezoneAndProfile={meter}
               formData={formData}
               readingValues={readingValues}
-              setActiveProfile={setActiveProfile}
               metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
               updateReading={updateReading}
               isFirstReading={isFirstReading}
               hasMultipleMeters={hasMultipleMeters}
               setIsOnParameterForm={setIsOnParameterForm}
+              profileRefs={profileRefs}
+              activeProfile={activeProfile}
+              setActiveProfile={setActiveProfile}
+              ref={(el) => {
+                previewRefs.current[meterIdx] = el
+              }}
             />
           )}
 
-          {activeProfile && activeProfile.meterIdx === meterIdx && (
-            <ProfileReadingForm
-              activeProfile={activeProfile}
-              metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
-              updateReading={updateReading}
-              readingValues={readingValues}
-              setActiveProfile={setActiveProfile}
-              isFirstReading={isFirstReading}
-              hasMultipleMeters={hasMultipleMeters}
-              setIsOnParameterForm={setIsOnParameterForm}
-            />
-          )}
           {hasMultipleMeters && activeProfile === null && (
             <div className='flex justify-between'>
               <Button

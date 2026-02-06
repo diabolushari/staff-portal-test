@@ -747,4 +747,5 @@ export interface PurposeInfo {
   updated_at?: string
   purpose: ParameterValues
   tariff: ParameterValues
+  tariff_name: string
 }

@@ -1,5 +1,5 @@
 import MainLayout from '@/layouts/main-layout'
-import { meteringBillingNavItems } from '@/components/Navbar/navitems'
+import { meteringBillingNavItems, meterNavItems } from '@/components/Navbar/navitems'
 import { BreadcrumbItem } from '@/types'
 import { PurposeInfo } from '@/interfaces/data_interfaces'
 import PurposeInfoForm from '@/components/PurposeInfo/PurposeInfoForm'
@@ -26,9 +26,9 @@ export default function TariffOrderCreatePage({ purposeInfo }: Readonly<PageProp
     <MainLayout
       breadcrumb={breadcrumb}
       navItems={meteringBillingNavItems}
-      leftBarTitle='Tariff Management'
-      selectedItem='Tariffs'
-      title={purposeInfo ? 'Edit Purpose Info' : 'Add Purpose Info'}
+      leftBarTitle='Tariff Mappings'
+      selectedItem='Tariff Mappings'
+      title={purposeInfo ? 'Configure Tariff Mapping' : 'Configure Tariff Mapping'}
     >
       {' '}
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-6'>

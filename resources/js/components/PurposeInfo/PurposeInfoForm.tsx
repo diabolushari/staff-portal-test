@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import ComboBox from '@/ui/form/ComboBox'
 import CheckBox from '@/ui/form/CheckBox'
+import { router } from '@inertiajs/react'
 
 interface PageProps {
   purposeInfo?: PurposeInfo
@@ -33,7 +34,9 @@ export default function PurposeInfoForm({ purposeInfo }: Readonly<PageProps>) {
   })
 
   const { post, errors, loading } = useInertiaPost<typeof formData>(
-    purposeInfo ? route('purpose-info.update', purposeInfo?.id ?? 0) : route('purpose-info.store'),
+    purposeInfo
+      ? route('tariff-mappings.update', purposeInfo?.id ?? 0)
+      : route('tariff-mappings.store'),
     {
       showErrorToast: true,
     }
@@ -107,13 +110,19 @@ export default function PurposeInfoForm({ purposeInfo }: Readonly<PageProps>) {
           error={errors?.effective_end}
         />
       </FormCard>
-      <div className='mt-4 flex justify-end'>
+      <div className='mt-4 flex justify-between'>
+        <Button
+          type='button'
+          label='Cancel'
+          variant='secondary'
+          onClick={() => router.get(route('tariff-mappings.index'))}
+        />
         <Button
           type='submit'
           disabled={loading}
           label={loading ? 'Saving...' : 'Save'}
           processing={loading}
-          variant={loading ? 'processing' : 'default'}
+          variant={loading ? 'processing' : 'primary'}
         />
       </div>
     </form>

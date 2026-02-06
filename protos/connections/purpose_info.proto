@@ -38,6 +38,16 @@ message PurposeInfoFormMessage {
   optional int32 updated_by = 8;
 }
 
+message PuropseInfoWithMulitplePurpseForm {
+  optional int64 id = 1;
+  int32 tariff_id = 2;
+  bool is_non_dps = 3;
+  string effective_start = 4;
+  optional string effective_end = 5;
+  optional int32 created_by = 6;
+  optional int32 updated_by = 7;
+  repeated int32 purpose_ids = 8;
+}
 
 message GetPurposeInfoRequest{
   int64 id = 1;
@@ -64,6 +74,9 @@ message ListPurposeInfoPaginatedRequest {
   optional string sort_direction = 4;
     optional string search = 5;
   optional int32 purpose_id = 6;
+  optional int32 tariff_id = 7;
+  optional string from_date = 8;
+  optional string to_date = 9;
 }
 message ListPurposeInfoPaginatedResponse {
   repeated PurposeInfoMessage purpose_infos = 1;
@@ -83,6 +96,11 @@ message DeletePurposeInfoRequest {
   optional int32 deleted_by = 2;
 }
 
+message GetTariffWithPurposeAndDateRequest {
+  optional int32 purpose_id = 1;
+  optional string date = 2;
+}
+
 
 
 // Service definitions
@@ -93,4 +111,7 @@ service PurposeInfoService {
   rpc GetPurposeInfo(GetPurposeInfoRequest) returns (GetPurposeInfoResponse);
   rpc UpdatePurposeInfo(PurposeInfoFormMessage) returns (PurposeInfoMessage);
   rpc DeletePurposeInfo(DeletePurposeInfoRequest) returns (DeletePurposeInfoResponse);
+  rpc CreatePurposeInfoWithMultiplePurpse(PuropseInfoWithMulitplePurpseForm) returns (ListPurposeInfoResponse);
+  rpc UpdatePurposeInfoWithMultiplePurpse(PuropseInfoWithMulitplePurpseForm) returns (ListPurposeInfoResponse);
+  rpc GetTariffWithPurposeAndDate(GetTariffWithPurposeAndDateRequest) returns (ListPurposeInfoResponse);
 }

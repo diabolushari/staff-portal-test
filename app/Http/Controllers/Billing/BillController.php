@@ -68,8 +68,10 @@ class BillController extends Controller
         $bill = $this->billService->getBill($id);
         $energyMeter = null;
         $selfGenerationMeter = null;
+        $chargeHeads = $this->billExportService->getChargeHeads($bill->data['charge_heads'] ?? []);
+        $computedProperties = $this->billExportService->getComputedProperties($bill->data['computed_properties'] ?? []);
         if (isset($bill?->data['connection_id']) && $bill->data['connection_id']) {
-            $energyMeter = $this->billExportService->getEnergyConsumptionMeter($bill->data['connection_id']);
+            $energyMeter = $this->billExportService->getEnergyConsumptionMeter($bill->data['connection_id'], $computedProperties['meter'] ?? null);
             $selfGenerationMeter = $this->billExportService->getSelfGenerationMeter($bill->data['connection_id']);
         }
         $meterReading = null;
@@ -78,8 +80,7 @@ class BillController extends Controller
             $meterReading = $this->billExportService->getMeterReading($bill->data['connection_id'], $bill->data['reading_year_month']);
         }
 
-        $chargeHeads = $this->billExportService->getChargeHeads($bill->data['charge_heads'] ?? []);
-        $computedProperties = $this->billExportService->getComputedProperties($bill->data['computed_properties'] ?? []);
+
         $timezones = $this->billExportService->splitTimeZones($computedProperties['timezones'] ?? []);
         $selfGenerationkwhValues = $this->billExportService->filterReadingByParameter($meterReading, 'kwh', $selfGenerationMeter['meter']['meter_id'] ?? null, $timezones);
         $kvaValues = $this->billExportService->filterReadingByParameter($meterReading, 'kva', $energyMeter['meter']['meter_id'] ?? null, $timezones);

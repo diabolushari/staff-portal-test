@@ -32,6 +32,7 @@ class PurposeInfoConverter
             'deleted_ts' => $purposeInfoMessage->getDeletedTs(),
             'purpose' => ParameterValueProtoConvertor::convertToArray($purposeInfoMessage->getPurpose()),
             'tariff' => ParameterValueProtoConvertor::convertToArray($purposeInfoMessage->getTariff()),
+            'tariff_name' => ParameterValueProtoConvertor::convertToArray($purposeInfoMessage->getTariff())['parameter_value'] ?? null
         ];
     }
 
