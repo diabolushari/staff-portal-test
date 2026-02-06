@@ -208,6 +208,7 @@
     'connection' => $connection,
     'consumer' => $consumer,
     'meter' => $meter,
+    'computedProperties' => $computedProperties,
     ])
 
 

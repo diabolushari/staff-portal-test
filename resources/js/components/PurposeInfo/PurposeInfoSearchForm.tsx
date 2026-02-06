@@ -80,7 +80,7 @@ export default function PurposeInfoSearchForm({
                 dataKey='id'
                 displayKey='parameter_value'
                 displayValue2='parameter_code'
-                url='/api/parameter-values?domain_name=Connection&parameter_name=Primary Purpose&attribute_value='
+                url='/api/parameter-values?domain_name=Connection&parameter_name=Primary Purpose&search='
               />
               <ComboBox
                 label='Tariff'
@@ -90,7 +90,7 @@ export default function PurposeInfoSearchForm({
                 dataKey='id'
                 displayKey='parameter_value'
                 displayValue2='parameter_code'
-                url='/api/parameter-values?domain_name=Connection&parameter_name=Tariff&attribute_value='
+                url='/api/parameter-values?domain_name=Connection&parameter_name=Tariff&search='
               />
 
               <Datepicker

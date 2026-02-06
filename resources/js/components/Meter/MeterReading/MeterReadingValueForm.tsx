@@ -31,6 +31,7 @@ export default function MeterReadingValueForm({
   mf,
   warnings,
 }: Readonly<Props>) {
+  console.log(maxReadingValue, 'maxReadingValue')
   return (
     <div className='rounded border bg-white p-4'>
       <div
@@ -115,7 +116,7 @@ export default function MeterReadingValueForm({
                 setValue={(val) => onChange(tz.timezone_id, val)}
                 max={maxReadingValue}
                 disabled={isFirstReading && profileParameter.is_cumulative}
-                min={0}
+                min={0.0}
               />
               {errors?.[`${tz.timezone_id}.final`] && (
                 <ErrorText>{errors[`${tz.timezone_id}.final`]}</ErrorText>

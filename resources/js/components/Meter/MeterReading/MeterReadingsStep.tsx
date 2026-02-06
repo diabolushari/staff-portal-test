@@ -127,7 +127,7 @@ export default function MeterReadingsStep({
       {/* ---------- PREVIEW + PROFILE FOR SELECTED METER ---------- */}
       {metersToRender?.map(({ meter, meterIdx }) => (
         <React.Fragment key={meter.meter_id}>
-          {(!activeProfile || activeProfile.meterIdx !== meterIdx) && (
+          {(!activeProfile || activeProfile?.meterIdx !== meterIdx) && (
             <MeterReadingPreview
               healthData={healthData}
               meterHealthTypes={meterHealthTypes}

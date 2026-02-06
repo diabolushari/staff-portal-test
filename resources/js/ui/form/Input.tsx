@@ -59,6 +59,7 @@ export default function Input({
           className={figmaInputClasses}
           disabled={disabled}
           readOnly={readonly}
+          step={0.0000001}
           required={required}
         />
 
