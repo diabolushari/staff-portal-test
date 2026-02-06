@@ -84,6 +84,7 @@ message ConnectionMessage {
   optional com.kseb.consumerservice.proto.meterreading.MeterReadingMessage previous_reading = 58;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto billing_side = 59;
   repeated com.kseb.consumerservice.proto.greenenergy.GreenEnergyMessage green_energy = 60;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto alternate_tariff = 61; 
 
 }
 

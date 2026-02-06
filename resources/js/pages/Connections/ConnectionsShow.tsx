@@ -4,18 +4,15 @@ import ConnectionGreenEnergyFormModal from '@/components/Connections/ConnectionG
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Card } from '@/components/ui/card'
 import Field from '@/components/ui/field'
-import type { Connection, ConnectionGreenEnergy } from '@/interfaces/data_interfaces'
+import type { Connection } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import StrongText from '@/typography/StrongText'
 import AddButton from '@/ui/button/AddButton'
 import EditButton from '@/ui/button/EditButton'
-import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 import { useMemo, useState } from 'react'
 import { groupFlagsBySection } from '../Consumer/ConsumerShow'
-import ActionButton from '@/components/action-button'
-import DeleteModal from '@/ui/Modal/DeleteModal'
 import ConnectionGreenEnergyCard from '@/components/Connections/ConnectionGreenEnergyCard'
 
 interface Props {
@@ -94,6 +91,14 @@ export default function ConnectionsShow({
 
     return labels.join(', ')
   }, [connection?.other_purposes, primaryPurposes])
+  console.log(connectionGroupedFlags)
+
+  const deemedHt =
+    connectionGroupedFlags?.some(
+      (group) =>
+        group.group_name === 'Additional Information' &&
+        group.flags?.some((f) => f.flag?.parameter_value === 'Deemed HT')
+    ) ?? false
 
   return (
     <ConnectionsLayout
@@ -294,6 +299,12 @@ export default function ConnectionsShow({
                 <Field
                   label='Billing Side'
                   value={connection?.billing_side?.parameter_value}
+                />
+              )}
+              {connection?.alternate_tariff && deemedHt && (
+                <Field
+                  label='Billing Tariff'
+                  value={connection?.alternate_tariff?.parameter_value}
                 />
               )}
             </div>

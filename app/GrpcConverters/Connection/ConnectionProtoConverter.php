@@ -178,6 +178,7 @@ class ConnectionProtoConverter
             $otherPurposes[] = (int) $purposeId;
         }
 
+
         return [
             'version_id' => $connection->getVersionId(),
             'connection_id' => $connection->getConnectionId(),
@@ -239,6 +240,7 @@ class ConnectionProtoConverter
             'no_of_main_meters' => $connection->getNoOfMainMeters(),
             'previous_reading' => $previousMeterReadingArray,
             'green_energy' => $greenEnergyArrays,
+            'alternate_tariff' => $connection->hasAlternateTariff() ? ParameterValueProtoConvertor::convertToArray($connection->getAlternateTariff()) : null,
         ];
     }
 }

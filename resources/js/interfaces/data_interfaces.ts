@@ -206,6 +206,7 @@ export interface Connection {
   connection_generation_types?: ConnectionGenerationType[]
   previous_reading: MeterReading
   green_energy?: ConnectionGreenEnergy[]
+  alternate_tariff?: ParameterValues
 }
 
 export interface ConnectionGreenEnergy {
