@@ -89,7 +89,7 @@ export default function PurposeInfoForm({ purposeInfo }: Readonly<PageProps>) {
           error={errors.tariff_id}
         />
         <CheckBox
-          label='Is Non DPS'
+          label='Non DPS Allowed'
           toggleValue={toggleBoolean('is_non_dps')}
           value={formData.is_non_dps}
           error={errors?.is_non_dps}
