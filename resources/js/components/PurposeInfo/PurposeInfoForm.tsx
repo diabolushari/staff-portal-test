@@ -74,7 +74,7 @@ export default function PurposeInfoForm({ purposeInfo }: Readonly<PageProps>) {
           dataKey='id'
           displayKey='parameter_value'
           displayValue2='parameter_code'
-          url='/api/parameter-values?domain_name=Connection&parameter_name=Primary Purpose&attribute_value='
+          url='/api/parameter-values?domain_name=Connection&parameter_name=Primary Purpose&search='
           error={errors.purpose_id}
         />
         <ComboBox
@@ -85,11 +85,11 @@ export default function PurposeInfoForm({ purposeInfo }: Readonly<PageProps>) {
           dataKey='id'
           displayKey='parameter_value'
           displayValue2='parameter_code'
-          url='/api/parameter-values?domain_name=Connection&parameter_name=Tariff&attribute_value='
+          url='/api/parameter-values?domain_name=Connection&parameter_name=Tariff&search='
           error={errors.tariff_id}
         />
         <CheckBox
-          label='Is Non DPS'
+          label='Non DPS Allowed'
           toggleValue={toggleBoolean('is_non_dps')}
           value={formData.is_non_dps}
           error={errors?.is_non_dps}

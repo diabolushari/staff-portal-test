@@ -52,6 +52,16 @@ export default function BillSearchForm({
     })
   }
 
+  const handleReset = () => {
+    setSelectedGroup(null)
+    setSelectedConnection(null)
+    setAll({
+      connection_id: '',
+      group_id: '',
+    })
+    router.get('/bills')
+  }
+
   return (
     <div>
       <form
@@ -88,13 +98,7 @@ export default function BillSearchForm({
             label='Reset'
             type='button'
             variant='secondary'
-            onClick={() => {
-              setSelectedGroup(null)
-              setAll({
-                connection_id: '',
-                group_id: '',
-              })
-            }}
+            onClick={handleReset}
           />
           <Button
             label='Search'

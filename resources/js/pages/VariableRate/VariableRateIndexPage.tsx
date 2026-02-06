@@ -45,6 +45,7 @@ export default function VariableRateIndexPage({
     setShowParameterValueModal(!showParameterValueModal)
   }, [showParameterValueModal])
   const handleAddBtnClick = () => {
+    setSelectedRate(null)
     setShowModal(true)
   }
 

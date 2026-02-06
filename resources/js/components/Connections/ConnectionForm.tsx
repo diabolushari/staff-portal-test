@@ -181,6 +181,15 @@ export default function ConnectionForm({
   const handleSetTariff = (tariffId: string) => {
     setFormValue('tariff_type_id')(tariffId)
   }
+  useEffect(() => {
+    if (tariffData && billingProcesses) {
+      const nonDpsValue = tariffData[0]?.is_non_dps ? 'non-dps' : 'dps'
+      const billingProcess = billingProcesses.find(
+        (item) => item.parameter_value.toLowerCase() === nonDpsValue
+      )
+      setFormValue('billing_process_id')(billingProcess?.id ?? '')
+    }
+  }, [tariffData, billingProcesses])
   return (
     <form
       onSubmit={handleSubmit}

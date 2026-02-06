@@ -76,7 +76,7 @@ class PurposeInfoController extends Controller
         if ($response->statusCode !== 0) {
             return back()->with(['error' => $response->error ?? 'Something went wrong']);
         }
-        return redirect()->route('purpose-info.index')->with(['message' => 'Purpose Info created successfully']);
+        return redirect()->route('tariff-mappings.index')->with(['message' => 'Purpose Info created successfully']);
     }
 
     public function edit(int $id): Response
@@ -96,7 +96,7 @@ class PurposeInfoController extends Controller
         if ($response->statusCode !== 0) {
             return back()->with(['error' => $response->error ?? 'Something went wrong']);
         }
-        return redirect()->route('purpose-info.index')->with(['message' => 'Purpose Info updated successfully']);
+        return redirect()->route('tariff-mappings.index')->with(['message' => 'Purpose Info updated successfully']);
     }
 
 
@@ -109,6 +109,6 @@ class PurposeInfoController extends Controller
         if ($response->statusCode !== 0) {
             return back()->with(['error' => $response->error ?? 'Something went wrong']);
         }
-        return redirect()->route('purpose-info.index')->with(['message' => 'Purpose Info deleted successfully']);
+        return redirect()->route('tariff-mappings.index')->with(['message' => 'Purpose Info deleted successfully']);
     }
 }
