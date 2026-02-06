@@ -192,34 +192,44 @@ export default function MeterReadingCreatePage({
     })
   }
 
+  const [showGlobalWarning, setShowGlobalWarning] = useState(false)
+  const [skipWarnings, setSkipWarnings] = useState(false)
+
   const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault()
 
-    // 1️⃣ Expand all accordions
     accordionOpen()
 
-    // 2️⃣ Wait for UI to update, then validate
     requestAnimationFrame(() => {
-      let firstErrorProfile: { meterIdx: number; profileIdx: number } | null = null
+      // let hasErrors = false
+      // let hasWarnings = false
 
-      Object.entries(profileRefs.current).forEach(([key, ref]) => {
-        if (!ref) return
+      // Object.values(profileRefs.current).forEach((ref) => {
+      //   if (!ref) return
 
-        const isValid = ref.handleUpdate()
+      //   const result = ref.handleUpdate(skipWarnings)
 
-        if (!isValid && !firstErrorProfile) {
-          const [meterIdx, profileIdx] = key.split('-').map(Number)
-          firstErrorProfile = { meterIdx, profileIdx }
-        }
-      })
+      //   if (result.hasErrors) {
+      //     hasErrors = true
+      //   }
 
-      if (firstErrorProfile) {
-        setIsOnParameterForm(false)
-        setActiveStep(2)
-        return
-      }
+      //   if (result.hasWarnings) {
+      //     hasWarnings = true
+      //   }
+      // })
 
-      // 3️⃣ Submit only if valid
+      // if (hasErrors) {
+      //   setIsOnParameterForm(false)
+      //   setActiveStep(2)
+      //   return
+      // }
+
+      // if (hasWarnings && !skipWarnings) {
+      //   setShowGlobalWarning(true)
+      //   return
+      // }
+
+      // ✅ FINAL SUBMIT
       post({
         ...formData,
         readings_by_meter: readingValues,
@@ -389,6 +399,34 @@ export default function MeterReadingCreatePage({
               )}
             </div>
           </form>
+        </div>
+      )}
+      {showGlobalWarning && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
+          <div className='w-full max-w-md rounded-lg bg-white p-6'>
+            <h3 className='text-lg font-semibold text-yellow-600'>Warning detected</h3>
+
+            <p className='mt-2 text-sm text-gray-700'>
+              Some readings differ by more than ±20%. Do you want to continue?
+            </p>
+
+            <div className='mt-4 flex justify-end gap-2'>
+              <Button
+                variant='secondary'
+                label='Cancel'
+                onClick={() => setShowGlobalWarning(false)}
+              />
+              <Button
+                variant='primary'
+                label='Continue & Submit'
+                onClick={() => {
+                  setSkipWarnings(true)
+                  setShowGlobalWarning(false)
+                  handleSubmit()
+                }}
+              />
+            </div>
+          </div>
         </div>
       )}
     </MainLayout>

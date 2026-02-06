@@ -36,7 +36,10 @@ const getPercentageChange = (initialDiff: number, lastDiff: number) => {
 }
 
 export interface ProfileReadingFormRef {
-  handleUpdate: () => boolean
+  handleUpdate: (skipWarnings?: boolean) => {
+    hasErrors: boolean
+    hasWarnings: boolean
+  }
 }
 
 const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
@@ -207,7 +210,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
       [maxValue, meter]
     )
 
-    const handleUpdate = () => {
+    const handleUpdate = (skipWarnings = false) => {
       if (meter == null || selectedParameter == null || parameterReading == null) {
         return true
       }
@@ -272,20 +275,46 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
           ) {
             errors[`${reading.timezone_id}.diff`] = 'kVAh should be greater than kWh.'
             hasErrors = true
-            return false
+          }
+        }
+      })
+      const warnings: Record<string, string | undefined> = {}
+      let hasWarnings = false
+
+      currentReadingState.forEach((reading) => {
+        const initialDiff = Number(reading.values.lastReadingDiff)
+        const diff = Number(reading.values.diff)
+
+        if (!Number.isNaN(initialDiff) && !Number.isNaN(diff) && initialDiff > 0) {
+          const percentage = getPercentageChange(initialDiff, diff)
+
+          if (Math.abs(percentage) >= 20) {
+            const direction = percentage > 0 ? 'higher' : 'lower'
+            const absPercent = Math.abs(percentage).toFixed(2)
+
+            warnings[`${reading.timezone_id}.diff`] =
+              `Difference is ${absPercent}% ${direction} than previous reading. (Previous: ${initialDiff} -> Current: ${diff})`
+            hasWarnings = true
           }
         }
       })
 
+      setReadingWarnings(warnings)
+
       setReadingErrors(errors)
+
       if (hasErrors) {
         showError('Please fix the highlighted reading values.')
-        return false
+        return { hasErrors: true, hasWarnings: false }
+      }
+
+      if (hasWarnings && !skipWarnings) {
+        return { hasErrors: false, hasWarnings: true }
       }
 
       updateReading(meter.meter_id, selectedParameter.meter_parameter_id, currentReadingState)
       setActiveProfile(null)
-      return true
+      return { hasErrors: false, hasWarnings: false }
     }
 
     useImperativeHandle(ref, () => ({
@@ -319,44 +348,12 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
               </div>
               <div className='mt-4 flex justify-end gap-2'>
                 <Button
-                  onClick={handleUpdate}
+                  onClick={() => handleUpdate()}
                   type='button'
-                  label='Validate Entry'
+                  label='Update'
                   variant='link'
                 />
               </div>
-              {showWarningModal && (
-                <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
-                  <div className='w-full max-w-md rounded-lg bg-white p-6'>
-                    <h3 className='text-lg font-semibold text-yellow-600'>Warning detected</h3>
-
-                    <p className='mt-2 text-sm text-gray-700'>
-                      Some readings differ by more than ±20%. Are you sure you want to continue?
-                    </p>
-
-                    <div className='mt-4 flex justify-end gap-2'>
-                      <Button
-                        variant='secondary'
-                        label='Cancel'
-                        onClick={() => setShowWarningModal(false)}
-                      />
-                      <Button
-                        variant='primary'
-                        label='Continue & Save'
-                        onClick={() => {
-                          setShowWarningModal(false)
-                          updateReading(
-                            meter!.meter_id,
-                            selectedParameter!.meter_parameter_id,
-                            currentReadingState
-                          )
-                          setActiveProfile(null)
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
             </Card>
           </div>
         )}
