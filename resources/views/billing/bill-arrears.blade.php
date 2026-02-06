@@ -68,15 +68,11 @@
         </td>
 
         <td class="center">
-            {{ isset($connection['contract_demand_kva_val'])
-        ? number_format($connection['contract_demand_kva_val'] * 0.75, 2)
-        : '-' }}
+            {{ $computedProperties['75_of_contract_demand']['result'] ?? '-' }}
         </td>
 
         <td class="center">
-            {{ isset($connection['contract_demand_kva_val'])
-        ? number_format($connection['contract_demand_kva_val'] * 1.30, 2)
-        : '-' }}
+            {{ $computedProperties['130_of_contract_demand']['result'] ?? '-' }}
         </td>
 
         <td colspan="3" class="center">
