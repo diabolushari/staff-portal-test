@@ -110,7 +110,12 @@ class BillExportService
 
 
         $sortedValues = [];
-        $timeZoneNames = $timeZones['result'] ?? [];
+        $defaultZone = [
+            ['result' => 'Normal'],
+            ['result' => 'Peak'],
+            ['result' => 'Off Peak']
+        ];
+        $timeZoneNames = $timeZones['result'] ?? $defaultZone;
         foreach ($timeZoneNames as $timeZoneName) {
             foreach ($unsortedValues as $value) {
                 if (strtolower($value['timezone']) == strtolower($timeZoneName['result'])) {
