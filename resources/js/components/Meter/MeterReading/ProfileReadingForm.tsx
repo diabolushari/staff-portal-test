@@ -1,8 +1,7 @@
 import { Card } from '@/components/ui/card'
 import { MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
-import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import MeterReadingValueForm from './MeterReadingValueForm'
 import { MeterReadingFormState, TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
 import { showError } from '@/ui/alerts'
@@ -43,20 +42,16 @@ export interface ProfileReadingFormRef {
 }
 
 const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
-  (
-    {
-      activeProfile,
-      readingValues,
-      metersWithTimezonesAndProfiles,
-      updateReading,
-      setActiveProfile,
-      isFirstReading,
-      hasMultipleMeters,
-      setIsOnParameterForm,
-    },
-    ref
-  ) => {
-    const [currentReadingState, setCurrentReadingState] = useState<TimezoneReadingState[]>([])
+  ({
+    activeProfile,
+    readingValues,
+    metersWithTimezonesAndProfiles,
+    updateReading,
+    setActiveProfile,
+    isFirstReading,
+    hasMultipleMeters,
+    setIsOnParameterForm,
+  }) => {
     const [readingErrors, setReadingErrors] = useState<Record<string, string | undefined>>({})
     const [readingWarnings, setReadingWarnings] = useState<Record<string, string | undefined>>({})
     const [showWarningModal, setShowWarningModal] = useState(false)
@@ -84,21 +79,6 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
       }
     }, [activeProfile, readingValues, metersWithTimezonesAndProfiles])
 
-    useEffect(() => {
-      if (parameterReading == null) {
-        return
-      }
-      const timezoneReadingStates = parameterReading.readings.map((reading) => {
-        return {
-          ...reading,
-          values: {
-            ...reading.values,
-          },
-        }
-      })
-      setCurrentReadingState(timezoneReadingStates)
-    }, [parameterReading])
-
     const maxValue = useMemo(() => {
       const integerDigits = meter?.meter.digit_count ?? 0
       const decimalDigits = meter?.meter.decimal_digit_count ?? 0
@@ -107,107 +87,195 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
       )
     }, [meter])
 
+    const debounceRef = useRef<number | null>(null)
+
+    const validateReadingsDebounced = useCallback(
+      (readings: TimezoneReadingState[]) => {
+        if (debounceRef.current) {
+          clearTimeout(debounceRef.current)
+        }
+
+        debounceRef.current = window.setTimeout(() => {
+          if (!meter || !selectedParameter) return
+
+          const errors: Record<string, string | undefined> = {}
+          const warnings: Record<string, string | undefined> = {}
+
+          const integerDigits = meter.meter.digit_count ?? 0
+          const decimalDigits = meter.meter.decimal_digit_count ?? 0
+
+          readings.forEach((reading) => {
+            // -------- Errors --------
+            if (reading.values.final === '') {
+              errors[`${reading.timezone_id}.final`] = 'Final reading is required.'
+              return
+            }
+
+            const finalNum = Number(reading.values.final)
+            const diffNum = Number(reading.values.diff)
+
+            if (Number.isNaN(finalNum)) {
+              errors[`${reading.timezone_id}.final`] = 'Final reading must be a number.'
+              return
+            }
+
+            if (finalNum < 0) {
+              errors[`${reading.timezone_id}.final`] = 'Final reading must not be less than 0.'
+              return
+            }
+
+            if (Number.isNaN(diffNum) || diffNum < 0) {
+              errors[`${reading.timezone_id}.diff`] =
+                'Final reading must not be less than Initial reading.'
+              return
+            }
+
+            if (!verifyFinalReadingDigits(reading.values.final, integerDigits, decimalDigits)) {
+              const decimalHint = decimalDigits > 0 ? ` and ${decimalDigits} decimals` : ''
+              errors[`${reading.timezone_id}.final`] =
+                `Final reading can only have up to ${integerDigits} digits${decimalHint}.`
+              return
+            }
+
+            if (
+              selectedParameter.name.toLowerCase() === CONSUMPTION_PARAMETER_NAME.toLowerCase() ||
+              selectedParameter.name.toLowerCase() === DEMAND_PARAMETER_NAME.toLowerCase()
+            ) {
+              if (
+                !verifyApparentEnergy(
+                  reading.timezone_id,
+                  selectedParameter.name,
+                  Number(reading.values.diff),
+                  meter,
+                  readingValues
+                )
+              ) {
+                errors[`${reading.timezone_id}.diff`] = 'kVAh should be greater than kWh.'
+                return
+              }
+            }
+
+            // -------- Warnings --------
+            const prevDiff = Number(reading.values.lastReadingDiff)
+            if (!Number.isNaN(prevDiff) && prevDiff > 0) {
+              const percentage = getPercentageChange(prevDiff, diffNum)
+              if (Math.abs(percentage) >= 20) {
+                const direction = percentage > 0 ? 'higher' : 'lower'
+                warnings[`${reading.timezone_id}.diff`] =
+                  `Difference is ${Math.abs(percentage).toFixed(2)}% ${direction} than previous reading.`
+              }
+            }
+          })
+
+          setReadingErrors(errors)
+          setReadingWarnings(warnings)
+        }, 800)
+      },
+      [meter, selectedParameter, readingValues]
+    )
+
+    const updateTimezoneReading = useCallback(
+      (timezoneId: number, updater: (r: TimezoneReadingState) => TimezoneReadingState) => {
+        if (!meter || !selectedParameter || !parameterReading) return
+
+        const updatedReadings = parameterReading.readings.map((r) =>
+          r.timezone_id === timezoneId ? updater(r) : r
+        )
+
+        updateReading(meter.meter_id, selectedParameter.meter_parameter_id, updatedReadings)
+      },
+      [meter, selectedParameter, parameterReading, updateReading]
+    )
+
     const updateData = useCallback(
-      (timeZoneId: number, value: string) => {
+      (timezoneId: number, value: string) => {
         const valueAsNumber = Number.parseFloat(value)
-        if (value != '' && Number.isNaN(valueAsNumber)) {
+        if (value !== '' && Number.isNaN(valueAsNumber)) {
           showError('Invalid value')
           return
         }
-        setCurrentReadingState((prevState) => {
-          return prevState.map((tzReading) => {
-            if (tzReading.timezone_id !== timeZoneId) {
-              return tzReading
-            }
-            let diff: number
-            if (tzReading.isRotation) {
-              diff = Math.ceil(maxValue) - tzReading.values.initial + valueAsNumber
+
+        updateTimezoneReading(timezoneId, (reading) => {
+          let diff = 0
+
+          if (value !== '') {
+            if (reading.isRotation) {
+              diff = Math.ceil(maxValue) - Number(reading.values.initial) + valueAsNumber
             } else {
-              diff = valueAsNumber - tzReading.values.initial
+              diff = valueAsNumber - Number(reading.values.initial)
             }
-            return {
-              ...tzReading,
-              values: {
-                ...tzReading.values,
-                final: value,
-                diff: diff.toString(),
-                value: Number((meter?.meter_mf ?? 1) * diff).toFixed(
-                  meter?.meter.decimal_digit_count ?? 2
-                ),
-              },
-            }
-          })
+          }
+
+          const updated = {
+            ...reading,
+            values: {
+              ...reading.values,
+              final: value,
+              diff: diff.toString(),
+              value: Number((meter?.meter_mf ?? 1) * diff).toFixed(
+                meter?.meter.decimal_digit_count ?? 2
+              ),
+            },
+          }
+
+          // Debounced validation after typing stops
+          validateReadingsDebounced(
+            parameterReading!.readings.map((r) => (r.timezone_id === timezoneId ? updated : r))
+          )
+
+          return updated
         })
       },
-      [meter, maxValue]
+      [updateTimezoneReading, maxValue, meter, validateReadingsDebounced, parameterReading]
     )
 
-    const updateInitialValue = useCallback((timeZoneId: number, value: string) => {
-      setCurrentReadingState((prevState) => {
-        return prevState.map((tzReading) => {
-          if (tzReading.timezone_id !== timeZoneId) {
-            return tzReading
-          }
-          const normalizedValue = value === '' ? '0' : value
-          const valueAsNumber = Number.parseFloat(normalizedValue)
+    const updateInitialValue = useCallback(
+      (timezoneId: number, value: string) => {
+        updateTimezoneReading(timezoneId, (reading) => {
+          const normalized = value === '' ? '0' : value
+          const num = Number.parseFloat(normalized)
 
-          if (Number.isNaN(valueAsNumber)) {
-            return tzReading
-          }
+          if (Number.isNaN(num)) return reading
 
           return {
-            ...tzReading,
+            ...reading,
             values: {
-              ...tzReading.values,
-              initial: normalizedValue,
-              final: value,
+              ...reading.values,
+              initial: normalized,
+              final: '',
               diff: 0,
               value: 0,
             },
           }
         })
-      })
-    }, [])
+      },
+      [updateTimezoneReading]
+    )
 
     const toggleRotation = useCallback(
       (timezoneId: number) => {
-        setCurrentReadingState((prevState) => {
-          return prevState.map((tzReading) => {
-            if (tzReading.timezone_id !== timezoneId) {
-              return tzReading
-            }
-            if (tzReading.values.final === '') {
-              return {
-                ...tzReading,
-                isRotation: !tzReading.isRotation,
-              }
-            }
-            const finalValue = Number.parseFloat(tzReading.values.final)
-            if (Number.isNaN(finalValue)) {
-              return {
-                ...tzReading,
-                isRotation: !tzReading.isRotation,
-              }
-            }
-            let diff: number
-            if (!tzReading.isRotation) {
-              diff = Math.ceil(maxValue) - tzReading.values.initial + finalValue
-            } else {
-              diff = finalValue - tzReading.values.initial
-            }
-            return {
-              ...tzReading,
-              isRotation: !tzReading.isRotation,
-              values: {
-                ...tzReading.values,
-                diff: diff.toString(),
-                value: (meter?.meter_mf ?? 1) * diff,
-              },
-            }
-          })
+        updateTimezoneReading(timezoneId, (reading) => {
+          const finalNum = Number(reading.values.final)
+          let diff = Number(reading.values.diff)
+
+          if (!Number.isNaN(finalNum)) {
+            diff = reading.isRotation
+              ? finalNum - Number(reading.values.initial)
+              : Math.ceil(maxValue) - Number(reading.values.initial) + finalNum
+          }
+
+          return {
+            ...reading,
+            isRotation: !reading.isRotation,
+            values: {
+              ...reading.values,
+              diff: diff.toString(),
+              value: (meter?.meter_mf ?? 1) * diff,
+            },
+          }
         })
       },
-      [maxValue, meter]
+      [updateTimezoneReading, maxValue, meter]
     )
 
     const handleUpdate = () => {
@@ -219,7 +287,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
       const decimalDigits = meter.meter.decimal_digit_count ?? 0
       let hasErrors = false
 
-      currentReadingState.forEach((reading) => {
+      parameterReading.readings.forEach((reading) => {
         if (reading.values.final === '') {
           errors[`${reading.timezone_id}.final`] = 'Final reading is required.'
           hasErrors = true
@@ -281,7 +349,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
       const warnings: Record<string, string | undefined> = {}
       let hasWarnings = false
 
-      currentReadingState.forEach((reading) => {
+      parameterReading.readings.forEach((reading) => {
         const initialDiff = Number(reading.values.lastReadingDiff)
         const diff = Number(reading.values.diff)
 
@@ -311,27 +379,37 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
         return
       }
 
-      updateReading(meter.meter_id, selectedParameter.meter_parameter_id, currentReadingState)
+      updateReading(meter.meter_id, selectedParameter.meter_parameter_id, parameterReading.readings)
       setActiveProfile(null)
     }
 
-    useImperativeHandle(ref, () => ({
-      handleUpdate,
-    }))
+    useEffect(() => {
+      if (
+        meter &&
+        selectedParameter &&
+        parameterReading &&
+        Object.keys(readingErrors).length === 0
+      ) {
+        updateReading(
+          meter.meter_id,
+          selectedParameter.meter_parameter_id,
+          parameterReading.readings
+        )
+      }
+    }, [readingErrors])
 
     return (
       <>
         {meter == null || selectedParameter == null || parameterReading == null ? null : (
           <div className='flex flex-col gap-4'>
             <Card className='p-4'>
-              <StrongText>{selectedParameter?.display_name}</StrongText>
               <div
                 className={`mt-2 ${
                   parameterReading?.readings?.length > 2 ? 'overflow-y-auto pr-2' : ''
                 }`}
               >
                 <MeterReadingValueForm
-                  parameterReadingValues={currentReadingState ?? []}
+                  parameterReadingValues={parameterReading.readings ?? []}
                   onChange={updateData}
                   onToggleRotation={toggleRotation}
                   meter={meter.meter}
@@ -342,14 +420,6 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
                   updateInitialReading={updateInitialValue}
                   mf={meter?.meter_mf ?? 1}
                   warnings={readingWarnings}
-                />
-              </div>
-              <div className='mt-4 flex justify-end gap-2'>
-                <Button
-                  onClick={() => handleUpdate()}
-                  type='button'
-                  label='Update'
-                  variant='secondary'
                 />
               </div>
             </Card>
@@ -378,7 +448,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
                     updateReading(
                       meter!.meter_id,
                       selectedParameter!.meter_parameter_id,
-                      currentReadingState
+                      parameterReading!.readings
                     )
                     setActiveProfile(null)
                   }}

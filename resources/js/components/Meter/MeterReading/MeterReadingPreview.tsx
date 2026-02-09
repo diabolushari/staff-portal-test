@@ -378,9 +378,6 @@ const MeterReadingPreview = forwardRef<MeterReadingPreviewRef, Props>(
                   meterIndex={meterIdx}
                 >
                   <ProfileReadingForm
-                    ref={(el) => {
-                      profileRefs.current[`${meterIdx}-${pIdx}`] = el
-                    }}
                     activeProfile={{ meterIdx, profileIdx: pIdx }}
                     metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
                     updateReading={updateReading}
