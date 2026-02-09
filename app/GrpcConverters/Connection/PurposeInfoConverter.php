@@ -4,6 +4,8 @@ namespace App\GrpcConverters\Connection;
 
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Http\Requests\Connections\PurposeInfoFormRequest;
+use Illuminate\Validation\ValidationException;
+use Proto\Connections\PuropseInfoWithMulitplePurpseForm;
 use Proto\Connections\PurposeInfoFormMessage;
 use Proto\Connections\PurposeInfoMessage;
 
@@ -42,13 +44,47 @@ class PurposeInfoConverter
         if ($request->id) {
             $purposeInfoFormMessage->setId($request->id);
         }
-        $purposeInfoFormMessage->setPurposeId($request->purposeId);
+        if ($request->purposeId) {
+            $purposeInfoFormMessage->setPurposeId($request->purposeId);
+        } else {
+            throw ValidationException::withMessages([
+                'purpose_id' => ['Purpose is required'],
+            ]);
+        }
+
+        $purposeInfoFormMessage->setTariffId($request->tariffId);
+
+        $purposeInfoFormMessage->setIsNonDps($request->isNonDps);
+        $purposeInfoFormMessage->setEffectiveStart($request->effectiveStart);
+        if ($request->effectiveEnd) {
+            $purposeInfoFormMessage->setEffectiveEnd($request->effectiveEnd);
+        }
+        return $purposeInfoFormMessage;
+    }
+
+    public static function multiplePurposeFormToProto(PurposeInfoFormRequest $request): PuropseInfoWithMulitplePurpseForm
+    {
+        $purposeInfoFormMessage = new PuropseInfoWithMulitplePurpseForm();
+        if ($request->id) {
+            $purposeInfoFormMessage->setId($request->id);
+        }
         $purposeInfoFormMessage->setTariffId($request->tariffId);
         $purposeInfoFormMessage->setIsNonDps($request->isNonDps);
         $purposeInfoFormMessage->setEffectiveStart($request->effectiveStart);
         if ($request->effectiveEnd) {
             $purposeInfoFormMessage->setEffectiveEnd($request->effectiveEnd);
         }
+        $purposes = [];
+        if ($request->mulitplePurposes) {
+            foreach ($request->mulitplePurposes as $purpose) {
+                $purposes[] = $purpose;
+            }
+        } else {
+            throw ValidationException::withMessages([
+                'mulitple_purposes' => ['Purpose is required'],
+            ]);
+        }
+        $purposeInfoFormMessage->setPurposeIds($purposes);
         return $purposeInfoFormMessage;
     }
 }

@@ -11,6 +11,7 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import ComboBox from '@/ui/form/ComboBox'
 import CheckBox from '@/ui/form/CheckBox'
 import { router } from '@inertiajs/react'
+import MultiSelectComboBox from '@/ui/form/MultiSelectComboBox'
 
 interface PageProps {
   purposeInfo?: PurposeInfo
@@ -20,6 +21,7 @@ export default function PurposeInfoForm({ purposeInfo }: Readonly<PageProps>) {
   const [selectedPurpose, setSelectedPurpose] = useState<ParameterValues | null>(
     purposeInfo?.purpose ?? null
   )
+  const [selectedPurposeList, setSelectedPurposeList] = useState<ParameterValues[]>([])
   const [selectedTariff, setSelectedTariff] = useState<ParameterValues | null>(
     purposeInfo?.tariff ?? null
   )
@@ -30,6 +32,7 @@ export default function PurposeInfoForm({ purposeInfo }: Readonly<PageProps>) {
     is_non_dps: purposeInfo?.is_non_dps ?? false,
     effective_start: purposeInfo?.effective_start ?? '',
     effective_end: purposeInfo?.effective_end ?? '',
+    mulitple_purposes: [] as number[],
     _method: purposeInfo != null ? 'PUT' : undefined,
   })
 
@@ -60,23 +63,21 @@ export default function PurposeInfoForm({ purposeInfo }: Readonly<PageProps>) {
     }
   }, [selectedPurpose, selectedTariff])
 
+  useEffect(() => {
+    if (selectedPurposeList) {
+      const purposeIds = selectedPurposeList.map((purpose) => purpose.id)
+      setFormValue('mulitple_purposes')(purposeIds)
+    } else {
+      setFormValue('mulitple_purposes')([])
+    }
+  }, [selectedPurposeList])
+
   return (
     <form
       onSubmit={handleSubmit}
       className='flex flex-col gap-4'
     >
       <FormCard title='Basic Information'>
-        <ComboBox
-          label='Purpose'
-          value={selectedPurpose}
-          setValue={setSelectedPurpose}
-          placeholder='Search Purpose'
-          dataKey='id'
-          displayKey='parameter_value'
-          displayValue2='parameter_code'
-          url='/api/parameter-values?domain_name=Connection&parameter_name=Primary Purpose&search='
-          error={errors.purpose_id}
-        />
         <ComboBox
           label='Tariff'
           value={selectedTariff}
@@ -86,8 +87,35 @@ export default function PurposeInfoForm({ purposeInfo }: Readonly<PageProps>) {
           displayKey='parameter_value'
           displayValue2='parameter_code'
           url='/api/parameter-values?domain_name=Connection&parameter_name=Tariff&search='
-          error={errors.tariff_id}
+          error={errors?.tariff_id}
         />
+        {!purposeInfo && (
+          <MultiSelectComboBox
+            label='Purposes'
+            value={selectedPurposeList}
+            setValue={setSelectedPurposeList}
+            placeholder='Search Purpose'
+            dataKey='id'
+            displayKey='parameter_value'
+            displayValue2='parameter_code'
+            url='/api/parameter-values?domain_name=Connection&parameter_name=Primary Purpose&search='
+            error={errors?.mulitple_purposes}
+          />
+        )}
+        {purposeInfo && (
+          <ComboBox
+            label='Purpose'
+            value={selectedPurpose}
+            setValue={setSelectedPurpose}
+            placeholder='Search Purpose'
+            dataKey='id'
+            displayKey='parameter_value'
+            displayValue2='parameter_code'
+            url='/api/parameter-values?domain_name=Connection&parameter_name=Primary Purpose&search='
+            error={errors?.purpose_id}
+          />
+        )}
+
         <CheckBox
           label='Non DPS Allowed'
           toggleValue={toggleBoolean('is_non_dps')}

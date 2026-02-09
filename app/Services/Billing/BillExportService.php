@@ -5,12 +5,10 @@ namespace App\Services\Billing;
 use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterReadingService;
 use NumberFormatter;
-use Spatie\LaravelData\Attributes\Validation\InArray;
 
 class BillExportService
 {
     public function __construct(
-        private readonly BillService $billService,
         private readonly MeterConnectionMappingService $meterConnectionMappingService,
         private readonly MeterReadingService $meterReadingService
     ) {}

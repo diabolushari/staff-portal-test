@@ -135,6 +135,27 @@ class PurposeInfoService
         return GrpcServiceResponse::success(PurposeInfoConverter::toArray($response), $response, $status->code, $status->details);
     }
 
+    public function createPurposeInfoWithMultiplePurpose(PurposeInfoFormRequest $request): GrpcServiceResponse
+    {
+        $grpcRequest = PurposeInfoConverter::multiplePurposeFormToProto($request);
+        [$response, $status] = $this->client->CreatePurposeInfoWithMultiplePurpse($grpcRequest)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+        $purposeInfoList = $response->getPurposeInfos();
+        $purposeInfoArray = [];
+        foreach ($purposeInfoList as $purposeInfo) {
+            $purposeInfoArray[] = PurposeInfoConverter::toArray($purposeInfo);
+        }
+
+        return GrpcServiceResponse::success($purposeInfoArray, $response, $status->code, $status->details);
+    }
+
     public function getPurposeInfoById(int $id): GrpcServiceResponse
     {
         $grpcRequest = new GetPurposeInfoRequest();

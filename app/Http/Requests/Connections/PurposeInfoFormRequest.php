@@ -11,11 +11,11 @@ class PurposeInfoFormRequest extends Data
 {
     public function __construct(
         public ?int $id,
-        public int $purposeId,
+        public ?int $purposeId,
         public int $tariffId,
         public bool $isNonDps,
         public string $effectiveStart,
         public ?string $effectiveEnd,
-
+        public ?array $mulitplePurposes,
     ) {}
 }
