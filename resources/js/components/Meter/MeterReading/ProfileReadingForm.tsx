@@ -20,6 +20,7 @@ interface Props {
   isFirstReading: boolean
   hasMultipleMeters: boolean
   setIsOnParameterForm: (isOnParameterForm: boolean) => void
+  onErrorChange?: (hasError: boolean) => void
 }
 
 const isOutside20Percent = (initial: number, diff: number) => {
@@ -51,6 +52,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
     isFirstReading,
     hasMultipleMeters,
     setIsOnParameterForm,
+    onErrorChange,
   }) => {
     const [readingErrors, setReadingErrors] = useState<Record<string, string | undefined>>({})
     const [readingWarnings, setReadingWarnings] = useState<Record<string, string | undefined>>({})
@@ -89,7 +91,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
 
     const debounceRef = useRef<number | null>(null)
 
-    const validateReadingsDebounced = useCallback(
+    const validateReadings = useCallback(
       (readings: TimezoneReadingState[]) => {
         if (debounceRef.current) {
           clearTimeout(debounceRef.current)
@@ -111,8 +113,8 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
               return
             }
 
-            const finalNum = Number(reading.values.final)
-            const diffNum = Number(reading.values.diff)
+            const finalNum = Number.parseFloat(reading.values.final)
+            const diffNum = Number.parseFloat(reading.values.diff)
 
             if (Number.isNaN(finalNum)) {
               errors[`${reading.timezone_id}.final`] = 'Final reading must be a number.'
@@ -125,7 +127,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
             }
 
             if (Number.isNaN(diffNum) || diffNum < 0) {
-              errors[`${reading.timezone_id}.diff`] =
+              errors[`${reading.timezone_id}.final`] =
                 'Final reading must not be less than Initial reading.'
               return
             }
@@ -169,10 +171,18 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
 
           setReadingErrors(errors)
           setReadingWarnings(warnings)
+
+          if (!readingErrors && readingWarnings) {
+            setShowWarningModal(true)
+          }
         }, 800)
       },
       [meter, selectedParameter, readingValues]
     )
+    useEffect(() => {
+      const hasError = Object.keys(readingErrors).length > 0
+      onErrorChange?.(hasError)
+    }, [readingErrors, onErrorChange])
 
     const updateTimezoneReading = useCallback(
       (timezoneId: number, updater: (r: TimezoneReadingState) => TimezoneReadingState) => {
@@ -194,6 +204,20 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
           showError('Invalid value')
           return
         }
+
+        // HIDE errors & warnings immediately while typing
+        setReadingErrors((prev) => {
+          const updated = { ...prev }
+          delete updated[`${timezoneId}.final`]
+          delete updated[`${timezoneId}.diff`]
+          return updated
+        })
+
+        setReadingWarnings((prev) => {
+          const updated = { ...prev }
+          delete updated[`${timezoneId}.diff`]
+          return updated
+        })
 
         updateTimezoneReading(timezoneId, (reading) => {
           let diff = 0
@@ -218,15 +242,15 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
             },
           }
 
-          // Debounced validation after typing stops
-          validateReadingsDebounced(
+          // Re-validate reading
+          validateReadings(
             parameterReading!.readings.map((r) => (r.timezone_id === timezoneId ? updated : r))
           )
 
           return updated
         })
       },
-      [updateTimezoneReading, maxValue, meter, validateReadingsDebounced, parameterReading]
+      [updateTimezoneReading, maxValue, meter, validateReadings, parameterReading]
     )
 
     const updateInitialValue = useCallback(
@@ -278,111 +302,6 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
       [updateTimezoneReading, maxValue, meter]
     )
 
-    const handleUpdate = () => {
-      if (meter == null || selectedParameter == null || parameterReading == null) {
-        return
-      }
-      const errors: Record<string, string | undefined> = {}
-      const integerDigits = meter.meter.digit_count ?? 0
-      const decimalDigits = meter.meter.decimal_digit_count ?? 0
-      let hasErrors = false
-
-      parameterReading.readings.forEach((reading) => {
-        if (reading.values.final === '') {
-          errors[`${reading.timezone_id}.final`] = 'Final reading is required.'
-          hasErrors = true
-          return
-        }
-
-        const finalAsNumber = Number.parseFloat(reading.values.final)
-        const diffAsNumber = Number.parseFloat(reading.values.diff)
-        if (Number.isNaN(finalAsNumber)) {
-          errors[`${reading.timezone_id}.final`] = 'Final reading must be a number.'
-          hasErrors = true
-          return
-        }
-        if (finalAsNumber < 0) {
-          errors[`${reading.timezone_id}.final`] = 'Final reading must not be less than 0.'
-          hasErrors = true
-          return
-        }
-
-        if (Number.isNaN(diffAsNumber) || diffAsNumber < 0) {
-          errors[`${reading.timezone_id}.diff`] =
-            'Final reading must not be less than Initial reading.'
-          hasErrors = true
-          return
-        }
-
-        const isValidFinal = verifyFinalReadingDigits(
-          reading.values.final,
-          integerDigits,
-          decimalDigits
-        )
-
-        if (!isValidFinal) {
-          const decimalHint = decimalDigits > 0 ? ` and ${decimalDigits} decimals` : ''
-          errors[`${reading.timezone_id}.final`] =
-            `Final reading can only have up to ${integerDigits} digits${decimalHint}.`
-          hasErrors = true
-          return
-        }
-
-        if (
-          selectedParameter.name.toLowerCase() === CONSUMPTION_PARAMETER_NAME.toLowerCase() ||
-          selectedParameter.name.toLowerCase() === DEMAND_PARAMETER_NAME.toLowerCase()
-        ) {
-          if (
-            !verifyApparentEnergy(
-              reading.timezone_id,
-              selectedParameter.name,
-              Number(reading.values.diff),
-              meter,
-              readingValues
-            )
-          ) {
-            errors[`${reading.timezone_id}.diff`] = 'kVAh should be greater than kWh.'
-            hasErrors = true
-          }
-        }
-      })
-      const warnings: Record<string, string | undefined> = {}
-      let hasWarnings = false
-
-      parameterReading.readings.forEach((reading) => {
-        const initialDiff = Number(reading.values.lastReadingDiff)
-        const diff = Number(reading.values.diff)
-
-        if (!Number.isNaN(initialDiff) && !Number.isNaN(diff) && initialDiff > 0) {
-          const percentage = getPercentageChange(initialDiff, diff)
-
-          if (Math.abs(percentage) >= 20) {
-            const direction = percentage > 0 ? 'higher' : 'lower'
-            const absPercent = Math.abs(percentage).toFixed(2)
-
-            warnings[`${reading.timezone_id}.diff`] =
-              `Difference is ${absPercent}% ${direction} than previous reading. (Previous: ${initialDiff} -> Current: ${diff})`
-            hasWarnings = true
-          }
-        }
-      })
-
-      setReadingWarnings(warnings)
-
-      setReadingErrors(errors)
-      if (hasErrors) {
-        showError('Please fix the highlighted reading values.')
-        return
-      }
-      if (hasWarnings) {
-        setShowWarningModal(true)
-        return
-      }
-
-      updateReading(meter.meter_id, selectedParameter.meter_parameter_id, parameterReading.readings)
-      setActiveProfile(null)
-    }
-
     useEffect(() => {
       if (
         meter &&
@@ -397,6 +316,11 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
         )
       }
     }, [readingErrors])
+
+    useEffect(() => {
+      console.log('Form mounted')
+      return () => console.log('Form unmounted')
+    }, [])
 
     return (
       <>
@@ -429,29 +353,15 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
           <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
             <div className='w-full max-w-md rounded-lg bg-white p-6'>
               <h3 className='text-lg font-semibold text-yellow-600'>Warning detected</h3>
-
               <p className='mt-2 text-sm text-gray-700'>
-                Some readings differ by more than ±20%. Are you sure you want to continue?
+                Reading difference is more than ±20%. Are you sure you want to continue?
               </p>
 
               <div className='mt-4 flex justify-end gap-2'>
                 <Button
-                  variant='secondary'
-                  label='Cancel'
-                  onClick={() => setShowWarningModal(false)}
-                />
-                <Button
                   variant='primary'
-                  label='Continue & Save'
-                  onClick={() => {
-                    setShowWarningModal(false)
-                    updateReading(
-                      meter!.meter_id,
-                      selectedParameter!.meter_parameter_id,
-                      parameterReading!.readings
-                    )
-                    setActiveProfile(null)
-                  }}
+                  label='ok'
+                  onClick={() => setShowWarningModal(false)}
                 />
               </div>
             </div>

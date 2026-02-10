@@ -15,7 +15,7 @@ import { MeterHealth } from './ReadingForm/useMeterHealthForm'
 import { MeterReadingFormState, TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
 import ProfileReadingForm, { ProfileReadingFormRef } from './ProfileReadingForm'
 import Button from '@/ui/button/Button'
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 
 interface PowerFactorData {
   timezone_name: string
@@ -160,6 +160,9 @@ interface Props {
   ctHealthTypes: ParameterValues[]
   setIsOnParameterForm: (value: boolean) => void
   profileRefs: React.MutableRefObject<Record<string, ProfileReadingFormRef | null>>
+
+  setProfileErrorExist: (value: boolean) => void
+  setAllProfileHasData: (value: boolean) => void
 }
 
 export interface MeterReadingPreviewRef {
@@ -182,7 +185,8 @@ const MeterReadingPreview = forwardRef<MeterReadingPreviewRef, Props>(
       meterHealthTypes,
       ctHealthTypes,
       setIsOnParameterForm,
-      profileRefs,
+      setProfileErrorExist,
+      setAllProfileHasData,
     },
     ref
   ) => {
@@ -211,20 +215,52 @@ const MeterReadingPreview = forwardRef<MeterReadingPreviewRef, Props>(
     )
 
     const [openProfiles, setOpenProfiles] = useState<Set<number>>(new Set())
-
     const allProfileIds = meterWithTimezoneAndProfile.reading_parameters.map(
       (p) => p.meter_parameter_id
     )
 
-    useImperativeHandle(ref, () => ({
-      expandAll() {
-        setOpenProfiles(new Set(allProfileIds))
-      },
-    }))
-
     const expandAll = openProfiles.size === allProfileIds.length
 
     const previewRef = useRef<HTMLDivElement | null>(null)
+
+    const [profileErrors, setProfileErrors] = useState<Record<number, boolean>>({})
+
+    const handleProfileErrorChange = useCallback((parameterId: number, hasError: boolean) => {
+      setProfileErrors((prev) => ({
+        ...prev,
+        [parameterId]: hasError,
+      }))
+    }, [])
+
+    useEffect(() => {
+      const hasAnyError = Object.values(profileErrors).some(Boolean)
+      setProfileErrorExist(hasAnyError)
+    }, [profileErrors, setProfileErrorExist])
+
+    const checkAllProfilesHaveData = useCallback(() => {
+      const meterData = readingValues.find(
+        (m) => m.meter_id === meterWithTimezoneAndProfile.meter_id
+      )
+
+      if (!meterData) return false
+
+      return meterWithTimezoneAndProfile.reading_parameters.every((profile) => {
+        const param = meterData.parameters.find(
+          (p) => p.meter_parameter_id === profile.meter_parameter_id
+        )
+
+        if (!param || !param.readings?.length) return false
+
+        return param.readings.every(
+          (r) => r.values?.final !== undefined && r.values?.final !== null && r.values?.final !== ''
+        )
+      })
+    }, [readingValues, meterWithTimezoneAndProfile])
+
+    useEffect(() => {
+      const dataExist = checkAllProfilesHaveData()
+      setAllProfileHasData(dataExist)
+    }, [checkAllProfilesHaveData, setAllProfileHasData])
 
     return (
       <div
@@ -376,6 +412,7 @@ const MeterReadingPreview = forwardRef<MeterReadingPreviewRef, Props>(
                   profile={profile}
                   profileIndex={pIdx}
                   meterIndex={meterIdx}
+                  hasError={profileErrors[profile.meter_parameter_id] ?? false}
                 >
                   <ProfileReadingForm
                     activeProfile={{ meterIdx, profileIdx: pIdx }}
@@ -386,6 +423,9 @@ const MeterReadingPreview = forwardRef<MeterReadingPreviewRef, Props>(
                     isFirstReading={isFirstReading}
                     hasMultipleMeters={hasMultipleMeters}
                     setIsOnParameterForm={setIsOnParameterForm}
+                    onErrorChange={(hasError) =>
+                      handleProfileErrorChange(profile.meter_parameter_id, hasError)
+                    }
                   />
                 </ReadingParameterPreviewCard>
               )

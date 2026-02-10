@@ -29,6 +29,8 @@ interface Props {
   activeProfile: { meterIdx: number; profileIdx: number } | null
   setActiveProfile: (profile: { meterIdx: number; profileIdx: number } | null) => void
   previewRefs: React.MutableRefObject<Record<number, MeterReadingPreviewRef | null>>
+  setProfileErrorExist: (value: boolean) => void
+  setAllProfileHasData: (value: boolean) => void
 }
 
 export default function MeterReadingsStep({
@@ -47,6 +49,8 @@ export default function MeterReadingsStep({
   activeProfile,
   setActiveProfile,
   previewRefs,
+  setAllProfileHasData,
+  setProfileErrorExist,
 }: Readonly<Props>) {
   const isSingleMeter = metersWithTimezonesAndProfiles.length === 1
 
@@ -129,6 +133,8 @@ export default function MeterReadingsStep({
         <React.Fragment key={meter.meter_id}>
           {(!activeProfile || activeProfile?.meterIdx !== meterIdx) && (
             <MeterReadingPreview
+              setAllProfileHasData={setAllProfileHasData}
+              setProfileErrorExist={setProfileErrorExist}
               healthData={healthData}
               meterHealthTypes={meterHealthTypes}
               ctHealthTypes={ctHealthTypes}

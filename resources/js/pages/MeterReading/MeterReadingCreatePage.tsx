@@ -17,12 +17,13 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import ErrorBanner from '@/ui/Errors/ErrorBanner'
 import dayjs from 'dayjs'
 import { getDisplayDate } from '@/utils'
 import { ProfileReadingFormRef } from '@/components/Meter/MeterReading/ProfileReadingForm'
 import { MeterReadingPreviewRef } from '@/components/Meter/MeterReading/MeterReadingPreview'
+import { set } from 'date-fns'
 
 export interface MeterReadingForm extends MeterReading {
   reading_type: string
@@ -162,6 +163,9 @@ export default function MeterReadingCreatePage({
 
   const [isOnParamaterForm, setIsOnParameterForm] = useState(false)
 
+  const [allProfileHasData, setAllProfileHasData] = useState<boolean>(false)
+  const [profileErrorExist, setProfileErrorExist] = useState<boolean>(false)
+
   const { formData, setFormValue } = useCustomForm<MeterReadingForm>({
     id: editMode ? latestMeterReading?.id : 0,
     connection_id: connectionWithConsumer?.connection?.connection_id ?? 0,
@@ -192,50 +196,17 @@ export default function MeterReadingCreatePage({
     })
   }
 
-  const [showGlobalWarning, setShowGlobalWarning] = useState(false)
-  const [skipWarnings, setSkipWarnings] = useState(false)
-
   const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault()
 
     accordionOpen()
 
-    requestAnimationFrame(() => {
-      // let hasErrors = false
-      // let hasWarnings = false
-
-      // Object.values(profileRefs.current).forEach((ref) => {
-      //   if (!ref) return
-
-      //   const result = ref.handleUpdate(skipWarnings)
-
-      //   if (result.hasErrors) {
-      //     hasErrors = true
-      //   }
-
-      //   if (result.hasWarnings) {
-      //     hasWarnings = true
-      //   }
-      // })
-
-      // if (hasErrors) {
-      //   setIsOnParameterForm(false)
-      //   setActiveStep(2)
-      //   return
-      // }
-
-      // if (hasWarnings && !skipWarnings) {
-      //   setShowGlobalWarning(true)
-      //   return
-      // }
-
-      // ✅ FINAL SUBMIT
-      post({
-        ...formData,
-        readings_by_meter: readingValues,
-        meter_health: healthData,
-        multiple_reading: false,
-      })
+    //  FINAL SUBMIT
+    post({
+      ...formData,
+      readings_by_meter: readingValues,
+      meter_health: healthData,
+      multiple_reading: false,
     })
   }
 
@@ -360,6 +331,8 @@ export default function MeterReadingCreatePage({
                   activeProfile={activeProfile}
                   setActiveProfile={setActiveProfile}
                   previewRefs={previewRefs}
+                  setAllProfileHasData={setAllProfileHasData}
+                  setProfileErrorExist={setProfileErrorExist}
                 />
               )}
             </Stepper>
@@ -388,7 +361,7 @@ export default function MeterReadingCreatePage({
                   onClick={() => handleSubmit()}
                 />
               )}
-              {activeStep === steps.length - 1 && (
+              {activeStep === steps.length - 1 && allProfileHasData && !profileErrorExist && (
                 <Button
                   type='submit'
                   label='Submit'
@@ -399,34 +372,6 @@ export default function MeterReadingCreatePage({
               )}
             </div>
           </form>
-        </div>
-      )}
-      {showGlobalWarning && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
-          <div className='w-full max-w-md rounded-lg bg-white p-6'>
-            <h3 className='text-lg font-semibold text-yellow-600'>Warning detected</h3>
-
-            <p className='mt-2 text-sm text-gray-700'>
-              Some readings differ by more than ±20%. Do you want to continue?
-            </p>
-
-            <div className='mt-4 flex justify-end gap-2'>
-              <Button
-                variant='secondary'
-                label='Cancel'
-                onClick={() => setShowGlobalWarning(false)}
-              />
-              <Button
-                variant='primary'
-                label='Continue & Submit'
-                onClick={() => {
-                  setSkipWarnings(true)
-                  setShowGlobalWarning(false)
-                  handleSubmit()
-                }}
-              />
-            </div>
-          </div>
         </div>
       )}
     </MainLayout>
