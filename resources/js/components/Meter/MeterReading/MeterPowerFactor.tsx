@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card'
 interface Props {
   powerFactorsByMeter: any
   meterId: number
-  averagePF?: string | null
+  averagePF?: string | number | null
 }
 
 export default function PowerFactorBar({ powerFactorsByMeter, averagePF }: Props) {
