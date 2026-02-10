@@ -19,6 +19,7 @@ interface Props {
   children: React.ReactNode
   isOpen: boolean
   onToggle: (open: boolean) => void
+  hasError: boolean
 }
 
 export default function ReadingParameterPreviewCard({
@@ -29,6 +30,7 @@ export default function ReadingParameterPreviewCard({
   meterIndex,
   children,
   isOpen,
+  hasError,
   onToggle,
 }: Readonly<Props>) {
   const meterData = readingValues.find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
@@ -63,9 +65,7 @@ export default function ReadingParameterPreviewCard({
         <AccordionTrigger className='p-0 hover:no-underline'>
           <Card
             key={profile.meter_parameter_id}
-            className={`hover:ring-primary bg-kseb-bg-blue relative w-full cursor-pointer p-4 transition-all hover:ring-2 ${
-              hasData ? 'border-green-500 shadow-md' : ''
-            }`}
+            className={`hover:ring-primary bg-kseb-bg-blue relative w-full cursor-pointer p-4 transition-all hover:ring-2 ${hasError ? 'border-red-500' : `${hasData ? 'border-green-500 shadow-md' : ''}`} `}
           >
             <div className='flex items-center gap-2'>
               <StrongText>{profile.display_name}</StrongText>
@@ -84,80 +84,84 @@ export default function ReadingParameterPreviewCard({
               }`}
               style={{ scrollBehavior: 'smooth' }}
             >
-              {profile.is_cumulative ? (
+              {!isOpen && (
                 <>
-                  {/* Header */}
-                  <div className='grid grid-cols-4 gap-2 border-b border-gray-200 pb-1 font-medium text-gray-700'>
-                    <span></span>
-                    <span className='text-right'>IR</span>
-                    <span className='text-right'>FR</span>
-                    <span className='text-right'>DIFF x MF</span>
-                  </div>
-                  {/* Rows */}
-                  {paramData?.readings?.map((r) => {
-                    return (
-                      <div
-                        key={r.timezone_id}
-                        className='grid grid-cols-4 gap-2 border-b border-gray-100 py-1 last:border-0'
-                      >
-                        <span>{r.timezone_name}</span>
-
-                        <span className='text-right font-medium text-gray-800'>
-                          {r.values?.initial || 0}
-                        </span>
-
-                        <span className='text-right font-medium text-gray-800'>
-                          {r.values?.final || 0}
-                        </span>
-
-                        <span className='text-right font-medium'>
-                          {r.values?.value !== undefined && r.values?.value !== null
-                            ? Number(r.values.value).toFixed(2)
-                            : 0}
-                        </span>
+                  {profile.is_cumulative ? (
+                    <>
+                      {/* Header */}
+                      <div className='grid grid-cols-4 gap-2 border-b border-gray-200 pb-1 font-medium text-gray-700'>
+                        <span></span>
+                        <span className='text-right'>IR</span>
+                        <span className='text-right'>FR</span>
+                        <span className='text-right'>DIFF x MF</span>
                       </div>
-                    )
-                  })}
-                  {profile.is_cumulative && totalValue !== null && (
-                    <div className='mt-2 grid grid-cols-4 gap-2 pt-2 font-semibold text-gray-800'>
-                      <span>Total</span>
+                      {/* Rows */}
+                      {paramData?.readings?.map((r) => {
+                        return (
+                          <div
+                            key={r.timezone_id}
+                            className='grid grid-cols-4 gap-2 border-b border-gray-100 py-1 last:border-0'
+                          >
+                            <span>{r.timezone_name}</span>
 
-                      <span className='text-right'></span>
-                      <span className='text-right'></span>
+                            <span className='text-right font-medium text-gray-800'>
+                              {r.values?.initial || 0}
+                            </span>
 
-                      <span className='text-right'>{totalValue.toFixed(2) || '-'}</span>
-                    </div>
+                            <span className='text-right font-medium text-gray-800'>
+                              {r.values?.final || 0}
+                            </span>
+
+                            <span className='text-right font-medium'>
+                              {r.values?.value !== undefined && r.values?.value !== null
+                                ? Number(r.values.value).toFixed(2)
+                                : 0}
+                            </span>
+                          </div>
+                        )
+                      })}
+                      {profile.is_cumulative && totalValue !== null && (
+                        <div className='mt-2 grid grid-cols-4 gap-2 pt-2 font-semibold text-gray-800'>
+                          <span>Total</span>
+
+                          <span className='text-right'></span>
+                          <span className='text-right'></span>
+
+                          <span className='text-right'>{totalValue.toFixed(2) || '-'}</span>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {/* Header */}
+                      <div className='grid grid-cols-3 gap-2 border-b border-gray-200 pb-1 font-medium text-gray-700'>
+                        <span></span>
+                        <span className='text-right'>FR</span>
+                        <span className='text-right'>DIFF x MF</span>
+                      </div>
+                      {/* Rows */}
+                      {paramData?.readings?.map((r) => {
+                        return (
+                          <div
+                            key={r.timezone_id}
+                            className='grid grid-cols-3 gap-2 border-b border-gray-100 py-1 last:border-0'
+                          >
+                            <span>{r.timezone_name}</span>
+
+                            <span className='text-right font-medium text-gray-800'>
+                              {r.values?.final || 0}
+                            </span>
+
+                            <span className='text-right font-medium'>
+                              {r.values?.value !== undefined && r.values?.value !== null
+                                ? Number(r.values.value).toFixed(2)
+                                : 0}
+                            </span>
+                          </div>
+                        )
+                      })}
+                    </>
                   )}
-                </>
-              ) : (
-                <>
-                  {/* Header */}
-                  <div className='grid grid-cols-3 gap-2 border-b border-gray-200 pb-1 font-medium text-gray-700'>
-                    <span></span>
-                    <span className='text-right'>FR</span>
-                    <span className='text-right'>DIFF x MF</span>
-                  </div>
-                  {/* Rows */}
-                  {paramData?.readings?.map((r) => {
-                    return (
-                      <div
-                        key={r.timezone_id}
-                        className='grid grid-cols-3 gap-2 border-b border-gray-100 py-1 last:border-0'
-                      >
-                        <span>{r.timezone_name}</span>
-
-                        <span className='text-right font-medium text-gray-800'>
-                          {r.values?.final || 0}
-                        </span>
-
-                        <span className='text-right font-medium'>
-                          {r.values?.value !== undefined && r.values?.value !== null
-                            ? Number(r.values.value).toFixed(2)
-                            : 0}
-                        </span>
-                      </div>
-                    )
-                  })}
                 </>
               )}
             </div>
@@ -181,8 +185,13 @@ export default function ReadingParameterPreviewCard({
         </AccordionTrigger>
 
         {/* ---------- CONTENT BELOW CARD ---------- */}
-        <AccordionContent className='pt-3'>
-          <div className='rounded-lg border bg-slate-50 p-4'>{children}</div>
+        <AccordionContent
+          className='pt-3'
+          forceMount
+        >
+          <div className={isOpen ? 'block' : 'hidden'}>
+            <div className='rounded-lg border bg-slate-50 p-4'>{children}</div>
+          </div>
         </AccordionContent>
       </AccordionItem>
     </Accordion>
