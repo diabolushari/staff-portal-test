@@ -69,7 +69,7 @@ class PurposeInfoController extends Controller
 
     public function store(PurposeInfoFormRequest $request): RedirectResponse
     {
-        $response = $this->purposeInfoService->createPurposeInfo($request);
+        $response = $this->purposeInfoService->createPurposeInfoWithMultiplePurpose($request);
         if ($response->hasValidationError()) {
             return $response->error ?? back()->with(['error' => 'Something went wrong']);
         }

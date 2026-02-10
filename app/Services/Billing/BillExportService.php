@@ -5,12 +5,10 @@ namespace App\Services\Billing;
 use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeterReadingService;
 use NumberFormatter;
-use Spatie\LaravelData\Attributes\Validation\InArray;
 
 class BillExportService
 {
     public function __construct(
-        private readonly BillService $billService,
         private readonly MeterConnectionMappingService $meterConnectionMappingService,
         private readonly MeterReadingService $meterReadingService
     ) {}
@@ -110,7 +108,12 @@ class BillExportService
 
 
         $sortedValues = [];
-        $timeZoneNames = $timeZones['result'] ?? [];
+        $defaultZone = [
+            ['result' => 'Normal'],
+            ['result' => 'Peak'],
+            ['result' => 'Off Peak']
+        ];
+        $timeZoneNames = $timeZones['result'] ?? $defaultZone;
         foreach ($timeZoneNames as $timeZoneName) {
             foreach ($unsortedValues as $value) {
                 if (strtolower($value['timezone']) == strtolower($timeZoneName['result'])) {
