@@ -138,7 +138,7 @@ class PurposeInfoService
     public function createPurposeInfoWithMultiplePurpose(PurposeInfoFormRequest $request): GrpcServiceResponse
     {
         $grpcRequest = PurposeInfoConverter::multiplePurposeFormToProto($request);
-        [$response, $status] = $this->client->CreatePurposeInfoWithMultiplePurpse($grpcRequest)->wait();
+        [$response, $status] = $this->client->CreateMultiplePurposesForTariff($grpcRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),

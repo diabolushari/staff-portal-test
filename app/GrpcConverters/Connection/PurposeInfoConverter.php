@@ -5,6 +5,7 @@ namespace App\GrpcConverters\Connection;
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Http\Requests\Connections\PurposeInfoFormRequest;
 use Illuminate\Validation\ValidationException;
+use Proto\Connections\MultiplePurpsesForTariffForm;
 use Proto\Connections\PuropseInfoWithMulitplePurpseForm;
 use Proto\Connections\PurposeInfoFormMessage;
 use Proto\Connections\PurposeInfoMessage;
@@ -62,9 +63,9 @@ class PurposeInfoConverter
         return $purposeInfoFormMessage;
     }
 
-    public static function multiplePurposeFormToProto(PurposeInfoFormRequest $request): PuropseInfoWithMulitplePurpseForm
+    public static function multiplePurposeFormToProto(PurposeInfoFormRequest $request): MultiplePurpsesForTariffForm
     {
-        $purposeInfoFormMessage = new PuropseInfoWithMulitplePurpseForm();
+        $purposeInfoFormMessage = new MultiplePurpsesForTariffForm();
         if ($request->id) {
             $purposeInfoFormMessage->setId($request->id);
         }
