@@ -8,14 +8,14 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
 import { CONSUMPTION_PARAMETER_NAME, DEMAND_PARAMETER_NAME } from '@/types/constants'
 import StrongText from '@/typography/StrongText'
+import Button from '@/ui/button/Button'
 import SelectList from '@/ui/form/SelectList'
+import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import PowerFactorBar from './MeterPowerFactor'
+import ProfileReadingForm, { ProfileReadingFormRef } from './ProfileReadingForm'
 import ReadingParameterPreviewCard from './ReadingForm/ReadingParameterPreviewCard'
 import { MeterHealth } from './ReadingForm/useMeterHealthForm'
 import { MeterReadingFormState, TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
-import ProfileReadingForm, { ProfileReadingFormRef } from './ProfileReadingForm'
-import Button from '@/ui/button/Button'
-import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 
 interface PowerFactorData {
   timezone_name: string
@@ -237,30 +237,29 @@ const MeterReadingPreview = forwardRef<MeterReadingPreviewRef, Props>(
       setProfileErrorExist(hasAnyError)
     }, [profileErrors, setProfileErrorExist])
 
-    const checkAllProfilesHaveData = useCallback(() => {
-      const meterData = readingValues.find(
+    useEffect(() => {
+      const meterReadingData = readingValues.find(
         (m) => m.meter_id === meterWithTimezoneAndProfile.meter_id
       )
 
-      if (!meterData) return false
+      if (meterReadingData == null) {
+        setAllProfileHasData(false)
+        return
+      }
 
-      return meterWithTimezoneAndProfile.reading_parameters.every((profile) => {
-        const param = meterData.parameters.find(
+      const dataExist = meterWithTimezoneAndProfile.reading_parameters.every((profile) => {
+        const param = meterReadingData.parameters.find(
           (p) => p.meter_parameter_id === profile.meter_parameter_id
         )
 
-        if (!param || !param.readings?.length) return false
+        if (param == null || param.readings?.length === 0) return false
 
         return param.readings.every(
           (r) => r.values?.final !== undefined && r.values?.final !== null && r.values?.final !== ''
         )
       })
-    }, [readingValues, meterWithTimezoneAndProfile])
-
-    useEffect(() => {
-      const dataExist = checkAllProfilesHaveData()
       setAllProfileHasData(dataExist)
-    }, [checkAllProfilesHaveData, setAllProfileHasData])
+    }, [readingValues, meterWithTimezoneAndProfile, setAllProfileHasData])
 
     return (
       <div

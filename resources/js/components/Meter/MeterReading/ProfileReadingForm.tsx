@@ -1,12 +1,12 @@
 import { Card } from '@/components/ui/card'
 import { MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
+import { CONSUMPTION_PARAMETER_NAME, DEMAND_PARAMETER_NAME } from '@/types/constants'
+import { showError } from '@/ui/alerts'
 import Button from '@/ui/button/Button'
 import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import MeterReadingValueForm from './MeterReadingValueForm'
 import { MeterReadingFormState, TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
-import { showError } from '@/ui/alerts'
 import { verifyApparentEnergy, verifyFinalReadingDigits } from './valdiations/reading-validations'
-import { CONSUMPTION_PARAMETER_NAME, DEMAND_PARAMETER_NAME } from '@/types/constants'
 
 interface Props {
   activeProfile: {
@@ -48,10 +48,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
     readingValues,
     metersWithTimezonesAndProfiles,
     updateReading,
-    setActiveProfile,
     isFirstReading,
-    hasMultipleMeters,
-    setIsOnParameterForm,
     onErrorChange,
   }) => {
     const [readingErrors, setReadingErrors] = useState<Record<string, string | undefined>>({})
@@ -89,7 +86,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
       )
     }, [meter])
 
-    const debounceRef = useRef<number | null>(null)
+    const debounceRef = useRef<NodeJS.Timeout | null>(null)
 
     const validateReadings = useCallback(
       (readings: TimezoneReadingState[]) => {
@@ -97,7 +94,7 @@ const ProfileReadingForm = forwardRef<ProfileReadingFormRef, Props>(
           clearTimeout(debounceRef.current)
         }
 
-        debounceRef.current = window.setTimeout(() => {
+        debounceRef.current = setTimeout(() => {
           if (!meter || !selectedParameter) return
 
           const errors: Record<string, string | undefined> = {}
