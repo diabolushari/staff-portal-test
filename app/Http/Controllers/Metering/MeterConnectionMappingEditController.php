@@ -33,7 +33,7 @@ class MeterConnectionMappingEditController extends Controller
         $meterProfiles = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile');
         $timezoneTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Timezone Type');
 
-        return Inertia::render('Connections/ConnectMeter', [
+        return Inertia::render('Connections/ConnectMeterForm', [
             'relation' => $relation->data,
             'meters' => $meters->data,
             'useCategory' => $useCategory->data,
