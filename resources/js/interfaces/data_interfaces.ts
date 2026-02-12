@@ -78,6 +78,8 @@ export interface MeterConnectionMapping {
   energise_date?: string
   meter_profile?: ParameterValues
   meter_mf?: number
+  meter_timezone_type?: ParameterValues
+  timezone_type_id?: number
 }
 
 export interface DateTimeField {

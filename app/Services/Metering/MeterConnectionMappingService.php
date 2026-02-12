@@ -231,11 +231,31 @@ class MeterConnectionMappingService
         if (isset($data->relId)) {
             $request->setRelId($data->relId);
         }
-        $request->setMeterId($data->meterId);
-        $request->setConnectionId($data->connectionId);
-        $request->setMeterUseCategory($data->meterUseCategory);
+        // $request->setMeterId($data->meterId);
+        // $request->setConnectionId($data->connectionId);
+       if (isset($data->meterUseCategory)) {
+            $request->setMeterUseCategory($data->meterUseCategory);
+        }
 
-        $request->setMeterStatusId($data->meterStatusId);
+        if (isset($data->meterProfileId)) {
+            $request->setProfileId($data->meterProfileId);
+        }
+
+        if (isset($data->timezoneTypeId)) {
+            $request->setTimezoneTypeId($data->timezoneTypeId);
+        }
+
+
+
+        if ($data->meterMf !== null) {
+            $request->setMeterMf($data->meterMf);
+        }
+
+       // $request->setMeterStatusId($data->meterStatusId);
+         $energiseDate = DateTimeConverter::convertStringToTimestamp($data->energiseDate);
+        if ($energiseDate !== null) {
+            $request->setEnergiseDate($energiseDate);
+        }
 
         if (isset($data->sortPriority)) {
             $request->setSortPriority($data->sortPriority);
@@ -318,6 +338,11 @@ class MeterConnectionMappingService
         $changeDate = $rel->getChangeDate() ? $rel->getChangeDate()->toDateTime()->format('Y-m-d') : null;
         $meterProfile = ParameterValueProtoConvertor::convertToArray($rel->getProfile());
         $energiseDate = $rel->getEnergiseDate() ? $rel->getEnergiseDate()->toDateTime()->format('Y-m-d') : null;
+        $meter = MeterProtoConvertor::convertToArray($rel->getMeter());
+
+        $timezoneType = $meter['meter_timezone_type_rel'][0]['timezone_type'] ?? null;
+        $timezoneTypeId = $timezoneType['id'] ?? null;
+
 
         return [
             'version_id' => $rel->getVersionId(),
@@ -346,6 +371,9 @@ class MeterConnectionMappingService
             'meter_profile' => $meterProfile,
             'energise_date' => $energiseDate,
             'meter_mf' => $rel->getMeterMf(),
+            'meter' => $meter,
+            'timezone_type' => $timezoneType,
+            'timezone_type_id' => $timezoneTypeId,
         ];
     }
 
