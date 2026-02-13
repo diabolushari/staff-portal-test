@@ -351,56 +351,6 @@ export default function BillInvoice({
                   </TableCell>
                 </TableRow>
               ))}
-
-              {Number(chargeHeads?.monthly_fuel_surcharge?.result) > 0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={2}
-                    className='border border-black'
-                  >
-                    {`  
-                      Monthly Fuel Surcharge  ( ${computedProperties?.total_consumption?.result} units at rate of ${computedProperties?.monthly_fuel_surcharge_rate?.result})`}
-                  </TableCell>
-                  <TableCell className='border border-black text-right'>
-                    {Number(chargeHeads?.monthly_fuel_surcharge?.result)
-                      ? Number(chargeHeads?.monthly_fuel_surcharge?.result).toFixed(2)
-                      : '-'}
-                  </TableCell>
-                </TableRow>
-              )}
-
-              {Number(chargeHeads?.green_energy_charge?.result) > 0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={2}
-                    className='border border-black'
-                  >
-                    {`  
-                      Green Energy Charge (${computedProperties?.total_consumption?.result} units at rate of ${computedProperties?.green_energy_charge_rate?.result})`}
-                  </TableCell>
-                  <TableCell className='border border-black text-right'>
-                    {Number(chargeHeads?.green_energy_charge?.result)
-                      ? Number(chargeHeads?.green_energy_charge?.result).toFixed(2)
-                      : '-'}
-                  </TableCell>
-                </TableRow>
-              )}
-              {Number(chargeHeads?.lt_surcharge?.result) > 0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={2}
-                    className='border border-black'
-                  >
-                    LOW_VOLT_SUR
-                  </TableCell>
-                  <TableCell className='border border-black text-right'>
-                    {Number(chargeHeads?.lt_surcharge?.result)
-                      ? Number(chargeHeads?.lt_surcharge?.result).toFixed(2)
-                      : '-'}
-                  </TableCell>
-                </TableRow>
-              )}
-
               {/* Spacer rows like printed bill */}
 
               {/* 10. Total */}
