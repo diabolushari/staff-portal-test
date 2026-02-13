@@ -10,6 +10,9 @@ use Proto\Consumers\CreateSdDemandRequest;
 use Proto\Consumers\GetSdDemandRequest;
 use Proto\Consumers\SdDemandServiceClient;
 use Grpc\ChannelCredentials;
+use Proto\Consumers\DeleteSdDemandRequest;
+use Proto\Consumers\ListSdDemandsPaginatedRequest;
+use Proto\Consumers\UpdateSdDemandRequest;
 
 class SdDemandsService
 {
@@ -23,9 +26,54 @@ class SdDemandsService
         );
     }
 
+    public function listPaginatedSdDemands(?int $connectionId, ?int $calculationBasicId, ?int $demandTypeId, ?int $statusId, ?string $totalSdAmount)
+    {
+        $request = new ListSdDemandsPaginatedRequest;
+        if ($connectionId != null) {
+            $request->setConnectionId($connectionId);
+        }
+        if ($calculationBasicId != null) {
+            $request->setCalculationBasicId($calculationBasicId);
+        }
+        if ($demandTypeId != null) {
+            $request->setDemandTypeId($demandTypeId);
+        }
+        if ($statusId != null) {
+            $request->setStatusId($statusId);
+        }
+        if ($totalSdAmount != null) {
+            $request->setTotalSdAmount($totalSdAmount);
+        }
+
+        [$response, $status] = $this->client->ListSdDemandsPaginated($request)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+        $sdDemands = $response->getItems();
+        $sdDemandArray = [];
+        foreach ($sdDemands as $sdDemand) {
+            $sdDemandArray[] = $this->sdDemandService->convertToArray($sdDemand);
+        }
+
+        $paginatedData = [
+            'sd_demands' => $sdDemandArray,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ];
+
+        return GrpcServiceResponse::success($paginatedData, $response, $status->code, $status->details);
+    }
+
     public function create(SdDemandFormRequest $request): GrpcServiceResponse
     {
-        $sdDemand = $this->sdDemandService->formToGrpcMessage($request);
+        $sdDemand = $this->sdDemandService->formToGrpcMessage($request, null);
 
         $grpcRequest = new CreateSdDemandRequest();
         $grpcRequest->setSdDemand($sdDemand);
@@ -53,10 +101,61 @@ class SdDemandsService
         );
     }
 
+    public function update(SdDemandFormRequest $request, int $id): GrpcServiceResponse
+    {
+        $sdDemand = $this->sdDemandService->formToGrpcMessage($request, $id);
+
+        $grpcRequest = new UpdateSdDemandRequest();
+        $grpcRequest->setSdDemand($sdDemand);
+
+
+        [$response, $status] =
+            $this->client->UpdateSdDemand($grpcRequest)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $sdDemandArray = $this->sdDemandService->convertToArray($response->getSdDemand());
+
+
+        return GrpcServiceResponse::success(
+            $sdDemandArray,
+            $response,
+            $status->code,
+            $status->details
+        );
+    }
+
+    public function deleteSdDemand(int $id)
+    {
+        $grpcRequest = new DeleteSdDemandRequest();
+        $grpcRequest->setSdDemandId($id);
+
+        [$response, $status] = $this->client->DeleteSdDemand($grpcRequest)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        return GrpcServiceResponse::success([
+            'success' => $response->getSuccess()
+        ]);
+    }
+
     public function getSdDemand(int $id)
     {
 
-        $request = new GetSdDemandRequest();
+        $request = new GetSdDemandRequest;
         $request->setSdDemandId($id);
         [$response, $status] = $this->client->GetSdDemand($request)->wait();
         if ($status->code !== 0) {

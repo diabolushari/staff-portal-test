@@ -1,6 +1,6 @@
 import { metadataNavItems } from '@/components/Navbar/navitems'
 import SdDemandForm from '@/components/SecurityDeposit/SdDemands/SdDemandForm'
-import { sdDemand } from '@/interfaces/data_interfaces'
+import { SdDemand } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
@@ -8,14 +8,14 @@ import { BreadcrumbItem } from '@/types'
 interface Props {
   demandTypes: ParameterValues[]
   calculationBasics: ParameterValues[]
-  status: ParameterValues[]
-  sdDemand?: sdDemand
+  statuses: ParameterValues[]
+  sdDemand?: SdDemand
 }
 
 export default function SdDemandCreate({
   demandTypes,
   calculationBasics,
-  status,
+  statuses,
   sdDemand,
 }: Readonly<Props>) {
   const breadcrumbs: BreadcrumbItem[] = [
@@ -44,7 +44,7 @@ export default function SdDemandCreate({
         <SdDemandForm
           demandTypes={demandTypes}
           calculationBasics={calculationBasics}
-          status={status}
+          statuses={statuses}
           sdDemand={sdDemand}
         />
       </div>

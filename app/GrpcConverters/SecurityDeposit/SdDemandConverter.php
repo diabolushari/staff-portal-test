@@ -40,9 +40,13 @@ class SdDemandConverter
         ];
     }
 
-    public function formToGrpcMessage(SdDemandFormRequest $request): SdDemandMessage
+    public function formToGrpcMessage(SdDemandFormRequest $request, ?int $id): SdDemandMessage
     {
         $msg = new SdDemandMessage;
+
+        if ($id != null) {
+            $msg->setSdDemandId($id);
+        }
 
         $msg->setConnectionId($request->connectionId);
         $msg->setDemandTypeId($request->demandTypeId);

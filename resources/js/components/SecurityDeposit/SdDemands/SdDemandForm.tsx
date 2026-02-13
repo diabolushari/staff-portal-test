@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { Connection, sdDemand } from '@/interfaces/data_interfaces'
+import { Connection, SdDemand } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import CheckBox from '@/ui/form/CheckBox'
 import ComboBox from '@/ui/form/ComboBox'
@@ -13,30 +13,34 @@ import { useEffect, useState } from 'react'
 interface Props {
   demandTypes: ParameterValues[]
   calculationBasics: ParameterValues[]
-  status: ParameterValues[]
-  sdDemand?: sdDemand
+  statuses: ParameterValues[]
+  sdDemand?: SdDemand
 }
 
-const SdDemandForm = ({ demandTypes, calculationBasics, status, sdDemand }: Props) => {
+const SdDemandForm = ({ demandTypes, calculationBasics, statuses, sdDemand }: Props) => {
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     connection_id: sdDemand?.connection_id ?? '',
-    demand_type_id: sdDemand?.demand_type_id ?? '1',
-    calculation_basic_id: sdDemand?.calculation_basic_id ?? null,
+    demand_type_id: sdDemand?.demand_type_id ?? '',
+    calculation_basic_id: sdDemand?.calculation_basic_id ?? '',
     calculation_period_from: sdDemand?.calculation_period_from ?? '',
     calculation_period_to: sdDemand?.calculation_period_to ?? '',
     total_sd_amount: sdDemand?.total_sd_amount ?? '',
     applicable_from: sdDemand?.applicable_from ?? '',
     applicable_to: sdDemand?.applicable_to ?? '',
-    status_id: sdDemand?.status_id ?? '1',
+    status_id: sdDemand?.status_id ?? '',
     is_active: sdDemand?.is_active ?? true,
+    _method: sdDemand ? 'PUT' : undefined,
   })
 
-  const { post, loading, errors } = useInertiaPost<typeof formData>(
-    sdDemand ? route('sd-demands.update', sdDemand.sd_demand_id) : route('sd-demands.store'),
-    {
-      showErrorToast: true,
-    }
-  )
+  const url = sdDemand
+    ? route('sd-demands.update', {
+        sd_demand: sdDemand.sd_demand_id,
+      })
+    : route('sd-demands.store')
+
+  const { post, loading, errors } = useInertiaPost<typeof formData>(url, {
+    showErrorToast: true,
+  })
 
   const [selectedConnection, setSelectedConnection] = useState<Connection | null>(
     sdDemand?.connection ?? null
@@ -131,7 +135,7 @@ const SdDemandForm = ({ demandTypes, calculationBasics, status, sdDemand }: Prop
           />
           <SelectList
             label='Status'
-            list={status}
+            list={statuses}
             dataKey='id'
             displayKey='parameter_value'
             setValue={setFormValue('status_id')}

@@ -755,7 +755,7 @@ export interface PurposeInfo {
 
 
 
-export interface sdDemand{
+export interface SdDemand{
 sd_demand_id:number
 connection_id	:number 	
 demand_type_id	:number	
