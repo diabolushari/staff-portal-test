@@ -64,6 +64,7 @@ use App\Http\Controllers\Offices\OfficesCreateWithCsvController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
+use App\Http\Controllers\SecurityDeposit\SdDemandsController;
 use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
 use App\Http\Controllers\Tariff\TariffConfigController;
@@ -169,6 +170,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('update-meter-transformer-assignment-status');
 
     Route::resource('meter-profile', MeterProfileParameterController::class);
+
+    //Security Deposit
+    Route::resource('sd-demands', SdDemandsController::class);
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);

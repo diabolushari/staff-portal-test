@@ -752,3 +752,23 @@ export interface PurposeInfo {
   tariff: ParameterValues
   tariff_name: string
 }
+
+
+
+export interface sdDemand{
+sd_demand_id:number
+connection_id	:number 	
+demand_type_id	:number	
+calculation_basic_id	?:number 	
+calculation_period_from	:string	
+calculation_period_to	:string	
+total_sd_amount	:string	
+applicable_from	:string	
+applicable_to	?:string 	
+status_id	:number	
+is_active	:boolean 
+connection:Connection
+demand_type:ParameterValues
+calculation_basic?:ParameterValues
+status:ParameterValues
+}
