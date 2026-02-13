@@ -166,6 +166,18 @@ export const metadataNavItems: MainNav = {
         },
       ],
     },
+    {
+      title: 'Calendar Management',
+      href: '/calendar',
+      icon: '',
+      children: [
+        {
+          title: 'Calendar',
+          href: '/calendar',
+          icon: '',
+        },
+      ],
+    },
   ],
 }
 
