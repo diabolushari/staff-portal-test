@@ -10,7 +10,7 @@ export default function CalendarEditModal({
   calendar: Calendar
   setModalOpen: () => void
 }) {
-  const { data, setData, put, processing } = useForm({
+  const { data, setData, put } = useForm({
     isHoliday: calendar.is_holiday,
     isWeekend: calendar.is_weekend,
     remarks: calendar.remarks || '',
