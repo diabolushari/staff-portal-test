@@ -26,7 +26,8 @@ export default function CalendarTable({ calendar }: { calendar: Paginator<Calend
             <TableRow>
               <TableHead>#</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead>Day</TableHead>
+              <TableHead>Day of Week</TableHead>
+              <TableHead>Day of Year</TableHead>
               <TableHead>Holiday</TableHead>
               <TableHead>Weekend</TableHead>
               <TableHead>Remarks</TableHead>
@@ -39,6 +40,7 @@ export default function CalendarTable({ calendar }: { calendar: Paginator<Calend
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{getDisplayDate(item.calendar_date)}</TableCell>
                 <TableCell>{item.day_of_week}</TableCell>
+                <TableCell>{item.day_of_year}</TableCell>
                 <TableCell>{item.is_holiday ? 'Yes' : 'No'}</TableCell>
                 <TableCell>{item.is_weekend ? 'Yes' : 'No'}</TableCell>
                 <TableCell>{item.remarks || '-'}</TableCell>
