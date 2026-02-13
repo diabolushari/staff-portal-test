@@ -19,7 +19,7 @@ message SdDemandMessage {
   string total_sd_amount = 7;
   string applicable_from = 8;
   optional string applicable_to = 9;
-  int32 status_id = 10;
+  optional int32 status_id = 10;
   bool is_active = 11;
   optional int32 created_by = 12;
   optional int32 updated_by = 13;
@@ -76,6 +76,21 @@ message ListSdDemandsPaginatedResponse {
   int32 total_pages = 5;
 }
 
+message ListSdDemandsByConnectionIdRequest {
+  int32 connection_id = 1;
+  optional int32 page = 2;
+  optional int32 page_size = 3;
+}
+
+message ListSdDemandsByConnectionIdResponse {
+  repeated SdDemandMessage items = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
+
 message UpdateSdDemandRequest {
   SdDemandMessage sd_demand = 1;
 }
@@ -97,6 +112,7 @@ service SdDemandService {
   rpc GetSdDemand(GetSdDemandRequest) returns (GetSdDemandResponse);
   rpc ListSdDemands(ListSdDemandsRequest) returns (ListSdDemandsResponse);
   rpc ListSdDemandsPaginated(ListSdDemandsPaginatedRequest) returns (ListSdDemandsPaginatedResponse);
+  rpc ListSdDemandsByConnectionId(ListSdDemandsByConnectionIdRequest) returns (ListSdDemandsByConnectionIdResponse);
   rpc UpdateSdDemand(UpdateSdDemandRequest) returns (UpdateSdDemandResponse);
   rpc DeleteSdDemand(DeleteSdDemandRequest) returns (DeleteSdDemandResponse);
 }

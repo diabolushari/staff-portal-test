@@ -37,6 +37,7 @@ use App\Http\Controllers\Connection\GetConsumerController;
 use App\Http\Controllers\Connection\MeterConnectionMappingUpdateChangeController;
 use App\Http\Controllers\Connection\MeterConnectionMappingUpdateStatusController;
 use App\Http\Controllers\Connection\PurposeInfoController;
+use App\Http\Controllers\Connection\SecurityDeposit\ConnectionSdDemandController;
 use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
@@ -173,6 +174,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //Security Deposit
     Route::resource('sd-demands', SdDemandsController::class);
+    Route::get('connection/{connectionId}/sd-demands', ConnectionSdDemandController::class)
+        ->name('connection.sd-demands');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);

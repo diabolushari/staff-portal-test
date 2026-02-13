@@ -31,13 +31,6 @@ const SdDemandList = ({ sdDemands }: Props) => {
               <div className='flex items-start justify-between'>
                 <div className='flex flex-1 cursor-pointer flex-col gap-2.5 p-[10px]'>
                   <div className='flex flex-col gap-1'>
-                    <div className='flex items-center gap-2'>
-                      <div className='font-inter text-base leading-normal font-semibold text-black'>
-                        Consumer Number :
-                        <StrongText>{sdDemand.connection.consumer_number}</StrongText>
-                      </div>
-                    </div>
-
                     <div className='flex w-full items-center gap-5'>
                       <div className='flex items-center gap-[3px]'>
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
@@ -68,13 +61,13 @@ const SdDemandList = ({ sdDemands }: Props) => {
                           <StrongText> {getDisplayDate(sdDemand.calculation_period_to)}</StrongText>
                         </div>
                       </div>
+                    </div>
+                    <div className='flex w-full items-center gap-5'>
                       <div className='flex items-center gap-[3px]'>
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
                           Total SD Amount: <StrongText> {sdDemand.total_sd_amount}</StrongText>
                         </div>
                       </div>
-                    </div>
-                    <div className='flex w-full items-center gap-5'>
                       <div className='flex items-center gap-[3px]'>
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
                           Applicable From:{' '}

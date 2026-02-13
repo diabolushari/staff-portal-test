@@ -13,6 +13,8 @@ use Grpc\ChannelCredentials;
 use Proto\Consumers\DeleteSdDemandRequest;
 use Proto\Consumers\ListSdDemandsPaginatedRequest;
 use Proto\Consumers\UpdateSdDemandRequest;
+use Proto\Consumers\ListSdDemandsByConnectionIdRequest;
+
 
 class SdDemandsService
 {
@@ -54,6 +56,38 @@ class SdDemandsService
                 $status->details
             );
         }
+        $sdDemands = $response->getItems();
+        $sdDemandArray = [];
+        foreach ($sdDemands as $sdDemand) {
+            $sdDemandArray[] = $this->sdDemandService->convertToArray($sdDemand);
+        }
+
+        $paginatedData = [
+            'sd_demands' => $sdDemandArray,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ];
+
+        return GrpcServiceResponse::success($paginatedData, $response, $status->code, $status->details);
+    }
+
+    public function listSdDemandsByConnection(int $connectionId): GrpcServiceResponse
+    {
+        $request = new ListSdDemandsByConnectionIdRequest;
+        $request->setConnectionId($connectionId);
+
+        [$response, $status] = $this->client->ListSdDemandsByConnectionId($request)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
         $sdDemands = $response->getItems();
         $sdDemandArray = [];
         foreach ($sdDemands as $sdDemand) {

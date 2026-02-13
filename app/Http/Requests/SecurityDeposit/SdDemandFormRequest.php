@@ -11,8 +11,8 @@ class SdDemandFormRequest extends Data
 {
     public function __construct(
         public int $connectionId,
-        public string $demandTypeId,
-        public ?string $calculationBasicId,
+        public int $demandTypeId,
+        public ?int $calculationBasicId,
         public float $totalSdAmount,
         public string $calculationPeriodFrom,
         public string $calculationPeriodTo,

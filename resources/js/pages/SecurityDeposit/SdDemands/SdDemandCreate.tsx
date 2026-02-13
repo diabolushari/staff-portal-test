@@ -1,6 +1,6 @@
 import { metadataNavItems } from '@/components/Navbar/navitems'
 import SdDemandForm from '@/components/SecurityDeposit/SdDemands/SdDemandForm'
-import { SdDemand } from '@/interfaces/data_interfaces'
+import { Connection, SdDemand } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
@@ -9,6 +9,7 @@ interface Props {
   demandTypes: ParameterValues[]
   calculationBasics: ParameterValues[]
   statuses: ParameterValues[]
+  connection?: Connection
   sdDemand?: SdDemand
 }
 
@@ -16,20 +17,31 @@ export default function SdDemandCreate({
   demandTypes,
   calculationBasics,
   statuses,
+  connection,
   sdDemand,
 }: Readonly<Props>) {
+  const connectionData = connection ? connection : sdDemand?.connection
+
+  if (!connectionData) {
+    throw new Error('Connection data not found')
+  }
+
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Home',
       href: '/',
     },
     {
-      title: 'Security Deposit Demands',
-      href: '/sd-demands',
+      title: connectionData?.consumer_number,
+      href: `/connections/${connectionData?.connection_id}`,
     },
     {
-      title: sdDemand ? 'Edit Security Deposit Demand' : 'Add Security Deposit Demand',
-      href: sdDemand ? `/sd-demands/${sdDemand.sd_demand_id}` : '/sd-demands/create',
+      title: 'Security Deposit Demands',
+      href: `/connection/${connectionData?.connection_id}/sd-demands`,
+    },
+    {
+      title: sdDemand ? 'Edit SD Demand' : 'Add SD Demand',
+      href: '#',
     },
   ]
   return (
@@ -45,6 +57,7 @@ export default function SdDemandCreate({
           demandTypes={demandTypes}
           calculationBasics={calculationBasics}
           statuses={statuses}
+          connection={connectionData}
           sdDemand={sdDemand}
         />
       </div>

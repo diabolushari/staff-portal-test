@@ -4,22 +4,27 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 import { Connection, SdDemand } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import CheckBox from '@/ui/form/CheckBox'
-import ComboBox from '@/ui/form/ComboBox'
 import Datepicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
-import { useEffect, useState } from 'react'
 
 interface Props {
   demandTypes: ParameterValues[]
   calculationBasics: ParameterValues[]
   statuses: ParameterValues[]
   sdDemand?: SdDemand
+  connection: Connection
 }
 
-const SdDemandForm = ({ demandTypes, calculationBasics, statuses, sdDemand }: Props) => {
+const SdDemandForm = ({
+  demandTypes,
+  calculationBasics,
+  statuses,
+  sdDemand,
+  connection,
+}: Props) => {
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
-    connection_id: sdDemand?.connection_id ?? '',
+    connection_id: connection.connection_id,
     demand_type_id: sdDemand?.demand_type_id ?? '',
     calculation_basic_id: sdDemand?.calculation_basic_id ?? '',
     calculation_period_from: sdDemand?.calculation_period_from ?? '',
@@ -42,36 +47,15 @@ const SdDemandForm = ({ demandTypes, calculationBasics, statuses, sdDemand }: Pr
     showErrorToast: true,
   })
 
-  const [selectedConnection, setSelectedConnection] = useState<Connection | null>(
-    sdDemand?.connection ?? null
-  )
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     post(formData)
   }
-  console.log(formData)
-  console.log(selectedConnection)
-  useEffect(() => {
-    if (selectedConnection) {
-      setFormValue('connection_id')(selectedConnection.connection_id)
-    }
-  }, [selectedConnection, setFormValue])
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <div className='grid grid-cols-2 gap-4'>
-          <ComboBox
-            label='Consumer Number / Legacy Code'
-            url={`/api/consumer-number?q=`}
-            setValue={(value) => setSelectedConnection(value)}
-            value={selectedConnection}
-            dataKey='connection_id'
-            displayKey='consumer_number'
-            displayValue2='consumer_legacy_code'
-            placeholder='Enter Consumer Number / Legacy Code'
-            error={errors.connection_id}
-            required
-          />
           <SelectList
             label='Demand Type'
             list={demandTypes}

@@ -20,7 +20,7 @@ class SdDemandsController extends Controller
     public function __construct(
         private readonly SdDemandsService $sdDemandService,
         private readonly ConnectionService $connectionService,
-        private readonly ParameterValueService $parameterValueService
+        private readonly ParameterValueService $parameterValueService,
     ) {}
     /**
      * Display a listing of the resource.
@@ -67,9 +67,11 @@ class SdDemandsController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
+        $connectionId = $request->input('connectionId');
 
+        $connection = $this->connectionService->getConnection($connectionId)->data;
 
         $demandTypes = $this->parameterValueService->getParameterValues(null, null,  null, 'Connection', 'Demand Type')->data;
         $calculationBasics = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'Calculation Basic')->data;
@@ -81,6 +83,7 @@ class SdDemandsController extends Controller
                 'demandTypes' => $demandTypes,
                 'calculationBasics' => $calculationBasics,
                 'statuses' => $statuses,
+                'connection' => $connection,
             ]
         );
     }
@@ -92,12 +95,14 @@ class SdDemandsController extends Controller
     {
         $response = $this->sdDemandService->create($request);
 
+        $connectionId = $request->connectionId;
+
         if ($response->data === null) {
             return redirect()->back()->with('error', 'Failed to create security deposit demand');
         }
 
 
-        return redirect()->route('sd-demands.index')
+        return redirect()->route('connection.sd-demands', $connectionId)
             ->with('message', 'Security deposit demand created successfully');
     }
 
@@ -108,7 +113,6 @@ class SdDemandsController extends Controller
     public function edit(string $id): Response
     {
         $sdDemand = $this->sdDemandService->getSdDemand($id);
-
 
 
         $demandTypes = $this->parameterValueService->getParameterValues(null, null,  null, 'Connection', 'Demand Type')->data;
@@ -131,12 +135,13 @@ class SdDemandsController extends Controller
         $sdDemand = $this->sdDemandService->update($request, $id);
 
         if ($sdDemand->data === null) {
-            return redirect()->back()->with('error', 'Failed to create security deposit demand');
+            return redirect()->back()->with('error', 'Failed to update security deposit demand');
         }
 
+        $connectionId = $request->connectionId;
 
-        return redirect()->route('sd-demands.index')
-            ->with('message', 'Security deposit demand created successfully');
+        return redirect()->route('connection.sd-demands', $connectionId)
+            ->with('message', 'Security deposit demand updated successfully');
     }
 
     /**
@@ -144,7 +149,11 @@ class SdDemandsController extends Controller
      */
     public function destroy(int $id): RedirectResponse
     {
+
+        $connectionId = $this->sdDemandService->getSdDemand($id)?->data?->connection_id;
         $response = $this->sdDemandService->deleteSdDemand($id);
+
+
 
         if (!$response->success) {
             return redirect()->back()->with(
@@ -154,7 +163,7 @@ class SdDemandsController extends Controller
         }
 
         return redirect()
-            ->route('sd-demands.index')
+            ->route('connection.sd-demands', $connectionId)
             ->with('message', 'Security deposit demand deleted successfully.');
     }
 }
