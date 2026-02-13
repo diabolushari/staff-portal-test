@@ -11,6 +11,7 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
 import "connections/connections.proto";
 import "connections/consumer.proto";
+import "billing/demand.proto";
 // ---------------- ENTITY MESSAGE ----------------
 
 message BillMessage {
@@ -18,33 +19,21 @@ message BillMessage {
   int32 connection_id = 2;
   string reading_year_month = 3;  // YYYY-MM
   string bill_year_month = 4;     // YYYY-MM
-  google.protobuf.Timestamp bill_date = 5;
-  google.protobuf.Timestamp due_date = 6;
-  google.protobuf.Timestamp dc_date = 7;
+  string bill_date = 5;
+  string due_date = 6;
+  string dc_date = 7;
   double bill_amount = 8;
-  repeated google.protobuf.Struct charge_heads = 9;
-  repeated google.protobuf.Struct computed_properties = 10;
-  string remarks = 11;
-  google.protobuf.Timestamp created_ts = 12;
-  int32 created_by = 13;
-  google.protobuf.Timestamp deleted_ts = 14;
-  int32 deleted_by = 15;
-  optional com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 16;
-  optional com.kseb.consumerservice.grpc.connections.ConsumerMessage consumer = 17;
+  string remarks = 9;
+  optional string created_ts = 10;
+  optional int32 created_by = 11;
+  optional string deleted_ts = 12;
+  optional int32 deleted_by = 13;
+  optional com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 14;
+  optional com.kseb.consumerservice.grpc.connections.ConsumerMessage consumer = 15;
+  repeated com.kseb.consumerservice.proto.billing.DemandMessage demands = 16;
+
 }
 
-message BillJobGenerationStatusMessage {
-  int64 bill_job_generation_status_id = 1;
-  int32 connection_id = 2;
-  string reading_year_month = 3;  // YYYY-MM
-  string bill_year_month = 4;     // YYYY-MM
-  google.protobuf.Timestamp bill_date = 5;
-  google.protobuf.Timestamp due_date = 6;
-  google.protobuf.Timestamp dc_date = 7;
-  string exception = 8;
-  google.protobuf.Timestamp initialized_date = 9;
-  optional com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 10;
-}
 
 // ---------------- REQUEST / RESPONSE ----------------
 
@@ -127,7 +116,6 @@ message ListBillRequest {
 
 message ListBillResponse {
   repeated BillMessage bills = 1;
-  repeated BillJobGenerationStatusMessage exceptions = 2;
 }
 
 // ---------------- SERVICE ----------------

@@ -10,6 +10,7 @@ import {
   BillMeterReading,
   ChargeHeads,
   ComputedProperties,
+  OtherChargeItem,
   TotalDemandCharge,
   TotalEnergyCharge,
 } from '@/interfaces/bill_pdf_interfaces'
@@ -25,6 +26,7 @@ export default function BillInvoice({
   computedProperties,
   kwhValues,
   selfGenerationkwhValues,
+  otherCharges,
 }: {
   chargeHeads: ChargeHeads
   totalDemandChargeRows: TotalDemandCharge
@@ -33,6 +35,7 @@ export default function BillInvoice({
   computedProperties: ComputedProperties
   kwhValues: BillMeterReading[]
   selfGenerationkwhValues: BillMeterReading[]
+  otherCharges: OtherChargeItem[]
 }) {
   console.log(chargeHeads)
   const subTotalLabel = totalEnergyChargeRows?.rows
@@ -330,13 +333,33 @@ export default function BillInvoice({
                 </TableCell>
               </TableRow>
 
+              {otherCharges?.map((charge, index) => (
+                <TableRow key={index}>
+                  <TableCell
+                    colSpan={2}
+                    className='border border-black'
+                  >
+                    {charge?.name +
+                      ' (' +
+                      charge?.units +
+                      ' units at rate of ' +
+                      charge?.rate +
+                      ')'}
+                  </TableCell>
+                  <TableCell className='border border-black text-right'>
+                    {Number(charge?.amount)?.toFixed(2)}
+                  </TableCell>
+                </TableRow>
+              ))}
+
               {Number(chargeHeads?.monthly_fuel_surcharge?.result) > 0 && (
                 <TableRow>
                   <TableCell
                     colSpan={2}
                     className='border border-black'
                   >
-                    Monthly Fuel Surcharge
+                    {`  
+                      Monthly Fuel Surcharge  ( ${computedProperties?.total_consumption?.result} units at rate of ${computedProperties?.monthly_fuel_surcharge_rate?.result})`}
                   </TableCell>
                   <TableCell className='border border-black text-right'>
                     {Number(chargeHeads?.monthly_fuel_surcharge?.result)
@@ -352,7 +375,8 @@ export default function BillInvoice({
                     colSpan={2}
                     className='border border-black'
                   >
-                    Green Energy Charge
+                    {`  
+                      Green Energy Charge (${computedProperties?.total_consumption?.result} units at rate of ${computedProperties?.green_energy_charge_rate?.result})`}
                   </TableCell>
                   <TableCell className='border border-black text-right'>
                     {Number(chargeHeads?.green_energy_charge?.result)

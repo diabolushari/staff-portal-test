@@ -9,11 +9,11 @@
             <strong>Arrears as on</strong> {{ \Carbon\Carbon::parse($connection['previous_reading']['reading_end_date'])->format('d-m-Y') ?? '-' }}
         </td>
 
-        <td colspan="3">
+        <td colspan="2">
             <strong>Date of Previous Reading</strong>
         </td>
 
-        <td colspan="2" class="center">
+        <td colspan="3" class="center" style="width: 100px;">
             {{ \Carbon\Carbon::parse($connection['previous_reading']['reading_end_date'])->format('d-m-Y') ?? '-' }}
         </td>
 
@@ -30,11 +30,11 @@
         <td class="right">0</td>
         <td colspan="2"></td>
 
-        <td colspan="3">
+        <td colspan="2">
             <strong>Date of Present Reading</strong>
         </td>
 
-        <td colspan="2" class="center">
+        <td colspan="3" class="center" style="width: 100px;">
             {{ \Carbon\Carbon::parse($connection['latest_meter_reading']['reading_end_date'])->format('d-m-Y') ?? '-' }}
         </td>
 

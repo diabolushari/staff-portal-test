@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.billing;
+
+option php_namespace = "Proto\\Billing";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/empty.proto";
+import "billing/demand_detail.proto";
+
+// ----------------- ENTITY MESSAGE -----------------
+message DemandMessage {
+  int64 id = 1;
+  int64 bill_id = 2;
+  repeated google.protobuf.Struct computed_properties = 3;
+  repeated google.protobuf.Struct charge_heads = 4;
+
+  optional string created_ts = 5;
+  optional string updated_ts = 6;
+  optional string deleted_ts = 7;
+
+  int32 created_by = 8;
+  int32 updated_by = 9;
+  int32 deleted_by = 10;
+
+  repeated DemandDetailMessage demand_details = 11;
+}
+

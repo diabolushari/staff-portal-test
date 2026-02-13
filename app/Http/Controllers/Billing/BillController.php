@@ -68,8 +68,8 @@ class BillController extends Controller
         $bill = $this->billService->getBill($id);
         $energyMeter = null;
         $selfGenerationMeter = null;
-        $chargeHeads = $this->billExportService->getChargeHeads($bill->data['charge_heads'] ?? []);
-        $computedProperties = $this->billExportService->getComputedProperties($bill->data['computed_properties'] ?? []);
+        $chargeHeads = $this->billExportService->getChargeHeads($bill->data['demands'][0]['charge_heads'] ?? []);
+        $computedProperties = $this->billExportService->getComputedProperties($bill->data['demands'][0]['computed_properties'] ?? []);
         if (isset($bill?->data['connection_id']) && $bill->data['connection_id']) {
             $energyMeter = $this->billExportService->getEnergyConsumptionMeter($bill->data['connection_id'], $computedProperties['meter'] ?? null);
             $selfGenerationMeter = $this->billExportService->getSelfGenerationMeter($bill->data['connection_id']);
@@ -99,6 +99,7 @@ class BillController extends Controller
             $billWithNumber = $bill->data;
             $billWithNumber['bill_number'] = $billNumber;
         };
+        $otherCharges = $this->billExportService->configure_other_charges($chargeHeads, $computedProperties);
 
         return Inertia::render('Bill/BillShowPage', [
 
@@ -121,6 +122,7 @@ class BillController extends Controller
             'selfGenerationkwhValues' => $selfGenerationkwhValues,
             'bill' => $billWithNumber,
             'timeZones' => $timezones,
+            'otherCharges' => $otherCharges,
         ]);
     }
 }
