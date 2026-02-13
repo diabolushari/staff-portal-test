@@ -225,6 +225,18 @@ export interface ConnectionGreenEnergy {
   effective_end: string
 }
 
+export interface Calendar {
+  id: number
+  calendar_date: string
+  is_holiday: boolean
+  is_weekend: boolean
+  day_of_week: number
+  day_of_year: number
+  remarks?: string
+}
+
+
+
 export interface OfficeHierarchy {
   hierarchy_id: number
   hierarchy_code: string

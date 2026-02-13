@@ -68,6 +68,7 @@ use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
 use App\Http\Controllers\Tariff\TariffConfigController;
 use App\Http\Controllers\Tariff\TariffOrderController;
+use App\Http\Controllers\Calendar\CalendarController;
 use App\Http\Controllers\VariableRate\VariableRateController;
 use App\Http\Requests\SystemModule\SystemModuleFormRequest;
 use App\Services\SystemModule\SystemModuleService;
@@ -106,6 +107,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('connection-green-energy.update');
     Route::delete('/connections/green-energy/{id}', [ConnectionGreenEnergyController::class, 'destroy'])
         ->name('connections.green-energy.destroy');
+
+    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+    Route::put('/calendar/{id}', [CalendarController::class, 'update'])->name('calendar.update');
+
 
 
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)

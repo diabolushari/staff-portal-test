@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.calendar;
+
+option php_namespace = "Proto\\Calendar";
+option php_metadata_namespace = "GPBMetadata";
+
+option java_multiple_files = true;
+option java_package = "com.kseb.consumerservice.proto.calendar";
+option java_outer_classname = "CalendarProto";
+
+import "google/protobuf/empty.proto";
+
+service CalendarService {
+
+  rpc ListCalendar (ListCalendarRequest)
+      returns (ListCalendarResponse);
+
+  rpc UpdateCalendar (UpdateCalendarRequest)
+      returns (CalendarResponse);
+
+  rpc ListCalendarPaginated (CalendarPaginatedListRequest)
+      returns (CalendarPaginatedListResponse);
+}
+
+message ListCalendarRequest {
+  string fromDate = 1;
+  string toDate   = 2;
+}
+
+message ListCalendarResponse {
+  repeated CalendarResponse data = 1;
+}
+
+message CalendarPaginatedListRequest {
+  optional string fromDate = 1;  
+  optional string toDate   = 2;   
+  int32 page_number = 3;         
+  int32 page_size = 4;
+  optional string sort_by = 5;        
+  optional string sort_direction = 6;
+}
+
+message CalendarPaginatedListResponse {
+  repeated CalendarResponse data = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
+message UpdateCalendarRequest {
+  int32 id = 1;
+  bool isHoliday = 2;
+  bool isWeekend = 3;
+  string remarks = 4;
+}
+
+message CalendarResponse {
+  int32 id = 1;
+  string calendarDate = 2;
+  bool isHoliday = 3;
+  bool isWeekend = 4;
+  int32 dayOfWeek = 5;
+  int32 dayOfYear = 6;
+  string remarks = 7;
+}
