@@ -11,52 +11,52 @@ option java_outer_classname = "CalendarProto";
 
 import "google/protobuf/empty.proto";
 
-service CalendarService {
+service CalendarDayService {
 
-  rpc ListCalendar (ListCalendarRequest)
-      returns (ListCalendarResponse);
+  rpc ListCalendarDay (ListCalendarDayRequest)
+      returns (ListCalendarDayResponse);
 
-  rpc UpdateCalendar (UpdateCalendarRequest)
-      returns (CalendarResponse);
+  rpc UpdateCalendar (UpdateCalendarDayRequest)
+      returns (CalendarDayResponse);
 
-  rpc ListCalendarPaginated (CalendarPaginatedListRequest)
-      returns (CalendarPaginatedListResponse);
+  rpc ListCalendarPaginated (CalendarDayPaginatedListRequest)
+      returns (CalendarDayPaginatedListResponse);
 }
 
-message ListCalendarRequest {
+message ListCalendarDayRequest {
  optional string from_date = 1;
  optional string to_date   = 2;
 }
 
-message ListCalendarResponse {
-  repeated CalendarResponse data = 1;
+message ListCalendarDayResponse {
+  repeated CalendarDayResponse data = 1;
 }
 
-message CalendarPaginatedListRequest {
-  optional string from_date = 1;  
-  optional string to_date   = 2;   
-  int32 page_number = 3;         
+message CalendarDayPaginatedListRequest {
+  optional string from_date = 1;
+  optional string to_date   = 2;
+  int32 page_number = 3;
   int32 page_size = 4;
-  optional string sort_by = 5;        
+  optional string sort_by = 5;
   optional string sort_direction = 6;
 }
 
-message CalendarPaginatedListResponse {
-  repeated CalendarResponse data = 1;
+message CalendarDayPaginatedListResponse {
+  repeated CalendarDayResponse data = 1;
   int64 total_count = 2;
   int32 page_number = 3;
   int32 page_size = 4;
   int32 total_pages = 5;
 }
 
-message UpdateCalendarRequest {
+message UpdateCalendarDayRequest {
   int32 id = 1;
   bool is_holiday = 2;
   bool is_weekend = 3;
   string remarks = 4;
 }
 
-message CalendarResponse {
+message CalendarDayResponse {
   int32 id = 1;
   string calendar_date = 2;
   bool is_holiday = 3;

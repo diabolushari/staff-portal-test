@@ -6,25 +6,24 @@ use App\Http\Requests\Calendar\CalendarUpdateFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
-use Proto\Calendar\CalendarPaginatedListRequest;
-use Proto\Calendar\CalendarPaginatedListResponse;
-use Proto\Calendar\CalendarResponse;
-use Proto\Calendar\CalendarServiceClient;
-use Proto\Calendar\UpdateCalendarRequest;
+use Proto\Calendar\CalendarDayPaginatedListRequest;
+use Proto\Calendar\CalendarDayPaginatedListResponse;
+use Proto\Calendar\CalendarDayResponse;
+use Proto\Calendar\CalendarDayServiceClient;
+use Proto\Calendar\UpdateCalendarDayRequest;
 
-class CalendarService
+class CalendarDayService
 {
-    private CalendarServiceClient $client;
+    private CalendarDayServiceClient $client;
 
     public function __construct()
     {
-        $this->client = new CalendarServiceClient(
+        $this->client = new CalendarDayServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
         );
     }
 
-   
     public function listCalendarPaginated(
         ?int $pageNumber = 1,
         ?int $pageSize = 20,
@@ -34,7 +33,7 @@ class CalendarService
         ?string $sortDirection = null
     ): GrpcServiceResponse {
 
-        $grpcRequest = new CalendarPaginatedListRequest();
+        $grpcRequest = new CalendarDayPaginatedListRequest;
 
         if ($pageNumber) {
             $grpcRequest->setPageNumber($pageNumber);
@@ -60,8 +59,9 @@ class CalendarService
             $grpcRequest->setSortDirection($sortDirection);
         }
 
+        /** @var CalendarDayPaginatedListResponse $response */
         [$response, $status] =
-            $this->client->listCalendarPaginated($grpcRequest)->wait();
+            $this->client->ListCalendarPaginated($grpcRequest)->wait();
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -85,14 +85,15 @@ class CalendarService
      */
     public function updateCalendar(int $id, CalendarUpdateFormRequest $request): GrpcServiceResponse
     {
-        $grpcRequest = new UpdateCalendarRequest();
+        $grpcRequest = new UpdateCalendarDayRequest;
         $grpcRequest->setId($id);
         $grpcRequest->setIsHoliday($request->isHoliday);
         $grpcRequest->setIsWeekend($request->isWeekend);
         $grpcRequest->setRemarks($request->remarks ?? '');
 
+        /** @var CalendarDayResponse $response */
         [$response, $status] =
-            $this->client->updateCalendar($grpcRequest)->wait();
+            $this->client->UpdateCalendar($grpcRequest)->wait();
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -111,8 +112,7 @@ class CalendarService
         );
     }
 
-    
-    private function calendarMessageToArray(CalendarResponse $msg): array
+    private function calendarMessageToArray(CalendarDayResponse $msg): array
     {
         return [
             'id' => $msg->getId(),
@@ -125,8 +125,7 @@ class CalendarService
         ];
     }
 
-    
-    private function convertToPaginatedArray(CalendarPaginatedListResponse $response): array
+    private function convertToPaginatedArray(CalendarDayPaginatedListResponse $response): array
     {
         $rows = [];
         foreach ($response->getData() as $item) {
