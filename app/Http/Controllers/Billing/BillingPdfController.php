@@ -21,8 +21,8 @@ class BillingPdfController extends Controller
         $bill = $this->billService->getBill($billId);
         $energyMeter = null;
         $selfGenerationMeter = null;
-        $chargeHeads = $this->billExportService->getChargeHeads($bill->data['charge_heads'] ?? []);
-        $computedProperties = $this->billExportService->getComputedProperties($bill->data['computed_properties'] ?? []);
+        $chargeHeads = $this->billExportService->getChargeHeads($bill->data['demands'][0]['charge_heads'] ?? []);
+        $computedProperties = $this->billExportService->getComputedProperties($bill->data['demands'][0]['computed_properties'] ?? []);
         if (isset($bill?->data['connection_id']) && $bill->data['connection_id']) {
             $energyMeter = $this->billExportService->getEnergyConsumptionMeter($bill->data['connection_id'], $computedProperties['meter'] ?? null);
             $selfGenerationMeter = $this->billExportService->getSelfGenerationMeter($bill->data['connection_id']);
@@ -52,6 +52,7 @@ class BillingPdfController extends Controller
             $billWithNumber['bill_number'] = $billNumber;
         };
         $amountInWords = $this->billExportService->getAmountInWords($bill->data['bill_amount'] ?? null);
+        $otherCharges = $this->billExportService->configure_other_charges($chargeHeads, $computedProperties);
         $pdf = Pdf::loadView('billing/bill-template', [
             'kvaValues' => $kvaValues,
             'kvahValues' => $kvahValues,
@@ -71,6 +72,7 @@ class BillingPdfController extends Controller
             'totalEnergyChargeRows' => $totalEnergyChargeRows,
             'selfGenerationkwhValues' => $selfGenerationkwhValues,
             'amountInWords' => $amountInWords,
+            'otherCharges' => $otherCharges,
         ]);
         $pdf->setPaper([0, 0, 612, 1008], 'portrait');
 

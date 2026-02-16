@@ -209,6 +209,7 @@
     'consumer' => $consumer,
     'meter' => $meter,
     'computedProperties' => $computedProperties,
+    'otherCharges' => $otherCharges,
     ])
 
 
