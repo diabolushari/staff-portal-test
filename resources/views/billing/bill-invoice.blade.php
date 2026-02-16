@@ -190,37 +190,26 @@
                     <td colspan="3">9. Other Charges</td>
                 </tr>
 
-
+                @foreach($otherCharges as $charge)
                 @php
-                $fuelSurcharge = $chargeHeads['monthly_fuel_surcharge']['result'] ?? null;
+                $amount = $charge['amount'] ?? null;
                 @endphp
 
-                @if(is_numeric($fuelSurcharge) && $fuelSurcharge != 0)
+                @if(is_numeric($amount) && $amount != 0)
                 <tr>
-                    <td colspan="2">Monthly Fuel Surcharge</td>
-                    <td class="right">{{ number_format($fuelSurcharge, 2) }}</td>
+                    <td colspan="2">
+                        {{ $charge['name'] }}
+                        ({{ $charge['units'] ?? 0 }} units at rate of {{ $charge['rate'] ?? 0 }})
+                    </td>
+                    <td class="right">
+                        {{ number_format($amount, 2) }}
+                    </td>
                 </tr>
                 @endif
-                @php
-                $greenEnergy = $chargeHeads['green_energy_charge']['result'] ?? null;
-                @endphp
+                @endforeach
 
-                @if(is_numeric($greenEnergy) && $greenEnergy != 0)
-                <tr>
-                    <td colspan="2">Green Energy Charge</td>
-                    <td class="right">{{ number_format($greenEnergy, 2) }}</td>
-                </tr>
-                @endif
-                @php
-                $ltSurcharge = $chargeHeads['lt_surcharge']['result'] ?? null;
-                @endphp
 
-                @if(is_numeric($ltSurcharge) && $ltSurcharge != 0)
-                <tr>
-                    <td colspan="2">LOW_VOLT_SUR</td>
-                    <td class="right">{{ number_format($ltSurcharge, 2) }}</td>
-                </tr>
-                @endif
+
                 <tr>
                     <td colspan="3" style="height:165px;"></td>
                 </tr>

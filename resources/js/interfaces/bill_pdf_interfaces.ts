@@ -64,6 +64,18 @@ export interface ComputedProperties {
   factory_lighting_unit_rate: ComputedProperty
   time_zones: ComputedProperty
   tariff: ComputedProperty
+  monthly_fuel_surcharge_rate: ComputedProperty
+  green_energy_charge_rate: ComputedProperty
+  lt_surcharge: ComputedProperty
+}
+
+export interface OtherChargeItem {
+  id: string
+  name: string
+  rate: number
+  units: number
+  amount: number
+  zoneId: number | null
 }
 
 export interface TotalDemandChargeRow {

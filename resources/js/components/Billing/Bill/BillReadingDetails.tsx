@@ -387,8 +387,9 @@ export default function BillReadingDetails({
                 colSpan={2}
                 className='border border-black text-right'
               >
-                {Number(computedProperties.total_consumption_factory_lighting.result).toFixed(2) ??
-                  '-'}
+                {Number(computedProperties?.total_consumption_factory_lighting?.result).toFixed(
+                  2
+                ) ?? '-'}
               </TableCell>
             </TableRow>
             <TableRow className='bg-gray-100'>
@@ -402,7 +403,7 @@ export default function BillReadingDetails({
                 colSpan={2}
                 className='border border-black text-right'
               >
-                {Number(computedProperties.total_consumption_colony_lighting.result).toFixed(2) ??
+                {Number(computedProperties?.total_consumption_colony_lighting?.result).toFixed(2) ??
                   '-'}
               </TableCell>
             </TableRow>

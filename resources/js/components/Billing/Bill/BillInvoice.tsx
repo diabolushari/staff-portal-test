@@ -10,6 +10,7 @@ import {
   BillMeterReading,
   ChargeHeads,
   ComputedProperties,
+  OtherChargeItem,
   TotalDemandCharge,
   TotalEnergyCharge,
 } from '@/interfaces/bill_pdf_interfaces'
@@ -25,6 +26,7 @@ export default function BillInvoice({
   computedProperties,
   kwhValues,
   selfGenerationkwhValues,
+  otherCharges,
 }: {
   chargeHeads: ChargeHeads
   totalDemandChargeRows: TotalDemandCharge
@@ -33,6 +35,7 @@ export default function BillInvoice({
   computedProperties: ComputedProperties
   kwhValues: BillMeterReading[]
   selfGenerationkwhValues: BillMeterReading[]
+  otherCharges: OtherChargeItem[]
 }) {
   console.log(chargeHeads)
   const subTotalLabel = totalEnergyChargeRows?.rows
@@ -330,53 +333,24 @@ export default function BillInvoice({
                 </TableCell>
               </TableRow>
 
-              {Number(chargeHeads?.monthly_fuel_surcharge?.result) > 0 && (
-                <TableRow>
+              {otherCharges?.map((charge, index) => (
+                <TableRow key={index}>
                   <TableCell
                     colSpan={2}
                     className='border border-black'
                   >
-                    Monthly Fuel Surcharge
+                    {charge?.name +
+                      ' (' +
+                      charge?.units +
+                      ' units at rate of ' +
+                      charge?.rate +
+                      ')'}
                   </TableCell>
                   <TableCell className='border border-black text-right'>
-                    {Number(chargeHeads?.monthly_fuel_surcharge?.result)
-                      ? Number(chargeHeads?.monthly_fuel_surcharge?.result).toFixed(2)
-                      : '-'}
+                    {Number(charge?.amount)?.toFixed(2)}
                   </TableCell>
                 </TableRow>
-              )}
-
-              {Number(chargeHeads?.green_energy_charge?.result) > 0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={2}
-                    className='border border-black'
-                  >
-                    Green Energy Charge
-                  </TableCell>
-                  <TableCell className='border border-black text-right'>
-                    {Number(chargeHeads?.green_energy_charge?.result)
-                      ? Number(chargeHeads?.green_energy_charge?.result).toFixed(2)
-                      : '-'}
-                  </TableCell>
-                </TableRow>
-              )}
-              {Number(chargeHeads?.lt_surcharge?.result) > 0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={2}
-                    className='border border-black'
-                  >
-                    LOW_VOLT_SUR
-                  </TableCell>
-                  <TableCell className='border border-black text-right'>
-                    {Number(chargeHeads?.lt_surcharge?.result)
-                      ? Number(chargeHeads?.lt_surcharge?.result).toFixed(2)
-                      : '-'}
-                  </TableCell>
-                </TableRow>
-              )}
-
+              ))}
               {/* Spacer rows like printed bill */}
 
               {/* 10. Total */}

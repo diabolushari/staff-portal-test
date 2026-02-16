@@ -554,4 +554,34 @@ class BillExportService
 
         return $computedProperty;
     }
+
+    public function configure_other_charges(?array $chargeHeads, ?array $computedProperties): array
+    {
+
+        $nonOtherCharges = [
+            'total demand charge',
+            "energy charge",
+            "electricity duty",
+            "electricity surcharge",
+            "power factor incentive and disincentive",
+            "self generation duty",
+            "factory lighting",
+            "colony lighting"
+        ];
+        $otherCharges = [];
+        foreach ($chargeHeads as $chargeHead) {
+            if (in_array(strtolower($chargeHead['name']), $nonOtherCharges) || (int)$chargeHead['result'] == 0) {
+                continue;
+            }
+            $otherCharges[] = [
+                'id' => $chargeHead['id'],
+                'name' => $chargeHead['name'],
+                'rate' => $computedProperties[$this->toSnakeCase($chargeHead['name']) . '_rate']['result'] ?? null,
+                'units' => $computedProperties[$this->toSnakeCase($chargeHead['name']) . '_unit']['result'] ?? null,
+                'amount' => $chargeHead['result'] ?? null,
+                'zoneId' => $chargeHead['results'][0]['zoneId'] ?? null,
+            ];
+        }
+        return $otherCharges;
+    }
 }

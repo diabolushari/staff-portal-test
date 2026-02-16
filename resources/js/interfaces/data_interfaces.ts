@@ -673,8 +673,6 @@ export interface Bill {
   due_date: string
   dc_date: string
   bill_amount: number
-  charge_heads: ChargeHead[]
-  computed_properties: ComputedProperty[]
   remarks: string
   created_ts: string
   created_by: number
@@ -682,6 +680,35 @@ export interface Bill {
   deleted_by?: number
   connection: Connection
   consumer: Consumer
+  demands: Demand[]
+}
+
+export interface Demand {
+  id: number
+  bill_id: number
+  computed_properties: ComputedProperty[]
+  charge_heads: ChargeHead[]
+  created_ts: string
+  updated_ts: string
+  deleted_ts: string
+  created_by: number
+  updated_by: number
+  deleted_by: number
+  demand_details: DemandDetail[]
+}
+
+export interface DemandDetail {
+  id: number
+  demand_id: number
+  charge_head_id: number
+  amount: number
+  created_ts: string
+  updated_ts: string
+  deleted_ts: string
+  created_by: number
+  updated_by: number
+  deleted_by: number
+  charge_head: ChargeHead
 }
 
 export interface BillGenerationJob {

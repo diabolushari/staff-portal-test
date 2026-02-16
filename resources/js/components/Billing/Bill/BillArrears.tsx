@@ -119,7 +119,7 @@ export default function BillArrears({
             colSpan={3}
             className='border border-black'
           >
-            Billing Type : {connection.billing_process?.parameter_value ?? '-'}
+            Billing Type : {connection?.billing_process?.parameter_value ?? '-'}
           </TableCell>
         </TableRow>
 
@@ -129,10 +129,10 @@ export default function BillArrears({
             {connection?.contract_demand_kva_val ?? '-'}
           </TableCell>
           <TableCell className='border border-black text-center'>
-            {Number(computedProperties?.['75_of_contract_demand'].result).toFixed(2) ?? '-'}
+            {Number(computedProperties?.['75_of_contract_demand']?.result).toFixed(2) ?? '-'}
           </TableCell>
           <TableCell className='border border-black text-center'>
-            {Number(computedProperties?.['130_of_contract_demand'].result).toFixed(2) ?? '-'}
+            {Number(computedProperties?.['130_of_contract_demand']?.result).toFixed(2) ?? '-'}
           </TableCell>
           <TableCell
             colSpan={3}
