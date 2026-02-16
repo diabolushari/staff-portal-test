@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.billing;
+
+option php_namespace = "Proto\\Billing";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/empty.proto";
+import "billing/billing_rule.proto";
+import "parameters/parameter-value.proto";
+
+
+// ----------------- ENTITY MESSAGE -----------------
+message ChargeHeadDefinitionMessage {
+    int64 version_id = 1;
+    int32 charge_head_definition_id = 2;
+    string charge_head_code = 3;
+    string name = 4;
+    string description = 5;
+    int64 category_id = 6;
+    int64 status_id = 7;
+    int64 default_priority = 8;
+    optional bool is_interest_bearing = 9;
+    optional string interest_calculation_method = 10;
+    optional string gl_code = 11;
+    optional string sop_mapping = 12;
+    optional string effective_from = 13;
+    optional string effective_to = 14;
+    optional bool is_active = 15;
+    optional string created_ts = 16;
+    optional string updated_ts = 17;
+    optional string created_by = 18;
+    optional string updated_by = 19;
+    optional string deleted_ts = 20;
+    optional string deleted_by = 21;
+
+    com.kseb.consumerservice.proto.parameters.ParameterValueProto category = 22;
+    com.kseb.consumerservice.proto.parameters.ParameterValueProto status = 23;
+}

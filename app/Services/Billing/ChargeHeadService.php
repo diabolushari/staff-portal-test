@@ -2,6 +2,7 @@
 
 namespace App\Services\Billing;
 
+use App\GrpcConverters\Billing\ChargeHeadDefinitionConverter;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\DateTimeConverter;
@@ -17,7 +18,7 @@ class ChargeHeadService
     private ChargeHeadServiceClient $client;
 
     public function __construct(
-        private readonly ParameterValueService $parameterValueService
+        private readonly ChargeHeadDefinitionConverter $chargeHeadDefinitionConverter
     ) {
         $this->client = new ChargeHeadServiceClient(
             config('app.consumer_service_grpc_host'),
@@ -81,11 +82,16 @@ class ChargeHeadService
 
     public function chargeHeadMessageToArray(ChargeHeadMessage $message)
     {
+        $chargeHeadDefinitions = [];
+        foreach ($message->getChargeHeadDefinitions() as $chargeHeadDefinition) {
+            $chargeHeadDefinitions[] = $this->chargeHeadDefinitionConverter->convertToArray($chargeHeadDefinition);
+        }
+
         return [
             'id' => $message->getId(),
             'billing_rule_id' => $message->getBillingRuleId(),
-            'name_id' => $message->getNameId(),
-            'name' => $message->getName() ? $this->parameterValueService->toArray($message->getName()) : null,
+            'charge_head_definition_id' => $message->getChargeHeadDefinitionId(),
+            'charge_head_definitions' => $chargeHeadDefinitions,
             'calculations' => $message->getCalculations() ? StructConverter::convert($message->getCalculations()) : null,
             'effective_start' => $message->getEffectiveStart() ? DateTimeConverter::convertTimestampToString($message->getEffectiveStart()) : null,
             'effective_end' => $message->getEffectiveEnd() ? DateTimeConverter::convertTimestampToString($message->getEffectiveEnd()) : null,

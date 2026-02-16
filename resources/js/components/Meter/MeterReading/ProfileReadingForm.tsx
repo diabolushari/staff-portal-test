@@ -170,7 +170,7 @@ const ProfileReadingForm = ({
     console.log(readingErrors)
     const hasError = Object.keys(readingErrors).length > 0
     onErrorChange?.(hasError)
-  }, [readingErrors])
+  }, [readingErrors, onErrorChange])
 
   const updateData = useCallback(
     (timezoneId: number, value: string) => {

@@ -85,10 +85,14 @@ export default function BillingRuleShowPage({
           <div className='mb-6 flex items-center justify-between'>
             <StrongText className='text-base font-semibold text-[#252c32]'>Charge Heads</StrongText>
           </div>
-          <ChargeHeadTable
-            chargeHeads={paginatedChargeHeads.data}
-            pagination={paginatedChargeHeads}
-          />
+          {paginatedChargeHeads?.data?.length > 0 ? (
+            <ChargeHeadTable
+              chargeHeads={paginatedChargeHeads?.data}
+              pagination={paginatedChargeHeads}
+            />
+          ) : (
+            <p>No charge heads found</p>
+          )}
         </Card>
 
         <Card>

@@ -17,7 +17,7 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import ErrorBanner from '@/ui/Errors/ErrorBanner'
 import dayjs from 'dayjs'
 import { getDisplayDate } from '@/utils'
@@ -124,6 +124,8 @@ export default function MeterReadingCreatePage({
     latestMeterReading
   )
 
+  const [isInterimReading, setIsInterimReading] = useState(false)
+
   const getMeterEnergisedDate = (meterMappings: MeterConnectionMapping[] = []): string => {
     if (!meterMappings.length) return ''
 
@@ -186,6 +188,15 @@ export default function MeterReadingCreatePage({
       showErrorToast: true,
     }
   )
+
+  useEffect(() => {
+    if (formData.reading_type === 'interim_reading') {
+      setIsInterimReading(true)
+    } else {
+      setIsInterimReading(false)
+      setFormValue('reading_end_date')(getMonthEnd(readingStartDate, isFirstReading) ?? '')
+    }
+  }, [formData.reading_type])
 
   const [activeStep, setActiveStep] = useState(0)
 
@@ -299,6 +310,7 @@ export default function MeterReadingCreatePage({
                   errors={errors}
                   latestMeterReading={latestMeterReading}
                   isFirstReading={isFirstReading}
+                  isInterimReading={isInterimReading}
                 />
               )}
               {activeStep === 1 && (

@@ -20,12 +20,14 @@ export default function ChargeHeadTable({ chargeHeads, pagination }: Props) {
           </tr>
         </thead>
         <tbody className='divide-y divide-gray-100'>
-          {chargeHeads.map((head) => (
-            <tr key={head.id}>
-              <td className='px-4 py-2'>{head.id}</td>
-              <td className='px-4 py-2'>{head.name.parameter_value}</td>
-              <td className='px-4 py-2'>{head.effective_start || '-'}</td>
-              <td className='px-4 py-2'>{head.effective_end || '-'}</td>
+          {chargeHeads?.map((head) => (
+            <tr key={head?.id}>
+              <td className='px-4 py-2'>{head?.id}</td>
+              <td className='px-4 py-2'>{head?.charge_head_definitions[0]?.name}</td>
+              <td className='px-4 py-2'>
+                {head?.charge_head_definitions[0]?.effective_from || '-'}
+              </td>
+              <td className='px-4 py-2'>{head?.charge_head_definitions[0]?.effective_to || '-'}</td>
             </tr>
           ))}
         </tbody>

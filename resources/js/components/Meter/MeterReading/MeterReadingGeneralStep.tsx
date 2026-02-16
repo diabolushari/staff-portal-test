@@ -13,6 +13,7 @@ interface Props {
   errors?: any
   latestMeterReading?: any
   isFirstReading?: boolean
+  isInterimReading?: boolean
 }
 
 export default function MeterReadingGeneralStep({
@@ -22,9 +23,11 @@ export default function MeterReadingGeneralStep({
   errors,
   latestMeterReading,
   isFirstReading,
+  isInterimReading,
 }: Props) {
   const maxDate = dayjs().format('DD-MM-YYYY')
   const maxDateForReadingStartDate = dayjs(maxDate).subtract(1, 'day').format('DD-MM-YYYY')
+
   return (
     <>
       <div className='mb-6 flex items-center justify-between'>
@@ -35,7 +38,7 @@ export default function MeterReadingGeneralStep({
           label='Reading Type'
           list={[
             { id: 'single_reading', label: 'Single Reading' },
-            { id: 'multiple_reading', label: 'Multiple Reading' },
+            { id: 'interim_reading', label: 'Interim Reading' },
           ]}
           dataKey='id'
           displayKey='label'
@@ -87,7 +90,7 @@ export default function MeterReadingGeneralStep({
               setValue={setFormValue('reading_end_date')}
               error={errors?.reading_end_date}
               max={maxDate}
-              disabled={isFirstReading}
+              disabled={!isFirstReading && !isInterimReading}
             />
           </div>
         </div>

@@ -10,15 +10,16 @@ import "google/protobuf/struct.proto";
 import "google/protobuf/empty.proto";
 import "billing/billing_rule.proto";
 import "parameters/parameter-value.proto";
+import "billing/charge_head_definition.proto";
 
 // ----------------- ENTITY MESSAGE -----------------
 message ChargeHeadMessage {
   int64 id = 1;
   int64 billing_rule_id = 2;
-  int64 name_id = 3;
+  int32 charge_head_definition_id = 3;
   google.protobuf.Struct calculations = 4;
   com.kseb.consumerservice.proto.billing.BillingRuleMessage billing_rule = 5;
-  com.kseb.consumerservice.proto.parameters.ParameterValueProto name = 6;
+  repeated com.kseb.consumerservice.proto.billing.ChargeHeadDefinitionMessage charge_head_definitions = 6;
 
   google.protobuf.Timestamp effective_start = 7;
   google.protobuf.Timestamp effective_end = 8;
@@ -36,7 +37,7 @@ message ChargeHeadMessage {
 message ChargeHeadFormMessage {
   optional int64 id = 1;
   int64 billing_rule_id = 2;
-  int64 name_id = 3;
+  int32 charge_head_definition_id = 3;
   google.protobuf.Struct calculations = 4;
   google.protobuf.Timestamp effective_start = 5;
   optional google.protobuf.Timestamp effective_end = 6;
