@@ -1,14 +1,13 @@
-import { router } from '@inertiajs/react'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
+import { router } from '@inertiajs/react'
 
-import Input from '@/ui/form/Input'
-import SelectList from '@/ui/form/SelectList'
+import ConnectMeterTransformerModal from '@/components/Connections/ConnectionMeter/ConnectMeterTransformerModal'
+import SelectUnassignedMeterModal from '@/components/Connections/ConnectionMeter/SelectUnassignedMeterModal'
 import { consumerNavItems } from '@/components/Navbar/navitems'
-import { ParameterValues } from '@/interfaces/parameter_types'
-import { useEffect, useState } from 'react'
+import { Card } from '@/components/ui/card'
 import {
   Connection,
   Meter,
@@ -16,25 +15,16 @@ import {
   MeterTransformer,
   MeterTransformerAssignment,
 } from '@/interfaces/data_interfaces'
-import StrongText from '@/typography/StrongText'
-import { Card } from '@/components/ui/card'
-import { BreadcrumbItem } from '@/types'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
-import ConnectMeterTransformerModal from '@/components/Connections/ConnectionMeter/ConnectMeterTransformerModal'
-import SelectUnassignedMeterModal from '@/components/Connections/ConnectionMeter/SelectUnassignedMeterModal'
+import { BreadcrumbItem } from '@/types'
+import StrongText from '@/typography/StrongText'
 import Datepicker from '@/ui/form/DatePicker'
+import Input from '@/ui/form/Input'
+import SelectList from '@/ui/form/SelectList'
+import { useEffect, useState } from 'react'
 
-export default function ConnectMeter({
-  connection_id,
-  relation,
-  useCategory,
-  meterStatus,
-  connection,
-  ctpts,
-  statuses,
-  meterProfiles,
-  timezoneTypes,
-}: {
+interface Props {
   connection_id: number
   relation?: MeterConnectionMapping
   useCategory: ParameterValues[]
@@ -46,7 +36,19 @@ export default function ConnectMeter({
   changeReasons: ParameterValues[]
   meterProfiles: ParameterValues[]
   timezoneTypes: ParameterValues[]
-}) {
+}
+
+export default function ConnectMeterForm({
+  connection_id,
+  relation,
+  useCategory,
+  meterStatus,
+  connection,
+  ctpts,
+  statuses,
+  meterProfiles,
+  timezoneTypes,
+}: Readonly<Props>) {
   const [meterTransformers, setMeterTransformers] = useState<MeterTransformerAssignment[]>([])
 
   const [showModal, setShowModal] = useState(false)
@@ -55,21 +57,35 @@ export default function ConnectMeter({
 
   const [selectedUseCategory, setSelectedUseCategory] = useState<ParameterValues | null>(null)
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
-    rel_id: '',
+    rel_id: relation?.rel_id ?? '',
     connection_id: connection_id,
-    meter_id: '',
-    meter_use_category: '',
-    meter_profile_id: '',
-    meter_status_id: '',
-    timezone_type_id: '',
-    sort_priority: '0',
-    is_meter_reading_mandatory: false,
-    meter_mf: '',
-    energise_date: '',
+    meter_id: relation?.meter_id ?? '',
+    meter_use_category: relation?.meter_use_category?.id ?? '',
+    meter_profile_id: relation?.meter_profile?.id ?? '',
+    meter_status_id: relation?.meter_status?.id ?? '',
+    timezone_type_id:
+      relation?.meter?.meter_timezone_type_rel?.[0]?.timezone_type?.id?.toString() ?? '',
+    sort_priority: relation?.sort_priority ?? '0',
+    is_meter_reading_mandatory: relation?.is_meter_reading_mandatory ?? false,
+    meter_mf: relation?.meter_mf ?? '',
+    energise_date: relation?.energise_date ?? '',
     _method: relation ? 'PUT' : undefined,
     meter_transformers: meterTransformers,
   })
-console.log(formData)
+
+  useEffect(() => {
+    if (relation?.meter) {
+      setSelectedMeter(relation.meter)
+
+      setFormValue('meter_id')(relation.meter.meter_id.toString())
+    }
+    if (relation?.energise_date) {
+      setFormValue('energise_date')(relation.energise_date)
+    }
+  }, [relation, setFormValue])
+
+  console.log(relation)
+
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     relation
       ? route('meter-connection-rel.update', connection_id)
@@ -78,9 +94,10 @@ console.log(formData)
       showErrorToast: true,
     }
   )
+
   useEffect(() => {
     setFormValue('meter_transformers')(meterTransformers)
-  }, [meterTransformers])
+  }, [meterTransformers, setFormValue])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -93,7 +110,7 @@ console.log(formData)
       const selectedCategory = useCategory.find(
         (category) => category.id == Number(formData.meter_use_category)
       )
-      if (selectedCategory) {
+      if (selectedCategory != null) {
         setSelectedUseCategory(selectedCategory)
         if (selectedCategory.parameter_value == 'Energy Consumption') {
           setFormValue('meter_mf')('')
@@ -172,7 +189,7 @@ console.log(formData)
                   label='Select'
                   onClick={() => setShowMeterModal(true)}
                   variant='secondary'
-                  disabled={loading}
+                  disabled={loading || !!relation}
                 />
                 {selectedMeter && (
                   <Button
@@ -180,7 +197,7 @@ console.log(formData)
                     label='Clear'
                     onClick={handleClearSelection}
                     variant='secondary'
-                    disabled={loading}
+                    disabled={loading || !!relation}
                   />
                 )}
               </div>
@@ -193,6 +210,7 @@ console.log(formData)
               dataKey='id'
               displayKey='parameter_value'
               error={errors.meter_status_id}
+              disabled={!!relation}
               required
             />
 

@@ -78,6 +78,8 @@ export interface MeterConnectionMapping {
   energise_date?: string
   meter_profile?: ParameterValues
   meter_mf?: number
+  meter_timezone_type?: ParameterValues
+  timezone_type_id?: number
 }
 
 export interface DateTimeField {
@@ -222,6 +224,18 @@ export interface ConnectionGreenEnergy {
   effective_start: string
   effective_end: string
 }
+
+export interface Calendar {
+  id: number
+  calendar_date: string
+  is_holiday: boolean
+  is_weekend: boolean
+  day_of_week: number
+  day_of_year: number
+  remarks?: string
+}
+
+
 
 export interface OfficeHierarchy {
   hierarchy_id: number

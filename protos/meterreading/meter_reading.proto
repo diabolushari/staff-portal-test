@@ -119,7 +119,7 @@ message MeterHealthFormMessage {
   double current_y = 7;
   double current_b = 8;
   repeated CtptHealthFormMessage healths = 9;
-  
+
 }
 
 // Create
@@ -210,8 +210,8 @@ message ListMeterReadingPaginatedRequest {
   optional string search = 2;
   int32 page_number = 3;
   int32 page_size = 4;
-  optional string sort_by = 5;       
-  optional string sort_direction = 6; 
+  optional string sort_by = 5;
+  optional string sort_direction = 6;
 }
 
 message ListMeterReadingPaginatedResponse {

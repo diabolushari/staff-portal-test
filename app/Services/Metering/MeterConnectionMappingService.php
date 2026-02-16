@@ -14,7 +14,6 @@ use App\Services\utils\GrpcServiceResponse;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Proto\Metering\CreateMeterConnectionMappingRequest;
 use Proto\Metering\DeleteMeterConnectionMappingRequest;
 use Proto\Metering\GetMeterConnectionMappingByConnectionIdRequest;
@@ -89,12 +88,11 @@ class MeterConnectionMappingService
                         ? $transformer->ctptEnergiseDate
                         : new \DateTime($transformer->ctptEnergiseDate);
 
-                    $energise = new Timestamp();
+                    $energise = new Timestamp;
                     $energise->fromDateTime($dateTime);
 
                     $transformer_proto->setCtptEnergiseDate($energise);
                 }
-
 
                 // ctpt_change_date
                 if ($transformer->ctptChangeDate !== null) {
@@ -109,7 +107,6 @@ class MeterConnectionMappingService
         }
 
         [$response, $status] = $this->client->CreateMeterConnectionMapping($request)->wait();
-
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -231,22 +228,33 @@ class MeterConnectionMappingService
         if (isset($data->relId)) {
             $request->setRelId($data->relId);
         }
-        $request->setMeterId($data->meterId);
-        $request->setConnectionId($data->connectionId);
-        $request->setMeterUseCategory($data->meterUseCategory);
+        if (isset($data->meterUseCategory)) {
+            $request->setMeterUseCategory($data->meterUseCategory);
+        }
 
-        $request->setMeterStatusId($data->meterStatusId);
+        if (isset($data->meterProfileId)) {
+            $request->setProfileId($data->meterProfileId);
+        }
+
+        if (isset($data->timezoneTypeId)) {
+            $request->setTimezoneTypeId($data->timezoneTypeId);
+        }
+
+        if ($data->meterMf !== null) {
+            $request->setMeterMf((float) $data->meterMf);
+        }
+
+        $energiseDate = DateTimeConverter::convertStringToTimestamp($data->energiseDate);
+        if ($energiseDate !== null) {
+            $request->setEnergiseDate($energiseDate);
+        }
 
         if (isset($data->sortPriority)) {
             $request->setSortPriority($data->sortPriority);
         }
         $request->setIsMeterReadingMandatory($data->isMeterReadingMandatory);
 
-        if (isset($data->effectiveStartTs)) {
-            $effectiveStartTs = new Timestamp;
-            $request->setEffectiveStartTs($effectiveStartTs);
-        }
-
+        /** @var MeterConnectionMappingResponse $response */
         [$response, $status] = $this->client->UpdateMeterConnectionMapping($request)->wait();
 
         if ($status->code !== 0) {
@@ -280,10 +288,9 @@ class MeterConnectionMappingService
         return GrpcServiceResponse::success(null, $response, $status->code, $status->details);
     }
 
-
     public function updateMeterConnectionProfile(int $relId, int $profileId): GrpcServiceResponse
     {
-        $request = new UpdateMeterConnectionProfileRequest();
+        $request = new UpdateMeterConnectionProfileRequest;
         $request->setRelId($relId);
         $request->setProfileId($profileId);
 
@@ -318,6 +325,10 @@ class MeterConnectionMappingService
         $changeDate = $rel->getChangeDate() ? $rel->getChangeDate()->toDateTime()->format('Y-m-d') : null;
         $meterProfile = ParameterValueProtoConvertor::convertToArray($rel->getProfile());
         $energiseDate = $rel->getEnergiseDate() ? $rel->getEnergiseDate()->toDateTime()->format('Y-m-d') : null;
+        $meter = MeterProtoConvertor::convertToArray($rel->getMeter());
+
+        $timezoneType = $meter['meter_timezone_type_rel'][0]['timezone_type'] ?? null;
+        $timezoneTypeId = $timezoneType['id'] ?? null;
 
         return [
             'version_id' => $rel->getVersionId(),
@@ -346,6 +357,9 @@ class MeterConnectionMappingService
             'meter_profile' => $meterProfile,
             'energise_date' => $energiseDate,
             'meter_mf' => $rel->getMeterMf(),
+            'meter' => $meter,
+            'timezone_type' => $timezoneType,
+            'timezone_type_id' => $timezoneTypeId,
         ];
     }
 

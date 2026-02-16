@@ -12,7 +12,6 @@ use Inertia\Response;
 class GetConnectionMeterController extends Controller
 {
     public function __construct(
-
         private ConnectionService $connectionService,
         private ParameterValueService $parameterValueService,
     ) {}

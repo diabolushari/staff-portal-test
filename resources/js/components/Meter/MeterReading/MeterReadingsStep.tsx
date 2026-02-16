@@ -1,7 +1,7 @@
 import { Meter, MeterReading, MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import MeterReadingPreview, { MeterReadingPreviewRef } from './MeterReadingPreview'
 import { ProfileReadingFormRef } from './ProfileReadingForm'
 import { MeterHealth } from './ReadingForm/useMeterHealthForm'
@@ -29,6 +29,8 @@ interface Props {
   activeProfile: { meterIdx: number; profileIdx: number } | null
   setActiveProfile: (profile: { meterIdx: number; profileIdx: number } | null) => void
   previewRefs: React.MutableRefObject<Record<number, MeterReadingPreviewRef | null>>
+  setProfileErrorExist: (value: boolean) => void
+  setAllProfileHasData: (value: boolean) => void
 }
 
 export default function MeterReadingsStep({
@@ -46,23 +48,15 @@ export default function MeterReadingsStep({
   profileRefs,
   activeProfile,
   setActiveProfile,
-  previewRefs,
+
+  setAllProfileHasData,
+  setProfileErrorExist,
 }: Readonly<Props>) {
   const isSingleMeter = metersWithTimezonesAndProfiles.length === 1
 
   const [activeMeterIdx, setActiveMeterIdx] = useState<number | null>(isSingleMeter ? 0 : null)
-  const [hasMultipleMeters, setHasMultipleMeters] = useState<boolean>(
-    metersWithTimezonesAndProfiles.length > 1
-  )
 
-  useEffect(() => {
-    if (hasMultipleMeters) {
-      setIsOnParameterForm(true)
-    } else {
-      setIsOnParameterForm(activeProfile !== null)
-    }
-  }, [activeProfile, setIsOnParameterForm])
-
+  const hasMultipleMeters = metersWithTimezonesAndProfiles.length > 1
   const metersToRender = useMemo(() => {
     if (isSingleMeter) {
       return metersWithTimezonesAndProfiles.map((m, idx) => ({
@@ -82,10 +76,6 @@ export default function MeterReadingsStep({
 
     return []
   }, [isSingleMeter, activeMeterIdx, metersWithTimezonesAndProfiles])
-
-  useEffect(() => {
-    setIsOnParameterForm(false)
-  }, [])
 
   return (
     <div className='flex flex-col gap-6'>
@@ -127,30 +117,27 @@ export default function MeterReadingsStep({
       {/* ---------- PREVIEW + PROFILE FOR SELECTED METER ---------- */}
       {metersToRender?.map(({ meter, meterIdx }) => (
         <React.Fragment key={meter.meter_id}>
-          {(!activeProfile || activeProfile?.meterIdx !== meterIdx) && (
-            <MeterReadingPreview
-              healthData={healthData}
-              meterHealthTypes={meterHealthTypes}
-              ctHealthTypes={ctHealthTypes}
-              updateMeterHealth={updateMeterHealth}
-              updateCTPTHealth={updateCTPTHealth}
-              meterIdx={meterIdx}
-              meterWithTimezoneAndProfile={meter}
-              formData={formData}
-              readingValues={readingValues}
-              metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
-              updateReading={updateReading}
-              isFirstReading={isFirstReading}
-              hasMultipleMeters={hasMultipleMeters}
-              setIsOnParameterForm={setIsOnParameterForm}
-              profileRefs={profileRefs}
-              activeProfile={activeProfile}
-              setActiveProfile={setActiveProfile}
-              ref={(el) => {
-                previewRefs.current[meterIdx] = el
-              }}
-            />
-          )}
+          <MeterReadingPreview
+            setAllProfileHasData={setAllProfileHasData}
+            setProfileErrorExist={setProfileErrorExist}
+            healthData={healthData}
+            meterHealthTypes={meterHealthTypes}
+            ctHealthTypes={ctHealthTypes}
+            updateMeterHealth={updateMeterHealth}
+            updateCTPTHealth={updateCTPTHealth}
+            meterIdx={meterIdx}
+            meterWithTimezoneAndProfile={meter}
+            formData={formData}
+            readingValues={readingValues}
+            metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
+            updateReading={updateReading}
+            isFirstReading={isFirstReading}
+            hasMultipleMeters={hasMultipleMeters}
+            setIsOnParameterForm={setIsOnParameterForm}
+            profileRefs={profileRefs}
+            activeProfile={activeProfile}
+            setActiveProfile={setActiveProfile}
+          />
 
           {hasMultipleMeters && activeProfile === null && (
             <div className='flex justify-between'>

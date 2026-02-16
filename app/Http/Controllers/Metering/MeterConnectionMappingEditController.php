@@ -30,13 +30,17 @@ class MeterConnectionMappingEditController extends Controller
         $useCategory = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Use Category');
         $meterStatus = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Status');
         $changeReason = $this->parameterValueService->getParameterValues(1, 100, null, 'Meter', 'Change Reason');
+        $meterProfiles = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Meter Profile');
+        $timezoneTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Meter', 'Timezone Type');
 
-        return Inertia::render('Connections/ConnectMeter', [
+        return Inertia::render('Connections/ConnectMeterForm', [
             'relation' => $relation->data,
             'meters' => $meters->data,
             'useCategory' => $useCategory->data,
             'meterStatus' => $meterStatus->data,
             'changeReason' => $changeReason->data,
+            'meterProfiles' => $meterProfiles->data,
+            'timezoneTypes' => $timezoneTypes->data,
             'connection_id' => $connection->data['connection_id'] ?? null,
             'connection' => $connection->data ?? null,
         ]);

@@ -170,6 +170,14 @@ export default function ConnectionCardSection({
               </Button>
             </div>
           )}
+          <Button
+            variant='outline'
+            size='sm'
+            className='h-8 cursor-pointer gap-1.5 text-xs'
+            onClick={() => onEdit(meterMapping.rel_id)}
+          >
+            Edit
+          </Button>
           <DeleteButton onClick={() => onDelete(meterMapping)} />
         </div>
       </div>
