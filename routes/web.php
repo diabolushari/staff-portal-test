@@ -23,6 +23,7 @@ use App\Http\Controllers\BillingGroup\BillingGroupBillController;
 use App\Http\Controllers\BillingGroup\BillingGroupConnectionRelController;
 use App\Http\Controllers\BillingGroup\BillingGroupController;
 use App\Http\Controllers\BillingGroup\ConsumerNumberApiController;
+use App\Http\Controllers\Calendar\CalendarDayController;
 use App\Http\Controllers\Connection\ConnectionController;
 use App\Http\Controllers\Connection\ConnectionFlagController;
 use App\Http\Controllers\Connection\ConnectionGenerationController;
@@ -109,6 +110,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/connections/green-energy/{id}', [ConnectionGreenEnergyController::class, 'destroy'])
         ->name('connections.green-energy.destroy');
 
+    Route::get('/calendar', [CalendarDayController::class, 'index'])->name('calendar.index');
+    Route::put('/calendar/{id}', [CalendarDayController::class, 'update'])->name('calendar.update');
 
     Route::post('update-office-contacts', UpdateOfficeContactsController::class)
         ->name('offices.update-contacts');
@@ -213,5 +216,5 @@ Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
 
 // pdf download
 Route::get('pdf-download/{billId}', [BillingPdfController::class, 'index'])->name('pdf-download');
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';
