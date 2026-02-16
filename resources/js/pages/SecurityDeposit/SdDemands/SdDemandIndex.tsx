@@ -31,7 +31,7 @@ interface Props {
   oldTotalSdAmount?: string
 }
 
-export default function ConnectionsIndex({
+export default function SdDemandIndex({
   sdDemands,
   calculationBasics,
   demandTypes,
