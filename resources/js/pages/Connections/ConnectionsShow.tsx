@@ -91,7 +91,6 @@ export default function ConnectionsShow({
 
     return labels.join(', ')
   }, [connection?.other_purposes, primaryPurposes])
-  console.log(connectionGroupedFlags)
 
   const deemedHt =
     connectionGroupedFlags?.some(
