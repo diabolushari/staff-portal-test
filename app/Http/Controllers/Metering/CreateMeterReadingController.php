@@ -36,6 +36,14 @@ class CreateMeterReadingController extends Controller
             'Meter Health',
         );
 
+        $interimReasons = $this->parameterService->getParameterValues(
+            1,
+            100,
+            null,
+            'Meter Reading',
+            'Interim Reasons',
+        );
+
         $ctHealthTypes = $this->parameterService->getParameterValues(
             1,
             100,
@@ -68,6 +76,7 @@ class CreateMeterReadingController extends Controller
                 $meterWithTimezoneAndProfile['meter'] = $meter->data;
                 $meterWithTimezoneAndProfile['meter_profile'] = $meterConnectionRel['meter_profile'] ?? null;
                 $meterWithTimezoneAndProfile['meter_mf'] = $meterConnectionRel['meter_mf'] ?? null;
+                $meterWithTimezoneAndProfile['meter_serial'] = $meter->data['meter_serial'];
 
                 $data = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($meterConnectionRel['meter_id'])->data ?? [];
                 if (! empty($data)) {
@@ -111,6 +120,7 @@ class CreateMeterReadingController extends Controller
             'latestMeterReading' => $latestMeterReading->data,
             'ctHealthTypes' => $ctHealthTypes->data,
             'editMode' => false,
+            'interimReasons' => $interimReasons->data,
         ]);
     }
 }

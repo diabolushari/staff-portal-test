@@ -46,6 +46,7 @@ interface Props {
   metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
   latestMeterReading: MeterReading
   editMode: boolean
+  interimReasons: ParameterValues[]
 }
 
 const getNextDay = (dateStr: string) => {
@@ -80,6 +81,7 @@ export default function MeterReadingCreatePage({
   metersWithTimezonesAndProfiles,
   latestMeterReading,
   editMode,
+  interimReasons,
 }: Readonly<Props>) {
   const breadcrumb: BreadcrumbItem[] = useMemo(() => {
     return [
@@ -125,6 +127,9 @@ export default function MeterReadingCreatePage({
   )
 
   const [isInterimReading, setIsInterimReading] = useState(false)
+  const [metersListForInterimReading, setMetersListForInterimReading] = useState<
+    MeterWithTimezoneAndProfile[]
+  >(metersWithTimezonesAndProfiles)
 
   const getMeterEnergisedDate = (meterMappings: MeterConnectionMapping[] = []): string => {
     if (!meterMappings.length) return ''
@@ -179,6 +184,7 @@ export default function MeterReadingCreatePage({
     reading_type: editMode ? latestMeterReading?.single_reading : 'single_reading',
     anomaly_id: editMode ? latestMeterReading?.anomaly_id : 0,
     remarks: editMode ? latestMeterReading?.remarks : '',
+    interim_reason: '',
     _method: editMode ? 'PUT' : undefined,
   })
 
@@ -212,7 +218,6 @@ export default function MeterReadingCreatePage({
 
     accordionOpen()
 
-    //  FINAL SUBMIT
     post({
       ...formData,
       readings_by_meter: readingValues,
@@ -311,6 +316,8 @@ export default function MeterReadingCreatePage({
                   latestMeterReading={latestMeterReading}
                   isFirstReading={isFirstReading}
                   isInterimReading={isInterimReading}
+                  interimReasons={interimReasons}
+                  metersListForInterimReading={metersListForInterimReading}
                 />
               )}
               {activeStep === 1 && (

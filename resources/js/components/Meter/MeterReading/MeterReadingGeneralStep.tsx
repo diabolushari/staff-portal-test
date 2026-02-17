@@ -1,10 +1,12 @@
 import Field from '@/components/ui/field'
-import { ConsumerData } from '@/interfaces/data_interfaces'
+import { ConsumerData, MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import RadioGroup from '@/ui/form/RadioGroup'
 import { ConnectionDetailTooltip } from './ConnectionDetailTooltip'
 import dayjs from 'dayjs'
 import Datepicker from '@/ui/form/DatePicker'
+import { ParameterValues } from '@/interfaces/parameter_types'
+import SelectList from '@/ui/form/SelectList'
 
 interface Props {
   connectionWithConsumer: ConsumerData
@@ -14,6 +16,8 @@ interface Props {
   latestMeterReading?: any
   isFirstReading?: boolean
   isInterimReading?: boolean
+  interimReasons: ParameterValues[]
+  metersListForInterimReading: MeterWithTimezoneAndProfile[]
 }
 
 export default function MeterReadingGeneralStep({
@@ -24,6 +28,8 @@ export default function MeterReadingGeneralStep({
   latestMeterReading,
   isFirstReading,
   isInterimReading,
+  interimReasons,
+  metersListForInterimReading,
 }: Props) {
   const maxDate = dayjs().format('DD-MM-YYYY')
   const maxDateForReadingStartDate = dayjs(maxDate).subtract(1, 'day').format('DD-MM-YYYY')
@@ -61,10 +67,33 @@ export default function MeterReadingGeneralStep({
 
         <div className='col-span-3'>
           <div className='grid gap-4 md:grid-cols-2'>
+            {isInterimReading && (
+              <SelectList
+                label='Interim Reason'
+                list={interimReasons}
+                dataKey='id'
+                displayKey='parameter_value'
+                setValue={setFormValue('interim_reason')}
+                value={formData?.interim_reason}
+                error={errors?.interim_reason}
+              />
+            )}
+            {isInterimReading && (
+              <SelectList
+                label='Meter'
+                list={metersListForInterimReading}
+                dataKey='meter_id'
+                displayKey='meter_serial'
+                setValue={setFormValue('meter_id')}
+                value={formData?.meter_id}
+                error={errors?.meter_id}
+              />
+            )}
+
             <div className='col-span-2 grid md:grid-cols-2'>
               <Datepicker
                 label='Meter Reading Date'
-                value={formData.metering_date}
+                value={formData?.metering_date}
                 setValue={setFormValue('metering_date')}
                 error={errors?.metering_date}
                 max={maxDate}

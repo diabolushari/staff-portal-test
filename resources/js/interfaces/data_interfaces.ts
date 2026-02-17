@@ -657,6 +657,7 @@ export interface BillingRuleJson {
 export interface MeterWithTimezoneAndProfile {
   meter_id: number
   meter: Meter
+  meter_serial: string
   timezones: {
     timezone_id: number
     timezone_name: string
