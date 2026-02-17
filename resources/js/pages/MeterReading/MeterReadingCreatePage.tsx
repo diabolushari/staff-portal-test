@@ -185,6 +185,7 @@ export default function MeterReadingCreatePage({
     anomaly_id: editMode ? latestMeterReading?.anomaly_id : 0,
     remarks: editMode ? latestMeterReading?.remarks : '',
     interim_reason: '',
+    meters: [],
     _method: editMode ? 'PUT' : undefined,
   })
 
@@ -328,6 +329,8 @@ export default function MeterReadingCreatePage({
                   errors={errors}
                   meterHealthData={healthData}
                   updateRybValues={updateRybValues}
+                  isInterimReading={isInterimReading}
+                  metersListForInterimReading={metersListForInterimReading}
                 />
               )}
               {activeStep === 2 && (

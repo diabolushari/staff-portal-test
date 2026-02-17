@@ -7,6 +7,7 @@ import dayjs from 'dayjs'
 import Datepicker from '@/ui/form/DatePicker'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import SelectList from '@/ui/form/SelectList'
+import MultiSelectList from '@/ui/form/MultiSelect'
 
 interface Props {
   connectionWithConsumer: ConsumerData
@@ -79,14 +80,14 @@ export default function MeterReadingGeneralStep({
               />
             )}
             {isInterimReading && (
-              <SelectList
-                label='Meter'
+              <MultiSelectList
+                label='Meters'
                 list={metersListForInterimReading}
                 dataKey='meter_id'
                 displayKey='meter_serial'
-                setValue={setFormValue('meter_id')}
-                value={formData?.meter_id}
-                error={errors?.meter_id}
+                setValue={setFormValue('meters')}
+                value={formData?.meters}
+                error={errors?.meters}
               />
             )}
 

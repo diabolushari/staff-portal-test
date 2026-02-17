@@ -4,6 +4,7 @@ import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
 import { MeterHealth } from './ReadingForm/useMeterHealthForm'
 import NormalText from '@/typography/NormalText'
+import { MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 
 interface Props {
   formData: any
@@ -16,6 +17,8 @@ interface Props {
     value: number,
     type: 'voltage_r' | 'voltage_y' | 'voltage_b' | 'current_r' | 'current_y' | 'current_b'
   ) => void
+  isInterimReading: boolean
+  metersListForInterimReading: MeterWithTimezoneAndProfile[]
 }
 
 export default function MeterReadingObservationStep({
@@ -25,6 +28,8 @@ export default function MeterReadingObservationStep({
   errors,
   meterHealthData,
   updateRybValues,
+  isInterimReading,
+  metersListForInterimReading,
 }: Props) {
   return (
     <>
@@ -40,57 +45,62 @@ export default function MeterReadingObservationStep({
             error={errors?.anomaly_id}
           />
         </div>
-        {meterHealthData.map((meter) => (
-          <div className='border p-4'>
-            <NormalText>Meter #{meter.meter_serial}</NormalText>
-            <div className='grid gap-4 md:grid-cols-3'>
-              <Input
-                key={meter.meter_id}
-                label='Voltage R (kV)'
-                value={meter.voltage_r}
-                setValue={(value) => updateRybValues(meter.meter_id, value, 'voltage_r')}
-                type='number'
-                error={errors?.voltage_r}
-              />
-              <Input
-                label='Voltage Y (kV)'
-                value={meter.voltage_y}
-                setValue={(value) => updateRybValues(meter.meter_id, value, 'voltage_y')}
-                type='number'
-                error={errors?.voltage_y}
-              />
-              <Input
-                label='Voltage B (kV)'
-                value={meter.voltage_b}
-                setValue={(value) => updateRybValues(meter.meter_id, value, 'voltage_b')}
-                type='number'
-                error={errors?.voltage_b}
-              />
+        {!isInterimReading && (
+          <>
+            {meterHealthData.map((meter) => (
+              <div className='border p-4'>
+                <NormalText>Meter #{meter.meter_serial}</NormalText>
+                <div className='grid gap-4 md:grid-cols-3'>
+                  <Input
+                    key={meter.meter_id}
+                    label='Voltage R (kV)'
+                    value={meter.voltage_r}
+                    setValue={(value) => updateRybValues(meter.meter_id, value, 'voltage_r')}
+                    type='number'
+                    error={errors?.voltage_r}
+                  />
+                  <Input
+                    label='Voltage Y (kV)'
+                    value={meter.voltage_y}
+                    setValue={(value) => updateRybValues(meter.meter_id, value, 'voltage_y')}
+                    type='number'
+                    error={errors?.voltage_y}
+                  />
+                  <Input
+                    label='Voltage B (kV)'
+                    value={meter.voltage_b}
+                    setValue={(value) => updateRybValues(meter.meter_id, value, 'voltage_b')}
+                    type='number'
+                    error={errors?.voltage_b}
+                  />
 
-              <Input
-                label='Current R (A)'
-                value={meter.current_r}
-                setValue={(value) => updateRybValues(meter.meter_id, value, 'current_r')}
-                type='number'
-                error={errors?.current_r}
-              />
-              <Input
-                label='Current Y (A)'
-                value={meter.current_y}
-                setValue={(value) => updateRybValues(meter.meter_id, value, 'current_y')}
-                type='number'
-                error={errors?.current_y}
-              />
-              <Input
-                label='Current B (A)'
-                value={meter.current_b}
-                setValue={(value) => updateRybValues(meter.meter_id, value, 'current_b')}
-                type='number'
-                error={errors?.current_b}
-              />
-            </div>
-          </div>
-        ))}
+                  <Input
+                    label='Current R (A)'
+                    value={meter.current_r}
+                    setValue={(value) => updateRybValues(meter.meter_id, value, 'current_r')}
+                    type='number'
+                    error={errors?.current_r}
+                  />
+                  <Input
+                    label='Current Y (A)'
+                    value={meter.current_y}
+                    setValue={(value) => updateRybValues(meter.meter_id, value, 'current_y')}
+                    type='number'
+                    error={errors?.current_y}
+                  />
+                  <Input
+                    label='Current B (A)'
+                    value={meter.current_b}
+                    setValue={(value) => updateRybValues(meter.meter_id, value, 'current_b')}
+                    type='number'
+                    error={errors?.current_b}
+                  />
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+
         <TextArea
           label='Remarks'
           value={formData.remarks}
