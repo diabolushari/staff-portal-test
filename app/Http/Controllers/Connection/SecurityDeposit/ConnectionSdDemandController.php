@@ -18,7 +18,7 @@ class ConnectionSdDemandController extends Controller
     public function __invoke(int $connectionId)
     {
         $connection = $this->connectionService->getConnection($connectionId)->data;
-        $sdDemands = $this->sdDemandService->listSdDemandsByConnection($connectionId);
+        $sdDemands = $this->sdDemandService->listPaginatedSdDemands($connectionId, null, null, null, null);
 
         $paginated = null;
 

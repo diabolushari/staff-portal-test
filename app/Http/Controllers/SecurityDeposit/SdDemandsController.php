@@ -97,8 +97,11 @@ class SdDemandsController extends Controller
 
         $connectionId = $request->connectionId;
 
-        if ($response->data === null) {
-            return redirect()->back()->with('error', 'Failed to create security deposit demand');
+
+        if ($response->hasValidationError() || $response->statusCode !== 0) {
+            return $response->error ?? redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Unknown error',
+            ]);
         }
 
 
@@ -134,8 +137,10 @@ class SdDemandsController extends Controller
     {
         $sdDemand = $this->sdDemandService->update($request, $id);
 
-        if ($sdDemand->data === null) {
-            return redirect()->back()->with('error', 'Failed to update security deposit demand');
+        if ($sdDemand->hasValidationError() || $sdDemand->statusCode !== 0) {
+            return $sdDemand->error ?? redirect()->back()->withErrors([
+                'message' => $sdDemand->statusDetails ?? 'Unknown error',
+            ]);
         }
 
         $connectionId = $request->connectionId;
