@@ -93,15 +93,12 @@ const averagePowerfactor = (
   let totalKwh = 0
   let totalKvah = 0
 
-  console.log(totalKvah, 'totalKvah')
-  console.log(totalKwh, 'totalKwh')
   readingValues
     .filter((r) => r.meter_id === meterId)
     .forEach((reading) => {
       reading.parameters.forEach((param) => {
         // kWh
         if (param.meter_parameter_id == kwhProfile.meter_parameter_id) {
-          console.log('kwh', param.readings)
           param.readings.forEach((tz) => {
             totalKwh += Number(tz.values?.diff) ?? 0
           })
@@ -109,7 +106,6 @@ const averagePowerfactor = (
 
         // kVAh
         if (param.meter_parameter_id == kvahProfile.meter_parameter_id) {
-          console.log('kvah', param.readings)
           param.readings.forEach((tz) => {
             totalKvah += Number(tz.values?.diff) ?? 0
           })

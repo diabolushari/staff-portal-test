@@ -167,6 +167,7 @@ const ProfileReadingForm = ({
     [meter, selectedParameter, readingValues]
   )
   useEffect(() => {
+    console.log(readingErrors)
     const hasError = Object.keys(readingErrors).length > 0
     onErrorChange?.(hasError)
   }, [readingErrors, onErrorChange])
@@ -293,11 +294,6 @@ const ProfileReadingForm = ({
       updateReading(meter.meter_id, selectedParameter.meter_parameter_id, parameterReading.readings)
     }
   }, [readingErrors])
-
-  useEffect(() => {
-    console.log('Form mounted')
-    return () => console.log('Form unmounted')
-  }, [])
 
   return (
     <>

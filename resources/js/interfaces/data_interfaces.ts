@@ -235,8 +235,6 @@ export interface Calendar {
   remarks?: string
 }
 
-
-
 export interface OfficeHierarchy {
   hierarchy_id: number
   hierarchy_code: string
@@ -612,7 +610,7 @@ export interface ComputedProperty {
 
 export interface ChargeHead {
   id: number
-  name: ParameterValues
+  charge_head_definitions: ChargeHeadDefinition[]
   effective_start: string
   effective_end: string
   calculations: JSON
@@ -621,6 +619,32 @@ export interface ChargeHead {
   updated_by?: number
   created_at?: string
   updated_at?: string
+}
+
+export interface ChargeHeadDefinition {
+  version_id: number
+  charge_head_definition_id: number
+  charge_head_code: string
+  name: string
+  description: string
+  category_id: number
+  status_id: number
+  default_priority: number
+  is_interest_bearing: boolean
+  interest_calculation_method: number
+  gl_code: string
+  sop_mapping: string
+  effective_from: string
+  effective_to: string
+  is_active: boolean
+  created_ts: string
+  updated_ts: string
+  created_by: number
+  updated_by: number
+  deleted_ts: string
+  deleted_by: number
+  category: ParameterValues
+  status: ParameterValues
 }
 export interface BillingRuleJson {
   id: number

@@ -83,7 +83,6 @@ const getPreviousFinalReading = (
   timezoneId: number
 ) => {
   if (lastMeterReading == null) {
-    console.log('latest reading not found')
     return 0
   }
 
@@ -104,7 +103,6 @@ const getPreviousDiffReading = (
   timezoneId: number
 ) => {
   if (lastMeterReading == null) {
-    console.log('latest reading not found')
     return 0
   }
 
