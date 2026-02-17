@@ -14,6 +14,8 @@ const SdDemandList = ({ sdDemands }: Props) => {
   const [deleteItem, setDeleteItem] = useState<SdDemand | null>(null)
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
 
+  const [selectedItem, setSelectedItem] = useState<SdDemand | null>(null)
+
   useEffect(() => {
     if (!showDeleteModal) {
       setDeleteItem(null)
