@@ -76,19 +76,6 @@ message ListSdDemandsPaginatedResponse {
   int32 total_pages = 5;
 }
 
-message ListSdDemandsByConnectionIdRequest {
-  int32 connection_id = 1;
-  optional int32 page = 2;
-  optional int32 page_size = 3;
-}
-
-message ListSdDemandsByConnectionIdResponse {
-  repeated SdDemandMessage items = 1;
-  int64 total_count = 2;
-  int32 page_number = 3;
-  int32 page_size = 4;
-  int32 total_pages = 5;
-}
 
 
 message UpdateSdDemandRequest {
@@ -112,7 +99,6 @@ service SdDemandService {
   rpc GetSdDemand(GetSdDemandRequest) returns (GetSdDemandResponse);
   rpc ListSdDemands(ListSdDemandsRequest) returns (ListSdDemandsResponse);
   rpc ListSdDemandsPaginated(ListSdDemandsPaginatedRequest) returns (ListSdDemandsPaginatedResponse);
-  rpc ListSdDemandsByConnectionId(ListSdDemandsByConnectionIdRequest) returns (ListSdDemandsByConnectionIdResponse);
   rpc UpdateSdDemand(UpdateSdDemandRequest) returns (UpdateSdDemandResponse);
   rpc DeleteSdDemand(DeleteSdDemandRequest) returns (DeleteSdDemandResponse);
 }
