@@ -52,14 +52,17 @@ export default function MeterReadingsStep({
   setAllProfileHasData,
   setProfileErrorExist,
 }: Readonly<Props>) {
-  const isSingleMeter = metersWithTimezonesAndProfiles.length === 1
+  const filteredMetersWithTimezonesAndProfiles = formData.is_interim_reading
+    ? metersWithTimezonesAndProfiles.filter((meter) => formData.meters.includes(meter.meter_id))
+    : metersWithTimezonesAndProfiles
+  const isSingleMeter = filteredMetersWithTimezonesAndProfiles.length === 1
 
   const [activeMeterIdx, setActiveMeterIdx] = useState<number | null>(isSingleMeter ? 0 : null)
 
-  const hasMultipleMeters = metersWithTimezonesAndProfiles.length > 1
+  const hasMultipleMeters = filteredMetersWithTimezonesAndProfiles.length > 1
   const metersToRender = useMemo(() => {
     if (isSingleMeter) {
-      return metersWithTimezonesAndProfiles.map((m, idx) => ({
+      return filteredMetersWithTimezonesAndProfiles.map((m, idx) => ({
         meter: m,
         meterIdx: idx,
       }))
@@ -68,21 +71,21 @@ export default function MeterReadingsStep({
     if (activeMeterIdx !== null) {
       return [
         {
-          meter: metersWithTimezonesAndProfiles[activeMeterIdx],
+          meter: filteredMetersWithTimezonesAndProfiles[activeMeterIdx],
           meterIdx: activeMeterIdx,
         },
       ]
     }
 
     return []
-  }, [isSingleMeter, activeMeterIdx, metersWithTimezonesAndProfiles])
+  }, [isSingleMeter, activeMeterIdx, filteredMetersWithTimezonesAndProfiles])
 
   return (
     <div className='flex flex-col gap-6'>
       {/* ---------- MULTIPLE METERS : SELECTOR ---------- */}
       {!isSingleMeter && activeMeterIdx === null && (
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-          {metersWithTimezonesAndProfiles?.map((meter, idx) => (
+          {filteredMetersWithTimezonesAndProfiles?.map((meter, idx) => (
             <div
               key={meter.meter_id}
               className='hover:bg-muted cursor-pointer rounded-xl border p-4 transition'

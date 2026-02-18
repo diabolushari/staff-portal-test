@@ -66,6 +66,7 @@ class CreateMeterReadingController extends Controller
         $meterTimezoneTypeRel = [];
         $timeZoneNames = [];
         $latestMeterReading = $this->meterReadingService->latestMeterReading($connectionId);
+        $latestMeterReadingGroupByMeter = $this->meterReadingService->latestMeterReadingGroupByMeter($connectionId);
 
         if ($connection->data['meter_mappings'] && count($connection->data['meter_mappings']) > 0) {
             $meterWithTimezoneAndProfile = [];
@@ -76,7 +77,7 @@ class CreateMeterReadingController extends Controller
                 $meterWithTimezoneAndProfile['meter'] = $meter->data;
                 $meterWithTimezoneAndProfile['meter_profile'] = $meterConnectionRel['meter_profile'] ?? null;
                 $meterWithTimezoneAndProfile['meter_mf'] = $meterConnectionRel['meter_mf'] ?? null;
-                $meterWithTimezoneAndProfile['meter_serial'] = $meter->data['meter_serial'];
+                $meterWithTimezoneAndProfile['meter_serial'] = $meter->data['meter_serial'] ?? null;
 
                 $data = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($meterConnectionRel['meter_id'])->data ?? [];
                 if (! empty($data)) {
@@ -121,6 +122,7 @@ class CreateMeterReadingController extends Controller
             'ctHealthTypes' => $ctHealthTypes->data,
             'editMode' => false,
             'interimReasons' => $interimReasons->data,
+            'latestMeterReadingGroupByMeter' => $latestMeterReadingGroupByMeter->data,
         ]);
     }
 }

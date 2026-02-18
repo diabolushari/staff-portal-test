@@ -20,6 +20,9 @@ class MeterReadingForm extends Data
         public array $readingsByMeter,
         public array $meterHealth,
         public ?bool $multipleReading,
+        public ?int $interimReasonId,
+        public ?bool $isInterimReading,
+        public ?array $meters,
 
     ) {}
 }

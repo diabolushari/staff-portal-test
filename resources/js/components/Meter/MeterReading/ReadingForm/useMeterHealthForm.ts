@@ -1,4 +1,8 @@
-import { Meter, MeterReading, MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
+import {
+  Meter,
+  MeterReadingValueGroup,
+  MeterWithTimezoneAndProfile,
+} from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -19,7 +23,7 @@ const storeInitialMetersHealthData = (
   metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[],
   meterHealths: ParameterValues[],
   ctHealths: ParameterValues[],
-  latestMeterReading: MeterReading | null
+  latestMeterReading: MeterReadingValueGroup[] | null
 ): MeterHealth[] => {
   const defaultMeterHealth = meterHealths.find((h) => h.parameter_value === 'Working')
   const defaultCTHealth = ctHealths.find((h) => h.parameter_value === 'Working')
@@ -36,28 +40,34 @@ const storeInitialMetersHealthData = (
         }
       }),
       voltage_r:
-        latestMeterReading?.healths
-          ?.filter((h) => h.meter_id == meter.meter_id)[0]
+        latestMeterReading
+          ?.find((h) => h.meter.meter_id == meter.meter_id)
+          ?.reading?.healths?.find((m) => m?.meter_id == meter.meter_id)
           ?.voltage_r.toFixed(2) ?? 0,
       voltage_y:
-        latestMeterReading?.healths
-          ?.filter((h) => h.meter_id == meter.meter_id)[0]
+        latestMeterReading
+          ?.find((h) => h.meter.meter_id == meter.meter_id)
+          ?.reading?.healths?.find((m) => m?.meter_id == meter.meter_id)
           ?.voltage_y.toFixed(2) ?? 0,
       voltage_b:
-        latestMeterReading?.healths
-          ?.filter((h) => h.meter_id == meter.meter_id)[0]
+        latestMeterReading
+          ?.find((h) => h.meter.meter_id == meter.meter_id)
+          ?.reading?.healths?.find((m) => m?.meter_id == meter.meter_id)
           ?.voltage_b.toFixed(2) ?? 0,
       current_r:
-        latestMeterReading?.healths
-          ?.filter((h) => h.meter_id == meter.meter_id)[0]
+        latestMeterReading
+          ?.find((h) => h.meter.meter_id == meter.meter_id)
+          ?.reading?.healths?.find((m) => m?.meter_id == meter.meter_id)
           ?.current_r.toFixed(2) ?? 0,
       current_y:
-        latestMeterReading?.healths
-          ?.filter((h) => h.meter_id == meter.meter_id)[0]
+        latestMeterReading
+          ?.find((h) => h.meter.meter_id == meter.meter_id)
+          ?.reading?.healths?.find((m) => m?.meter_id == meter.meter_id)
           ?.current_y.toFixed(2) ?? 0,
       current_b:
-        latestMeterReading?.healths
-          ?.filter((h) => h.meter_id == meter.meter_id)[0]
+        latestMeterReading
+          ?.find((h) => h.meter.meter_id == meter.meter_id)
+          ?.reading?.healths?.find((m) => m?.meter_id == meter.meter_id)
           ?.current_b.toFixed(2) ?? 0,
     }
   })
@@ -67,7 +77,7 @@ export default function useMeterHealthForm(
   metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[],
   meterHealths: ParameterValues[],
   ctHealths: ParameterValues[],
-  latestMeterReading: MeterReading | null
+  latestMeterReading: MeterReadingValueGroup[] | null
 ) {
   const [healthData, setHealthData] = useState<MeterHealth[]>([])
 

@@ -2,6 +2,7 @@ import {
   MeterProfileParameter,
   MeterReading,
   MeterReadingValue,
+  MeterReadingValueGroup,
   MeterWithTimezoneAndProfile,
 } from '@/interfaces/data_interfaces'
 import { useCallback, useEffect, useState } from 'react'
@@ -77,7 +78,7 @@ function transformToFormData(
 }
 
 const getPreviousFinalReading = (
-  lastMeterReading: MeterReading | null,
+  lastMeterReading: MeterReadingValueGroup[] | null,
   meterId: number,
   parameterId: number,
   timezoneId: number
@@ -87,17 +88,24 @@ const getPreviousFinalReading = (
   }
 
   return (
-    lastMeterReading?.values?.find(
-      (readingValue) =>
-        readingValue.meter_id === meterId &&
-        readingValue.timezone_id === timezoneId &&
-        readingValue.parameter_id === parameterId
-    )?.final_reading ?? 0
+    lastMeterReading
+      ?.find(
+        (readingValue) =>
+          readingValue.meter.meter_id === meterId &&
+          readingValue?.values?.find(
+            (readingValue) =>
+              readingValue.parameter_id === parameterId && readingValue.timezone_id === timezoneId
+          )
+      )
+      ?.values?.find(
+        (readingValue) =>
+          readingValue.parameter_id === parameterId && readingValue.timezone_id === timezoneId
+      )?.final_reading ?? 0
   )
 }
 
 const getPreviousDiffReading = (
-  lastMeterReading: MeterReading | null,
+  lastMeterReading: MeterReadingValueGroup[] | null,
   meterId: number,
   parameterId: number,
   timezoneId: number
@@ -107,18 +115,25 @@ const getPreviousDiffReading = (
   }
 
   return (
-    lastMeterReading?.values?.find(
-      (readingValue) =>
-        readingValue.meter_id === meterId &&
-        readingValue.timezone_id === timezoneId &&
-        readingValue.parameter_id === parameterId
-    )?.difference ?? 0
+    lastMeterReading
+      ?.find(
+        (readingValue) =>
+          readingValue.meter.meter_id === meterId &&
+          readingValue?.values?.find(
+            (readingValue) =>
+              readingValue.parameter_id === parameterId && readingValue.timezone_id === timezoneId
+          )
+      )
+      ?.values?.find(
+        (readingValue) =>
+          readingValue.parameter_id === parameterId && readingValue.timezone_id === timezoneId
+      )?.difference ?? 0
   )
 }
 
 export default function useMeterReadingForm(
   metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[],
-  lastMeterReading: MeterReading | null,
+  lastMeterReading: MeterReadingValueGroup[],
   oldReading: MeterReading | null
 ) {
   const [readingValues, setReadingValues] = useState<MeterReadingFormState[]>([])
