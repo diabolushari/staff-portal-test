@@ -126,6 +126,13 @@ const connectionTabs = (connection?: Connection | null) => [
           ? route('connection.parties', connection?.connection_id)
           : '#',
       },
+      {
+        subValue: 'sd-demands',
+        subLabel: 'SD Demands',
+        subLink: connection?.connection_id
+          ? route('connection.sd-demands', connection?.connection_id)
+          : '#',
+      },
     ],
   },
   {

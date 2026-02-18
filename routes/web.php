@@ -38,6 +38,7 @@ use App\Http\Controllers\Connection\GetConsumerController;
 use App\Http\Controllers\Connection\MeterConnectionMappingUpdateChangeController;
 use App\Http\Controllers\Connection\MeterConnectionMappingUpdateStatusController;
 use App\Http\Controllers\Connection\PurposeInfoController;
+use App\Http\Controllers\Connection\SecurityDeposit\ConnectionSdDemandController;
 use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
@@ -65,6 +66,7 @@ use App\Http\Controllers\Offices\OfficesCreateWithCsvController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
+use App\Http\Controllers\SecurityDeposit\SdDemandsController;
 use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
 use App\Http\Controllers\Tariff\TariffConfigController;
@@ -172,6 +174,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('update-meter-transformer-assignment-status');
 
     Route::resource('meter-profile', MeterProfileParameterController::class);
+
+    //Security Deposit
+    Route::resource('sd-demands', SdDemandsController::class)
+        ->only(['create', 'store', 'edit', 'update', 'destroy']);
+
+    Route::get('connection/{connectionId}/sd-demands', ConnectionSdDemandController::class)
+        ->name('connection.sd-demands');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
@@ -209,5 +218,5 @@ Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
 
 // pdf download
 Route::get('pdf-download/{billId}', [BillingPdfController::class, 'index'])->name('pdf-download');
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

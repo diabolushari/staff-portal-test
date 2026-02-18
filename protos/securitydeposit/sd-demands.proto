@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.securitydeposit;
+
+option php_namespace = "Proto\\Consumers";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/empty.proto";
+import "parameters/parameter-value.proto";
+import "connections/connections.proto";
+
+message SdDemandMessage {
+  optional int32 sd_demand_id = 1;
+  int32 connection_id = 2;
+  int32 demand_type_id = 3;
+  optional int32 calculation_basic_id = 4;
+  string calculation_period_from = 5;
+  string calculation_period_to = 6;
+  string total_sd_amount = 7;
+  string applicable_from = 8;
+  optional string applicable_to = 9;
+  optional int32 status_id = 10;
+  bool is_active = 11;
+  optional int32 created_by = 12;
+  optional int32 updated_by = 13;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto demand_type = 14;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto calculation_basic = 15;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto status = 16;
+  com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 17;
+}
+
+message CreateSdDemandRequest {
+  SdDemandMessage sd_demand = 1;
+}
+
+message CreateSdDemandResponse {
+  SdDemandMessage sd_demand = 1;
+}
+
+message GetSdDemandRequest {
+  int32 sd_demand_id = 1;
+}
+
+message GetSdDemandResponse {
+  SdDemandMessage sd_demand = 1;
+}
+
+message ListSdDemandsRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListSdDemandsResponse {
+  repeated SdDemandMessage items = 1;
+}
+
+message ListSdDemandsPaginatedRequest {
+  optional int32 connection_id = 1;
+  optional int32 demand_type_id = 2;
+  optional int32 calculation_basic_id = 3;
+  optional string calculation_period_from = 4;
+  optional string calculation_period_to = 5;
+  optional string total_sd_amount = 6;
+  optional string applicable_from = 7;
+  optional string applicable_to = 8;
+  optional int32 status_id = 9;
+  optional int32 page = 10;
+  optional int32 page_size = 11;
+}
+
+message ListSdDemandsPaginatedResponse {
+  repeated SdDemandMessage items = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
+
+
+message UpdateSdDemandRequest {
+  SdDemandMessage sd_demand = 1;
+}
+
+message UpdateSdDemandResponse {
+  SdDemandMessage sd_demand = 1;
+}
+
+message DeleteSdDemandRequest {
+  int32 sd_demand_id = 1;
+}
+
+message DeleteSdDemandResponse {
+  bool success = 1;
+}
+
+service SdDemandService {
+  rpc CreateSdDemand(CreateSdDemandRequest) returns (CreateSdDemandResponse);
+  rpc GetSdDemand(GetSdDemandRequest) returns (GetSdDemandResponse);
+  rpc ListSdDemands(ListSdDemandsRequest) returns (ListSdDemandsResponse);
+  rpc ListSdDemandsPaginated(ListSdDemandsPaginatedRequest) returns (ListSdDemandsPaginatedResponse);
+  rpc UpdateSdDemand(UpdateSdDemandRequest) returns (UpdateSdDemandResponse);
+  rpc DeleteSdDemand(DeleteSdDemandRequest) returns (DeleteSdDemandResponse);
+}
