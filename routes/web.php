@@ -67,6 +67,7 @@ use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SecurityDeposit\SdDemandsController;
+use App\Http\Controllers\SecurityDeposit\SdCollectionController;
 use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
 use App\Http\Controllers\Tariff\TariffConfigController;
@@ -181,6 +182,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('connection/{connectionId}/sd-demands', ConnectionSdDemandController::class)
         ->name('connection.sd-demands');
+
+    //security deposit collection
+    Route::resource('sd-collections', SdCollectionController::class)
+        ->only(['create', 'store', 'edit', 'update', 'destroy']);
+
+
+    //     Route::get('sd-demand/{sdDemandId}/sd-collections', SdCollectionController::class)
+    // ->name('sd-demand.sd-collections');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);

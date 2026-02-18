@@ -1,6 +1,7 @@
 import ActionButton from '@/components/action-button'
 import { SdDemand } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
+import Button from '@/ui/button/Button'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
@@ -116,6 +117,14 @@ const SdDemandList = ({ sdDemands }: Props) => {
                         setShowDeleteModal(true)
                       }}
                       onEdit={() => router.get(route('sd-demands.edit', sdDemand.sd_demand_id))}
+                    />
+                    <Button
+                      label='Add Collection'
+                      variant='link'
+                      type='button'
+                      onClick={() =>
+                        router.get(`/sd-collections/create?sdDemandId=${sdDemand.sd_demand_id}`)
+                      }
                     />
                   </div>
                 </div>

@@ -49,7 +49,7 @@ export default function SdDemandCreate({
       breadcrumb={breadcrumbs}
       selectedItem='Security Deposit Demand Details'
       navItems={metadataNavItems}
-      title='Security Deposit Demand'
+      title='Security Deposit Demand Collections'
       description={sdDemand ? 'Edit Security Deposit Demand' : 'Add Security Deposit Demand'}
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-6'>
