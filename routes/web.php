@@ -185,11 +185,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //security deposit collection
     Route::resource('sd-collections', SdCollectionController::class)
-        ->only(['create', 'store', 'edit', 'update', 'destroy']);
-
-
-    //     Route::get('sd-demand/{sdDemandId}/sd-collections', SdCollectionController::class)
-    // ->name('sd-demand.sd-collections');
+        ->only(['create', 'store']);
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);

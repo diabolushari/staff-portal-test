@@ -1,5 +1,5 @@
 import { metadataNavItems } from '@/components/Navbar/navitems'
-import SdCollectionForm from '@/components/SecurityDeposit/SdDemands/SdCollectionForm'
+import SdCollectionForm from '@/components/SecurityDeposit/SdCollections/SdCollectionForm'
 import { SdDemand } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'

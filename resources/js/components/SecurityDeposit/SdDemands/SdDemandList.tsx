@@ -118,16 +118,16 @@ const SdDemandList = ({ sdDemands }: Props) => {
                       }}
                       onEdit={() => router.get(route('sd-demands.edit', sdDemand.sd_demand_id))}
                     />
-                    <Button
-                      label='Add Collection'
-                      variant='link'
-                      type='button'
-                      onClick={() =>
-                        router.get(`/sd-collections/create?sdDemandId=${sdDemand.sd_demand_id}`)
-                      }
-                    />
                   </div>
                 </div>
+                <Button
+                  label='Add Collection'
+                  variant='link'
+                  type='button'
+                  onClick={() =>
+                    router.get(`/sd-collections/create?sdDemandId=${sdDemand.sd_demand_id}`)
+                  }
+                />
               </div>
             </div>
           ))}
