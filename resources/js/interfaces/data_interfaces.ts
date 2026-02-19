@@ -834,4 +834,39 @@ connection:Connection
 demand_type:ParameterValues
 calculation_basic?:ParameterValues
 status:ParameterValues
+collections?:SdCollection[]
+}
+
+export interface SdCollection{
+   sd_collection_id:number;
+   sd_demand_id:number;
+   collection_date:string;
+   collection_mode_id:number;
+   collection_amount:string;
+   receipt_number:string;
+   collected_at:string;
+   collected_by:string;
+   is_active:boolean;
+   reversal_reason:string;
+   reversal_date:string;
+   reversed_by:string;
+   created_by:number;
+   updated_by:number;
+   collection_mode:ParameterValues;
+   sdAttribute:SdAttribute
+}
+
+export interface SdAttribute{
+  attribute_id:number;
+  sd_collection_id:number;
+  attribute_definition_id:number; 
+  attribute_value:string;
+  is_verified:boolean;
+  verified_by:string;
+  verified_date:string;
+  expiry_date:string;
+  document_path:string;
+  created_by:number;
+  updated_by:number;
+  attribute_definition:ParameterValues;
 }

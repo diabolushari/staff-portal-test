@@ -1,11 +1,12 @@
 import ActionButton from '@/components/action-button'
+import { Button } from '@/components/ui/button'
 import { SdDemand } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
-import Button from '@/ui/button/Button'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
+import SdCollectionList from '../SdCollections/SdCollectionList'
 
 interface Props {
   sdDemands: SdDemand[]
@@ -14,8 +15,6 @@ interface Props {
 const SdDemandList = ({ sdDemands }: Props) => {
   const [deleteItem, setDeleteItem] = useState<SdDemand | null>(null)
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
-
-  const [selectedItem, setSelectedItem] = useState<SdDemand | null>(null)
 
   useEffect(() => {
     if (!showDeleteModal) {
@@ -53,7 +52,6 @@ const SdDemandList = ({ sdDemands }: Props) => {
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
                           Calculation Period Start:{' '}
                           <StrongText>
-                            {' '}
                             {getDisplayDate(sdDemand.calculation_period_from)}
                           </StrongText>
                         </div>
@@ -120,15 +118,25 @@ const SdDemandList = ({ sdDemands }: Props) => {
                     />
                   </div>
                 </div>
+              </div>
+              <div className='flex justify-end p-4'>
                 <Button
-                  label='Add Collection'
-                  variant='link'
+                  variant='outline'
                   type='button'
                   onClick={() =>
                     router.get(`/sd-collections/create?sdDemandId=${sdDemand.sd_demand_id}`)
                   }
-                />
+                >
+                  Add Collection
+                </Button>
               </div>
+              {sdDemand.collections && sdDemand.collections.length > 0 ? (
+                <SdCollectionList sdCollections={sdDemand.collections} />
+              ) : (
+                <div className='flex justify-center gap-1'>
+                  <span className='context-menu-item'>No Collections Added</span>
+                </div>
+              )}
             </div>
           ))}
         </div>

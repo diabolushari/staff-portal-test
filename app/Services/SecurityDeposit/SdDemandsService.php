@@ -2,6 +2,8 @@
 
 namespace App\Services\SecurityDeposit;
 
+use App\GrpcConverters\SecurityDeposit\SdCollectionAttributeConverter;
+use App\GrpcConverters\SecurityDeposit\SdCollectionConverter;
 use App\GrpcConverters\SecurityDeposit\SdDemandConverter;
 use App\Http\Requests\SecurityDeposit\SdDemandFormRequest;
 use App\Services\Grpc\GrpcErrorService;
@@ -20,8 +22,11 @@ class SdDemandsService
 {
     private SdDemandServiceClient $client;
 
-    public function __construct(private readonly SdDemandConverter $sdDemandService)
-    {
+    public function __construct(
+        private readonly SdDemandConverter $sdDemandConverter,
+        private readonly SdCollectionConverter $sdCollectionConverter,
+        private readonly SdCollectionAttributeConverter $sdAttributeConverter
+    ) {
         $this->client = new SdDemandServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
@@ -48,6 +53,7 @@ class SdDemandsService
         }
 
         [$response, $status] = $this->client->ListSdDemandsPaginated($request)->wait();
+
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -59,7 +65,22 @@ class SdDemandsService
         $sdDemands = $response->getItems();
         $sdDemandArray = [];
         foreach ($sdDemands as $sdDemand) {
-            $sdDemandArray[] = $this->sdDemandService->convertToArray($sdDemand);
+            $demandData = $this->sdDemandConverter->convertToArray($sdDemand);
+            $collectionsArray = [];
+            foreach ($sdDemand->getCollections() as $collection) {
+                $collectionData = $this->sdCollectionConverter
+                    ->convertToArray($collection);
+                // Add attribute if present
+                if ($collection->hasSdAttribute()) {
+                    $collectionData['sdAttribute'] =
+                        $this->sdAttributeConverter
+                        ->sdAttributeToArray($collection->getSdAttribute());
+                }
+
+                $collectionsArray[] = $collectionData;
+            }
+            $demandData['collections'] = $collectionsArray;
+            $sdDemandArray[] = $demandData;
         }
 
         $paginatedData = [
@@ -77,7 +98,7 @@ class SdDemandsService
 
     public function create(SdDemandFormRequest $request): GrpcServiceResponse
     {
-        $sdDemand = $this->sdDemandService->formToGrpcMessage($request, null);
+        $sdDemand = $this->sdDemandConverter->formToGrpcMessage($request, null);
 
         $grpcRequest = new CreateSdDemandRequest();
         $grpcRequest->setSdDemand($sdDemand);
@@ -94,7 +115,7 @@ class SdDemandsService
             );
         }
 
-        $sdDemandArray = $this->sdDemandService->convertToArray($response->getSdDemand());
+        $sdDemandArray = $this->sdDemandConverter->convertToArray($response->getSdDemand());
 
 
         return GrpcServiceResponse::success(
@@ -107,7 +128,7 @@ class SdDemandsService
 
     public function update(SdDemandFormRequest $request, int $id): GrpcServiceResponse
     {
-        $sdDemand = $this->sdDemandService->formToGrpcMessage($request, $id);
+        $sdDemand = $this->sdDemandConverter->formToGrpcMessage($request, $id);
 
         $grpcRequest = new UpdateSdDemandRequest();
         $grpcRequest->setSdDemand($sdDemand);
@@ -125,7 +146,7 @@ class SdDemandsService
             );
         }
 
-        $sdDemandArray = $this->sdDemandService->convertToArray($response->getSdDemand());
+        $sdDemandArray = $this->sdDemandConverter->convertToArray($response->getSdDemand());
 
 
         return GrpcServiceResponse::success(
@@ -172,7 +193,7 @@ class SdDemandsService
         }
 
         $sdDemand = $response->getSdDemand();
-        $sdDemandArray = $this->sdDemandService->convertToArray($sdDemand);
+        $sdDemandArray = $this->sdDemandConverter->convertToArray($sdDemand);
 
         return GrpcServiceResponse::success($sdDemandArray, $response, $status->code, $status->details);
     }

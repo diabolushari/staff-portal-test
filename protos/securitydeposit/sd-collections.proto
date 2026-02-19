@@ -11,7 +11,6 @@ option java_outer_classname = "SdCollectionsProto";
 
 import "google/protobuf/empty.proto";
 import "parameters/parameter-value.proto";
-import "securitydeposit/sd-demands.proto";
 
 message SdCollectionMessage {
   optional int32 sd_collection_id = 1;
@@ -29,8 +28,7 @@ message SdCollectionMessage {
   optional int32 created_by = 13;
   optional int32 updated_by = 14;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto collection_mode = 15;
-  com.kseb.consumerservice.grpc.securitydeposit.SdDemandMessage sd_demand = 16;
-  optional SdAttributeResponse sd_attribute = 17;
+  optional SdAttributeResponse sd_attribute = 16;
 }
 
 message SdAttributeResponse {

@@ -35,11 +35,11 @@ class SdCollectionController extends Controller
         $sdDemand = $this->sdDemandsService->getSdDemand($sdDemandId)->data;
 
         $collectionModes = $this->parameterValueService
-            ->getParameterValues(null, null, null, 'Connection', 'Collection Mode')
+            ->getParameterValues(null, null, null, 'Connection', 'SD Collection Mode')
             ->data;
 
         $attributeDefinitions = $this->parameterValueService
-            ->getParameterValues(null, null, null, 'Connection', 'Collection Attribute')
+            ->getParameterValues(null, null, null, 'Connection', 'SD Collection Attribute')
             ->data;
 
         return Inertia::render('SecurityDeposit/SdCollections/SdCollectionCreate', [
@@ -64,7 +64,8 @@ class SdCollectionController extends Controller
         }
 
         $sdDemand = $this->sdDemandsService->getSdDemand($request->sdDemandId)->data;
-        $connectionId = $sdDemand?->connection_id;
+
+        $connectionId = $sdDemand['connection_id'];
 
         return redirect()
             ->route('connection.sd-demands', $connectionId)

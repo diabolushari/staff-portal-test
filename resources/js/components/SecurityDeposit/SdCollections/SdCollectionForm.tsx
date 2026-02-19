@@ -36,7 +36,6 @@ const SdCollectionForm = ({ sdDemand, collectionModes, attributeDefinitions }: P
     document_path: null,
     document_name: '',
   })
-  console.log('attributeDefinitions', attributeDefinitions)
 
   const url = route('sd-collections.store')
 
@@ -62,6 +61,8 @@ const SdCollectionForm = ({ sdDemand, collectionModes, attributeDefinitions }: P
     post(formData)
   }
 
+  const isReversed = false
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -86,6 +87,59 @@ const SdCollectionForm = ({ sdDemand, collectionModes, attributeDefinitions }: P
             required
             placeholder='Select Collection Mode'
           />
+
+          <Input
+            type='number'
+            label='Collection Amount'
+            value={formData.collection_amount}
+            setValue={setFormValue('collection_amount')}
+            error={errors.collection_amount}
+            required
+            placeholder='Enter Amount'
+          />
+
+          <Input
+            label='Receipt Number'
+            value={formData.receipt_number}
+            setValue={setFormValue('receipt_number')}
+            error={errors.receipt_number}
+            placeholder='Enter Receipt Number'
+          />
+
+          <Input
+            label='Collected By'
+            value={formData.collected_by}
+            setValue={setFormValue('collected_by')}
+            error={errors.collected_by}
+            placeholder='Collected By'
+          />
+          {isReversed && (
+            <>
+              <Input
+                label='Reversal Reason'
+                value={formData.reversal_reason}
+                setValue={setFormValue('reversal_reason')}
+                error={errors.reversal_reason}
+                placeholder='Reason (if reversed)'
+              />
+
+              <Datepicker
+                label='Reversed Date'
+                value={formData.reversed_date}
+                setValue={setFormValue('reversed_date')}
+                error={errors.reversed_date}
+                placeholder='Select Reversed Date'
+              />
+
+              <Input
+                label='Reversed By'
+                value={formData.reversed_by}
+                setValue={setFormValue('reversed_by')}
+                error={errors.reversed_by}
+                placeholder='Reversed By'
+              />
+            </>
+          )}
           {selectedCollectionMode?.parameter_value.toLowerCase() !== 'cash' &&
             formData.collection_mode_id && (
               <>
@@ -147,56 +201,6 @@ const SdCollectionForm = ({ sdDemand, collectionModes, attributeDefinitions }: P
                 />
               </>
             )}
-
-          <Input
-            type='number'
-            label='Collection Amount'
-            value={formData.collection_amount}
-            setValue={setFormValue('collection_amount')}
-            error={errors.collection_amount}
-            required
-            placeholder='Enter Amount'
-          />
-
-          <Input
-            label='Receipt Number'
-            value={formData.receipt_number}
-            setValue={setFormValue('receipt_number')}
-            error={errors.receipt_number}
-            placeholder='Enter Receipt Number'
-          />
-
-          <Input
-            label='Collected By'
-            value={formData.collected_by}
-            setValue={setFormValue('collected_by')}
-            error={errors.collected_by}
-            placeholder='Collected By'
-          />
-
-          <Input
-            label='Reversal Reason'
-            value={formData.reversal_reason}
-            setValue={setFormValue('reversal_reason')}
-            error={errors.reversal_reason}
-            placeholder='Reason (if reversed)'
-          />
-
-          <Datepicker
-            label='Reversed Date'
-            value={formData.reversed_date}
-            setValue={setFormValue('reversed_date')}
-            error={errors.reversed_date}
-            placeholder='Select Reversed Date'
-          />
-
-          <Input
-            label='Reversed By'
-            value={formData.reversed_by}
-            setValue={setFormValue('reversed_by')}
-            error={errors.reversed_by}
-            placeholder='Reversed By'
-          />
         </div>
 
         <div className='flex justify-end'>
