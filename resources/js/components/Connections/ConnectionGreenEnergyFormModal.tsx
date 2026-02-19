@@ -101,12 +101,14 @@ const ConnectionGreenEnergyFormModal = ({
             setValue={setFormValue('effective_start')}
             value={formData.effective_start}
             error={errors?.effective_start}
+            placeholder='Select Effective Start'
           />
           <Datepicker
             label='Effective End Date'
             setValue={setFormValue('effective_end')}
             value={formData.effective_end}
             error={errors?.effective_end}
+            placeholder='Select Effective End'
           />
           <TextArea
             label='Remarks'

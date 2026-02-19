@@ -90,6 +90,7 @@ export default function ConnectionPartiesFormModal({
           setValue={setFormValue('effective_start')}
           error={errors.effective_start}
           required
+          placeholder='Select From Date'
         />
         <Datepicker
           label='To Date'
@@ -97,6 +98,7 @@ export default function ConnectionPartiesFormModal({
           setValue={setFormValue('effective_end')}
           error={errors.effective_end}
           required
+          placeholder='Select To Date'
         />
         <Button
           type='submit'

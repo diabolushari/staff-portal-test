@@ -7,7 +7,7 @@ import Input from '../form/Input'
 interface Props {
   title?: string
   placeholder?: string
-  url?: string
+  url: string
   search?: string
   filters?: Record<string, string | number>
 }
@@ -47,10 +47,23 @@ export default function ListSearch({ title, placeholder, url, search, filters }:
                 placeholder={placeholder ?? 'Search'}
                 style='google'
               />
+
               <Button
                 label='Search'
                 type='submit'
               />
+
+              {(search || filters?.search) && (
+                <Button
+                  variant='secondary'
+                  label='Reset'
+                  type='button'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    router.get(url)
+                  }}
+                />
+              )}
             </div>
           </form>
         </div>

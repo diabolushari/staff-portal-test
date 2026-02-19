@@ -17,8 +17,6 @@ export interface MeterFormProps {
   resetTypes: ParameterValues[]
   internalPtRatios: ParameterValues[]
   internalCtRatios: ParameterValues[]
-  meterCtPrimary: ParameterValues[]
-  meterCtSecondary: ParameterValues[]
   meterPtPrimary: ParameterValues[]
   meterPtSecondary: ParameterValues[]
   meter?: Meter
@@ -50,8 +48,6 @@ export default function MeterCreatePage({
   units,
   resetTypes,
   meter,
-  meterCtPrimary,
-  meterCtSecondary,
   meterPtPrimary,
   meterPtSecondary,
 }: Readonly<MeterFormProps>) {
@@ -73,8 +69,6 @@ export default function MeterCreatePage({
             dialingFactors={dialingFactors}
             units={units}
             resetTypes={resetTypes}
-            internalCtPrimary={meterCtPrimary}
-            internalCtSecondary={meterCtSecondary}
             internalPtPrimary={meterPtPrimary}
             internalPtSecondary={meterPtSecondary}
             meter={meter}
