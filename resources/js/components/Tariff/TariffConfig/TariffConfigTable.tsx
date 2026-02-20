@@ -17,6 +17,7 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 import ActionButton from '@/components/action-button'
+import InlineSearch from '@/ui/Search/InlineSearch'
 
 export default function TariffConfigTable({
   tariff_configs,
@@ -47,6 +48,14 @@ export default function TariffConfigTable({
   return (
     <CustomCard
       title='Tariff Configurations'
+      centerSlot={
+        <div className='w-[320px]'>
+          <InlineSearch
+            url={route('tariff-configs.index')}
+            placeholder='Search connection tariff...'
+          />
+        </div>
+      }
       onAddClick={() => {
         setSelectedTariffConfig(null)
         setAddTariffConfig(true)
