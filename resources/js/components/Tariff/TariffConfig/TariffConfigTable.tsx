@@ -15,20 +15,22 @@ import DeleteModal from '@/ui/Modal/DeleteModal'
 import TariffConfigForm from '../TariffConfigForm'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { getDisplayDate } from '@/utils'
-import { router } from '@inertiajs/react'
 import ActionButton from '@/components/action-button'
-import InlineSearch from '@/ui/Search/InlineSearch'
+import TariffConfigInlineSearch from './TariffConfigInlineSearch'
+
+interface Props {
+  tariff_configs: Paginator<TariffConfig>
+  tariffOrder: TariffOrder
+  connectionTariffs: ParameterValues[]
+  oldConnectionTariffId: number
+}
 
 export default function TariffConfigTable({
   tariff_configs,
   tariffOrder,
-  consumption_tariff,
-}: {
-  tariff_configs: Paginator<TariffConfig>
-
-  tariffOrder: TariffOrder
-  consumption_tariff: ParameterValues[]
-}) {
+  connectionTariffs,
+  oldConnectionTariffId,
+}: Props) {
   const [addTariffConfig, setAddTariffConfig] = useState<boolean>(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [selectedTariffConfig, setSelectedTariffConfig] = useState<TariffConfig | null | undefined>(
@@ -48,20 +50,22 @@ export default function TariffConfigTable({
   return (
     <CustomCard
       title='Tariff Configurations'
-      centerSlot={
-        <div className='w-[320px]'>
-          <InlineSearch
-            url={route('tariff-configs.index')}
-            placeholder='Search connection tariff...'
-          />
-        </div>
-      }
       onAddClick={() => {
         setSelectedTariffConfig(null)
         setAddTariffConfig(true)
       }}
       addButtonText='Add Tariff Config'
+      searchSlot={
+        <div className='w-full items-center'>
+          <TariffConfigInlineSearch
+            tariffOrder={tariffOrder}
+            connectionTariffs={connectionTariffs}
+            oldConnectionTariffId={oldConnectionTariffId}
+          />
+        </div>
+      }
     >
+      <div className='overflow-visible'></div>
       <div className='overflow-visible'>
         <Table>
           <TableHeader>
@@ -118,7 +122,7 @@ export default function TariffConfigTable({
       {addTariffConfig && (
         <TariffConfigForm
           tariffOrder={tariffOrder}
-          consumptionTariff={consumption_tariff ?? []}
+          connectionTariffs={connectionTariffs ?? []}
           setModalOpen={setAddTariffConfig}
           tariffConfig={selectedTariffConfig}
         />
