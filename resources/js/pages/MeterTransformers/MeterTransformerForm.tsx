@@ -1,6 +1,5 @@
 import { meteringBillingNavItems } from '@/components/Navbar/navitems'
 import useCustomForm from '@/hooks/useCustomForm'
-import useFetchList from '@/hooks/useFetchList'
 import useFetchRecord from '@/hooks/useFetchRecord'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { MeterTransformer } from '@/interfaces/data_interfaces'
@@ -201,7 +200,25 @@ export default function MeterTransformerForm({
             displayKey='parameter_value'
             error={errors.burden_id}
           />
-          {filteredPrimaryRatios && (
+          {transformerType === 'CT' && (
+            <Input
+              label={transformerInfo.primary}
+              value={formData.ratio_primary_value}
+              setValue={setFormValue('ratio_primary_value')}
+              type='number'
+              error={errors.ratio_primary_value}
+            />
+          )}
+          {transformerType === 'CT' && (
+            <Input
+              label={transformerInfo.secondary}
+              value={formData.ratio_secondary_value}
+              setValue={setFormValue('ratio_secondary_value')}
+              type='number'
+              error={errors.ratio_secondary_value}
+            />
+          )}
+          {filteredPrimaryRatios && transformerType !== 'CT' && (
             <SelectList
               label={transformerInfo.primary}
               value={formData.ratio_primary_value}
@@ -213,7 +230,7 @@ export default function MeterTransformerForm({
             />
           )}
 
-          {filteredSecondaryRatios && (
+          {filteredSecondaryRatios && transformerType !== 'CT' && (
             <SelectList
               label={transformerInfo.secondary}
               value={formData.ratio_secondary_value}

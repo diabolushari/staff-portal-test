@@ -84,15 +84,19 @@ class TariffOrderController extends Controller
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 5;
         $response = $this->tariffOrderService->getTariffOrder($id);
+
+        $connectionTariffId= $request->input('connection_tariff_id');
         if ($response->hasValidationError()) {
             return redirect()->back()->withErrors([
                 'message' => $response->error ?? $response->statusDetails ?? 'Unknown error',
             ]);
         }
+        
         $tariffConfigs = $this->tariffConfigService->listPaginatedTariffConfigs(
             pageNumber: $pageNumber,
             pageSize: $pageSize,
-            tariffOrderId: $response->data['tariff_order_id'] ?? null
+            tariffOrderId: $response->data['tariff_order_id'] ?? null,
+            connectionTariffId: $connectionTariffId ?? null
         );
 
         $paginated = null;
@@ -106,7 +110,7 @@ class TariffOrderController extends Controller
             );
         }
 
-        $consumptionTariff = $parameterValueService->getParameterValues(
+        $connectionTariffs = $parameterValueService->getParameterValues(
             1,
             10,
             null,
@@ -117,7 +121,8 @@ class TariffOrderController extends Controller
         return Inertia::render('TariffOrder/TariffOrderShowPage', [
             'tariff_order' => $response->data,
             'tariff_configs' => $paginated ?? [],
-            'consumption_tariff' => $consumptionTariff->data,
+            'connection_tariffs' => $connectionTariffs->data,
+            'oldConnectionTariffId'=>$connectionTariffId,
         ]);
     }
 

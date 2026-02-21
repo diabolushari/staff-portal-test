@@ -22,8 +22,6 @@ export interface MeterFormProps {
   dialingFactors: ParameterValues[]
   units: ParameterValues[]
   resetTypes: ParameterValues[]
-  internalCtPrimary: ParameterValues[]
-  internalCtSecondary: ParameterValues[]
   internalPtPrimary: ParameterValues[]
   internalPtSecondary: ParameterValues[]
   meter?: Meter
@@ -37,8 +35,6 @@ export default function MeterForm({
   dialingFactors,
   units,
   resetTypes,
-  internalCtPrimary,
-  internalCtSecondary,
   internalPtPrimary,
   internalPtSecondary,
   meter,
@@ -76,7 +72,7 @@ export default function MeterForm({
     pt_count: meter?.pt_count ?? '',
     _method: meter ? 'PUT' : 'POST',
   })
-  
+
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     meter ? route('meters.update', meter?.meter_id) : route('meters.store'),
     {
@@ -270,23 +266,19 @@ export default function MeterForm({
           min={0}
           required
         />
-        <SelectList
+        <Input
+          type='number'
           label='Internal CT Primary'
           value={formData.internal_ct_primary}
           setValue={setFormValue('internal_ct_primary')}
-          list={internalCtPrimary}
-          dataKey='parameter_value'
-          displayKey='parameter_value'
           error={errors.internal_ct_primary}
           required
         />
-        <SelectList
+        <Input
+          type='number'
           label='Internal CT Secondary'
           value={formData.internal_ct_secondary}
           setValue={setFormValue('internal_ct_secondary')}
-          list={internalCtSecondary}
-          dataKey='parameter_value'
-          displayKey='parameter_value'
           error={errors.internal_ct_secondary}
           required
         />

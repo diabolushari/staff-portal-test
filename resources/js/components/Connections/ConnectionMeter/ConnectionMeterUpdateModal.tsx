@@ -74,11 +74,13 @@ export default function ConnectionMeterUpdateModal({
                 label='Notice Date'
                 value={formData.notice_date}
                 setValue={setFormValue('notice_date')}
+                placeholder='Select Notice Date'
               />
               <Datepicker
                 label='Intimation Date'
                 value={formData.intimation_date}
                 setValue={setFormValue('intimation_date')}
+                placeholder='Select Intimation Date'
               />
             </div>
           ) : (

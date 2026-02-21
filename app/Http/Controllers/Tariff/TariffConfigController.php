@@ -58,7 +58,7 @@ class TariffConfigController extends Controller
     {
         $tariffOrder = $this->tariffOrderService->getTariffOrder($tariffOrderId);
 
-        $consumptionTariff = $this->parameterValueService->getParameterValues(
+        $connectionTariff = $this->parameterValueService->getParameterValues(
             1,
             10,
             null,
@@ -68,7 +68,7 @@ class TariffConfigController extends Controller
 
         return Inertia::render('TariffConfig/TariffConfigCreatePage', [
             'tariff_order' => $tariffOrder->data,
-            'consumption_tariff' => $consumptionTariff->data,
+            'connection_tariffs' => $connectionTariff->data,
         ]);
     }
 

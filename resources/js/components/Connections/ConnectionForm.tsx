@@ -289,6 +289,7 @@ export default function ConnectionForm({
             value={formData.connected_date}
             error={errors?.connected_date}
             required
+            placeholder='Select Connection Date'
           />
           <Input
             label='Number of Main Meters'
