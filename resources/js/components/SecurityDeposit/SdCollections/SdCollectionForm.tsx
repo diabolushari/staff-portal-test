@@ -1,23 +1,23 @@
 import { Button } from '@/components/ui/button'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { SdDemand } from '@/interfaces/data_interfaces'
+import { SdAttribute, SdDemand } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
-import CheckBox from '@/ui/form/CheckBox'
 import Datepicker from '@/ui/form/DatePicker'
-import FileInput from '@/ui/form/FileInput'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import SdAttributeForm from './SdAttributeForm'
 
 interface Props {
   sdDemand: SdDemand
   collectionModes: ParameterValues[]
-  attributeDefinitions: ParameterValues[]
 }
 
-const SdCollectionForm = ({ sdDemand, collectionModes, attributeDefinitions }: Props) => {
-  const { formData, setFormValue, toggleBoolean } = useCustomForm({
+const SdCollectionForm = ({ sdDemand, collectionModes }: Props) => {
+  const [selectedCollectionMode, setSelectedCollectionMode] = useState<ParameterValues | null>(null)
+
+  const { formData, setFormValue } = useCustomForm({
     sd_demand_id: sdDemand.sd_demand_id,
     collection_date: '',
     collection_mode_id: '',
@@ -36,13 +36,19 @@ const SdCollectionForm = ({ sdDemand, collectionModes, attributeDefinitions }: P
     document_path: null,
     document_name: '',
   })
+  useEffect(() => {
+    if (!formData.collection_mode_id) return setSelectedCollectionMode(null)
+    const CollectionMode = collectionModes.find(
+      (mode) => mode.id == Number(formData.collection_mode_id)
+    )
+    setSelectedCollectionMode(CollectionMode ?? null)
+  }, [formData.collection_mode_id])
 
   const url = route('sd-collections.store')
 
   const { post, loading, errors } = useInertiaPost<typeof formData>(url, {
     showErrorToast: true,
   })
-  const [selectedCollectionMode, setSelectedCollectionMode] = useState<ParameterValues | null>(null)
 
   useEffect(() => {
     if (formData.collection_mode_id) {
@@ -56,12 +62,28 @@ const SdCollectionForm = ({ sdDemand, collectionModes, attributeDefinitions }: P
     }
   }, [formData.collection_mode_id, collectionModes])
 
+  const isReversed = false
+
+  const [attributeData, setAttributeData] = useState<SdAttribute[] | null>(null)
+
+  const customFormData = useMemo(() => {
+    return {
+      ...formData,
+      attributeData: attributeData?.map((item) => {
+        return {
+          attribute_definition_id: item.attribute_definition_id,
+          attribute_value: item.attribute_value,
+          file: item.file,
+        }
+      }),
+    }
+  }, [attributeData, formData])
+
+  console.log(customFormData)
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    post(formData)
+    post(customFormData)
   }
-
-  const isReversed = false
 
   return (
     <div>
@@ -140,68 +162,12 @@ const SdCollectionForm = ({ sdDemand, collectionModes, attributeDefinitions }: P
               />
             </>
           )}
-          {selectedCollectionMode?.parameter_value.toLowerCase() !== 'cash' &&
-            formData.collection_mode_id && (
-              <>
-                <SelectList
-                  label='Attribute Definition'
-                  list={attributeDefinitions}
-                  dataKey='id'
-                  displayKey='parameter_value'
-                  value={formData.attribute_definition_id}
-                  setValue={setFormValue('attribute_definition_id')}
-                  error={errors.attribute_definition_id}
-                  placeholder='Select Attribute Definition'
-                  required
-                />
-
-                <Input
-                  label='Attribute Value'
-                  value={formData.attribute_value}
-                  setValue={setFormValue('attribute_value')}
-                  error={errors.attribute_value}
-                  required
-                />
-
-                <CheckBox
-                  label='Is Verified'
-                  value={formData.is_verified}
-                  toggleValue={toggleBoolean('is_verified')}
-                  error={errors.is_verified}
-                />
-
-                <Datepicker
-                  label='Verified Date'
-                  value={formData.verified_date}
-                  setValue={setFormValue('verified_date')}
-                  error={errors.verified_date}
-                  placeholder='Select Verified Date'
-                />
-
-                <Datepicker
-                  label='Expiry Date'
-                  value={formData.expiry_date}
-                  setValue={setFormValue('expiry_date')}
-                  error={errors.expiry_date}
-                  placeholder='Select Expiry Date'
-                />
-
-                <FileInput
-                  label='Document'
-                  setValue={(file) => {
-                    setFormValue('document_path')(file)
-                    setFormValue('document_name')(file ? file.name : '')
-                  }}
-                  file={
-                    typeof formData.document_path === 'string'
-                      ? { name: formData.document_path, size: 0, type: '' }
-                      : formData.document_path
-                  }
-                  error={errors.document_path}
-                />
-              </>
-            )}
         </div>
+        <SdAttributeForm
+          selectedCollectionMode={selectedCollectionMode}
+          attributeData={attributeData}
+          setAttributeData={setAttributeData}
+        />
 
         <div className='flex justify-end'>
           <Button

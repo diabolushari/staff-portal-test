@@ -8,15 +8,13 @@ use App\GrpcConverters\SecurityDeposit\SdDemandConverter;
 use App\Http\Requests\SecurityDeposit\SdDemandFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
-use Proto\Consumers\CreateSdDemandRequest;
-use Proto\Consumers\GetSdDemandRequest;
-use Proto\Consumers\SdDemandServiceClient;
 use Grpc\ChannelCredentials;
+use Proto\Consumers\CreateSdDemandRequest;
 use Proto\Consumers\DeleteSdDemandRequest;
+use Proto\Consumers\GetSdDemandRequest;
 use Proto\Consumers\ListSdDemandsPaginatedRequest;
+use Proto\Consumers\SdDemandServiceClient;
 use Proto\Consumers\UpdateSdDemandRequest;
-use Proto\Consumers\ListSdDemandsByConnectionIdRequest;
-
 
 class SdDemandsService
 {
@@ -70,11 +68,16 @@ class SdDemandsService
             foreach ($sdDemand->getCollections() as $collection) {
                 $collectionData = $this->sdCollectionConverter
                     ->convertToArray($collection);
-                // Add attribute if present
-                if ($collection->hasSdAttribute()) {
-                    $collectionData['sdAttribute'] =
-                        $this->sdAttributeConverter
-                        ->sdAttributeToArray($collection->getSdAttribute());
+
+                $attributesArray = [];
+
+                foreach ($collection->getSdAttribute() as $attribute) {
+                    $attributesArray[] = $this->sdAttributeConverter
+                        ->sdAttributeToArray($attribute);
+                }
+
+                if (! empty($attributesArray)) {
+                    $collectionData['sdAttribute'] = $attributesArray;
                 }
 
                 $collectionsArray[] = $collectionData;
@@ -94,13 +97,11 @@ class SdDemandsService
         return GrpcServiceResponse::success($paginatedData, $response, $status->code, $status->details);
     }
 
-
-
     public function create(SdDemandFormRequest $request): GrpcServiceResponse
     {
         $sdDemand = $this->sdDemandConverter->formToGrpcMessage($request, null);
 
-        $grpcRequest = new CreateSdDemandRequest();
+        $grpcRequest = new CreateSdDemandRequest;
         $grpcRequest->setSdDemand($sdDemand);
 
         [$response, $status] =
@@ -117,7 +118,6 @@ class SdDemandsService
 
         $sdDemandArray = $this->sdDemandConverter->convertToArray($response->getSdDemand());
 
-
         return GrpcServiceResponse::success(
             $sdDemandArray,
             $response,
@@ -130,9 +130,8 @@ class SdDemandsService
     {
         $sdDemand = $this->sdDemandConverter->formToGrpcMessage($request, $id);
 
-        $grpcRequest = new UpdateSdDemandRequest();
+        $grpcRequest = new UpdateSdDemandRequest;
         $grpcRequest->setSdDemand($sdDemand);
-
 
         [$response, $status] =
             $this->client->UpdateSdDemand($grpcRequest)->wait();
@@ -148,7 +147,6 @@ class SdDemandsService
 
         $sdDemandArray = $this->sdDemandConverter->convertToArray($response->getSdDemand());
 
-
         return GrpcServiceResponse::success(
             $sdDemandArray,
             $response,
@@ -159,7 +157,7 @@ class SdDemandsService
 
     public function deleteSdDemand(int $id)
     {
-        $grpcRequest = new DeleteSdDemandRequest();
+        $grpcRequest = new DeleteSdDemandRequest;
         $grpcRequest->setSdDemandId($id);
 
         [$response, $status] = $this->client->DeleteSdDemand($grpcRequest)->wait();
@@ -173,7 +171,7 @@ class SdDemandsService
         }
 
         return GrpcServiceResponse::success([
-            'success' => $response->getSuccess()
+            'success' => $response->getSuccess(),
         ]);
     }
 

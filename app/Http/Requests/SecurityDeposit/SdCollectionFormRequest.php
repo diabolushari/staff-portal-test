@@ -3,10 +3,8 @@
 namespace App\Http\Requests\SecurityDeposit;
 
 use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Attributes\Validation\Required;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
-use Illuminate\Http\UploadedFile;
 
 #[MapName(SnakeCaseMapper::class)]
 class SdCollectionFormRequest extends Data
@@ -22,11 +20,7 @@ class SdCollectionFormRequest extends Data
         public ?string $reversalReason,
         public ?string $reversedDate,
         public ?string $reversedBy,
-        public ?int $attributeDefinitionId,
-        public ?string $attributeValue,
-        public ?bool $isVerified,
-        public ?string $verifiedDate,
-        public ?string $expiryDate,
-        public ?UploadedFile $documentPath,
+      /** @var DataCollection<SdAttributeFormRequest> */
+        public ?array $attributeData,
     ) {}
 }

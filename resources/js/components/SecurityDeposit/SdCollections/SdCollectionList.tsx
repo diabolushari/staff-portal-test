@@ -1,4 +1,5 @@
 import { SdCollection } from '@/interfaces/data_interfaces'
+import StrongText from '@/typography/StrongText'
 import { getDisplayDate } from '@/utils'
 
 interface Props {
@@ -14,90 +15,106 @@ const SdCollectionList = ({ sdCollections }: Props) => {
           key={collection?.sd_collection_id}
           className='rounded-lg border border-slate-200 bg-slate-50 p-3 shadow-sm'
         >
-          <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-center'>
-            <div className='flex flex-wrap items-center gap-4 text-sm'>
-              <div className='flex items-center gap-1'>
-                <span className='font-medium text-slate-700'>Date:</span>
-                <span className='cursor-pointer text-slate-600'>
-                  {getDisplayDate(collection.collection_date)}
-                </span>
-              </div>
-              <div className='flex items-center gap-1'>
-                <span className='font-medium text-slate-700'>Mode:</span>
-                <span className='text-slate-600'>{collection.collection_mode.parameter_value}</span>
-              </div>
-              <div className='flex items-center gap-1'>
-                <span className='font-medium text-slate-700'>Amount:</span>
-                <span className='text-slate-600'>{collection.collection_amount}</span>
-              </div>
-              {collection.receipt_number && (
-                <div className='flex items-center gap-1'>
-                  <span className='font-medium text-slate-700'>Receipt Number:</span>
-                  <span className='text-slate-600'>{collection.receipt_number}</span>
+          <div className='flex items-start justify-between'>
+            <div className='flex flex-1 cursor-pointer flex-col gap-2.5 p-[10px]'>
+              <div className='grid grid-cols-3 gap-x-6 gap-y-2'>
+                <div className='flex items-center gap-[3px]'>
+                  <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                    Collection Date:{' '}
+                    <StrongText> {getDisplayDate(collection.collection_date)}</StrongText>
+                  </div>
                 </div>
-              )}
-              {collection.collected_at && (
-                <div className='flex items-center gap-1'>
-                  <span className='font-medium text-slate-700'>Collected At:</span>
-                  <span className='text-slate-600'>{collection.collected_at}</span>
+                <div className='flex items-center gap-[3px]'>
+                  <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                    Collection Mode:{' '}
+                    <StrongText> {collection.collection_mode.parameter_value}</StrongText>
+                  </div>
                 </div>
-              )}
-              {collection.collected_by && (
-                <div className='flex items-center gap-1'>
-                  <span className='font-medium text-slate-700'>Collected By:</span>
-                  <span className='text-slate-600'>{collection.collected_by}</span>
+                <div className='flex items-center gap-[3px]'>
+                  <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                    Collection Amount: <StrongText> {collection.collection_amount}</StrongText>
+                  </div>
                 </div>
-              )}
+                {collection.receipt_number && (
+                  <div className='flex items-center gap-[3px]'>
+                    <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                      Receipt Number:<StrongText> {collection.receipt_number}</StrongText>
+                    </div>
+                  </div>
+                )}
+                {collection.collected_at && (
+                  <div className='flex items-center gap-[3px]'>
+                    <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                      Collected At: <StrongText> {collection.collected_at}</StrongText>
+                    </div>
+                  </div>
+                )}
+                {collection.collected_by && (
+                  <div className='flex items-center gap-[3px]'>
+                    <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                      Collected By: <StrongText> {collection.collected_by}</StrongText>
+                    </div>
+                  </div>
+                )}
+                {collection.reversal_reason && (
+                  <div className='flex items-center gap-[3px]'>
+                    <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                      Reversal Reason: <StrongText> {collection.reversal_reason}</StrongText>
+                    </div>
+                  </div>
+                )}
+                {collection.reversal_date && (
+                  <div className='flex items-center gap-[3px]'>
+                    <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                      Reversal Date:{' '}
+                      <StrongText> {getDisplayDate(collection.reversal_date)}</StrongText>
+                    </div>
+                  </div>
+                )}
+                {collection.reversed_by && (
+                  <div className='flex items-center gap-[3px]'>
+                    <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                      Reversal By: <StrongText> {collection.reversed_by}</StrongText>
+                    </div>
+                  </div>
+                )}
+                {collection.sdAttribute &&
+                  collection.sdAttribute.length > 0 &&
+                  collection.sdAttribute.map((attribute) => {
+                    const type = attribute.attribute_definition?.attribute1_value.toLowerCase()
+                    let displayValue
+                    if (type === 'date') {
+                      displayValue = getDisplayDate(attribute.attribute_value)
+                    } else if (type === 'file' && attribute.attribute_value) {
+                      displayValue = (
+                        <a
+                          href={`/attribute-download?path=${attribute.attribute_value}`}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='text-blue-600 underline'
+                        >
+                          Download
+                        </a>
+                      )
+                    } else {
+                      displayValue = attribute.attribute_value
+                    }
+
+                    return (
+                      <div
+                        key={attribute.attribute_id}
+                        className='flex items-center gap-[3px]'
+                      >
+                        <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                          {attribute.attribute_definition?.parameter_value}:{' '}
+                          <StrongText>{displayValue}</StrongText>
+                        </div>
+                      </div>
+                    )
+                  })}
+              </div>
             </div>
           </div>
-          {collection.sdAttribute && (
-            <div className='flex flex-col justify-between gap-4 pt-2 sm:flex-row sm:items-center'>
-              <div className='flex flex-wrap items-center gap-4 text-sm'>
-                {collection.sdAttribute.attribute_definition?.parameter_value && (
-                  <div className='flex items-center gap-1'>
-                    <span className='font-medium text-slate-700'>Attribute Definition:</span>
-                    <span className='cursor-pointer text-slate-600'>
-                      {collection.sdAttribute.attribute_definition?.parameter_value}
-                    </span>
-                  </div>
-                )}
-                <div className='flex items-center gap-1'>
-                  <span className='font-medium text-slate-700'>Attribute Value:</span>
-                  <span className='text-slate-600'>{collection.sdAttribute.attribute_value}</span>
-                </div>
-
-                <div className='flex items-center gap-1'>
-                  <span className='font-medium text-slate-700'>Verified:</span>
-                  <span className='text-slate-600'>
-                    {collection.sdAttribute.is_verified ? 'Yes' : 'No'}
-                  </span>
-                </div>
-
-                {collection.sdAttribute.verified_by && (
-                  <div className='flex items-center gap-1'>
-                    <span className='font-medium text-slate-700'>Verified By:</span>
-                    <span className='text-slate-600'>{collection.sdAttribute.verified_by}</span>
-                  </div>
-                )}
-                {collection.sdAttribute.verified_date && (
-                  <div className='flex items-center gap-1'>
-                    <span className='font-medium text-slate-700'>Verified Date:</span>
-                    <span className='text-slate-600'>
-                      {getDisplayDate(collection.sdAttribute.verified_date)}
-                    </span>
-                  </div>
-                )}
-                {collection.sdAttribute.expiry_date && (
-                  <div className='flex items-center gap-1'>
-                    <span className='font-medium text-slate-700'>Expiry Date:</span>
-                    <span className='text-slate-600'>
-                      {getDisplayDate(collection.sdAttribute.expiry_date)}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
         </div>
       ))}
     </div>

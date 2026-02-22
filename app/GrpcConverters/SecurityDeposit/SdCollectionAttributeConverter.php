@@ -5,7 +5,6 @@ namespace App\GrpcConverters\SecurityDeposit;
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use Proto\SecurityDeposit\SdAttributeResponse;
 use Proto\SecurityDeposit\SdCollectionAttributeMessage;
-use Proto\SecurityDeposit\SdCollectionMessage;
 
 class SdCollectionAttributeConverter
 {
@@ -37,17 +36,13 @@ class SdCollectionAttributeConverter
         if ($sdAttribute === null) {
             return null;
         }
+
         return [
             'attribute_id' => $sdAttribute->getAttributeId(),
             'sd_collection_id' => $sdAttribute->getSdCollectionId(),
             'attribute_definition_id' => $sdAttribute->getAttributeDefinitionId(),
             'attribute_value' => $sdAttribute->getAttributeValue(),
-            'is_verified' => $sdAttribute->getAttributeValue(),
-            'verified_by' => $sdAttribute->hasVerifiedBy() ? $sdAttribute->getVerifiedBy() : null,
-            'verified_date' => $sdAttribute->hasVerifiedDate() ? $sdAttribute->getVerifiedDate() : null,
-            'expiry_date' => $sdAttribute->hasExpiryDate() ? $sdAttribute->getVerifiedDate() : null,
-            'document_path' => $sdAttribute->hasDocumentPath() ? $sdAttribute->getDocumentPath() : null,
-            'created_by' => $sdAttribute->hasCreatedBy() ? $sdAttribute->getVerifiedBy() : null,
+            'mime_type' => $sdAttribute->getMimeType(),
             'updated_by' => $sdAttribute->getUpdatedBy() ? $sdAttribute->getUpdatedBy() : null,
             'attribute_definition' => $sdAttribute->hasAttributeDefinition() ?
                 ParameterValueProtoConvertor::convertToArray($sdAttribute->getAttributeDefinition()) :

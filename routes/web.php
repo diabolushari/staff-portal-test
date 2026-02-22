@@ -66,8 +66,9 @@ use App\Http\Controllers\Offices\OfficesCreateWithCsvController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
-use App\Http\Controllers\SecurityDeposit\SdDemandsController;
+use App\Http\Controllers\SecurityDeposit\SdAttributeDownloadController;
 use App\Http\Controllers\SecurityDeposit\SdCollectionController;
+use App\Http\Controllers\SecurityDeposit\SdDemandsController;
 use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
 use App\Http\Controllers\Tariff\TariffConfigController;
@@ -176,16 +177,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('meter-profile', MeterProfileParameterController::class);
 
-    //Security Deposit
+    // Security Deposit
     Route::resource('sd-demands', SdDemandsController::class)
         ->only(['create', 'store', 'edit', 'update', 'destroy']);
 
     Route::get('connection/{connectionId}/sd-demands', ConnectionSdDemandController::class)
         ->name('connection.sd-demands');
 
-    //security deposit collection
+    // security deposit collection
     Route::resource('sd-collections', SdCollectionController::class)
         ->only(['create', 'store']);
+    Route::get('attribute-download', SdAttributeDownloadController::class)
+        ->name('attribute-download');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
@@ -223,5 +226,5 @@ Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
 
 // pdf download
 Route::get('pdf-download/{billId}', [BillingPdfController::class, 'index'])->name('pdf-download');
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';
