@@ -20,7 +20,7 @@ export default function SdDemandCreate({
   connection,
   sdDemand,
 }: Readonly<Props>) {
-  const connectionData = connection ? connection : sdDemand?.connection
+  const connectionData = connection ?? sdDemand?.connection
 
   if (!connectionData) {
     throw new Error('Connection data not found')
@@ -46,8 +46,8 @@ export default function SdDemandCreate({
   ]
   return (
     <ConnectionsLayout
-      connection={connection}
-      connectionId={connection?.connection_id ?? 0}
+      connection={connectionData}
+      connectionId={connectionData?.connection_id ?? 0}
       value={'connection'}
       subTabValue='sd-demands'
       heading='SD Demands'
@@ -55,12 +55,12 @@ export default function SdDemandCreate({
         sdDemand ? (
           <>
             Edit SD Demand for consumer number {'   '}
-            <span className='font-bold'>{connection?.consumer_number}</span>
+            <span className='font-bold'>{connectionData?.consumer_number}</span>
           </>
         ) : (
           <>
             Create SD Demands for consumer number {'   '}
-            <span className='font-bold'>{connection?.consumer_number}</span>
+            <span className='font-bold'>{connectionData?.consumer_number}</span>
           </>
         )
       }
