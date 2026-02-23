@@ -1,10 +1,12 @@
 import ActionButton from '@/components/action-button'
+import { Button } from '@/components/ui/button'
 import { SdDemand } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
+import SdCollectionList from '../SdCollections/SdCollectionList'
 
 interface Props {
   sdDemands: SdDemand[]
@@ -30,62 +32,56 @@ const SdDemandList = ({ sdDemands }: Props) => {
             >
               <div className='flex items-start justify-between'>
                 <div className='flex flex-1 cursor-pointer flex-col gap-2.5 p-[10px]'>
-                  <div className='flex flex-col gap-1'>
-                    <div className='flex w-full items-center gap-5'>
-                      <div className='flex items-center gap-[3px]'>
-                        <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          Demand Type:{' '}
-                          <StrongText> {sdDemand.demand_type.parameter_value}</StrongText>
-                        </div>
-                      </div>
-                      {sdDemand.calculation_basic && (
-                        <div className='flex items-center gap-[3px]'>
-                          <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                            Calculation Basic:{' '}
-                            <StrongText> {sdDemand.calculation_basic?.parameter_value}</StrongText>
-                          </div>
-                        </div>
-                      )}
-                      <div className='flex items-center gap-[3px]'>
-                        <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          Calculation Period Start:{' '}
-                          <StrongText>
-                            {' '}
-                            {getDisplayDate(sdDemand.calculation_period_from)}
-                          </StrongText>
-                        </div>
-                      </div>
-                      <div className='flex items-center gap-[3px]'>
-                        <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          Calculation Period End:{' '}
-                          <StrongText> {getDisplayDate(sdDemand.calculation_period_to)}</StrongText>
-                        </div>
+                  <div className='grid grid-cols-3 gap-x-6 gap-y-2'>
+                    <div className='flex items-center gap-[3px]'>
+                      <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                        Demand Type:{' '}
+                        <StrongText> {sdDemand.demand_type.parameter_value}</StrongText>
                       </div>
                     </div>
-                    <div className='flex w-full items-center gap-5'>
+                    {sdDemand.calculation_basic && (
                       <div className='flex items-center gap-[3px]'>
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          Total SD Amount: <StrongText> {sdDemand.total_sd_amount}</StrongText>
+                          Calculation Basic:{' '}
+                          <StrongText> {sdDemand.calculation_basic?.parameter_value}</StrongText>
                         </div>
                       </div>
+                    )}
+                    <div className='flex items-center gap-[3px]'>
+                      <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                        Calculation Period Start:{' '}
+                        <StrongText>{getDisplayDate(sdDemand.calculation_period_from)}</StrongText>
+                      </div>
+                    </div>
+                    <div className='flex items-center gap-[3px]'>
+                      <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                        Calculation Period End:{' '}
+                        <StrongText> {getDisplayDate(sdDemand.calculation_period_to)}</StrongText>
+                      </div>
+                    </div>
+
+                    <div className='flex items-center gap-[3px]'>
+                      <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                        Total SD Amount: <StrongText> {sdDemand.total_sd_amount}</StrongText>
+                      </div>
+                    </div>
+                    <div className='flex items-center gap-[3px]'>
+                      <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                        Applicable From:{' '}
+                        <StrongText> {getDisplayDate(sdDemand.applicable_from)}</StrongText>
+                      </div>
+                    </div>
+                    {sdDemand.applicable_to && (
                       <div className='flex items-center gap-[3px]'>
                         <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          Applicable From:{' '}
-                          <StrongText> {getDisplayDate(sdDemand.applicable_from)}</StrongText>
+                          Applicable To:{' '}
+                          <StrongText> {getDisplayDate(sdDemand.applicable_to)}</StrongText>
                         </div>
                       </div>
-                      {sdDemand.applicable_to && (
-                        <div className='flex items-center gap-[3px]'>
-                          <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                            Applicable To:{' '}
-                            <StrongText> {getDisplayDate(sdDemand.applicable_to)}</StrongText>
-                          </div>
-                        </div>
-                      )}
-                      <div className='flex items-center gap-[3px]'>
-                        <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          Status: <StrongText> {sdDemand.status.parameter_value}</StrongText>
-                        </div>
+                    )}
+                    <div className='flex items-center gap-[3px]'>
+                      <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                        Status: <StrongText> {sdDemand.status.parameter_value}</StrongText>
                       </div>
                     </div>
                   </div>
@@ -118,6 +114,24 @@ const SdDemandList = ({ sdDemands }: Props) => {
                   </div>
                 </div>
               </div>
+              <div className='flex justify-end p-4'>
+                <Button
+                  variant='outline'
+                  type='button'
+                  onClick={() =>
+                    router.get(`/sd-collections/create?sdDemandId=${sdDemand.sd_demand_id}`)
+                  }
+                >
+                  Add Collection
+                </Button>
+              </div>
+              {sdDemand.collections && sdDemand.collections.length > 0 ? (
+                <SdCollectionList sdCollections={sdDemand.collections} />
+              ) : (
+                <div className='flex justify-center gap-1'>
+                  <span className='context-menu-item'>No Collections Added</span>
+                </div>
+              )}
             </div>
           ))}
         </div>

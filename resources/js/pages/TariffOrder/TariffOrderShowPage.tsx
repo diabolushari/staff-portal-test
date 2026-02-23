@@ -9,15 +9,19 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import ShowPageCard from '@/ui/Card/ShowPageCard'
 import { getDisplayDate } from '@/utils'
 
+interface Props {
+  tariff_order: TariffOrder
+  tariff_configs: Paginator<TariffConfig>
+  connection_tariffs: ParameterValues[]
+  oldConnectionTariffId: number
+}
+
 export default function TariffOrderShowPage({
   tariff_order,
   tariff_configs,
-  consumption_tariff,
-}: {
-  tariff_order: TariffOrder
-  tariff_configs: Paginator<TariffConfig>
-  consumption_tariff: ParameterValues[]
-}) {
+  connection_tariffs,
+  oldConnectionTariffId,
+}: Props) {
   const breadcrumb: BreadcrumbItem[] = [
     {
       title: 'Settings',
@@ -89,7 +93,8 @@ export default function TariffOrderShowPage({
         <TariffConfigTable
           tariff_configs={tariff_configs}
           tariffOrder={tariff_order}
-          consumption_tariff={consumption_tariff}
+          connectionTariffs={connection_tariffs}
+          oldConnectionTariffId={oldConnectionTariffId}
         />
       </div>
     </MainLayout>

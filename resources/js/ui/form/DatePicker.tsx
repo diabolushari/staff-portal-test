@@ -68,7 +68,7 @@ export default function Datepicker({
       <DatePicker
         selected={dateObject}
         onChange={(date: Date | null) => setValue(date ? formatForDB(date) : '')}
-        placeholderText={placeholder}
+        placeholderText={placeholder ?? 'dd/mm/yyyy'}
         minDate={minDate ?? undefined}
         maxDate={maxDate ?? undefined}
         disabled={disabled}

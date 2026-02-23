@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.securitydeposit;
+
+option php_namespace = "Proto\\SecurityDeposit";
+option php_metadata_namespace = "GPBMetadata";
+
+option java_package = "com.kseb.consumerservice.grpc.securitydeposit";
+option java_multiple_files = true;
+option java_outer_classname = "SdCollectionsProto";
+
+import "google/protobuf/empty.proto";
+import "parameters/parameter-value.proto";
+
+message SdCollectionMessage {
+  optional int32 sd_collection_id = 1;
+  int32 sd_demand_id = 2;
+  string collection_date = 3;
+  int32 collection_mode_id=4;
+  string collection_amount=5;
+  optional string receipt_number = 6;
+  optional string collected_at = 7;
+  optional string collected_by = 8;
+  bool is_active = 9;
+  optional string reversal_reason = 10;
+  optional string reversal_date = 11;
+  optional string reversed_by = 12;
+  optional int32 created_by = 13;
+  optional int32 updated_by = 14;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto collection_mode = 15;
+  repeated SdAttributeResponse sd_attribute = 16;
+}
+
+message SdAttributeResponse {
+  int32 attribute_id = 1;
+  int32 sd_collection_id = 2;
+  int32 attribute_definition_id = 3; 
+  string attribute_value = 4;
+  optional string mime_type = 5;
+  optional int32 created_by = 6;
+  optional int32 updated_by = 7;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto attribute_definition = 8;
+}
+message SdAttributeRequest {
+  int32 attribute_definition_id = 1; 
+  string attribute_value = 2;
+  optional string mime_type = 3;
+  optional int32 created_by = 4;
+  optional int32 updated_by = 5;
+}
+
+message CreateSdCollectionRequest {
+  SdCollectionMessage sd_collection = 1;
+  repeated SdAttributeRequest sd_attribute = 2;
+}
+
+message CreateSdCollectionResponse {
+  SdCollectionMessage sd_collection = 1;
+  repeated SdAttributeResponse sd_attribute = 2;
+}
+
+message GetSdCollectionRequest {
+  int32 sd_collection_id = 1;
+}
+
+message GetSdCollectionResponse {
+  SdCollectionMessage sd_collection = 1;
+}
+
+message ListSdCollectionsRequest {
+  optional int32 sd_demand_id = 1;
+  optional int32 page = 2;
+  optional int32 page_size = 3;
+}
+
+message ListSdCollectionsResponse {
+  repeated SdCollectionMessage items = 1;
+}
+
+message ListSdCollectionsPaginatedRequest {
+  optional int32 sd_demand_id = 1;
+  optional int32 page = 2;
+  optional int32 page_size = 3;
+}
+
+message ListSdCollectionsPaginatedResponse {
+  repeated SdCollectionMessage items = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
+
+message UpdateSdCollectionRequest {
+  SdCollectionMessage sd_collection = 1;
+}
+
+message UpdateSdCollectionResponse {
+  SdCollectionMessage sd_collection = 1;
+}
+
+message DeleteSdCollectionRequest {
+  int32 sd_collection_id = 1;
+}
+
+message DeleteSdCollectionResponse {
+  bool success = 1;
+}
+
+service SdCollectionService {
+  rpc CreateSdCollection(CreateSdCollectionRequest) returns (CreateSdCollectionResponse);
+  rpc GetSdCollection(GetSdCollectionRequest) returns (GetSdCollectionResponse);
+  rpc ListSdCollections(ListSdCollectionsRequest) returns (ListSdCollectionsResponse);
+  rpc ListSdCollectionsPaginated(ListSdCollectionsPaginatedRequest) returns (ListSdCollectionsPaginatedResponse);
+  rpc UpdateSdCollection(UpdateSdCollectionRequest) returns (UpdateSdCollectionResponse);
+  rpc DeleteSdCollection(DeleteSdCollectionRequest) returns (DeleteSdCollectionResponse);
+}

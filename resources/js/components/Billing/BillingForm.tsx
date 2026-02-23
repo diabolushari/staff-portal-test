@@ -94,12 +94,14 @@ export default function BillingForm({ billingRule }: { billingRule?: BillingRule
             setValue={setFormValue('effective_start')}
             value={formData.effective_start}
             error={errors?.effective_start}
+            placeholder='Select Effective Start'
           />
           <Datepicker
             label='Effective End'
             setValue={setFormValue('effective_end')}
             value={formData.effective_end}
             error={errors?.effective_end}
+            placeholder='Select Effective End'
           />
         </div>
       </Card>

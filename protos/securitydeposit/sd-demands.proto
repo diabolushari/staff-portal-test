@@ -8,6 +8,7 @@ option php_metadata_namespace = "GPBMetadata";
 import "google/protobuf/empty.proto";
 import "parameters/parameter-value.proto";
 import "connections/connections.proto";
+import "securitydeposit/sd-collections.proto";
 
 message SdDemandMessage {
   optional int32 sd_demand_id = 1;
@@ -27,6 +28,7 @@ message SdDemandMessage {
   com.kseb.consumerservice.proto.parameters.ParameterValueProto calculation_basic = 15;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto status = 16;
   com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 17;
+  repeated SdCollectionMessage collections = 18;
 }
 
 message CreateSdDemandRequest {
@@ -75,8 +77,6 @@ message ListSdDemandsPaginatedResponse {
   int32 page_size = 4;
   int32 total_pages = 5;
 }
-
-
 
 message UpdateSdDemandRequest {
   SdDemandMessage sd_demand = 1;
