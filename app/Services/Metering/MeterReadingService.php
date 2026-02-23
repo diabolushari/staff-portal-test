@@ -135,6 +135,7 @@ class MeterReadingService
     {
 
         $grpcRequest = $this->toProto($request);
+
         [$response, $status] = $this->client->CreateMeterReading($grpcRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -261,12 +262,12 @@ class MeterReadingService
         $protoRequest->setReadingStartDate($request->readingStartDate);
         $protoRequest->setReadingEndDate($request->readingEndDate);
 
-        if ($request->readingType === 'single_reading') {
-            $protoRequest->setSingleReading(true);
-            $protoRequest->setMultipleReading(false);
-        } else {
-            $protoRequest->setMultipleReading(true);
+        if ($request->isInterimReading) {
             $protoRequest->setSingleReading(false);
+            $protoRequest->setIsInterimReading(true);
+        } else {
+            $protoRequest->setIsInterimReading(false);
+            $protoRequest->setSingleReading(true);
         }
 
         if ($request->isInterimReading) {
@@ -276,7 +277,6 @@ class MeterReadingService
                     'interim_reason_id' => ['Interim reason is required'],
                 ]);
             }
-            $protoRequest->setIsInterimReading(true);
             $protoRequest->setInterimReasonId($reasonId);
         }
 
@@ -291,7 +291,7 @@ class MeterReadingService
         // 🔑 Flatten readings_by_meter into MeterReadingValue list
 
         foreach ($request->readingsByMeter as $meter) {
-            if (empty($meter['meter_id'])) {
+            if (!in_array($meter['meter_id'], $request->meters)) {
                 continue; // skip if meter_id missing
             }
 

@@ -71,7 +71,10 @@ export default function ParameterValueIndex({ values, domains, definitions, filt
               onEdit={(item) => router.get(route('parameter-value.edit', item.id))}
               onDelete={handleDeleteClick}
             />
-            <Pagination pagination={values} />
+            <Pagination
+              pagination={values}
+              filters={filters}
+            />
           </>
         )}
         {showDeleteModal && editRow && (

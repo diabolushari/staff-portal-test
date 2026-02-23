@@ -45,8 +45,11 @@ class MeterConnectionMappingConverter
     /**
      * @return array<string, mixed>
      */
-    public function meterConnectionMappingProtoToArray(MeterConnectionMappingResponse $rel): array
+    public static function meterConnectionMappingProtoToArray(?MeterConnectionMappingResponse $rel): array
     {
+        if ($rel == null) {
+            return [];
+        }
         $faultyDate = $rel->getFaultyDate() ? $rel->getFaultyDate()->toDateTime()->format('Y-m-d') : null;
         $rectificationDate = $rel->getRectificationDate() ? $rel->getRectificationDate()->toDateTime()->format('Y-m-d') : null;
         $effectiveStartTs = $rel->getEffectiveStartTs() ? $rel->getEffectiveStartTs()->toDateTime()->format('Y-m-d H:i:s') : null;

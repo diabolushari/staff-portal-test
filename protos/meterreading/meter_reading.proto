@@ -126,7 +126,7 @@ message MeterHealthFormMessage {
 message CreateMeterReadingRequest {
   int64 connection_id = 1;
   bool single_reading = 2;
-  bool multiple_reading = 3;
+  bool is_interim_reading = 3;
   int64 anomaly_id = 4;
   string metering_date = 5;
   string reading_start_date = 6;
@@ -137,6 +137,9 @@ message CreateMeterReadingRequest {
   bool is_active = 17;
   repeated ReadingValueFormMessage readings = 18;
   repeated MeterHealthFormMessage meter_healths = 19;
+  optional int64 interim_reason_id = 20;
+  optional int64 reading_type_id = 21;
+
 }
 message CreateMeterReadingResponse {
   MeterReadingMessage reading = 1;

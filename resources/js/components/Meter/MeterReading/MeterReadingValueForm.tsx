@@ -32,6 +32,7 @@ export default function MeterReadingValueForm({
   warnings,
 }: Readonly<Props>) {
   console.log(maxReadingValue, 'maxReadingValue')
+  console.log(parameterReadingValues, 'parameterReadingValues')
   return (
     <div className='rounded border bg-white p-4'>
       <div

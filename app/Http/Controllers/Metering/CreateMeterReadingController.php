@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Metering;
 
 use App\Http\Controllers\Controller;
 use App\Services\Connection\ConnectionService;
+use App\Services\Metering\GetReadingEntryService;
 use App\Services\Metering\MeteringParameterProfileService;
 use App\Services\Metering\MeterReadingService;
 use App\Services\Metering\MeterService;
@@ -24,6 +25,7 @@ class CreateMeterReadingController extends Controller
         private MeteringParameterProfileService $meteringParameterProfileService,
         private MeterService $meterService,
         private MeterReadingService $meterReadingService,
+        private GetReadingEntryService $getReadingEntryService,
     ) {}
 
     public function __invoke(Request $request, int $connectionId): Response
@@ -68,10 +70,13 @@ class CreateMeterReadingController extends Controller
         $latestMeterReading = $this->meterReadingService->latestMeterReading($connectionId);
         $latestMeterReadingGroupByMeter = $this->meterReadingService->latestMeterReadingGroupByMeter($connectionId);
 
-        if ($connection->data['meter_mappings'] && count($connection->data['meter_mappings']) > 0) {
+        $getReadingEntryResponse = $this->getReadingEntryService->getReadingEntryData($connectionId);
+
+
+        if ($getReadingEntryResponse->data['meter_connection_mappings'] && count($getReadingEntryResponse->data['meter_connection_mappings']) > 0) {
             $meterWithTimezoneAndProfile = [];
 
-            foreach ($connection->data['meter_mappings'] as $meterConnectionRel) {
+            foreach ($getReadingEntryResponse->data['meter_connection_mappings'] as $meterConnectionRel) {
                 $meterWithTimezoneAndProfile['meter_id'] = $meterConnectionRel['meter_id'];
                 $meter = $this->meterService->getMeter($meterConnectionRel['meter_id']);
                 $meterWithTimezoneAndProfile['meter'] = $meter->data;

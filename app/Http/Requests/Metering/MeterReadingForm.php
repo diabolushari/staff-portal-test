@@ -11,7 +11,6 @@ class MeterReadingForm extends Data
 {
     public function __construct(
         public int $connectionId,
-        public string $readingType,
         public int $anomalyId,
         public string $meteringDate,
         public string $readingStartDate,

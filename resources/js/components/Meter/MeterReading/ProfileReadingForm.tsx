@@ -167,10 +167,9 @@ const ProfileReadingForm = ({
     [meter, selectedParameter, readingValues]
   )
   useEffect(() => {
-    console.log(readingErrors)
     const hasError = Object.keys(readingErrors).length > 0
     onErrorChange?.(hasError)
-  }, [readingErrors, onErrorChange])
+  }, [readingErrors])
 
   const updateData = useCallback(
     (timezoneId: number, value: string) => {

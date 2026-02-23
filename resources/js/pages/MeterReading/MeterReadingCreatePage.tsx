@@ -163,6 +163,18 @@ export default function MeterReadingCreatePage({
     }
   }, [formData.is_interim_reading])
 
+  useEffect(() => {
+    const lastMeterId = formData.meters[formData.meters.length - 1]
+    const lastMeter = latestMeterReadingGroupByMeter.find(
+      (lastMeterReading) => lastMeterReading.meter?.meter_id === lastMeterId
+    )
+    if (lastMeter) {
+      setFormValue('reading_end_date')(
+        getMonthEnd(getNextDay(lastMeter?.reading?.reading_end_date ?? '') ?? '', false) ?? ''
+      )
+    }
+  }, [formData.meters])
+
   const [activeStep, setActiveStep] = useState(0)
 
   const previewRefs = useRef<Record<number, MeterReadingPreviewRef | null>>({})

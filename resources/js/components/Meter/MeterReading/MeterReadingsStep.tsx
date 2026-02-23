@@ -52,11 +52,16 @@ export default function MeterReadingsStep({
   setAllProfileHasData,
   setProfileErrorExist,
 }: Readonly<Props>) {
-  const filteredMetersWithTimezonesAndProfiles = formData.is_interim_reading
-    ? metersWithTimezonesAndProfiles.filter((meter) => formData.meters.includes(meter.meter_id))
-    : metersWithTimezonesAndProfiles
-  const isSingleMeter = filteredMetersWithTimezonesAndProfiles.length === 1
-
+  const filteredMetersWithTimezonesAndProfiles = useMemo(
+    () =>
+      metersWithTimezonesAndProfiles.filter((meter) => formData.meters.includes(meter.meter_id)),
+    [metersWithTimezonesAndProfiles, formData.meters]
+  )
+  const isSingleMeter = useMemo(
+    () => filteredMetersWithTimezonesAndProfiles.length === 1,
+    [filteredMetersWithTimezonesAndProfiles]
+  )
+  console.log(filteredMetersWithTimezonesAndProfiles, 'metereadigsetp')
   const [activeMeterIdx, setActiveMeterIdx] = useState<number | null>(isSingleMeter ? 0 : null)
 
   const hasMultipleMeters = filteredMetersWithTimezonesAndProfiles.length > 1
@@ -132,7 +137,7 @@ export default function MeterReadingsStep({
             meterWithTimezoneAndProfile={meter}
             formData={formData}
             readingValues={readingValues}
-            metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
+            metersWithTimezonesAndProfiles={filteredMetersWithTimezonesAndProfiles}
             updateReading={updateReading}
             isFirstReading={isFirstReading}
             hasMultipleMeters={hasMultipleMeters}
@@ -140,6 +145,7 @@ export default function MeterReadingsStep({
             profileRefs={profileRefs}
             activeProfile={activeProfile}
             setActiveProfile={setActiveProfile}
+            filteredMetersWithTimezonesAndProfiles={filteredMetersWithTimezonesAndProfiles}
           />
 
           {hasMultipleMeters && activeProfile === null && (

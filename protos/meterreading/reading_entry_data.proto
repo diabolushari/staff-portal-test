@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.meterreading;
+
+option php_namespace = "Proto\\MeterReading";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "parameters/parameter-value.proto";
+import "metering/meter.proto";
+import "meterreading/meter_reading.proto";
+import "connections/connections.proto";
+import "metering/meter_connection_mapping.proto";
+
+
+message GetReadingEntryDataRequest {
+  int64 connection_id = 1;
+  optional string reading_start_date = 2;
+  optional string reading_end_date = 3;
+}
+
+message GetReadingEntryDataResponse {
+  repeated  com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 1;
+  repeated com.kseb.consumerservice.proto.meterreading.MeterReadingValueGroupMessage meter_reading_value_groups = 2;
+  repeated com.kseb.consumerservice.proto.metering.MeterConnectionMappingResponse meter_connection_mappings = 3;
+}
+
+
+// ----------- SERVICE ------------
+service ReadingEntryDataService {
+  rpc GetReadingEntryData (GetReadingEntryDataRequest) returns (GetReadingEntryDataResponse);
+}

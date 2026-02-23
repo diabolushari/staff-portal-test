@@ -146,6 +146,7 @@ interface Props {
 
   setProfileErrorExist: (value: boolean) => void
   setAllProfileHasData: (value: boolean) => void
+  filteredMetersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
 }
 
 export interface MeterReadingPreviewRef {
@@ -161,11 +162,11 @@ const MeterReadingPreview = ({
   metersWithTimezonesAndProfiles,
   updateReading,
   isFirstReading,
-
   meterHealthTypes,
   ctHealthTypes,
   setProfileErrorExist,
   setAllProfileHasData,
+  filteredMetersWithTimezonesAndProfiles,
 }: Props) => {
   const hasImportKwh = meterWithTimezoneAndProfile.reading_parameters.some(
     (p) =>
@@ -215,8 +216,17 @@ const MeterReadingPreview = ({
   }, [profileErrors, setProfileErrorExist])
 
   useEffect(() => {
-    const meterReadingData = readingValues.find(
-      (m) => m.meter_id === meterWithTimezoneAndProfile.meter_id
+    const filteredReadingvalues = readingValues?.filter((readingData) =>
+      filteredMetersWithTimezonesAndProfiles?.find((m) => m.meter.meter_id === readingData.meter_id)
+    )
+    const meterReadingData = filteredReadingvalues?.find(
+      (readingData) => readingData.meter_id === meterWithTimezoneAndProfile.meter_id
+    )
+    console.log(
+      'understanind',
+      meterReadingData,
+      filteredReadingvalues,
+      meterWithTimezoneAndProfile
     )
 
     if (meterReadingData == null) {
@@ -228,13 +238,14 @@ const MeterReadingPreview = ({
       const param = meterReadingData.parameters.find(
         (p) => p.meter_parameter_id === profile.meter_parameter_id
       )
-
+      console.log('param', param)
       if (param == null || param.readings?.length === 0) return false
 
       return param.readings.every(
         (r) => r.values?.final !== undefined && r.values?.final !== null && r.values?.final !== ''
       )
     })
+    console.log('dataExist', dataExist)
     setAllProfileHasData(dataExist)
   }, [readingValues, meterWithTimezoneAndProfile, setAllProfileHasData])
 
