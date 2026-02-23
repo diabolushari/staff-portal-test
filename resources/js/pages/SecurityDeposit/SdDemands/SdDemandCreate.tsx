@@ -1,8 +1,8 @@
-import { metadataNavItems } from '@/components/Navbar/navitems'
+import { consumerNavItems } from '@/components/Navbar/navitems'
 import SdDemandForm from '@/components/SecurityDeposit/SdDemands/SdDemandForm'
 import { Connection, SdDemand } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
-import MainLayout from '@/layouts/main-layout'
+import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { BreadcrumbItem } from '@/types'
 
 interface Props {
@@ -45,12 +45,27 @@ export default function SdDemandCreate({
     },
   ]
   return (
-    <MainLayout
-      breadcrumb={breadcrumbs}
-      selectedItem='Security Deposit Demand Details'
-      navItems={metadataNavItems}
-      title='Security Deposit Demand Collections'
-      description={sdDemand ? 'Edit Security Deposit Demand' : 'Add Security Deposit Demand'}
+    <ConnectionsLayout
+      connection={connection}
+      connectionId={connection?.connection_id ?? 0}
+      value={'connection'}
+      subTabValue='sd-demands'
+      heading='SD Demands'
+      description={
+        sdDemand ? (
+          <>
+            Edit SD Demand for consumer number {'   '}
+            <span className='font-bold'>{connection?.consumer_number}</span>
+          </>
+        ) : (
+          <>
+            Create SD Demands for consumer number {'   '}
+            <span className='font-bold'>{connection?.consumer_number}</span>
+          </>
+        )
+      }
+      breadcrumbs={breadcrumbs}
+      connectionsNavItems={consumerNavItems}
     >
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-6'>
         <SdDemandForm
@@ -61,6 +76,6 @@ export default function SdDemandCreate({
           sdDemand={sdDemand}
         />
       </div>
-    </MainLayout>
+    </ConnectionsLayout>
   )
 }

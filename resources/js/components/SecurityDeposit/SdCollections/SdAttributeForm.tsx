@@ -14,7 +14,7 @@ const SdAttributeForm = ({ selectedCollectionMode, attributeData, setAttributeDa
   const attributeUrl = useMemo(() => {
     if (!selectedCollectionMode) return null
 
-    return `/api/parameter-values?domain_name=Connection&parameter_name=SD Attribute&attribute_name=attribute2Value&attribute_value=${selectedCollectionMode.parameter_value}`
+    return `/api/parameter-values?domain_name=Connection&parameter_name=SD Collection Attribute&attribute_name=attribute2Value&attribute_value=${selectedCollectionMode.parameter_value}`
   }, [selectedCollectionMode])
 
   const [SdAttribute] = useFetchRecord<ParameterValues[]>(attributeUrl ? attributeUrl : ' ')
