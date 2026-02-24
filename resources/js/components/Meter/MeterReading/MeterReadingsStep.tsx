@@ -48,7 +48,6 @@ export default function MeterReadingsStep({
   profileRefs,
   activeProfile,
   setActiveProfile,
-
   setAllProfileHasData,
   setProfileErrorExist,
 }: Readonly<Props>) {

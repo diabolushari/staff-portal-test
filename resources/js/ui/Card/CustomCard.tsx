@@ -18,6 +18,7 @@ interface CustomCardProps {
   addButtonText?: string
   onAddClick?: () => void
   onEditClick?: () => void
+  searchSlot?: ReactNode
 }
 
 export default function CustomCard({
@@ -29,6 +30,7 @@ export default function CustomCard({
   className = '',
   onAddClick,
   onEditClick,
+  searchSlot,
 }: CustomCardProps) {
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
@@ -54,6 +56,12 @@ export default function CustomCard({
               />
             )}
           </div>
+        </div>
+      )}
+
+      {searchSlot && (
+        <div className='flex w-full items-center justify-center'>
+          <div className='w-full max-w-sm'>{searchSlot}</div>
         </div>
       )}
 

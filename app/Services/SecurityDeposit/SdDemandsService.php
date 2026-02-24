@@ -2,26 +2,29 @@
 
 namespace App\Services\SecurityDeposit;
 
+use App\GrpcConverters\SecurityDeposit\SdCollectionAttributeConverter;
+use App\GrpcConverters\SecurityDeposit\SdCollectionConverter;
 use App\GrpcConverters\SecurityDeposit\SdDemandConverter;
 use App\Http\Requests\SecurityDeposit\SdDemandFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
-use Proto\Consumers\CreateSdDemandRequest;
-use Proto\Consumers\GetSdDemandRequest;
-use Proto\Consumers\SdDemandServiceClient;
 use Grpc\ChannelCredentials;
+use Proto\Consumers\CreateSdDemandRequest;
 use Proto\Consumers\DeleteSdDemandRequest;
+use Proto\Consumers\GetSdDemandRequest;
 use Proto\Consumers\ListSdDemandsPaginatedRequest;
+use Proto\Consumers\SdDemandServiceClient;
 use Proto\Consumers\UpdateSdDemandRequest;
-use Proto\Consumers\ListSdDemandsByConnectionIdRequest;
-
 
 class SdDemandsService
 {
     private SdDemandServiceClient $client;
 
-    public function __construct(private readonly SdDemandConverter $sdDemandService)
-    {
+    public function __construct(
+        private readonly SdDemandConverter $sdDemandConverter,
+        private readonly SdCollectionConverter $sdCollectionConverter,
+        private readonly SdCollectionAttributeConverter $sdAttributeConverter
+    ) {
         $this->client = new SdDemandServiceClient(
             config('app.consumer_service_grpc_host'),
             ['credentials' => ChannelCredentials::createInsecure()]
@@ -48,6 +51,7 @@ class SdDemandsService
         }
 
         [$response, $status] = $this->client->ListSdDemandsPaginated($request)->wait();
+
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
                 GrpcErrorService::handleErrorResponse($status),
@@ -59,7 +63,27 @@ class SdDemandsService
         $sdDemands = $response->getItems();
         $sdDemandArray = [];
         foreach ($sdDemands as $sdDemand) {
-            $sdDemandArray[] = $this->sdDemandService->convertToArray($sdDemand);
+            $demandData = $this->sdDemandConverter->convertToArray($sdDemand);
+            $collectionsArray = [];
+            foreach ($sdDemand->getCollections() as $collection) {
+                $collectionData = $this->sdCollectionConverter
+                    ->convertToArray($collection);
+
+                $attributesArray = [];
+
+                foreach ($collection->getSdAttribute() as $attribute) {
+                    $attributesArray[] = $this->sdAttributeConverter
+                        ->sdAttributeToArray($attribute);
+                }
+
+                if (! empty($attributesArray)) {
+                    $collectionData['sdAttribute'] = $attributesArray;
+                }
+
+                $collectionsArray[] = $collectionData;
+            }
+            $demandData['collections'] = $collectionsArray;
+            $sdDemandArray[] = $demandData;
         }
 
         $paginatedData = [
@@ -73,13 +97,11 @@ class SdDemandsService
         return GrpcServiceResponse::success($paginatedData, $response, $status->code, $status->details);
     }
 
-
-
     public function create(SdDemandFormRequest $request): GrpcServiceResponse
     {
-        $sdDemand = $this->sdDemandService->formToGrpcMessage($request, null);
+        $sdDemand = $this->sdDemandConverter->formToGrpcMessage($request, null);
 
-        $grpcRequest = new CreateSdDemandRequest();
+        $grpcRequest = new CreateSdDemandRequest;
         $grpcRequest->setSdDemand($sdDemand);
 
         [$response, $status] =
@@ -94,8 +116,7 @@ class SdDemandsService
             );
         }
 
-        $sdDemandArray = $this->sdDemandService->convertToArray($response->getSdDemand());
-
+        $sdDemandArray = $this->sdDemandConverter->convertToArray($response->getSdDemand());
 
         return GrpcServiceResponse::success(
             $sdDemandArray,
@@ -107,11 +128,10 @@ class SdDemandsService
 
     public function update(SdDemandFormRequest $request, int $id): GrpcServiceResponse
     {
-        $sdDemand = $this->sdDemandService->formToGrpcMessage($request, $id);
+        $sdDemand = $this->sdDemandConverter->formToGrpcMessage($request, $id);
 
-        $grpcRequest = new UpdateSdDemandRequest();
+        $grpcRequest = new UpdateSdDemandRequest;
         $grpcRequest->setSdDemand($sdDemand);
-
 
         [$response, $status] =
             $this->client->UpdateSdDemand($grpcRequest)->wait();
@@ -125,8 +145,7 @@ class SdDemandsService
             );
         }
 
-        $sdDemandArray = $this->sdDemandService->convertToArray($response->getSdDemand());
-
+        $sdDemandArray = $this->sdDemandConverter->convertToArray($response->getSdDemand());
 
         return GrpcServiceResponse::success(
             $sdDemandArray,
@@ -138,7 +157,7 @@ class SdDemandsService
 
     public function deleteSdDemand(int $id)
     {
-        $grpcRequest = new DeleteSdDemandRequest();
+        $grpcRequest = new DeleteSdDemandRequest;
         $grpcRequest->setSdDemandId($id);
 
         [$response, $status] = $this->client->DeleteSdDemand($grpcRequest)->wait();
@@ -152,7 +171,7 @@ class SdDemandsService
         }
 
         return GrpcServiceResponse::success([
-            'success' => $response->getSuccess()
+            'success' => $response->getSuccess(),
         ]);
     }
 
@@ -172,7 +191,7 @@ class SdDemandsService
         }
 
         $sdDemand = $response->getSdDemand();
-        $sdDemandArray = $this->sdDemandService->convertToArray($sdDemand);
+        $sdDemandArray = $this->sdDemandConverter->convertToArray($sdDemand);
 
         return GrpcServiceResponse::success($sdDemandArray, $response, $status->code, $status->details);
     }

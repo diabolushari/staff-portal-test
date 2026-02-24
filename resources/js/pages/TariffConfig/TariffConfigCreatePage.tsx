@@ -16,10 +16,10 @@ interface Props {
   tariff_config?: TariffConfig
   tariff_order?: TariffOrder
   connection_purpose?: ParameterValues[]
-  consumption_tariff?: ParameterValues[]
+  connection_tariffs: ParameterValues[]
 }
 
-export default function TariffConfigCreatePage({ tariff_order, consumption_tariff }: Props) {
+export default function TariffConfigCreatePage({ tariff_order, connection_tariffs }: Props) {
   const breadcrumb: BreadcrumbItem[] = [
     {
       title: 'Settings',
@@ -77,7 +77,7 @@ export default function TariffConfigCreatePage({ tariff_order, consumption_tarif
       {tariff_order && (
         <TariffConfigForm
           tariffOrder={tariff_order}
-          consumptionTariff={consumption_tariff ?? []}
+          connectionTariffs={connection_tariffs ?? []}
         />
       )}
     </MainLayout>

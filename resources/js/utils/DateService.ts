@@ -13,21 +13,43 @@ export const getToday = () => {
   return today.toISOString().split('T')[0]
 }
 
-export const getMonthEnd = (dateStr: string, isFirstReading: boolean) => {
+export const getMonthEnd = (
+  dateStr: string,
+  isFirstReading: boolean,
+  meterConnectionMappings?: MeterConnectionMapping[]
+) => {
   if (!dateStr) return ''
 
-  // First reading use the same date
+  const inputDate = dayjs(dateStr)
+
   if (isFirstReading) {
-    return dayjs(dateStr).format('YYYY-MM-DD')
+    return inputDate.format('YYYY-MM-DD')
   }
 
-  // Not first reading end of that month
-  return dayjs(dateStr).endOf('month').format('YYYY-MM-DD')
+  const monthEnd = inputDate.endOf('month')
+
+  const validEndDates =
+    meterConnectionMappings
+      ?.map((m) => m.effective_end_ts)
+      .filter(Boolean)
+      .map((d) => dayjs(d)) ?? false
+
+  if (!validEndDates || validEndDates.length === 0) {
+    return monthEnd.format('YYYY-MM-DD')
+  }
+
+  const lowestEndDate = validEndDates.reduce((min, current) =>
+    current.isBefore(min) ? current : min
+  )
+  if (lowestEndDate.isAfter(monthEnd)) {
+    return monthEnd.format('YYYY-MM-DD')
+  }
+
+  return lowestEndDate.format('YYYY-MM-DD')
 }
 export const getMeterEnergisedDate = (meterMappings: MeterConnectionMapping[] = []): string => {
   if (!meterMappings.length) return ''
 
-  // 1️⃣ Try ENERGY_CONSUMPTION meter first
   const energyMeter = meterMappings.find(
     (m) =>
       m.meter_use_category?.parameter_value?.toLowerCase() === 'energy consumption' &&
@@ -38,7 +60,6 @@ export const getMeterEnergisedDate = (meterMappings: MeterConnectionMapping[] = 
     return dayjs(energyMeter.energise_date).format('YYYY-MM-DD')
   }
 
-  // 2️⃣ Otherwise take the first energised_date
   const latestMeter = meterMappings
     .filter((m) => m.energise_date)
     .sort((a, b) => dayjs(a.energise_date!).valueOf() - dayjs(b.energise_date!).valueOf())[0]

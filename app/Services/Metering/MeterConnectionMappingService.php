@@ -315,8 +315,8 @@ class MeterConnectionMappingService
     {
         $faultyDate = $rel->getFaultyDate() ? $rel->getFaultyDate()->toDateTime()->format('Y-m-d') : null;
         $rectificationDate = $rel->getRectificationDate() ? $rel->getRectificationDate()->toDateTime()->format('Y-m-d') : null;
-        $effectiveStartTs = $rel->getEffectiveStartTs() ? $rel->getEffectiveStartTs()->toDateTime()->format('Y-m-d H:i:s') : null;
-        $effectiveEndTs = $rel->getEffectiveEndTs() ? $rel->getEffectiveEndTs()->toDateTime()->format('Y-m-d H:i:s') : null;
+        $effectiveStartTs = $rel->getEffectiveStartTs() ? $rel->getEffectiveStartTs() : null;
+        $effectiveEndTs = $rel->getEffectiveEndTs() ? $rel->getEffectiveEndTs() : null;
         $createdTs = $rel->getCreatedTs() ? $rel->getCreatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
         $updatedTs = $rel->getUpdatedTs() ? $rel->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
         $meter = MeterProtoConvertor::convertToArray($rel->getMeter());

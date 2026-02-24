@@ -128,7 +128,7 @@ const connectionTabs = (connection?: Connection | null) => [
       },
       {
         subValue: 'sd-demands',
-        subLabel: 'SD Demands',
+        subLabel: 'Security Deposits',
         subLink: connection?.connection_id
           ? route('connection.sd-demands', connection?.connection_id)
           : '#',

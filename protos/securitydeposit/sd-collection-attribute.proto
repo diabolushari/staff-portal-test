@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.securitydeposit;
+
+option php_namespace = "Proto\\SecurityDeposit";
+option php_metadata_namespace = "GPBMetadata";
+
+option java_package = "com.kseb.consumerservice.grpc.securitydeposit";
+option java_multiple_files = true;
+option java_outer_classname = "SdCollectionAttributesProto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+import "parameters/parameter-value.proto";
+import "securitydeposit/sd-collections.proto";
+
+message SdCollectionAttributeMessage {
+   optional int32 attribute_id = 1;
+    int32 sd_collection_id = 2;
+    int32 attribute_definition_id = 3; 
+    string attribute_value = 4;
+    bool is_verified = 5;
+    optional string verified_by=6;
+    optional string verified_date=7;
+    optional string expiry_date=8;
+    optional string document_path=9;
+    optional int32 created_by = 10;
+    optional int32 updated_by = 11;
+    com.kseb.consumerservice.proto.parameters.ParameterValueProto attribute_definition = 12;
+    com.kseb.consumerservice.grpc.securitydeposit.SdCollectionMessage sd_collection = 13;
+}
+
+
+
+
+message GetSdCollectionAttributeRequest {
+  int32 attribute_id = 1;
+}
+
+message GetSdCollectionAttributeResponse {
+  SdCollectionAttributeMessage sd_collection_attribute = 1;
+}
+
+message ListSdCollectionAttributesRequest {
+  optional int32 sd_collection_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message ListSdCollectionAttributesResponse {
+  repeated SdCollectionAttributeMessage items = 1;
+}
+
+message ListSdCollectionAttributesPaginatedRequest {
+  optional int32 page = 1;
+  optional int32 page_size = 2;
+  int32 sd_collection_id = 3;
+}
+
+message ListSdCollectionAttributesPaginatedResponse {
+  repeated SdCollectionAttributeMessage items = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
+message DeleteSdCollectionAttributeRequest {
+    int32 attribute_id = 1;
+    }
+
+message DeleteSdCollectionAttributeResponse {
+  bool success = 1;
+}
+
+service SdCollectionAttributeService {
+  rpc GetSdCollectionAttribute(GetSdCollectionAttributeRequest) returns (GetSdCollectionAttributeResponse);
+  rpc ListSdCollectionAttributes(ListSdCollectionAttributesRequest) returns (ListSdCollectionAttributesResponse);
+  rpc ListSdCollectionAttributesPaginated(ListSdCollectionAttributesPaginatedRequest) returns (ListSdCollectionAttributesPaginatedResponse);
+  rpc DeleteSdCollectionAttribute(DeleteSdCollectionAttributeRequest) returns (DeleteSdCollectionAttributeResponse);
+}

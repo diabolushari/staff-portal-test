@@ -8,7 +8,9 @@ use App\GrpcConverters\Meter\MeterProtoConvertor;
 use App\GrpcConverters\Metering\MeterReadingConverter;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
+use Carbon\Carbon;
 use Grpc\ChannelCredentials;
+use Illuminate\Support\Facades\Date;
 use Proto\MeterReading\GetReadingEntryDataRequest;
 use Proto\MeterReading\GetReadingEntryDataResponse;
 use Proto\MeterReading\ReadingEntryDataServiceClient;
@@ -93,5 +95,46 @@ class GetReadingEntryService
             'meter_reading_value_groups' => $meterReadingValueGroupsArray,
             'meter_connection_mappings' => $meterConnectionMappingsArray,
         ];
+    }
+
+    public function getUniqueMeters($meterConnectionMappings)
+    {
+        $groupedMeters = [];
+
+        // Step 1: Group by meter_id
+        foreach ($meterConnectionMappings as $mapping) {
+            $groupedMeters[$mapping['meter_id']][] = $mapping;
+        }
+
+        $result = [];
+
+        // Step 2: Process each meter group
+        foreach ($groupedMeters as $meterId => $records) {
+
+            // If only one record exists → return it
+            if (count($records) === 1) {
+                $result[] = $records[0];
+                continue;
+            }
+
+            // Filter records where effective_end is NOT null
+            $nonNullEndRecords = array_filter($records, function ($record) {
+                return !is_null($record['effective_end_ts']);
+            });
+
+            // If we have valid end dates
+            if (!empty($nonNullEndRecords)) {
+
+                usort($nonNullEndRecords, function ($a, $b) {
+                    return Carbon::parse($a['effective_end_ts'])
+                        ->lt(Carbon::parse($b['effective_end_ts'])) ? -1 : 1;
+                });
+
+                // Smallest effective_end
+                $result[] = $nonNullEndRecords[0];
+            }
+        }
+
+        return $result;
     }
 }

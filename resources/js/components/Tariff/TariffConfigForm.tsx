@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import Button from '@/ui/button/Button'
@@ -10,28 +9,16 @@ import { TariffConfig, TariffOrder } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import dayjs from 'dayjs'
 
-interface TariffConfigItem {
-  connection_tariff: string
-  consumption_lower_limit: string
-  consumption_upper_limit: string
-  demand_charge_kva: string
-  energy_charge_kwh: string
-  effective_start: string
-  effective_end: string
-}
-
-const dateToString = (date: string) => date.split('T')[0]
-
 interface PageProps {
   tariffOrder: TariffOrder
-  consumptionTariff: ParameterValues[]
+  connectionTariffs: ParameterValues[]
   setModalOpen: (open: boolean) => void
   tariffConfig?: TariffConfig | null
 }
 
 export default function TariffConfigForm({
   tariffOrder,
-  consumptionTariff,
+  connectionTariffs,
   setModalOpen,
   tariffConfig,
 }: Readonly<PageProps>) {
@@ -79,7 +66,7 @@ export default function TariffConfigForm({
         <div className='grid gap-4 md:grid-cols-2'>
           <SelectList
             label='Connection Tariff'
-            list={consumptionTariff}
+            list={connectionTariffs}
             dataKey='id'
             displayKey='parameter_value'
             setValue={setFormValue('connection_tariff')}

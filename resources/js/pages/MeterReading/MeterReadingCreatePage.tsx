@@ -9,6 +9,7 @@ import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import {
   ConsumerData,
+  MeterConnectionMapping,
   MeterReading,
   MeterReadingValueGroup,
   MeterWithTimezoneAndProfile,
@@ -23,6 +24,7 @@ import { getDisplayDate } from '@/utils'
 import { ProfileReadingFormRef } from '@/components/Meter/MeterReading/ProfileReadingForm'
 import { MeterReadingPreviewRef } from '@/components/Meter/MeterReading/MeterReadingPreview'
 import { getMeterEnergisedDate, getMonthEnd, getNextDay, getToday } from '@/utils/DateService'
+import dayjs, { Dayjs } from 'dayjs'
 
 export interface MeterReadingForm extends MeterReading {
   meters: number[]
@@ -49,6 +51,7 @@ interface Props {
   editMode: boolean
   interimReasons: ParameterValues[]
   latestMeterReadingGroupByMeter: MeterReadingValueGroup[]
+  meterConnectionMappings: MeterConnectionMapping[]
 }
 
 export default function MeterReadingCreatePage({
@@ -61,6 +64,7 @@ export default function MeterReadingCreatePage({
   editMode,
   interimReasons,
   latestMeterReadingGroupByMeter,
+  meterConnectionMappings,
 }: Readonly<Props>) {
   const breadcrumb: BreadcrumbItem[] = useMemo(() => {
     return [
@@ -118,6 +122,7 @@ export default function MeterReadingCreatePage({
   }, [latestMeterReading])
 
   const readingStartDate = useMemo(() => {
+    console.log(meterConnectionMappings)
     if (isFirstReading) {
       return getMeterEnergisedDate(connectionWithConsumer?.connection?.meter_mappings ?? [])
     }
@@ -130,6 +135,8 @@ export default function MeterReadingCreatePage({
   const [allProfileHasData, setAllProfileHasData] = useState<boolean>(false)
   const [profileErrorExist, setProfileErrorExist] = useState<boolean>(false)
 
+  const endDate = getMonthEnd(readingStartDate, isFirstReading, meterConnectionMappings)
+
   const { formData, setFormValue, toggleBoolean } = useCustomForm<MeterReadingForm>({
     id: editMode ? latestMeterReading?.id : 0,
     connection_id: connectionWithConsumer?.connection?.connection_id ?? 0,
@@ -137,7 +144,7 @@ export default function MeterReadingCreatePage({
     reading_start_date: readingStartDate,
     reading_end_date: editMode
       ? latestMeterReading?.reading_end_date
-      : (getMonthEnd(readingStartDate, isFirstReading) ?? ''),
+      : (getMonthEnd(readingStartDate, isFirstReading, meterConnectionMappings) ?? ''),
     anomaly_id: editMode ? latestMeterReading?.anomaly_id : 0,
     remarks: editMode ? latestMeterReading?.remarks : '',
     interim_reason_id: '',
@@ -168,10 +175,20 @@ export default function MeterReadingCreatePage({
     const lastMeter = latestMeterReadingGroupByMeter.find(
       (lastMeterReading) => lastMeterReading.meter?.meter_id === lastMeterId
     )
+    console.log(lastMeter, 'conose', latestMeterReadingGroupByMeter)
     if (lastMeter) {
-      setFormValue('reading_end_date')(
-        getMonthEnd(getNextDay(lastMeter?.reading?.reading_end_date ?? '') ?? '', false) ?? ''
+      const meterConnectionMapping = meterConnectionMappings.find(
+        (m) => m.meter_id == lastMeter.meter.meter_id
       )
+      let lastReadingDate =
+        getMonthEnd(getNextDay(lastMeter?.reading?.reading_end_date ?? '') ?? '', false) ?? ''
+
+      if (dayjs(meterConnectionMapping?.effective_end_ts) < dayjs(lastReadingDate)) {
+        console.log(dayjs(meterConnectionMapping?.effective_end_ts).format('YYYY-MM-DD'))
+        lastReadingDate = dayjs(meterConnectionMapping?.effective_end_ts).format('YYYY-MM-DD')
+      }
+
+      setFormValue('reading_end_date')(lastReadingDate)
     }
   }, [formData.meters])
 
@@ -259,6 +276,8 @@ export default function MeterReadingCreatePage({
       ? formData.meters
       : metersWithTimezonesAndProfiles.map((meter) => meter.meter_id)
   }, [formData.meters, formData.is_interim_reading, metersWithTimezonesAndProfiles])
+
+  console.log(metersWithTimezonesAndProfiles)
 
   return (
     <MainLayout

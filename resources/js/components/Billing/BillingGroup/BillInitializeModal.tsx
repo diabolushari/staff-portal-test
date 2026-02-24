@@ -91,18 +91,21 @@ export default function BillInitializeModal({
           value={formData.bill_date}
           setValue={handleBillDateChange}
           error={errors?.bill_date}
+          placeholder='Select Bill Date'
         />
         <Datepicker
           label='Due Date'
           value={formData.due_date}
           setValue={setFormValue('due_date')}
           error={errors?.due_date}
+          placeholder='Select Due Date'
         />
         <Datepicker
           label='DC Date'
           value={formData.dc_date}
           setValue={setFormValue('dc_date')}
           error={errors?.dc_date}
+          placeholder='Select DC Date'
         />
         <div className='flex justify-end gap-2'>
           <Button

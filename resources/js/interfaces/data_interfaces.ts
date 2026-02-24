@@ -840,4 +840,56 @@ export interface SdDemand {
   demand_type: ParameterValues
   calculation_basic?: ParameterValues
   status: ParameterValues
+  collections?: SdCollection[]
+}
+
+export interface SdCollection {
+  sd_collection_id: number
+  sd_demand_id: number
+  collection_date: string
+  collection_mode_id: number
+  collection_amount: string
+  receipt_number: string
+  collected_at: string
+  collected_by: string
+  is_active: boolean
+  reversal_reason: string
+  reversal_date: string
+  reversed_by: string
+  created_by: number
+  updated_by: number
+  collection_mode: ParameterValues
+  sdAttribute: SdAttribute[]
+}
+
+export interface SdAttribute {
+  attribute_id: number | null
+  sd_collection_id: number | null
+  attribute_definition_id: number
+  attribute_value: string
+  mime_type: string | null
+  file: File | null
+  created_by?: number
+  updated_by?: number
+  created_at?: string
+  updated_at?: string
+  attribute_definition: ParameterValues
+}
+
+export interface SdDemand {
+  sd_demand_id: number
+  connection_id: number
+  demand_type_id: number
+  calculation_basic_id?: number
+  calculation_period_from: string
+  calculation_period_to: string
+  total_sd_amount: string
+  applicable_from: string
+  applicable_to?: string
+  status_id: number
+  is_active: boolean
+  connection: Connection
+  demand_type: ParameterValues
+  calculation_basic?: ParameterValues
+  status: ParameterValues
 }

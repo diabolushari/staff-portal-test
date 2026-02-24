@@ -71,18 +71,20 @@ class CreateMeterReadingController extends Controller
         $latestMeterReadingGroupByMeter = $this->meterReadingService->latestMeterReadingGroupByMeter($connectionId);
 
         $getReadingEntryResponse = $this->getReadingEntryService->getReadingEntryData($connectionId);
+        $uniqueMeters = $this->getReadingEntryService->getUniqueMeters($getReadingEntryResponse->data['meter_connection_mappings']);
 
 
-        if ($getReadingEntryResponse->data['meter_connection_mappings'] && count($getReadingEntryResponse->data['meter_connection_mappings']) > 0) {
+        if ($uniqueMeters && count($uniqueMeters) > 0) {
             $meterWithTimezoneAndProfile = [];
 
-            foreach ($getReadingEntryResponse->data['meter_connection_mappings'] as $meterConnectionRel) {
+            foreach ($uniqueMeters as $meterConnectionRel) {
                 $meterWithTimezoneAndProfile['meter_id'] = $meterConnectionRel['meter_id'];
                 $meter = $this->meterService->getMeter($meterConnectionRel['meter_id']);
                 $meterWithTimezoneAndProfile['meter'] = $meter->data;
                 $meterWithTimezoneAndProfile['meter_profile'] = $meterConnectionRel['meter_profile'] ?? null;
                 $meterWithTimezoneAndProfile['meter_mf'] = $meterConnectionRel['meter_mf'] ?? null;
                 $meterWithTimezoneAndProfile['meter_serial'] = $meter->data['meter_serial'] ?? null;
+                $meterWithTimezoneAndProfile['meter_connection_mapping'] = $meterConnectionRel;
 
                 $data = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($meterConnectionRel['meter_id'])->data ?? [];
                 if (! empty($data)) {
@@ -128,6 +130,7 @@ class CreateMeterReadingController extends Controller
             'editMode' => false,
             'interimReasons' => $interimReasons->data,
             'latestMeterReadingGroupByMeter' => $latestMeterReadingGroupByMeter->data,
+            'meterConnectionMappings' => $uniqueMeters
         ]);
     }
 }

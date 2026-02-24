@@ -32,7 +32,11 @@ class TariffConfigService
         );
     }
 
-    public function listPaginatedTariffConfigs(?int $pageNumber = 1, ?int $pageSize = 10, ?int $tariffOrderId = null): GrpcServiceResponse
+    public function listPaginatedTariffConfigs(
+        ?int $pageNumber = 1,
+     ?int $pageSize = 10,
+      ?int $tariffOrderId,
+       ?int $connectionTariffId): GrpcServiceResponse
     {
         $grpcRequest = new ListTariffConfigPaginatedRequest;
         if ($pageNumber) {
@@ -43,6 +47,9 @@ class TariffConfigService
         }
         if ($tariffOrderId) {
             $grpcRequest->setTariffOrderId($tariffOrderId);
+        }
+        if($connectionTariffId){
+            $grpcRequest->setConnectionTariffId($connectionTariffId);
         }
 
         [$response, $status] = $this->client->listTariffConfigPaginated($grpcRequest)->wait();
