@@ -106,7 +106,8 @@ export default function MeterReadingCreatePage({
     metersWithTimezonesAndProfiles,
     meterHealthTypes,
     ctHealthTypes,
-    latestMeterReadingGroupByMeter
+    latestMeterReadingGroupByMeter,
+    anomalyTypes
   )
 
   const [hasInterimReading, setHasInterimReading] = useState(
@@ -118,6 +119,11 @@ export default function MeterReadingCreatePage({
   )
 
   const isFirstReading = useMemo(() => {
+    console.log(
+      latestMeterReadingGroupByMeter,
+      'latestMeterReadingGroupByMeter',
+      meterConnectionMappings
+    )
     return latestMeterReading == null
   }, [latestMeterReading])
 
@@ -136,7 +142,9 @@ export default function MeterReadingCreatePage({
   const [profileErrorExist, setProfileErrorExist] = useState<boolean>(false)
 
   const endDate = getMonthEnd(readingStartDate, isFirstReading, meterConnectionMappings)
-
+  const defalultAnomaly = anomalyTypes.find(
+    (h) => h.parameter_value.toLowerCase() === 'no visible anomalies'
+  )
   const { formData, setFormValue, toggleBoolean } = useCustomForm<MeterReadingForm>({
     id: editMode ? latestMeterReading?.id : 0,
     connection_id: connectionWithConsumer?.connection?.connection_id ?? 0,
@@ -145,7 +153,7 @@ export default function MeterReadingCreatePage({
     reading_end_date: editMode
       ? latestMeterReading?.reading_end_date
       : (getMonthEnd(readingStartDate, isFirstReading, meterConnectionMappings) ?? ''),
-    anomaly_id: editMode ? latestMeterReading?.anomaly_id : 0,
+    anomaly_id: editMode ? latestMeterReading?.anomaly_id : defalultAnomaly?.id,
     remarks: editMode ? latestMeterReading?.remarks : '',
     interim_reason_id: '',
     is_interim_reading: hasInterimReading ? true : false,
