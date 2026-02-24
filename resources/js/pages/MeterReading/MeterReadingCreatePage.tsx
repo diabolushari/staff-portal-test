@@ -239,7 +239,7 @@ export default function MeterReadingCreatePage({
           getMonthEnd(getNextDay(latestReadingEndDate.format('YYYY-MM-DD')) ?? '', false) ?? ''
       }
     }
-    console.log('callin this useeffict', formData.meters, lastReadingDate, readingStartDate)
+
     if (isFirstReading) {
       setFormValue('reading_end_date')(readingStartDate ?? '')
     }
