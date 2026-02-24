@@ -136,7 +136,6 @@ export default function MeterReadingCreatePage({
 
   const readingStartDate = useMemo(() => {
     if (isFirstReading) {
-      console.log(getMeterEnergisedDate(meterConnectionMappings ?? []), 'testing')
       return getMeterEnergisedDate(meterConnectionMappings ?? [])
     }
 
@@ -184,26 +183,53 @@ export default function MeterReadingCreatePage({
   }, [formData.is_interim_reading])
 
   useEffect(() => {
-    console.log(formData.meters, 'meters', meterConnectionMappings)
-    const lastMeterId = formData.meters[formData.meters.length - 1]
-    const lastMeter = latestMeterReadingGroupByMeter.find(
-      (lastMeterReading) => lastMeterReading.meter?.meter_id === lastMeterId
-    )
+    if (!formData.meters?.length) return
 
-    if (lastMeter) {
-      const meterConnectionMapping = meterConnectionMappings.find(
-        (m) => m.meter_id == lastMeter.meter.meter_id
-      )
-      let lastReadingDate =
-        getMonthEnd(getNextDay(lastMeter?.reading?.reading_end_date ?? '') ?? '', false) ?? ''
+    const currentMonth = dayjs()
 
-      if (dayjs(meterConnectionMapping?.effective_end_ts) < dayjs(lastReadingDate)) {
-        lastReadingDate = dayjs(meterConnectionMapping?.effective_end_ts).format('YYYY-MM-DD')
+    let effectiveEndDates: Dayjs[] = []
+
+    formData.meters.forEach((meterId) => {
+      const mappingsOfMeter = meterConnectionMappings.filter((m) => m.meter_id === meterId)
+
+      mappingsOfMeter.forEach((mapping) => {
+        if (!mapping.effective_end_ts) return
+
+        const endDate = dayjs(mapping.effective_end_ts)
+
+        if (endDate.isSame(currentMonth, 'month')) {
+          effectiveEndDates.push(endDate)
+        }
+      })
+    })
+
+    let lastReadingDate: string = ''
+
+    if (effectiveEndDates.length > 0) {
+      // ✅ Get lowest (earliest) effective_end_ts
+      const lowestDate = effectiveEndDates.sort((a, b) => a.valueOf() - b.valueOf())[0]
+
+      lastReadingDate = lowestDate.format('YYYY-MM-DD')
+    } else {
+      // 🔁 Normal fallback logic (use latest reading among meters)
+      const lastReadings = formData.meters
+        .map((meterId) =>
+          latestMeterReadingGroupByMeter.find((reading) => reading.meter?.meter_id === meterId)
+        )
+        .filter(Boolean)
+
+      const latestReadingEndDate = lastReadings
+        .map((r) => dayjs(r!.reading?.reading_end_date))
+        .sort((a, b) => b.valueOf() - a.valueOf())[0]
+
+      if (latestReadingEndDate) {
+        lastReadingDate =
+          getMonthEnd(getNextDay(latestReadingEndDate.format('YYYY-MM-DD')) ?? '', false) ?? ''
       }
-
-      setFormValue('reading_end_date')(lastReadingDate)
     }
-  }, [formData.meters])
+
+    setFormValue('reading_end_date')(lastReadingDate)
+  }, [formData.meters, latestMeterReadingGroupByMeter, meterConnectionMappings])
 
   const [activeStep, setActiveStep] = useState(0)
 
