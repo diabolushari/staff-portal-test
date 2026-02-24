@@ -96,17 +96,17 @@ const averagePowerfactor = (
   readingValues
     .filter((r) => r.meter_id === meterId)
     .forEach((reading) => {
-      reading.parameters.forEach((param) => {
+      reading?.parameters?.forEach((param) => {
         // kWh
         if (param.meter_parameter_id == kwhProfile.meter_parameter_id) {
-          param.readings.forEach((tz) => {
+          param?.readings?.forEach((tz) => {
             totalKwh += Number(tz.values?.diff) ?? 0
           })
         }
 
         // kVAh
         if (param.meter_parameter_id == kvahProfile.meter_parameter_id) {
-          param.readings.forEach((tz) => {
+          param?.readings?.forEach((tz) => {
             totalKvah += Number(tz.values?.diff) ?? 0
           })
         }
@@ -242,7 +242,7 @@ const MeterReadingPreview = ({
             r.values?.initial.toString() !== ''
         )
       }
-      return param.readings.every(
+      return param?.readings?.every(
         (r) => r.values?.final !== undefined && r.values?.final !== null && r.values?.final !== ''
       )
     })
@@ -250,16 +250,18 @@ const MeterReadingPreview = ({
     setAllProfileHasData(dataExist)
   }, [readingValues, meterWithTimezoneAndProfile, setAllProfileHasData])
 
+  console.log(meterWithTimezoneAndProfile, 'jajfaj')
+
   return (
     <div
       key={meterWithTimezoneAndProfile.meter_id}
       className='flex flex-col gap-4'
     >
       <StrongText className='mb-2 block'>
-        Meter {meterWithTimezoneAndProfile.meter.meter_serial}
+        Meter {meterWithTimezoneAndProfile?.meter?.meter_serial}
       </StrongText>
       <span className='text-sm text-gray-500'>
-        Multiplication Factor: {meterWithTimezoneAndProfile.meter_mf}
+        Multiplication Factor: {meterWithTimezoneAndProfile?.meter_mf}
       </span>
       <div className='flex flex-col gap-2'>
         {meterHealthTypes && (
@@ -267,11 +269,11 @@ const MeterReadingPreview = ({
             <SelectList
               label='Meter Health'
               value={
-                healthData.find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
+                healthData.find((m) => m.meter_id === meterWithTimezoneAndProfile?.meter_id)
                   ?.meter_health_id ?? ''
               }
               setValue={(value) =>
-                updateMeterHealth(Number(value), meterWithTimezoneAndProfile.meter)
+                updateMeterHealth(Number(value), meterWithTimezoneAndProfile?.meter)
               }
               list={meterHealthTypes}
               dataKey='id'

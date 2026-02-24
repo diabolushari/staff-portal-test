@@ -86,7 +86,7 @@ class CreateMeterReadingController extends Controller
                 $meterWithTimezoneAndProfile['meter_serial'] = $meter->data['meter_serial'] ?? null;
                 $meterWithTimezoneAndProfile['meter_connection_mapping'] = $meterConnectionRel;
 
-                $data = $this->meterTimezoneTypeRelService->getActiveMeterTimezoneTypeRelByMeterId($meterConnectionRel['meter_id'])->data ?? [];
+                $data = $this->meterTimezoneTypeRelService->getMeterTimezoneTypeRelByVersionId($meterConnectionRel['meter']['meter_timezone_type_rel'][0]['version_id'])->data ?? [];
                 if (! empty($data)) {
                     $meterWithTimezoneAndProfile['meter_timezone_type'] = $data['timezone_type']['parameter_value'];
                     $meterTimezoneTypeRel[] = $data;
