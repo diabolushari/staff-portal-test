@@ -36,8 +36,11 @@ const SdCollectionForm = ({ sdDemand, collectionModes }: Props) => {
     document_path: null,
     document_name: '',
   })
+
+  //TODO useEffect has missing dependency of collectionModes
   useEffect(() => {
     if (!formData.collection_mode_id) return setSelectedCollectionMode(null)
+    // TODO wrong naming convention
     const CollectionMode = collectionModes.find(
       (mode) => mode.id == Number(formData.collection_mode_id)
     )
@@ -64,6 +67,7 @@ const SdCollectionForm = ({ sdDemand, collectionModes }: Props) => {
 
   const isReversed = false
 
+  //TODO should default to empty array
   const [attributeData, setAttributeData] = useState<SdAttribute[] | null>(null)
 
   const customFormData = useMemo(() => {
