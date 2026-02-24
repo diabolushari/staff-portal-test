@@ -88,6 +88,7 @@ class MeterConnectionMappingConverter
             'intimation_date' => $intimationDate,
             'change_date' => $changeDate,
             'energise_date' => $energiseDate,
+            'is_current' => $rel->getIsCurrent(),
         ];
     }
 }

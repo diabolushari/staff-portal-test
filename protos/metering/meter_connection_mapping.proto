@@ -147,6 +147,7 @@ message MeterConnectionMappingResponse {
   optional bool is_meter_reading_mandatory = 24;
   optional MeterResponse meter = 25;
   optional float meter_mf = 26;
+  optional bool is_current = 27;
 }
 
 

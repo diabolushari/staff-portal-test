@@ -96,6 +96,10 @@ export default function MeterReadingCreatePage({
     profileIdx: number
   } | null>(null)
 
+  const [selectedMeters, setSelectedMeters] = useState<number[]>(
+    meterConnectionMappings?.map((m) => m.meter_id) ?? []
+  )
+
   const { readingValues, updateReading } = useMeterReadingForm(
     metersWithTimezonesAndProfiles,
     latestMeterReadingGroupByMeter,
@@ -118,29 +122,36 @@ export default function MeterReadingCreatePage({
       : false
   )
 
-  const isFirstReading = useMemo(() => {
+  const isFirstReading: boolean = useMemo(() => {
     if (!meterConnectionMappings?.length) return true
-
-    const mappedMeterIds = meterConnectionMappings.map((mapping) => mapping.meter?.meter_id)
 
     const readingMeterIds =
       latestMeterReadingGroupByMeter?.map((reading) => reading?.meter?.meter_id) ?? []
 
     // If any mapped meter does NOT have a reading → first reading
-    const hasMeterWithoutReading = mappedMeterIds.some(
+    const hasMeterWithoutReading = selectedMeters.some(
       (meterId) => !readingMeterIds.includes(meterId)
     )
 
     return hasMeterWithoutReading
-  }, [meterConnectionMappings, latestMeterReadingGroupByMeter])
+  }, [meterConnectionMappings, latestMeterReadingGroupByMeter, selectedMeters])
 
-  const readingStartDate = useMemo(() => {
+  const readingStartDate: string = useMemo(() => {
     if (isFirstReading) {
-      return getMeterEnergisedDate(meterConnectionMappings ?? [])
+      return getMeterEnergisedDate(
+        meterConnectionMappings ?? [],
+        latestMeterReadingGroupByMeter,
+        selectedMeters
+      )
     }
 
     return getNextDay(latestMeterReading?.reading_end_date) ?? ''
-  }, [isFirstReading, latestMeterReading?.reading_end_date, meterConnectionMappings])
+  }, [
+    isFirstReading,
+    latestMeterReading?.reading_end_date,
+    meterConnectionMappings,
+    selectedMeters,
+  ])
 
   const [isOnParamaterForm, setIsOnParameterForm] = useState(false)
 
@@ -185,6 +196,7 @@ export default function MeterReadingCreatePage({
   useEffect(() => {
     if (!formData.meters?.length) return
 
+    setSelectedMeters(formData.meters)
     const currentMonth = dayjs()
 
     let effectiveEndDates: Dayjs[] = []
@@ -227,9 +239,13 @@ export default function MeterReadingCreatePage({
           getMonthEnd(getNextDay(latestReadingEndDate.format('YYYY-MM-DD')) ?? '', false) ?? ''
       }
     }
-
+    console.log('callin this useeffict', formData.meters, lastReadingDate, readingStartDate)
+    if (isFirstReading) {
+      setFormValue('reading_end_date')(readingStartDate ?? '')
+    }
     setFormValue('reading_end_date')(lastReadingDate)
-  }, [formData.meters, latestMeterReadingGroupByMeter, meterConnectionMappings])
+    setFormValue('reading_start_date')(readingStartDate)
+  }, [formData.meters, latestMeterReadingGroupByMeter, meterConnectionMappings, selectedMeters])
 
   const [activeStep, setActiveStep] = useState(0)
 

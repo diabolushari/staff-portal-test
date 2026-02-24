@@ -1,4 +1,4 @@
-import { MeterConnectionMapping } from '@/interfaces/data_interfaces'
+import { MeterConnectionMapping, MeterReadingValueGroup } from '@/interfaces/data_interfaces'
 import dayjs from 'dayjs'
 
 export const getNextDay = (dateStr: string) => {
@@ -47,11 +47,22 @@ export const getMonthEnd = (
 
   return lowestEndDate.format('YYYY-MM-DD')
 }
-export const getMeterEnergisedDate = (meterMappings: MeterConnectionMapping[] = []): string => {
+export const getMeterEnergisedDate = (
+  meterMappings: MeterConnectionMapping[] = [],
+  latestMeterReadingGroupByMeter?: MeterReadingValueGroup[],
+  meters?: number[]
+): string => {
   if (!meterMappings.length) return ''
 
-  const earliestMeter = meterMappings
-    .filter((m) => m.energise_date)
+  const selectedMeters = meterMappings.filter((m) => meters?.includes(m.meter_id))
+  const meterIdsWithReading = latestMeterReadingGroupByMeter?.map((r) => r.meter?.meter_id) ?? []
+
+  const metersWithoutReading = selectedMeters.filter(
+    (m) => !meterIdsWithReading.includes(m.meter_id)
+  )
+
+  const earliestMeter = metersWithoutReading
+    .filter((m) => m.energise_date && m.is_current && m.is_active)
     .sort((a, b) => dayjs(a.energise_date!).valueOf() - dayjs(b.energise_date!).valueOf())[0]
 
   return earliestMeter?.energise_date ? dayjs(earliestMeter.energise_date).format('YYYY-MM-DD') : ''

@@ -80,6 +80,8 @@ export interface MeterConnectionMapping {
   meter_mf?: number
   meter_timezone_type?: ParameterValues
   timezone_type_id?: number
+  is_current: boolean
+  is_active: boolean
 }
 
 export interface DateTimeField {

@@ -45,9 +45,7 @@ export default function MeterReadingGeneralStep({
 }: Props) {
   const maxDate = dayjs().format('DD-MM-YYYY')
   const maxDateForReadingStartDate = dayjs(maxDate).subtract(1, 'day').format('DD-MM-YYYY')
-  const [openDateField, setOpenDateField] = useState(
-    hasInterimReading == false || formData.meters.length > 0
-  )
+  const [openDateField, setOpenDateField] = useState(formData.meters.length > 0)
 
   useEffect(() => {
     if (isFirstReading) {
