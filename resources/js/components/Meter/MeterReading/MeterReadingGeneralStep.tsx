@@ -50,6 +50,10 @@ export default function MeterReadingGeneralStep({
   )
 
   useEffect(() => {
+    if (isFirstReading) {
+      setOpenDateField(true)
+      return
+    }
     if (formData?.meters?.length > 0) {
       const meterReadingEndDates = latestMeterReading
         ?.filter((groupedReading) => {
@@ -69,7 +73,7 @@ export default function MeterReadingGeneralStep({
         setOpenDateField(false)
       }
     }
-  }, [formData.meters.length, hasInterimReading])
+  }, [formData.meters.length, hasInterimReading, isFirstReading])
 
   return (
     <>

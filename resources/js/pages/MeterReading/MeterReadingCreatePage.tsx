@@ -119,29 +119,35 @@ export default function MeterReadingCreatePage({
   )
 
   const isFirstReading = useMemo(() => {
-    console.log(
-      latestMeterReadingGroupByMeter,
-      'latestMeterReadingGroupByMeter',
-      meterConnectionMappings
+    if (!meterConnectionMappings?.length) return true
+
+    const mappedMeterIds = meterConnectionMappings.map((mapping) => mapping.meter?.meter_id)
+
+    const readingMeterIds =
+      latestMeterReadingGroupByMeter?.map((reading) => reading?.meter?.meter_id) ?? []
+
+    // If any mapped meter does NOT have a reading → first reading
+    const hasMeterWithoutReading = mappedMeterIds.some(
+      (meterId) => !readingMeterIds.includes(meterId)
     )
-    return latestMeterReading == null
-  }, [latestMeterReading])
+
+    return hasMeterWithoutReading
+  }, [meterConnectionMappings, latestMeterReadingGroupByMeter])
 
   const readingStartDate = useMemo(() => {
-    console.log(meterConnectionMappings)
     if (isFirstReading) {
-      return getMeterEnergisedDate(connectionWithConsumer?.connection?.meter_mappings ?? [])
+      console.log(getMeterEnergisedDate(meterConnectionMappings ?? []), 'testing')
+      return getMeterEnergisedDate(meterConnectionMappings ?? [])
     }
 
     return getNextDay(latestMeterReading?.reading_end_date) ?? ''
-  }, [isFirstReading, latestMeterReading?.reading_end_date, connectionWithConsumer])
+  }, [isFirstReading, latestMeterReading?.reading_end_date, meterConnectionMappings])
 
   const [isOnParamaterForm, setIsOnParameterForm] = useState(false)
 
   const [allProfileHasData, setAllProfileHasData] = useState<boolean>(false)
   const [profileErrorExist, setProfileErrorExist] = useState<boolean>(false)
 
-  const endDate = getMonthEnd(readingStartDate, isFirstReading, meterConnectionMappings)
   const defalultAnomaly = anomalyTypes.find(
     (h) => h.parameter_value.toLowerCase() === 'no visible anomalies'
   )
@@ -153,14 +159,13 @@ export default function MeterReadingCreatePage({
     reading_end_date: editMode
       ? latestMeterReading?.reading_end_date
       : (getMonthEnd(readingStartDate, isFirstReading, meterConnectionMappings) ?? ''),
-    anomaly_id: editMode ? latestMeterReading?.anomaly_id : defalultAnomaly?.id,
+    anomaly_id: editMode ? latestMeterReading?.anomaly_id : (defalultAnomaly?.id ?? 0),
     remarks: editMode ? latestMeterReading?.remarks : '',
     interim_reason_id: '',
     is_interim_reading: hasInterimReading ? true : false,
     meters:
-      hasInterimReading && latestMeterReadingGroupByMeter.length == 1
-        ? [latestMeterReadingGroupByMeter[0]?.meter?.meter_id]
-        : metersWithTimezonesAndProfiles.map((meter) => meter.meter_id),
+      meterConnectionMappings?.length >= 1 ? meterConnectionMappings?.map((m) => m.meter_id) : [],
+    has_first_reading_meter: isFirstReading,
     _method: editMode ? 'PUT' : undefined,
   })
 
@@ -183,7 +188,7 @@ export default function MeterReadingCreatePage({
     const lastMeter = latestMeterReadingGroupByMeter.find(
       (lastMeterReading) => lastMeterReading.meter?.meter_id === lastMeterId
     )
-    console.log(lastMeter, 'conose', latestMeterReadingGroupByMeter)
+
     if (lastMeter) {
       const meterConnectionMapping = meterConnectionMappings.find(
         (m) => m.meter_id == lastMeter.meter.meter_id
@@ -192,7 +197,6 @@ export default function MeterReadingCreatePage({
         getMonthEnd(getNextDay(lastMeter?.reading?.reading_end_date ?? '') ?? '', false) ?? ''
 
       if (dayjs(meterConnectionMapping?.effective_end_ts) < dayjs(lastReadingDate)) {
-        console.log(dayjs(meterConnectionMapping?.effective_end_ts).format('YYYY-MM-DD'))
         lastReadingDate = dayjs(meterConnectionMapping?.effective_end_ts).format('YYYY-MM-DD')
       }
 
@@ -284,8 +288,6 @@ export default function MeterReadingCreatePage({
       ? formData.meters
       : metersWithTimezonesAndProfiles.map((meter) => meter.meter_id)
   }, [formData.meters, formData.is_interim_reading, metersWithTimezonesAndProfiles])
-
-  console.log(metersWithTimezonesAndProfiles)
 
   return (
     <MainLayout

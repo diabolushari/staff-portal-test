@@ -60,7 +60,7 @@ export default function MeterReadingsStep({
     () => filteredMetersWithTimezonesAndProfiles.length === 1,
     [filteredMetersWithTimezonesAndProfiles]
   )
-  console.log(filteredMetersWithTimezonesAndProfiles, 'metereadigsetp')
+
   const [activeMeterIdx, setActiveMeterIdx] = useState<number | null>(isSingleMeter ? 0 : null)
 
   const hasMultipleMeters = filteredMetersWithTimezonesAndProfiles.length > 1

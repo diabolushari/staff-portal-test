@@ -222,12 +222,6 @@ const MeterReadingPreview = ({
     const meterReadingData = filteredReadingvalues?.find(
       (readingData) => readingData.meter_id === meterWithTimezoneAndProfile.meter_id
     )
-    console.log(
-      'understanind',
-      meterReadingData,
-      filteredReadingvalues,
-      meterWithTimezoneAndProfile
-    )
 
     if (meterReadingData == null) {
       setAllProfileHasData(false)
@@ -238,14 +232,21 @@ const MeterReadingPreview = ({
       const param = meterReadingData.parameters.find(
         (p) => p.meter_parameter_id === profile.meter_parameter_id
       )
-      console.log('param', param)
-      if (param == null || param.readings?.length === 0) return false
 
+      if (param == null || param.readings?.length === 0) return false
+      if (isFirstReading) {
+        return param.readings.every(
+          (r) =>
+            r.values?.initial !== undefined &&
+            r.values?.initial !== null &&
+            r.values?.initial.toString() !== ''
+        )
+      }
       return param.readings.every(
         (r) => r.values?.final !== undefined && r.values?.final !== null && r.values?.final !== ''
       )
     })
-    console.log('dataExist', dataExist)
+
     setAllProfileHasData(dataExist)
   }, [readingValues, meterWithTimezoneAndProfile, setAllProfileHasData])
 

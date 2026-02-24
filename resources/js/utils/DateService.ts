@@ -50,19 +50,9 @@ export const getMonthEnd = (
 export const getMeterEnergisedDate = (meterMappings: MeterConnectionMapping[] = []): string => {
   if (!meterMappings.length) return ''
 
-  const energyMeter = meterMappings.find(
-    (m) =>
-      m.meter_use_category?.parameter_value?.toLowerCase() === 'energy consumption' &&
-      m.energise_date
-  )
-
-  if (energyMeter?.energise_date) {
-    return dayjs(energyMeter.energise_date).format('YYYY-MM-DD')
-  }
-
-  const latestMeter = meterMappings
+  const earliestMeter = meterMappings
     .filter((m) => m.energise_date)
     .sort((a, b) => dayjs(a.energise_date!).valueOf() - dayjs(b.energise_date!).valueOf())[0]
 
-  return latestMeter?.energise_date ? dayjs(latestMeter.energise_date).format('YYYY-MM-DD') : ''
+  return earliestMeter?.energise_date ? dayjs(earliestMeter.energise_date).format('YYYY-MM-DD') : ''
 }

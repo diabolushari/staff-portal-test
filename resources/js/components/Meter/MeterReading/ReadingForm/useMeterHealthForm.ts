@@ -23,7 +23,6 @@ const storeInitialMetersHealthData = (
   metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[],
   meterHealths: ParameterValues[],
   ctHealths: ParameterValues[],
-  anomalyTypes: ParameterValues[],
   latestMeterReading: MeterReadingValueGroup[] | null
 ): MeterHealth[] => {
   const defaultMeterHealth = meterHealths.find((h) => h.parameter_value === 'Working')
@@ -90,7 +89,7 @@ export default function useMeterHealthForm(
         metersWithTimezonesAndProfiles,
         meterHealths,
         ctHealths,
-        anomalyTypes,
+
         latestMeterReading
       )
     )

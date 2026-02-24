@@ -60,6 +60,7 @@ class MeterConnectionMappingConverter
         $noticeDate = $rel->getNoticeDate() ? $rel->getNoticeDate()->toDateTime()->format('Y-m-d') : null;
         $intimationDate = $rel->getIntimationDate() ? $rel->getIntimationDate()->toDateTime()->format('Y-m-d') : null;
         $changeDate = $rel->getChangeDate() ? $rel->getChangeDate()->toDateTime()->format('Y-m-d') : null;
+        $energiseDate = $rel->getEnergiseDate() ? $rel->getEnergiseDate()->toDateTime()->format('Y-m-d') : null;
         return [
             'version_id' => $rel->getVersionId(),
             'rel_id' => $rel->getRelId(),
@@ -86,6 +87,7 @@ class MeterConnectionMappingConverter
             'notice_date' => $noticeDate,
             'intimation_date' => $intimationDate,
             'change_date' => $changeDate,
+            'energise_date' => $energiseDate,
         ];
     }
 }
