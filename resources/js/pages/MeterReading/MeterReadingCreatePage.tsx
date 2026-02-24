@@ -184,6 +184,7 @@ export default function MeterReadingCreatePage({
   }, [formData.is_interim_reading])
 
   useEffect(() => {
+    console.log(formData.meters, 'meters', meterConnectionMappings)
     const lastMeterId = formData.meters[formData.meters.length - 1]
     const lastMeter = latestMeterReadingGroupByMeter.find(
       (lastMeterReading) => lastMeterReading.meter?.meter_id === lastMeterId
