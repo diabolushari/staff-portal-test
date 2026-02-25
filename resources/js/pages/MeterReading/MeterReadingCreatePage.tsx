@@ -197,13 +197,14 @@ export default function MeterReadingCreatePage({
     if (!formData.meters?.length) return
 
     setSelectedMeters(formData.meters)
-    const currentMonth = dayjs()
+    const currentMonth = dayjs(latestMeterReading?.reading_end_date).add(1, 'day')
 
     let effectiveEndDates: Dayjs[] = []
 
     formData.meters.forEach((meterId) => {
       const mappingsOfMeter = meterConnectionMappings.filter((m) => m.meter_id === meterId)
 
+      console.log(mappingsOfMeter, 'mappingsOfMeter', currentMonth)
       mappingsOfMeter.forEach((mapping) => {
         if (!mapping.effective_end_ts) return
 
@@ -217,13 +218,13 @@ export default function MeterReadingCreatePage({
 
     let lastReadingDate: string = ''
 
+    console.log(effectiveEndDates, 'effective ned dates ')
     if (effectiveEndDates.length > 0) {
       // ✅ Get lowest (earliest) effective_end_ts
       const lowestDate = effectiveEndDates.sort((a, b) => a.valueOf() - b.valueOf())[0]
 
       lastReadingDate = lowestDate.format('YYYY-MM-DD')
     } else {
-      // 🔁 Normal fallback logic (use latest reading among meters)
       const lastReadings = formData.meters
         .map((meterId) =>
           latestMeterReadingGroupByMeter.find((reading) => reading.meter?.meter_id === meterId)
@@ -238,11 +239,13 @@ export default function MeterReadingCreatePage({
         lastReadingDate =
           getMonthEnd(getNextDay(latestReadingEndDate.format('YYYY-MM-DD')) ?? '', false) ?? ''
       }
+      console.log('lastReadingDate', lastReadingDate)
     }
 
     if (isFirstReading) {
       setFormValue('reading_end_date')(readingStartDate ?? '')
     }
+
     setFormValue('reading_end_date')(lastReadingDate)
     setFormValue('reading_start_date')(readingStartDate)
   }, [formData.meters, latestMeterReadingGroupByMeter, meterConnectionMappings, selectedMeters])
