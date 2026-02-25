@@ -246,6 +246,9 @@ class BillExportService
                 if (($useContractDemand && $zoneId == $maxKvaIndex) || (! $useContractDemand && $zoneId == $zoneWithMaxDemand['result'])) {
                     $units = $demandUnits;
                     $demandChargeAmount = $demandChargeHead ? (float) ($demandChargeHead['result'] ?? 0) : 0;
+                } elseif (!$useContractDemand && $zoneWithMaxDemand['result'] - 1 == $index) {
+                    $units = $demandUnits;
+                    $demandChargeAmount = $demandChargeHead ? (float) ($demandChargeHead['result'] ?? 0) : 0;
                 }
 
                 $demandRows[] = [
