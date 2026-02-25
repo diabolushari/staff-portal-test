@@ -144,6 +144,7 @@ export default function MeterReadingCreatePage({
     const latestMeter = meterMappings
       .filter((m) => m.energise_date)
       .sort((a, b) => dayjs(a.energise_date!).valueOf() - dayjs(b.energise_date!).valueOf())[0]
+    console.log(meterMappings)
 
     return latestMeter?.energise_date ? dayjs(latestMeter.energise_date).format('YYYY-MM-DD') : ''
   }
@@ -153,6 +154,7 @@ export default function MeterReadingCreatePage({
   }, [latestMeterReading])
 
   const readingStartDate = useMemo(() => {
+    console.log(latestMeterReading)
     if (isFirstReading) {
       return getMeterEnergisedDate(connectionWithConsumer?.connection?.meter_mappings ?? [])
     }
