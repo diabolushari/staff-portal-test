@@ -100,6 +100,12 @@ export default function MeterReadingGeneralStep({
               value={formData.is_interim_reading}
               error={errors?.is_interim_reading}
             />
+            <CheckBox
+              label='Use For Billing'
+              toggleValue={toggleBoolean('is_billable')}
+              value={formData.is_billable}
+              error={errors?.is_billable}
+            />
             {formData.is_interim_reading && (
               <SelectList
                 label='Interim Reason'

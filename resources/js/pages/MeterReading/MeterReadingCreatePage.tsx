@@ -177,6 +177,7 @@ export default function MeterReadingCreatePage({
       meterConnectionMappings?.length >= 1 ? meterConnectionMappings?.map((m) => m.meter_id) : [],
     has_first_reading_meter: isFirstReading,
     _method: editMode ? 'PUT' : undefined,
+    is_billable: true,
   })
 
   const { post, errors, loading } = useInertiaPost(
