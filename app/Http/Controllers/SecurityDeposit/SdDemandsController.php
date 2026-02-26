@@ -30,9 +30,8 @@ class SdDemandsController extends Controller
         $connectionId = $request->input('connection_id') ?? null;
         $calculationBasicId = $request->input('calculation_basic_id') ?? null;
         $demandTypeId = $request->input('demand_type_id') ?? null;
-        $statusId = $request->input('status_id') ?? null;
         $totalSdAmount = $request->input('total_sd_amount') ?? null;
-        $response = $this->sdDemandService->listPaginatedSdDemands($connectionId, $calculationBasicId, $demandTypeId, $statusId, $totalSdAmount);
+        $response = $this->sdDemandService->listPaginatedSdDemands($connectionId, $calculationBasicId, $demandTypeId, $totalSdAmount);
 
         $paginated = null;
 
@@ -46,20 +45,17 @@ class SdDemandsController extends Controller
             );
         }
 
-        $demandTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'Demand Type')->data;
-        $calculationBasics = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'Calculation Basic')->data;
-        $statuses = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'SD Status')->data;
+        $demandTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'SD Demand Type')->data;
+        $calculationBasics = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'SD Calculation Basic')->data;
 
         return Inertia::render('SecurityDeposit/SdDemands/SdDemandIndex', [
             'sdDemands' => $paginated,
             'oldConnection' => $connectionId ? $this->connectionService->getConnection($connectionId)->data : null,
             'oldCalculationBasicId' => $calculationBasicId,
             'oldDemandTypeId' => $demandTypeId,
-            'oldStatusId' => $statusId,
             'oldTotalSdAmount' => $totalSdAmount,
             'demandTypes' => $demandTypes,
             'calculationBasics' => $calculationBasics,
-            'statuses' => $statuses,
         ]);
     }
 
@@ -72,8 +68,10 @@ class SdDemandsController extends Controller
 
         $connection = $this->connectionService->getConnection($connectionId)->data;
 
-        $demandTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'Demand Type')->data;
-        $calculationBasics = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'Calculation Basic')->data;
+        $demandTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'SD Demand Type')->data;
+        $calculationBasics = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'SD Calculation Basic')->data;
+        $sdRegisterTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'SD Register Type')->data;
+        $occupancyTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'SD Occupancy Type')->data;
 
         return Inertia::render(
             'SecurityDeposit/SdDemands/SdDemandCreate',
@@ -81,6 +79,8 @@ class SdDemandsController extends Controller
                 'demandTypes' => $demandTypes,
                 'calculationBasics' => $calculationBasics,
                 'connection' => $connection,
+                'sdRegisterTypes' => $sdRegisterTypes,
+                'occupancyTypes' => $occupancyTypes,
             ]
         );
     }

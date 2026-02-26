@@ -24,7 +24,6 @@ class SdCollectionController extends Controller
      * List collections for a SD Demand
      */
 
-
     /**
      * Show create form
      */
@@ -34,28 +33,26 @@ class SdCollectionController extends Controller
 
         $sdDemand = $this->sdDemandsService->getSdDemand($sdDemandId)->data;
 
-        $collectionModes = $this->parameterValueService
-            ->getParameterValues(null, null, null, 'Connection', 'SD Collection Mode')
+        $paymmentModes = $this->parameterValueService
+            ->getParameterValues(null, null, null, 'Connection', 'SD Payment Mode')
             ->data;
-
-        $attributeDefinitions = $this->parameterValueService
-            ->getParameterValues(null, null, null, 'Connection', 'SD Collection Attribute')
+        $sdcollectionStatus = $this->parameterValueService
+            ->getParameterValues(null, null, null, 'Connection', 'SD Collection Status')
             ->data;
 
         return Inertia::render('SecurityDeposit/SdCollections/SdCollectionCreate', [
             'sdDemand' => $sdDemand,
-            'collectionModes' => $collectionModes,
-            'attributeDefinitions' => $attributeDefinitions,
+            'paymentModes' => $paymmentModes,
+            'collectionStatus' => $sdcollectionStatus,
         ]);
     }
-
 
     /**
      * Store new collection
      */
     public function store(SdCollectionFormRequest $request): RedirectResponse
     {
-       
+
         $response = $this->sdCollectionService->create($request);
 
         if ($response->hasValidationError() || $response->statusCode !== 0) {

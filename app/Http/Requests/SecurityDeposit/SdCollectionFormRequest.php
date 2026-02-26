@@ -10,17 +10,22 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class SdCollectionFormRequest extends Data
 {
     public function __construct(
-       
+
         public int $sdDemandId,
         public string $collectionDate,
-        public int $collectionModeId,
+        public int $paymentModeId,
         public string $collectionAmount,
+        public bool $isActive,
         public ?string $receiptNumber,
+        public ?string $collectedAt,
         public ?string $collectedBy,
         public ?string $reversalReason,
         public ?string $reversedDate,
         public ?string $reversedBy,
-      /** @var DataCollection<SdAttributeFormRequest> */
+        public ?string $transactionRef,
+        public ?string $remarks,
+        public int $statusId,
+        /** @var DataCollection<SdAttributeFormRequest> */
         public ?array $attributeData,
     ) {}
 }

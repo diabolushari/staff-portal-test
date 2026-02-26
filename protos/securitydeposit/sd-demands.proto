@@ -36,7 +36,7 @@ message CreateSdDemandRequest {
   optional int32 calculation_basic_id = 3;
   string total_sd_amount = 4;
   string applicable_from = 5;
-  optional string applicable_to = 6;
+  string applicable_to = 6;
   int32 charge_head_definition_id = 7;
   bool is_active=8;
   optional int32 created_by=9;

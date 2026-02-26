@@ -73,7 +73,7 @@ const SdAttributeForm = ({ selectedCollectionMode, attributeData, setAttributeDa
 
   //TODO use attributeData != null for empty check
   return (
-    <div className='grid grid-cols-2 gap-4 p-4'>
+    <div className='grid grid-cols-2 gap-4 py-4'>
       {attributeData != null &&
         attributeData?.map((attribute) => (
           <div key={attribute.attribute_definition_id}>

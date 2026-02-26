@@ -52,24 +52,15 @@ const SdDemandList = ({ sdDemands }: Props) => {
                       </div>
                     </div>
                   </div>
+                  <div className='flex items-center gap-[3px]'>
+                    <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                      Charge Head Definition:{' '}
+                      <StrongText> {sdDemand.charge_head_definition.name}</StrongText>
+                    </div>
+                  </div>
                 </div>
 
                 <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
-                  <div
-                    className={`rounded-[50px] px-2.5 py-px ${
-                      sdDemand.is_active ? 'bg-green-100' : 'bg-red-100'
-                    }`}
-                  >
-                    <div
-                      className={`font-inter text-xs leading-6 font-normal tracking-[-0.072px] ${
-                        sdDemand.is_active ? 'text-deep-green' : 'text-red-800'
-                      }`}
-                    >
-                      {sdDemand.is_active ? 'Active' : 'Inactive'}
-                    </div>
-                  </div>
-
-                  {/* Inline Edit/Delete buttons */}
                   <div className='mt-2 flex items-center gap-3'>
                     <ActionButton
                       onDelete={() => {

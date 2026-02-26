@@ -10,6 +10,8 @@ interface Props {
   calculationBasics: ParameterValues[]
   connection?: Connection
   sdDemand?: SdDemand
+  sdRegisterTypes: ParameterValues[]
+  occupancyTypes: ParameterValues[]
 }
 
 export default function SdDemandCreate({
@@ -17,6 +19,8 @@ export default function SdDemandCreate({
   calculationBasics,
   connection,
   sdDemand,
+  sdRegisterTypes,
+  occupancyTypes,
 }: Readonly<Props>) {
   const connectionData = connection ?? sdDemand?.connection
 
@@ -71,6 +75,8 @@ export default function SdDemandCreate({
           calculationBasics={calculationBasics}
           connection={connectionData}
           sdDemand={sdDemand}
+          sdRegisterTypes={sdRegisterTypes}
+          occupancyTypes={occupancyTypes}
         />
       </div>
     </ConnectionsLayout>

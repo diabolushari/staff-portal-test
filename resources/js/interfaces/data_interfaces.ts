@@ -822,11 +822,11 @@ export interface SdDemand {
   demand_type_id: number
   calculation_basic_id?: number
   total_sd_amount: string
-  applicable_from: string
-  applicable_to?: string
   is_active: boolean
   connection: Connection
   demand_type: ParameterValues
+  charge_head_definition_id: number
+  charge_head_definition: ChargeHeadDefinition
   calculation_basic?: ParameterValues
   collections?: SdCollection[]
 }
@@ -835,7 +835,7 @@ export interface SdCollection {
   sd_collection_id: number
   sd_demand_id: number
   collection_date: string
-  collection_mode_id: number
+  payment_mode_id: number
   collection_amount: string
   receipt_number: string
   collected_at: string
@@ -846,7 +846,7 @@ export interface SdCollection {
   reversed_by: string
   created_by: number
   updated_by: number
-  collection_mode: ParameterValues
+  payment_mode: ParameterValues
   sdAttribute: SdAttribute[]
 }
 
