@@ -1,14 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 
-export type Appearance = 'light' | 'dark' | 'system'
+export type Appearance = 'light'
 
-const prefersDark = () => {
-  if (typeof window === 'undefined') {
-    return false
-  }
-
-  return window.matchMedia('(prefers-color-scheme: light)').matches
-}
+const LIGHT_APPEARANCE: Appearance = 'light'
 
 const setCookie = (name: string, value: string, days = 365) => {
   if (typeof document === 'undefined') {
@@ -19,47 +13,38 @@ const setCookie = (name: string, value: string, days = 365) => {
   document.cookie = `${name}=${value};path=/;max-age=${maxAge};SameSite=Lax`
 }
 
-const applyTheme = (appearance: Appearance) => {
-  document.documentElement.classList.toggle('light')
-}
-
-const mediaQuery = () => {
-  if (typeof window === 'undefined') {
-    return null
+const applyTheme = (): void => {
+  if (typeof document === 'undefined') {
+    return
   }
 
-  return window.matchMedia('(prefers-color-scheme: dark)')
+  document.documentElement.classList.remove('dark')
 }
 
-const handleSystemThemeChange = () => {
-  applyTheme('light')
+const persistLightAppearance = (): void => {
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem('appearance', LIGHT_APPEARANCE)
+  }
+
+  setCookie('appearance', LIGHT_APPEARANCE)
 }
 
-export function initializeTheme() {
-  const savedAppearance = 'light'
-
-  applyTheme(savedAppearance)
-
-  // Add the event listener for system theme changes...
-  mediaQuery()?.addEventListener('change', handleSystemThemeChange)
+export function initializeTheme(): void {
+  applyTheme()
+  persistLightAppearance()
 }
 
 export function useAppearance() {
-  const [appearance, setAppearance] = useState<Appearance>('light')
+  const [appearance, setAppearance] = useState<Appearance>(LIGHT_APPEARANCE)
 
-  const updateAppearance = useCallback((mode: Appearance) => {
-    setAppearance(mode)
-    localStorage.setItem('appearance', mode)
-    setCookie('appearance', mode)
-
-    applyTheme(mode)
+  const updateAppearance = useCallback(() => {
+    setAppearance(LIGHT_APPEARANCE)
+    persistLightAppearance()
+    applyTheme()
   }, [])
 
   useEffect(() => {
-    const savedAppearance = localStorage.getItem('appearance') as Appearance | null
-    updateAppearance(savedAppearance || 'light')
-
-    return () => mediaQuery()?.removeEventListener('change', handleSystemThemeChange)
+    updateAppearance()
   }, [updateAppearance])
 
   return { appearance, updateAppearance } as const

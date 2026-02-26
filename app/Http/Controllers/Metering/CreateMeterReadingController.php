@@ -54,7 +54,6 @@ class CreateMeterReadingController extends Controller
             'CT-Health Type',
         );
 
-
         $anomalyTypes = $this->parameterService->getParameterValues(
             1,
             100,
@@ -70,9 +69,10 @@ class CreateMeterReadingController extends Controller
         $latestMeterReading = $this->meterReadingService->latestMeterReading($connectionId);
         $latestMeterReadingGroupByMeter = $this->meterReadingService->latestMeterReadingGroupByMeter($connectionId);
 
+        dd($latestMeterReadingGroupByMeter->data);
+
         $getReadingEntryResponse = $this->getReadingEntryService->getReadingEntryData($connectionId);
         $uniqueMeters = $this->getReadingEntryService->getUniqueMeters($getReadingEntryResponse->data['meter_connection_mappings']);
-
 
         if ($uniqueMeters && count($uniqueMeters) > 0) {
             $meterWithTimezoneAndProfile = [];
@@ -130,7 +130,7 @@ class CreateMeterReadingController extends Controller
             'editMode' => false,
             'interimReasons' => $interimReasons->data,
             'latestMeterReadingGroupByMeter' => $latestMeterReadingGroupByMeter->data,
-            'meterConnectionMappings' => $uniqueMeters
+            'meterConnectionMappings' => $uniqueMeters,
         ]);
     }
 }

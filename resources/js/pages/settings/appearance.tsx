@@ -23,7 +23,7 @@ export default function Appearance() {
         <div className='space-y-6'>
           <HeadingSmall
             title='Appearance settings'
-            description="Update your account's appearance settings"
+            description='Light theme is enabled for all users'
           />
           <AppearanceTabs />
         </div>

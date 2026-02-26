@@ -4,7 +4,7 @@
     ],
     "editors": [
         "codex",
-        "phpstorm"
+        "vscode"
     ],
     "guidelines": []
 }
