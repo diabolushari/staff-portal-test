@@ -18,17 +18,19 @@ const SdAttributeForm = ({ selectedCollectionMode, attributeData, setAttributeDa
   }, [selectedCollectionMode])
 
   //TODO wrong naming convention
-  const [SdAttribute] = useFetchRecord<ParameterValues[]>(attributeUrl ? attributeUrl : ' ')
+  const [sdAttributeFormItems] = useFetchRecord<ParameterValues[]>(
+    attributeUrl ? attributeUrl : ' '
+  )
   useEffect(() => {
-    if (!Array.isArray(SdAttribute)) return
+    if (!Array.isArray(sdAttributeFormItems)) return
 
-    if (SdAttribute.length == 0) {
+    if (sdAttributeFormItems.length == 0) {
       setAttributeData(null)
       return
     }
 
-    if (SdAttribute.length > 0) {
-      const data: SdAttribute[] = SdAttribute.map((attribute) => ({
+    if (sdAttributeFormItems.length > 0) {
+      const data: SdAttribute[] = sdAttributeFormItems.map((attribute) => ({
         attribute_id: null,
         sd_collection_id: null,
         attribute_definition_id: attribute.id,
@@ -40,25 +42,31 @@ const SdAttributeForm = ({ selectedCollectionMode, attributeData, setAttributeDa
 
       setAttributeData(data)
     }
-  }, [SdAttribute, setAttributeData])
+  }, [sdAttributeFormItems, setAttributeData])
 
   //TODO  type errors
   const updateTextValue = useCallback(
     (id: number, text: string) => {
-      setAttributeData((prev: SdAttribute[] | null) =>
-        prev?.map((item) =>
+      setAttributeData((prev) => {
+        if (!prev) return null
+
+        return prev.map((item) =>
           item.attribute_definition_id === id ? { ...item, attribute_value: text } : item
         )
-      )
+      })
     },
     [setAttributeData]
   )
 
   const updateFileValue = useCallback(
     (id: number, file: File | null) => {
-      setAttributeData((prev: SdAttribute[] | null) =>
-        prev?.map((item) => (item.attribute_definition_id === id ? { ...item, file: file } : item))
-      )
+      setAttributeData((prev) => {
+        if (!prev) return null
+
+        return prev.map((item) =>
+          item.attribute_definition_id === id ? { ...item, file: file } : item
+        )
+      })
     },
     [setAttributeData]
   )
@@ -66,8 +74,7 @@ const SdAttributeForm = ({ selectedCollectionMode, attributeData, setAttributeDa
   //TODO use attributeData != null for empty check
   return (
     <div className='grid grid-cols-2 gap-4 p-4'>
-      {attributeData &&
-        attributeData?.length > 0 &&
+      {attributeData != null &&
         attributeData?.map((attribute) => (
           <div key={attribute.attribute_definition_id}>
             <InputItemForm

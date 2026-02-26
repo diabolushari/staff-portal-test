@@ -41,11 +41,11 @@ const SdCollectionForm = ({ sdDemand, collectionModes }: Props) => {
   useEffect(() => {
     if (!formData.collection_mode_id) return setSelectedCollectionMode(null)
     // TODO wrong naming convention
-    const CollectionMode = collectionModes.find(
+    const selectedCollectionMode = collectionModes.find(
       (mode) => mode.id == Number(formData.collection_mode_id)
     )
-    setSelectedCollectionMode(CollectionMode ?? null)
-  }, [formData.collection_mode_id])
+    setSelectedCollectionMode(selectedCollectionMode ?? null)
+  }, [formData.collection_mode_id, collectionModes])
 
   const url = route('sd-collections.store')
 
@@ -55,12 +55,12 @@ const SdCollectionForm = ({ sdDemand, collectionModes }: Props) => {
 
   useEffect(() => {
     if (formData.collection_mode_id) {
-      const selected = collectionModes.find(
+      const selectedCollectionMode = collectionModes.find(
         (mode) => mode.id == Number(formData.collection_mode_id)
       )
 
-      if (selected) {
-        setSelectedCollectionMode(selected)
+      if (selectedCollectionMode) {
+        setSelectedCollectionMode(selectedCollectionMode)
       }
     }
   }, [formData.collection_mode_id, collectionModes])
@@ -68,7 +68,7 @@ const SdCollectionForm = ({ sdDemand, collectionModes }: Props) => {
   const isReversed = false
 
   //TODO should default to empty array
-  const [attributeData, setAttributeData] = useState<SdAttribute[] | null>(null)
+  const [attributeData, setAttributeData] = useState<SdAttribute[] | null>([])
 
   const customFormData = useMemo(() => {
     return {
@@ -113,7 +113,13 @@ const SdCollectionForm = ({ sdDemand, collectionModes }: Props) => {
             required
             placeholder='Select Collection Mode'
           />
-
+        </div>
+        <SdAttributeForm
+          selectedCollectionMode={selectedCollectionMode}
+          attributeData={attributeData}
+          setAttributeData={setAttributeData}
+        />
+        <div className='grid grid-cols-2 gap-4'>
           <Input
             type='number'
             label='Collection Amount'
@@ -167,11 +173,6 @@ const SdCollectionForm = ({ sdDemand, collectionModes }: Props) => {
             </>
           )}
         </div>
-        <SdAttributeForm
-          selectedCollectionMode={selectedCollectionMode}
-          attributeData={attributeData}
-          setAttributeData={setAttributeData}
-        />
 
         <div className='flex justify-end'>
           <Button
