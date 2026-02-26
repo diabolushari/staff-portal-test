@@ -8,7 +8,6 @@ import { BreadcrumbItem } from '@/types'
 interface Props {
   demandTypes: ParameterValues[]
   calculationBasics: ParameterValues[]
-  statuses: ParameterValues[]
   connection?: Connection
   sdDemand?: SdDemand
 }
@@ -16,7 +15,6 @@ interface Props {
 export default function SdDemandCreate({
   demandTypes,
   calculationBasics,
-  statuses,
   connection,
   sdDemand,
 }: Readonly<Props>) {
@@ -71,7 +69,6 @@ export default function SdDemandCreate({
         <SdDemandForm
           demandTypes={demandTypes}
           calculationBasics={calculationBasics}
-          statuses={statuses}
           connection={connectionData}
           sdDemand={sdDemand}
         />

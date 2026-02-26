@@ -11,28 +11,18 @@ import SelectList from '@/ui/form/SelectList'
 interface Props {
   demandTypes: ParameterValues[]
   calculationBasics: ParameterValues[]
-  statuses: ParameterValues[]
   sdDemand?: SdDemand
   connection: Connection
 }
 
-const SdDemandForm = ({
-  demandTypes,
-  calculationBasics,
-  statuses,
-  sdDemand,
-  connection,
-}: Props) => {
+const SdDemandForm = ({ demandTypes, calculationBasics, sdDemand, connection }: Props) => {
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     connection_id: connection.connection_id,
     demand_type_id: sdDemand?.demand_type_id ?? '',
     calculation_basic_id: sdDemand?.calculation_basic_id ?? '',
-    calculation_period_from: sdDemand?.calculation_period_from ?? '',
-    calculation_period_to: sdDemand?.calculation_period_to ?? '',
     total_sd_amount: sdDemand?.total_sd_amount ?? '',
     applicable_from: sdDemand?.applicable_from ?? '',
     applicable_to: sdDemand?.applicable_to ?? '',
-    status_id: sdDemand?.status_id ?? '',
     is_active: sdDemand?.is_active ?? true,
     _method: sdDemand ? 'PUT' : undefined,
   })
@@ -86,22 +76,7 @@ const SdDemandForm = ({
             error={errors?.calculation_basic_id}
             placeholder='Select Calculation Basic'
           />
-          <Datepicker
-            value={formData.calculation_period_from}
-            setValue={setFormValue('calculation_period_from')}
-            label='Calculation Period Start'
-            error={errors?.calculation_period_from}
-            required
-            placeholder='Select Calculation Period Start'
-          />
-          <Datepicker
-            value={formData.calculation_period_to}
-            setValue={setFormValue('calculation_period_to')}
-            label='Calculation Period End'
-            error={errors?.calculation_period_to}
-            placeholder='Select Calculation Period End'
-            required
-          />
+
           <Datepicker
             value={formData.applicable_from}
             setValue={setFormValue('applicable_from')}
@@ -117,16 +92,7 @@ const SdDemandForm = ({
             error={errors?.applicable_to}
             placeholder='Select Applicable To'
           />
-          <SelectList
-            label='Status'
-            list={statuses}
-            dataKey='id'
-            displayKey='parameter_value'
-            setValue={setFormValue('status_id')}
-            value={formData.status_id}
-            error={errors?.status_id}
-            placeholder='Select Status'
-          />
+
           <CheckBox
             label='Is Active'
             value={formData.is_active}

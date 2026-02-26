@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.securitydeposit;
+
+option php_namespace = "Proto\\Consumers";
+option php_metadata_namespace = "GPBMetadata";
+
+
+import "google/protobuf/empty.proto";
+import "parameters/parameter-value.proto";
+import "connections/connections.proto";
+import "securitydeposit/sd-demands.proto";
+
+
+message SdRegisterMessage {
+  optional int32 sd_register_id = 1;
+  int32 sd_demand_id = 2;
+  int32 connection_id = 3;
+  int32 sd_type_id = 4;
+  int32 occupancy_type_id = 5;
+  string period_from = 6;
+  string period_to = 7;
+  string generated_date = 8;
+  string sd_amount = 9;
+  string rate_or_basis = 10;
+  optional string bg_expiry_date = 11;
+  optional string bg_renewal_due_date = 12;
+  optional bool is_fully_settled = 13;
+  optional string settled_date = 14;
+  optional bool is_active = 15;
+  optional int32 created_by = 16;
+  optional int32 updated_by = 17;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto sd_type = 18;
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto occupancy_type = 19;
+  com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 20;
+  com.kseb.consumerservice.grpc.securitydeposit.SdDemandMessage sd_demand = 21;
+}
+
+
+message GetSdRegisterRequest {
+  int32 sd_register_id = 1;
+}
+
+message GetSdRegisterResponse {
+  SdRegisterMessage sd_register = 1;
+}
+
+message ListSdRegistersRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListSdRegistersResponse {
+  repeated SdRegisterMessage items = 1;
+}
+
+message ListSdRegistersPaginatedRequest {
+  optional int32 page = 1;
+  optional int32 page_size = 2;
+}
+
+message ListSdRegistersPaginatedResponse {
+  repeated SdRegisterMessage items = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
+
+
+service SdRegisterService {
+  rpc GetSdRegister(GetSdRegisterRequest) returns (GetSdRegisterResponse);
+  rpc ListSdRegisters(ListSdRegistersRequest) returns (ListSdRegistersResponse);
+  rpc ListSdRegistersPaginated(ListSdRegistersPaginatedRequest) returns (ListSdRegistersPaginatedResponse);
+}

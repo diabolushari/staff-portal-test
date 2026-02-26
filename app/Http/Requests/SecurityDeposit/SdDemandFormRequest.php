@@ -14,11 +14,12 @@ class SdDemandFormRequest extends Data
         public int $demandTypeId,
         public ?int $calculationBasicId,
         public float $totalSdAmount,
-        public string $calculationPeriodFrom,
-        public string $calculationPeriodTo,
         public string $applicableFrom,
         public ?string $applicableTo,
-        public int $statusId,
         public bool $isActive,
+        public int $chargeHeadDefinitionId,
+        public int $sdTypeId,
+        public int $occupancyTypeId,
+        public ?string $rateOrBasis,
     ) {}
 }

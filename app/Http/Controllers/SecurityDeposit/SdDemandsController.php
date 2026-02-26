@@ -10,18 +10,17 @@ use App\Services\SecurityDeposit\SdDemandsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class SdDemandsController extends Controller
 {
-
     public function __construct(
         private readonly SdDemandsService $sdDemandService,
         private readonly ConnectionService $connectionService,
         private readonly ParameterValueService $parameterValueService,
     ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -47,7 +46,7 @@ class SdDemandsController extends Controller
             );
         }
 
-        $demandTypes = $this->parameterValueService->getParameterValues(null, null,  null, 'Connection', 'Demand Type')->data;
+        $demandTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'Demand Type')->data;
         $calculationBasics = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'Calculation Basic')->data;
         $statuses = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'SD Status')->data;
 
@@ -73,16 +72,14 @@ class SdDemandsController extends Controller
 
         $connection = $this->connectionService->getConnection($connectionId)->data;
 
-        $demandTypes = $this->parameterValueService->getParameterValues(null, null,  null, 'Connection', 'Demand Type')->data;
+        $demandTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'Demand Type')->data;
         $calculationBasics = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'Calculation Basic')->data;
-        $statuses = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'SD Status')->data;
 
         return Inertia::render(
             'SecurityDeposit/SdDemands/SdDemandCreate',
             [
                 'demandTypes' => $demandTypes,
                 'calculationBasics' => $calculationBasics,
-                'statuses' => $statuses,
                 'connection' => $connection,
             ]
         );
@@ -97,18 +94,15 @@ class SdDemandsController extends Controller
 
         $connectionId = $request->connectionId;
 
-
         if ($response->hasValidationError() || $response->statusCode !== 0) {
             return $response->error ?? redirect()->back()->withErrors([
                 'message' => $response->statusDetails ?? 'Unknown error',
             ]);
         }
 
-
         return redirect()->route('connection.sd-demands', $connectionId)
             ->with('message', 'Security deposit demand created successfully');
     }
-
 
     /**
      * Show the form for editing the specified resource.
@@ -117,8 +111,7 @@ class SdDemandsController extends Controller
     {
         $sdDemand = $this->sdDemandService->getSdDemand($id);
 
-
-        $demandTypes = $this->parameterValueService->getParameterValues(null, null,  null, 'Connection', 'Demand Type')->data;
+        $demandTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'Demand Type')->data;
         $calculationBasics = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'Calculation Basic')->data;
         $statuses = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'SD Status')->data;
 
@@ -158,9 +151,7 @@ class SdDemandsController extends Controller
         $connectionId = $this->sdDemandService->getSdDemand($id)?->data?->connection_id;
         $response = $this->sdDemandService->deleteSdDemand($id);
 
-
-
-        if (!$response->success) {
+        if (! $response->success) {
             return redirect()->back()->with(
                 'error',
                 $response->error ?? 'Failed to delete security deposit demand.'

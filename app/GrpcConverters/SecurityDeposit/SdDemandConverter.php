@@ -22,18 +22,16 @@ class SdDemandConverter
         return [
             'sd_demand_id' => $sdDemand->getSdDemandId(),
             'connection_id' => $sdDemand->getConnectionId(),
-            'connection' => $sdDemand->hasConnection() ?  ConnectionProtoConverter::convertToArray($sdDemand->getConnection()) : null,
+            'connection' => $sdDemand->hasConnection() ? ConnectionProtoConverter::convertToArray($sdDemand->getConnection()) : null,
             'demand_type_id' => $sdDemand->getDemandTypeId(),
             'demand_type' => $sdDemand->hasDemandType() ? ParameterValueProtoConvertor::convertToArray($sdDemand->getDemandType()) : null,
             'total_sd_amount' => $sdDemand->getTotalSdAmount(),
             'calculation_basic_id' => $sdDemand->hasCalculationBasic() ? $sdDemand->getCalculationBasicId() : null,
             'calculation_basic' => $sdDemand->hasCalculationBasic() ? ParameterValueProtoConvertor::convertToArray($sdDemand->getCalculationBasic()) : null,
-            'calculation_period_from' => $sdDemand->getCalculationPeriodFrom(),
-            'calculation_period_to' => $sdDemand->getCalculationPeriodTo(),
+
             'applicable_from' => $sdDemand->getApplicableFrom(),
             'applicable_to' => $sdDemand->hasApplicableTo() ? $sdDemand->getApplicableTo() : null,
-            'status_id' => $sdDemand->getStatusId(),
-            'status' => $sdDemand->hasStatus() ? ParameterValueProtoConvertor::convertToArray($sdDemand->getStatus()) : null,
+
             'is_active' => $sdDemand->getIsActive(),
             'created_by' => $sdDemand->getCreatedBy(),
             'updated_by' => $sdDemand->getUpdatedBy(),
@@ -54,14 +52,37 @@ class SdDemandConverter
             $msg->setCalculationBasicId($request->calculationBasicId);
         }
         $msg->setTotalSdAmount($request->totalSdAmount);
-        $msg->setCalculationPeriodFrom($request->calculationPeriodFrom);
-        $msg->setCalculationPeriodTo($request->calculationPeriodTo);
         $msg->setApplicableFrom($request->applicableFrom);
         if ($request->applicableTo != null) {
             $msg->setApplicableTo($request->applicableTo);
         }
-        $msg->setStatusId($request->statusId);
         $msg->setIsActive($request->isActive);
+
+        return $msg;
+    }
+
+    public function grpcToDemandRegisterCreateRequest(SdDemandFormRequest $sdDemand): CreateSdDemandRequest
+    {
+        $msg = new CreateSdDemandRequest;
+
+        $msg->setConnectionId($sdDemand->connectionId);
+        $msg->setDemandTypeId($sdDemand->demandTypeId);
+        if ($sdDemand->calculationBasicId != null) {
+            $msg->setCalculationBasicId($sdDemand->calculationBasicId);
+        }
+        $msg->setTotalSdAmount($sdDemand->totalSdAmount);
+        $msg->setApplicableFrom($sdDemand->applicableFrom);
+        if ($sdDemand->applicableTo != null) {
+            $msg->setApplicableTo($sdDemand->applicableTo);
+        }
+        $msg->setChargeHeadDefinitionId($sdDemand->chargeHeadDefinitionId);
+        $msg->setIsActive($sdDemand->isActive);
+        $msg->setSdTypeId($sdDemand->sdTypeId);
+        $msg->setOccupancyTypeId($sdDemand->occupancyTypeId);
+        if ($sdDemand->rateOrBasis != null) {
+            $msg->setRateOrBasis($sdDemand->rateOrBasis);
+        }
+
         return $msg;
     }
 }
