@@ -17,7 +17,9 @@ export default function BillingGroupAddConnection({
     connection_id: '',
   })
 
-  const { post, errors, loading } = useInertiaPost(route('billing-group-connection-rel.store'))
+  const { post, errors, loading } = useInertiaPost<typeof formData>(
+    route('billing-group-connection-rel.store')
+  )
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const payload = {
       billing_group_id: formData.billing_group_id,
@@ -43,6 +45,7 @@ export default function BillingGroupAddConnection({
             displayKey='consumer_number'
             displayValue2='consumer_legacy_code'
             placeholder='Enter Consumer Number / Legacy Code'
+            error={errors?.connection_id}
           />
           <div className='mt-6'>
             <Button
