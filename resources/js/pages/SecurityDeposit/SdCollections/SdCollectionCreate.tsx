@@ -9,7 +9,7 @@ interface Props {
   sdDemand: SdDemand
   collectionModes: ParameterValues[]
 }
-
+//TODO need to show demand details in this page, currently only showing consumer number in heading, can show more details in description or in a separate section
 export default function SdCollectionCreate({ sdDemand, collectionModes }: Readonly<Props>) {
   const connection = sdDemand.connection
 

@@ -17,6 +17,7 @@ const SdAttributeForm = ({ selectedCollectionMode, attributeData, setAttributeDa
     return `/api/parameter-values?domain_name=Connection&parameter_name=SD Collection Attribute&attribute_name=attribute2Value&attribute_value=${selectedCollectionMode.parameter_value}`
   }, [selectedCollectionMode])
 
+  //TODO wrong naming convention
   const [SdAttribute] = useFetchRecord<ParameterValues[]>(attributeUrl ? attributeUrl : ' ')
   useEffect(() => {
     if (!Array.isArray(SdAttribute)) return
@@ -41,6 +42,7 @@ const SdAttributeForm = ({ selectedCollectionMode, attributeData, setAttributeDa
     }
   }, [SdAttribute, setAttributeData])
 
+  //TODO  type errors
   const updateTextValue = useCallback(
     (id: number, text: string) => {
       setAttributeData((prev: SdAttribute[] | null) =>
@@ -61,6 +63,7 @@ const SdAttributeForm = ({ selectedCollectionMode, attributeData, setAttributeDa
     [setAttributeData]
   )
 
+  //TODO use attributeData != null for empty check
   return (
     <div className='grid grid-cols-2 gap-4 p-4'>
       {attributeData &&
