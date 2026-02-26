@@ -250,8 +250,6 @@ const MeterReadingPreview = ({
     setAllProfileHasData(dataExist)
   }, [readingValues, meterWithTimezoneAndProfile, setAllProfileHasData])
 
-  console.log(meterWithTimezoneAndProfile, 'jajfaj')
-
   return (
     <div
       key={meterWithTimezoneAndProfile.meter_id}
