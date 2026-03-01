@@ -8,14 +8,14 @@ use Illuminate\Support\Str;
 
 class GrpcErrorService
 {
-    public const VALIDATION_CODES = [3, 6, 9, 11, 13,5];
+    public const VALIDATION_CODES = [3, 6, 9, 11, 13, 5];
 
     /**
      * Handle gRPC errors and return appropriate redirect response
      *
      * @param  object  $status  The gRPC status object
      */
-    public static function handleErrorResponse($status, ?RedirectResponse $redirectResponse = null, bool $flashError = true): ?RedirectResponse
+    public static function handleErrorResponse(object $status, ?RedirectResponse $redirectResponse = null, bool $flashError = true): ?RedirectResponse
     {
         // Status code 0 means success, no error handling needed
         if ($status->code === 0) {
@@ -30,7 +30,7 @@ class GrpcErrorService
             }
         }
 
-        if (in_array($status->code, [13])) {
+        if ($status->code === 13) {
             $errors = GrpcErrorHandler::extractError($status);
             /** @var string[] $debug */
             $debug = [];
@@ -119,7 +119,7 @@ class GrpcErrorService
     /**
      * Check if the status code represents a validation error
      */
-    private static function isValidationError(int $statusCode): bool
+    public static function isValidationError(int $statusCode): bool
     {
         return in_array($statusCode, self::VALIDATION_CODES, true);
     }

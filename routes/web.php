@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\BillingGroupListApiController;
+use App\Http\Controllers\Api\Connections\GetConnectionPeriodDetailsApiController;
 use App\Http\Controllers\Api\Connections\GetPurposeInfoApiController;
 use App\Http\Controllers\Api\Connections\PartiesListApiController;
 use App\Http\Controllers\Api\GetOfficeByCodeApiController;
@@ -204,8 +205,12 @@ Route::get('api/parties', PartiesListApiController::class);
 Route::get('api/unassigned-transformers', UnassignedTransformersApiController::class);
 Route::get('api/unassigned-meters', UnassignedMetersApiController::class);
 Route::get('api/billing-groups', BillingGroupListApiController::class);
-Route::get('api/tariff-order/{id}/download', TariffOrderDownloadApiController::class)->name('tariff-order.download');
-Route::get('api/connections/get-tariffs', GetPurposeInfoApiController::class)->name('connections.get-tariffs');
+Route::get('api/tariff-order/{id}/download', TariffOrderDownloadApiController::class)
+    ->name('tariff-order.download');
+Route::get('api/connections/get-tariffs', GetPurposeInfoApiController::class)
+    ->name('connections.get-tariffs');
+Route::post('api/connections/period-details', GetConnectionPeriodDetailsApiController::class)
+    ->name('connections.period-details');
 
 Route::get('consumer-test', function (SystemModuleService $service) {
     $response = $service->createSystemModule(

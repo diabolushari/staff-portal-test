@@ -1,6 +1,4 @@
 import MeterReadingGeneralStep from '@/components/Meter/MeterReading/MeterReadingGeneralStep'
-import MeterReadingObservationStep from '@/components/Meter/MeterReading/MeterReadingObservationStep'
-import MeterReadingsStep from '@/components/Meter/MeterReading/MeterReadingsStep'
 import useMeterHealthForm from '@/components/Meter/MeterReading/ReadingForm/useMeterHealthForm'
 import useMeterReadingForm from '@/components/Meter/MeterReading/ReadingForm/useMeterReadingForm'
 import { consumerNavItems } from '@/components/Navbar/navitems'
@@ -24,11 +22,16 @@ import { getDisplayDate } from '@/utils'
 import { ProfileReadingFormRef } from '@/components/Meter/MeterReading/ProfileReadingForm'
 import { MeterReadingPreviewRef } from '@/components/Meter/MeterReading/MeterReadingPreview'
 import { getMeterEnergisedDate, getMonthEnd, getNextDay, getToday } from '@/utils/DateService'
-import dayjs, { Dayjs } from 'dayjs'
 
-export interface MeterReadingForm extends MeterReading {
-  meters: number[]
-  interim_reason_id: number
+export interface MeterReadingForm {
+  id: number
+  connection_id: number
+  metering_date: string
+  reading_start_date: string
+  reading_end_date: string
+  anomaly_id: string
+  remarks: string
+  interim_reason_id: string
   is_interim_reading: boolean
   _method: 'PUT' | 'POST' | undefined
 }
@@ -114,14 +117,6 @@ export default function MeterReadingCreatePage({
     anomalyTypes
   )
 
-  const [hasInterimReading, setHasInterimReading] = useState(
-    latestMeterReadingGroupByMeter?.length > 0
-      ? latestMeterReadingGroupByMeter?.some((h) => h?.reading?.is_interim_reading) === true
-        ? true
-        : false
-      : false
-  )
-
   const isFirstReading: boolean = useMemo(() => {
     if (!meterConnectionMappings?.length) return true
 
@@ -169,13 +164,12 @@ export default function MeterReadingCreatePage({
     reading_end_date: editMode
       ? latestMeterReading?.reading_end_date
       : (getMonthEnd(readingStartDate, isFirstReading, meterConnectionMappings) ?? ''),
-    anomaly_id: editMode ? latestMeterReading?.anomaly_id : (defalultAnomaly?.id ?? 0),
+    anomaly_id: editMode
+      ? latestMeterReading?.anomaly_id.toString()
+      : (defalultAnomaly?.id.toString() ?? ''),
     remarks: editMode ? latestMeterReading?.remarks : '',
     interim_reason_id: '',
-    is_interim_reading: hasInterimReading ? true : false,
-    meters:
-      meterConnectionMappings?.length >= 1 ? meterConnectionMappings?.map((m) => m.meter_id) : [],
-    has_first_reading_meter: isFirstReading,
+    is_interim_reading: false,
     _method: editMode ? 'PUT' : undefined,
   })
 
@@ -187,65 +181,10 @@ export default function MeterReadingCreatePage({
   )
 
   useEffect(() => {
-    if (formData.is_interim_reading) {
-    } else {
+    if (!formData.is_interim_reading) {
       setFormValue('reading_end_date')(getMonthEnd(readingStartDate, isFirstReading) ?? '')
     }
-  }, [formData.is_interim_reading])
-
-  useEffect(() => {
-    if (!formData.meters?.length) return
-
-    setSelectedMeters(formData.meters)
-    const currentMonth = dayjs()
-
-    let effectiveEndDates: Dayjs[] = []
-
-    formData.meters.forEach((meterId) => {
-      const mappingsOfMeter = meterConnectionMappings.filter((m) => m.meter_id === meterId)
-
-      mappingsOfMeter.forEach((mapping) => {
-        if (!mapping.effective_end_ts) return
-
-        const endDate = dayjs(mapping.effective_end_ts)
-
-        if (endDate.isSame(currentMonth, 'month')) {
-          effectiveEndDates.push(endDate)
-        }
-      })
-    })
-
-    let lastReadingDate: string = ''
-
-    if (effectiveEndDates.length > 0) {
-      // ✅ Get lowest (earliest) effective_end_ts
-      const lowestDate = effectiveEndDates.sort((a, b) => a.valueOf() - b.valueOf())[0]
-
-      lastReadingDate = lowestDate.format('YYYY-MM-DD')
-    } else {
-      // 🔁 Normal fallback logic (use latest reading among meters)
-      const lastReadings = formData.meters
-        .map((meterId) =>
-          latestMeterReadingGroupByMeter.find((reading) => reading.meter?.meter_id === meterId)
-        )
-        .filter(Boolean)
-
-      const latestReadingEndDate = lastReadings
-        .map((r) => dayjs(r!.reading?.reading_end_date))
-        .sort((a, b) => b.valueOf() - a.valueOf())[0]
-
-      if (latestReadingEndDate) {
-        lastReadingDate =
-          getMonthEnd(getNextDay(latestReadingEndDate.format('YYYY-MM-DD')) ?? '', false) ?? ''
-      }
-    }
-
-    if (isFirstReading) {
-      setFormValue('reading_end_date')(readingStartDate ?? '')
-    }
-    setFormValue('reading_end_date')(lastReadingDate)
-    setFormValue('reading_start_date')(readingStartDate)
-  }, [formData.meters, latestMeterReadingGroupByMeter, meterConnectionMappings, selectedMeters])
+  }, [formData.is_interim_reading, isFirstReading, readingStartDate])
 
   const [activeStep, setActiveStep] = useState(0)
 
@@ -263,8 +202,8 @@ export default function MeterReadingCreatePage({
 
     post({
       ...formData,
-      readings_by_meter: readingValues,
-      meter_health: healthData,
+      // readings_by_meter: readingValues,
+      // meter_health: healthData,
     })
   }
 
@@ -326,12 +265,6 @@ export default function MeterReadingCreatePage({
 
   const profileRefs = useRef<Record<string, ProfileReadingFormRef | null>>({})
 
-  const availableMeterIds = useMemo(() => {
-    return formData.is_interim_reading
-      ? formData.meters
-      : metersWithTimezonesAndProfiles.map((meter) => meter.meter_id)
-  }, [formData.meters, formData.is_interim_reading, metersWithTimezonesAndProfiles])
-
   return (
     <MainLayout
       breadcrumb={breadcrumb}
@@ -362,67 +295,47 @@ export default function MeterReadingCreatePage({
                   setFormValue={setFormValue}
                   toggleBoolean={toggleBoolean}
                   errors={errors}
-                  latestMeterReading={latestMeterReadingGroupByMeter}
+                  latestMeterReadings={latestMeterReadingGroupByMeter}
                   isFirstReading={isFirstReading}
                   interimReasons={interimReasons}
-                  availableMeterIds={availableMeterIds}
-                  metersListForInterimReading={metersWithTimezonesAndProfiles}
-                  hasInterimReading={hasInterimReading}
                 />
               )}
-              {activeStep === 1 && (
-                <MeterReadingObservationStep
-                  formData={formData}
-                  setFormValue={setFormValue}
-                  anomalyTypes={anomalyTypes}
-                  errors={errors}
-                  meterHealthData={healthData}
-                  updateRybValues={updateRybValues}
-                />
-              )}
-              {activeStep === 2 && (
-                <MeterReadingsStep
-                  healthData={healthData}
-                  metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
-                  formData={formData}
-                  readingValues={readingValues}
-                  updateReading={updateReading}
-                  setFormValue={setFormValue}
-                  latestMeterReading={latestMeterReading}
-                  meterHealthTypes={meterHealthTypes}
-                  ctHealthTypes={ctHealthTypes}
-                  updateMeterHealth={updateMeterHealth}
-                  updateCTPTHealth={updateCTPTHealth}
-                  setIsOnParameterForm={setIsOnParameterForm}
-                  isFirstReading={isFirstReading}
-                  isOnparameterForm={isOnParamaterForm}
-                  profileRefs={profileRefs}
-                  activeProfile={activeProfile}
-                  setActiveProfile={setActiveProfile}
-                  previewRefs={previewRefs}
-                  setAllProfileHasData={setAllProfileHasData}
-                  setProfileErrorExist={setProfileErrorExist}
-                />
-              )}
+              {/*{activeStep === 1 && (*/}
+              {/*  <MeterReadingObservationStep*/}
+              {/*    formData={formData}*/}
+              {/*    setFormValue={setFormValue}*/}
+              {/*    anomalyTypes={anomalyTypes}*/}
+              {/*    errors={errors}*/}
+              {/*    meterHealthData={healthData}*/}
+              {/*    updateRybValues={updateRybValues}*/}
+              {/*  />*/}
+              {/*)}*/}
+              {/*{activeStep === 2 && (*/}
+              {/*  <MeterReadingsStep*/}
+              {/*    healthData={healthData}*/}
+              {/*    metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}*/}
+              {/*    formData={formData}*/}
+              {/*    readingValues={readingValues}*/}
+              {/*    updateReading={updateReading}*/}
+              {/*    setFormValue={setFormValue}*/}
+              {/*    latestMeterReading={latestMeterReading}*/}
+              {/*    meterHealthTypes={meterHealthTypes}*/}
+              {/*    ctHealthTypes={ctHealthTypes}*/}
+              {/*    updateMeterHealth={updateMeterHealth}*/}
+              {/*    updateCTPTHealth={updateCTPTHealth}*/}
+              {/*    setIsOnParameterForm={setIsOnParameterForm}*/}
+              {/*    isFirstReading={isFirstReading}*/}
+              {/*    isOnparameterForm={isOnParamaterForm}*/}
+              {/*    profileRefs={profileRefs}*/}
+              {/*    activeProfile={activeProfile}*/}
+              {/*    setActiveProfile={setActiveProfile}*/}
+              {/*    previewRefs={previewRefs}*/}
+              {/*    setAllProfileHasData={setAllProfileHasData}*/}
+              {/*    setProfileErrorExist={setProfileErrorExist}*/}
+              {/*  />*/}
+              {/*)}*/}
             </Stepper>
             <div className='mt-6 flex justify-between'>
-              {activeStep >= 0 && (
-                <Button
-                  type='button'
-                  variant='secondary'
-                  onClick={() => setActiveStep(activeStep - 1)}
-                  label='Back'
-                  disabled={activeStep === 0}
-                />
-              )}
-              {activeStep < steps.length - 1 && (
-                <Button
-                  type='button'
-                  onClick={() => setActiveStep(activeStep + 1)}
-                  label='Next'
-                />
-              )}
-
               {activeStep === steps.length - 1 && allProfileHasData && !profileErrorExist && (
                 <Button
                   type='submit'

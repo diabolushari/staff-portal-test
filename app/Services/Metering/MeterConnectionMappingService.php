@@ -11,9 +11,10 @@ use App\Http\Requests\Metering\MeterConnectionRelFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
+use DateTime;
+use DateTimeInterface;
 use Google\Protobuf\Timestamp;
 use Grpc\ChannelCredentials;
-use Illuminate\Http\Request;
 use Proto\Metering\CreateMeterConnectionMappingRequest;
 use Proto\Metering\DeleteMeterConnectionMappingRequest;
 use Proto\Metering\GetMeterConnectionMappingByConnectionIdRequest;
@@ -78,15 +79,15 @@ class MeterConnectionMappingService
                 // faulty_date
                 if ($transformer->faultyDate !== null) {
                     $faulty = new Timestamp;
-                    $faulty->fromDateTime(new \DateTime($transformer->faultyDate));
+                    $faulty->fromDateTime(new DateTime($transformer->faultyDate));
                     $transformer_proto->setFaultyDate($faulty);
                 }
 
                 // ctpt_energise_date
                 if ($transformer->ctptEnergiseDate !== null) {
-                    $dateTime = $transformer->ctptEnergiseDate instanceof \DateTimeInterface
+                    $dateTime = $transformer->ctptEnergiseDate instanceof DateTimeInterface
                         ? $transformer->ctptEnergiseDate
-                        : new \DateTime($transformer->ctptEnergiseDate);
+                        : new DateTime($transformer->ctptEnergiseDate);
 
                     $energise = new Timestamp;
                     $energise->fromDateTime($dateTime);
@@ -97,7 +98,7 @@ class MeterConnectionMappingService
                 // ctpt_change_date
                 if ($transformer->ctptChangeDate !== null) {
                     $change = new Timestamp;
-                    $change->fromDateTime(new \DateTime($transformer->ctptChangeDate));
+                    $change->fromDateTime(new DateTime($transformer->ctptChangeDate));
                     $transformer_proto->setCtptChangeDate($change);
                 }
 
@@ -163,9 +164,10 @@ class MeterConnectionMappingService
         return GrpcServiceResponse::success($items, $response, $status->code, $status->details);
     }
 
-    public function listMeterConnectionMappings(): GrpcServiceResponse
+    public function listMeterConnectionMappings(int $connectionId): GrpcServiceResponse
     {
         $request = new ListMeterConnectionMappingsRequest;
+        $request->setConnectionId($connectionId);
 
         [$response, $status] = $this->client->ListMeterConnectionMappings($request)->wait();
 
@@ -356,8 +358,6 @@ class MeterConnectionMappingService
             'change_date' => $changeDate,
             'meter_profile' => $meterProfile,
             'energise_date' => $energiseDate,
-            'meter_mf' => $rel->getMeterMf(),
-            'meter' => $meter,
             'timezone_type' => $timezoneType,
             'timezone_type_id' => $timezoneTypeId,
         ];

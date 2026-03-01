@@ -1,34 +1,35 @@
 import Field from '@/components/ui/field'
-import {
-  ConsumerData,
-  MeterReadingValueGroup,
-  MeterWithTimezoneAndProfile,
-} from '@/interfaces/data_interfaces'
+import { ConsumerData, MeterReadingValueGroup } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
-import RadioGroup from '@/ui/form/RadioGroup'
 import { ConnectionDetailTooltip } from './ConnectionDetailTooltip'
 import dayjs from 'dayjs'
 import Datepicker from '@/ui/form/DatePicker'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import SelectList from '@/ui/form/SelectList'
-import MultiSelectList from '@/ui/form/MultiSelect'
 import CheckBox from '@/ui/form/CheckBox'
+import { getDisplayDate } from '@/utils'
 import { useEffect, useState } from 'react'
-import { getNextDay } from '@/utils/DateService'
+import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
+import Button from '@/ui/button/Button'
+import axios from 'axios'
+import { handleHttpErrors } from '@/ui/alerts'
 
 interface Props {
   connectionWithConsumer: ConsumerData
-  formData: any
-  setFormValue: any
-  toggleBoolean: any
-  errors?: any
-  latestMeterReading?: MeterReadingValueGroup[]
+  formData: MeterReadingForm
+  setFormValue: <K extends keyof MeterReadingForm>(key: K) => (value: MeterReadingForm[K]) => void
+  toggleBoolean: (key: keyof MeterReadingForm) => () => void
+  errors?: Record<string, string | undefined>
+  latestMeterReadings?: MeterReadingValueGroup[]
   isFirstReading?: boolean
-  isInterimReading?: boolean
   interimReasons: ParameterValues[]
-  metersListForInterimReading: MeterWithTimezoneAndProfile[]
-  availableMeterIds: number[]
-  hasInterimReading: boolean
+}
+
+interface MeterRow {
+  meterId: number
+  meterSerial: string
+  latestMeterReadingDate: string | null
+  checked: boolean
 }
 
 export default function MeterReadingGeneralStep({
@@ -37,41 +38,89 @@ export default function MeterReadingGeneralStep({
   setFormValue,
   toggleBoolean,
   errors,
-  latestMeterReading,
+  latestMeterReadings,
   isFirstReading,
   interimReasons,
-  metersListForInterimReading,
-  hasInterimReading,
 }: Props) {
   const maxDate = dayjs().format('DD-MM-YYYY')
   const maxDateForReadingStartDate = dayjs(maxDate).subtract(1, 'day').format('DD-MM-YYYY')
-  const [openDateField, setOpenDateField] = useState(formData.meters.length > 0)
+  const [openDateField, setOpenDateField] = useState(true)
+  const [meterRows, setMeterRows] = useState<MeterRow[]>([])
+
+  const getLastReadingDate = (latestMeterReadingDate: string | null): string => {
+    if (!latestMeterReadingDate) {
+      return '-'
+    }
+
+    return getDisplayDate(latestMeterReadingDate)
+  }
+
+  const handleMeterSelection = (meterId: number): void => {
+    setMeterRows((previousMeterRows) => {
+      return previousMeterRows.map((meterRow) => {
+        if (meterRow.meterId !== meterId) {
+          return meterRow
+        }
+
+        return {
+          ...meterRow,
+          checked: !meterRow.checked,
+        }
+      })
+    })
+  }
+
+  const handleValidate = async (): Promise<void> => {
+    try {
+      const selectedMeterIds = meterRows
+        .filter((meterRow) => meterRow.checked)
+        .map((meterRow) => meterRow.meterId)
+
+      const response = await axios.post('/api/connections/period-details', {
+        connection_id: formData.connection_id,
+        meter_ids: selectedMeterIds,
+        start_date: formData.reading_start_date ?? null,
+        end_date: formData.reading_end_date ?? null,
+      })
+
+      console.log('Period details response:', response.data)
+    } catch (error) {
+      handleHttpErrors(error)
+    }
+  }
 
   useEffect(() => {
     if (isFirstReading) {
       setOpenDateField(true)
       return
     }
-    if (formData?.meters?.length > 0) {
-      const meterReadingEndDates = latestMeterReading
-        ?.filter((groupedReading) => {
-          if (formData.meters.includes(groupedReading.meter.meter_id)) {
-            return groupedReading.reading?.reading_end_date ?? []
-          }
-        })
-        .map((groupedReading) => groupedReading.reading?.reading_end_date)
+  }, [isFirstReading])
 
-      const isSameBillEndDate = meterReadingEndDates?.every(
-        (date) => date === meterReadingEndDates[0]
-      )
-      if (isSameBillEndDate && meterReadingEndDates?.length > 0) {
-        setOpenDateField(true)
-        setFormValue('reading_start_date')(getNextDay(meterReadingEndDates[0]))
-      } else {
-        setOpenDateField(false)
+  useEffect(() => {
+    const availableRows =
+      latestMeterReadings
+        ?.filter((latestMeterReading) => latestMeterReading?.meter != null)
+        .map((latestMeterReading) => ({
+          meterId: latestMeterReading.meter.meter_id,
+          meterSerial: latestMeterReading.meter.meter_serial,
+          latestMeterReadingDate: latestMeterReading?.reading?.reading_end_date ?? null,
+        })) ?? []
+
+    setMeterRows((previousMeterRows) => {
+      if (availableRows.length === 0) {
+        return []
       }
-    }
-  }, [formData.meters.length, hasInterimReading, isFirstReading])
+
+      const previousCheckedMap = new Map(
+        previousMeterRows.map((meterRow) => [meterRow.meterId, meterRow.checked])
+      )
+
+      return availableRows.map((meterRow) => ({
+        ...meterRow,
+        checked: previousCheckedMap.get(meterRow.meterId) ?? true,
+      }))
+    })
+  }, [latestMeterReadings])
 
   return (
     <>
@@ -112,15 +161,40 @@ export default function MeterReadingGeneralStep({
               />
             )}
 
-            <MultiSelectList
-              label='Meters'
-              list={metersListForInterimReading}
-              dataKey='meter_id'
-              displayKey='meter_serial'
-              setValue={setFormValue('meters')}
-              value={formData?.meters}
-              error={errors?.meters}
-            />
+            <div className='col-span-2'>
+              <div className='mb-2 text-sm font-medium text-[#252c32]'>Meters</div>
+              <div className='grid gap-3'>
+                {meterRows?.map((meterRow) => {
+                  return (
+                    <label
+                      key={meterRow.meterId}
+                      className='flex cursor-pointer items-start gap-3 rounded-lg border border-[#e5e9eb] p-3'
+                    >
+                      <input
+                        type='checkbox'
+                        checked={meterRow.checked}
+                        onChange={() => handleMeterSelection(meterRow.meterId)}
+                        className='mt-1 h-4 w-4'
+                      />
+                      <div className='flex flex-col'>
+                        <span className='text-sm font-medium text-[#252c32]'>
+                          Meter Serial: {meterRow.meterSerial}
+                        </span>
+                        <span className='text-xs text-[#5f6d79]'>
+                          Last Reading Date: {getLastReadingDate(meterRow.latestMeterReadingDate)}
+                        </span>
+                      </div>
+                    </label>
+                  )
+                })}
+
+                {(!meterRows || meterRows.length === 0) && (
+                  <div className='rounded-lg border border-dashed border-[#d8dde0] p-3 text-sm text-[#5f6d79]'>
+                    No meters available
+                  </div>
+                )}
+              </div>
+            </div>
 
             <div className='col-span-2 grid md:grid-cols-2'>
               <Datepicker
@@ -157,6 +231,15 @@ export default function MeterReadingGeneralStep({
                 disabled={!isFirstReading && !formData.is_interim_reading}
               />
             )}
+
+            <div className='col-span-2 flex justify-end'>
+              <Button
+                type='button'
+                label='Validate'
+                onClick={handleValidate}
+                variant='secondary'
+              />
+            </div>
           </div>
         </div>
       </div>

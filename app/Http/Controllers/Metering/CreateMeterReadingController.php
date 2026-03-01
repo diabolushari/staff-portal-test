@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Metering;
 use App\Http\Controllers\Controller;
 use App\Services\Connection\ConnectionService;
 use App\Services\Metering\GetReadingEntryService;
+use App\Services\Metering\MeterConnectionMappingService;
 use App\Services\Metering\MeteringParameterProfileService;
 use App\Services\Metering\MeterReadingService;
 use App\Services\Metering\MeterService;
@@ -18,14 +19,15 @@ use Inertia\Response;
 class CreateMeterReadingController extends Controller
 {
     public function __construct(
-        private ConnectionService $connectionService,
-        private ParameterValueService $parameterService,
-        private MeterTimezoneTypeRelService $meterTimezoneTypeRelService,
-        private MeteringTimezoneService $meteringTimezoneService,
-        private MeteringParameterProfileService $meteringParameterProfileService,
-        private MeterService $meterService,
-        private MeterReadingService $meterReadingService,
-        private GetReadingEntryService $getReadingEntryService,
+        private readonly ConnectionService $connectionService,
+        private readonly ParameterValueService $parameterService,
+        private readonly MeterTimezoneTypeRelService $meterTimezoneTypeRelService,
+        private readonly MeteringTimezoneService $meteringTimezoneService,
+        private readonly MeteringParameterProfileService $meteringParameterProfileService,
+        private readonly MeterService $meterService,
+        private readonly MeterReadingService $meterReadingService,
+        private readonly GetReadingEntryService $getReadingEntryService,
+        private readonly MeterConnectionMappingService $meterConnectionMappingService,
     ) {}
 
     public function __invoke(Request $request, int $connectionId): Response
@@ -69,7 +71,8 @@ class CreateMeterReadingController extends Controller
         $latestMeterReading = $this->meterReadingService->latestMeterReading($connectionId);
         $latestMeterReadingGroupByMeter = $this->meterReadingService->latestMeterReadingGroupByMeter($connectionId);
 
-        dd($latestMeterReadingGroupByMeter->data);
+        $allMeterMappings = $this->meterConnectionMappingService->listMeterConnectionMappings($connectionId);
+        dd($allMeterMappings);
 
         $getReadingEntryResponse = $this->getReadingEntryService->getReadingEntryData($connectionId);
         $uniqueMeters = $this->getReadingEntryService->getUniqueMeters($getReadingEntryResponse->data['meter_connection_mappings']);

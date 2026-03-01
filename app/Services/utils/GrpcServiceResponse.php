@@ -19,6 +19,7 @@ class GrpcServiceResponse
 {
     public readonly bool $success;
 
+    /** @var array<int|string, mixed>|null Domain specific payload */
     public readonly ?array $data;
 
     public readonly ?RedirectResponse $error;
@@ -30,6 +31,13 @@ class GrpcServiceResponse
 
     public readonly ?string $statusDetails;
 
+    /** @var array<string, string> */
+    public readonly array $validationErrors;
+
+    /**
+     * @param  array<string|int, mixed>|null  $data
+     * @param  array<string, string>|null  $validationErrors
+     */
     private function __construct(
         bool $success,
         ?array $data = null,
@@ -37,6 +45,7 @@ class GrpcServiceResponse
         ?object $rawResponse = null,
         int $statusCode = 0,
         ?string $statusDetails = null,
+        ?array $validationErrors = null,
     ) {
         $this->success = $success;
         $this->data = $data;
@@ -44,24 +53,34 @@ class GrpcServiceResponse
         $this->rawResponse = $rawResponse;
         $this->statusCode = $statusCode;
         $this->statusDetails = $statusDetails;
+        $this->validationErrors = $validationErrors ?? [];
     }
 
     /**
-     * Successful response factory.
+     * @param  array<string|int, mixed>|null  $data
      */
-    public static function success(?array $data = null, ?object $rawResponse = null, int $statusCode = 0, ?string $statusDetails = null): self
-    {
-        return new self(true, $data, null, $rawResponse, $statusCode, $statusDetails);
+    public static function success(
+        ?array $data = null,
+        ?object $rawResponse = null,
+        int $statusCode = 0,
+        ?string $statusDetails = null
+    ): self {
+        return new self(true, $data, null, $rawResponse, $statusCode, $statusDetails, []);
     }
 
     /**
-     * Error response factory.
-     *
-     * @param  RedirectResponse  $error  Redirect prepared by GrpcErrorService
+     * @param  array<string|int, mixed>|null  $data
+     * @param  array<string, string>|null  $validationErrors
      */
-    public static function error(?RedirectResponse $error, ?object $rawResponse = null, int $statusCode = 2, ?string $statusDetails = null, ?array $data = null): self
-    {
-        return new self(false, $data, $error, $rawResponse, $statusCode, $statusDetails);
+    public static function error(
+        ?RedirectResponse $error,
+        ?object $rawResponse = null,
+        int $statusCode = 2,
+        ?string $statusDetails = null,
+        ?array $data = null,
+        ?array $validationErrors = null,
+    ): self {
+        return new self(false, $data, $error, $rawResponse, $statusCode, $statusDetails, $validationErrors);
     }
 
     /** Quickly check if there is an error redirect */
