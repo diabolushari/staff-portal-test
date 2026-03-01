@@ -234,23 +234,24 @@ const MeterReadingPreview = ({
       )
 
       if (param == null || param.readings?.length === 0) return false
+
       if (isFirstReading) {
         return param.readings.every(
           (r) =>
             r.values?.initial !== undefined &&
             r.values?.initial !== null &&
-            r.values?.initial.toString() !== ''
+            Number(r.values?.initial) >= 0
         )
       }
-      return param?.readings?.every(
-        (r) => r.values?.final !== undefined && r.values?.final !== null && r.values?.final !== ''
+
+      return param.readings.every(
+        (r) =>
+          r.values?.final !== undefined && r.values?.final !== null && Number(r.values?.final) > 0
       )
     })
 
     setAllProfileHasData(dataExist)
   }, [readingValues, meterWithTimezoneAndProfile, setAllProfileHasData])
-
-  console.log(meterWithTimezoneAndProfile, 'jajfaj')
 
   return (
     <div

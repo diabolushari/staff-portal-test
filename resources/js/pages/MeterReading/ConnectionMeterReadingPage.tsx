@@ -73,7 +73,7 @@ export default function ConnectionMeterReadingPage({
               meterReadings?.data.map((meterReading) => (
                 <MeterReadingCard
                   meterReading={meterReading}
-                  meters={connection.meter_mappings}
+                  meters={connection?.meter_mappings ?? []}
                   key={meterReading.id}
                 />
               ))

@@ -16,6 +16,7 @@ class SdCollectionConverter
             return null;
         }
 
+        // TODO REVERSAL DATE
         return [
             'sd_collection_id' => $sdCollection->getSdCollectionId(),
             'sd_demand_id' => $sdCollection->getSdDemandId(),
@@ -31,7 +32,7 @@ class SdCollectionConverter
             'reversed_by' => $sdCollection->hasReversedBy() ? $sdCollection->getReversedBy() : null,
             'collection_mode' => $sdCollection->hasCollectionMode() ?
                 ParameterValueProtoConvertor::convertToArray($sdCollection->getCollectionMode()) :
-                null
+                null,
         ];
     }
 }

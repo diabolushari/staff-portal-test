@@ -22,6 +22,7 @@ class MeterReadingForm extends Data
         public ?int $interimReasonId,
         public ?bool $isInterimReading,
         public ?array $meters,
+        public ?bool $isBillable,
 
     ) {}
 }
