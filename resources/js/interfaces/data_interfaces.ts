@@ -834,7 +834,7 @@ export interface SdRegister {
   is_active?: boolean
   created_by?: number
   updated_by?: number
-  sd_type: ParameterValues
+  sd_type: ChargeHeadDefinition
   occupancy_type: ParameterValues
   connection: Connection
   sd_demand: SdDemand

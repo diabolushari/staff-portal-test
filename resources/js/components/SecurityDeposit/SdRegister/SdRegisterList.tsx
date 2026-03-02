@@ -25,7 +25,7 @@ const SdRegisterList = ({ sdRegisters }: Props) => {
           key={sdRegister.sd_register_id}
           className='normal-font grid grid-cols-10 gap-x-6 gap-y-2'
         >
-          <span>{sdRegister.sd_type.parameter_value}</span>
+          <span>{sdRegister.sd_type.name}</span>
           <span>{sdRegister.sd_demand.demand_type.parameter_value}</span>
           <span>{sdRegister.occupancy_type.parameter_value}</span>
           <span>{getDisplayDate(sdRegister.period_from)}</span>
