@@ -23,7 +23,7 @@ class SdAttributeService
 
             if ($attribute->file !== null) {
                 $file = $attribute->file;
-                // Generate filename using timestamp
+                // TODO will generate duplicate file names, need to generate unique name
                 $fileName = time().'.'.$file->getClientOriginalExtension();
 
                 // Store file (auto-creates folder)
