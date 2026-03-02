@@ -23,7 +23,9 @@ class GeneratingStationAttributeConverter
             'station_id' => $attribute->getStationId(),
             'attribute_definition_id' => $attribute->getAttributeDefinitionId(),
             'attribute_value' => $attribute->getAttributeValue(),
-
+            'mime_type' => $attribute->hasMimeType()
+                            ? $attribute->getMimeType()
+                            : null,
             'created_by' => $attribute->hasCreatedBy()
                 ? $attribute->getCreatedBy()
                 : null,

@@ -15,21 +15,22 @@ message GeneratingStationAttributeResponse {
   int32 station_id = 2;
   int32 attribute_definition_id = 3;
   string attribute_value = 4;
+  optional string mime_type = 5;
+  optional int32 created_by = 6;
+  optional int32 updated_by = 7;
+  optional int32 deleted_by = 8;
 
-  optional int32 created_by = 5;
-  optional int32 updated_by = 6;
-  optional int32 deleted_by = 7;
-
-  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto attribute_definition = 8;
-  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto attribute_value_object = 9;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto attribute_definition = 9;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto attribute_value_object = 10;
 }
 
 message GeneratingStationAttributeRequest {
 
   int32 attribute_definition_id = 1;
   string attribute_value = 2;
-  optional int32 created_by = 3;
-  optional int32 updated_by = 4;
+  optional string mime_type = 3;
+  optional int32 created_by = 4;
+  optional int32 updated_by = 5;
 }
 
 message GetGeneratingStationAttributeRequest {

@@ -36,6 +36,8 @@ const GeneratingStationAttributeForm = ({
       station_id: null,
       attribute_definition_id: attr.id,
       attribute_value: '',
+      file: null,
+      mime_type: null,
       attribute_definition: attr,
     }))
 
@@ -50,10 +52,10 @@ const GeneratingStationAttributeForm = ({
         ) ?? null
     )
   }
-  console.log('Attribute Data:', attributeData)
+
   const updateFileValue = (id: number, file: File | null) => {
     setAttributeData(
-      (prev) =>
+      (prev: GeneratingStationAttribute[] | null) =>
         prev?.map((attr) =>
           attr.attribute_definition_id === id ? { ...attr, file: file } : attr
         ) ?? null
@@ -67,6 +69,7 @@ const GeneratingStationAttributeForm = ({
           key={attribute.attribute_definition_id}
           attribute={attribute}
           updateTextValue={updateTextValue}
+          updateFileValue={updateFileValue}
         />
       ))}
     </div>

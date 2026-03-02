@@ -6,49 +6,51 @@ package com.kseb.consumerservice.proto.generatingstation;
 option php_namespace = "Proto\\GeneratingStation";
 option php_metadata_namespace = "GPBMetadata";
 
+
 import "google/protobuf/timestamp.proto";
 import "connections/connections.proto";
+import "connections/consumer.proto";
 import "connections/consumer_address.proto";
 import "parameters/parameter-value.proto";
 import "generatingstation/generating-station-attribute.proto";
 
 message GeneratingStationMessage {
+  optional int32 version_id = 1;
+  optional int32 station_id = 2;
+  optional int32 connection_id = 3;
 
-  optional int32 station_id = 1;
-  optional int32 connection_id = 2;
+  string station_name = 4;
 
-  string station_name = 3;
+  int32 generation_status_id = 5;
+  double installed_capacity = 6;
 
-  int32 generation_status_id = 4;
-  double installed_capacity = 5;
+  int32 generation_type_id = 7;
+  int32 voltage_category_id = 8;
+  int32 plant_type_id = 9;
+  string commissioning_date = 10;
 
-  int32 generation_type_id = 6;
-  int32 voltage_category_id = 7;
-  int32 plant_type_id = 8;
-  string commissioning_date = 9;
+  int32 address_id = 11;   
 
-  int32 address_id = 10;   
+  bool is_active = 12;
 
-  bool is_active = 11;
+  optional int32 created_by = 13;
+  optional int32 updated_by = 14;
+  optional int32 deleted_by = 15;
 
-  optional int32 created_by = 12;
-  optional int32 updated_by = 13;
-  optional int32 deleted_by = 14;
+  optional com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 16;
+  optional com.kseb.consumerservice.grpc.connections.ConsumerAddressMessage address = 17;
 
-  optional com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 15;
-  com.kseb.consumerservice.grpc.connections.ConsumerAddressMessage address = 16;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto generation_type = 18;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto voltage_category = 19;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto plant_type = 20;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto generation_status = 21;
 
-  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto generation_type = 17;
-  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto voltage_category = 18;
-  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto plant_type = 19;
-  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto generation_status = 20;
-
-  repeated GeneratingStationAttributeResponse attributes = 21;
+  repeated GeneratingStationAttributeResponse attributes = 22;
 }
 
 message CreateGeneratingStationRequest {
   GeneratingStationMessage station = 1;
-  com.kseb.consumerservice.grpc.connections.ConsumerAddressMessage address = 2;
+  optional com.kseb.consumerservice.grpc.connections.AddressMessage address = 2;
   repeated GeneratingStationAttributeRequest attributes = 3;
 }
 
@@ -58,7 +60,7 @@ message CreateGeneratingStationResponse {
 
 message UpdateGeneratingStationRequest {
   GeneratingStationMessage station = 1;
-  com.kseb.consumerservice.grpc.connections.ConsumerAddressMessage address = 2;
+  optional com.kseb.consumerservice.grpc.connections.AddressMessage address = 2;
   repeated GeneratingStationAttributeRequest attributes = 3;
 }
 
@@ -83,18 +85,11 @@ message DeleteGeneratingStationResponse {
 }
 
 message ListGeneratingStationRequest {
-  optional int32 page = 1;
-  optional int32 page_size = 2;
-  optional string search = 3;
-  optional bool is_active = 4;
+ optional string search = 1;
 }
 
 message ListGeneratingStationResponse {
   repeated GeneratingStationMessage items = 1;
-  int64 total_count = 2;
-  int32 page_number = 3;
-  int32 page_size = 4;
-  int32 total_pages = 5;
 }
 
 message ListGeneratingStationPaginatedRequest {
@@ -119,10 +114,8 @@ service GeneratingStationService {
   rpc UpdateGeneratingStation(UpdateGeneratingStationRequest)
       returns (UpdateGeneratingStationResponse);
 
-  
  rpc GetGeneratingStation(GetGeneratingStationRequest)
     returns (GetGeneratingStationResponse);
-
 
   rpc DeleteGeneratingStation(DeleteGeneratingStationRequest)
       returns (DeleteGeneratingStationResponse);

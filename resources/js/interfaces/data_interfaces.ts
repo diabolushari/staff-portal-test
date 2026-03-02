@@ -897,6 +897,8 @@ export interface GeneratingStationAttribute {
   station_id: number | null
   attribute_definition_id: number
   attribute_value: string
+  mime_type: string | null
+  file: File | null
   created_by?: number
   updated_by?: number
   deleted_by?: number

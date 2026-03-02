@@ -6,7 +6,7 @@ import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import ComboBox from '@/ui/form/ComboBox'
 import { useEffect, useMemo, useState } from 'react'
-import { GeneratingStationAttribute, RegionOption } from '@/interfaces/data_interfaces'
+import { Connection, GeneratingStationAttribute, RegionOption } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import GeneratingStationAttributeForm from './GeneratingStationAttributeForm'
 
@@ -27,7 +27,7 @@ const GeneratingStationForm = ({
   voltageCategories,
   plantTypes,
 }: Props) => {
-  const [selectedConnection, setSelectedConnection] = useState<any>(null)
+  const [selectedConnection, setSelectedConnection] = useState<Connection | null>(null)
 
   const { formData, setFormValue } = useCustomForm({
     connection_id: '',
@@ -45,7 +45,8 @@ const GeneratingStationForm = ({
     pincode: '',
     district_id: '',
     state_id: '',
-    is_active: true,
+    is_current: true,
+    attributeData: [],
   })
 
   const [selectedGenerationType, setSelectedGenerationType] = useState<ParameterValues | null>(null)

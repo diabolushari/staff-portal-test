@@ -11,7 +11,7 @@ use Proto\GeneratingStation\ListGeneratingStationPaginatedRequest;
 use Proto\GeneratingStation\GetGeneratingStationRequest;
 use Proto\GeneratingStation\GeneratingStationMessage;
 use Proto\GeneratingStation\GeneratingStationAttributeRequest;
-use Proto\Connections\ConsumerAddressMessage;
+use Proto\Connections\AddressMessage;
 use Proto\GeneratingStation\GeneratingStationServiceClient;
 
 class GeneratingStationService
@@ -269,17 +269,14 @@ class GeneratingStationService
 
         $msg->setCommissioningDate($request->commissioningDate);
 
-
-        $msg->setIsActive(true);
-
         return $msg;
     }
 
     private function toAddress(
         GeneratingStationFormRequest $request
-    ): ConsumerAddressMessage {
+    ): AddressMessage {
 
-        $address = new ConsumerAddressMessage();
+        $address = new AddressMessage();
 
         $address->setAddressLine1($request->addressLine1);
         $address->setAddressLine2($request->addressLine2 ?? '');

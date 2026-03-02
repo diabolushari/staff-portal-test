@@ -12,6 +12,7 @@ final class GeneratingStationAttributeFormRequest extends Data
     public function __construct(
         public int $attributeDefinitionId,
         public ?string $attributeValue,
+        public ?UploadedFile $file,
         public ?int $createdBy,
         public ?int $updatedBy,
     ) {}

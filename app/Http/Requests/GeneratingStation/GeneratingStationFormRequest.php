@@ -11,7 +11,7 @@ class GeneratingStationFormRequest extends Data
 {
     public function __construct(
 
-    public ?int $connectionId,
+    public int $connectionId,
 
     public string $stationName,
     public int $generationStatusId,
@@ -30,7 +30,7 @@ class GeneratingStationFormRequest extends Data
     public int $districtId,
     public int $stateId,
 
-    public bool $isActive,
+    public bool $isCurrent,
 
     /** @var GeneratingStationAttributeFormRequest[] */
     public ?array $attributeData,
