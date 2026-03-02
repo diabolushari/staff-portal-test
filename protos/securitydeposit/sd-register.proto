@@ -37,13 +37,7 @@ message SdRegisterMessage {
 }
 
 
-message GetSdRegisterRequest {
-  int32 sd_register_id = 1;
-}
 
-message GetSdRegisterResponse {
-  SdRegisterMessage sd_register = 1;
-}
 
 message ListSdRegistersRequest {
   int32 page = 1;
@@ -70,7 +64,6 @@ message ListSdRegistersPaginatedResponse {
 
 
 service SdRegisterService {
-  rpc GetSdRegister(GetSdRegisterRequest) returns (GetSdRegisterResponse);
   rpc ListSdRegisters(ListSdRegistersRequest) returns (ListSdRegistersResponse);
   rpc ListSdRegistersPaginated(ListSdRegistersPaginatedRequest) returns (ListSdRegistersPaginatedResponse);
 }

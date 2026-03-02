@@ -40,9 +40,6 @@ message CreateSdDemandRequest {
   int32 charge_head_definition_id = 7;
   bool is_active=8;
   optional int32 created_by=9;
-  int32 sd_type_id=10;
-  int32 occupancy_type_id=11;
-  optional string rate_or_basis=12;
 }
 
 message CreateSdDemandResponse {

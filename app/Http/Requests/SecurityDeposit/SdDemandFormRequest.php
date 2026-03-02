@@ -18,8 +18,5 @@ class SdDemandFormRequest extends Data
         public ?string $applicableTo,
         public bool $isActive,
         public int $chargeHeadDefinitionId,
-        public int $sdTypeId,
-        public int $occupancyTypeId,
-        public ?string $rateOrBasis,
     ) {}
 }

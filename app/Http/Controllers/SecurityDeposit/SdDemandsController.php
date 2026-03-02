@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SecurityDeposit;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SecurityDeposit\SdDemandFormRequest;
+use App\Services\Billing\ChargeHeadDefinitionService;
 use App\Services\Connection\ConnectionService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\SecurityDeposit\SdDemandsService;
@@ -19,6 +20,7 @@ class SdDemandsController extends Controller
         private readonly SdDemandsService $sdDemandService,
         private readonly ConnectionService $connectionService,
         private readonly ParameterValueService $parameterValueService,
+        private readonly ChargeHeadDefinitionService $chargeHeadDefinitionService,
     ) {}
 
     /**
@@ -72,6 +74,7 @@ class SdDemandsController extends Controller
         $calculationBasics = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'SD Calculation Basic')->data;
         $sdRegisterTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'SD Register Type')->data;
         $occupancyTypes = $this->parameterValueService->getParameterValues(null, null, null, 'Connection', 'SD Occupancy Type')->data;
+        $chargeHeadDefinitions = $this->chargeHeadDefinitionService->listChargeHeadByCategory('Security Deposit')->data;
 
         return Inertia::render(
             'SecurityDeposit/SdDemands/SdDemandCreate',
@@ -81,6 +84,7 @@ class SdDemandsController extends Controller
                 'connection' => $connection,
                 'sdRegisterTypes' => $sdRegisterTypes,
                 'occupancyTypes' => $occupancyTypes,
+                'chargeHeadDefinitions' => $chargeHeadDefinitions,
             ]
         );
     }

@@ -79,11 +79,6 @@ class SdDemandConverter
         }
         $msg->setChargeHeadDefinitionId($sdDemand->chargeHeadDefinitionId);
         $msg->setIsActive($sdDemand->isActive);
-        $msg->setSdTypeId($sdDemand->sdTypeId);
-        $msg->setOccupancyTypeId($sdDemand->occupancyTypeId);
-        if ($sdDemand->rateOrBasis != null) {
-            $msg->setRateOrBasis($sdDemand->rateOrBasis);
-        }
 
         return $msg;
     }

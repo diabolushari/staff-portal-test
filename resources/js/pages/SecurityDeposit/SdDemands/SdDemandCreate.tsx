@@ -1,6 +1,6 @@
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import SdDemandForm from '@/components/SecurityDeposit/SdDemands/SdDemandForm'
-import { Connection, SdDemand } from '@/interfaces/data_interfaces'
+import { ChargeHeadDefinition, Connection, SdDemand } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { BreadcrumbItem } from '@/types'
@@ -12,6 +12,7 @@ interface Props {
   sdDemand?: SdDemand
   sdRegisterTypes: ParameterValues[]
   occupancyTypes: ParameterValues[]
+  chargeHeadDefinitions: ChargeHeadDefinition[]
 }
 
 export default function SdDemandCreate({
@@ -21,6 +22,7 @@ export default function SdDemandCreate({
   sdDemand,
   sdRegisterTypes,
   occupancyTypes,
+  chargeHeadDefinitions,
 }: Readonly<Props>) {
   const connectionData = connection ?? sdDemand?.connection
 
@@ -77,6 +79,7 @@ export default function SdDemandCreate({
           sdDemand={sdDemand}
           sdRegisterTypes={sdRegisterTypes}
           occupancyTypes={occupancyTypes}
+          chargeHeadDefinitions={chargeHeadDefinitions}
         />
       </div>
     </ConnectionsLayout>

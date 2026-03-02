@@ -816,6 +816,30 @@ export interface PurposeInfo {
   tariff_name: string
 }
 
+export interface SdRegister {
+  sd_register_id: number
+  sd_demand_id: number
+  connection_id: number
+  sd_type_id: number
+  occupancy_type_id: number
+  period_from: string
+  period_to: string
+  generated_date: string
+  sd_amount: string
+  rate_or_basis: string
+  bg_expiry_date?: string
+  bg_renewal_due_date?: string
+  is_fully_settled?: boolean
+  settled_date?: string
+  is_active?: boolean
+  created_by?: number
+  updated_by?: number
+  sd_type: ParameterValues
+  occupancy_type: ParameterValues
+  connection: Connection
+  sd_demand: SdDemand
+}
+
 export interface SdDemand {
   sd_demand_id: number
   connection_id: number
