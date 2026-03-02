@@ -452,8 +452,6 @@ export interface MeterTransformerAssignment {
 export interface MeteringTimezoneSlot {
   version_id: number
   metering_timezone_id: number
-  pricing_type_id: number
-  pricing_type?: Partial<ParameterValues> | null
   timezone_type_id: number
   timezone_type?: Partial<ParameterValues> | null
   timezone_name_id: number

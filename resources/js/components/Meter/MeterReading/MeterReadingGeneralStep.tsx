@@ -1,5 +1,13 @@
 import Field from '@/components/ui/field'
-import { ConsumerData, MeterReadingValueGroup } from '@/interfaces/data_interfaces'
+import {
+  Connection,
+  ConsumerData,
+  MeterConnectionMapping,
+  MeteringTimezoneSlot,
+  MeterProfileParameter,
+  MeterReadingValueGroup,
+  MeterWithTimezoneAndProfile,
+} from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import { ConnectionDetailTooltip } from './ConnectionDetailTooltip'
 import dayjs from 'dayjs'
@@ -8,11 +16,12 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import SelectList from '@/ui/form/SelectList'
 import CheckBox from '@/ui/form/CheckBox'
 import { getDisplayDate } from '@/utils'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
 import Button from '@/ui/button/Button'
 import axios from 'axios'
-import { handleHttpErrors } from '@/ui/alerts'
+import { handleHttpErrors, showError } from '@/ui/alerts'
+import { getMeterMappingForPeriod } from '@/components/Meter/MeterReading/valdiations/meter-reading-validation-helpers'
 
 interface Props {
   connectionWithConsumer: ConsumerData
@@ -21,8 +30,9 @@ interface Props {
   toggleBoolean: (key: keyof MeterReadingForm) => () => void
   errors?: Record<string, string | undefined>
   latestMeterReadings?: MeterReadingValueGroup[]
-  isFirstReading?: boolean
   interimReasons: ParameterValues[]
+  meterConnectionMappings: MeterConnectionMapping[]
+  onMetersWithTimezonesAndProfilesChange: (meters: MeterWithTimezoneAndProfile[]) => void
 }
 
 interface MeterRow {
@@ -32,6 +42,49 @@ interface MeterRow {
   checked: boolean
 }
 
+interface MeterPeriodDetailsResponse {
+  success: boolean
+  data?: {
+    connections: Connection[]
+    meters?: MeterPeriodDetails[]
+  }
+}
+
+interface MeterPeriodDetails {
+  meter_id: number
+  profiles: {
+    profile: ParameterValues | null
+    profile_parameters: MeterProfileParameter[]
+  }[]
+  timezones: {
+    metering_timezones: MeteringTimezoneSlot[]
+    timezone_type: ParameterValues | null
+  }[]
+}
+
+const getSmallestDate = (dates: string[]): string | null => {
+  const validDates = dates.filter((date) => dayjs(date).isValid())
+  if (validDates.length === 0) {
+    return null
+  }
+
+  return validDates.reduce((smallestDate, currentDate) => {
+    if (dayjs(currentDate).isBefore(dayjs(smallestDate))) {
+      return currentDate
+    }
+
+    return smallestDate
+  })
+}
+
+const getLastReadingDate = (latestMeterReadingDate: string | null): string => {
+  if (!latestMeterReadingDate) {
+    return '-'
+  }
+
+  return getDisplayDate(latestMeterReadingDate)
+}
+
 export default function MeterReadingGeneralStep({
   connectionWithConsumer,
   formData,
@@ -39,21 +92,80 @@ export default function MeterReadingGeneralStep({
   toggleBoolean,
   errors,
   latestMeterReadings,
-  isFirstReading,
   interimReasons,
+  meterConnectionMappings,
+  onMetersWithTimezonesAndProfilesChange,
 }: Props) {
   const maxDate = dayjs().format('DD-MM-YYYY')
   const maxDateForReadingStartDate = dayjs(maxDate).subtract(1, 'day').format('DD-MM-YYYY')
   const [openDateField, setOpenDateField] = useState(true)
   const [meterRows, setMeterRows] = useState<MeterRow[]>([])
+  const selectedMeterIds = useMemo(() => {
+    return new Set(
+      meterRows.filter((meterRow) => meterRow.checked).map((meterRow) => meterRow.meterId)
+    )
+  }, [meterRows])
 
-  const getLastReadingDate = (latestMeterReadingDate: string | null): string => {
-    if (!latestMeterReadingDate) {
-      return '-'
+  const smallestPreviousReadingEndDate = useMemo(() => {
+    const previousReadingEndDates =
+      latestMeterReadings
+        ?.filter((latestMeterReading) => {
+          const meterId = latestMeterReading?.meter?.meter_id
+
+          if (meterId == null || !selectedMeterIds.has(meterId)) {
+            return false
+          }
+
+          return latestMeterReading?.reading?.reading_end_date != null
+        })
+        .map((latestMeterReading) => latestMeterReading.reading?.reading_end_date ?? '') ?? []
+
+    return getSmallestDate(previousReadingEndDates)
+  }, [latestMeterReadings, selectedMeterIds])
+
+  const smallestSelectedMeterEnergiseDate = useMemo(() => {
+    const energiseDates =
+      meterConnectionMappings
+        ?.filter((meterConnectionMapping) => {
+          return (
+            selectedMeterIds.has(meterConnectionMapping.meter_id) &&
+            meterConnectionMapping.is_current &&
+            meterConnectionMapping.energise_date != null
+          )
+        })
+        .map((meterConnectionMapping) => meterConnectionMapping.energise_date ?? '') ?? []
+    return getSmallestDate(energiseDates)
+  }, [meterConnectionMappings, selectedMeterIds])
+
+  const isFirstReading = useMemo(() => {
+    const hasPreviousReadingForSelectedMeter = latestMeterReadings?.some((latestMeterReading) => {
+      const meterId = latestMeterReading?.meter?.meter_id
+
+      if (meterId == null || !selectedMeterIds.has(meterId)) {
+        return false
+      }
+
+      return latestMeterReading?.reading?.reading_end_date != null
+    })
+
+    return !hasPreviousReadingForSelectedMeter
+  }, [latestMeterReadings, selectedMeterIds])
+
+  useEffect(() => {
+    if (isFirstReading && smallestSelectedMeterEnergiseDate != null) {
+      setFormValue('reading_start_date')(smallestSelectedMeterEnergiseDate)
+      setFormValue('reading_end_date')(smallestSelectedMeterEnergiseDate)
     }
-
-    return getDisplayDate(latestMeterReadingDate)
-  }
+    if (!isFirstReading && smallestPreviousReadingEndDate != null) {
+      setFormValue('reading_start_date')(smallestPreviousReadingEndDate)
+      setFormValue('reading_end_date')('')
+    }
+  }, [
+    isFirstReading,
+    smallestPreviousReadingEndDate,
+    smallestSelectedMeterEnergiseDate,
+    setFormValue,
+  ])
 
   const handleMeterSelection = (meterId: number): void => {
     setMeterRows((previousMeterRows) => {
@@ -76,25 +188,90 @@ export default function MeterReadingGeneralStep({
         .filter((meterRow) => meterRow.checked)
         .map((meterRow) => meterRow.meterId)
 
-      const response = await axios.post('/api/connections/period-details', {
+      const payload = {
         connection_id: formData.connection_id,
         meter_ids: selectedMeterIds,
         start_date: formData.reading_start_date ?? null,
         end_date: formData.reading_end_date ?? null,
+      }
+
+      const response = await axios.post<MeterPeriodDetailsResponse>(
+        '/api/connections/period-details',
+        payload
+      )
+
+      if (!response.data?.success) {
+        showError('Validation Failed')
+        return
+      }
+
+      //check if any meter has multiple timezones or profiles
+      let hasError = false
+
+      response.data?.data?.meters?.map((meter) => {
+        if (meter.profiles.length !== 1) {
+          showError(
+            'Meter Should have only one profile during selected period. Please check the meter details.'
+          )
+          hasError = true
+        }
+        if (meter.timezones.length !== 1) {
+          showError(
+            'Meter Should have only one timezone during selected period. Please check the meter details.'
+          )
+          hasError = true
+        }
+        const mappings = getMeterMappingForPeriod(
+          meterConnectionMappings.filter((mapping) => mapping.meter_id === meter.meter_id),
+          payload.start_date ?? '',
+          payload.end_date ?? ''
+        )
+        if (mappings.length !== 1) {
+          showError('Meters data changed during this period. Please check the meter details.')
+          hasError = true
+        }
       })
 
-      console.log('Period details response:', response.data)
+      if (hasError) {
+        return
+      }
+      //construct meterWith Profile + Timezone
+      const meterWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[] =
+        response.data?.data?.meters
+          ?.map((meter) => {
+            const latestMeterReading = latestMeterReadings?.find(
+              (latestMeterReading) => latestMeterReading?.meter?.meter_id === meter.meter_id
+            )
+            if (latestMeterReading == null || latestMeterReading?.meter == null) {
+              return null
+            }
+            const mapping = getMeterMappingForPeriod(
+              meterConnectionMappings.filter((mapping) => mapping.meter_id === meter.meter_id),
+              payload.start_date ?? '',
+              payload.end_date ?? ''
+            )
+            return {
+              meter_id: meter.meter_id,
+              meter: latestMeterReading.meter,
+              meter_serial: latestMeterReading.meter.meter_serial,
+              reading_parameters: meter.profiles[0].profile_parameters,
+              timezones: meter.timezones[0].metering_timezones.map((timezone) => {
+                return {
+                  timezone_id: timezone.timezone_name_id,
+                  timezone_name: timezone.timezone_name?.parameter_value ?? '',
+                }
+              }),
+              meter_mf: mapping[0].meter_mf,
+              meter_profile: meter.profiles[0].profile,
+            } as MeterWithTimezoneAndProfile
+          })
+          .filter((meterWithTimezoneAndProfile) => meterWithTimezoneAndProfile != null)
+
+      onMetersWithTimezonesAndProfilesChange(meterWithTimezonesAndProfiles)
     } catch (error) {
       handleHttpErrors(error)
     }
   }
-
-  useEffect(() => {
-    if (isFirstReading) {
-      setOpenDateField(true)
-      return
-    }
-  }, [isFirstReading])
 
   useEffect(() => {
     const availableRows =
@@ -234,16 +411,14 @@ export default function MeterReadingGeneralStep({
                 setValue={setFormValue('reading_end_date')}
                 error={errors?.reading_end_date}
                 max={maxDate}
-                disabled={!isFirstReading && !formData.is_interim_reading}
               />
             )}
 
             <div className='col-span-2 flex justify-end'>
               <Button
                 type='button'
-                label='Validate'
+                label='Validate & Continue'
                 onClick={handleValidate}
-                variant='secondary'
               />
             </div>
           </div>
