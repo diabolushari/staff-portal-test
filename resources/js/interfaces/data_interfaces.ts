@@ -867,3 +867,38 @@ export interface SdAttribute {
   updated_at?: string
   attribute_definition: ParameterValues
 }
+
+export interface GeneratingStation {
+  station_id: number
+  connection_id: number
+  station_name: string
+  generation_status_id: number
+  installed_capacity: number
+  generation_type_id: number
+  voltage_category_id: number
+  plant_type_id: number
+  commissioning_date: string
+  
+  is_active: boolean
+  created_by?: number
+  updated_by?: number
+  deleted_by?: number
+  connection?:Connection
+  generation_status?: ParameterValues
+  generation_type?: ParameterValues
+  voltage_category?: ParameterValues
+  plant_type?: ParameterValues
+  address?: Address
+  attributes: GeneratingStationAttribute[]
+}
+
+export interface GeneratingStationAttribute {
+  attribute_id: number | null
+  station_id: number | null
+  attribute_definition_id: number
+  attribute_value: string
+  created_by?: number
+  updated_by?: number
+  deleted_by?: number
+  attribute_definition?: ParameterValues
+}

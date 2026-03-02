@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.generatingstation;
+
+
+option php_namespace = "Proto\\GeneratingStation";
+option php_metadata_namespace = "GPBMetadata";
+
+
+import "parameters/parameter-value.proto";
+
+message GeneratingStationAttributeResponse {
+
+  int32 attribute_id = 1;
+  int32 station_id = 2;
+  int32 attribute_definition_id = 3;
+  string attribute_value = 4;
+
+  optional int32 created_by = 5;
+  optional int32 updated_by = 6;
+  optional int32 deleted_by = 7;
+
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto attribute_definition = 8;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto attribute_value_object = 9;
+}
+
+message GeneratingStationAttributeRequest {
+
+  int32 attribute_definition_id = 1;
+  string attribute_value = 2;
+  optional int32 created_by = 3;
+  optional int32 updated_by = 4;
+}
+
+message GetGeneratingStationAttributeRequest {
+  int32 attribute_id = 1;
+}
+
+message GetGeneratingStationAttributeResponse {
+  GeneratingStationAttributeResponse generating_station_attribute = 1;
+}
+
+message ListGeneratingStationAttributesRequest {
+  optional int32 station_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message ListGeneratingStationAttributesResponse {
+  repeated GeneratingStationAttributeResponse items = 1;
+}
+
+message ListGeneratingStationAttributesPaginatedRequest {
+  optional int32 station_id = 1;
+  optional int32 page = 2;
+  optional int32 page_size = 3;
+}
+
+message ListGeneratingStationAttributesPaginatedResponse {
+  repeated GeneratingStationAttributeResponse items = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
+message DeleteGeneratingStationAttributeRequest {
+  int32 attribute_id = 1;
+}
+
+message DeleteGeneratingStationAttributeResponse {
+  bool success = 1;
+}
+
+service GeneratingStationAttributeService {
+
+  rpc GetGeneratingStationAttribute(GetGeneratingStationAttributeRequest)
+      returns (GetGeneratingStationAttributeResponse);
+
+  rpc ListGeneratingStationAttributes(ListGeneratingStationAttributesRequest)
+      returns (ListGeneratingStationAttributesResponse);
+
+  rpc ListGeneratingStationAttributesPaginated(ListGeneratingStationAttributesPaginatedRequest)
+      returns (ListGeneratingStationAttributesPaginatedResponse);
+
+  rpc DeleteGeneratingStationAttribute(DeleteGeneratingStationAttributeRequest)
+      returns (DeleteGeneratingStationAttributeResponse);
+}

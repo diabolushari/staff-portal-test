@@ -69,6 +69,7 @@ use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SecurityDeposit\SdAttributeDownloadController;
 use App\Http\Controllers\SecurityDeposit\SdCollectionController;
 use App\Http\Controllers\SecurityDeposit\SdDemandsController;
+use App\Http\Controllers\GeneratingStation\GeneratingStationController;
 use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
 use App\Http\Controllers\Tariff\TariffConfigController;
@@ -189,6 +190,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->only(['create', 'store']);
     Route::get('attribute-download', SdAttributeDownloadController::class)
         ->name('attribute-download');
+    //generating station
+    Route::resource('generating-stations', GeneratingStationController::class)
+        ->only(['index', 'create', 'store', 'show']);
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
