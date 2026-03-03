@@ -7,7 +7,6 @@ import Datepicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { useEffect, useMemo, useState } from 'react'
-import SdAttributeForm from './SdAttributeForm'
 import DynamicAttributeForm from '@/ui/form/DynamicAttributeForm'
 
 interface Props {

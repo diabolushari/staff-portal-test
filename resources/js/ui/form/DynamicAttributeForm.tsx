@@ -10,14 +10,14 @@ export interface BaseAttribute {
   file: File | null
   mime_type: string | null
   attribute_definition: ParameterValues
-  [key: string]: any // allows foreign key field (station_id / sd_collection_id)
+  [key: string]: any
 }
 
 interface Props<T extends BaseAttribute> {
   selectedValue: ParameterValues | null
   domainName: string
   parameterName: string
-  foreignKeyName: string // "station_id" | "sd_collection_id"
+  foreignKeyName: string
   foreignKeyValue: number | null
   attributeData: T[] | null
   setAttributeData: Dispatch<SetStateAction<T[] | null>>
