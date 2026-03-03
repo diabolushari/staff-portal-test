@@ -21,34 +21,34 @@ class GeneratingStationController extends Controller
         private readonly GeoRegionsService $geoRegionsService,
     ) {}
 
-   public function index(Request $request)
-{
-    $search = $request->input('search') ?? null;
-    $pageNumber = $request->input('page') ?? 1;
-    $pageSize = $request->input('page_size') ?? 10;
+    public function index(Request $request): Response
+    {
+        $search = $request->input('search') ?? null;
+        $pageNumber = $request->input('page') ?? 1;
+        $pageSize = $request->input('page_size') ?? 10;
 
-    $response = $this->generatingStationService
-        ->listPaginatedGeneratingStations($pageNumber, $pageSize, $search);
+        $response = $this->generatingStationService
+            ->listPaginatedGeneratingStations($pageNumber, $pageSize, $search);
 
-    $paginated = null;
+        $paginated = null;
 
-    if (!empty($response->data)) {
-        $paginated = new LengthAwarePaginator(
-            $response->data['items'],
-            $response->data['total_count'],
-            $response->data['page_size'],
-            $response->data['page_number'],
-            ['path' => request()->url()]
-        );
+        if (!empty($response->data)) {
+            $paginated = new LengthAwarePaginator(
+                $response->data['items'],
+                $response->data['total_count'],
+                $response->data['page_size'],
+                $response->data['page_number'],
+                ['path' => request()->url()]
+            );
+        }
+
+        return Inertia::render('GeneratingStation/GeneratingStationIndex', [
+            'generatingStations' => $paginated ?? [],
+            'filters' => [
+                'search' => $search,
+            ],
+        ]);
     }
-
-    return Inertia::render('GeneratingStation/GeneratingStationIndex', [
-        'generatingStations' => $paginated ?? [],
-        'filters' => [
-            'search' => $search,
-        ],
-    ]);
-}
     /**
      * Show create form
      */
@@ -94,8 +94,8 @@ class GeneratingStationController extends Controller
             'voltageCategories' => $voltageCategories,
             'plantTypes' => $plantTypes,
             'attributeDefinitions' => $attributeDefinitions,
-            'districts' => $districts->data, 
-            'states' => $states->data,  
+            'districts' => $districts->data,
+            'states' => $states->data,
         ]);
     }
 
@@ -117,7 +117,7 @@ class GeneratingStationController extends Controller
             ->with('message', 'Generating Station added successfully');
     }
 
-    public function show($id)
+    public function show(int $id): Response
     {
         $response = $this->generatingStationService->getGeneratingStation($id);
 
