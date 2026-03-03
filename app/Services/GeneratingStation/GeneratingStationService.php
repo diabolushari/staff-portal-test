@@ -2,6 +2,7 @@
 
 namespace App\Services\GeneratingStation;
 
+use App\GrpcConverters\GeneratingStation\GeneratingStationConverter;
 use App\Http\Requests\GeneratingStation\GeneratingStationFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
@@ -62,39 +63,7 @@ class GeneratingStationService
         $stations = [];
 
         foreach ($response->getItems() as $station) {
-            $stations[] = [
-                'station_id' => $station->getStationId(),
-                'station_name' => $station->getStationName(),
-                'installed_capacity' => $station->getInstalledCapacity(),
-                'commissioning_date' => $station->getCommissioningDate(),
-                'generation_type' => $station->getGenerationType()
-                    ? [
-                        'parameter_value' =>
-                            $station->getGenerationType()->getParameterValue()
-                    ]
-                    : null,
-
-                'plant_type' => $station->getPlantType()
-                    ? [
-                        'parameter_value' =>
-                            $station->getPlantType()->getParameterValue()
-                    ]
-                    : null,
-
-                'voltage_category' => $station->getVoltageCategory()
-                    ? [
-                        'parameter_value' =>
-                            $station->getVoltageCategory()->getParameterValue()
-                    ]
-                    : null,
-
-                'generation_status' => $station->getGenerationStatus()
-                    ? [
-                        'parameter_value' =>
-                            $station->getGenerationStatus()->getParameterValue()
-                    ]
-                    : null,
-            ];
+            $stations[] = GeneratingStationConverter::convertToArray($station);
         }
 
         $data = [
@@ -125,10 +94,10 @@ class GeneratingStationService
             $this->toAddress($request)
         );
 
-        
+
         if ($request->attributeData) {
 
-           $processedAttributes = $this->attributeService
+            $processedAttributes = $this->attributeService
                 ->processGeneratingStationAttributes($request);
 
             $protoAttributes = [];
@@ -171,7 +140,7 @@ class GeneratingStationService
         );
     }
 
-  public function getGeneratingStation($id)
+    public function getGeneratingStation(int $id): GrpcServiceResponse
     {
         $request = new GetGeneratingStationRequest();
         $request->setStationId($id);
@@ -187,69 +156,13 @@ class GeneratingStationService
             );
         }
 
-        $station = $response->getStation(); 
-        if (!$station) {
-            return GrpcServiceResponse::success(null);
-        }
-        $attributes = [];
-        foreach ($station->getAttributes() as $attr) {
-            $attrDef = $attr->getAttributeDefinition();
-            $attrValueObj = $attr->getAttributeValueObject();
-
-            $attributes[] = [
-                'attribute_definition_id' => $attr->getAttributeDefinitionId(),
-                'attribute_value' => $attr->getAttributeValue(),
-
-                'attribute_value_object' => $attrValueObj ? [
-                    'id' => $attrValueObj->getId(),
-                    'parameter_value' => $attrValueObj->getParameterValue(),
-                ] : null,
-
-                'attribute_definition' => $attrDef ? [
-                    'id' => $attrDef->getId(),
-                    'parameter_value' => $attrDef->getParameterValue(),
-                    'attribute1_value' => $attrDef->getAttribute1Value(),
-                    'attribute2_value' => $attrDef->getAttribute2Value(),
-                    'attribute3_value' => $attrDef->getAttribute3Value(),
-                    'attribute4_value' => $attrDef->getAttribute4Value(),
-                    'attribute5_value' => $attrDef->getAttribute5Value(),
-                ] : null,
-            ];
-        }
-
-        return GrpcServiceResponse::success([
-            'station_id' => $station->getStationId(),
-            'station_name' => $station->getStationName(),
-            'installed_capacity' => $station->getInstalledCapacity(),
-            'commissioning_date' => $station->getCommissioningDate(),
-            'is_active' => $station->getIsActive(),
-            'generation_type' => $station->getGenerationType()
-                ? ['parameter_value' => $station->getGenerationType()->getParameterValue()]
-                : null,
-            'plant_type' => $station->getPlantType()
-                ? ['parameter_value' => $station->getPlantType()->getParameterValue()]
-                : null,
-            'voltage_category' => $station->getVoltageCategory()
-                ? ['parameter_value' => $station->getVoltageCategory()->getParameterValue()]
-                : null,
-            'generation_status' => $station->getGenerationStatus()
-                ? ['parameter_value' => $station->getGenerationStatus()->getParameterValue()]
-                : null,
-            'attributes' => $attributes,
-            'address' => $station->getAddress()
-                ? [
-                    'address_line_1' => $station->getAddress()->getAddressLine1(),
-                    'address_line_2' => $station->getAddress()->getAddressLine2(),
-                    'city_town_village' => $station->getAddress()->getCityTownVillage(),
-                    'pincode' => $station->getAddress()->getPincode(),
-                     'district' => $station->getAddress()->getDistrict()
-                    ? [
-                        'name' => $station->getAddress()->getDistrict()->getRegionName()
-                    ]
-                    : null,
-                ]
-                : null,
-        ]);
+        $station = $response->getStation();
+        return GrpcServiceResponse::success(
+            GeneratingStationConverter::convertToArray($station),
+            $response,
+            $status->code,
+            $status->details
+        );
     }
 
     private function toGeneratingStation(

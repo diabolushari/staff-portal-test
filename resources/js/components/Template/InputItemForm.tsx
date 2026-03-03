@@ -7,6 +7,7 @@ import { Select } from 'react-day-picker'
 import SelectList from '@/ui/form/SelectList'
 import useFetchRecord from '@/hooks/useFetchPagination'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import DynamicSelectList from '@/ui/form/DynamicSelectList'
 
 interface Props {
   updateTextValue: (attribute_id: number, value: string) => void
@@ -29,7 +30,7 @@ export default function InputItemForm({
       className='flex flex-col'
       key={attribute.attribute_id}
     >
-      {attribute.attribute_definition.attribute1_value.toLowerCase() === 'date' && (
+      {attribute?.attribute_definition?.attribute1_value.toLowerCase() === 'date' && (
         <Datepicker
           setValue={(value) => updateTextValue(attribute.attribute_definition_id, value)}
           label={attribute.attribute_definition.parameter_value}
@@ -38,7 +39,7 @@ export default function InputItemForm({
           error={errors}
         />
       )}
-      {attribute.attribute_definition.attribute1_value.toLowerCase() === 'boolean' && (
+      {attribute?.attribute_definition?.attribute1_value.toLowerCase() === 'boolean' && (
         <CheckBox
           label={attribute.attribute_definition.parameter_value}
           value={String(attribute.attribute_value).toLowerCase() === 'true'}
@@ -51,8 +52,8 @@ export default function InputItemForm({
         />
       )}
 
-      {(attribute.attribute_definition.attribute1_value.toLowerCase() === 'text' ||
-        attribute.attribute_definition.attribute1_value.toLowerCase() === 'number') && (
+      {(attribute?.attribute_definition?.attribute1_value.toLowerCase() === 'text' ||
+        attribute?.attribute_definition?.attribute1_value.toLowerCase() === 'number') && (
         <Input
           setValue={(value) => updateTextValue(attribute.attribute_definition_id, value)}
           value={attribute.attribute_value}
@@ -62,7 +63,7 @@ export default function InputItemForm({
         />
       )}
 
-      {attribute.attribute_definition.attribute1_value.toLocaleLowerCase() === 'file' &&
+      {attribute?.attribute_definition?.attribute1_value.toLocaleLowerCase() === 'file' &&
         updateFileValue && (
           <div className='space-y-2'>
             <FileInput
@@ -73,15 +74,15 @@ export default function InputItemForm({
             />
           </div>
         )}
-      {attribute.attribute_definition.attribute1_value.toLowerCase() === 'drop down' && list && (
-        <SelectList
+      {attribute?.attribute_definition?.attribute1_value.toLowerCase() === 'drop down' && list && (
+        <DynamicSelectList
           setValue={(value) => updateTextValue(attribute.attribute_definition_id, value)}
           label={attribute.attribute_definition.parameter_value}
           placeholder={attribute.attribute_definition.parameter_value ?? ''}
           value={attribute.attribute_value}
           error={errors}
-          list={list}
-          dataKey='id'
+          url={`/api/parameter-values?domain_name=${attribute.attribute_definition?.attribute3_value}&parameter_name=${attribute.attribute_definition?.attribute4_value}`}
+          dataKey='parameter_value'
           displayKey='parameter_value'
         />
       )}

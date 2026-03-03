@@ -21,7 +21,7 @@ message GeneratingStationAttributeResponse {
   optional int32 deleted_by = 8;
 
   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto attribute_definition = 9;
-  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto attribute_value_object = 10;
+
 }
 
 message GeneratingStationAttributeRequest {

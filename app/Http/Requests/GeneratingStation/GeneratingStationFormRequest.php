@@ -11,28 +11,28 @@ class GeneratingStationFormRequest extends Data
 {
     public function __construct(
 
-    public int $connectionId,
+        public int $connectionId,
 
-    public string $stationName,
-    public int $generationStatusId,
-    public float $installedCapacity,
+        public string $stationName,
+        public int $generationStatusId,
+        public float $installedCapacity,
 
-    public int $generationTypeId,
-    public int $voltageCategoryId,
-    public int $plantTypeId,
+        public int $generationTypeId,
+        public int $voltageCategoryId,
+        public int $plantTypeId,
 
-    public string $commissioningDate,
+        public string $commissioningDate,
 
-    public string $addressLine1,
-    public ?string $addressLine2,
-    public string $cityTownVillage,
-    public string $pincode,
-    public int $districtId,
-    public int $stateId,
+        public string $addressLine1,
+        public ?string $addressLine2,
+        public string $cityTownVillage,
+        public int $pincode,
+        public int $districtId,
+        public int $stateId,
 
-    public bool $isCurrent,
+        public bool $isCurrent,
 
-    /** @var GeneratingStationAttributeFormRequest[] */
-    public ?array $attributeData,
-) {}
+        /** @var GeneratingStationAttributeFormRequest[] */
+        public ?array $attributeData,
+    ) {}
 }

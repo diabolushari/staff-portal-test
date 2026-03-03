@@ -67,7 +67,7 @@ export default function GeneratingStationShowPage({ station }: Props) {
               <Field
                 key={index}
                 label={attr.attribute_definition?.parameter_value}
-                value={attr.attribute_value_object?.parameter_value ?? attr.attribute_value ?? '-'}
+                value={attr.attribute_value ?? '-'}
               />
             ))}
         </div>

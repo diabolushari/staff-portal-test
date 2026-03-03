@@ -21,9 +21,14 @@ class GeneratingStationConverter
             return null;
         }
 
+        $attributes = [];
+        foreach ($station->getAttributes() as $attr) {
+            $attributes[] = GeneratingStationAttributeConverter::convertToArray($attr);
+        }
+
         return [
             'station_id' => $station->getStationId(),
-           'connection_id' => $station->getConnectionId() ?: null,
+            'connection_id' => $station->getConnectionId() ?: null,
 
             'station_name' => $station->getStationName(),
             'generation_status_id' => $station->getGenerationStatusId(),
@@ -41,7 +46,7 @@ class GeneratingStationConverter
                     $station->getGenerationStatus()
                 )
                 : null,
-          
+
             'generation_type' => $station->hasGenerationType()
                 ? ParameterValueProtoConvertor::convertToArray(
                     $station->getGenerationType()
@@ -66,10 +71,12 @@ class GeneratingStationConverter
                 )
                 : null,
 
-            'connection' => $station->hasConnection() 
+            'connection' => $station->hasConnection()
                 ?  ConnectionProtoConverter::convertToArray(
                     $station->getConnection()
                 ) : null,
+
+            'attributes' => $attributes,
         ];
     }
 }
