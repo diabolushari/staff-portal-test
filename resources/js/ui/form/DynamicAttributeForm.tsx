@@ -85,7 +85,7 @@ const DynamicAttributeForm = <T extends BaseAttribute>({
   )
 
   return (
-    <div className='grid grid-cols-2 gap-4 p-4'>
+    <div className='grid grid-cols-2 gap-4'>
       {attributeData?.map((attribute) => (
         <InputItemForm
           key={attribute.attribute_definition_id}
