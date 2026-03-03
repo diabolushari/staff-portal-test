@@ -32,7 +32,7 @@ class GeneratingStationFormRequest extends Data
 
         public bool $isCurrent,
 
-        /** @var GeneratingStationAttributeFormRequest[] */
+        /** @var AttributeFormRequest[] */
         public ?array $attributeData,
     ) {}
 }

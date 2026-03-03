@@ -7,7 +7,7 @@ use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 #[MapName(SnakeCaseMapper::class)]
-final class GeneratingStationAttributeFormRequest extends Data
+final class AttributeFormRequest extends Data
 {
     public function __construct(
         public int $attributeDefinitionId,
