@@ -70,10 +70,10 @@ class ParameterValueService
 
                 $definition = $parameterValue->getDefinition();
                 $definitionArray = [
-                    'id' => $definition->getId(),
-                    'parameter_name' => $definition->getParameterName(),
+                    'id' => $definition?->getId() ?? null,
+                    'parameter_name' => $definition?->getParameterName() ?? null,
                 ];
-                $domain = $definition->getDomain();
+                $domain = $definition?->getDomain();
 
                 if ($domain != null) {
                     $domainArray = [
