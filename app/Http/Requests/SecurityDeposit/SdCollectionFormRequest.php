@@ -25,7 +25,7 @@ class SdCollectionFormRequest extends Data
     public ?string $transactionRef,
     public ?string $remarks,
     public int $statusId,
-    /** @var AttributeFormRequest[] */
+    /** @var DataCollection<AttributeFormRequest> */
     public ?array $attributeData,
   ) {}
 }

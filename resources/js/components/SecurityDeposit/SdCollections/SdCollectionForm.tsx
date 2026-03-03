@@ -88,6 +88,7 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
   console.log(customFormData)
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    console.log(customFormData)
     post(customFormData)
   }
 
@@ -217,15 +218,6 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
             placeholder='Select Status'
           />
         </div>
-        <DynamicAttributeForm
-          selectedValue={selectedCollectionMode}
-          domainName='Connection'
-          parameterName='SD Collection Attribute'
-          foreignKeyName='sd_collection_id'
-          foreignKeyValue={null}
-          attributeData={attributeData}
-          setAttributeData={setAttributeData}
-        />
 
         <div className='flex justify-end'>
           <Button

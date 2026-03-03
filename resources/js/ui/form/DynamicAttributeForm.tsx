@@ -75,11 +75,13 @@ const DynamicAttributeForm = <T extends BaseAttribute>({
 
   const updateFileValue = useCallback(
     (id: number, file: File | null) => {
-      setAttributeData(
-        (prev) =>
-          prev?.map((attr) => (attr.attribute_definition_id === id ? { ...attr, file } : attr)) ??
-          null
-      )
+      setAttributeData((prev) => {
+        if (!prev) return null
+
+        return prev.map((item) =>
+          item.attribute_definition_id === id ? { ...item, file: file } : item
+        )
+      })
     },
     [setAttributeData]
   )
