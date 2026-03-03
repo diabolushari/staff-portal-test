@@ -92,6 +92,7 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
     post(customFormData)
   }
 
+  console.log(errors)
   return (
     <div>
       <form onSubmit={handleSubmit}>
