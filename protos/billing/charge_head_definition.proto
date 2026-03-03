@@ -39,3 +39,16 @@ message ChargeHeadDefinitionMessage {
     com.kseb.consumerservice.proto.parameters.ParameterValueProto category = 22;
     com.kseb.consumerservice.proto.parameters.ParameterValueProto status = 23;
 }
+
+message GetChargeHeadDefinitionsRequest {
+    string category = 1;
+}
+
+message GetChargeHeadDefinitionsResponse {
+  repeated ChargeHeadDefinitionMessage charge_head_definitions = 1;
+}
+
+service ChargeHeadDefinitionService {
+  rpc GetChargeHeadDefinitions(GetChargeHeadDefinitionsRequest)
+      returns (GetChargeHeadDefinitionsResponse);
+}

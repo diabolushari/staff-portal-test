@@ -9,7 +9,6 @@ use App\Http\Requests\SecurityDeposit\SdDemandFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
-use Proto\Consumers\CreateSdDemandRequest;
 use Proto\Consumers\DeleteSdDemandRequest;
 use Proto\Consumers\GetSdDemandRequest;
 use Proto\Consumers\ListSdDemandsPaginatedRequest;
@@ -31,7 +30,7 @@ class SdDemandsService
         );
     }
 
-    public function listPaginatedSdDemands(?int $connectionId, ?int $calculationBasicId, ?int $demandTypeId, ?int $statusId, ?string $totalSdAmount)
+    public function listPaginatedSdDemands(?int $connectionId, ?int $calculationBasicId, ?int $demandTypeId, ?string $totalSdAmount)
     {
         $request = new ListSdDemandsPaginatedRequest;
         if ($connectionId != null) {
@@ -42,9 +41,6 @@ class SdDemandsService
         }
         if ($demandTypeId != null) {
             $request->setDemandTypeId($demandTypeId);
-        }
-        if ($statusId != null) {
-            $request->setStatusId($statusId);
         }
         if ($totalSdAmount != null) {
             $request->setTotalSdAmount($totalSdAmount);
@@ -99,10 +95,7 @@ class SdDemandsService
 
     public function create(SdDemandFormRequest $request): GrpcServiceResponse
     {
-        $sdDemand = $this->sdDemandConverter->formToGrpcMessage($request, null);
-
-        $grpcRequest = new CreateSdDemandRequest;
-        $grpcRequest->setSdDemand($sdDemand);
+        $grpcRequest = $this->sdDemandConverter->grpcToDemandRegisterCreateRequest($request);
 
         [$response, $status] =
             $this->client->CreateSdDemand($grpcRequest)->wait();
