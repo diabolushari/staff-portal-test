@@ -4,7 +4,7 @@ import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { RegionOption } from '@/interfaces/data_interfaces'
-
+import Card from '@/ui/Card/Card'
 interface Props {
   districts: RegionOption[]
   states: RegionOption[]
@@ -45,15 +45,17 @@ export default function GeneratingStationCreatePage({
       navItems={consumerNavItems}
       title='Generating Stations'
     >
-      <div className='flex flex-col gap-4'>
-        <GeneratingStationForm
-          districts={districts}
-          states={states}
-          generationStatus={generationStatus}
-          generationTypes={generationTypes}
-          voltageCategories={voltageCategories}
-          plantTypes={plantTypes}
-        />
+      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
+        <Card>
+          <GeneratingStationForm
+            districts={districts}
+            states={states}
+            generationStatus={generationStatus}
+            generationTypes={generationTypes}
+            voltageCategories={voltageCategories}
+            plantTypes={plantTypes}
+          />
+        </Card>
       </div>
     </MainLayout>
   )

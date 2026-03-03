@@ -15,7 +15,7 @@ export default function GeneratingStationShowPage({ station }: Props) {
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Home', href: '/' },
     { title: 'Generating Stations', href: '/generating-stations' },
-    { title: station.station_name, href: '#' },
+    { title: station?.station_name, href: '#' },
   ]
 
   return (
@@ -31,43 +31,43 @@ export default function GeneratingStationShowPage({ station }: Props) {
         <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
           <Field
             label='Station Name'
-            value={station.station_name}
+            value={station?.station_name ?? '-'}
           />
 
           <Field
             label='Generation Type'
-            value={station.generation_type?.parameter_value}
+            value={station?.generation_type?.parameter_value ?? '-'}
           />
 
           <Field
             label='Plant Type'
-            value={station.plant_type?.parameter_value}
+            value={station?.plant_type?.parameter_value ?? '-'}
           />
 
           <Field
             label='Voltage Category'
-            value={station.voltage_category?.parameter_value}
+            value={station?.voltage_category?.parameter_value ?? '-'}
           />
 
           <Field
             label='Installed Capacity'
-            value={`${station.installed_capacity} kW`}
+            value={`${station?.installed_capacity ?? '-'}`}
           />
 
           <Field
             label='Commissioning Date'
-            value={getDisplayDate(station.commissioning_date)}
+            value={getDisplayDate(station.commissioning_date) ?? '-'}
           />
 
           <Field
             label='Generation Status'
-            value={station.generation_status?.parameter_value}
+            value={station?.generation_status?.parameter_value ?? '-'}
           />
-          {station.attributes?.length > 0 &&
-            station.attributes.map((attr: any, index: number) => (
+          {station?.attributes?.length > 0 &&
+            station?.attributes?.map((attr: any, index: number) => (
               <Field
                 key={index}
-                label={attr.attribute_definition?.parameter_value}
+                label={attr.attribute_definition?.parameter_value ?? '-'}
                 value={attr.attribute_value ?? '-'}
               />
             ))}
@@ -80,15 +80,15 @@ export default function GeneratingStationShowPage({ station }: Props) {
         <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
           <Field
             label='Address Line 1'
-            value={station.address?.address_line1}
+            value={station?.address?.address_line1 ?? '-'}
           />
           <Field
             label='Address Line 2'
-            value={station.address?.address_line2}
+            value={station?.address?.address_line2 ?? '-'}
           />
           <Field
             label='Village'
-            value={station.address?.city_town_village}
+            value={station?.address?.city_town_village ?? '-'}
           />
           <Field
             label='District'

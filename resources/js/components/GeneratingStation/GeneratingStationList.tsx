@@ -70,7 +70,7 @@ export default function GeneratingStationList({ stations }: Props) {
                   <div className='flex items-center gap-1'>
                     <Zap className='h-3.5 w-3.5 text-gray-500' />
                     <span className='text-sm text-gray-600'>
-                      Installed Capacity: {station.installed_capacity} kW
+                      Installed Capacity: {station.installed_capacity}
                     </span>
                   </div>
 
@@ -91,11 +91,13 @@ export default function GeneratingStationList({ stations }: Props) {
                 {/* Status */}
                 <div
                   className={`rounded-[50px] px-2.5 py-px ${
-                    station.generation_status ? 'bg-green-100' : 'bg-red-100'
+                    station.generation_status?.parameter_value.toLowerCase() == 'active'
+                      ? 'bg-green-100'
+                      : 'bg-red-100'
                   }`}
                 >
                   <span
-                    className={`text-xs ${station.generation_status ? 'text-green-800' : 'text-red-800'}`}
+                    className={`text-xs ${station.generation_status?.parameter_value.toLowerCase() == 'active' ? 'text-green-800' : 'text-red-800'}`}
                   >
                     {station?.generation_status?.parameter_value}
                   </span>

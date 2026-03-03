@@ -10,6 +10,7 @@ import { Connection, GeneratingStationAttribute, RegionOption } from '@/interfac
 import { ParameterValues } from '@/interfaces/parameter_types'
 import GeneratingStationAttributeForm from './GeneratingStationAttributeForm'
 import DynamicAttributeForm from '@/ui/form/DynamicAttributeForm'
+import FormCard from '@/ui/Card/FormCard'
 
 interface Props {
   districts: RegionOption[]
@@ -86,8 +87,11 @@ const GeneratingStationForm = ({
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <div className='grid grid-cols-2 gap-4 py-4'>
+      <form
+        onSubmit={handleSubmit}
+        className='flex flex-col gap-4'
+      >
+        <FormCard title='Basic Information'>
           {/* Connection ComboBox */}
           <ComboBox
             label='Connection'
@@ -118,17 +122,17 @@ const GeneratingStationForm = ({
             error={errors.generation_type_id}
             required
           />
-        </div>
-        <DynamicAttributeForm
-          selectedValue={selectedGenerationType}
-          domainName='Station'
-          parameterName='Generating Station Attribute'
-          foreignKeyName='station_id'
-          foreignKeyValue={null}
-          attributeData={attributeData}
-          setAttributeData={setAttributeData}
-        />
-        <div className='grid grid-cols-2 gap-4 py-4'>
+
+          <DynamicAttributeForm
+            selectedValue={selectedGenerationType}
+            domainName='Station'
+            parameterName='Generating Station Attribute'
+            foreignKeyName='station_id'
+            foreignKeyValue={null}
+            attributeData={attributeData}
+            setAttributeData={setAttributeData}
+          />
+
           <SelectList
             label='Voltage Category'
             list={voltageCategories}
@@ -177,11 +181,8 @@ const GeneratingStationForm = ({
             placeholder='Select Commissioning Date'
             required
           />
-
-          <div className='col-span-2 mt-4'>
-            <h3 className='border-b pb-1 text-lg font-semibold'>Address Details</h3>
-          </div>
-
+        </FormCard>
+        <FormCard title='Address'>
           <Input
             label='Address Line 1'
             value={formData.address_line1}
@@ -230,7 +231,7 @@ const GeneratingStationForm = ({
             value={formData.state_id}
             setValue={setFormValue('state_id')}
           />
-        </div>
+        </FormCard>
 
         <div className='mt-4 flex justify-end'>
           <Button
