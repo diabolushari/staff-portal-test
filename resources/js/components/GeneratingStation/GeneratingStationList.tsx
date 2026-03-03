@@ -118,7 +118,7 @@ export default function GeneratingStationList({ stations }: Props) {
                   <span
                     className={`text-xs ${station.generation_status ? 'text-green-800' : 'text-red-800'}`}
                   >
-                    {station.generation_status ? 'Active' : 'Inactive'}
+                    {station?.generation_status?.parameter_value}
                   </span>
                 </div>
 
