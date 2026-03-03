@@ -119,6 +119,17 @@ export const billingNavItems: MainNav = {
         },
       ],
     },
+    {
+      title: 'Security Deposit',
+      href: '/security-deposit',
+      icon: '',
+      children: [
+        {
+          title: 'SD Register',
+          href: '/sd-register',
+        },
+      ],
+    },
   ],
 }
 

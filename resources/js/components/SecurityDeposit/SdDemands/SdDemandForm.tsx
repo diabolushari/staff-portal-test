@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { Connection, SdDemand } from '@/interfaces/data_interfaces'
+import { ChargeHeadDefinition, Connection, SdDemand } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import CheckBox from '@/ui/form/CheckBox'
 import Datepicker from '@/ui/form/DatePicker'
@@ -11,32 +11,32 @@ import SelectList from '@/ui/form/SelectList'
 interface Props {
   demandTypes: ParameterValues[]
   calculationBasics: ParameterValues[]
-  statuses: ParameterValues[]
   sdDemand?: SdDemand
   connection: Connection
+  sdRegisterTypes: ParameterValues[]
+  occupancyTypes: ParameterValues[]
+  chargeHeadDefinitions: ChargeHeadDefinition[]
 }
 
 const SdDemandForm = ({
   demandTypes,
   calculationBasics,
-  statuses,
   sdDemand,
   connection,
+  chargeHeadDefinitions,
 }: Props) => {
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     connection_id: connection.connection_id,
     demand_type_id: sdDemand?.demand_type_id ?? '',
     calculation_basic_id: sdDemand?.calculation_basic_id ?? '',
-    calculation_period_from: sdDemand?.calculation_period_from ?? '',
-    calculation_period_to: sdDemand?.calculation_period_to ?? '',
     total_sd_amount: sdDemand?.total_sd_amount ?? '',
-    applicable_from: sdDemand?.applicable_from ?? '',
-    applicable_to: sdDemand?.applicable_to ?? '',
-    status_id: sdDemand?.status_id ?? '',
-    is_active: sdDemand?.is_active ?? true,
+    applicable_from: '',
+    applicable_to: '',
+    is_active: true,
+    charge_head_definition_id: sdDemand?.charge_head_definition_id ?? '',
     _method: sdDemand ? 'PUT' : undefined,
   })
-
+  console.log(chargeHeadDefinitions)
   const url = sdDemand
     ? route('sd-demands.update', {
         sd_demand: sdDemand.sd_demand_id,
@@ -86,21 +86,23 @@ const SdDemandForm = ({
             error={errors?.calculation_basic_id}
             placeholder='Select Calculation Basic'
           />
-          <Datepicker
-            value={formData.calculation_period_from}
-            setValue={setFormValue('calculation_period_from')}
-            label='Calculation Period Start'
-            error={errors?.calculation_period_from}
+          <SelectList
+            label='Charge Head Definition'
+            list={chargeHeadDefinitions}
+            dataKey='charge_head_definition_id'
+            displayKey='name'
+            setValue={setFormValue('charge_head_definition_id')}
+            value={formData.charge_head_definition_id}
+            error={errors?.charge_head_definition_id}
+            placeholder='Select Charge Head Definition'
             required
-            placeholder='Select Calculation Period Start'
           />
-          <Datepicker
-            value={formData.calculation_period_to}
-            setValue={setFormValue('calculation_period_to')}
-            label='Calculation Period End'
-            error={errors?.calculation_period_to}
-            placeholder='Select Calculation Period End'
-            required
+
+          <CheckBox
+            label='Is Active'
+            value={formData.is_active}
+            toggleValue={toggleBoolean('is_active')}
+            error={errors?.is_active}
           />
           <Datepicker
             value={formData.applicable_from}
@@ -116,22 +118,6 @@ const SdDemandForm = ({
             label='Applicable To'
             error={errors?.applicable_to}
             placeholder='Select Applicable To'
-          />
-          <SelectList
-            label='Status'
-            list={statuses}
-            dataKey='id'
-            displayKey='parameter_value'
-            setValue={setFormValue('status_id')}
-            value={formData.status_id}
-            error={errors?.status_id}
-            placeholder='Select Status'
-          />
-          <CheckBox
-            label='Is Active'
-            value={formData.is_active}
-            toggleValue={toggleBoolean('is_active')}
-            error={errors?.is_active}
           />
         </div>
         <div className='flex justify-end'>

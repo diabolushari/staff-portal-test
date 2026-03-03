@@ -8,44 +8,48 @@ import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { useEffect, useMemo, useState } from 'react'
 import DynamicAttributeForm from '@/ui/form/DynamicAttributeForm'
+import CheckBox from '@/ui/form/CheckBox'
 
 interface Props {
   sdDemand: SdDemand
-  collectionModes: ParameterValues[]
+  paymentModes: ParameterValues[]
+  collectionStatus: ParameterValues[]
 }
 
-const SdCollectionForm = ({ sdDemand, collectionModes }: Props) => {
+const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) => {
   const [selectedCollectionMode, setSelectedCollectionMode] = useState<ParameterValues | null>(null)
+  const [isReversed, setIsReversed] = useState<boolean>(false)
 
-  const { formData, setFormValue } = useCustomForm({
+  const { formData, setFormValue, toggleBoolean } = useCustomForm({
     sd_demand_id: sdDemand.sd_demand_id,
     collection_date: '',
-    collection_mode_id: '',
+    payment_mode_id: '',
     collection_amount: '',
     receipt_number: '',
     collected_at: '',
     collected_by: '',
+    is_active: true,
     reversal_reason: '',
     reversed_date: '',
     reversed_by: '',
-    attribute_definition_id: '',
-    attribute_value: '',
-    is_verified: false,
-    verified_date: '',
-    expiry_date: '',
-    document_path: null,
-    document_name: '',
+    transaction_ref: '',
+    remarks: '',
+    status_id: '',
   })
 
   //TODO useEffect has missing dependency of collectionModes
   useEffect(() => {
-    if (!formData.collection_mode_id) return setSelectedCollectionMode(null)
+    if (!formData.payment_mode_id) return setSelectedCollectionMode(null)
     // TODO wrong naming convention
-    const CollectionMode = collectionModes.find(
-      (mode) => mode.id == Number(formData.collection_mode_id)
+    const selectedCollectionMode = paymentModes.find(
+      (mode) => mode.id == Number(formData.payment_mode_id)
     )
-    setSelectedCollectionMode(CollectionMode ?? null)
-  }, [formData.collection_mode_id])
+    setSelectedCollectionMode(selectedCollectionMode ?? null)
+  }, [formData.payment_mode_id, paymentModes])
+
+  useEffect(() => {
+    setIsReversed(!formData.is_active)
+  }, [formData.is_active])
 
   const url = route('sd-collections.store')
 
@@ -54,21 +58,19 @@ const SdCollectionForm = ({ sdDemand, collectionModes }: Props) => {
   })
 
   useEffect(() => {
-    if (formData.collection_mode_id) {
-      const selected = collectionModes.find(
-        (mode) => mode.id == Number(formData.collection_mode_id)
+    if (formData.payment_mode_id) {
+      const selectedCollectionMode = paymentModes.find(
+        (mode) => mode.id == Number(formData.payment_mode_id)
       )
 
-      if (selected) {
-        setSelectedCollectionMode(selected)
+      if (selectedCollectionMode) {
+        setSelectedCollectionMode(selectedCollectionMode)
       }
     }
-  }, [formData.collection_mode_id, collectionModes])
-
-  const isReversed = false
+  }, [formData.payment_mode_id, paymentModes])
 
   //TODO should default to empty array
-  const [attributeData, setAttributeData] = useState<SdAttribute[] | null>(null)
+  const [attributeData, setAttributeData] = useState<SdAttribute[] | null>([])
 
   const customFormData = useMemo(() => {
     return {
@@ -103,17 +105,23 @@ const SdCollectionForm = ({ sdDemand, collectionModes }: Props) => {
           />
 
           <SelectList
-            label='Collection Mode'
-            list={collectionModes}
+            label='Payment Mode'
+            list={paymentModes}
             dataKey='id'
             displayKey='parameter_value'
-            value={formData.collection_mode_id}
-            setValue={setFormValue('collection_mode_id')}
-            error={errors.collection_mode_id}
+            value={formData.payment_mode_id}
+            setValue={setFormValue('payment_mode_id')}
+            error={errors.payment_mode_id}
             required
-            placeholder='Select Collection Mode'
+            placeholder='Select Payment Mode'
           />
-
+        </div>
+        <SdAttributeForm
+          selectedCollectionMode={selectedCollectionMode}
+          attributeData={attributeData}
+          setAttributeData={setAttributeData}
+        />
+        <div className='grid grid-cols-2 gap-4'>
           <Input
             type='number'
             label='Collection Amount'
@@ -138,6 +146,18 @@ const SdCollectionForm = ({ sdDemand, collectionModes }: Props) => {
             setValue={setFormValue('collected_by')}
             error={errors.collected_by}
             placeholder='Collected By'
+          />
+          <Input
+            label='Collected At'
+            value={formData.collected_at}
+            setValue={setFormValue('collected_at')}
+            error={errors.collected_at}
+            placeholder='Collected At'
+          />
+          <CheckBox
+            label='Is Active'
+            value={formData.is_active}
+            toggleValue={toggleBoolean('is_active')}
           />
           {isReversed && (
             <>
@@ -166,6 +186,31 @@ const SdCollectionForm = ({ sdDemand, collectionModes }: Props) => {
               />
             </>
           )}
+          <Input
+            label='Transaction Ref'
+            value={formData.transaction_ref}
+            setValue={setFormValue('transaction_ref')}
+            error={errors.transaction_ref}
+            placeholder='Enter Transaction Ref'
+          />
+          <Input
+            label='Remarks'
+            value={formData.remarks}
+            setValue={setFormValue('remarks')}
+            error={errors.remarks}
+            placeholder='Enter Remarks'
+          />
+          <SelectList
+            label='Status'
+            list={collectionStatus}
+            dataKey='id'
+            displayKey='parameter_value'
+            value={formData.status_id}
+            setValue={setFormValue('status_id')}
+            error={errors.status_id}
+            required
+            placeholder='Select Status'
+          />
         </div>
         <DynamicAttributeForm
           selectedValue={selectedCollectionMode}
