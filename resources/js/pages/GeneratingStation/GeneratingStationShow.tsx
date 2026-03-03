@@ -5,9 +5,10 @@ import Field from '@/components/ui/field'
 import StrongText from '@/typography/StrongText'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { getDisplayDate } from '@/utils'
+import { GeneratingStation } from '@/interfaces/data_interfaces'
 
 interface Props {
-  station: any
+  station: GeneratingStation
 }
 
 export default function GeneratingStationShowPage({ station }: Props) {
@@ -79,11 +80,11 @@ export default function GeneratingStationShowPage({ station }: Props) {
         <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
           <Field
             label='Address Line 1'
-            value={station.address?.address_line_1}
+            value={station.address?.address_line1}
           />
           <Field
             label='Address Line 2'
-            value={station.address?.address_line_2}
+            value={station.address?.address_line2}
           />
           <Field
             label='Village'
