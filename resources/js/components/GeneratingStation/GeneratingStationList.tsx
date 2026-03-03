@@ -4,28 +4,7 @@ import { router } from '@inertiajs/react'
 import { useState } from 'react'
 import { Zap, Cpu, Calendar, Hash } from 'lucide-react'
 import { getDisplayDate } from '@/utils'
-
-interface GeneratingStation {
-  station_id: number
-  station_name: string
-  installed_capacity: number
-  commissioning_date?: string
-  generation_status?: {
-    parameter_value: string
-  }
-
-  generation_type?: {
-    parameter_value: string
-  }
-
-  plant_type?: {
-    parameter_value: string
-  }
-
-  voltage_category?: {
-    parameter_value: string
-  }
-}
+import { GeneratingStation } from '@/interfaces/data_interfaces'
 
 interface Props {
   stations: GeneratingStation[]
