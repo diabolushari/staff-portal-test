@@ -7,7 +7,6 @@ interface Props {
 }
 
 const SdCollectionList = ({ sdCollections }: Props) => {
-  console.log(sdCollections)
   return (
     <div className='space-y-4 p-4'>
       {sdCollections.map((collection) => (

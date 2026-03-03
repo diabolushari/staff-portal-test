@@ -85,14 +85,12 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
     }
   }, [attributeData, formData])
 
-  console.log(customFormData)
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(customFormData)
+
     post(customFormData)
   }
 
-  console.log(errors)
   return (
     <div>
       <form onSubmit={handleSubmit}>
