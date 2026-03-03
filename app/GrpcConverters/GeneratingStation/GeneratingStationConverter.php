@@ -3,7 +3,6 @@
 namespace App\GrpcConverters\GeneratingStation;
 
 use App\GrpcConverters\Connection\AddressProtoConverter;
-use App\GrpcConverters\Connection\GeoRegionProtoConverter;
 use App\GrpcConverters\Connection\ConnectionProtoConverter;
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use Proto\GeneratingStation\GeneratingStationMessage;

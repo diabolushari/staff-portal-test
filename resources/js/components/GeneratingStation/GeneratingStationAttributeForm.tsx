@@ -1,4 +1,4 @@
-import InputItemForm from '@/components/Template/InputItemForm'
+import InputItemForm from '@/ui/form/InputItemForm'
 import useFetchRecord from '@/hooks/useFetchRecord'
 import { GeneratingStationAttribute } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'

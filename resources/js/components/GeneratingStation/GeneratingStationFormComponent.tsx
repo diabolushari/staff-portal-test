@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Connection, GeneratingStationAttribute, RegionOption } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import GeneratingStationAttributeForm from './GeneratingStationAttributeForm'
+import DynamicAttributeForm from '@/ui/form/DynamicAttributeForm'
 
 interface Props {
   districts: RegionOption[]
@@ -118,8 +119,12 @@ const GeneratingStationForm = ({
             required
           />
         </div>
-        <GeneratingStationAttributeForm
-          selectedGenerationType={selectedGenerationType}
+        <DynamicAttributeForm
+          selectedValue={selectedGenerationType}
+          domainName='Station'
+          parameterName='Generating Station Attribute'
+          foreignKeyName='station_id'
+          foreignKeyValue={null}
           attributeData={attributeData}
           setAttributeData={setAttributeData}
         />

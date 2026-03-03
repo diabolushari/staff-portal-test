@@ -1,27 +1,27 @@
 import Datepicker from '@/ui/form/DatePicker'
 import CheckBox from '@/ui/form/CheckBox'
 import FileInput from '@/ui/form/FileInput'
-import { SdAttribute, GeneratingStationAttribute } from '@/interfaces/data_interfaces'
+
 import Input from '@/ui/form/Input'
-import { Select } from 'react-day-picker'
-import SelectList from '@/ui/form/SelectList'
+
 import useFetchRecord from '@/hooks/useFetchPagination'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import DynamicSelectList from '@/ui/form/DynamicSelectList'
+import { BaseAttribute } from './DynamicAttributeForm'
 
-interface Props {
+interface Props<T extends BaseAttribute> {
   updateTextValue: (attribute_id: number, value: string) => void
   updateFileValue?: (attribute_id: number, value: File | null) => void
-  attribute: SdAttribute | GeneratingStationAttribute
+  attribute: T
   errors?: string
 }
 
-export default function InputItemForm({
+export default function InputItemForm<T extends BaseAttribute>({
   updateTextValue,
   updateFileValue,
   attribute,
   errors,
-}: Readonly<Props>) {
+}: Readonly<Props<T>>) {
   const [list] = useFetchRecord<ParameterValues[]>(
     `/api/parameter-values?domain_name=${attribute.attribute_definition?.attribute3_value}&parameter_name=${attribute.attribute_definition?.attribute4_value}`
   )

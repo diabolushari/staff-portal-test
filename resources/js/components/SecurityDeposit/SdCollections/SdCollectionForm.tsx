@@ -8,6 +8,7 @@ import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { useEffect, useMemo, useState } from 'react'
 import SdAttributeForm from './SdAttributeForm'
+import DynamicAttributeForm from '@/ui/form/DynamicAttributeForm'
 
 interface Props {
   sdDemand: SdDemand
@@ -167,8 +168,12 @@ const SdCollectionForm = ({ sdDemand, collectionModes }: Props) => {
             </>
           )}
         </div>
-        <SdAttributeForm
-          selectedCollectionMode={selectedCollectionMode}
+        <DynamicAttributeForm
+          selectedValue={selectedCollectionMode}
+          domainName='Connection'
+          parameterName='SD Collection Attribute'
+          foreignKeyName='sd_collection_id'
+          foreignKeyValue={null}
           attributeData={attributeData}
           setAttributeData={setAttributeData}
         />
