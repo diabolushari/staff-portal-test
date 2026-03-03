@@ -115,12 +115,17 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
             required
             placeholder='Select Payment Mode'
           />
+          <DynamicAttributeForm
+            selectedValue={selectedCollectionMode}
+            domainName='Connection'
+            parameterName='SD Collection Attribute'
+            foreignKeyName='sd_collection_id'
+            foreignKeyValue={null}
+            attributeData={attributeData}
+            setAttributeData={setAttributeData}
+          />
         </div>
-        <SdAttributeForm
-          selectedCollectionMode={selectedCollectionMode}
-          attributeData={attributeData}
-          setAttributeData={setAttributeData}
-        />
+
         <div className='grid grid-cols-2 gap-4'>
           <Input
             type='number'
