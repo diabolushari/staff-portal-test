@@ -31,7 +31,7 @@ message GeneratingStationMessage {
 
   int32 address_id = 11;   
 
-  bool is_active = 12;
+  bool is_current = 12;
 
   optional int32 created_by = 13;
   optional int32 updated_by = 14;
