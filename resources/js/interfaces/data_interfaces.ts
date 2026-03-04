@@ -880,7 +880,7 @@ export interface SdAttribute {
   attribute_definition_id: number
   attribute_value: string
   mime_type: string | null
-  file: File | null
+  file: string | null
   created_by?: number
   updated_by?: number
   created_at?: string
@@ -893,7 +893,7 @@ export interface GeneratingStationAttribute {
   attribute_definition_id: number
   attribute_value: string
   mime_type: string | null
-  file: File | null
+  file: string | null
   created_by?: number
   updated_by?: number
   deleted_by?: number
