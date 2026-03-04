@@ -39,7 +39,7 @@ class GeneratingStationConverter
 
             'commissioning_date' => $station->getCommissioningDate(),
 
-            'is_active' => $station->getIsActive(),
+            'is_current' => $station->getIsCurrent(),
             'generation_status' => $station->hasGenerationStatus()
                 ? ParameterValueProtoConvertor::convertToArray(
                     $station->getGenerationStatus()

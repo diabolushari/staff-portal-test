@@ -1,14 +1,14 @@
 import { Button } from '@/components/ui/button'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { SdAttribute, SdDemand } from '@/interfaces/data_interfaces'
+import { SdDemand } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import CheckBox from '@/ui/form/CheckBox'
 import Datepicker from '@/ui/form/DatePicker'
+import DynamicAttributeForm, { BaseAttribute } from '@/ui/form/DynamicAttributeForm'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import { useEffect, useMemo, useState } from 'react'
-import DynamicAttributeForm from '@/ui/form/DynamicAttributeForm'
-import CheckBox from '@/ui/form/CheckBox'
 
 interface Props {
   sdDemand: SdDemand
@@ -70,7 +70,7 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
   }, [formData.payment_mode_id, paymentModes])
 
   //TODO should default to empty array
-  const [attributeData, setAttributeData] = useState<SdAttribute[] | null>([])
+  const [attributeData, setAttributeData] = useState<BaseAttribute[] | null>([])
 
   const customFormData = useMemo(() => {
     return {
@@ -119,8 +119,6 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
             selectedValue={selectedCollectionMode}
             domainName='Connection'
             parameterName='SD Collection Attribute'
-            foreignKeyName='sd_collection_id'
-            foreignKeyValue={null}
             attributeData={attributeData}
             setAttributeData={setAttributeData}
           />
