@@ -816,22 +816,42 @@ export interface PurposeInfo {
   tariff_name: string
 }
 
+export interface SdRegister {
+  sd_register_id: number
+  sd_demand_id: number
+  connection_id: number
+  sd_type_id: number
+  occupancy_type_id: number
+  period_from: string
+  period_to: string
+  generated_date: string
+  sd_amount: string
+  rate_or_basis: string
+  bg_expiry_date?: string
+  bg_renewal_due_date?: string
+  is_fully_settled?: boolean
+  settled_date?: string
+  is_active?: boolean
+  created_by?: number
+  updated_by?: number
+  sd_type: ChargeHeadDefinition
+  occupancy_type: ParameterValues
+  connection: Connection
+  sd_demand: SdDemand
+}
+
 export interface SdDemand {
   sd_demand_id: number
   connection_id: number
   demand_type_id: number
   calculation_basic_id?: number
-  calculation_period_from: string
-  calculation_period_to: string
   total_sd_amount: string
-  applicable_from: string
-  applicable_to?: string
-  status_id: number
   is_active: boolean
   connection: Connection
   demand_type: ParameterValues
+  charge_head_definition_id: number
+  charge_head_definition: ChargeHeadDefinition
   calculation_basic?: ParameterValues
-  status: ParameterValues
   collections?: SdCollection[]
 }
 
@@ -839,7 +859,7 @@ export interface SdCollection {
   sd_collection_id: number
   sd_demand_id: number
   collection_date: string
-  collection_mode_id: number
+  payment_mode_id: number
   collection_amount: string
   receipt_number: string
   collected_at: string
@@ -850,7 +870,7 @@ export interface SdCollection {
   reversed_by: string
   created_by: number
   updated_by: number
-  collection_mode: ParameterValues
+  payment_mode: ParameterValues
   sdAttribute: SdAttribute[]
 }
 
@@ -866,4 +886,39 @@ export interface SdAttribute {
   created_at?: string
   updated_at?: string
   attribute_definition: ParameterValues
+}
+export interface GeneratingStationAttribute {
+  attribute_id: number | null
+  station_id: number | null
+  attribute_definition_id: number
+  attribute_value: string
+  mime_type: string | null
+  file: File | null
+  created_by?: number
+  updated_by?: number
+  deleted_by?: number
+  attribute_definition: ParameterValues
+}
+export interface GeneratingStation {
+  station_id: number
+  connection_id: number
+  station_name: string
+  generation_status_id: number
+  installed_capacity: number
+  generation_type_id: number
+  voltage_category_id: number
+  plant_type_id: number
+  commissioning_date: string
+
+  is_active: boolean
+  created_by?: number
+  updated_by?: number
+  deleted_by?: number
+  connection?: Connection
+  generation_status?: ParameterValues
+  generation_type?: ParameterValues
+  voltage_category?: ParameterValues
+  plant_type?: ParameterValues
+  address?: Address
+  attributes: GeneratingStationAttribute[]
 }

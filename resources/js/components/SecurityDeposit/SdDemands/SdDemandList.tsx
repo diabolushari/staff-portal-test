@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button'
 import { SdDemand } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import DeleteModal from '@/ui/Modal/DeleteModal'
-import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
 import SdCollectionList from '../SdCollections/SdCollectionList'
@@ -49,60 +48,19 @@ const SdDemandList = ({ sdDemands }: Props) => {
                     )}
                     <div className='flex items-center gap-[3px]'>
                       <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                        Calculation Period Start:{' '}
-                        <StrongText>{getDisplayDate(sdDemand.calculation_period_from)}</StrongText>
-                      </div>
-                    </div>
-                    <div className='flex items-center gap-[3px]'>
-                      <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                        Calculation Period End:{' '}
-                        <StrongText> {getDisplayDate(sdDemand.calculation_period_to)}</StrongText>
-                      </div>
-                    </div>
-
-                    <div className='flex items-center gap-[3px]'>
-                      <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
                         Total SD Amount: <StrongText> {sdDemand.total_sd_amount}</StrongText>
                       </div>
                     </div>
-                    <div className='flex items-center gap-[3px]'>
-                      <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                        Applicable From:{' '}
-                        <StrongText> {getDisplayDate(sdDemand.applicable_from)}</StrongText>
-                      </div>
-                    </div>
-                    {sdDemand.applicable_to && (
-                      <div className='flex items-center gap-[3px]'>
-                        <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                          Applicable To:{' '}
-                          <StrongText> {getDisplayDate(sdDemand.applicable_to)}</StrongText>
-                        </div>
-                      </div>
-                    )}
-                    <div className='flex items-center gap-[3px]'>
-                      <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                        Status: <StrongText> {sdDemand.status.parameter_value}</StrongText>
-                      </div>
+                  </div>
+                  <div className='flex items-center gap-[3px]'>
+                    <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
+                      Charge Head Definition:{' '}
+                      <StrongText> {sdDemand.charge_head_definition.name}</StrongText>
                     </div>
                   </div>
                 </div>
 
                 <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
-                  <div
-                    className={`rounded-[50px] px-2.5 py-px ${
-                      sdDemand.is_active ? 'bg-green-100' : 'bg-red-100'
-                    }`}
-                  >
-                    <div
-                      className={`font-inter text-xs leading-6 font-normal tracking-[-0.072px] ${
-                        sdDemand.is_active ? 'text-deep-green' : 'text-red-800'
-                      }`}
-                    >
-                      {sdDemand.is_active ? 'Active' : 'Inactive'}
-                    </div>
-                  </div>
-
-                  {/* Inline Edit/Delete buttons */}
                   <div className='mt-2 flex items-center gap-3'>
                     <ActionButton
                       onDelete={() => {

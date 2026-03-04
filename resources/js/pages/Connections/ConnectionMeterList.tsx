@@ -99,7 +99,7 @@ export default function ConnectionMeterList({
     setMeter(null)
     setIsStatusChange(false)
   }
-  console.log(connection?.meter_mappings)
+
   return (
     <ConnectionsLayout
       connectionId={connection_id}

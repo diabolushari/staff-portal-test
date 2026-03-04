@@ -7,7 +7,6 @@ interface Props {
 }
 
 const SdCollectionList = ({ sdCollections }: Props) => {
-  console.log(sdCollections)
   return (
     <div className='space-y-4 p-4'>
       {sdCollections.map((collection) => (
@@ -26,8 +25,8 @@ const SdCollectionList = ({ sdCollections }: Props) => {
                 </div>
                 <div className='flex items-center gap-[3px]'>
                   <div className='font-inter text-dark-gray text-sm leading-6 font-normal tracking-[-0.084px]'>
-                    Collection Mode:{' '}
-                    <StrongText> {collection.collection_mode.parameter_value}</StrongText>
+                    Payment Mode:{' '}
+                    <StrongText> {collection.payment_mode.parameter_value}</StrongText>
                   </div>
                 </div>
                 <div className='flex items-center gap-[3px]'>

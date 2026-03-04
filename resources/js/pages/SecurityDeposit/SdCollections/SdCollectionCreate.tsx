@@ -7,10 +7,15 @@ import { BreadcrumbItem } from '@/types'
 
 interface Props {
   sdDemand: SdDemand
-  collectionModes: ParameterValues[]
+  paymentModes: ParameterValues[]
+  collectionStatus: ParameterValues[]
 }
 //TODO need to show demand details in this page, currently only showing consumer number in heading, can show more details in description or in a separate section
-export default function SdCollectionCreate({ sdDemand, collectionModes }: Readonly<Props>) {
+export default function SdCollectionCreate({
+  sdDemand,
+  paymentModes,
+  collectionStatus,
+}: Readonly<Props>) {
   const connection = sdDemand.connection
 
   const breadcrumbs: BreadcrumbItem[] = [
@@ -48,7 +53,8 @@ export default function SdCollectionCreate({ sdDemand, collectionModes }: Readon
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-6'>
         <SdCollectionForm
           sdDemand={sdDemand}
-          collectionModes={collectionModes}
+          paymentModes={paymentModes}
+          collectionStatus={collectionStatus}
         />
       </div>
     </ConnectionsLayout>

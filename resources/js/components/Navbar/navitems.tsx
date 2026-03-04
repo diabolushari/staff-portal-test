@@ -67,6 +67,11 @@ export const consumerNavItems: MainNav = {
       href: '/parties',
       icon: '',
     },
+    {
+      title: 'Generating Stations',
+      href: '/generating-stations',
+      icon: '',
+    },
   ],
 }
 
@@ -111,6 +116,17 @@ export const billingNavItems: MainNav = {
         {
           title: 'Bills',
           href: '/bills',
+        },
+      ],
+    },
+    {
+      title: 'Security Deposit',
+      href: '/security-deposit',
+      icon: '',
+      children: [
+        {
+          title: 'SD Register',
+          href: '/sd-register',
         },
       ],
     },

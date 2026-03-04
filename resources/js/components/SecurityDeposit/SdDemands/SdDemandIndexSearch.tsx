@@ -16,24 +16,20 @@ interface Props {
   oldTotalSdAmount?: string
   calculationBasics: ParameterValues[]
   demandTypes: ParameterValues[]
-  statuses: ParameterValues[]
 }
 
 const SdDemandIndexSearch = ({
   oldConnection,
   oldCalculationBasicId,
   oldDemandTypeId,
-  oldStatusId,
   oldTotalSdAmount,
   calculationBasics,
   demandTypes,
-  statuses,
 }: Readonly<Props>) => {
   const { formData, setFormValue } = useCustomForm({
     connection_id: oldConnection?.connection_id ?? '',
     calculation_basic_id: oldCalculationBasicId ?? '',
     demand_type_id: oldDemandTypeId ?? '',
-    status_id: oldStatusId ?? '',
     total_sd_amount: oldTotalSdAmount ?? '',
   })
 
@@ -86,15 +82,6 @@ const SdDemandIndexSearch = ({
               />
 
               <SelectList
-                allOptionText='All Statuses'
-                showAllOption
-                value={formData.status_id}
-                setValue={setFormValue('status_id')}
-                list={statuses}
-                dataKey='id'
-                displayKey='parameter_value'
-              />
-              <SelectList
                 allOptionText='All Calculation Basics'
                 showAllOption
                 value={formData.calculation_basic_id}
@@ -121,11 +108,7 @@ const SdDemandIndexSearch = ({
                   type='submit'
                 />
               </div>
-              {(oldConnection ||
-                oldCalculationBasicId ||
-                oldDemandTypeId ||
-                oldStatusId ||
-                oldTotalSdAmount) && (
+              {(oldConnection || oldCalculationBasicId || oldDemandTypeId || oldTotalSdAmount) && (
                 <div className='col-span-2 col-end-7'>
                   <Button
                     label='Clear Filters'
