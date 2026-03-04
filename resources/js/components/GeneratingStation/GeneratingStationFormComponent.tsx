@@ -1,16 +1,15 @@
 import { Button } from '@/components/ui/button'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
+import { Connection, RegionOption } from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
+import FormCard from '@/ui/Card/FormCard'
+import ComboBox from '@/ui/form/ComboBox'
 import Datepicker from '@/ui/form/DatePicker'
+import DynamicAttributeForm, { BaseAttribute } from '@/ui/form/DynamicAttributeForm'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
-import ComboBox from '@/ui/form/ComboBox'
 import { useEffect, useMemo, useState } from 'react'
-import { Connection, GeneratingStationAttribute, RegionOption } from '@/interfaces/data_interfaces'
-import { ParameterValues } from '@/interfaces/parameter_types'
-import GeneratingStationAttributeForm from './GeneratingStationAttributeForm'
-import DynamicAttributeForm from '@/ui/form/DynamicAttributeForm'
-import FormCard from '@/ui/Card/FormCard'
 
 interface Props {
   districts: RegionOption[]
@@ -33,7 +32,6 @@ const GeneratingStationForm = ({
 
   const { formData, setFormValue } = useCustomForm({
     connection_id: '',
-
     station_name: '',
     generation_status_id: '',
     installed_capacity: '',
@@ -48,12 +46,11 @@ const GeneratingStationForm = ({
     district_id: '',
     state_id: '',
     is_current: true,
-    attributeData: [],
   })
 
   const [selectedGenerationType, setSelectedGenerationType] = useState<ParameterValues | null>(null)
 
-  const [attributeData, setAttributeData] = useState<GeneratingStationAttribute[] | null>(null)
+  const [attributeData, setAttributeData] = useState<BaseAttribute[] | null>(null)
 
   const url = route('generating-stations.store')
 
@@ -64,10 +61,11 @@ const GeneratingStationForm = ({
   const customFormData = useMemo(() => {
     return {
       ...formData,
-      connection_id: selectedConnection?.connection_id,
+      connection_id: selectedConnection?.connection_id.toString() ?? '',
       attributeData: attributeData?.map((attr) => ({
         attribute_definition_id: attr.attribute_definition_id,
         attribute_value: attr.attribute_value,
+        file: attr.file,
       })),
     }
   }, [formData, selectedConnection, attributeData])
@@ -127,8 +125,6 @@ const GeneratingStationForm = ({
             selectedValue={selectedGenerationType}
             domainName='Station'
             parameterName='Generating Station Attribute'
-            foreignKeyName='station_id'
-            foreignKeyValue={null}
             attributeData={attributeData}
             setAttributeData={setAttributeData}
           />
