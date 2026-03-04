@@ -910,7 +910,7 @@ export interface GeneratingStation {
   plant_type_id: number
   commissioning_date: string
 
-  is_active: boolean
+  is_current: boolean
   created_by?: number
   updated_by?: number
   deleted_by?: number
