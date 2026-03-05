@@ -21,9 +21,9 @@ class ConnectionStationConsumerRelController extends Controller
         $stations = $this->stationConsumerRelService
             ->listConsumerStations($connectionId)->data;
 
-        return Inertia::render('Connections/GeneratingStations/StationConsumerRelCreate', [
+        return Inertia::render('GeneratingStation/StationConsumerRelCreate', [
             'connection' => $connection,
-            'stations' => $stations,
+
         ]);
     }
 }

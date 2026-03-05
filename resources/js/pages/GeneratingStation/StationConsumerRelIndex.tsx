@@ -1,5 +1,4 @@
 import { consumerNavItems } from '@/components/Navbar/navitems'
-import StationConsumerRelList from '@/components/GeneratingStation/StationConsumerRel/StationConsumerRelList'
 import { StationConsumerRel } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
@@ -19,7 +18,7 @@ interface Props {
   stations: StationConsumerRel[]
 }
 
-export default function StationConsumerRelIndex({ stations }: Readonly<Props>) {
+export default function StationConsumerRelIndex({}: Readonly<Props>) {
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -29,13 +28,7 @@ export default function StationConsumerRelIndex({ stations }: Readonly<Props>) {
       selectedTopNav='Consumers'
       title='Station Consumers'
     >
-      <div>
-        {stations && stations.length > 0 ? (
-          <StationConsumerRelList stations={stations} />
-        ) : (
-          <div className='flex h-full items-center justify-center'>No Station Consumers Found</div>
-        )}
-      </div>
+      <div></div>
     </MainLayout>
   )
 }

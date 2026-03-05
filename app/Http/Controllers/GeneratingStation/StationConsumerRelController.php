@@ -4,8 +4,8 @@ namespace App\Http\Controllers\GeneratingStation;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GeneratingStation\StationConsumerRelFormRequest;
-use App\Services\GeneratingStation\StationConsumerRelService;
 use App\Services\Connection\ConnectionService;
+use App\Services\GeneratingStation\StationConsumerRelService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -33,7 +33,7 @@ class StationConsumerRelController extends Controller
             ->getParameterValues(null, null, null, 'Connection', 'Consumer Type')
             ->data;
 
-        return Inertia::render('GeneratingStation/StationConsumerRel/StationConsumerRelIndex', [
+        return Inertia::render('GeneratingStation/StationConsumerRelIndex', [
             'relations' => $response->data ?? [],
             'stationId' => $stationId,
             'consumerTypes' => $consumerTypes,
@@ -55,7 +55,7 @@ class StationConsumerRelController extends Controller
             ->data;
 
         return Inertia::render(
-            'GeneratingStation/StationConsumerRel/StationConsumerRelCreate',
+            'GeneratingStation/StationConsumerRelCreate',
             [
                 'stationId' => $stationId,
                 'stationConnection' => $stationConnection,
@@ -78,7 +78,7 @@ class StationConsumerRelController extends Controller
         }
 
         return redirect()
-            ->route('station.consumer-relations', $request->stationId)
+            ->route('connection.station-consumer-rels', $request->consumerConnectionId)
             ->with('message', 'Station consumer relation created successfully');
     }
 

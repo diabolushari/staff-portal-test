@@ -1,23 +1,16 @@
 import { consumerNavItems } from '@/components/Navbar/navitems'
-import StationConsumerRelForm from '@/components/GeneratingStation/StationConsumerRel/StationConsumerRelForm'
-import { Connection } from '@/interfaces/data_interfaces'
-import { ParameterValues } from '@/interfaces/parameter_types'
+import { Connection, StationConsumerRel } from '@/interfaces/data_interfaces'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { BreadcrumbItem } from '@/types'
+import AddButton from '@/ui/button/AddButton'
+import { router } from '@inertiajs/react'
 
 interface Props {
   connection: Connection
-  stationId: number
-  stationConnection: Connection
-  consumerTypes: ParameterValues[]
+  station: StationConsumerRel
 }
 
-export default function StationConsumerRelCreate({
-  connection,
-  stationId,
-  stationConnection,
-  consumerTypes,
-}: Readonly<Props>) {
+export default function StationConsumerRelCreate({ connection, station }: Readonly<Props>) {
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Home',
@@ -53,14 +46,17 @@ export default function StationConsumerRelCreate({
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
     >
-      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-6'>
-        <StationConsumerRelForm
-          stationId={stationId}
-          stationConnection={stationConnection}
-          consumerTypes={consumerTypes}
-          connection={connection}
+      <div className='flex justify-end p-5'>
+        <AddButton
+          onClick={() =>
+            router.get(
+              route('station-consumer-rels.create', { connectionId: connection.connection_id })
+            )
+          }
+          buttonText='Add Station'
         />
       </div>
+      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-6'></div>
     </ConnectionsLayout>
   )
 }
