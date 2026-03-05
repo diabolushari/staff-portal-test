@@ -93,12 +93,12 @@ class SdDemandsService
         return GrpcServiceResponse::success($paginatedData, $response, $status->code, $status->details);
     }
 
-    public function create(SdDemandFormRequest $request): GrpcServiceResponse
+    public function createDemandWithRegister(SdDemandFormRequest $request): GrpcServiceResponse
     {
         $grpcRequest = $this->sdDemandConverter->grpcToDemandRegisterCreateRequest($request);
 
         [$response, $status] =
-            $this->client->CreateSdDemand($grpcRequest)->wait();
+            $this->client->CreateSdDemandWithRegister($grpcRequest)->wait();
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -109,7 +109,7 @@ class SdDemandsService
             );
         }
 
-        $sdDemandArray = $this->sdDemandConverter->convertToArray($response->getSdDemand());
+        $sdDemandArray = $this->sdDemandConverter->convertToArray($response);
 
         return GrpcServiceResponse::success(
             $sdDemandArray,

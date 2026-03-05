@@ -31,6 +31,10 @@ message SdDemandMessage {
 }
 
 message CreateSdDemandRequest {
+  SdDemandMessage sd_demand_message = 1;
+}
+
+message CreateSdDemandWithRegisterRequest {
   int32 connection_id = 1;
   int32 demand_type_id = 2;
   optional int32 calculation_basic_id = 3;
@@ -98,6 +102,7 @@ message DeleteSdDemandResponse {
 
 service SdDemandService {
   rpc CreateSdDemand(CreateSdDemandRequest) returns (CreateSdDemandResponse);
+  rpc CreateSdDemandWithRegister(CreateSdDemandWithRegisterRequest) returns (SdDemandMessage);
   rpc GetSdDemand(GetSdDemandRequest) returns (GetSdDemandResponse);
   rpc ListSdDemands(ListSdDemandsRequest) returns (ListSdDemandsResponse);
   rpc ListSdDemandsPaginated(ListSdDemandsPaginatedRequest) returns (ListSdDemandsPaginatedResponse);
