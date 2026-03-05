@@ -40,6 +40,7 @@ use App\Http\Controllers\Connection\MeterConnectionMappingUpdateChangeController
 use App\Http\Controllers\Connection\MeterConnectionMappingUpdateStatusController;
 use App\Http\Controllers\Connection\PurposeInfoController;
 use App\Http\Controllers\Connection\SecurityDeposit\ConnectionSdDemandController;
+use App\Http\Controllers\Connection\GeneratingStation\ConnectionStationConsumerRelController;
 use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
@@ -71,6 +72,7 @@ use App\Http\Controllers\SecurityDeposit\SdAttributeDownloadController;
 use App\Http\Controllers\SecurityDeposit\SdCollectionController;
 use App\Http\Controllers\SecurityDeposit\SdDemandsController;
 use App\Http\Controllers\GeneratingStation\GeneratingStationController;
+use App\Http\Controllers\GeneratingStation\StationConsumerRelController;
 use App\Http\Controllers\SecurityDeposit\SdRegisterController;
 use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
@@ -198,6 +200,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('sd-register', SdRegisterController::class)
         ->name('sd-register');
+
+    Route::resource('station-consumer-rels', StationConsumerRelController::class)
+        ->only(['create', 'store', 'edit', 'update', 'destroy']);
+
+    Route::get('connection/{connectionId}/station-consumer-rels', ConnectionStationConsumerRelController::class)
+        ->name('connection.station-consumer-rels');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
