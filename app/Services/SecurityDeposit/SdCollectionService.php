@@ -74,20 +74,41 @@ class SdCollectionService
 
         $msg->setSdDemandId($request->sdDemandId);
         $msg->setCollectionDate($request->collectionDate);
-        $msg->setCollectionModeId($request->collectionModeId);
+        $msg->setPaymentModeId($request->paymentModeId);
         $msg->setCollectionAmount($request->collectionAmount);
 
         if ($request->receiptNumber) {
             $msg->setReceiptNumber($request->receiptNumber);
+        }
+        if ($request->collectedAt) {
+            $msg->setCollectedAt($request->collectedAt);
         }
 
         if ($request->collectedBy) {
             $msg->setCollectedBy($request->collectedBy);
         }
 
+        if ($request->isActive) {
+            $msg->setIsActive($request->isActive);
+        }
+
         if ($request->reversalReason) {
             $msg->setReversalReason($request->reversalReason);
         }
+        if ($request->reversedDate) {
+            $msg->setReversalDate($request->reversedDate);
+        }
+        if ($request->reversedBy) {
+            $msg->setReversedBy($request->reversedBy);
+        }
+        if ($request->transactionRef) {
+            $msg->setTransactionRef($request->transactionRef);
+        }
+        if ($request->remarks) {
+            $msg->setRemarks($request->remarks);
+        }
+
+        $msg->setStatusId($request->statusId);
 
         return $msg;
     }

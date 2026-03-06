@@ -27,8 +27,8 @@ Key integration behavior:
 - At attach time, user provides `station_priority_order`, `effective_start`, and `effective_end`.
 - System sets `consumer_priority_order = 0` during attachment.
 - Priority updates are allowed from both sides:
-    - station side updates `consumer_priority_order`
-    - consumer side updates `station_priority_order`
+  - station side updates `consumer_priority_order`
+  - consumer side updates `station_priority_order`
 
 The relation is append-only and versioned, with strict auditability and active-row uniqueness guarantees.
 
@@ -71,8 +71,8 @@ Spring Boot Consumer Service (gRPC)
 - Create/update/deactivate/list/get/replacement service behavior
 - gRPC contract and Laravel gateway normalization
 - Inertia UI contract for:
-    - connection-side attach
-    - station-side consumer priority maintenance
+  - connection-side attach
+  - station-side consumer priority maintenance
 
 ### 4.2 Out of Scope
 
@@ -181,9 +181,9 @@ Table: `consumer.station_consumer_rel`
 
 - `consumer_type_id -> parameter_value.id`
 - Check constraints:
-    - `consumer_priority_order >= 0`
-    - `station_priority_order >= 1`
-    - `effective_end IS NULL OR effective_end > effective_start`
+  - `consumer_priority_order >= 0`
+  - `station_priority_order >= 1`
+  - `effective_end IS NULL OR effective_end > effective_start`
 
 ### 8.3 Active Uniqueness Indexes
 
@@ -302,8 +302,8 @@ Inputs:
 
 - `rel_id`
 - one of:
-    - `consumer_priority_order` (station-side update)
-    - `station_priority_order` (consumer-side update)
+  - `consumer_priority_order` (station-side update)
+  - `station_priority_order` (consumer-side update)
 - `effective_start` (new version start)
 - `effective_end` (new version end)
 - optional `consumer_type_id`
@@ -414,8 +414,8 @@ Update request contract:
 
 - `rel_id` (required)
 - one of:
-    - `consumer_priority_order`
-    - `station_priority_order`
+  - `consumer_priority_order`
+  - `station_priority_order`
 - `effective_start` (required)
 - `effective_end` (required)
 
@@ -452,15 +452,15 @@ Field-level errors supported:
 Date-window validation rules:
 
 - Update must satisfy:
-    - `request.effective_end > request.effective_start`
-    - `request.effective_start > current.effective_start`
-    - when `current.effective_end` is present:
-        - `request.effective_start < current.effective_end`
-        - `request.effective_end <= current.effective_end`
+  - `request.effective_end > request.effective_start`
+  - `request.effective_start > current.effective_start`
+  - when `current.effective_end` is present:
+    - `request.effective_start < current.effective_end`
+    - `request.effective_end <= current.effective_end`
 - Deactivate must satisfy:
-    - `request.effective_end > current.effective_start`
-    - when `current.effective_end` is present:
-        - `request.effective_end <= current.effective_end`
+  - `request.effective_end > current.effective_start`
+  - when `current.effective_end` is present:
+    - `request.effective_end <= current.effective_end`
 
 Error classes:
 
@@ -489,8 +489,8 @@ Error classes:
 - Unique indexes are final conflict guards after service pre-checks.
 - Retries for transient DB errors are allowed at service boundary.
 - Idempotency strategy:
-    - client repeats same create payload may return duplicate-pair validation error
-    - updates/deactivations are relation-based (`rel_id`); invalid active-window transitions yield deterministic failure
+  - client repeats same create payload may return duplicate-pair validation error
+  - updates/deactivations are relation-based (`rel_id`); invalid active-window transitions yield deterministic failure
 
 ## 18. Observability
 
@@ -618,25 +618,25 @@ Input state:
 Step A: Attach from `connections.show`
 
 - request values:
-    - `station_priority_order=2`
-    - `effective_start=2026-03-06T00:00:00`
-    - `effective_end=null`
+  - `station_priority_order=2`
+  - `effective_start=2026-03-06T00:00:00`
+  - `effective_end=null`
 
 Result:
 
 - inserted row values:
-    - `station_priority_order=2`
-    - `consumer_priority_order=0`
-    - `is_current=true`
-    - `rel_id=version_id`
+  - `station_priority_order=2`
+  - `consumer_priority_order=0`
+  - `is_current=true`
+  - `rel_id=version_id`
 
 Step B: Station-side update on `generating-stations.show`
 
 - request values:
-    - `rel_id=<existing_rel_id>`
-    - `consumer_priority_order=4`
-    - `effective_start=2026-03-10T00:00:00`
-    - `effective_end=2026-12-31T23:59:59`
+  - `rel_id=<existing_rel_id>`
+  - `consumer_priority_order=4`
+  - `effective_start=2026-03-10T00:00:00`
+  - `effective_end=2026-12-31T23:59:59`
 
 Result:
 
@@ -646,10 +646,10 @@ Result:
 Step C: Consumer-side update on `connections.show`
 
 - request values:
-    - `rel_id=<existing_rel_id>`
-    - `station_priority_order=1`
-    - `effective_start=2027-01-01T00:00:00`
-    - `effective_end=2027-12-31T23:59:59`
+  - `rel_id=<existing_rel_id>`
+  - `station_priority_order=1`
+  - `effective_start=2027-01-01T00:00:00`
+  - `effective_end=2027-12-31T23:59:59`
 
 Result:
 
@@ -659,8 +659,8 @@ Result:
 Step D: Deactivate relation
 
 - request values:
-    - `rel_id=<existing_rel_id>`
-    - `effective_end=2027-12-31T23:59:59`
+  - `rel_id=<existing_rel_id>`
+  - `effective_end=2027-12-31T23:59:59`
 
 Result:
 
@@ -675,19 +675,19 @@ Result:
 ## 22. Failure Handling
 
 - Validation errors:
-    - return structured `INVALID_ARGUMENT` with field mappings
+  - return structured `INVALID_ARGUMENT` with field mappings
 - Unique conflict errors:
-    - map DB constraint violation to corresponding field error
+  - map DB constraint violation to corresponding field error
 - Internal errors:
-    - return `INTERNAL`, log with trace ID
+  - return `INTERNAL`, log with trace ID
 - Transaction rollback:
-    - all mutation failures rollback fully
+  - all mutation failures rollback fully
 
 ## 23. Deployment Model
 
 - Database changes delivered through Liquibase changelog:
-    - `79-station-consumer-rel.xml`
-    - optional seed file for relation type values
+  - `79-station-consumer-rel.xml`
+  - optional seed file for relation type values
 - Backend deploy updates gRPC service and proto consumers
 - Laravel deploy updates controllers/services/pages for prop and form contract
 - Feature flag optional for gradual UI exposure of new card/actions

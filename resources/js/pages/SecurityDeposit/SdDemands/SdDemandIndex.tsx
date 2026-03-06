@@ -23,11 +23,9 @@ interface Props {
   sdDemands: Paginator<SdDemand>
   calculationBasics: ParameterValues[]
   demandTypes: ParameterValues[]
-  statuses: ParameterValues[]
   oldConnection?: Connection
   oldCalculationBasicId?: string
   oldDemandTypeId?: string
-  oldStatusId?: string
   oldTotalSdAmount?: string
 }
 
@@ -35,11 +33,9 @@ export default function SdDemandIndex({
   sdDemands,
   calculationBasics,
   demandTypes,
-  statuses,
   oldConnection,
   oldCalculationBasicId,
   oldDemandTypeId,
-  oldStatusId,
   oldTotalSdAmount,
 }: Readonly<Props>) {
   return (
@@ -54,11 +50,9 @@ export default function SdDemandIndex({
       <SdDemandIndexSearch
         calculationBasics={calculationBasics}
         demandTypes={demandTypes}
-        statuses={statuses}
         oldConnection={oldConnection}
         oldCalculationBasicId={oldCalculationBasicId}
         oldDemandTypeId={oldDemandTypeId}
-        oldStatusId={oldStatusId}
         oldTotalSdAmount={oldTotalSdAmount}
       />
       <div>{sdDemands && <SdDemandList sdDemands={sdDemands.data} />}</div>

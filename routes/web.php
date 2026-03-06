@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\BillingGroupListApiController;
 use App\Http\Controllers\Api\Connections\GetConnectionPeriodDetailsApiController;
+use App\Http\Controllers\Api\ChargeHeadDefinition\GetChargeHeadDefinitionController;
 use App\Http\Controllers\Api\Connections\GetPurposeInfoApiController;
 use App\Http\Controllers\Api\Connections\PartiesListApiController;
 use App\Http\Controllers\Api\GetOfficeByCodeApiController;
@@ -70,6 +71,8 @@ use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SecurityDeposit\SdAttributeDownloadController;
 use App\Http\Controllers\SecurityDeposit\SdCollectionController;
 use App\Http\Controllers\SecurityDeposit\SdDemandsController;
+use App\Http\Controllers\GeneratingStation\GeneratingStationController;
+use App\Http\Controllers\SecurityDeposit\SdRegisterController;
 use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
 use App\Http\Controllers\Tariff\TariffConfigController;
@@ -190,6 +193,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->only(['create', 'store']);
     Route::get('attribute-download', SdAttributeDownloadController::class)
         ->name('attribute-download');
+    //generating station
+    Route::resource('generating-stations', GeneratingStationController::class)
+        ->only(['index', 'create', 'store', 'show']);
+
+    Route::get('sd-register', SdRegisterController::class)
+        ->name('sd-register');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
@@ -211,6 +220,9 @@ Route::get('api/connections/get-tariffs', GetPurposeInfoApiController::class)
     ->name('connections.get-tariffs');
 Route::post('api/connections/period-details', GetConnectionPeriodDetailsApiController::class)
     ->name('connections.period-details');
+Route::get('api/tariff-order/{id}/download', TariffOrderDownloadApiController::class)->name('tariff-order.download');
+Route::get('api/connections/get-tariffs', GetPurposeInfoApiController::class)->name('connections.get-tariffs');
+Route::get('api/charge-head-definitions', GetChargeHeadDefinitionController::class);
 
 Route::get('consumer-test', function (SystemModuleService $service) {
     $response = $service->createSystemModule(
@@ -231,5 +243,5 @@ Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
 
 // pdf download
 Route::get('pdf-download/{billId}', [BillingPdfController::class, 'index'])->name('pdf-download');
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
