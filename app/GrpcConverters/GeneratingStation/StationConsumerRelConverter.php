@@ -10,7 +10,6 @@ use Proto\GeneratingStation\StationConsumerRelMessage;
 use Proto\GeneratingStation\CreateStationConsumerRelRequest;
 use Proto\GeneratingStation\UpdateStationConsumerRelPriorityRequest;
 use Proto\GeneratingStation\DeactivateStationConsumerRelRequest;
-
 class StationConsumerRelConverter
 {
     /**
@@ -74,12 +73,11 @@ class StationConsumerRelConverter
         $msg->setStationId($request->stationId);
         $msg->setStationConnectionId($request->stationConnectionId);
         $msg->setConsumerConnectionId($request->consumerConnectionId);
-        $msg->setConsumerTypeId($request->consumerTypeId);
 
-        $msg->setConsumerPriorityOrder($request->consumerPriorityOrder);
         $msg->setStationPriorityOrder($request->stationPriorityOrder);
+       
 
-        $msg->setEffectiveStart($request->effectiveStart);
+       $msg->setEffectiveStart($request->effectiveStart);
 
         if ($request->effectiveEnd != null) {
             $msg->setEffectiveEnd($request->effectiveEnd);
@@ -94,7 +92,6 @@ class StationConsumerRelConverter
     public function toUpdatePriorityRequest(
         int $versionId,
         int $stationConnectionId,
-        int $consumerTypeId,
         int $consumerPriorityOrder,
         int $stationPriorityOrder
     ): UpdateStationConsumerRelPriorityRequest {
@@ -103,7 +100,6 @@ class StationConsumerRelConverter
 
         $msg->setVersionId($versionId);
         $msg->setStationConnectionId($stationConnectionId);
-        $msg->setConsumerTypeId($consumerTypeId);
         $msg->setConsumerPriorityOrder($consumerPriorityOrder);
         $msg->setStationPriorityOrder($stationPriorityOrder);
 

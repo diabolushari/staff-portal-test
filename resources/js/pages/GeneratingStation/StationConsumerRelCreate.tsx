@@ -1,16 +1,25 @@
+import AddStationConsumerModal from '@/components/GeneratingStation/AddStationConsumerModal'
+import ConsumerStationList from '@/components/GeneratingStation/ConsumerStationList'
 import { consumerNavItems } from '@/components/Navbar/navitems'
-import { Connection, StationConsumerRel } from '@/interfaces/data_interfaces'
+import { Connection, GeneratingStation, StationConsumerRel } from '@/interfaces/data_interfaces'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { BreadcrumbItem } from '@/types'
 import AddButton from '@/ui/button/AddButton'
 import { router } from '@inertiajs/react'
+import { useState } from 'react'
 
 interface Props {
   connection: Connection
-  station: StationConsumerRel
+  stations: GeneratingStation[]
+  relations: StationConsumerRel[]
 }
 
-export default function StationConsumerRelCreate({ connection, station }: Readonly<Props>) {
+export default function StationConsumerRelCreate({
+  connection,
+  stations,
+  relations,
+}: Readonly<Props>) {
+  const [showModal, setShowModal] = useState(false)
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Home',
@@ -29,7 +38,7 @@ export default function StationConsumerRelCreate({ connection, station }: Readon
       href: '#',
     },
   ]
-
+  console.log(stations)
   return (
     <ConnectionsLayout
       connection={connection}
@@ -39,8 +48,7 @@ export default function StationConsumerRelCreate({ connection, station }: Readon
       heading='Stations'
       description={
         <>
-          Add station consumer for consumer number{' '}
-          <span className='font-bold'>{connection?.consumer_number}</span>
+          Add station consumer <span className='font-bold'>{connection?.consumer_number}</span>
         </>
       }
       breadcrumbs={breadcrumbs}
@@ -48,15 +56,21 @@ export default function StationConsumerRelCreate({ connection, station }: Readon
     >
       <div className='flex justify-end p-5'>
         <AddButton
-          onClick={() =>
-            router.get(
-              route('station-consumer-rels.create', { connectionId: connection.connection_id })
-            )
-          }
           buttonText='Add Station'
+          onClick={() => setShowModal(true)}
         />
       </div>
-      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-6'></div>
+
+      {showModal && (
+        <AddStationConsumerModal
+          connection={connection}
+          stations={stations}
+          setShowModal={setShowModal}
+        />
+      )}
+      <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-6'>
+        <ConsumerStationList relations={relations} />
+      </div>
     </ConnectionsLayout>
   )
 }

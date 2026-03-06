@@ -117,7 +117,6 @@ class StationConsumerRelService
     public function updatePriority(
         int $versionId,
         int $stationConnectionId,
-        int $consumerTypeId,
         int $consumerPriorityOrder,
         int $stationPriorityOrder
     ): GrpcServiceResponse {
@@ -125,7 +124,6 @@ class StationConsumerRelService
         $grpcRequest = new UpdateStationConsumerRelPriorityRequest();
         $grpcRequest->setVersionId($versionId);
         $grpcRequest->setStationConnectionId($stationConnectionId);
-        $grpcRequest->setConsumerTypeId($consumerTypeId);
         $grpcRequest->setConsumerPriorityOrder($consumerPriorityOrder);
         $grpcRequest->setStationPriorityOrder($stationPriorityOrder);
 

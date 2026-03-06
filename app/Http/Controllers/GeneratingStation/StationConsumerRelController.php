@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\GeneratingStation\StationConsumerRelFormRequest;
 use App\Services\Connection\ConnectionService;
 use App\Services\GeneratingStation\StationConsumerRelService;
+use App\Services\GeneratingStation\GeneratingStationService;
 use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ class StationConsumerRelController extends Controller
         private readonly StationConsumerRelService $stationConsumerRelService,
         private readonly ConnectionService $connectionService,
         private readonly ParameterValueService $parameterValueService,
+        private readonly GeneratingStationService $generatingStationService,
     ) {}
 
     /**
@@ -26,11 +28,12 @@ class StationConsumerRelController extends Controller
     public function index(Request $request): Response
     {
         $stationId = $request->input('station_id');
+        $connectionId = $request->input('connection_id');
 
-        $response = $this->stationConsumerRelService->listStationConsumers($stationId);
+        $response = $this->stationConsumerRelService->listConsumerStations($connectionId);
 
         $consumerTypes = $this->parameterValueService
-            ->getParameterValues(null, null, null, 'Connection', 'Consumer Type')
+            ->getParameterValues(null, null, null, 'Station Consumer Type', 'Consumer Type')
             ->data;
 
         return Inertia::render('GeneratingStation/StationConsumerRelIndex', [
@@ -54,12 +57,17 @@ class StationConsumerRelController extends Controller
             ->getParameterValues(null, null, null, 'Station Consumer Type', 'Consumer Type')
             ->data;
 
+        $stations = $this->generatingStationService
+            ->listGeneratingStations()
+            ->data;
+
         return Inertia::render(
             'GeneratingStation/StationConsumerRelCreate',
             [
                 'stationId' => $stationId,
-                'stationConnection' => $stationConnection,
+                'connection' => $stationConnection,
                 'consumerTypes' => $consumerTypes,
+                'stations' => $stations,
             ]
         );
     }
@@ -89,10 +97,9 @@ class StationConsumerRelController extends Controller
     {
         $response = $this->stationConsumerRelService->updatePriority(
             $versionId,
-            $request->stationConnectionId,
-            $request->consumerTypeId,
-            $request->consumerPriorityOrder,
-            $request->stationPriorityOrder
+            $request->station_connection_id,
+            $request->consumer_priority_order,
+            $request->station_priority_order
         );
 
         if ($response->hasValidationError() || $response->statusCode !== 0) {

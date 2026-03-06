@@ -1,34 +1,15 @@
-import { consumerNavItems } from '@/components/Navbar/navitems'
+import StationConsumerList from '@/components/GeneratingStation/ConsumerStationList'
 import { StationConsumerRel } from '@/interfaces/data_interfaces'
-import MainLayout from '@/layouts/main-layout'
-import { BreadcrumbItem } from '@/types'
-
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Home',
-    href: '/',
-  },
-  {
-    title: 'Station Consumers',
-    href: '/station-consumers',
-  },
-]
 
 interface Props {
-  stations: StationConsumerRel[]
+  relations: StationConsumerRel[]
 }
 
-export default function StationConsumerRelIndex({}: Readonly<Props>) {
+export default function StationConsumerRelIndex({ relations }: Readonly<Props>) {
+  console.log('Relations from backend:', relations)
   return (
-    <MainLayout
-      breadcrumb={breadcrumbs}
-      navItems={consumerNavItems}
-      addBtnText='Station Consumer'
-      addBtnUrl={route('station-consumers.create')}
-      selectedTopNav='Consumers'
-      title='Station Consumers'
-    >
-      <div></div>
-    </MainLayout>
+    <div className='mt-6'>
+      <StationConsumerList relations={relations ?? []} />
+    </div>
   )
 }

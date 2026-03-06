@@ -18,11 +18,14 @@ class ConnectionStationConsumerRelController extends Controller
     {
         $connection = $this->connectionService->getConnection($connectionId)->data;
 
-        $stations = $this->stationConsumerRelService
-            ->listConsumerStations($connectionId)->data;
+        // $stations = $this->stationConsumerRelService
+        //     ->listConsumerStations($connectionId)->data;
+        $relations = $this->stationConsumerRelService
+        ->listConsumerStations($connectionId)->data;
 
         return Inertia::render('GeneratingStation/StationConsumerRelCreate', [
             'connection' => $connection,
+            'relations' => $relations,
 
         ]);
     }
