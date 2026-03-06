@@ -8,6 +8,7 @@ package com.kseb.consumerservice.grpc.securitydeposit;
 option php_namespace = "Proto\\Consumers";
 option php_metadata_namespace = "GPBMetadata";
 
+import "google/protobuf/empty.proto";
 import "connections/connections.proto";
 import "securitydeposit/sd-collections.proto";
 import "securitydeposit/sd-demands.proto";
@@ -31,4 +32,17 @@ message SdBalanceSummaryMessage {
   com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 16;
   optional com.kseb.consumerservice.grpc.securitydeposit.SdDemandMessage sd_demand = 17;
   optional com.kseb.consumerservice.grpc.securitydeposit.SdCollectionMessage sd_collection = 18;
+}
+
+message SdBalanceSummaryListByConnectionIdRequest {
+  int32 connection_id = 1;
+}
+
+message SdBalanceSummaryListByConnectionIdResponse {
+  SdBalanceSummaryMessage sd_balance_summary = 1;
+}
+
+
+service SdBalanceSummaryService {
+  rpc GetSdBalanceSummaryByConnectionId(SdBalanceSummaryListByConnectionIdRequest) returns (SdBalanceSummaryListByConnectionIdResponse);
 }

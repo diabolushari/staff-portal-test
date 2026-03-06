@@ -8,7 +8,6 @@ option php_metadata_namespace = "GPBMetadata";
 import "parameters/parameter-value.proto";
 import "connections/connections.proto";
 import "securitydeposit/sd-collections.proto";
-import "securitydeposit/sd-demands.proto";
 
 message SdDemandStatusMessage {
   optional int32 status_log_id = 1;
@@ -23,7 +22,6 @@ message SdDemandStatusMessage {
   optional string remarks = 10;
   optional int32 created_by = 11;
   optional int32 updated_by = 12;
-  optional com.kseb.consumerservice.grpc.securitydeposit.SdDemandMessage sd_demand = 13;
   optional com.kseb.consumerservice.grpc.securitydeposit.SdCollectionMessage sd_collection = 14;
   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto status = 15;
 }

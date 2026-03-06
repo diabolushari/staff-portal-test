@@ -5,6 +5,7 @@ namespace App\Services\SecurityDeposit;
 use App\GrpcConverters\SecurityDeposit\SdCollectionAttributeConverter;
 use App\GrpcConverters\SecurityDeposit\SdCollectionConverter;
 use App\GrpcConverters\SecurityDeposit\SdDemandConverter;
+use App\GrpcConverters\SecurityDeposit\SdDemandStatusConverter;
 use App\Http\Requests\SecurityDeposit\SdDemandFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
@@ -22,7 +23,8 @@ class SdDemandsService
     public function __construct(
         private readonly SdDemandConverter $sdDemandConverter,
         private readonly SdCollectionConverter $sdCollectionConverter,
-        private readonly SdCollectionAttributeConverter $sdAttributeConverter
+        private readonly SdCollectionAttributeConverter $sdAttributeConverter,
+        private readonly SdDemandStatusConverter $sdDemandStatusConverter
     ) {
         $this->client = new SdDemandServiceClient(
             config('app.consumer_service_grpc_host'),
@@ -60,6 +62,9 @@ class SdDemandsService
         $sdDemandArray = [];
         foreach ($sdDemands as $sdDemand) {
             $demandData = $this->sdDemandConverter->convertToArray($sdDemand);
+            $sdDemandStatus = $sdDemand->getLatestStatus();
+            $sdDemandStatusArray = $this->sdDemandStatusConverter->convertToArray($sdDemandStatus);
+            $demandData['latestStatus'] = $sdDemandStatusArray;
             $collectionsArray = [];
             foreach ($sdDemand->getCollections() as $collection) {
                 $collectionData = $this->sdCollectionConverter
