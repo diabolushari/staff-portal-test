@@ -1,6 +1,6 @@
 import useFetchRecord from '@/hooks/useFetchRecord'
 import { ParameterValues } from '@/interfaces/parameter_types'
-import { Dispatch, SetStateAction, useEffect, useMemo, useCallback } from 'react'
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo } from 'react'
 import InputItemForm from './InputItemForm'
 
 export interface BaseAttribute {
@@ -10,28 +10,23 @@ export interface BaseAttribute {
   file: File | null
   mime_type: string | null
   attribute_definition: ParameterValues
-  [key: string]: any
 }
 
-interface Props<T extends BaseAttribute> {
+interface Props {
   selectedValue: ParameterValues | null
   domainName: string
   parameterName: string
-  foreignKeyName: string
-  foreignKeyValue: number | null
-  attributeData: T[] | null
-  setAttributeData: Dispatch<SetStateAction<T[] | null>>
+  attributeData: BaseAttribute[] | null
+  setAttributeData: Dispatch<SetStateAction<BaseAttribute[] | null>>
 }
 
-const DynamicAttributeForm = <T extends BaseAttribute>({
+const DynamicAttributeForm = ({
   selectedValue,
   domainName,
   parameterName,
-  foreignKeyName,
-  foreignKeyValue,
   attributeData,
   setAttributeData,
-}: Props<T>) => {
+}: Props) => {
   const attributeUrl = useMemo(() => {
     if (!selectedValue) return null
 
@@ -50,16 +45,15 @@ const DynamicAttributeForm = <T extends BaseAttribute>({
 
     const data = attributes.map((attr) => ({
       attribute_id: null,
-      [foreignKeyName]: foreignKeyValue,
       attribute_definition_id: attr.id,
       attribute_value: '',
       file: null,
       mime_type: null,
       attribute_definition: attr,
-    })) as T[]
+    }))
 
     setAttributeData(data)
-  }, [attributes, foreignKeyName, foreignKeyValue, setAttributeData])
+  }, [attributes, setAttributeData])
 
   const updateTextValue = useCallback(
     (id: number, value: string) => {

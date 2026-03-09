@@ -3,28 +3,22 @@ import CheckBox from '@/ui/form/CheckBox'
 import FileInput from '@/ui/form/FileInput'
 
 import Input from '@/ui/form/Input'
-
-import useFetchRecord from '@/hooks/useFetchPagination'
-import { ParameterValues } from '@/interfaces/parameter_types'
 import DynamicSelectList from '@/ui/form/DynamicSelectList'
 import { BaseAttribute } from './DynamicAttributeForm'
 
-interface Props<T extends BaseAttribute> {
+interface Props {
   updateTextValue: (attribute_id: number, value: string) => void
   updateFileValue?: (attribute_id: number, value: File | null) => void
-  attribute: T
+  attribute: BaseAttribute
   errors?: string
 }
 
-export default function InputItemForm<T extends BaseAttribute>({
+export default function InputItemForm({
   updateTextValue,
   updateFileValue,
   attribute,
   errors,
-}: Readonly<Props<T>>) {
-  const [list] = useFetchRecord<ParameterValues[]>(
-    `/api/parameter-values?domain_name=${attribute.attribute_definition?.attribute3_value}&parameter_name=${attribute.attribute_definition?.attribute4_value}`
-  )
+}: Readonly<Props>) {
   return (
     <div
       className='flex flex-col'
@@ -74,7 +68,7 @@ export default function InputItemForm<T extends BaseAttribute>({
             />
           </div>
         )}
-      {attribute?.attribute_definition?.attribute1_value.toLowerCase() === 'drop down' && list && (
+      {attribute?.attribute_definition?.attribute1_value.toLowerCase() === 'drop down' && (
         <DynamicSelectList
           setValue={(value) => updateTextValue(attribute.attribute_definition_id, value)}
           label={attribute.attribute_definition.parameter_value}

@@ -10,6 +10,7 @@ use App\Services\Consumers\GeoRegionsService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Concurrency;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -56,36 +57,31 @@ class GeneratingStationController extends Controller
     {
         $connectionId = $request->input('connectionId');
 
-        $generationStatus = $this->parameterValueService
-            ->getParameterValues(null, null, null, 'Station', 'Generation Status')
-            ->data;
-
-        $generationTypes = $this->parameterValueService
-            ->getParameterValues(null, null, null, 'Station', 'Generation Type')
-            ->data;
-
-        $voltageCategories = $this->parameterValueService
-            ->getParameterValues(null, null, null, 'Station', 'Voltage Category')
-            ->data;
-
-        $plantTypes = $this->parameterValueService
-            ->getParameterValues(null, null, null, 'Station', 'Plant Type')
-            ->data;
-
-        $attributeDefinitions = $this->parameterValueService
-            ->getParameterValues(null, null, null, 'Station', 'Generating Station Attribute')
-            ->data;
-
-        $districts = $this->geoRegionsService->getGeoRegions(
-            'Administrative',
-            'District'
+        [$generationStatus, $generationTypes, $voltageCategories, $plantTypes, $attributeDefinitions, $districts, $states] = Concurrency::run(
+            fn() => $this->parameterValueService
+                ->getParameterValues(null, null, null, 'Station', 'Generation Status')
+                ->data,
+            fn() => $this->parameterValueService
+                ->getParameterValues(null, null, null, 'Station', 'Generation Type')
+                ->data,
+            fn() => $this->parameterValueService
+                ->getParameterValues(null, null, null, 'Station', 'Voltage Category')
+                ->data,
+            fn() => $this->parameterValueService
+                ->getParameterValues(null, null, null, 'Station', 'Plant Type')
+                ->data,
+            fn() => $this->parameterValueService
+                ->getParameterValues(null, null, null, 'Station', 'Generating Station Attribute')
+                ->data,
+            fn() => $this->geoRegionsService->getGeoRegions(
+                'Administrative',
+                'District'
+            ),
+            fn() => $this->geoRegionsService->getGeoRegions(
+                'Administrative',
+                'State'
+            ),
         );
-
-        $states = $this->geoRegionsService->getGeoRegions(
-            'Administrative',
-            'State'
-        );
-
 
         return Inertia::render('GeneratingStation/GeneratingStationCreate', [
             'connectionId' => $connectionId,

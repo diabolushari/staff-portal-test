@@ -880,7 +880,7 @@ export interface SdAttribute {
   attribute_definition_id: number
   attribute_value: string
   mime_type: string | null
-  file: File | null
+  file: string | null
   created_by?: number
   updated_by?: number
   created_at?: string
@@ -914,7 +914,7 @@ export interface GeneratingStationAttribute {
   attribute_definition_id: number
   attribute_value: string
   mime_type: string | null
-  file: File | null
+  file: string | null
   created_by?: number
   updated_by?: number
   deleted_by?: number
@@ -931,7 +931,7 @@ export interface GeneratingStation {
   plant_type_id: number
   commissioning_date: string
 
-  is_active: boolean
+  is_current: boolean
   created_by?: number
   updated_by?: number
   deleted_by?: number
