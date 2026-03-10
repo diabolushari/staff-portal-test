@@ -7,6 +7,7 @@ import { getDisplayDate } from '@/utils'
 import { StationConsumerRel } from '@/interfaces/data_interfaces'
 import StationActionButton from '../station-action-button'
 import ReprioritizeStationConsumerModal from './ReprioritizeStationConsumerModal'
+import DeactivateStationConsumerModal from './DeactivateStationConsumerModal'
 
 interface Props {
   relations: StationConsumerRel[]
@@ -15,6 +16,7 @@ interface Props {
 export default function ConsumerStationList({ relations }: Props) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [reprioritizeModalOpen, setReprioritizeModalOpen] = useState(false)
+  const [inactiveModalOpen, setInactiveModalOpen] = useState(false)
   const [selectedRelation, setSelectedRelation] = useState<StationConsumerRel | null>(null)
 
   const handleDeleteClick = (rel: StationConsumerRel) => {
@@ -40,6 +42,15 @@ export default function ConsumerStationList({ relations }: Props) {
             className={`mb-4 cursor-pointer rounded-lg border border-gray-200 px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md ${getPrimarySource.includes(rel) ? 'bg-blue-500 text-white [&_*]:text-white' : ''}`}
           >
             <div className='flex items-start justify-between'>
+              <div
+                className={`mt-[10px] rounded-full px-3 py-[2px] text-xs font-bold ${
+                  getPrimarySource.includes(rel)
+                    ? 'bg-white !text-blue-700 text-blue-700'
+                    : 'bg-gray-200 text-gray-800'
+                }`}
+              >
+                P-{rel.station_priority_order}
+              </div>
               <div className='flex flex-1 flex-col gap-2.5 p-[10px]'>
                 {/* Station Name */}
                 <div className='font-semibold text-black'>{rel.station?.station_name ?? '-'}</div>
@@ -88,6 +99,12 @@ export default function ConsumerStationList({ relations }: Props) {
                       Active From: {rel.effective_start ? getDisplayDate(rel.effective_start) : '-'}
                     </span>
                   </div>
+                  <div className='flex items-center gap-1'>
+                    <Calendar className='h-3.5 w-3.5 text-gray-500' />
+                    <span className='text-sm text-gray-600'>
+                      Active To: {rel.effective_end ? getDisplayDate(rel.effective_end) : '-'}
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -120,10 +137,12 @@ export default function ConsumerStationList({ relations }: Props) {
                   <div onClick={(e) => e.stopPropagation()}>
                     <StationActionButton
                       onReprioritize={() => {
-                        console.log('Reprioritize', rel)
+                        setSelectedRelation(rel)
+                        setReprioritizeModalOpen(true)
                       }}
                       onInactive={() => {
-                        console.log('Inactive', rel)
+                        setSelectedRelation(rel)
+                        setInactiveModalOpen(true)
                       }}
                       onDeleteStation={() => handleDeleteClick(rel)}
                     />
@@ -138,6 +157,13 @@ export default function ConsumerStationList({ relations }: Props) {
       {reprioritizeModalOpen && selectedRelation && (
         <ReprioritizeStationConsumerModal
           setShowModal={setReprioritizeModalOpen}
+          relation={selectedRelation}
+          isconsumerPriority={false}
+        />
+      )}
+      {inactiveModalOpen && selectedRelation && (
+        <DeactivateStationConsumerModal
+          setShowModal={setInactiveModalOpen}
           relation={selectedRelation}
         />
       )}

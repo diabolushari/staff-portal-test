@@ -3,19 +3,27 @@ import useInertiaPost from '@/hooks/useInertiaPost'
 import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
 import Modal from '@/ui/Modal/Modal'
+import Datepicker from '@/ui/form/DatePicker'
 import { StationConsumerRel } from '@/interfaces/data_interfaces'
 
 interface Props {
   setShowModal: (show: boolean) => void
   relation: StationConsumerRel
+  isconsumerPriority: boolean
 }
 
-export default function ReprioritizeStationConsumerModal({ setShowModal, relation }: Props) {
+export default function ReprioritizeStationConsumerModal({
+  setShowModal,
+  relation,
+  isconsumerPriority,
+}: Props) {
   const { formData, setFormValue } = useCustomForm({
     version_id: relation.version_id,
     station_connection_id: relation.station_connection_id,
     consumer_priority_order: relation.consumer_priority_order ?? '',
     station_priority_order: relation.station_priority_order ?? '',
+    effective_start: '',
+    effective_end: '',
     _method: 'PUT',
   })
 
@@ -43,18 +51,30 @@ export default function ReprioritizeStationConsumerModal({ setShowModal, relatio
         className='flex flex-col gap-4'
         onSubmit={handleSubmit}
       >
-        <Input
-          label='Consumer Priority'
-          type='number'
-          value={formData.consumer_priority_order}
-          setValue={setFormValue('consumer_priority_order')}
+        {isconsumerPriority ? (
+          <Input
+            label='Consumer Priority'
+            type='number'
+            value={formData.consumer_priority_order}
+            setValue={setFormValue('consumer_priority_order')}
+          />
+        ) : (
+          <Input
+            label='Station Priority'
+            type='number'
+            value={formData.station_priority_order}
+            setValue={setFormValue('station_priority_order')}
+          />
+        )}
+        <Datepicker
+          label='New Priority Effective From'
+          value={formData.effective_start}
+          setValue={setFormValue('effective_start')}
         />
-
-        <Input
-          label='Station Priority'
-          type='number'
-          value={formData.station_priority_order}
-          setValue={setFormValue('station_priority_order')}
+        <Datepicker
+          label='New Priority Effective To'
+          value={formData.effective_end}
+          setValue={setFormValue('effective_end')}
         />
 
         <div className='flex justify-end gap-2'>

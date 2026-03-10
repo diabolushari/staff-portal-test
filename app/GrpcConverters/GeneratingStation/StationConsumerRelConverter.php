@@ -109,11 +109,11 @@ class StationConsumerRelConverter
     /**
      * Convert deactivate request
      */
-    public function toDeactivateRequest(int $versionId): DeactivateStationConsumerRelRequest
+    public function toDeactivateRequest(int $relId): DeactivateStationConsumerRelRequest
     {
         $msg = new DeactivateStationConsumerRelRequest();
 
-        $msg->setVersionId($versionId);
+        $msg->setRelId($relId);
 
         return $msg;
     }

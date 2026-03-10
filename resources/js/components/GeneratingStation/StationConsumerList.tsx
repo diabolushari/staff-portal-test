@@ -2,6 +2,8 @@ import { Consumer, StationConsumerRel } from '@/interfaces/data_interfaces'
 import { Calendar, User, Hash, Building2 } from 'lucide-react'
 import { getDisplayDate } from '@/utils'
 import StationActionButton from '../station-action-button'
+import ReprioritizeStationConsumerModal from './ReprioritizeStationConsumerModal'
+import DeactivateStationConsumerModal from './DeactivateStationConsumerModal'
 import { useState } from 'react'
 
 interface Props {
@@ -10,6 +12,8 @@ interface Props {
 
 export default function StationConsumerList({ relations }: Props) {
   const [selectedRelation, setSelectedRelation] = useState<StationConsumerRel | null>(null)
+  const [reprioritizeModalOpen, setReprioritizeModalOpen] = useState(false)
+  const [inactiveModalOpen, setInactiveModalOpen] = useState(false)
 
   if (!relations || relations.length === 0) {
     return (
@@ -68,6 +72,12 @@ export default function StationConsumerList({ relations }: Props) {
                         {rel.effective_start ? getDisplayDate(rel.effective_start) : '-'}
                       </span>
                     </div>
+                    <div className='flex items-center gap-1'>
+                      <Calendar className='h-3.5 w-3.5 text-gray-500' />
+                      <span className='text-sm text-gray-600'>
+                        Active To: {rel.effective_end ? getDisplayDate(rel.effective_end) : '-'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -88,10 +98,12 @@ export default function StationConsumerList({ relations }: Props) {
                   <div onClick={(e) => e.stopPropagation()}>
                     <StationActionButton
                       onReprioritize={() => {
-                        console.log('Reprioritize', rel)
+                        setSelectedRelation(rel)
+                        setReprioritizeModalOpen(true)
                       }}
                       onInactive={() => {
-                        console.log('Inactive', rel)
+                        setSelectedRelation(rel)
+                        setInactiveModalOpen(true)
                       }}
                       onDeleteStation={() => console.log('Delete', rel)}
                     />
@@ -102,6 +114,19 @@ export default function StationConsumerList({ relations }: Props) {
           )
         })}
       </div>
+      {reprioritizeModalOpen && selectedRelation && (
+        <ReprioritizeStationConsumerModal
+          setShowModal={setReprioritizeModalOpen}
+          relation={selectedRelation}
+          isconsumerPriority={true}
+        />
+      )}
+      {inactiveModalOpen && selectedRelation && (
+        <DeactivateStationConsumerModal
+          setShowModal={setInactiveModalOpen}
+          relation={selectedRelation}
+        />
+      )}
     </div>
   )
 }

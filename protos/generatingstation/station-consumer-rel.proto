@@ -68,11 +68,13 @@ message UpdateStationConsumerRelPriorityRequest {
 
   int32 version_id = 1;
 
-  int32 station_connection_id = 2;
-  int32 consumer_type_id = 3;
+  optional int32 station_connection_id = 2;
+  optional int32 consumer_type_id = 3;
 
-  int32 consumer_priority_order = 4;
-  int32 station_priority_order = 5;
+  optional int32 consumer_priority_order = 4;
+  optional int32 station_priority_order = 5;
+  optional string effective_start = 6;
+  optional string effective_end = 7;
 }
 
 message UpdateStationConsumerRelPriorityResponse {
@@ -80,7 +82,8 @@ message UpdateStationConsumerRelPriorityResponse {
 }
 
 message DeactivateStationConsumerRelRequest {
-  int32 version_id = 1;
+  int32 rel_id = 1;
+  string effective_end = 2;
 }
 
 message DeactivateStationConsumerRelResponse {

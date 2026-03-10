@@ -117,15 +117,27 @@ class StationConsumerRelService
     public function updatePriority(
         int $versionId,
         int $stationConnectionId,
-        int $consumerPriorityOrder,
-        int $stationPriorityOrder
+        ?int $consumerPriorityOrder,
+        ?int $stationPriorityOrder,
+        ?string $effectiveStart,
+        ?string $effectiveEnd
     ): GrpcServiceResponse {
 
         $grpcRequest = new UpdateStationConsumerRelPriorityRequest();
         $grpcRequest->setVersionId($versionId);
         $grpcRequest->setStationConnectionId($stationConnectionId);
-        $grpcRequest->setConsumerPriorityOrder($consumerPriorityOrder);
-        $grpcRequest->setStationPriorityOrder($stationPriorityOrder);
+        if ($consumerPriorityOrder !== null) {
+            $grpcRequest->setConsumerPriorityOrder($consumerPriorityOrder);
+        }
+        if ($stationPriorityOrder !== null) {
+            $grpcRequest->setStationPriorityOrder($stationPriorityOrder);
+        }
+        if ($effectiveStart !== null) {
+            $grpcRequest->setEffectiveStart($effectiveStart);
+        }
+        if ($effectiveEnd !== null) {
+            $grpcRequest->setEffectiveEnd($effectiveEnd);
+        }
 
         [$response, $status] =
             $this->client->UpdateStationConsumerRelPriority($grpcRequest)->wait();
@@ -150,10 +162,12 @@ class StationConsumerRelService
         );
     }
 
-    public function deactivate(int $versionId): GrpcServiceResponse
+    public function deactivate(int $relId, string $effectiveEnd): GrpcServiceResponse
     {
         $grpcRequest = new DeactivateStationConsumerRelRequest();
-        $grpcRequest->setVersionId($versionId);
+
+        $grpcRequest->setRelId($relId);
+        $grpcRequest->setEffectiveEnd($effectiveEnd);
 
         [$response, $status] =
             $this->client->DeactivateStationConsumerRel($grpcRequest)->wait();

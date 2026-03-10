@@ -98,8 +98,10 @@ class StationConsumerRelController extends Controller
         $response = $this->stationConsumerRelService->updatePriority(
             $versionId,
             $request->station_connection_id,
-            $request->consumer_priority_order,
-            $request->station_priority_order
+            $request->consumer_priority_order ?? null,
+            $request->station_priority_order ?? null,
+            $request->effective_start ?? null,
+            $request->effective_end ?? null
         );
 
         if ($response->hasValidationError() || $response->statusCode !== 0) {
@@ -115,15 +117,17 @@ class StationConsumerRelController extends Controller
     /**
      * Deactivate relation
      */
-    public function destroy(int $versionId): RedirectResponse
+   public function destroy(Request $request, int $relId): RedirectResponse
     {
-        $response = $this->stationConsumerRelService->deactivate($versionId);
+        $response = $this->stationConsumerRelService->deactivate(
+            $relId,
+            $request->effective_end
+        );
 
-        if (! $response->success) {
-            return redirect()->back()->with(
-                'error',
-                $response->error ?? 'Failed to deactivate station consumer relation.'
-            );
+        if ($response->hasValidationError() || $response->statusCode !== 0) {
+            return redirect()->back()->withErrors([
+                'message' => $response->statusDetails ?? 'Failed to deactivate',
+            ]);
         }
 
         return redirect()->back()
