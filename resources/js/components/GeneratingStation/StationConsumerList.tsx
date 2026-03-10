@@ -35,6 +35,9 @@ export default function StationConsumerList({ relations }: Props) {
               className='mb-4 cursor-pointer rounded-lg border border-gray-200 px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
             >
               <div className='flex items-start justify-between'>
+                <div className='mt-[10px] rounded-full bg-gray-200 px-3 py-[2px] text-xs font-bold text-gray-800'>
+                  P-{rel.consumer_priority_order}
+                </div>
                 {/* Left section */}
                 <div className='flex flex-1 flex-col gap-2.5 p-[10px]'>
                   {/* Consumer Name */}

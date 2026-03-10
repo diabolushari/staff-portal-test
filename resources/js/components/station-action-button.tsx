@@ -63,7 +63,7 @@ const StationActionButton = ({ onReprioritize, onInactive, onDeleteStation }: Pr
             </button>
           )}
 
-          {onDeleteStation && (
+          {/* {onDeleteStation && (
             <button
               onClick={() => {
                 setOpen(false)
@@ -74,7 +74,7 @@ const StationActionButton = ({ onReprioritize, onInactive, onDeleteStation }: Pr
               <Trash2 className='h-4 w-4' />
               Delete Station
             </button>
-          )}
+          )} */}
         </div>
       )}
     </div>
