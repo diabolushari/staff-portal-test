@@ -133,6 +133,13 @@ const connectionTabs = (connection?: Connection | null) => [
           ? route('connection.sd-demands', connection?.connection_id)
           : '#',
       },
+      {
+        subValue: 'stations',
+        subLabel: 'Stations',
+        subLink: connection?.connection_id
+          ? route('connection.station-consumer-rels', connection?.connection_id)
+          : '#',
+      },
     ],
   },
   {

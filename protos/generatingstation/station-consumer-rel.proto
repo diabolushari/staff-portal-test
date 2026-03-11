@@ -1,0 +1,155 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.generatingstation;
+
+
+option php_namespace = "Proto\\GeneratingStation";
+option php_metadata_namespace = "GPBMetadata";
+
+import "connections/connections.proto";
+import "parameters/parameter-value.proto";
+import "generatingstation/generating-station.proto";
+
+
+message StationConsumerRelMessage {
+
+  optional int32 version_id = 1;
+  optional int32 rel_id = 2;
+
+  int32 station_id = 3;
+  int32 station_connection_id = 4;
+  int32 consumer_connection_id = 5;
+
+  int32 consumer_type_id = 6;
+
+  int32 consumer_priority_order = 7;
+  int32 station_priority_order = 8;
+
+  string effective_start = 9;
+  optional string effective_end = 10;
+
+  bool is_current = 11;
+
+  optional int32 created_by = 12;
+  optional int32 updated_by = 13;
+  optional int32 deleted_by = 14;
+
+  optional GeneratingStationMessage station = 15;
+
+  optional com.kseb.consumerservice.grpc.connections.ConnectionMessage
+      station_connection = 16;
+
+  optional com.kseb.consumerservice.grpc.connections.ConnectionMessage
+      consumer_connection = 17;
+
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto
+      consumer_type = 18;
+}
+
+
+message CreateStationConsumerRelRequest {
+
+  int32 station_id = 1;
+  int32 station_connection_id = 2;
+  int32 consumer_connection_id = 3;
+  int32 consumer_type_id = 4;
+  int32 consumer_priority_order = 5;
+  int32 station_priority_order = 6;
+  string effective_start = 7;
+  optional string effective_end = 8;
+}
+
+message CreateStationConsumerRelResponse {
+  optional StationConsumerRelMessage relation = 1;
+}
+
+
+message UpdateStationConsumerRelPriorityRequest {
+
+  int32 version_id = 1;
+
+  optional int32 station_connection_id = 2;
+  optional int32 consumer_type_id = 3;
+
+  optional int32 consumer_priority_order = 4;
+  optional int32 station_priority_order = 5;
+  optional string effective_start = 6;
+  optional string effective_end = 7;
+}
+
+message UpdateStationConsumerRelPriorityResponse {
+  optional StationConsumerRelMessage relation = 1;
+}
+
+message DeactivateStationConsumerRelRequest {
+  int32 rel_id = 1;
+  string effective_end = 2;
+}
+
+message DeactivateStationConsumerRelResponse {
+  bool success = 1;
+}
+
+
+message ReplaceStationPrimaryConsumerRequest {
+  int32 station_id = 1;
+  int32 old_primary_version_id = 2;
+  int32 new_consumer_connection_id = 3;
+  int32 consumer_priority_order = 4; 
+}
+
+message ReplaceStationPrimaryConsumerResponse {
+  optional StationConsumerRelMessage relation = 1;
+}
+
+
+message GetStationConsumerRelRequest {
+  int32 rel_id = 1;
+}
+
+message GetStationConsumerRelResponse {
+  optional StationConsumerRelMessage relation = 1;
+}
+
+
+message ListStationConsumersRequest {
+  int32 station_id = 1;
+}
+
+message ListStationConsumersResponse {
+  repeated StationConsumerRelMessage items = 1;
+}
+
+
+message ListConsumerStationsRequest {
+  int32 consumer_connection_id = 1;
+}
+
+message ListConsumerStationsResponse {
+  repeated StationConsumerRelMessage items = 1;
+}
+
+
+service StationConsumerRelService {
+
+  rpc CreateStationConsumerRel(CreateStationConsumerRelRequest)
+      returns (CreateStationConsumerRelResponse);
+
+  rpc UpdateStationConsumerRelPriority(UpdateStationConsumerRelPriorityRequest)
+      returns (UpdateStationConsumerRelPriorityResponse);
+
+  rpc DeactivateStationConsumerRel(DeactivateStationConsumerRelRequest)
+      returns (DeactivateStationConsumerRelResponse);
+
+  rpc ReplaceStationPrimaryConsumer(ReplaceStationPrimaryConsumerRequest)
+      returns (ReplaceStationPrimaryConsumerResponse);
+
+  rpc GetStationConsumerRel(GetStationConsumerRelRequest)
+      returns (GetStationConsumerRelResponse);
+
+  rpc ListStationConsumers(ListStationConsumersRequest)
+      returns (ListStationConsumersResponse);
+
+  rpc ListConsumerStations(ListConsumerStationsRequest)
+      returns (ListConsumerStationsResponse);
+}
