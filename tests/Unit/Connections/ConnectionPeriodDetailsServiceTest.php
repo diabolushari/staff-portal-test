@@ -1,11 +1,14 @@
 <?php
 
 use App\Services\Connection\ConnectionPeriodDetailsService;
+use Google\Protobuf\Timestamp;
 use Proto\Connections\GetConnectionPeriodDetailsResponse;
 use Proto\Connections\MeterPeriodDetails;
 use Proto\Connections\ProfileHistoryItem;
 use Proto\Connections\TimezoneHistoryItem;
 use Proto\Metering\MeteringTimezoneResponse;
+use Proto\Metering\MeterTransformerMessage;
+use Proto\Metering\MeterTransformerRelMessage;
 use Proto\MeteringProfile\MeteringProfileParameterMessage;
 use Proto\Parameters\ParameterValueProto;
 use Tests\TestCase;
@@ -49,10 +52,33 @@ it('converts connection period details response to array', function () {
         ->setTimezoneType($timezoneType)
         ->setMeteringTimezones([$meteringTimezone]);
 
+    $transformerStatus = (new ParameterValueProto)
+        ->setId(7)
+        ->setParameterValue('Active');
+
+    $ctpt = (new MeterTransformerMessage)
+        ->setMeterCtptId(501)
+        ->setCtptSerial('CTPT-001')
+        ->setRatioPrimaryValue('100')
+        ->setRatioSecondaryValue('5');
+
+    $faultyDate = (new Timestamp)
+        ->setSeconds(strtotime('2024-01-15 12:30:00'));
+
+    $transformerRelation = (new MeterTransformerRelMessage)
+        ->setVersionId(2)
+        ->setCtptId(501)
+        ->setCtpt($ctpt)
+        ->setMeterId(101)
+        ->setFaultyDate($faultyDate)
+        ->setStatusId(7)
+        ->setStatus($transformerStatus);
+
     $meter = (new MeterPeriodDetails)
         ->setMeterId(101)
         ->setProfiles([$profileHistory])
-        ->setTimezones([$timezoneHistory]);
+        ->setTimezones([$timezoneHistory])
+        ->setTransformerRelations([$transformerRelation]);
 
     $response = (new GetConnectionPeriodDetailsResponse)
         ->setConnections([])
@@ -67,5 +93,9 @@ it('converts connection period details response to array', function () {
         ->and($result['meters'][0]['profiles'][0]['profile_parameters'][0]['meter_parameter_id'])->toBe(99)
         ->and($result['meters'][0]['timezones'][0]['timezone_type']['id'])->toBe(3)
         ->and($result['meters'][0]['timezones'][0]['metering_timezones'][0]['metering_timezone_id'])->toBe(42)
-        ->and($result['meters'][0]['timezones'][0]['metering_timezones'][0]['timezone_name']['parameter_value'])->toBe('PEAK');
+        ->and($result['meters'][0]['timezones'][0]['metering_timezones'][0]['timezone_name']['parameter_value'])->toBe('PEAK')
+        ->and($result['meters'][0]['transformer_relations'][0]['ctpt_id'])->toBe(501)
+        ->and($result['meters'][0]['transformer_relations'][0]['status']['parameter_value'])->toBe('Active')
+        ->and($result['meters'][0]['transformer_relations'][0]['ctpt']['ctpt_serial'])->toBe('CTPT-001')
+        ->and($result['meters'][0]['transformer_relations'][0]['faulty_date'])->toBe('2024-01-15 12:30:00');
 });

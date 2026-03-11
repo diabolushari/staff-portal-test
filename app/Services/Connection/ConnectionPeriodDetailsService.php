@@ -3,6 +3,7 @@
 namespace App\Services\Connection;
 
 use App\GrpcConverters\Connection\ConnectionProtoConverter;
+use App\GrpcConverters\Metering\MeterTransformerRelProtoConvertor;
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\Metering\MeteringParameterProfileService;
@@ -117,10 +118,16 @@ class ConnectionPeriodDetailsService
             $timezones[] = $this->timezoneHistoryToArray($timezone);
         }
 
+        $transformerRelations = [];
+        foreach ($meter->getTransformerRelations() as $transformerRelation) {
+            $transformerRelations[] = MeterTransformerRelProtoConvertor::relProtoToArray($transformerRelation);
+        }
+
         return [
             'meter_id' => $meter->getMeterId(),
             'profiles' => $profiles,
             'timezones' => $timezones,
+            'transformer_relations' => $transformerRelations,
         ];
     }
 

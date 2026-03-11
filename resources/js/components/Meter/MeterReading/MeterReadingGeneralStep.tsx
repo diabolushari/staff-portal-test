@@ -1,3 +1,4 @@
+import { getMeterMappingForPeriod } from '@/components/Meter/MeterReading/valdiations/meter-reading-validation-helpers'
 import Field from '@/components/ui/field'
 import {
   Connection,
@@ -6,22 +7,22 @@ import {
   MeteringTimezoneSlot,
   MeterProfileParameter,
   MeterReadingValueGroup,
+  MeterTransformerAssignment,
   MeterWithTimezoneAndProfile,
 } from '@/interfaces/data_interfaces'
-import StrongText from '@/typography/StrongText'
-import { ConnectionDetailTooltip } from './ConnectionDetailTooltip'
-import dayjs from 'dayjs'
-import Datepicker from '@/ui/form/DatePicker'
 import { ParameterValues } from '@/interfaces/parameter_types'
-import SelectList from '@/ui/form/SelectList'
-import CheckBox from '@/ui/form/CheckBox'
-import { getDisplayDate } from '@/utils'
-import { useEffect, useMemo, useState } from 'react'
 import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
-import Button from '@/ui/button/Button'
-import axios from 'axios'
+import StrongText from '@/typography/StrongText'
 import { handleHttpErrors, showError } from '@/ui/alerts'
-import { getMeterMappingForPeriod } from '@/components/Meter/MeterReading/valdiations/meter-reading-validation-helpers'
+import Button from '@/ui/button/Button'
+import CheckBox from '@/ui/form/CheckBox'
+import Datepicker from '@/ui/form/DatePicker'
+import SelectList from '@/ui/form/SelectList'
+import { getDisplayDate } from '@/utils'
+import axios from 'axios'
+import dayjs from 'dayjs'
+import { useEffect, useMemo, useState } from 'react'
+import { ConnectionDetailTooltip } from './ConnectionDetailTooltip'
 
 interface Props {
   connectionWithConsumer: ConsumerData
@@ -60,6 +61,7 @@ interface MeterPeriodDetails {
     metering_timezones: MeteringTimezoneSlot[]
     timezone_type: ParameterValues | null
   }[]
+  transformer_relations: MeterTransformerAssignment[]
 }
 
 const getSmallestDate = (dates: string[]): string | null => {
@@ -205,6 +207,8 @@ export default function MeterReadingGeneralStep({
         return
       }
 
+      console.log(response.data)
+
       //check if any meter has multiple timezones or profiles
       let hasError = false
 
@@ -252,7 +256,10 @@ export default function MeterReadingGeneralStep({
             )
             return {
               meter_id: meter.meter_id,
-              meter: latestMeterReading.meter,
+              meter: {
+                ...latestMeterReading.meter,
+                transformers: meter.transformer_relations,
+              },
               meter_serial: latestMeterReading.meter.meter_serial,
               reading_parameters: meter.profiles[0].profile_parameters,
               timezones: meter.timezones[0].metering_timezones.map((timezone) => {

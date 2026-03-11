@@ -6,6 +6,7 @@ option php_namespace = "Proto\\Connections";
 option php_metadata_namespace = "GPBMetadata";
 
 import "connections/connections.proto";
+import "metering/meter-transformer-rel.proto";
 import "parameters/parameter-value.proto";
 import "meterreading/metering_profile_parameters.proto";
 import "metering/metering-timezones.proto";
@@ -31,6 +32,7 @@ message MeterPeriodDetails {
   int64 meter_id = 1;
   repeated ProfileHistoryItem profiles = 2;
   repeated TimezoneHistoryItem timezones = 3;
+  repeated com.kseb.consumerservice.proto.metering.MeterTransformerRelMessage transformer_relations = 4;
 }
 
 message GetConnectionPeriodDetailsResponse {

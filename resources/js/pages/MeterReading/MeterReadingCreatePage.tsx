@@ -1,4 +1,6 @@
 import MeterReadingGeneralStep from '@/components/Meter/MeterReading/MeterReadingGeneralStep'
+import { MeterReadingPreviewRef } from '@/components/Meter/MeterReading/MeterReadingPreview'
+import { ProfileReadingFormRef } from '@/components/Meter/MeterReading/ProfileReadingForm'
 import useMeterHealthForm from '@/components/Meter/MeterReading/ReadingForm/useMeterHealthForm'
 import useMeterReadingForm from '@/components/Meter/MeterReading/ReadingForm/useMeterReadingForm'
 import { consumerNavItems } from '@/components/Navbar/navitems'
@@ -16,11 +18,9 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Button from '@/ui/button/Button'
-import { useEffect, useMemo, useRef, useState } from 'react'
 import { getDisplayDate } from '@/utils'
-import { ProfileReadingFormRef } from '@/components/Meter/MeterReading/ProfileReadingForm'
-import { MeterReadingPreviewRef } from '@/components/Meter/MeterReading/MeterReadingPreview'
 import { getToday } from '@/utils/DateService'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 export interface MeterReadingForm {
   id: number
@@ -113,11 +113,6 @@ export default function MeterReadingCreatePage({
     editMode ? latestMeterReading : null
   )
 
-  useEffect(() => {
-    console.log('readingValues changed')
-    console.log(readingValues)
-  }, [readingValues])
-
   const { healthData, updateMeterHealth, updateCTPTHealth, updateRybValues } = useMeterHealthForm(
     metersWithTimezonesAndProfiles,
     meterHealthTypes,
@@ -125,6 +120,15 @@ export default function MeterReadingCreatePage({
     latestMeterReadingGroupByMeter,
     anomalyTypes
   )
+
+  useEffect(() => {
+    console.log('readingValues changed')
+    console.log(readingValues)
+    console.log('healthData')
+    console.log(healthData)
+    console.log('latest meter reading')
+    console.log(latestMeterReadingGroupByMeter)
+  }, [readingValues, healthData, latestMeterReadingGroupByMeter])
 
   const [selectedMeters, setSelectedMeters] = useState<number[]>([])
 
