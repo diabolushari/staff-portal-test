@@ -94,7 +94,7 @@ class SdDemandsController extends Controller
      */
     public function store(SdDemandFormRequest $request): RedirectResponse
     {
-        $response = $this->sdDemandService->create($request);
+        $response = $this->sdDemandService->createDemandWithRegister($request);
 
         $connectionId = $request->connectionId;
 
