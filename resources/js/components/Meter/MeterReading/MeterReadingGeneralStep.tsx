@@ -97,7 +97,7 @@ export default function MeterReadingGeneralStep({
   interimReasons,
   meterConnectionMappings,
   onMetersWithTimezonesAndProfilesChange,
-}: Props) {
+}: Readonly<Props>) {
   const maxDate = dayjs().format('DD-MM-YYYY')
   const maxDateForReadingStartDate = dayjs(maxDate).subtract(1, 'day').format('DD-MM-YYYY')
   const [openDateField, setOpenDateField] = useState(true)

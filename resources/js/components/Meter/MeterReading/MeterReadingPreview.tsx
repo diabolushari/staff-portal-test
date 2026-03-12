@@ -14,7 +14,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import PowerFactorBar from './MeterPowerFactor'
 import ProfileReadingForm, { ProfileReadingFormRef } from './ProfileReadingForm'
 import ReadingParameterPreviewCard from './ReadingForm/ReadingParameterPreviewCard'
-import { MeterHealth } from './ReadingForm/useMeterHealthForm'
+import { MeterHealthFormData } from './ReadingForm/useMeterHealthForm'
 import { MeterReadingFormState, TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
 
 interface PowerFactorData {
@@ -129,7 +129,7 @@ interface Props {
   hasMultipleMeters: boolean
   formData: MeterReadingForm
   readingValues: MeterReadingFormState[]
-  healthData: MeterHealth[]
+  healthData: MeterHealthFormData[]
   updateMeterHealth: (statusId: number, meter: Meter) => void
   updateCTPTHealth: (meterId: number, ctptId: number, statusId: number) => void
   activeProfile: { meterIdx: number; profileIdx: number } | null

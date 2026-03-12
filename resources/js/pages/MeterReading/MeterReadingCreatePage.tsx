@@ -1,5 +1,7 @@
 import MeterReadingGeneralStep from '@/components/Meter/MeterReading/MeterReadingGeneralStep'
+import MeterReadingObservationStep from '@/components/Meter/MeterReading/MeterReadingObservationStep'
 import { MeterReadingPreviewRef } from '@/components/Meter/MeterReading/MeterReadingPreview'
+import MeterReadingsStep from '@/components/Meter/MeterReading/MeterReadingsStep'
 import { ProfileReadingFormRef } from '@/components/Meter/MeterReading/ProfileReadingForm'
 import useMeterHealthForm from '@/components/Meter/MeterReading/ReadingForm/useMeterHealthForm'
 import useMeterReadingForm from '@/components/Meter/MeterReading/ReadingForm/useMeterReadingForm'
@@ -67,8 +69,6 @@ export default function MeterReadingCreatePage({
   latestMeterReadingGroupByMeter,
   meterConnectionMappings,
 }: Readonly<Props>) {
-  console.log(connectionWithConsumer)
-
   const breadcrumb: BreadcrumbItem[] = useMemo(() => {
     return [
       {
@@ -101,11 +101,6 @@ export default function MeterReadingCreatePage({
   const [metersWithTimezonesAndProfiles, setMetersWithTimezonesAndProfiles] = useState<
     MeterWithTimezoneAndProfile[]
   >([])
-
-  useEffect(() => {
-    console.log('metersWithTimezonesAndProfiles changed')
-    console.log(metersWithTimezonesAndProfiles)
-  }, [metersWithTimezonesAndProfiles])
 
   const { readingValues, updateReading } = useMeterReadingForm(
     metersWithTimezonesAndProfiles,
@@ -269,40 +264,40 @@ export default function MeterReadingCreatePage({
                 onMetersWithTimezonesAndProfilesChange={setMetersWithTimezonesAndProfiles}
               />
             )}
-            {/*{activeStep === 1 && (*/}
-            {/*  <MeterReadingObservationStep*/}
-            {/*    formData={formData}*/}
-            {/*    setFormValue={setFormValue}*/}
-            {/*    anomalyTypes={anomalyTypes}*/}
-            {/*    errors={errors}*/}
-            {/*    meterHealthData={healthData}*/}
-            {/*    updateRybValues={updateRybValues}*/}
-            {/*  />*/}
-            {/*)}*/}
-            {/*{activeStep === 2 && (*/}
-            {/*  <MeterReadingsStep*/}
-            {/*    healthData={healthData}*/}
-            {/*    metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}*/}
-            {/*    formData={formData}*/}
-            {/*    readingValues={readingValues}*/}
-            {/*    updateReading={updateReading}*/}
-            {/*    setFormValue={setFormValue}*/}
-            {/*    latestMeterReading={latestMeterReading}*/}
-            {/*    meterHealthTypes={meterHealthTypes}*/}
-            {/*    ctHealthTypes={ctHealthTypes}*/}
-            {/*    updateMeterHealth={updateMeterHealth}*/}
-            {/*    updateCTPTHealth={updateCTPTHealth}*/}
-            {/*    setIsOnParameterForm={setIsOnParameterForm}*/}
-            {/*    isFirstReading={isFirstReading}*/}
-            {/*    isOnparameterForm={isOnParamaterForm}*/}
-            {/*    profileRefs={profileRefs}*/}
-            {/*    activeProfile={activeProfile}*/}
-            {/*    setActiveProfile={setActiveProfile}*/}
-            {/*    previewRefs={previewRefs}*/}
-            {/*    setAllProfileHasData={setAllProfileHasData}*/}
-            {/*    setProfileErrorExist={setProfileErrorExist}*/}
-            {/*  />*/}
-            {/*)}*/}
+            {activeStep === 1 && (
+              <MeterReadingObservationStep
+                formData={formData}
+                setFormValue={setFormValue}
+                anomalyTypes={anomalyTypes}
+                errors={errors}
+                meterHealthData={healthData}
+                updateRybValues={updateRybValues}
+              />
+            )}
+            {activeStep === 2 && (
+              <MeterReadingsStep
+                healthData={healthData}
+                metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
+                formData={formData}
+                readingValues={readingValues}
+                updateReading={updateReading}
+                setFormValue={setFormValue}
+                latestMeterReading={latestMeterReading}
+                meterHealthTypes={meterHealthTypes}
+                ctHealthTypes={ctHealthTypes}
+                updateMeterHealth={updateMeterHealth}
+                updateCTPTHealth={updateCTPTHealth}
+                setIsOnParameterForm={setIsOnParameterForm}
+                isFirstReading={false}
+                isOnparameterForm={isOnParamaterForm}
+                profileRefs={profileRefs}
+                activeProfile={activeProfile}
+                setActiveProfile={setActiveProfile}
+                previewRefs={previewRefs}
+                setAllProfileHasData={setAllProfileHasData}
+                setProfileErrorExist={setProfileErrorExist}
+              />
+            )}
           </Stepper>
           <div className='mt-6 flex justify-between'>
             {activeStep === steps.length - 1 && allProfileHasData && !profileErrorExist && (

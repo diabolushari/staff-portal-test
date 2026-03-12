@@ -1,17 +1,17 @@
 import { Meter, MeterReading, MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
+import Button from '@/ui/button/Button'
 import React, { useMemo, useState } from 'react'
 import MeterReadingPreview, { MeterReadingPreviewRef } from './MeterReadingPreview'
 import { ProfileReadingFormRef } from './ProfileReadingForm'
-import { MeterHealth } from './ReadingForm/useMeterHealthForm'
+import { MeterHealthFormData } from './ReadingForm/useMeterHealthForm'
 import { MeterReadingFormState, TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
-import Button from '@/ui/button/Button'
 
 interface Props {
   metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
   formData: MeterReadingForm
-  healthData: MeterHealth[]
+  healthData: MeterHealthFormData[]
   setFormValue: (
     key: keyof MeterReadingForm
   ) => (value: MeterReadingForm[keyof MeterReadingForm]) => void
@@ -51,11 +51,10 @@ export default function MeterReadingsStep({
   setAllProfileHasData,
   setProfileErrorExist,
 }: Readonly<Props>) {
-  const filteredMetersWithTimezonesAndProfiles = useMemo(
-    () =>
-      metersWithTimezonesAndProfiles.filter((meter) => formData.meters.includes(meter.meter_id)),
-    [metersWithTimezonesAndProfiles, formData.meters]
-  )
+  const filteredMetersWithTimezonesAndProfiles = useMemo(() => {
+    return metersWithTimezonesAndProfiles
+  }, [metersWithTimezonesAndProfiles])
+
   const isSingleMeter = useMemo(
     () => filteredMetersWithTimezonesAndProfiles.length === 1,
     [filteredMetersWithTimezonesAndProfiles]
