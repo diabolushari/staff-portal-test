@@ -49,6 +49,14 @@ class GeneratingStationController extends Controller
                 'search' => $search,
             ],
         ]);
+
+        $response = $this->generatingStationService
+        ->listGeneratingStations($search);
+
+        return Inertia::render('GeneratingStation/GeneratingStationIndex', [
+            'generatingStations' => $response->data ?? [],
+            'filters' => ['search' => $search],
+        ]);
     }
     /**
      * Show create form

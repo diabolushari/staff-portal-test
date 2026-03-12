@@ -944,3 +944,31 @@ export interface GeneratingStation {
   address?: Address
   attributes: GeneratingStationAttribute[]
 }
+
+export interface StationConsumerRel {
+  version_id?: number
+  rel_id?: number
+
+  station_id: number
+  station_connection_id: number
+  consumer_connection_id: number
+
+  consumer_type_id: number
+
+  consumer_priority_order: number
+  station_priority_order: number
+
+  effective_start: string
+  effective_end?: string
+
+  is_current: boolean
+
+  created_by?: number
+  updated_by?: number
+  deleted_by?: number
+
+  station?: GeneratingStation
+  station_connection?: Connection
+  consumer_connection?: Connection
+  consumer_type?: ParameterValues
+}

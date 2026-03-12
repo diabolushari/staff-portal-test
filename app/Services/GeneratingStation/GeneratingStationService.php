@@ -8,6 +8,7 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
 use Proto\GeneratingStation\CreateGeneratingStationRequest;
+use Proto\GeneratingStation\ListGeneratingStationRequest;
 use Proto\GeneratingStation\ListGeneratingStationPaginatedRequest;
 use Proto\GeneratingStation\GetGeneratingStationRequest;
 use Proto\GeneratingStation\GeneratingStationMessage;
@@ -76,6 +77,40 @@ class GeneratingStationService
 
         return GrpcServiceResponse::success(
             $data,
+            $response,
+            $status->code,
+            $status->details
+        );
+    }
+
+    public function listGeneratingStations(?string $search = null): GrpcServiceResponse
+    {
+        $req = new ListGeneratingStationRequest();
+
+        if ($search !== null) {
+            $req->setSearch($search);
+        }
+
+        [$response, $status] =
+            $this->client->ListGeneratingStation($req)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $stations = [];
+
+        foreach ($response->getItems() as $station) {
+            $stations[] = GeneratingStationConverter::convertToArray($station);
+        }
+
+        return GrpcServiceResponse::success(
+            $stations,
             $response,
             $status->code,
             $status->details
