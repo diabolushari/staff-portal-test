@@ -3,7 +3,6 @@
 namespace App\GrpcConverters\SecurityDeposit;
 
 use App\GrpcConverters\Billing\ChargeHeadDefinitionConverter;
-use App\GrpcConverters\Connection\ConnectionProtoConverter;
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Http\Requests\SecurityDeposit\SdDemandFormRequest;
 use Proto\Consumers\CreateSdDemandWithRegisterRequest;
@@ -24,7 +23,6 @@ class SdDemandConverter
             'sd_demand_id' => $sdDemand->getSdDemandId(),
             'connection_id' => $sdDemand->getConnectionId(),
             'charge_head_definition_id' => $sdDemand->getChargeHeadDefinitionId(),
-            'connection' => $sdDemand->hasConnection() ? ConnectionProtoConverter::convertToArray($sdDemand->getConnection()) : null,
             'demand_type_id' => $sdDemand->getDemandTypeId(),
             'demand_type' => $sdDemand->hasDemandType() ? ParameterValueProtoConvertor::convertToArray($sdDemand->getDemandType()) : null,
             'total_sd_amount' => $sdDemand->getTotalSdAmount(),

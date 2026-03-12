@@ -209,6 +209,7 @@ export interface Connection {
   previous_reading: MeterReading
   green_energy?: ConnectionGreenEnergy[]
   alternate_tariff?: ParameterValues
+  sd_balance_summary?: SdBalanceSummary[]
 }
 
 export interface ConnectionGreenEnergy {

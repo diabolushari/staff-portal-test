@@ -7,7 +7,6 @@ option php_metadata_namespace = "GPBMetadata";
 
 import "google/protobuf/empty.proto";
 import "parameters/parameter-value.proto";
-import "connections/connections.proto";
 import "securitydeposit/sd-collections.proto";
 import "billing/charge_head_definition.proto";
 import "securitydeposit/sd-demand-status.proto";
@@ -26,11 +25,10 @@ message SdDemandMessage {
   optional int32 updated_by = 11;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto demand_type = 12;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto calculation_basic = 13;
-  com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 14;
-  com.kseb.consumerservice.proto.billing.ChargeHeadDefinitionMessage charge_head_definition = 15;
-  repeated SdCollectionMessage collections = 16;
-  optional com.kseb.consumerservice.grpc.securitydeposit.SdDemandStatusMessage latest_status = 17;
-  repeated com.kseb.consumerservice.grpc.securitydeposit.SdDemandStatusMessage demand_status = 18;
+  com.kseb.consumerservice.proto.billing.ChargeHeadDefinitionMessage charge_head_definition = 14;
+  repeated SdCollectionMessage collections = 15;
+  optional com.kseb.consumerservice.grpc.securitydeposit.SdDemandStatusMessage latest_status = 16;
+  repeated com.kseb.consumerservice.grpc.securitydeposit.SdDemandStatusMessage demand_status = 17;
 }
 
 message CreateSdDemandRequest {

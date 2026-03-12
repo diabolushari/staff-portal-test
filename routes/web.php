@@ -44,6 +44,7 @@ use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
+use App\Http\Controllers\GeneratingStation\GeneratingStationController;
 use App\Http\Controllers\Metering\CreateMeterReadingController;
 use App\Http\Controllers\Metering\MeterConnectionMappingController;
 use App\Http\Controllers\Metering\MeterConnectionMappingCreateController;
@@ -67,10 +68,10 @@ use App\Http\Controllers\Offices\OfficesCreateWithCsvController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
+use App\Http\Controllers\SecurityDeposit\Consumer\ConsumerSDController;
 use App\Http\Controllers\SecurityDeposit\SdAttributeDownloadController;
 use App\Http\Controllers\SecurityDeposit\SdCollectionController;
 use App\Http\Controllers\SecurityDeposit\SdDemandsController;
-use App\Http\Controllers\GeneratingStation\GeneratingStationController;
 use App\Http\Controllers\SecurityDeposit\SdRegisterController;
 use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
@@ -192,12 +193,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->only(['create', 'store']);
     Route::get('attribute-download', SdAttributeDownloadController::class)
         ->name('attribute-download');
-    //generating station
+    // generating station
     Route::resource('generating-stations', GeneratingStationController::class)
         ->only(['index', 'create', 'store', 'show']);
 
     Route::get('sd-register', SdRegisterController::class)
         ->name('sd-register');
+
+    Route::get('consumer-sd', ConsumerSDController::class)
+        ->name('consumer-sd');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
@@ -236,5 +240,5 @@ Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
 
 // pdf download
 Route::get('pdf-download/{billId}', [BillingPdfController::class, 'index'])->name('pdf-download');
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

@@ -19,7 +19,7 @@ import "meterreading/meter_reading.proto";
 import "connections/connection-flag.proto";
 import "connections/connection-generation-type.proto";
 import "greenenergy/green-energy.proto";
-
+import "securitydeposit/sd-balance-summary.proto";
 
 
 // Connection table
@@ -84,7 +84,8 @@ message ConnectionMessage {
   optional com.kseb.consumerservice.proto.meterreading.MeterReadingMessage previous_reading = 58;
   com.kseb.consumerservice.proto.parameters.ParameterValueProto billing_side = 59;
   repeated com.kseb.consumerservice.proto.greenenergy.GreenEnergyMessage green_energy = 60;
-  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto alternate_tariff = 61; 
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto alternate_tariff = 61;
+  repeated com.kseb.consumerservice.grpc.securitydeposit.SdBalanceSummaryMessage sd_balance_summary = 62;
 
 }
 
@@ -122,6 +123,7 @@ message CreateConnectionRequest {
   repeated int64 other_purposes = 30;
   repeated com.kseb.consumerservice.grpc.connections.ConnectionFlagFormRequest connection_flags = 31;
   repeated com.kseb.consumerservice.grpc.connections.ConnectionGenerationFormRequest connection_generation_types = 32;
+
 
 }
 
@@ -243,6 +245,20 @@ message ConnectionUpdateResponse {
   ConnectionMessage connection = 1;
 }
 
+message ConnectionSdBalanceSummaryListRequest {
+ optional int32 connection_id = 1;
+  int32 page_number = 2;
+  int32 page_size = 3;
+}
+
+message ConnectionSdBalanceSummaryListResponse {
+ repeated ConnectionMessage connection = 1;
+  int64 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+  int32 total_pages = 5;
+}
+
 
 // Service definitions
 service ConnectionService {
@@ -252,4 +268,5 @@ service ConnectionService {
   rpc GetConnection(GetConnectionRequest) returns (GetConnectionResponse);
   rpc UpdateConnection(ConnectionUpdateRequest) returns (ConnectionUpdateResponse);
   rpc DeleteConnection(ConnectionRequest) returns (DeleteResponse);
+  rpc ListConnectionSdBalanceSummaries(ConnectionSdBalanceSummaryListRequest) returns (ConnectionSdBalanceSummaryListResponse);
 }
