@@ -32,6 +32,12 @@ export default function GeneratingStationShowPage({ station }: Props) {
       icon: '',
       href: route('generating-stations.consumers', station?.station_id),
     },
+    {
+      value: 'transaction',
+      label: 'Transactions',
+      icon: '',
+      href: route('generating-stations.transactions', station?.station_id),
+    },
   ]
   return (
     <MainLayout

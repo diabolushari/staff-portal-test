@@ -1,22 +1,21 @@
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import { consumerNavItems } from '@/components/Navbar/navitems'
-import StationConsumerList from '@/components/GeneratingStation/StationConsumerList'
-import { GeneratingStation, StationConsumerRel } from '@/interfaces/data_interfaces'
+import { GeneratingStation } from '@/interfaces/data_interfaces'
 import SingleTabGroup from '@/components/ui/single-tab'
-import { Value } from '@radix-ui/react-select'
+import StationTransactionList from '@/components/GeneratingStation/StationTransactionList'
 
 interface Props {
-  relations: StationConsumerRel[]
+  transactions: any[]
   stationId: number
   station: GeneratingStation
 }
 
-export default function StationConsumersPage({ relations, stationId, station }: Props) {
+export default function StationTransactionPage({ transactions, stationId, station }: Props) {
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Home', href: '/' },
     { title: 'Generating Stations', href: '/generating-stations' },
-    { title: 'Consumers', href: '#' },
+    { title: 'Transactions', href: '#' },
   ]
 
   const tabs = [
@@ -39,19 +38,20 @@ export default function StationConsumersPage({ relations, stationId, station }: 
       href: route('generating-stations.transactions', station?.station_id),
     },
   ]
+
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
       navItems={consumerNavItems}
       selectedItem='Generating Stations'
-      title='Station Consumers'
+      title='Station Transactions'
     >
       <SingleTabGroup
         tabs={tabs}
-        defaultValue='consumer'
+        defaultValue='transaction'
       />
 
-      <StationConsumerList relations={relations} />
+      <StationTransactionList transactions={transactions} />
     </MainLayout>
   )
 }
