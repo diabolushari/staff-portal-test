@@ -65,31 +65,29 @@ class GeneratingStationController extends Controller
     {
         $connectionId = $request->input('connectionId');
 
-        [$generationStatus, $generationTypes, $voltageCategories, $plantTypes, $attributeDefinitions, $districts, $states] = Concurrency::run(
-            fn() => $this->parameterValueService
+            $generationStatus = $this->parameterValueService
                 ->getParameterValues(null, null, null, 'Station', 'Generation Status')
-                ->data,
-            fn() => $this->parameterValueService
+                ->data;
+            $generationTypes = $this->parameterValueService
                 ->getParameterValues(null, null, null, 'Station', 'Generation Type')
-                ->data,
-            fn() => $this->parameterValueService
+                ->data;
+            $voltageCategories = $this->parameterValueService
                 ->getParameterValues(null, null, null, 'Station', 'Voltage Category')
-                ->data,
-            fn() => $this->parameterValueService
+                ->data;
+            $plantTypes = $this->parameterValueService
                 ->getParameterValues(null, null, null, 'Station', 'Plant Type')
-                ->data,
-            fn() => $this->parameterValueService
+                ->data;
+            $attributeDefinitions = $this->parameterValueService
                 ->getParameterValues(null, null, null, 'Station', 'Generating Station Attribute')
-                ->data,
-            fn() => $this->geoRegionsService->getGeoRegions(
+                ->data;
+            $districts = $this->geoRegionsService->getGeoRegions(
                 'Administrative',
                 'District'
-            ),
-            fn() => $this->geoRegionsService->getGeoRegions(
+            );
+            $states = $this->geoRegionsService->getGeoRegions(
                 'Administrative',
                 'State'
-            ),
-        );
+            );
 
         return Inertia::render('GeneratingStation/GeneratingStationCreate', [
             'connectionId' => $connectionId,
