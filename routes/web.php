@@ -32,6 +32,7 @@ use App\Http\Controllers\Connection\ConnectionGreenEnergyController;
 use App\Http\Controllers\Connection\ConnectionsPartyController;
 use App\Http\Controllers\Connection\ConsumerController;
 use App\Http\Controllers\Connection\CreateConsumerController;
+use App\Http\Controllers\Connection\GeneratingStation\ConnectionStationConsumerRelController;
 use App\Http\Controllers\Connection\GetConnectionMeterController;
 use App\Http\Controllers\Connection\GetConnectionMeterTransformerController;
 use App\Http\Controllers\Connection\GetConnectionPartyController;
@@ -40,13 +41,14 @@ use App\Http\Controllers\Connection\MeterConnectionMappingUpdateChangeController
 use App\Http\Controllers\Connection\MeterConnectionMappingUpdateStatusController;
 use App\Http\Controllers\Connection\PurposeInfoController;
 use App\Http\Controllers\Connection\SecurityDeposit\ConnectionSdDemandController;
-use App\Http\Controllers\Connection\GeneratingStation\ConnectionStationConsumerRelController;
 use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
 use App\Http\Controllers\GeneratingStation\GeneratingStationApiController;
 use App\Http\Controllers\GeneratingStation\GeneratingStationController;
+use App\Http\Controllers\GeneratingStation\StationConsumerController;
+use App\Http\Controllers\GeneratingStation\StationConsumerRelController;
 use App\Http\Controllers\Metering\CreateMeterReadingController;
 use App\Http\Controllers\Metering\MeterConnectionMappingController;
 use App\Http\Controllers\Metering\MeterConnectionMappingCreateController;
@@ -74,8 +76,6 @@ use App\Http\Controllers\SecurityDeposit\Consumer\ConsumerSDController;
 use App\Http\Controllers\SecurityDeposit\SdAttributeDownloadController;
 use App\Http\Controllers\SecurityDeposit\SdCollectionController;
 use App\Http\Controllers\SecurityDeposit\SdDemandsController;
-use App\Http\Controllers\GeneratingStation\StationConsumerController;
-use App\Http\Controllers\GeneratingStation\StationConsumerRelController;
 use App\Http\Controllers\SecurityDeposit\SdRegisterController;
 use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
@@ -210,7 +210,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('connection/{connectionId}/station-consumer-rels', ConnectionStationConsumerRelController::class)
         ->name('connection.station-consumer-rels');
 
-    Route::get('/generating-stations/{stationId}/consumers',[StationConsumerController::class, 'index'])
+    Route::get('/generating-stations/{stationId}/consumers', [StationConsumerController::class, 'index'])
         ->name('generating-stations.consumers');
 
     Route::get('consumer-sd', ConsumerSDController::class)
