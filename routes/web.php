@@ -73,6 +73,7 @@ use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SecurityDeposit\Consumer\ConsumerSDController;
+use App\Http\Controllers\SecurityDeposit\Consumer\ConsumerSDGroupController;
 use App\Http\Controllers\SecurityDeposit\SdAttributeDownloadController;
 use App\Http\Controllers\SecurityDeposit\SdCollectionController;
 use App\Http\Controllers\SecurityDeposit\SdDemandsController;
@@ -215,6 +216,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('consumer-sd', ConsumerSDController::class)
         ->name('consumer-sd');
+
+    Route::get('consumer-sd/group', [ConsumerSDGroupController::class, 'index'])
+        ->name('consumer-sd.group');
+
+    Route::get('consumer-sd/group/{id}', [ConsumerSDGroupController::class, 'show'])
+        ->name('consumer-sd.group.show');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
