@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.securitydeposit;
+
+
+
+option php_namespace = "Proto\\SecurityDeposit";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/empty.proto";
+import "parameters/parameter-value.proto";
+import "connections/connections.proto";
+import "securitydeposit/sd-demands.proto";
+import "billing/charge_head_definition.proto";
+
+
+
+
+message SdRecalculateRequest {
+  int32 connection_id = 1;
+  optional string context_date = 2;
+  int32 trigger_type_id = 3;
+
+}
+
+message SdRecalculateWithMultipleConnectionsRequest {
+  repeated int32 connection_ids = 1;
+  optional string context_date = 2;
+  int32 trigger_type_id = 3;
+
+}
+
+message SdRecalculateResponse {
+  bool success = 1;
+}
+
+service SdRecalculateService {
+  rpc RecalculateSd(SdRecalculateRequest) returns (SdRecalculateResponse);
+  rpc RecalculateSdWithMultipleConnections(SdRecalculateWithMultipleConnectionsRequest) returns (SdRecalculateResponse);
+}

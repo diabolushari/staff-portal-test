@@ -1,10 +1,14 @@
 import { billingNavItems } from '@/components/Navbar/navitems'
 import { Button } from '@/components/ui/button'
 import IconSingleTab from '@/components/ui/icon-single-tab'
+import useCustomForm from '@/hooks/useCustomForm'
+import useInertiaPost from '@/hooks/useInertiaPost'
 import { BillingGroup } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import CheckBox from '@/ui/form/CheckBox'
+import SelectList from '@/ui/form/SelectList'
+import { error } from 'console'
 import { User, Users } from 'lucide-react'
 import { useState } from 'react'
 
@@ -54,6 +58,13 @@ export default function ConsumerSDGroupShowPage({ group }: Readonly<PageProps>) 
   ]
   const [selectAll, setSelectAll] = useState<boolean>(false)
   const [selectedConnections, setSelectedConnections] = useState<number[]>([])
+  const { formData, setFormValue } = useCustomForm({
+    connection_ids: [],
+    trigger_type_id: 1,
+    context_date: '',
+  })
+
+  const { post, loading } = useInertiaPost(route('sd-assess'))
 
   const handleSelectAllToggle = () => {
     if (selectAll) {
@@ -77,8 +88,12 @@ export default function ConsumerSDGroupShowPage({ group }: Readonly<PageProps>) 
     setSelectAll(updatedSelection.length === group.connections.length)
   }
 
-  const handleAssessSelected = () => {}
-  console.log(group)
+  const handleAssessSelected = () => {
+    setFormValue('connection_ids')(selectedConnections)
+    setFormValue('context_date')('2025-04-01')
+    const payLoad = { ...formData, billing_group_id: group.billing_group_id }
+    post(payLoad)
+  }
 
   return (
     <MainLayout

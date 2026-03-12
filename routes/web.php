@@ -74,6 +74,7 @@ use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SecurityDeposit\Consumer\ConsumerSDController;
 use App\Http\Controllers\SecurityDeposit\Consumer\ConsumerSDGroupController;
+use App\Http\Controllers\SecurityDeposit\SdAssessController;
 use App\Http\Controllers\SecurityDeposit\SdAttributeDownloadController;
 use App\Http\Controllers\SecurityDeposit\SdCollectionController;
 use App\Http\Controllers\SecurityDeposit\SdDemandsController;
@@ -222,6 +223,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('consumer-sd/group/{id}', [ConsumerSDGroupController::class, 'show'])
         ->name('consumer-sd.group.show');
+
+    Route::post('sd-assess', SdAssessController::class)
+        ->name('sd-assess');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
@@ -261,5 +265,5 @@ Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
 
 // pdf download
 Route::get('pdf-download/{billId}', [BillingPdfController::class, 'index'])->name('pdf-download');
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
