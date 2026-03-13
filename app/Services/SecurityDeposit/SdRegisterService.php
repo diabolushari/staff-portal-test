@@ -6,6 +6,7 @@ use App\GrpcConverters\SecurityDeposit\SdRegisterConverter;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
+use Proto\Consumers\GetSdRegisterByIdRequest;
 use Proto\Consumers\ListSdRegistersPaginatedRequest;
 use Proto\Consumers\SdRegisterServiceClient;
 
@@ -57,5 +58,25 @@ class SdRegisterService
         ];
 
         return GrpcServiceResponse::success($paginatedData, $response, $status->code, $status->details);
+    }
+
+    public function getSdRegisterById(int $sdRegisterId)
+    {
+        $request = new GetSdRegisterByIdRequest;
+        $request->setSdRegisterId($sdRegisterId);
+
+        [$response, $status] = $this->client->GetSdRegister($request)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+        $sdRegister = $this->sdRegisterConverter->convertToArray($response->getSdRegister());
+
+        return GrpcServiceResponse::success($sdRegister, $response, $status->code, $status->details);
     }
 }

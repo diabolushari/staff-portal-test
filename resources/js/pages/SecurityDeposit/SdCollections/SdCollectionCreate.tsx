@@ -1,6 +1,6 @@
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import SdCollectionForm from '@/components/SecurityDeposit/SdCollections/SdCollectionForm'
-import { SdDemand } from '@/interfaces/data_interfaces'
+import { Connection, SdDemand, SdRegister } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import { BreadcrumbItem } from '@/types'
@@ -9,15 +9,17 @@ interface Props {
   sdDemand: SdDemand
   paymentModes: ParameterValues[]
   collectionStatus: ParameterValues[]
+  connection: Connection
+  sdRegister: SdRegister
 }
 //TODO need to show demand details in this page, currently only showing consumer number in heading, can show more details in description or in a separate section
 export default function SdCollectionCreate({
   sdDemand,
   paymentModes,
   collectionStatus,
+  connection,
+  sdRegister,
 }: Readonly<Props>) {
-  const connection = sdDemand.connection
-
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Home', href: '/' },
     {
@@ -55,6 +57,8 @@ export default function SdCollectionCreate({
           sdDemand={sdDemand}
           paymentModes={paymentModes}
           collectionStatus={collectionStatus}
+          connection={connection}
+          sdRegister={sdRegister}
         />
       </div>
     </ConnectionsLayout>

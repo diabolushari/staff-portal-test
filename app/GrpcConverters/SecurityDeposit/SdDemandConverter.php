@@ -18,6 +18,11 @@ class SdDemandConverter
         if ($sdDemand === null) {
             return null;
         }
+        $collections = [];
+
+        foreach ($sdDemand->getCollections() as $collection) {
+            $collections[] = SdCollectionConverter::convertToArray($collection);
+        }
 
         return [
             'sd_demand_id' => $sdDemand->getSdDemandId(),
@@ -31,6 +36,7 @@ class SdDemandConverter
             'charge_head_definition' => $sdDemand->hasChargeHeadDefinition() ?
                 ChargeHeadDefinitionConverter::convertToArray($sdDemand->getChargeHeadDefinition()) :
                 null,
+            'collections' => $collections,
             'is_active' => $sdDemand->getIsActive(),
             'created_by' => $sdDemand->getCreatedBy(),
             'updated_by' => $sdDemand->getUpdatedBy(),

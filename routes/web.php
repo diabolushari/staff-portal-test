@@ -203,8 +203,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('generating-stations', GeneratingStationController::class)
         ->only(['index', 'create', 'store', 'show']);
 
-    Route::get('sd-register', SdRegisterController::class)
+    Route::get('sd-register', [SdRegisterController::class, 'index'])
         ->name('sd-register');
+    Route::get('sd-register/{id}', [SdRegisterController::class, 'show'])
+        ->name('sd-register.show');
 
     Route::resource('station-consumer-rels', StationConsumerRelController::class)
         ->only(['create', 'store', 'edit', 'update', 'destroy']);
@@ -265,5 +267,5 @@ Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
 
 // pdf download
 Route::get('pdf-download/{billId}', [BillingPdfController::class, 'index'])->name('pdf-download');
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

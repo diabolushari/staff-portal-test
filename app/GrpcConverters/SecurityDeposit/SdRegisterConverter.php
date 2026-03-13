@@ -12,7 +12,7 @@ class SdRegisterConverter
     /**
      * Convert SdRegisterMessage proto to array.
      */
-    public static function convertTOArray(?SdRegisterMessage $sdRegister): ?array
+    public static function convertToArray(?SdRegisterMessage $sdRegister): ?array
     {
         if ($sdRegister === null) {
             return null;
@@ -44,6 +44,7 @@ class SdRegisterConverter
                          ConnectionProtoConverter::convertToArray($sdRegister->getConnection()) : null,
             'sd_demand' => $sdRegister->hasSdDemand() ?
                          SdDemandConverter::convertToArray($sdRegister->getSdDemand()) : null,
+
         ];
     }
 }

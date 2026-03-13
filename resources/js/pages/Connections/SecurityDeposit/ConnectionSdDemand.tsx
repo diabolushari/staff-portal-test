@@ -58,7 +58,14 @@ const ConnectionSdDemand = ({ connection, sdDemands, balanceSummary }: Props) =>
           buttonText='Add SD Demand'
         />
       </div>
-      <div>{sdDemands && <SdDemandList sdDemands={sdDemands.data} />}</div>
+      <div>
+        {sdDemands && (
+          <SdDemandList
+            sdDemands={sdDemands.data}
+            connection={connection}
+          />
+        )}
+      </div>
       <div>{sdDemands && <Pagination pagination={sdDemands} />}</div>
     </ConnectionsLayout>
   )

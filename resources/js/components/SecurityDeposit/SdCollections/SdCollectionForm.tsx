@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { SdDemand } from '@/interfaces/data_interfaces'
+import { Connection, SdDemand, SdRegister } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import CheckBox from '@/ui/form/CheckBox'
 import Datepicker from '@/ui/form/DatePicker'
@@ -14,9 +14,17 @@ interface Props {
   sdDemand: SdDemand
   paymentModes: ParameterValues[]
   collectionStatus: ParameterValues[]
+  connection: Connection
+  sdRegister: SdRegister
 }
 
-const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) => {
+const SdCollectionForm = ({
+  sdDemand,
+  paymentModes,
+  collectionStatus,
+  connection,
+  sdRegister,
+}: Props) => {
   const [selectedCollectionMode, setSelectedCollectionMode] = useState<ParameterValues | null>(null)
   const [isReversed, setIsReversed] = useState<boolean>(false)
 
@@ -35,6 +43,8 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
     transaction_ref: '',
     remarks: '',
     status_id: '',
+    connection_id: connection.connection_id,
+    sd_register_id: sdRegister.sd_register_id,
   })
 
   //TODO useEffect has missing dependency of collectionModes
@@ -93,6 +103,11 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
 
   return (
     <div>
+      <div className='flex items-center justify-between p-5'>
+        <h2 className='text-kseb-primary text-lg font-bold'>
+          TOTAL DEMAND: ₹{sdDemand.total_sd_amount}
+        </h2>
+      </div>
       <form onSubmit={handleSubmit}>
         <div className='grid grid-cols-2 gap-4'>
           <Datepicker
@@ -216,7 +231,7 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
           />
         </div>
 
-        <div className='flex justify-end'>
+        <div className='flex justify-end p-3'>
           <Button
             variant={'default'}
             type='submit'
