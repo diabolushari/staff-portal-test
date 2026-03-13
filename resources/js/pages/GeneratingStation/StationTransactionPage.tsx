@@ -44,7 +44,7 @@ export default function StationTransactionPage({ transactions, stationId, statio
       breadcrumb={breadcrumbs}
       navItems={consumerNavItems}
       selectedItem='Generating Stations'
-      title='Station Transactions'
+      title='Transaction Summary'
     >
       <SingleTabGroup
         tabs={tabs}
