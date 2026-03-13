@@ -1,5 +1,6 @@
 import { SdRegister } from '@/interfaces/data_interfaces'
 import { getDisplayDate } from '@/utils'
+import { router } from '@inertiajs/react'
 
 interface Props {
   sdRegisters: SdRegister[]
@@ -23,7 +24,8 @@ const SdRegisterList = ({ sdRegisters }: Props) => {
       {sdRegisters.map((sdRegister) => (
         <div
           key={sdRegister.sd_register_id}
-          className='normal-font grid grid-cols-10 gap-x-6 gap-y-2'
+          className='normal-font grid cursor-pointer grid-cols-10 gap-x-6 gap-y-2 hover:bg-gray-100'
+          onClick={() => router.get(route(`sd-register.show`, sdRegister.sd_register_id))}
         >
           <span>{sdRegister.sd_type.name}</span>
           <span>{sdRegister.sd_demand.demand_type.parameter_value}</span>

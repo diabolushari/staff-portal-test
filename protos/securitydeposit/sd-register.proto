@@ -5,7 +5,6 @@ package com.kseb.consumerservice.grpc.securitydeposit;
 option php_namespace = "Proto\\Consumers";
 option php_metadata_namespace = "GPBMetadata";
 
-
 import "google/protobuf/empty.proto";
 import "parameters/parameter-value.proto";
 import "connections/connections.proto";
@@ -63,9 +62,18 @@ message ListSdRegistersPaginatedResponse {
   int32 total_pages = 5;
 }
 
+message GetSdRegisterByIdRequest {
+  int32 sd_register_id = 1;
+}
+
+message GetSdRegisterByIdResponse {
+  SdRegisterMessage sd_register = 1;
+}
+
 
 
 service SdRegisterService {
   rpc ListSdRegisters(ListSdRegistersRequest) returns (ListSdRegistersResponse);
   rpc ListSdRegistersPaginated(ListSdRegistersPaginatedRequest) returns (ListSdRegistersPaginatedResponse);
+  rpc GetSdRegister(GetSdRegisterByIdRequest) returns (GetSdRegisterByIdResponse);
 }

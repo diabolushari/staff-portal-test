@@ -853,9 +853,28 @@ export interface SdDemand {
   charge_head_definition_id: number
   charge_head_definition: ChargeHeadDefinition
   calculation_basic?: ParameterValues
+  sd_demand_status?: SdDemandStatus
   collections?: SdCollection[]
 }
-
+export interface SdDemandStatus {
+  status_log_id: number
+  sd_demand_id: number
+  sd_collection_id: number
+  status_id: number
+  outstanding_amount: number
+  is_gl_posted: boolean
+  gl_posted_ts: string
+  gl_posted_by: number
+  gl_reference: string
+  remarks: string
+  created_ts: string
+  updated_ts: string
+  created_by: number
+  updated_by: number
+  deleted_ts: string
+  deleted_by: number
+  status: ParameterValues
+}
 export interface SdCollection {
   sd_collection_id: number
   sd_demand_id: number

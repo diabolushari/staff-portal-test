@@ -13,7 +13,7 @@ class SdRegisterController extends Controller
         private readonly SdRegisterService $sdRegisterService,
     ) {}
 
-    public function __invoke()
+    public function index()
     {
         $sdRegisters = $this->sdRegisterService->listPaginatedSdRegisters();
         $paginated = null;
@@ -30,6 +30,15 @@ class SdRegisterController extends Controller
 
         return Inertia::render('SecurityDeposit/SdRegister/SdRegisterIndex', [
             'sdRegisters' => $paginated,
+        ]);
+    }
+
+    public function show(int $id)
+    {
+        $sdRegister = $this->sdRegisterService->getSdRegisterById($id)->data;
+
+        return Inertia::render('SecurityDeposit/SdRegister/SdRegisterShow', [
+            'sdRegister' => $sdRegister,
         ]);
     }
 }
