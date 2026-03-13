@@ -49,7 +49,9 @@ const LastAssessmentCard = ({ sdRegister }: Props) => {
       {/* Amount */}
       <div>
         <p className='mb-1 text-xs text-gray-500'>Security Deposit Required</p>
-        <p className='text-kseb-primary text-2xl font-semibold'>₹{sdRegister?.sd_amount}</p>
+        <p className='text-kseb-primary text-2xl font-semibold'>
+          ₹{sdRegister?.sd_demand?.total_sd_amount}
+        </p>
       </div>
     </Card>
   )
