@@ -21,7 +21,7 @@ const LastAssessmentCard = ({ sdRegister }: Props) => {
         <span className='text-xs font-semibold tracking-wider text-gray-500'>
           LAST ASSESSMENT SUMMARY
         </span>
-        {sdRegister?.is_fully_settled ? (
+        {!sdRegister?.is_fully_settled ? (
           <span className='rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-600'>
             Not Settled
           </span>
