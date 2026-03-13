@@ -21,12 +21,12 @@ export default function SdCollectionCreate({
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Home', href: '/' },
     {
-      title: connection.consumer_number,
-      href: `/connections/${connection.connection_id}`,
+      title: connection?.consumer_number,
+      href: `/connections/${connection?.connection_id}`,
     },
     {
       title: 'Security Deposit Demands',
-      href: `/connection/${connection.connection_id}/sd-demands`,
+      href: `/connection/${connection?.connection_id}/sd-demands`,
     },
     {
       title: 'Add SD Collection',
