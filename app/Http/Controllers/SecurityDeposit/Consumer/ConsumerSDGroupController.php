@@ -5,6 +5,8 @@ namespace App\Http\Controllers\SecurityDeposit\Consumer;
 use App\Http\Controllers\Controller;
 use App\Services\BillingGroup\BillGenerationJobService;
 use App\Services\BillingGroup\BillingGroupService;
+use App\Services\Parameters\ParameterValueService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
@@ -14,7 +16,9 @@ class ConsumerSDGroupController extends Controller
 {
     public function __construct(
         private readonly BillingGroupService $billingGroupService,
-        private readonly BillGenerationJobService $billingGenerateJobService) {}
+        private readonly BillGenerationJobService $billingGenerateJobService,
+        private readonly ParameterValueService $parameterValueService
+    ) {}
 
     public function index(Request $request): Response
     {
@@ -24,6 +28,9 @@ class ConsumerSDGroupController extends Controller
         $sortBy = $request->input('sort_by') ?? null;
         $sortDirection = $request->input('sort_direction') ?? null;
         $response = $this->billingGroupService->listPaginatedBillingGroups($pageNumber, $pageSize, $search, $sortBy, $sortDirection);
+        $triggerTypes = $this->parameterValueService
+            ->getParameterValues(null, null, null, 'Connection', 'SD Trigger Type')
+            ->data;
 
         $paginated = null;
         if (! empty($response->data)) {
@@ -39,12 +46,16 @@ class ConsumerSDGroupController extends Controller
         return Inertia::render('SecurityDeposit/Consumer/ConsumerSDGroupIndexPage', [
             'groups' => $paginated,
             'oldSearch' => $search,
+            'triggerTypes' => $triggerTypes,
         ]);
     }
 
-    public function show(int $id)
+    public function show(int $id): Response|RedirectResponse
     {
         $response = $this->billingGroupService->getBillingGroup(null, $id);
+        $triggerTypes = $this->parameterValueService
+            ->getParameterValues(null, null, null, 'Connection', 'SD Trigger Type')
+            ->data;
 
         if ($response->hasValidationError()) {
             return $response->error ?? redirect()->back()->with(['error' => 'Failed to get billing group']);
@@ -52,6 +63,7 @@ class ConsumerSDGroupController extends Controller
 
         return Inertia::render('SecurityDeposit/Consumer/ConsumerSDGroupShowPage', [
             'group' => $response->data,
+            'triggerTypes' => $triggerTypes,
         ]);
     }
 }

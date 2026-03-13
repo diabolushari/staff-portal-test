@@ -1,9 +1,11 @@
 import { billingNavItems } from '@/components/Navbar/navitems'
+import SdAssessModal from '@/components/SecurityDeposit/SdAssessModal'
 import { Button } from '@/components/ui/button'
 import IconSingleTab from '@/components/ui/icon-single-tab'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { BillingGroup } from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import CheckBox from '@/ui/form/CheckBox'
@@ -20,6 +22,7 @@ export interface BillingGroupConnectionRelForm {
 
 export interface PageProps {
   group: BillingGroup
+  triggerTypes: ParameterValues[]
 }
 const Tabs = [
   {
@@ -36,7 +39,7 @@ const Tabs = [
   },
 ]
 
-export default function ConsumerSDGroupShowPage({ group }: Readonly<PageProps>) {
+export default function ConsumerSDGroupShowPage({ group, triggerTypes }: Readonly<PageProps>) {
   console.log(group)
   const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -56,6 +59,7 @@ export default function ConsumerSDGroupShowPage({ group }: Readonly<PageProps>) 
       href: '#',
     },
   ]
+  const [showAssessModal, setShowAssessModal] = useState(false)
   const [selectAll, setSelectAll] = useState<boolean>(false)
   const [selectedConnections, setSelectedConnections] = useState<number[]>([])
   const { formData, setFormValue } = useCustomForm({
@@ -63,8 +67,6 @@ export default function ConsumerSDGroupShowPage({ group }: Readonly<PageProps>) 
     trigger_type_id: 1,
     context_date: '',
   })
-
-  const { post, loading } = useInertiaPost(route('sd-assess'))
 
   const handleSelectAllToggle = () => {
     if (selectAll) {
@@ -89,10 +91,8 @@ export default function ConsumerSDGroupShowPage({ group }: Readonly<PageProps>) 
   }
 
   const handleAssessSelected = () => {
-    setFormValue('connection_ids')(selectedConnections)
-    setFormValue('context_date')('2025-04-01')
-    const payLoad = { ...formData, billing_group_id: group.billing_group_id }
-    post(payLoad)
+    if (selectedConnections.length === 0) return
+    setShowAssessModal(true)
   }
 
   return (
@@ -193,6 +193,13 @@ export default function ConsumerSDGroupShowPage({ group }: Readonly<PageProps>) 
               </div>
             ))}
           </div>
+          {showAssessModal && selectedConnections?.length > 0 && (
+            <SdAssessModal
+              setShowModal={setShowAssessModal}
+              connection_ids={selectedConnections}
+              triggerTypes={triggerTypes}
+            />
+          )}
         </>
       )}
     </MainLayout>
