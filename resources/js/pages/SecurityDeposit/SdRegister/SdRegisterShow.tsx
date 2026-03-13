@@ -34,7 +34,6 @@ const breadcrumb: BreadcrumbItem[] = [
 
 const SdRegisterShow = ({ sdRegister }: Props) => {
   const [showActions, setShowActions] = useState<boolean>(false)
-  console.log(sdRegister)
   return (
     <MainLayout
       breadcrumb={breadcrumb}

@@ -8,6 +8,11 @@ interface Props {
 }
 
 const LatestUpdateDetailCard = ({ sdRegister }: Props) => {
+  const collections = sdRegister?.sd_demand?.collections ?? []
+
+  const latestCollection = [...collections].sort(
+    (a, b) => new Date(b.collection_date).getTime() - new Date(a.collection_date).getTime()
+  )[0]
   return (
     <Card className='rounded-xl p-6'>
       <div className='space-y-6'>
@@ -34,8 +39,12 @@ const LatestUpdateDetailCard = ({ sdRegister }: Props) => {
           </div>
 
           <div className='text-right'>
-            <p className='text-sm font-semibold text-green-600'>₹2,550</p>
-            <p className='text-xs text-gray-400'>20 Sep 2023</p>
+            <p className='text-sm font-semibold text-green-600'>
+              ₹{latestCollection?.collection_amount}
+            </p>
+            <p className='text-xs text-gray-400'>
+              {getDisplayDate(latestCollection?.collection_date)}
+            </p>
           </div>
         </div>
 

@@ -9,9 +9,8 @@ interface Props {
 const SdRegisterList = ({ sdRegisters }: Props) => {
   return (
     <>
-      <div className='context-menu-item grid grid-cols-10 gap-x-6 gap-y-2 pt-5'>
+      <div className='context-menu-item grid grid-cols-9 gap-x-6 gap-y-2 pt-5'>
         <span>SD Register Type</span>
-        <span>Demand Type</span>
         <span>Occupancy Type</span>
         <span>Period From</span>
         <span>Period To</span>
@@ -24,11 +23,10 @@ const SdRegisterList = ({ sdRegisters }: Props) => {
       {sdRegisters.map((sdRegister) => (
         <div
           key={sdRegister.sd_register_id}
-          className='normal-font grid cursor-pointer grid-cols-10 gap-x-6 gap-y-2 hover:bg-gray-100'
+          className='normal-font grid cursor-pointer grid-cols-9 gap-x-6 gap-y-2 hover:bg-gray-100'
           onClick={() => router.get(route(`sd-register.show`, sdRegister.sd_register_id))}
         >
           <span>{sdRegister.sd_type.name}</span>
-          <span>{sdRegister.sd_demand.demand_type.parameter_value}</span>
           <span>{sdRegister.occupancy_type.parameter_value}</span>
           <span>{getDisplayDate(sdRegister.period_from)}</span>
           <span>{getDisplayDate(sdRegister.period_to)}</span>
