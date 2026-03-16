@@ -50,6 +50,7 @@ class MeterReadingConverter
             'values' => $values,
             'power_factors' => $powerFactors,
             'healths' => $healths,
+            'is_interim_reading' => $detail->getMultipleReading(),
         ];
     }
 
@@ -71,6 +72,7 @@ class MeterReadingConverter
             'time_zone' => ParameterValueProtoConvertor::convertToArray($detail->getTimezone()),
             'meter' => MeterProtoConvertor::convertToArray($detail->getMeter()),
             'meter_profile_parameter' => MeteringParameterProfileService::toArray($detail->getParameter()),
+
         ];
     }
 

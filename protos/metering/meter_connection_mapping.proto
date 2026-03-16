@@ -114,7 +114,9 @@ message DeleteMeterConnectionMappingRequest {
   int32 rel_id = 1;
 }
 
-message ListMeterConnectionMappingsRequest {}
+message ListMeterConnectionMappingsRequest {
+  int32 connection_id = 1;
+}
 
 message ListMeterConnectionMappingsResponse {
   repeated MeterConnectionMappingResponse meter_connection_mappings = 1;
@@ -136,8 +138,8 @@ message MeterConnectionMappingResponse {
   optional google.protobuf.Timestamp intimation_date = 13;
   optional google.protobuf.Timestamp change_date = 14;
   optional parameters.ParameterValueProto change_reason = 15;
-  google.protobuf.Timestamp effective_start_ts = 16;
-  optional google.protobuf.Timestamp effective_end_ts = 17;
+  string effective_start_ts = 16;
+  optional string effective_end_ts = 17;
   optional bool is_active = 18;
   google.protobuf.Timestamp created_ts = 19;
   optional google.protobuf.Timestamp updated_ts = 20;
@@ -147,6 +149,6 @@ message MeterConnectionMappingResponse {
   optional bool is_meter_reading_mandatory = 24;
   optional MeterResponse meter = 25;
   optional float meter_mf = 26;
+  optional bool is_current = 27;
 }
-
 

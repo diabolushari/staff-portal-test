@@ -80,6 +80,8 @@ export interface MeterConnectionMapping {
   meter_mf?: number
   meter_timezone_type?: ParameterValues
   timezone_type_id?: number
+  is_current: boolean
+  is_active: boolean
 }
 
 export interface DateTimeField {
@@ -450,8 +452,6 @@ export interface MeterTransformerAssignment {
 export interface MeteringTimezoneSlot {
   version_id: number
   metering_timezone_id: number
-  pricing_type_id: number
-  pricing_type?: Partial<ParameterValues> | null
   timezone_type_id: number
   timezone_type?: Partial<ParameterValues> | null
   timezone_name_id: number
@@ -502,7 +502,8 @@ export interface MeterReading {
   is_active: boolean
   values: MeterReadingValue[]
   power_factors: MeterReadingPowerFactor[]
-  healths: MeterHealth[]
+  healths?: MeterHealth[]
+  is_interim_reading: boolean
 }
 
 export interface MeterHealth {
@@ -657,6 +658,7 @@ export interface BillingRuleJson {
 export interface MeterWithTimezoneAndProfile {
   meter_id: number
   meter: Meter
+  meter_serial: string
   timezones: {
     timezone_id: number
     timezone_name: string
@@ -664,6 +666,12 @@ export interface MeterWithTimezoneAndProfile {
   reading_parameters: MeterProfileParameter[]
   meter_profile: ParameterValues
   meter_mf: number | null
+}
+
+export interface MeterReadingValueGroup {
+  meter: Meter
+  values?: MeterReadingValue[]
+  reading?: MeterReading
 }
 
 export interface BillingGroup {

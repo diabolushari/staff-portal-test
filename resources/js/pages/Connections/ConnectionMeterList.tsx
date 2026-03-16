@@ -129,18 +129,23 @@ export default function ConnectionMeterList({
         <div className='flex flex-col px-6 pb-6'>
           {connection?.meter_mappings && connection?.meter_mappings.length > 0 ? (
             connection?.meter_mappings.map((mapping) => (
-              <ConnectionCardSection
-                key={mapping.rel_id}
-                meterMapping={mapping}
-                connectionId={connection_id}
-                onDelete={handleDeleteMeter}
-                onEdit={handleEditMeter}
-                onMeterStatusChange={handleMeterStatusChange}
-                onMeterChange={handleMeterChange}
-                onMeterProfileChange={handleMeterProfileChange}
-                changeReasons={ctpt_change_reason}
-                statuses={ctpt_status}
-              />
+              <>
+                {' '}
+                {mapping?.effective_end_ts == null && (
+                  <ConnectionCardSection
+                    key={mapping.rel_id}
+                    meterMapping={mapping}
+                    connectionId={connection_id}
+                    onDelete={handleDeleteMeter}
+                    onEdit={handleEditMeter}
+                    onMeterStatusChange={handleMeterStatusChange}
+                    onMeterChange={handleMeterChange}
+                    onMeterProfileChange={handleMeterProfileChange}
+                    changeReasons={ctpt_change_reason}
+                    statuses={ctpt_status}
+                  />
+                )}
+              </>
             ))
           ) : (
             <div className='p-8 text-center text-slate-500'>
