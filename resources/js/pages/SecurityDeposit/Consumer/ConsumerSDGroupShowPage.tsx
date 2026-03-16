@@ -2,15 +2,11 @@ import { billingNavItems } from '@/components/Navbar/navitems'
 import SdAssessModal from '@/components/SecurityDeposit/SdAssessModal'
 import { Button } from '@/components/ui/button'
 import IconSingleTab from '@/components/ui/icon-single-tab'
-import useCustomForm from '@/hooks/useCustomForm'
-import useInertiaPost from '@/hooks/useInertiaPost'
 import { BillingGroup } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import CheckBox from '@/ui/form/CheckBox'
-import SelectList from '@/ui/form/SelectList'
-import { error } from 'console'
 import { User, Users } from 'lucide-react'
 import { useState } from 'react'
 
@@ -40,7 +36,6 @@ const Tabs = [
 ]
 
 export default function ConsumerSDGroupShowPage({ group, triggerTypes }: Readonly<PageProps>) {
-  console.log(group)
   const breadcrumbs: BreadcrumbItem[] = [
     {
       title: 'Home',
@@ -62,11 +57,6 @@ export default function ConsumerSDGroupShowPage({ group, triggerTypes }: Readonl
   const [showAssessModal, setShowAssessModal] = useState(false)
   const [selectAll, setSelectAll] = useState<boolean>(false)
   const [selectedConnections, setSelectedConnections] = useState<number[]>([])
-  const { formData, setFormValue } = useCustomForm({
-    connection_ids: [],
-    trigger_type_id: 1,
-    context_date: '',
-  })
 
   const handleSelectAllToggle = () => {
     if (selectAll) {
@@ -131,62 +121,65 @@ export default function ConsumerSDGroupShowPage({ group, triggerTypes }: Readonl
             {group.connections.map((connection) => (
               <div
                 key={connection.connection_id}
-                className='border-kseb-line mb-4 items-center justify-between rounded-none border-2 bg-white p-4 shadow-sm'
+                className='border-kseb-line mb-4 w-full border bg-white shadow-sm'
               >
-                <div className='flex flex-col gap-2 pb-3'>
-                  <span>
-                    <b>{connection.connection.consumer_profiles?.[0]?.consumer_name}</b>
-                  </span>
-                  <span>Consumer Number: {connection.connection.consumer_number}</span>
-                  <span>Legacy Code:{connection.connection.consumer_legacy_code}</span>
-                </div>
-                <div className='bg-kseb-bg-blue grid grid-cols-4 p-4'>
-                  <div className='flex flex-col'>
-                    <span>SD Assessed</span>
-                    <span>
-                      <b>
-                        {connection?.connection?.sd_balance_summary?.[0]?.sd_principal_required
-                          ? `₹ ${connection.connection.sd_balance_summary[0].sd_principal_required}`
-                          : '-'}
-                      </b>
+                <div className='flex items-start justify-between p-4'>
+                  <div className='flex flex-col gap-1 text-sm'>
+                    <span className='font-semibold'>
+                      {connection.connection.consumer_profiles?.[0]?.consumer_name}
                     </span>
+                    <span>Consumer Number: {connection.connection.consumer_number}</span>
+                    <span>Legacy Code: {connection.connection.consumer_legacy_code}</span>
                   </div>
 
-                  <div className='flex flex-col'>
-                    <span>SD Available</span>
-                    <span>
-                      <b>
-                        {connection?.connection?.sd_balance_summary?.[0]?.sd_principal_on_file
-                          ? `₹ ${connection.connection.sd_balance_summary[0].sd_principal_on_file}`
-                          : '-'}
-                      </b>
-                    </span>
-                  </div>
-
-                  <div className='flex flex-col'>
-                    <span>Difference</span>
-                    <span>
-                      <b>
-                        {connection?.connection?.sd_balance_summary?.[0]?.sd_principal_variance
-                          ? `₹ ${connection.connection.sd_balance_summary[0].sd_principal_variance}`
-                          : '-'}
-                      </b>
-                    </span>
-                  </div>
-                  <CheckBox
-                    label={''}
-                    toggleValue={() => handleSingleSelect(connection.connection_id)}
-                    value={selectedConnections.includes(connection.connection_id)}
-                  />
+                  <span className='rounded bg-gray-200 px-3 py-1 text-xs font-medium'></span>
                 </div>
 
-                <div className='flex gap-5'>
+                <div className='bg-kseb-bg-blue grid grid-cols-4 items-center px-4 py-3 text-sm'>
                   <div className='flex flex-col'>
-                    <span>Last Assessed</span>
+                    <span className='text-gray-600'>SD Assessed</span>
+                    <span className='font-semibold'>
+                      {connection?.connection?.sd_balance_summary?.[0]?.sd_principal_required
+                        ? `₹ ${connection.connection.sd_balance_summary[0].sd_principal_required}`
+                        : '-'}
+                    </span>
+                  </div>
+
+                  <div className='flex flex-col'>
+                    <span className='text-gray-600'>SD Available</span>
+                    <span className='font-semibold'>
+                      {connection?.connection?.sd_balance_summary?.[0]?.sd_principal_on_file
+                        ? `₹ ${connection.connection.sd_balance_summary[0].sd_principal_on_file}`
+                        : '-'}
+                    </span>
+                  </div>
+
+                  <div className='flex flex-col'>
+                    <span className='text-gray-600'>Difference</span>
+                    <span className='font-semibold text-red-500'>
+                      {connection?.connection?.sd_balance_summary?.[0]?.sd_principal_variance
+                        ? `₹ ${connection.connection.sd_balance_summary[0].sd_principal_variance}`
+                        : '-'}
+                    </span>
+                  </div>
+
+                  <div className='flex justify-end'>
+                    <CheckBox
+                      label=''
+                      toggleValue={() => handleSingleSelect(connection.connection_id)}
+                      value={selectedConnections.includes(connection.connection_id)}
+                    />
+                  </div>
+                </div>
+
+                <div className='flex gap-12 p-4 text-sm'>
+                  <div className='flex flex-col'>
+                    <span className='text-gray-600'>Last Assessed</span>
                     <span>{'-'}</span>
                   </div>
+
                   <div className='flex flex-col'>
-                    <span>Assessment Date</span>
+                    <span className='text-gray-600'>Assessment Date</span>
                     <span>{'-'}</span>
                   </div>
                 </div>

@@ -30,7 +30,7 @@ const ConsumerSDIndexSearch = ({ oldConnections }: Props) => {
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault()
-    router.get('/consumer-sd-index', formData)
+    router.get('/consumer-sd', formData)
   }
 
   return (

@@ -1,5 +1,4 @@
 import ActionButton from '@/components/action-button'
-import { Button } from '@/components/ui/button'
 import { Connection, SdDemand } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import DeleteModal from '@/ui/Modal/DeleteModal'
@@ -73,7 +72,7 @@ const SdDemandList = ({ sdDemands, connection }: Props) => {
                   </div>
                 </div>
               </div>
-              <div className='flex justify-end p-4'>
+              {/* <div className='flex justify-end p-4'>
                 <Button
                   variant='outline'
                   type='button'
@@ -85,7 +84,7 @@ const SdDemandList = ({ sdDemands, connection }: Props) => {
                 >
                   Add Collection
                 </Button>
-              </div>
+              </div> */}
               {sdDemand.collections && sdDemand.collections.length > 0 ? (
                 <SdCollectionList sdCollections={sdDemand.collections} />
               ) : (

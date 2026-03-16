@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SecurityDeposit\Consumer;
 
 use App\Http\Controllers\Controller;
 use App\Services\Connection\ConnectionService;
+use App\Services\Parameters\ParameterValueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -13,7 +14,8 @@ use Inertia\Response;
 class ConsumerSDController extends Controller
 {
     public function __construct(
-        private readonly ConnectionService $connectionService
+        private readonly ConnectionService $connectionService,
+        private readonly ParameterValueService $parameterValueService
     ) {}
 
     public function __invoke(Request $request): Response|RedirectResponse
@@ -45,9 +47,13 @@ class ConsumerSDController extends Controller
                 ['path' => request()->url()]
             );
         }
+        $triggerTypes = $this->parameterValueService
+            ->getParameterValues(null, null, null, 'Connection', 'SD Trigger Type')
+            ->data;
 
         return Inertia::render('SecurityDeposit/Consumer/ConsumerSDIndex', [
             'connections' => $paginated,
+            'triggerTypes' => $triggerTypes,
         ]);
     }
 }

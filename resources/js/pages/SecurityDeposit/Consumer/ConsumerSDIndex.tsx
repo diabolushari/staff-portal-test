@@ -1,8 +1,10 @@
 import { billingNavItems } from '@/components/Navbar/navitems'
 import ConsumerSDIndexSearch from '@/components/SecurityDeposit/Consumer/ConsumerSDIndexSearch'
+import SdAssessModal from '@/components/SecurityDeposit/SdAssessModal'
 import { Button } from '@/components/ui/button'
 import IconSingleTab from '@/components/ui/icon-single-tab'
 import { Connection } from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import CheckBox from '@/ui/form/CheckBox'
@@ -14,6 +16,7 @@ import { useState } from 'react'
 interface Props {
   connections: Paginator<Connection>
   oldConnections?: Connection
+  triggerTypes: ParameterValues[]
 }
 const Tabs = [
   {
@@ -29,7 +32,7 @@ const Tabs = [
     href: '/consumer-sd/group',
   },
 ]
-const ConsumerSDIndex = ({ connections, oldConnections }: Props) => {
+const ConsumerSDIndex = ({ connections, oldConnections, triggerTypes }: Props) => {
   const breadCrumbs: BreadcrumbItem[] = [
     {
       title: 'Home',
@@ -69,8 +72,12 @@ const ConsumerSDIndex = ({ connections, oldConnections }: Props) => {
     setSelectedConnections(updatedSelection)
     setSelectAll(updatedSelection.length === connections.data.length)
   }
+  const [showAssessModal, setShowAssessModal] = useState<boolean>(false)
 
-  const handleAssessSelected = () => {}
+  const handleAssessSelected = () => {
+    if (selectedConnections.length === 0) return
+    setShowAssessModal(true)
+  }
   return (
     <MainLayout
       breadcrumb={breadCrumbs}
@@ -108,42 +115,65 @@ const ConsumerSDIndex = ({ connections, oldConnections }: Props) => {
             {connections.data.map((connection) => (
               <div
                 key={connection.connection_id}
-                className='border-kseb-line mb-4 items-center justify-between rounded-none border-2 bg-white p-4 shadow-sm'
+                className='border-kseb-line mb-4 w-full border bg-white shadow-sm'
               >
-                <div className='flex flex-col gap-2 pb-3'>
-                  <span>
-                    <b>{connection?.consumer_profiles?.[0]?.consumer_name}</b>
-                  </span>
-                  <span>Consumer Number: {connection.consumer_number}</span>
-                  <span>Legacy Code:{connection.consumer_legacy_code}</span>
-                </div>
-                <div className='bg-kseb-bg-blue grid grid-cols-4 p-4'>
-                  <div className='flex flex-col'>
-                    <span>SD Assessed</span>
-                    <span>{connection?.sd_balance_summary?.[0]?.sd_principal_required ?? '-'}</span>
+                <div className='flex items-start justify-between p-4'>
+                  <div className='flex flex-col gap-1 text-sm'>
+                    <span className='font-semibold'>
+                      {connection.consumer_profiles?.[0]?.consumer_name}
+                    </span>
+                    <span>Consumer Number: {connection.consumer_number}</span>
+                    <span>Legacy Code: {connection.consumer_legacy_code}</span>
                   </div>
-                  <div className='flex flex-col'>
-                    <span>SD Available</span>
-                    <span>{connection?.sd_balance_summary?.[0]?.sd_principal_on_file ?? '-'}</span>
-                  </div>
-                  <div className='flex flex-col'>
-                    <span>Difference</span>
-                    <span>{connection?.sd_balance_summary?.[0]?.sd_principal_variance ?? '-'}</span>
-                  </div>
-                  <CheckBox
-                    label={''}
-                    toggleValue={() => handleSingleSelect(connection.connection_id)}
-                    value={selectedConnections.includes(connection.connection_id)}
-                  />
+
+                  <span className='rounded bg-gray-200 px-3 py-1 text-xs font-medium'></span>
                 </div>
 
-                <div className='flex gap-5'>
+                <div className='bg-kseb-bg-blue grid grid-cols-4 items-center px-4 py-3 text-sm'>
                   <div className='flex flex-col'>
-                    <span>Last Assessed</span>
+                    <span className='text-gray-600'>SD Assessed</span>
+                    <span className='font-semibold'>
+                      {connection?.sd_balance_summary?.[0]?.sd_principal_required
+                        ? `₹ ${connection.sd_balance_summary[0].sd_principal_required}`
+                        : '-'}
+                    </span>
+                  </div>
+
+                  <div className='flex flex-col'>
+                    <span className='text-gray-600'>SD Available</span>
+                    <span className='font-semibold'>
+                      {connection?.sd_balance_summary?.[0]?.sd_principal_on_file
+                        ? `₹ ${connection.sd_balance_summary[0].sd_principal_on_file}`
+                        : '-'}
+                    </span>
+                  </div>
+
+                  <div className='flex flex-col'>
+                    <span className='text-gray-600'>Difference</span>
+                    <span className='font-semibold text-red-500'>
+                      {connection?.sd_balance_summary?.[0]?.sd_principal_variance
+                        ? `₹ ${connection.sd_balance_summary[0].sd_principal_variance}`
+                        : '-'}
+                    </span>
+                  </div>
+
+                  <div className='flex justify-end'>
+                    <CheckBox
+                      label=''
+                      toggleValue={() => handleSingleSelect(connection.connection_id)}
+                      value={selectedConnections.includes(connection.connection_id)}
+                    />
+                  </div>
+                </div>
+
+                <div className='flex gap-12 p-4 text-sm'>
+                  <div className='flex flex-col'>
+                    <span className='text-gray-600'>Last Assessed</span>
                     <span>{'-'}</span>
                   </div>
+
                   <div className='flex flex-col'>
-                    <span>Assessment Date</span>
+                    <span className='text-gray-600'>Assessment Date</span>
                     <span>{'-'}</span>
                   </div>
                 </div>
@@ -151,6 +181,13 @@ const ConsumerSDIndex = ({ connections, oldConnections }: Props) => {
             ))}
           </div>
         </>
+      )}
+      {showAssessModal && selectedConnections?.length > 0 && (
+        <SdAssessModal
+          setShowModal={setShowAssessModal}
+          connection_ids={selectedConnections}
+          triggerTypes={triggerTypes}
+        />
       )}
       <Pagination pagination={connections} />
     </MainLayout>
