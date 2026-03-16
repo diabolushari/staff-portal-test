@@ -895,6 +895,27 @@ export interface SdAttribute {
   updated_at?: string
   attribute_definition: ParameterValues
 }
+
+export interface SdBalanceSummary {
+  connection: Connection
+  connection_id: number
+  created_by: number
+  interest_accrued: string
+  last_updated_by_collection: number | null
+  last_updated_by_demand: number | null
+  net_interest_payable: string
+  period_from: string
+  period_to?: string | null
+  remarks?: string
+  sd_balance_id: number
+  sd_collection?: SdCollection | null
+  sd_demand?: SdDemand
+  sd_principal_on_file: string
+  sd_principal_required: string
+  sd_principal_variance: string
+  tds_deducted: string
+  updated_by: number
+}
 export interface GeneratingStationAttribute {
   attribute_id: number | null
   station_id: number | null
@@ -929,4 +950,32 @@ export interface GeneratingStation {
   plant_type?: ParameterValues
   address?: Address
   attributes: GeneratingStationAttribute[]
+}
+
+export interface StationConsumerRel {
+  version_id?: number
+  rel_id?: number
+
+  station_id: number
+  station_connection_id: number
+  consumer_connection_id: number
+
+  consumer_type_id: number
+
+  consumer_priority_order: number
+  station_priority_order: number
+
+  effective_start: string
+  effective_end?: string
+
+  is_current: boolean
+
+  created_by?: number
+  updated_by?: number
+  deleted_by?: number
+
+  station?: GeneratingStation
+  station_connection?: Connection
+  consumer_connection?: Connection
+  consumer_type?: ParameterValues
 }

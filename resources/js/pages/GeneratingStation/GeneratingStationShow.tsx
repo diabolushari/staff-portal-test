@@ -6,6 +6,7 @@ import StrongText from '@/typography/StrongText'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { getDisplayDate } from '@/utils'
 import { GeneratingStation } from '@/interfaces/data_interfaces'
+import SingleTabGroup from '@/components/ui/single-tab'
 
 interface Props {
   station: GeneratingStation
@@ -18,6 +19,20 @@ export default function GeneratingStationShowPage({ station }: Props) {
     { title: station?.station_name, href: '#' },
   ]
 
+  const tabs = [
+    {
+      value: 'station',
+      label: 'Station',
+      icon: '',
+      href: route('generating-stations.show', station?.station_id),
+    },
+    {
+      value: 'consumer',
+      label: 'Consumers',
+      icon: '',
+      href: route('generating-stations.consumers', station?.station_id),
+    },
+  ]
   return (
     <MainLayout
       breadcrumb={breadcrumbs}
@@ -25,6 +40,10 @@ export default function GeneratingStationShowPage({ station }: Props) {
       selectedItem='Generating Stations'
       title='Generating Station Details'
     >
+      <SingleTabGroup
+        tabs={tabs}
+        defaultValue='station'
+      />
       <Card className='rounded-lg p-7'>
         <StrongText className='mb-6 block text-base font-semibold'>General Information</StrongText>
 

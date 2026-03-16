@@ -1,0 +1,48 @@
+
+
+
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.securitydeposit;
+
+option php_namespace = "Proto\\Consumers";
+option php_metadata_namespace = "GPBMetadata";
+
+import "google/protobuf/empty.proto";
+import "connections/connections.proto";
+import "securitydeposit/sd-collections.proto";
+import "securitydeposit/sd-demands.proto";
+
+message SdBalanceSummaryMessage {
+  optional int32 sd_balance_id = 1;
+  int32 connection_id = 2;
+  string period_from = 3;
+  optional string period_to = 4;
+  string sd_principal_required = 5;
+  string sd_principal_on_file = 6;
+  string sd_principal_variance = 7;
+  string interest_accrued = 8;
+  string tds_deducted = 9;
+  string net_interest_payable = 10;
+  optional string remarks=11;
+  optional int32 last_updated_by_demand=12;
+  optional int32 last_updated_by_collection=13;
+  optional int32 created_by = 14;
+  optional int32 updated_by = 15;
+  com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 16;
+  optional com.kseb.consumerservice.grpc.securitydeposit.SdDemandMessage sd_demand = 17;
+  optional com.kseb.consumerservice.grpc.securitydeposit.SdCollectionMessage sd_collection = 18;
+}
+
+message SdBalanceSummaryListByConnectionIdRequest {
+  int32 connection_id = 1;
+}
+
+message SdBalanceSummaryListByConnectionIdResponse {
+  SdBalanceSummaryMessage sd_balance_summary = 1;
+}
+
+
+service SdBalanceSummaryService {
+  rpc GetSdBalanceSummaryByConnectionId(SdBalanceSummaryListByConnectionIdRequest) returns (SdBalanceSummaryListByConnectionIdResponse);
+}
