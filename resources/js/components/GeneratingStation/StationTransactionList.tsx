@@ -7,6 +7,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { StationTransaction } from '@/interfaces/data_interfaces'
+import { tr } from 'date-fns/locale'
 import dayjs from 'dayjs'
 
 interface Props {
@@ -23,8 +24,11 @@ export default function StationTransactionTable({ transactions }: Props) {
   }
 
   // Compute only Generated Units
-  const generatedUnits = transactions.reduce((sum, txn) => sum + (txn.txn_units || 0), 0)
-
+  //const generatedUnits = transactions.reduce((sum, txn) => sum + (txn.txn_units || 0), 0)
+  const generatedUnits = transactions
+    .filter((txn) => txn.txn_type?.parameter_code === 'GEN_CREDIT')
+    .reduce((sum, txn) => sum + (txn.txn_units || 0), 0)
+  console.log(transactions)
   return (
     <div className='rounded-lg bg-white p-4'>
       {/* Generated Units Card */}
@@ -38,10 +42,16 @@ export default function StationTransactionTable({ transactions }: Props) {
         <TableHeader>
           <TableRow>
             <TableHead>Date</TableHead>
-            <TableHead>Source Zone</TableHead>
             <TableHead>Transaction Type</TableHead>
-            <TableHead>Txn Units</TableHead>
-            <TableHead>Unit Balance</TableHead>
+            <TableHead>Adjusted To</TableHead>
+            <TableHead>Source Zone</TableHead>
+
+            <TableHead>Target Zone</TableHead>
+            <TableHead>Direction</TableHead>
+            <TableHead>Adjusted Units</TableHead>
+            <TableHead>Conversion Factor</TableHead>
+            {/* <TableHead>Txn Units</TableHead>
+            <TableHead>Unit Balance</TableHead> */}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -50,10 +60,23 @@ export default function StationTransactionTable({ transactions }: Props) {
               <TableCell>
                 {txn.txn_date ? dayjs(txn.txn_date).format('MMM DD, YYYY') : '-'}
               </TableCell>
-              <TableCell>{txn.timezone?.parameter_value ?? '-'}</TableCell>
               <TableCell>{txn.txn_type?.parameter_value ?? '-'}</TableCell>
-              <TableCell>{txn.txn_units ?? '-'}</TableCell>
-              <TableCell>{txn.unit_balance ?? '-'}</TableCell>
+              <TableCell>{txn.consumer_connection?.consumer_number ?? '-'}</TableCell>
+              {/* <TableCell>{txn.timezone?.parameter_value ?? '-'}</TableCell> */}
+              <TableCell>{txn.source_timezone?.parameter_value ?? '-'}</TableCell>
+
+              <TableCell>{txn.timezone?.parameter_value ?? '-'}</TableCell>
+              <TableCell>{txn.txn_direction?.trim().toUpperCase() === 'C' ? 'C' : 'D'}</TableCell>
+              <TableCell>
+                {txn.pre_conversion_units != null
+                  ? `${txn.txn_direction?.trim().toUpperCase() === 'C' ? '+' : '-'}${txn.pre_conversion_units}`
+                  : '-'}
+              </TableCell>
+              {/* <TableCell>{txn.pre_conversion_units ?? '-'}</TableCell> */}
+
+              <TableCell>{txn.conversion_factor ?? '-'}</TableCell>
+              {/* <TableCell>{txn.txn_units ?? '-'}</TableCell>
+              <TableCell>{txn.unit_balance ?? '-'}</TableCell> */}
             </TableRow>
           ))}
         </TableBody>
