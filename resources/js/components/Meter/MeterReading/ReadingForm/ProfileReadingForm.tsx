@@ -1,23 +1,20 @@
 import { Card } from '@/components/ui/card'
-import { MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
+import { MeterProfileParameter, MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 import { CONSUMPTION_PARAMETER_NAME, DEMAND_PARAMETER_NAME } from '@/types/constants'
 import { showError } from '@/ui/alerts'
 import Button from '@/ui/button/Button'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { verifyApparentEnergy, verifyFinalReadingDigits } from '../valdiations/reading-validations'
 import MeterReadingValueForm from './MeterReadingValueForm'
-import { MeterReadingFormState, TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
-import { verifyApparentEnergy, verifyFinalReadingDigits } from './valdiations/reading-validations'
+import { MeterReadingFormState, TimezoneReadingState } from './useMeterReadingForm'
 
 interface Props {
-  activeProfile: {
-    meterIdx: number
-    profileIdx: number
-  } | null
   readingValues: MeterReadingFormState[]
-  metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
+  metersWithTimezonesAndProfile: MeterWithTimezoneAndProfile
+  profile: MeterProfileParameter
   updateReading: (meterId: number, parameterId: number, newReading: TimezoneReadingState[]) => void
   isFirstReading: boolean
-  onErrorChange?: (hasError: boolean) => void
+  onErrorChange?: (parameterId: number, hasError: boolean) => void
 }
 
 const getPercentageChange = (initialDiff: number, lastDiff: number) => {
@@ -26,17 +23,10 @@ const getPercentageChange = (initialDiff: number, lastDiff: number) => {
   return (diffChange / initialDiff) * 100
 }
 
-export interface ProfileReadingFormRef {
-  handleUpdate: (skipWarnings?: boolean) => {
-    hasErrors: boolean
-    hasWarnings: boolean
-  }
-}
-
 const ProfileReadingForm = ({
-  activeProfile,
   readingValues,
-  metersWithTimezonesAndProfiles,
+  metersWithTimezonesAndProfile,
+  profile,
   updateReading,
   isFirstReading,
   onErrorChange,
@@ -46,16 +36,8 @@ const ProfileReadingForm = ({
   const [showWarningModal, setShowWarningModal] = useState(false)
 
   const { meter, selectedParameter, parameterReading } = useMemo(() => {
-    if (activeProfile == null) {
-      return {
-        meter: null,
-        profile: null,
-        parameterReading: null,
-      }
-    }
-
-    const meter = metersWithTimezonesAndProfiles[activeProfile.meterIdx]
-    const selectedParameter = meter.reading_parameters[activeProfile.profileIdx]
+    const meter = metersWithTimezonesAndProfile
+    const selectedParameter = profile
     const meterReadingData = readingValues.find((m) => m.meter_id === meter.meter_id)
     const parameterReading = meterReadingData?.parameters.find(
       (p) => p.meter_parameter_id === selectedParameter.meter_parameter_id
@@ -66,7 +48,7 @@ const ProfileReadingForm = ({
       selectedParameter,
       parameterReading,
     }
-  }, [activeProfile, readingValues, metersWithTimezonesAndProfiles])
+  }, [readingValues, metersWithTimezonesAndProfile, profile])
 
   const maxValue = useMemo(() => {
     const integerDigits = meter?.meter.digit_count ?? 0
@@ -164,12 +146,13 @@ const ProfileReadingForm = ({
         }
       }, 800)
     },
-    [meter, selectedParameter, readingValues]
+    [meter, selectedParameter, readingValues, readingErrors, readingWarnings]
   )
+
   useEffect(() => {
     const hasError = Object.keys(readingErrors).length > 0
-    onErrorChange?.(hasError)
-  }, [readingErrors])
+    onErrorChange?.(profile.meter_parameter_id, hasError)
+  }, [readingErrors, onErrorChange, profile.meter_parameter_id])
 
   const updateData = useCallback(
     (timezoneId: number, value: string) => {
@@ -283,16 +266,11 @@ const ProfileReadingForm = ({
         }
       })
 
+      validateReadings(updatedReadings)
       updateReading(meter.meter_id, selectedParameter.meter_parameter_id, updatedReadings)
     },
-    [meter, selectedParameter, parameterReading, maxValue, updateReading]
+    [meter, selectedParameter, parameterReading, maxValue, validateReadings, updateReading]
   )
-
-  useEffect(() => {
-    if (meter && selectedParameter && parameterReading && Object.keys(readingErrors).length === 0) {
-      updateReading(meter.meter_id, selectedParameter.meter_parameter_id, parameterReading.readings)
-    }
-  }, [readingErrors])
 
   return (
     <>

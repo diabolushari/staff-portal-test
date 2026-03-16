@@ -1,12 +1,14 @@
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
 import NormalText from '@/typography/NormalText'
+import Button from '@/ui/button/Button'
 import Input from '@/ui/form/Input'
 import SelectList from '@/ui/form/SelectList'
 import TextArea from '@/ui/form/TextArea'
 import { MeterHealthFormData } from './ReadingForm/useMeterHealthForm'
 
 interface Props {
+  setActiveStep: (step: number) => void
   formData: MeterReadingForm
   setFormValue: <K extends keyof MeterReadingForm>(key: K) => (value: MeterReadingForm[K]) => void
   anomalyTypes: ParameterValues[]
@@ -20,6 +22,7 @@ interface Props {
 }
 
 export default function MeterReadingObservationStep({
+  setActiveStep,
   formData,
   setFormValue,
   anomalyTypes,
@@ -27,8 +30,6 @@ export default function MeterReadingObservationStep({
   meterHealthData,
   updateRybValues,
 }: Readonly<Props>) {
-  console.log(meterHealthData)
-
   return (
     <div className='flex w-full flex-col gap-4'>
       <div className='grid gap-4 md:grid-cols-2'>
@@ -104,6 +105,17 @@ export default function MeterReadingObservationStep({
         setValue={setFormValue('remarks')}
         error={errors?.remarks}
       />
+      <div className='flex justify-between gap-5'>
+        <Button
+          variant='secondary'
+          label='Change Meters/Dates'
+          onClick={() => setActiveStep(0)}
+        />
+        <Button
+          label='Enter Meter Readings'
+          onClick={() => setActiveStep(2)}
+        />
+      </div>
     </div>
   )
 }

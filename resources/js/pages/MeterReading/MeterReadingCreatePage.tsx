@@ -1,10 +1,5 @@
-import MeterReadingGeneralStep from '@/components/Meter/MeterReading/MeterReadingGeneralStep'
-import MeterReadingObservationStep from '@/components/Meter/MeterReading/MeterReadingObservationStep'
-import { MeterReadingPreviewRef } from '@/components/Meter/MeterReading/MeterReadingPreview'
-import MeterReadingsStep from '@/components/Meter/MeterReading/MeterReadingsStep'
-import { ProfileReadingFormRef } from '@/components/Meter/MeterReading/ProfileReadingForm'
-import useMeterHealthForm from '@/components/Meter/MeterReading/ReadingForm/useMeterHealthForm'
-import useMeterReadingForm from '@/components/Meter/MeterReading/ReadingForm/useMeterReadingForm'
+import MeterReadingGeneralStep from '@/components/Meter/MeterReading/ReadingForm/MeterReadingGeneralStep'
+import MeterReadingSubmitStep from '@/components/Meter/MeterReading/ReadingForm/MeterReadingSubmitStep'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import Stepper from '@/components/Stepper'
 import useCustomForm from '@/hooks/useCustomForm'
@@ -19,10 +14,9 @@ import {
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
-import Button from '@/ui/button/Button'
 import { getDisplayDate } from '@/utils'
 import { getToday } from '@/utils/DateService'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 export interface MeterReadingForm {
   id: number
@@ -94,43 +88,11 @@ export default function MeterReadingCreatePage({
     ]
   }, [connectionWithConsumer])
 
-  const [activeProfile, setActiveProfile] = useState<{
-    meterIdx: number
-    profileIdx: number
-  } | null>(null)
-  const [metersWithTimezonesAndProfiles, setMetersWithTimezonesAndProfiles] = useState<
-    MeterWithTimezoneAndProfile[]
-  >([])
-
-  const { readingValues, updateReading } = useMeterReadingForm(
-    metersWithTimezonesAndProfiles,
-    latestMeterReadingGroupByMeter,
-    editMode ? latestMeterReading : null
-  )
-
-  const { healthData, updateMeterHealth, updateCTPTHealth, updateRybValues } = useMeterHealthForm(
-    metersWithTimezonesAndProfiles,
-    meterHealthTypes,
-    ctHealthTypes,
-    latestMeterReadingGroupByMeter,
-    anomalyTypes
-  )
-
-  useEffect(() => {
-    console.log('readingValues changed')
-    console.log(readingValues)
-    console.log('healthData')
-    console.log(healthData)
-    console.log('latest meter reading')
-    console.log(latestMeterReadingGroupByMeter)
-  }, [readingValues, healthData, latestMeterReadingGroupByMeter])
+  const { post, errors, loading } = useInertiaPost(route('meter-reading.store'), {
+    showErrorToast: true,
+  })
 
   const [selectedMeters, setSelectedMeters] = useState<number[]>([])
-
-  const [isOnParamaterForm, setIsOnParameterForm] = useState(false)
-
-  const [allProfileHasData, setAllProfileHasData] = useState<boolean>(false)
-  const [profileErrorExist, setProfileErrorExist] = useState<boolean>(false)
 
   const defalultAnomaly = anomalyTypes.find(
     (h) => h.parameter_value.toLowerCase() === 'no visible anomalies'
@@ -151,33 +113,11 @@ export default function MeterReadingCreatePage({
     _method: editMode ? 'PUT' : undefined,
   })
 
-  const { post, errors, loading } = useInertiaPost(
-    editMode ? route('meter-reading.update', formData.id) : route('meter-reading.store'),
-    {
-      showErrorToast: true,
-    }
-  )
-
   const [activeStep, setActiveStep] = useState(0)
 
-  const previewRefs = useRef<Record<number, MeterReadingPreviewRef | null>>({})
-  const accordionOpen = () => {
-    Object.values(previewRefs.current).forEach((ref) => {
-      ref?.expandAll()
-    })
-  }
-
-  const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault()
-
-    accordionOpen()
-
-    post({
-      ...formData,
-      // readings_by_meter: readingValues,
-      // meter_health: healthData,
-    })
-  }
+  const [metersWithTimezonesAndProfiles, setMetersWithTimezonesAndProfiles] = useState<
+    MeterWithTimezoneAndProfile[]
+  >([])
 
   const steps: Step[] = useMemo(() => {
     const hasStepError = (fields: string[]) =>
@@ -235,8 +175,6 @@ export default function MeterReadingCreatePage({
     }
   }, [connectionWithConsumer])
 
-  const profileRefs = useRef<Record<string, ProfileReadingFormRef | null>>({})
-
   return (
     <MainLayout
       breadcrumb={breadcrumb}
@@ -245,10 +183,10 @@ export default function MeterReadingCreatePage({
       selectedTopNav='Consumers'
     >
       <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
-        <form onSubmit={handleSubmit}>
+        <div>
           <Stepper
             activeStep={activeStep}
-            onStepChange={setActiveStep}
+            onStepChange={() => {}}
             steps={steps}
           >
             {activeStep === 0 && (
@@ -262,55 +200,31 @@ export default function MeterReadingCreatePage({
                 interimReasons={interimReasons}
                 meterConnectionMappings={meterConnectionMappings}
                 onMetersWithTimezonesAndProfilesChange={setMetersWithTimezonesAndProfiles}
+                setActiveStep={setActiveStep}
+                selectedMeters={selectedMeters}
+                onSelectedMetersChange={setSelectedMeters}
               />
             )}
-            {activeStep === 1 && (
-              <MeterReadingObservationStep
-                formData={formData}
-                setFormValue={setFormValue}
-                anomalyTypes={anomalyTypes}
-                errors={errors}
-                meterHealthData={healthData}
-                updateRybValues={updateRybValues}
-              />
-            )}
-            {activeStep === 2 && (
-              <MeterReadingsStep
-                healthData={healthData}
+            {(activeStep === 1 || activeStep === 2) && (
+              <MeterReadingSubmitStep
+                post={post}
+                loading={loading}
+                activeStep={activeStep}
+                setActiveStep={setActiveStep}
                 metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
                 formData={formData}
-                readingValues={readingValues}
-                updateReading={updateReading}
                 setFormValue={setFormValue}
+                toggleBoolean={toggleBoolean}
+                errors={errors}
                 latestMeterReading={latestMeterReading}
+                latestMeterReadingGroupByMeter={latestMeterReadingGroupByMeter}
                 meterHealthTypes={meterHealthTypes}
                 ctHealthTypes={ctHealthTypes}
-                updateMeterHealth={updateMeterHealth}
-                updateCTPTHealth={updateCTPTHealth}
-                setIsOnParameterForm={setIsOnParameterForm}
-                isFirstReading={false}
-                isOnparameterForm={isOnParamaterForm}
-                profileRefs={profileRefs}
-                activeProfile={activeProfile}
-                setActiveProfile={setActiveProfile}
-                previewRefs={previewRefs}
-                setAllProfileHasData={setAllProfileHasData}
-                setProfileErrorExist={setProfileErrorExist}
+                anomalyTypes={anomalyTypes}
               />
             )}
           </Stepper>
-          <div className='mt-6 flex justify-between'>
-            {activeStep === steps.length - 1 && allProfileHasData && !profileErrorExist && (
-              <Button
-                type='submit'
-                label='Submit'
-                disabled={loading}
-                processing={loading}
-                variant={loading ? 'loading' : 'primary'}
-              />
-            )}
-          </div>
-        </form>
+        </div>
       </div>
     </MainLayout>
   )

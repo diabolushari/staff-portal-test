@@ -221,7 +221,7 @@ class MeterReadingService
 
     public function latestMeterReadingGroupByMeter(int $connectionId): GrpcServiceResponse
     {
-        $protoRequest = new LatestMeterReadingGroupByMeterRequest();
+        $protoRequest = new LatestMeterReadingGroupByMeterRequest;
         $protoRequest->setConnectionId($connectionId);
 
         [$response, $status] = $this->client->LatestMeterReadingGroupByMeter($protoRequest)->wait();
@@ -235,7 +235,7 @@ class MeterReadingService
         }
         $meterReadingValueGroups = [];
         foreach ($response->getMeterReadingValueGroups() as $meterReadingValueGroup) {
-            $meter  = MeterProtoConvertor::convertToArray($meterReadingValueGroup->getMeter());
+            $meter = MeterProtoConvertor::convertToArray($meterReadingValueGroup->getMeter());
             $reading = MeterReadingConverter::toArray($meterReadingValueGroup->getReading());
             $values = [];
             foreach ($meterReadingValueGroup->getValues() as $value) {
@@ -248,7 +248,6 @@ class MeterReadingService
             ];
             $meterReadingValueGroups[] = $meterReadingValueGroup;
         }
-
 
         return GrpcServiceResponse::success($meterReadingValueGroups, $response, $status->code, $status->details);
     }
@@ -292,20 +291,6 @@ class MeterReadingService
         // 🔑 Flatten readings_by_meter into MeterReadingValue list
 
         foreach ($request->readingsByMeter as $meter) {
-            if (!in_array($meter['meter_id'], $request->meters)) {
-                continue; // skip if meter_id missing
-            }
-
-            if ($request->isInterimReading) {
-                if (empty($request->meters)) {
-                    throw ValidationException::withMessages([
-                        'meters' => ['Meters are required'],
-                    ]);
-                }
-                if (!in_array($meter['meter_id'], $request->meters)) {
-                    continue;
-                }
-            }
             $meterId = (int) $meter['meter_id'];
 
             if (empty($meter['parameters']) || ! is_array($meter['parameters'])) {
@@ -375,7 +360,7 @@ class MeterReadingService
 
             if ($meterHealth['meter_health_id'] == null) {
                 throw ValidationException::withMessages([
-                    'meter_health_id' => ['Meter health is required. for meter :' . $meterHealth['meter_serial']],
+                    'meter_health_id' => ['Meter health is required. for meter :'.$meterHealth['meter_serial']],
                 ]);
             }
             $protoMeterHealth->setMeterHealthId($meterHealth['meter_health_id']);
@@ -405,7 +390,7 @@ class MeterReadingService
 
                 if ($transformer['health'] == null) {
                     throw ValidationException::withMessages([
-                        'ctpt_health_id' => ['CTPT health is required. for meter CTPT :' . $transformer['ctpt_serial']],
+                        'ctpt_health_id' => ['CTPT health is required. for meter CTPT :'.$transformer['ctpt_serial']],
                     ]);
                 }
 

@@ -27,3 +27,7 @@ export function getMeterMappingForPeriod(
       return mappingStart.isBefore(endDate) && (mappingEnd == null || mappingEnd.isAfter(startDate))
     })
 }
+
+export function getLastDayOfMonth(date: string): string {
+  return dayjs(date).endOf('month').format('YYYY-MM-DD')
+}
