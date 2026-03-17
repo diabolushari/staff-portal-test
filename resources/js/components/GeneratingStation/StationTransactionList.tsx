@@ -28,13 +28,30 @@ export default function StationTransactionTable({ transactions }: Props) {
   const generatedUnits = transactions
     .filter((txn) => txn.txn_type?.parameter_code === 'GEN_CREDIT')
     .reduce((sum, txn) => sum + (txn.txn_units || 0), 0)
+
+  const adjustedUnits = transactions
+    .filter((txn) => txn.txn_direction?.trim().toUpperCase() === 'D')
+    .reduce((sum, txn) => sum + (txn.pre_conversion_units || 0), 0)
   console.log(transactions)
   return (
     <div className='rounded-lg bg-white p-4'>
       {/* Generated Units Card */}
-      <div className='mb-4 w-40 rounded-lg bg-gray-100 p-4 text-center'>
-        <div className='text-sm text-gray-500'>Generated Units</div>
-        <div className='text-xl font-bold'>{generatedUnits.toLocaleString()}</div>
+      {/* <div className='mb-4 w-40 rounded-lg border bg-white p-4 text-center shadow-sm'>
+        <div className='text-sm font-semibold text-green-600'>+ Generated Units</div>
+        <div className='text-xl font-bold text-green-600'>{generatedUnits.toLocaleString()}</div>
+      </div> */}
+      <div className='mb-4 flex gap-4'>
+        {/* Generated Units Card */}
+        <div className='w-40 rounded-lg border bg-white p-4 text-center shadow-sm'>
+          <div className='text-sm font-semibold text-green-600'>Generated Units</div>
+          <div className='text-xl font-bold text-green-700'>{generatedUnits.toLocaleString()}</div>
+        </div>
+
+        {/* Adjusted Units Card */}
+        <div className='w-40 rounded-lg border bg-white p-4 text-center shadow-sm'>
+          <div className='text-sm font-semibold text-blue-800'>Adjusted Units</div>
+          <div className='text-xl font-bold'>{adjustedUnits.toLocaleString()}</div>
+        </div>
       </div>
 
       {/* Transaction Table */}
@@ -68,9 +85,11 @@ export default function StationTransactionTable({ transactions }: Props) {
               <TableCell>{txn.timezone?.parameter_value ?? '-'}</TableCell>
               <TableCell>{txn.txn_direction?.trim().toUpperCase() === 'C' ? 'C' : 'D'}</TableCell>
               <TableCell>
-                {txn.pre_conversion_units != null
-                  ? `${txn.txn_direction?.trim().toUpperCase() === 'C' ? '+' : '-'}${txn.pre_conversion_units}`
-                  : '-'}
+                {txn.txn_type?.parameter_code === 'GEN_CREDIT'
+                  ? `+${txn.txn_units}`
+                  : txn.pre_conversion_units != null
+                    ? `${txn.txn_direction?.trim().toUpperCase() === 'C' ? '+' : '-'}${txn.pre_conversion_units}`
+                    : '-'}
               </TableCell>
               {/* <TableCell>{txn.pre_conversion_units ?? '-'}</TableCell> */}
 
