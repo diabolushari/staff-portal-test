@@ -1,11 +1,11 @@
-import { Badge } from '@/components/ui/badge'
-import { Card } from '@/components/ui/card'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/ui/card'
 import { MeterProfileParameter, MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import { MeterReadingFormState } from './useMeterReadingForm'
@@ -14,8 +14,6 @@ interface Props {
   meterWithTimezoneAndProfile: MeterWithTimezoneAndProfile
   readingValues: MeterReadingFormState[]
   profile: MeterProfileParameter
-  profileIndex: number
-  meterIndex: number
   children: React.ReactNode
   isOpen: boolean
   onToggle: (open: boolean) => void
@@ -26,8 +24,6 @@ export default function ReadingParameterPreviewCard({
   meterWithTimezoneAndProfile,
   readingValues,
   profile,
-  profileIndex,
-  meterIndex,
   children,
   isOpen,
   hasError,
@@ -41,7 +37,7 @@ export default function ReadingParameterPreviewCard({
 
   const hasData = paramData?.readings?.some((r) => r.values?.final || r.values?.diff)
 
-  const accordionValue = `${meterIndex}-${profileIndex}`
+  const accordionValue = `${meterWithTimezoneAndProfile.meter_id}-${profile.meter_parameter_id}`
 
   const totalValue =
     profile.is_cumulative && paramData?.readings?.length
@@ -165,22 +161,6 @@ export default function ReadingParameterPreviewCard({
                 </>
               )}
             </div>
-
-            {/* <Tooltip>
-          <TooltipTrigger>
-            <Info className='absolute top-2 right-2 h-5 w-5 text-gray-400 hover:text-gray-600' />
-          </TooltipTrigger>
-          <TooltipContent
-            side='top'
-            className='bg-white'
-          >
-            <MeterReadingValueTooltip
-              meterId={meterWithTimezoneAndProfile.meter_id}
-              readingsByMeter={readingValues}
-              profile={profile}
-            />
-          </TooltipContent>
-        </Tooltip> */}
           </Card>
         </AccordionTrigger>
 
