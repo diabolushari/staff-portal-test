@@ -1,21 +1,32 @@
 import {
   MeterProfileParameter,
   MeterReading,
-  MeterReadingValue,
+  MeterReadingValueGroup,
   MeterWithTimezoneAndProfile,
 } from '@/interfaces/data_interfaces'
 import { useCallback, useEffect, useState } from 'react'
 
 export interface MeterReadingFormState {
   meter_id: number
-  parameters: {
-    meter_parameter_id: number
-    display_name: string
-    is_cumulative: boolean
-    is_export: boolean
-    readings: TimezoneReadingState[]
-    name: string
-  }[]
+  parameters: ParameterReadingState[]
+}
+
+export interface ParameterReadingState {
+  meter_parameter_id: number
+  display_name: string
+  is_cumulative: boolean
+  is_export: boolean
+  readings: TimezoneReadingState[]
+  name: string
+}
+
+export interface ParameterReadingState {
+  meter_parameter_id: number
+  display_name: string
+  is_cumulative: boolean
+  is_export: boolean
+  readings: TimezoneReadingState[]
+  name: string
 }
 
 export interface TimezoneReadingState {
@@ -31,94 +42,53 @@ export interface TimezoneReadingState {
   }
 }
 
-function transformToFormData(
-  values: MeterReadingValue[],
-  metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
-): MeterReadingFormState[] {
-  return metersWithTimezonesAndProfiles.map((meter) => {
-    const meterReadings = values.filter((v) => v.meter_id === meter.meter_id)
-
-    const parameters = meter.reading_parameters.map((profile: MeterProfileParameter) => {
-      const parameterReadings = meterReadings.filter(
-        (readingValue) => readingValue.parameter_id === profile.meter_parameter_id
-      )
-
-      const readings = meter.timezones.map((tz) => {
-        const match = parameterReadings.find((r) => r.timezone_id === tz.timezone_id)
-        return {
-          timezone_id: tz.timezone_id,
-          timezone_name: tz.timezone_name,
-          isRotation: false,
-          values: {
-            initial: match?.initial_reading ?? 0,
-            final: match?.final_reading?.toString() ?? '0',
-            diff: match?.difference?.toString() ?? '0',
-            value: 0,
-            lastReadingDiff: match?.difference ?? 0,
-          },
-        }
-      })
-
-      return {
-        meter_parameter_id: profile.meter_parameter_id,
-        display_name: profile.display_name,
-        name: profile?.name,
-        is_cumulative: profile.is_cumulative,
-        is_export: profile.is_export,
-        readings,
-      }
-    })
-
-    return {
-      meter_id: meter.meter_id,
-      parameters,
-    }
+function prevReadiningValue(
+  lastMeterReading: MeterReadingValueGroup | null,
+  profileId: number,
+  timezoneId: number
+) {
+  return lastMeterReading?.values?.find((value) => {
+    return value.parameter_id === profileId && value.timezone_id === timezoneId
   })
 }
 
-const getPreviousFinalReading = (
-  lastMeterReading: MeterReading | null,
-  meterId: number,
-  parameterId: number,
-  timezoneId: number
-) => {
-  if (lastMeterReading == null) {
-    return 0
+function initializeReadignParameter(
+  meter: MeterWithTimezoneAndProfile,
+  lastReading: MeterReadingValueGroup | null,
+  profile: MeterProfileParameter
+): ParameterReadingState {
+  return {
+    meter_parameter_id: profile.meter_parameter_id,
+    display_name: profile.display_name,
+    is_cumulative: profile.is_cumulative,
+    is_export: profile.is_export,
+    name: profile.name,
+    readings: meter?.timezones?.map((tz) => {
+      const prevReading = prevReadiningValue(
+        lastReading,
+        profile.meter_parameter_id,
+        tz.timezone_id
+      )
+
+      return {
+        timezone_id: tz.timezone_id,
+        timezone_name: tz.timezone_name,
+        isRotation: false,
+        values: {
+          initial: profile.is_cumulative ? (prevReading?.final_reading ?? 0) : 0,
+          final: prevReading == null ? '' : '0',
+          diff: prevReading == null ? '' : '0',
+          lastReadingDiff: prevReading?.difference ?? 0,
+          value: 0,
+        },
+      }
+    }),
   }
-
-  return (
-    lastMeterReading?.values?.find(
-      (readingValue) =>
-        readingValue.meter_id === meterId &&
-        readingValue.timezone_id === timezoneId &&
-        readingValue.parameter_id === parameterId
-    )?.final_reading ?? 0
-  )
-}
-
-const getPreviousDiffReading = (
-  lastMeterReading: MeterReading | null,
-  meterId: number,
-  parameterId: number,
-  timezoneId: number
-) => {
-  if (lastMeterReading == null) {
-    return 0
-  }
-
-  return (
-    lastMeterReading?.values?.find(
-      (readingValue) =>
-        readingValue.meter_id === meterId &&
-        readingValue.timezone_id === timezoneId &&
-        readingValue.parameter_id === parameterId
-    )?.difference ?? 0
-  )
 }
 
 export default function useMeterReadingForm(
   metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[],
-  lastMeterReading: MeterReading | null,
+  lastMeterReadings: MeterReadingValueGroup[],
   oldReading: MeterReading | null
 ) {
   const [readingValues, setReadingValues] = useState<MeterReadingFormState[]>([])
@@ -131,49 +101,26 @@ export default function useMeterReadingForm(
     if (metersWithTimezonesAndProfiles == null || metersWithTimezonesAndProfiles.length === 0) {
       return
     }
-
-    if (oldReading != null && oldReading?.values?.length > 0) {
-      const transformed = transformToFormData(oldReading.values, metersWithTimezonesAndProfiles)
-      setReadingValues(transformed)
-      return
-    }
-    const initializedMeters = metersWithTimezonesAndProfiles.map((meter) => ({
-      meter_id: meter.meter_id,
-      parameters: meter.reading_parameters.map((profile) => ({
-        meter_parameter_id: profile.meter_parameter_id,
-        display_name: profile.display_name,
-        is_cumulative: profile.is_cumulative,
-        is_export: profile.is_export,
-        name: profile.name,
-        readings: meter?.timezones?.map((tz) => ({
-          timezone_id: tz.timezone_id,
-          timezone_name: tz.timezone_name,
-          isRotation: false,
-          values: {
-            initial: !profile.is_cumulative
-              ? 0
-              : getPreviousFinalReading(
-                  lastMeterReading,
-                  meter.meter_id,
-                  profile.meter_parameter_id,
-                  tz.timezone_id
-                ),
-            final: lastMeterReading ? '' : 0,
-            diff: lastMeterReading ? '' : 0,
-            lastReadingDiff: getPreviousDiffReading(
-              lastMeterReading,
-              meter.meter_id,
-              profile.meter_parameter_id,
-              tz.timezone_id
-            ),
-            value: 0,
-          },
-        })),
-      })),
-    }))
+    const initializedMeters = metersWithTimezonesAndProfiles.map((meter) => {
+      const lastReading = lastMeterReadings.find(
+        (reading) => reading.meter.meter_id === meter.meter_id
+      )
+      if (lastReading == null) {
+        return {
+          meter_id: meter.meter_id,
+          parameters: [],
+        }
+      }
+      return {
+        meter_id: meter.meter_id,
+        parameters: meter.reading_parameters.map((profile) => {
+          return initializeReadignParameter(meter, lastReading, profile)
+        }),
+      }
+    })
 
     setReadingValues(initializedMeters)
-  }, [oldReading, metersWithTimezonesAndProfiles, readingValues, lastMeterReading])
+  }, [oldReading, metersWithTimezonesAndProfiles, readingValues, lastMeterReadings])
 
   const updateReading = useCallback(
     (meterId: number, parameterId: number, newReading: TimezoneReadingState[]) => {

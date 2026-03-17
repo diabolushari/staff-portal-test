@@ -84,8 +84,6 @@ export default function ConnectMeterForm({
     }
   }, [relation, setFormValue])
 
-  console.log(relation)
-
   const { post, loading, errors } = useInertiaPost<typeof formData>(
     relation
       ? route('meter-connection-rel.update', connection_id)
@@ -130,7 +128,7 @@ export default function ConnectMeterForm({
     },
     {
       title: connection?.consumer_number.toString() ?? '',
-      href: route('connections.show', connection?.connection_id),
+      href: route('connections.show', connection?.connection_id ?? 0),
     },
     {
       title: 'Meters',

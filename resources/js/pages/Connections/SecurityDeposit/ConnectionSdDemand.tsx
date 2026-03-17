@@ -1,6 +1,6 @@
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import SdDemandList from '@/components/SecurityDeposit/SdDemands/SdDemandList'
-import { Connection, SdDemand } from '@/interfaces/data_interfaces'
+import { Connection, SdBalanceSummary, SdDemand } from '@/interfaces/data_interfaces'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
 import AddButton from '@/ui/button/AddButton'
 import Pagination from '@/ui/Pagination/Pagination'
@@ -11,9 +11,10 @@ import { useMemo } from 'react'
 interface Props {
   connection: Connection
   sdDemands: Paginator<SdDemand>
+  balanceSummary: SdBalanceSummary
 }
 
-const ConnectionSdDemand = ({ connection, sdDemands }: Props) => {
+const ConnectionSdDemand = ({ connection, sdDemands, balanceSummary }: Props) => {
   const breadcrumbs = useMemo(
     () => [
       {
@@ -32,7 +33,7 @@ const ConnectionSdDemand = ({ connection, sdDemands }: Props) => {
     ],
     [connection]
   )
-
+  console.log(sdDemands)
   return (
     <ConnectionsLayout
       connection={connection}

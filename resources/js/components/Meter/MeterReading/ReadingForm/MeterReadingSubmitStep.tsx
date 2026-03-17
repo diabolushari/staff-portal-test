@@ -1,0 +1,126 @@
+import {
+  MeterReading,
+  MeterReadingValueGroup,
+  MeterWithTimezoneAndProfile,
+} from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
+import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
+import { Dispatch, SetStateAction, useState } from 'react'
+import MeterReadingObservationStep from '../MeterReadingObservationStep'
+import MeterReadingsStep from './MeterReadingsStep'
+import useMeterHealthForm from './useMeterHealthForm'
+import useMeterReadingForm from './useMeterReadingForm'
+
+interface Props {
+  activeStep: number
+  setActiveStep: Dispatch<SetStateAction<number>>
+  formData: MeterReadingForm
+  setFormValue: (
+    key: keyof MeterReadingForm
+  ) => (value: MeterReadingForm[keyof MeterReadingForm]) => void
+  toggleBoolean: (key: keyof MeterReadingForm) => () => void
+  meterHealthTypes: ParameterValues[]
+  ctHealthTypes: ParameterValues[]
+  anomalyTypes: ParameterValues[]
+  latestMeterReadingGroupByMeter: MeterReadingValueGroup[]
+  post: (form: MeterReadingForm) => void
+  errors: Record<string, string | undefined>
+  loading: boolean
+  metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
+  latestMeterReading: MeterReading | null
+}
+
+export default function MeterReadingSubmitStep({
+  activeStep,
+  setActiveStep,
+  formData,
+  setFormValue,
+  meterHealthTypes,
+  ctHealthTypes,
+  anomalyTypes,
+  latestMeterReadingGroupByMeter,
+  post,
+  errors,
+  loading,
+  metersWithTimezonesAndProfiles,
+  latestMeterReading,
+}: Readonly<Props>) {
+  const [activeMeter, setActiveMeter] = useState<MeterWithTimezoneAndProfile | null>(null)
+
+  const { readingValues, updateReading } = useMeterReadingForm(
+    metersWithTimezonesAndProfiles,
+    latestMeterReadingGroupByMeter,
+    null
+  )
+
+  const { healthData, updateMeterHealth, updateCTPTHealth, updateRybValues } = useMeterHealthForm(
+    metersWithTimezonesAndProfiles,
+    meterHealthTypes,
+    ctHealthTypes,
+    latestMeterReadingGroupByMeter
+  )
+
+  const accordionOpen = () => {
+    // Object.values(previewRefs.current).forEach((ref) => {
+    //   ref?.expandAll()
+    // })
+  }
+
+  const [isOnParamaterForm, setIsOnParameterForm] = useState(false)
+
+  const [allProfileHasData, setAllProfileHasData] = useState<boolean>(false)
+  const [profileErrorExist, setProfileErrorExist] = useState<boolean>(false)
+
+  const handleSubmit = () => {
+    accordionOpen()
+
+    post({
+      ...formData,
+      readings_by_meter: readingValues,
+      meter_health: healthData,
+    })
+  }
+
+  return (
+    <>
+      {activeStep === 1 && (
+        <MeterReadingObservationStep
+          setActiveStep={setActiveStep}
+          formData={formData}
+          setFormValue={setFormValue}
+          anomalyTypes={anomalyTypes}
+          errors={errors}
+          meterHealthData={healthData}
+          updateRybValues={updateRybValues}
+        />
+      )}
+      {activeStep === 2 && (
+        <MeterReadingsStep
+          setActiveStep={setActiveStep}
+          handleSubmit={handleSubmit}
+          healthData={healthData}
+          metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
+          formData={formData}
+          readingValues={readingValues}
+          updateReading={updateReading}
+          setFormValue={setFormValue}
+          latestMeterReading={latestMeterReading}
+          meterHealthTypes={meterHealthTypes}
+          ctHealthTypes={ctHealthTypes}
+          updateMeterHealth={updateMeterHealth}
+          updateCTPTHealth={updateCTPTHealth}
+          setIsOnParameterForm={setIsOnParameterForm}
+          isFirstReading={false}
+          isOnparameterForm={isOnParamaterForm}
+          activeMeter={activeMeter}
+          setActiveMeter={setActiveMeter}
+          setAllProfileHasData={setAllProfileHasData}
+          setProfileErrorExist={setProfileErrorExist}
+          allProfileHasData={allProfileHasData}
+          profileErrorExist={profileErrorExist}
+          loading={loading}
+        />
+      )}
+    </>
+  )
+}

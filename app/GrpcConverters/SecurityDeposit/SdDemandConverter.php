@@ -6,7 +6,7 @@ use App\GrpcConverters\Billing\ChargeHeadDefinitionConverter;
 use App\GrpcConverters\Connection\ConnectionProtoConverter;
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Http\Requests\SecurityDeposit\SdDemandFormRequest;
-use Proto\Consumers\CreateSdDemandRequest;
+use Proto\Consumers\CreateSdDemandWithRegisterRequest;
 use Proto\Consumers\SdDemandMessage;
 
 class SdDemandConverter
@@ -63,9 +63,9 @@ class SdDemandConverter
         return $msg;
     }
 
-    public function grpcToDemandRegisterCreateRequest(SdDemandFormRequest $sdDemand): CreateSdDemandRequest
+    public function grpcToDemandRegisterCreateRequest(SdDemandFormRequest $sdDemand): CreateSdDemandWithRegisterRequest
     {
-        $msg = new CreateSdDemandRequest;
+        $msg = new CreateSdDemandWithRegisterRequest;
 
         $msg->setConnectionId($sdDemand->connectionId);
         $msg->setDemandTypeId($sdDemand->demandTypeId);

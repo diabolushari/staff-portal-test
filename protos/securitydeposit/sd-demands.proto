@@ -10,6 +10,7 @@ import "parameters/parameter-value.proto";
 import "connections/connections.proto";
 import "securitydeposit/sd-collections.proto";
 import "billing/charge_head_definition.proto";
+import "securitydeposit/sd-demand-status.proto";
 
 message SdDemandMessage {
   optional int32 sd_demand_id = 1;
@@ -28,9 +29,15 @@ message SdDemandMessage {
   com.kseb.consumerservice.grpc.connections.ConnectionMessage connection = 14;
   com.kseb.consumerservice.proto.billing.ChargeHeadDefinitionMessage charge_head_definition = 15;
   repeated SdCollectionMessage collections = 16;
+  optional com.kseb.consumerservice.grpc.securitydeposit.SdDemandStatusMessage latest_status = 17;
+  repeated com.kseb.consumerservice.grpc.securitydeposit.SdDemandStatusMessage demand_status = 18;
 }
 
 message CreateSdDemandRequest {
+  SdDemandMessage sd_demand_message = 1;
+}
+
+message CreateSdDemandWithRegisterRequest {
   int32 connection_id = 1;
   int32 demand_type_id = 2;
   optional int32 calculation_basic_id = 3;
@@ -98,6 +105,7 @@ message DeleteSdDemandResponse {
 
 service SdDemandService {
   rpc CreateSdDemand(CreateSdDemandRequest) returns (CreateSdDemandResponse);
+  rpc CreateSdDemandWithRegister(CreateSdDemandWithRegisterRequest) returns (SdDemandMessage);
   rpc GetSdDemand(GetSdDemandRequest) returns (GetSdDemandResponse);
   rpc ListSdDemands(ListSdDemandsRequest) returns (ListSdDemandsResponse);
   rpc ListSdDemandsPaginated(ListSdDemandsPaginatedRequest) returns (ListSdDemandsPaginatedResponse);
