@@ -30,7 +30,7 @@ interface Props {
   latestMeterReading: MeterReading | null
 }
 
-export default function MeterReadingSubmitStep({
+export default function MeterReadingFormSteps({
   activeStep,
   setActiveStep,
   formData,
