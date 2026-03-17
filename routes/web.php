@@ -76,6 +76,7 @@ use App\Http\Controllers\SecurityDeposit\SdDemandsController;
 use App\Http\Controllers\GeneratingStation\GeneratingStationController;
 use App\Http\Controllers\GeneratingStation\StationConsumerController;
 use App\Http\Controllers\GeneratingStation\StationConsumerRelController;
+use App\Http\Controllers\GeneratingStation\StationTransactionController;
 use App\Http\Controllers\SecurityDeposit\SdRegisterController;
 use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
@@ -212,6 +213,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/generating-stations/{stationId}/consumers',[StationConsumerController::class, 'index'])
         ->name('generating-stations.consumers');
+
+    Route::get('/generating-stations/{stationId}/transactions',[StationTransactionController::class, 'index'])
+        ->name('generating-stations.transactions');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
