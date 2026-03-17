@@ -4,11 +4,11 @@ import { getDisplayDate } from '@/utils'
 import { FileText, Banknote, Undo2 } from 'lucide-react'
 
 interface Props {
-  sdRegister?: SdRegister
+  sdRegister?: SdRegister[]
 }
 
 const LatestUpdateDetailCard = ({ sdRegister }: Props) => {
-  const collections = sdRegister?.sd_demand?.collections ?? []
+  const collections = sdRegister?.flatMap((item) => item.sd_demand?.collections ?? []) ?? []
 
   const latestCollection = [...collections].sort(
     (a, b) => new Date(b.collection_date).getTime() - new Date(a.collection_date).getTime()
@@ -25,9 +25,11 @@ const LatestUpdateDetailCard = ({ sdRegister }: Props) => {
 
           <div className='text-right'>
             <p className='text-sm font-semibold text-gray-800'>
-              ₹{sdRegister?.sd_demand?.total_sd_amount}
+              ₹{sdRegister?.[0].sd_demand?.total_sd_amount}
             </p>
-            <p className='text-xs text-gray-400'>{getDisplayDate(sdRegister?.generated_date)}</p>
+            <p className='text-xs text-gray-400'>
+              {getDisplayDate(sdRegister?.[0].generated_date)}
+            </p>
           </div>
         </div>
 

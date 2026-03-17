@@ -1,12 +1,19 @@
-import { SdRegister } from '@/interfaces/data_interfaces'
+import useFetchList from '@/hooks/useFetchList'
+import useFetchRecord from '@/hooks/useFetchRecord'
+import { Connection, SdRegister } from '@/interfaces/data_interfaces'
+import { Paginator } from '@/ui/ui_interfaces'
 import { getDisplayDate } from '@/utils'
 import { router } from '@inertiajs/react'
 
 interface Props {
-  sdRegisters: SdRegister[]
+  connection: Connection
 }
 
-const SdRegisterList = ({ sdRegisters }: Props) => {
+const SdRegisterListByConnection = ({ connection }: Props) => {
+  const sdRegister = useFetchRecord<Paginator<SdRegister>>(
+    route(`/api/sd-register-by-connection/${connection.connection_id}`)
+  )
+  console.log(sdRegister)
   return (
     <>
       <div className='context-menu-item grid grid-cols-10 gap-x-6 gap-y-2 pt-5'>
@@ -21,7 +28,7 @@ const SdRegisterList = ({ sdRegisters }: Props) => {
         <span>BG Renewal Due Date</span>
         <span>Settled Date</span>
       </div>
-      {sdRegisters.map((sdRegister) => (
+      {sdRegister?.sdRegister?.data?.map((sdRegister) => (
         <div
           key={sdRegister.sd_register_id}
           className='normal-font grid cursor-pointer grid-cols-10 gap-x-6 gap-y-2 hover:bg-gray-100'
@@ -45,4 +52,4 @@ const SdRegisterList = ({ sdRegisters }: Props) => {
   )
 }
 
-export default SdRegisterList
+export default SdRegisterListByConnection

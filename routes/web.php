@@ -74,6 +74,7 @@ use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SecurityDeposit\Consumer\ConsumerSDController;
 use App\Http\Controllers\SecurityDeposit\Consumer\ConsumerSDGroupController;
+use App\Http\Controllers\SecurityDeposit\Consumer\SDRegisterByConnection;
 use App\Http\Controllers\SecurityDeposit\SdAssessController;
 use App\Http\Controllers\SecurityDeposit\SdAttributeDownloadController;
 use App\Http\Controllers\SecurityDeposit\SdCollectionController;
@@ -247,7 +248,8 @@ Route::get('api/tariff-order/{id}/download', TariffOrderDownloadApiController::c
 Route::get('api/connections/get-tariffs', GetPurposeInfoApiController::class)->name('connections.get-tariffs');
 Route::get('api/charge-head-definitions', GetChargeHeadDefinitionController::class);
 Route::get('api/generating-stations', GeneratingStationApiController::class);
-
+Route::get('api/sd-register-by-connection/{connectionId}', SDRegisterByConnection::class)
+    ->name('sd-register-by-connection');
 Route::get('consumer-test', function (SystemModuleService $service) {
     $response = $service->createSystemModule(
         new SystemModuleFormRequest('Test Module')

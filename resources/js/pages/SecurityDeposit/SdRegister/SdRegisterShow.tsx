@@ -2,15 +2,18 @@ import { billingNavItems } from '@/components/Navbar/navitems'
 import BalanceDetailCard from '@/components/SecurityDeposit/SdRegister/BalanceDetailCard'
 import LastAssessmentCard from '@/components/SecurityDeposit/SdRegister/LastAssessmentCard'
 import LatestUpdateDetailCard from '@/components/SecurityDeposit/SdRegister/LatestUpdateDetailCard'
+import SdRegisterListByConnection from '@/components/SecurityDeposit/SdRegister/SdRegisterListByConnection'
 import { Button } from '@/components/ui/button'
-import { SdRegister } from '@/interfaces/data_interfaces'
+import { Connection, SdBalanceSummary, SdRegister } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import { router } from '@inertiajs/react'
 import { useState } from 'react'
 
 interface Props {
-  sdRegister?: SdRegister
+  sdRegister?: SdRegister[]
+  connection: Connection
+  balanceSummary: SdBalanceSummary
 }
 
 const breadcrumb: BreadcrumbItem[] = [
@@ -32,7 +35,7 @@ const breadcrumb: BreadcrumbItem[] = [
   },
 ]
 
-const SdRegisterShow = ({ sdRegister }: Props) => {
+const SdRegisterShow = ({ sdRegister, connection, balanceSummary }: Props) => {
   const [showActions, setShowActions] = useState<boolean>(false)
   return (
     <MainLayout
@@ -43,7 +46,7 @@ const SdRegisterShow = ({ sdRegister }: Props) => {
       selectedTopNav='Billing'
       description={
         <span>
-          Security Deposit for Consumer number <b>{sdRegister?.connection?.consumer_number}</b>
+          Security Deposit for Consumer number <b>{connection.consumer_number}</b>
         </span>
       }
     >
@@ -64,9 +67,9 @@ const SdRegisterShow = ({ sdRegister }: Props) => {
                 onClick={() =>
                   router.get(
                     route('sd-collections.create', {
-                      sdDemandId: sdRegister?.sd_demand_id,
-                      connectionId: sdRegister?.connection_id,
-                      registerId: sdRegister?.sd_register_id,
+                      sdDemandId: sdRegister?.[0].sd_demand_id,
+                      connectionId: connection.connection_id,
+                      registerId: sdRegister?.[0].sd_register_id,
                     })
                   )
                 }
@@ -81,23 +84,25 @@ const SdRegisterShow = ({ sdRegister }: Props) => {
       <div className='flex flex-col gap-4'>
         <div className='flex gap-2'>
           <span className='text-sm text-gray-900'>
-            <b>{sdRegister?.connection?.consumer_profiles?.[0]?.consumer_name}</b>
+            <b>{connection.consumer_profiles?.[0]?.consumer_name}</b>
           </span>
         </div>
         <div className='flex gap-2'>
           <label className='text-sm font-medium text-gray-700'>Consumer Number : </label>
-          <span className='text-sm text-gray-900'>{sdRegister?.connection?.consumer_number}</span>
+          <span className='text-sm text-gray-900'>{connection.consumer_number}</span>
         </div>
         <div className='flex gap-2'>
           <label className='text-sm font-medium text-gray-700'>Legacy Code : </label>
-          <span className='text-sm text-gray-900'>
-            {sdRegister?.connection?.consumer_legacy_code}
-          </span>
+          <span className='text-sm text-gray-900'>{connection.consumer_legacy_code}</span>
         </div>
       </div>
       <LastAssessmentCard sdRegister={sdRegister} />
-      <BalanceDetailCard sdRegister={sdRegister} />
+      <BalanceDetailCard
+        sdRegister={sdRegister}
+        balanceSummary={balanceSummary}
+      />
       <LatestUpdateDetailCard sdRegister={sdRegister} />
+      <SdRegisterListByConnection connection={connection} />
     </MainLayout>
   )
 }

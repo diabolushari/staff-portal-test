@@ -891,7 +891,7 @@ export interface SdCollection {
   created_by: number
   updated_by: number
   payment_mode: ParameterValues
-  sdAttribute: SdAttribute[]
+  sd_attributes: SdAttribute[]
 }
 
 export interface SdAttribute {

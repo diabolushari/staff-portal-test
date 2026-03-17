@@ -50,8 +50,13 @@ message ListSdRegistersResponse {
 }
 
 message ListSdRegistersPaginatedRequest {
-  optional int32 page = 1;
-  optional int32 page_size = 2;
+  optional int32 connection_id = 1;
+  optional int32 sd_type_id = 2;
+  optional int32 occupancy_type_id = 3;
+  optional string period_from = 4;
+  optional string period_to = 5;
+  optional int32 page = 6;
+  optional int32 page_size = 7;
 }
 
 message ListSdRegistersPaginatedResponse {
@@ -70,10 +75,19 @@ message GetSdRegisterByIdResponse {
   SdRegisterMessage sd_register = 1;
 }
 
+message GetSdRegisterByConnectionIdRequest {
+  int32 connection_id = 1;
+}
+
+message GetSdRegisterByConnectionIdResponse {
+  repeated SdRegisterMessage sd_register = 1;
+}
+
 
 
 service SdRegisterService {
   rpc ListSdRegisters(ListSdRegistersRequest) returns (ListSdRegistersResponse);
   rpc ListSdRegistersPaginated(ListSdRegistersPaginatedRequest) returns (ListSdRegistersPaginatedResponse);
   rpc GetSdRegister(GetSdRegisterByIdRequest) returns (GetSdRegisterByIdResponse);
+  rpc GetSdRegisterByConnectionId(GetSdRegisterByConnectionIdRequest) returns (GetSdRegisterByConnectionIdResponse);
 }
