@@ -74,6 +74,7 @@ use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
 use App\Http\Controllers\SecurityDeposit\Consumer\ConsumerSDController;
 use App\Http\Controllers\SecurityDeposit\Consumer\ConsumerSDGroupController;
+use App\Http\Controllers\SecurityDeposit\Consumer\SDRefundController;
 use App\Http\Controllers\SecurityDeposit\Consumer\SDRegisterByConnection;
 use App\Http\Controllers\SecurityDeposit\SdAssessController;
 use App\Http\Controllers\SecurityDeposit\SdAttributeDownloadController;
@@ -208,6 +209,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('sd-register');
     Route::get('sd-register/{id}', [SdRegisterController::class, 'show'])
         ->name('sd-register.show');
+
+    Route::get('sd-refunds-create', [SDRefundController::class, 'create'])
+        ->name('sd-refunds-create');
 
     Route::resource('station-consumer-rels', StationConsumerRelController::class)
         ->only(['create', 'store', 'edit', 'update', 'destroy']);

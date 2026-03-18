@@ -78,7 +78,7 @@ const SdRegisterDetailView = ({
       value: 'collection',
       onClick: () =>
         router.get(
-          route('sd-collections.create', {
+          route('sd-collections-create', {
             sdDemandId: sdRegister?.[0].sd_demand_id,
             connectionId: connection.connection_id,
           })
@@ -88,7 +88,12 @@ const SdRegisterDetailView = ({
       label: 'Manage Refunds',
       value: 'refund',
       onClick: () =>
-        router.get(route('sd-refunds.create', { connectionId: connection.connection_id })),
+        router.get(
+          route('sd-refunds-create', {
+            connectionId: connection.connection_id,
+            sdDemandId: sdRegister?.[0].sd_demand_id,
+          })
+        ),
     },
   ]
 
@@ -113,16 +118,17 @@ const SdRegisterDetailView = ({
       sheetOpen={sheetOpen}
       sheetContent={sheetContent}
     >
-      <div className='relative ml-auto w-fit'>
+      <div className='relative ml-auto w-48'>
         <Button
+          className='w-full'
           variant={'default'}
           onClick={() => setShowActions(!showActions)}
         >
-          Actions
+          ACTIONS
         </Button>
 
         {showActions && (
-          <div className='absolute right-0 z-50 mt-2 w-48 rounded-md border bg-white shadow-lg'>
+          <div className='absolute right-0 z-50 mt-2 w-full rounded-md border bg-white shadow-lg'>
             <ul className='py-1 text-sm'>
               {ActionItems.map((tab) => (
                 <li

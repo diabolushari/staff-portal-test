@@ -1,4 +1,4 @@
-import SdCollectionForm from '@/components/SecurityDeposit/SdCollections/SdCollectionForm'
+import SdRefundForm from '@/components/SecurityDeposit/SdRefunds/SdRefundForm'
 import SdRegisterDetailView from '@/components/SecurityDeposit/SdRegister/SdRegisterDetailView'
 import {
   ChargeHeadDefinition,
@@ -22,8 +22,8 @@ interface Props {
   page?: number
   pageSize?: number
 }
-//TODO need to show demand details in this page, currently only showing consumer number in heading, can show more details in description or in a separate section
-export default function SdCollectionCreate({
+
+export default function SdRefundCreate({
   sdDemand,
   paymentModes,
   collectionStatus,
@@ -45,21 +45,15 @@ export default function SdCollectionCreate({
       sdTypes={sdTypes}
       page={page}
       pageSize={pageSize}
-      sheetTitle={'Register Collection'}
+      sheetTitle={'Manage Refunds'}
       sheetAction={setSheetOpen}
       sheetOpen={sheetOpen}
       sheetContent={
         <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
-          <SdCollectionForm
-            sdDemand={sdDemand}
-            paymentModes={paymentModes}
-            collectionStatus={collectionStatus}
-            connection={connection}
-            sdRegister={sdRegister[0]}
-          />
+          <SdRefundForm />
         </div>
       }
-      highlightedAction={'collection'}
+      highlightedAction={'refund'}
     />
   )
 }
