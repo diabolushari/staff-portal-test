@@ -892,6 +892,8 @@ export interface SdCollection {
   updated_by: number
   payment_mode: ParameterValues
   sd_attributes: SdAttribute[]
+  status: ParameterValues
+  status_id: number
 }
 
 export interface SdAttribute {

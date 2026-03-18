@@ -10,9 +10,15 @@ interface Props {
 const LatestUpdateDetailCard = ({ sdRegister }: Props) => {
   const collections = sdRegister?.flatMap((item) => item.sd_demand?.collections ?? []) ?? []
 
-  const latestCollection = [...collections].sort(
+  const sortedCollections = [...collections].sort(
     (a, b) => new Date(b.collection_date).getTime() - new Date(a.collection_date).getTime()
-  )[0]
+  )
+
+  const latestCollection = sortedCollections[0]
+
+  const latestRefundCollection =
+    sortedCollections?.find((c) => c.status?.parameter_value.toLowerCase() === 'refund') ?? null
+
   return (
     <Card className='rounded-xl p-6'>
       <div className='space-y-6'>
@@ -58,8 +64,14 @@ const LatestUpdateDetailCard = ({ sdRegister }: Props) => {
           </div>
 
           <div className='text-right'>
-            <p className='text-sm font-semibold text-orange-500'>₹0.00</p>
-            <p className='text-xs text-gray-400'>--</p>
+            <p className='text-sm font-semibold text-orange-500'>
+              ₹{latestRefundCollection?.collection_amount}
+            </p>
+            <p className='text-xs text-gray-400'>
+              {latestRefundCollection
+                ? getDisplayDate(latestRefundCollection?.collection_date)
+                : '--'}
+            </p>
           </div>
         </div>
       </div>

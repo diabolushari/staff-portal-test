@@ -11,6 +11,7 @@ import TopNavBar from '@/components/Navbar/TopNavBar'
 import LeftNavBar from '@/components/Navbar/LeftNavBar'
 import { usePage } from '@inertiajs/react'
 import { showError, showInfo, showSuccess } from '@/ui/alerts'
+import { X } from 'lucide-react'
 
 interface ConnectionsLayoutProps {
   children: React.ReactNode
@@ -25,6 +26,10 @@ interface ConnectionsLayoutProps {
   onEdit?: () => void
   consumerExist?: boolean
   meterExist?: boolean
+  sheetTitle?: string
+  sheetAction?: (open: boolean) => void
+  sheetOpen?: boolean
+  sheetContent?: React.ReactNode
 }
 
 const connectionTabs = (connection?: Connection | null) => [
@@ -273,6 +278,10 @@ export default function ConnectionsLayout({
   heading,
   description,
   onEdit,
+  sheetTitle,
+  sheetAction,
+  sheetOpen,
+  sheetContent,
 }: Readonly<ConnectionsLayoutProps>) {
   const { flash } = usePage<PageProps>().props
   useEffect(() => {
@@ -331,7 +340,21 @@ export default function ConnectionsLayout({
             </div>
           </main>
 
-          <div className='col-span-2 hidden lg:block'></div>
+          <div className='col-span-2 hidden lg:block'>
+            {sheetOpen && (
+              <div className='flex h-full flex-col border-l bg-white shadow-lg'>
+                <div className='flex items-center justify-between border-b p-4'>
+                  <h2 className='text-lg font-semibold'>{sheetTitle}</h2>
+                  <X
+                    onClick={() => sheetAction?.(false)}
+                    className='cursor-pointer text-gray-500 hover:text-black'
+                  />
+                </div>
+
+                <div className='flex-1 overflow-y-auto p-4'>{sheetContent}</div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </SidebarProvider>

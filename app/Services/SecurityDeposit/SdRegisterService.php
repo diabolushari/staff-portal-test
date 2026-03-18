@@ -28,8 +28,8 @@ class SdRegisterService
         ?int $connectionId,
         ?int $sdTypeId,
         ?int $occupancyTypeId,
-        ?int $periodFrom,
-        ?int $periodTo,
+        ?string $periodFrom,
+        ?string $periodTo,
         ?int $pageNumber = 1,
         ?int $pageSize = 10,
     ) {

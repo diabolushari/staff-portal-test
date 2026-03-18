@@ -103,13 +103,8 @@ const SdCollectionForm = ({
 
   return (
     <div>
-      <div className='flex items-center justify-between p-5'>
-        <h2 className='text-kseb-primary text-lg font-bold'>
-          TOTAL DEMAND: ₹{sdDemand.total_sd_amount}
-        </h2>
-      </div>
       <form onSubmit={handleSubmit}>
-        <div className='grid grid-cols-2 gap-4'>
+        <div className='grid grid-cols-1 gap-4'>
           <Datepicker
             label='Collection Date'
             value={formData.collection_date}
@@ -139,7 +134,7 @@ const SdCollectionForm = ({
           />
         </div>
 
-        <div className='grid grid-cols-2 gap-4'>
+        <div className='grid grid-cols-1 gap-4'>
           <Input
             type='number'
             label='Collection Amount'
@@ -229,15 +224,13 @@ const SdCollectionForm = ({
             required
             placeholder='Select Status'
           />
-        </div>
 
-        <div className='flex justify-end p-3'>
           <Button
             variant={'default'}
             type='submit'
             disabled={loading}
           >
-            SUBMIT
+            SUBMIT COLLECTION RECORD
           </Button>
         </div>
       </form>

@@ -22,7 +22,6 @@ const BalanceDetailCard = ({ sdRegister, balanceSummary }: Props) => {
     (attr) => attr.attribute_definition.parameter_value.toLowerCase() === 'bg_expiry_date'
   )?.attribute_value
 
-  console.log(balanceSummary)
   return (
     <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
       {/* Available Balance */}
