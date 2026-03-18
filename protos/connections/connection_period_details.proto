@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.connections;
+
+option php_namespace = "Proto\\Connections";
+option php_metadata_namespace = "GPBMetadata";
+
+import "connections/connections.proto";
+import "metering/meter-transformer-rel.proto";
+import "parameters/parameter-value.proto";
+import "meterreading/metering_profile_parameters.proto";
+import "metering/metering-timezones.proto";
+
+message GetConnectionPeriodDetailsRequest {
+  int64 connection_id = 1;
+  repeated int64 meter_ids = 2;
+  string start_date = 3;
+  string end_date = 4;
+}
+
+message ProfileHistoryItem {
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto profile = 1;
+  repeated com.kseb.consumerservice.proto.meterreading.MeteringProfileParameterMessage profile_parameters = 2;
+}
+
+message TimezoneHistoryItem {
+  com.kseb.consumerservice.proto.parameters.ParameterValueProto timezone_type = 1;
+  repeated com.kseb.consumerservice.proto.metering.MeteringTimezoneResponse metering_timezones = 2;
+}
+
+message MeterPeriodDetails {
+  int64 meter_id = 1;
+  repeated ProfileHistoryItem profiles = 2;
+  repeated TimezoneHistoryItem timezones = 3;
+  repeated com.kseb.consumerservice.proto.metering.MeterTransformerRelMessage transformer_relations = 4;
+}
+
+message GetConnectionPeriodDetailsResponse {
+  repeated ConnectionMessage connections = 1;
+  repeated MeterPeriodDetails meters = 2;
+}
+
+service ConnectionPeriodDetailsService {
+  rpc GetConnectionPeriodDetails(GetConnectionPeriodDetailsRequest) returns (GetConnectionPeriodDetailsResponse);
+}

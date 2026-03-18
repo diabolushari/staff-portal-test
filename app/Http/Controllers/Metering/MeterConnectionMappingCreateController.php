@@ -26,7 +26,7 @@ class MeterConnectionMappingCreateController extends Controller
         // TODO loading all data
         $meters = $this->meterService->listMeters();
         $connection = $this->connectionService->getConnection($id);
-        $meterRelations = $this->meterConnectionMappingService->listMeterConnectionMappings();
+        $meterRelations = $this->meterConnectionMappingService->listMeterConnectionMappings($id);
         $meterRelationIds = array_column($meterRelations->data ?? [], 'meter_id');
         $unrelatedMeters = array_filter($meters->data ?? [], function ($meter) use ($meterRelationIds) {
             return ! in_array($meter['meter_id'], $meterRelationIds);

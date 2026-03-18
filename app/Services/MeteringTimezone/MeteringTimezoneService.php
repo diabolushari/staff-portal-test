@@ -147,7 +147,7 @@ class MeteringTimezoneService
 
     public function getTimezoneGroupByTimezoneType(int $timezoneTypeId): GrpcServiceResponse
     {
-        $request = new GetTimezoneGroupByTimezoneTypeRequest();
+        $request = new GetTimezoneGroupByTimezoneTypeRequest;
         $request->setTimezoneTypeId($timezoneTypeId);
 
         [$response, $status] = $this->client->GetTimezoneGroupByTimezoneType($request)->wait();
@@ -246,7 +246,7 @@ class MeteringTimezoneService
         return [
             'timezone_type' => ParameterValueProtoConvertor::convertToArray($timezoneGroup->getTimezoneType()),
             'metering_timezones' => array_map(
-                fn(MeteringTimezoneResponse $tz) => self::timezoneProtoToArray($tz),
+                fn (MeteringTimezoneResponse $tz) => self::timezoneProtoToArray($tz),
                 $meteringTimezones
             ),
         ];
@@ -281,6 +281,7 @@ class MeteringTimezoneService
             'metering_timezone_id' => $tz->getMeteringTimezoneId(),
             'timezone_type' => ParameterValueProtoConvertor::convertToArray($tz->getTimezoneType()),
             'timezone_name' => ParameterValueProtoConvertor::convertToArray($tz->getTimezoneName()),
+            'timezone_name_id' => $tz->getTimezoneNameId(),
             'from_hrs' => $tz->getFromHrs(),
             'from_mins' => $tz->getFromMins(),
             'to_hrs' => $tz->getToHrs(),
@@ -295,15 +296,13 @@ class MeteringTimezoneService
         ];
     }
 
-
-
     private static function toTimestamp(\DateTimeInterface|string|int $value): ?Timestamp
     {
         try {
             if ($value instanceof \DateTimeInterface) {
                 $dt = $value;
             } elseif (is_int($value)) {
-                $dt = (new \DateTimeImmutable('@' . $value))->setTimezone(new \DateTimeZone('UTC'));
+                $dt = (new \DateTimeImmutable('@'.$value))->setTimezone(new \DateTimeZone('UTC'));
             } else {
                 $dt = new \DateTimeImmutable($value);
             }

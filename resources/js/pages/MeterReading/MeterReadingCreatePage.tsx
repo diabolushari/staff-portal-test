@@ -1,8 +1,5 @@
-import MeterReadingGeneralStep from '@/components/Meter/MeterReading/MeterReadingGeneralStep'
-import MeterReadingObservationStep from '@/components/Meter/MeterReading/MeterReadingObservationStep'
-import MeterReadingsStep from '@/components/Meter/MeterReading/MeterReadingsStep'
-import useMeterHealthForm from '@/components/Meter/MeterReading/ReadingForm/useMeterHealthForm'
-import useMeterReadingForm from '@/components/Meter/MeterReading/ReadingForm/useMeterReadingForm'
+import MeterReadingGeneralStep from '@/components/Meter/MeterReading/ReadingForm/MeterReadingGeneralStep'
+import MeterReadingFormSteps from '@/components/Meter/MeterReading/ReadingForm/MeterReadingFormSteps'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import Stepper from '@/components/Stepper'
 import useCustomForm from '@/hooks/useCustomForm'
@@ -11,22 +8,27 @@ import {
   ConsumerData,
   MeterConnectionMapping,
   MeterReading,
+  MeterReadingValueGroup,
   MeterWithTimezoneAndProfile,
 } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
-import Button from '@/ui/button/Button'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import ErrorBanner from '@/ui/Errors/ErrorBanner'
-import dayjs from 'dayjs'
 import { getDisplayDate } from '@/utils'
-import { ProfileReadingFormRef } from '@/components/Meter/MeterReading/ProfileReadingForm'
-import { MeterReadingPreviewRef } from '@/components/Meter/MeterReading/MeterReadingPreview'
-import { set } from 'date-fns'
+import { getToday } from '@/utils/DateService'
+import { useMemo, useState } from 'react'
 
-export interface MeterReadingForm extends MeterReading {
-  reading_type: string
+export interface MeterReadingForm {
+  id: number
+  connection_id: number
+  metering_date: string
+  reading_start_date: string
+  reading_end_date: string
+  anomaly_id: string
+  remarks: string
+  interim_reason_id: string
+  is_interim_reading: boolean
+  is_billable: boolean
   _method: 'PUT' | 'POST' | undefined
 }
 
@@ -43,33 +45,11 @@ interface Props {
   meterHealthTypes: ParameterValues[]
   ctHealthTypes: ParameterValues[]
   anomalyTypes: ParameterValues[]
-  metersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
   latestMeterReading: MeterReading
   editMode: boolean
-}
-
-const getNextDay = (dateStr: string) => {
-  if (!dateStr) {
-    return ''
-  }
-  const date = dayjs(dateStr)
-  return date.add(1, 'day').format('YYYY-MM-DD')
-}
-const getToday = () => {
-  const today = new Date()
-  return today.toISOString().split('T')[0]
-}
-
-const getMonthEnd = (dateStr: string, isFirstReading: boolean) => {
-  if (!dateStr) return ''
-
-  // First reading use the same date
-  if (isFirstReading) {
-    return dayjs(dateStr).format('YYYY-MM-DD')
-  }
-
-  // Not first reading end of that month
-  return dayjs(dateStr).endOf('month').format('YYYY-MM-DD')
+  interimReasons: ParameterValues[]
+  latestMeterReadingGroupByMeter: MeterReadingValueGroup[]
+  meterConnectionMappings: MeterConnectionMapping[]
 }
 
 export default function MeterReadingCreatePage({
@@ -77,9 +57,11 @@ export default function MeterReadingCreatePage({
   meterHealthTypes,
   ctHealthTypes,
   anomalyTypes,
-  metersWithTimezonesAndProfiles,
   latestMeterReading,
   editMode,
+  interimReasons,
+  latestMeterReadingGroupByMeter,
+  meterConnectionMappings,
 }: Readonly<Props>) {
   const breadcrumb: BreadcrumbItem[] = useMemo(() => {
     return [
@@ -106,122 +88,36 @@ export default function MeterReadingCreatePage({
     ]
   }, [connectionWithConsumer])
 
-  const [activeProfile, setActiveProfile] = useState<{
-    meterIdx: number
-    profileIdx: number
-  } | null>(null)
+  const { post, errors, loading } = useInertiaPost(route('meter-reading.store'), {
+    showErrorToast: true,
+  })
 
-  const { readingValues, updateReading } = useMeterReadingForm(
-    metersWithTimezonesAndProfiles,
-    latestMeterReading,
-    editMode ? latestMeterReading : null
+  const [selectedMeters, setSelectedMeters] = useState<number[]>([])
+
+  const defalultAnomaly = anomalyTypes.find(
+    (h) => h.parameter_value.toLowerCase() === 'no visible anomalies'
   )
-
-  const { healthData, updateMeterHealth, updateCTPTHealth, updateRybValues } = useMeterHealthForm(
-    metersWithTimezonesAndProfiles,
-    meterHealthTypes,
-    ctHealthTypes,
-    latestMeterReading
-  )
-
-  const [isInterimReading, setIsInterimReading] = useState(false)
-
-  const getMeterEnergisedDate = (meterMappings: MeterConnectionMapping[] = []): string => {
-    if (!meterMappings.length) return ''
-
-    // 1️⃣ Try ENERGY_CONSUMPTION meter first
-    const energyMeter = meterMappings.find(
-      (m) =>
-        m.meter_use_category?.parameter_value?.toLowerCase() === 'energy consumption' &&
-        m.energise_date
-    )
-
-    if (energyMeter?.energise_date) {
-      return dayjs(energyMeter.energise_date).format('YYYY-MM-DD')
-    }
-
-    // 2️⃣ Otherwise take the first energised_date
-    const latestMeter = meterMappings
-      .filter((m) => m.energise_date)
-      .sort((a, b) => dayjs(a.energise_date!).valueOf() - dayjs(b.energise_date!).valueOf())[0]
-    console.log(meterMappings)
-
-    return latestMeter?.energise_date ? dayjs(latestMeter.energise_date).format('YYYY-MM-DD') : ''
-  }
-
-  const isFirstReading = useMemo(() => {
-    return latestMeterReading == null
-  }, [latestMeterReading])
-
-  const readingStartDate = useMemo(() => {
-    console.log(latestMeterReading)
-    if (isFirstReading) {
-      return getMeterEnergisedDate(connectionWithConsumer?.connection?.meter_mappings ?? [])
-    }
-    // if (latestMeterReading?.reading_start_date == latestMeterReading?.reading_end_date) {
-    //   return latestMeterReading?.reading_end_date
-    // }
-
-    return getNextDay(latestMeterReading?.reading_end_date) ?? ''
-  }, [isFirstReading, latestMeterReading?.reading_end_date, connectionWithConsumer])
-
-  const [isOnParamaterForm, setIsOnParameterForm] = useState(false)
-
-  const [allProfileHasData, setAllProfileHasData] = useState<boolean>(false)
-  const [profileErrorExist, setProfileErrorExist] = useState<boolean>(false)
-
-  const { formData, setFormValue } = useCustomForm<MeterReadingForm>({
+  const { formData, setFormValue, toggleBoolean } = useCustomForm<MeterReadingForm>({
     id: editMode ? latestMeterReading?.id : 0,
     connection_id: connectionWithConsumer?.connection?.connection_id ?? 0,
     metering_date: getToday(),
-    reading_start_date: readingStartDate,
-    reading_end_date: editMode
-      ? latestMeterReading?.reading_end_date
-      : (getMonthEnd(readingStartDate, isFirstReading) ?? ''),
-    reading_type: editMode ? latestMeterReading?.single_reading : 'single_reading',
-    anomaly_id: editMode ? latestMeterReading?.anomaly_id : 0,
+    reading_start_date: '',
+    reading_end_date: '',
+    anomaly_id: editMode
+      ? latestMeterReading?.anomaly_id.toString()
+      : (defalultAnomaly?.id.toString() ?? ''),
     remarks: editMode ? latestMeterReading?.remarks : '',
+    interim_reason_id: '',
+    is_interim_reading: false,
+    is_billable: true,
     _method: editMode ? 'PUT' : undefined,
   })
 
-  const { post, errors, loading } = useInertiaPost(
-    editMode ? route('meter-reading.update', formData.id) : route('meter-reading.store'),
-    {
-      showErrorToast: true,
-    }
-  )
-
-  useEffect(() => {
-    if (formData.reading_type === 'interim_reading') {
-      setIsInterimReading(true)
-    } else {
-      setIsInterimReading(false)
-      setFormValue('reading_end_date')(getMonthEnd(readingStartDate, isFirstReading) ?? '')
-    }
-  }, [formData.reading_type])
-
   const [activeStep, setActiveStep] = useState(0)
 
-  const previewRefs = useRef<Record<number, MeterReadingPreviewRef | null>>({})
-  const accordionOpen = () => {
-    Object.values(previewRefs.current).forEach((ref) => {
-      ref?.expandAll()
-    })
-  }
-
-  const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault()
-
-    accordionOpen()
-
-    //  FINAL SUBMIT
-    post({
-      ...formData,
-      readings_by_meter: readingValues,
-      meter_health: healthData,
-      multiple_reading: false,
-    })
-  }
+  const [metersWithTimezonesAndProfiles, setMetersWithTimezonesAndProfiles] = useState<
+    MeterWithTimezoneAndProfile[]
+  >([])
 
   const steps: Step[] = useMemo(() => {
     const hasStepError = (fields: string[]) =>
@@ -279,8 +175,6 @@ export default function MeterReadingCreatePage({
     }
   }, [connectionWithConsumer])
 
-  const profileRefs = useRef<Record<string, ProfileReadingFormRef | null>>({})
-
   return (
     <MainLayout
       breadcrumb={breadcrumb}
@@ -288,106 +182,50 @@ export default function MeterReadingCreatePage({
       selectedItem='Meter & Readings'
       selectedTopNav='Consumers'
     >
-      {metersWithTimezonesAndProfiles.length === 0 && (
-        <ErrorBanner
-          title={meterMissingErrors.title}
-          description={meterMissingErrors.description}
-          bulletPoints={meterMissingErrors.bulletPoints}
-          actionUrl={meterMissingErrors.actionUrl}
-        />
-      )}
-      {metersWithTimezonesAndProfiles.length > 0 && (
-        <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
-          <form onSubmit={handleSubmit}>
-            <Stepper
-              activeStep={activeStep}
-              onStepChange={setActiveStep}
-              steps={steps}
-            >
-              {activeStep === 0 && (
-                <MeterReadingGeneralStep
-                  connectionWithConsumer={connectionWithConsumer}
-                  formData={formData}
-                  setFormValue={setFormValue}
-                  errors={errors}
-                  latestMeterReading={latestMeterReading}
-                  isFirstReading={isFirstReading}
-                  isInterimReading={isInterimReading}
-                />
-              )}
-              {activeStep === 1 && (
-                <MeterReadingObservationStep
-                  formData={formData}
-                  setFormValue={setFormValue}
-                  anomalyTypes={anomalyTypes}
-                  errors={errors}
-                  meterHealthData={healthData}
-                  updateRybValues={updateRybValues}
-                />
-              )}
-              {activeStep === 2 && (
-                <MeterReadingsStep
-                  healthData={healthData}
-                  metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
-                  formData={formData}
-                  readingValues={readingValues}
-                  updateReading={updateReading}
-                  setFormValue={setFormValue}
-                  latestMeterReading={latestMeterReading}
-                  meterHealthTypes={meterHealthTypes}
-                  ctHealthTypes={ctHealthTypes}
-                  updateMeterHealth={updateMeterHealth}
-                  updateCTPTHealth={updateCTPTHealth}
-                  setIsOnParameterForm={setIsOnParameterForm}
-                  isFirstReading={isFirstReading}
-                  isOnparameterForm={isOnParamaterForm}
-                  profileRefs={profileRefs}
-                  activeProfile={activeProfile}
-                  setActiveProfile={setActiveProfile}
-                  previewRefs={previewRefs}
-                  setAllProfileHasData={setAllProfileHasData}
-                  setProfileErrorExist={setProfileErrorExist}
-                />
-              )}
-            </Stepper>
-            <div className='mt-6 flex justify-between'>
-              {activeStep >= 0 && (
-                <Button
-                  type='button'
-                  variant='secondary'
-                  onClick={() => setActiveStep(activeStep - 1)}
-                  label='Back'
-                  disabled={activeStep === 0}
-                />
-              )}
-              {activeStep < steps.length - 1 && (
-                <Button
-                  type='button'
-                  onClick={() => setActiveStep(activeStep + 1)}
-                  label='Next'
-                />
-              )}
-              {formData.reading_type === 'multiple_reading' && activeStep === steps.length - 1 && (
-                <Button
-                  type='button'
-                  label='Save & Add New Reading'
-                  variant='link'
-                  onClick={() => handleSubmit()}
-                />
-              )}
-              {activeStep === steps.length - 1 && allProfileHasData && !profileErrorExist && (
-                <Button
-                  type='submit'
-                  label='Submit'
-                  disabled={loading}
-                  processing={loading}
-                  variant={loading ? 'loading' : 'primary'}
-                />
-              )}
-            </div>
-          </form>
+      <div className='flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6'>
+        <div>
+          <Stepper
+            activeStep={activeStep}
+            onStepChange={() => {}}
+            steps={steps}
+          >
+            {activeStep === 0 && (
+              <MeterReadingGeneralStep
+                connectionWithConsumer={connectionWithConsumer}
+                formData={formData}
+                setFormValue={setFormValue}
+                toggleBoolean={toggleBoolean}
+                errors={errors}
+                latestMeterReadings={latestMeterReadingGroupByMeter}
+                interimReasons={interimReasons}
+                meterConnectionMappings={meterConnectionMappings}
+                onMetersWithTimezonesAndProfilesChange={setMetersWithTimezonesAndProfiles}
+                setActiveStep={setActiveStep}
+                selectedMeters={selectedMeters}
+                onSelectedMetersChange={setSelectedMeters}
+              />
+            )}
+            {(activeStep === 1 || activeStep === 2) && (
+              <MeterReadingFormSteps
+                post={post}
+                loading={loading}
+                activeStep={activeStep}
+                setActiveStep={setActiveStep}
+                metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
+                formData={formData}
+                setFormValue={setFormValue}
+                toggleBoolean={toggleBoolean}
+                errors={errors}
+                latestMeterReading={latestMeterReading}
+                latestMeterReadingGroupByMeter={latestMeterReadingGroupByMeter}
+                meterHealthTypes={meterHealthTypes}
+                ctHealthTypes={ctHealthTypes}
+                anomalyTypes={anomalyTypes}
+              />
+            )}
+          </Stepper>
         </div>
-      )}
+      </div>
     </MainLayout>
   )
 }

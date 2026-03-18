@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.grpc.securitydeposit;
+
+option php_namespace = "Proto\\Consumers";
+option php_metadata_namespace = "GPBMetadata";
+
+import "parameters/parameter-value.proto";
+import "connections/connections.proto";
+import "securitydeposit/sd-collections.proto";
+
+message SdDemandStatusMessage {
+  optional int32 status_log_id = 1;
+  int32 sd_demand_id = 2;
+  optional int32 sd_collection_id = 3;
+  int32 status_id = 4;
+  string outstanding_amount = 5;
+  bool is_gl_posted = 6;
+  optional string gl_posted_ts = 7;
+  optional int32 gl_posted_by = 8;
+  optional string gl_reference = 9;
+  optional string remarks = 10;
+  optional int32 created_by = 11;
+  optional int32 updated_by = 12;
+  optional com.kseb.consumerservice.grpc.securitydeposit.SdCollectionMessage sd_collection = 14;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto status = 15;
+}

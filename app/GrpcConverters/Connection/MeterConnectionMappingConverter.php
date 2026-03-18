@@ -45,18 +45,22 @@ class MeterConnectionMappingConverter
     /**
      * @return array<string, mixed>
      */
-    public function meterConnectionMappingProtoToArray(MeterConnectionMappingResponse $rel): array
+    public static function meterConnectionMappingProtoToArray(?MeterConnectionMappingResponse $rel): array
     {
+        if ($rel == null) {
+            return [];
+        }
         $faultyDate = $rel->getFaultyDate() ? $rel->getFaultyDate()->toDateTime()->format('Y-m-d') : null;
         $rectificationDate = $rel->getRectificationDate() ? $rel->getRectificationDate()->toDateTime()->format('Y-m-d') : null;
-        $effectiveStartTs = $rel->getEffectiveStartTs() ? $rel->getEffectiveStartTs()->toDateTime()->format('Y-m-d H:i:s') : null;
-        $effectiveEndTs = $rel->getEffectiveEndTs() ? $rel->getEffectiveEndTs()->toDateTime()->format('Y-m-d H:i:s') : null;
+        $effectiveStartTs = $rel->getEffectiveStartTs() ? $rel->getEffectiveStartTs() : null;
+        $effectiveEndTs = $rel->getEffectiveEndTs() ? $rel->getEffectiveEndTs() : null;
         $createdTs = $rel->getCreatedTs() ? $rel->getCreatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
         $updatedTs = $rel->getUpdatedTs() ? $rel->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
         $meter = MeterProtoConvertor::convertToArray($rel->getMeter());
         $noticeDate = $rel->getNoticeDate() ? $rel->getNoticeDate()->toDateTime()->format('Y-m-d') : null;
         $intimationDate = $rel->getIntimationDate() ? $rel->getIntimationDate()->toDateTime()->format('Y-m-d') : null;
         $changeDate = $rel->getChangeDate() ? $rel->getChangeDate()->toDateTime()->format('Y-m-d') : null;
+        $energiseDate = $rel->getEnergiseDate() ? $rel->getEnergiseDate()->toDateTime()->format('Y-m-d') : null;
         return [
             'version_id' => $rel->getVersionId(),
             'rel_id' => $rel->getRelId(),
@@ -83,6 +87,8 @@ class MeterConnectionMappingConverter
             'notice_date' => $noticeDate,
             'intimation_date' => $intimationDate,
             'change_date' => $changeDate,
+            'energise_date' => $energiseDate,
+            'is_current' => $rel->getIsCurrent(),
         ];
     }
 }

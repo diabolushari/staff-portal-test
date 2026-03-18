@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\BillingGroupListApiController;
+use App\Http\Controllers\Api\Connections\GetConnectionPeriodDetailsApiController;
 use App\Http\Controllers\Api\ChargeHeadDefinition\GetChargeHeadDefinitionController;
 use App\Http\Controllers\Api\Connections\GetPurposeInfoApiController;
 use App\Http\Controllers\Api\Connections\PartiesListApiController;
@@ -40,10 +41,12 @@ use App\Http\Controllers\Connection\MeterConnectionMappingUpdateChangeController
 use App\Http\Controllers\Connection\MeterConnectionMappingUpdateStatusController;
 use App\Http\Controllers\Connection\PurposeInfoController;
 use App\Http\Controllers\Connection\SecurityDeposit\ConnectionSdDemandController;
+use App\Http\Controllers\Connection\GeneratingStation\ConnectionStationConsumerRelController;
 use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
+use App\Http\Controllers\GeneratingStation\GeneratingStationApiController;
 use App\Http\Controllers\Metering\CreateMeterReadingController;
 use App\Http\Controllers\Metering\MeterConnectionMappingController;
 use App\Http\Controllers\Metering\MeterConnectionMappingCreateController;
@@ -71,6 +74,9 @@ use App\Http\Controllers\SecurityDeposit\SdAttributeDownloadController;
 use App\Http\Controllers\SecurityDeposit\SdCollectionController;
 use App\Http\Controllers\SecurityDeposit\SdDemandsController;
 use App\Http\Controllers\GeneratingStation\GeneratingStationController;
+use App\Http\Controllers\GeneratingStation\StationConsumerController;
+use App\Http\Controllers\GeneratingStation\StationConsumerRelController;
+use App\Http\Controllers\GeneratingStation\StationTransactionController;
 use App\Http\Controllers\SecurityDeposit\SdRegisterController;
 use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
@@ -198,6 +204,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('sd-register', SdRegisterController::class)
         ->name('sd-register');
+
+    Route::resource('station-consumer-rels', StationConsumerRelController::class)
+        ->only(['create', 'store', 'edit', 'update', 'destroy']);
+
+    Route::get('connection/{connectionId}/station-consumer-rels', ConnectionStationConsumerRelController::class)
+        ->name('connection.station-consumer-rels');
+
+    Route::get('/generating-stations/{stationId}/consumers',[StationConsumerController::class, 'index'])
+        ->name('generating-stations.consumers');
+
+    Route::get('/generating-stations/{stationId}/transactions',[StationTransactionController::class, 'index'])
+        ->name('generating-stations.transactions');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
@@ -213,9 +231,16 @@ Route::get('api/parties', PartiesListApiController::class);
 Route::get('api/unassigned-transformers', UnassignedTransformersApiController::class);
 Route::get('api/unassigned-meters', UnassignedMetersApiController::class);
 Route::get('api/billing-groups', BillingGroupListApiController::class);
+Route::get('api/tariff-order/{id}/download', TariffOrderDownloadApiController::class)
+    ->name('tariff-order.download');
+Route::get('api/connections/get-tariffs', GetPurposeInfoApiController::class)
+    ->name('connections.get-tariffs');
+Route::post('api/connections/period-details', GetConnectionPeriodDetailsApiController::class)
+    ->name('connections.period-details');
 Route::get('api/tariff-order/{id}/download', TariffOrderDownloadApiController::class)->name('tariff-order.download');
 Route::get('api/connections/get-tariffs', GetPurposeInfoApiController::class)->name('connections.get-tariffs');
 Route::get('api/charge-head-definitions', GetChargeHeadDefinitionController::class);
+Route::get('api/generating-stations', GeneratingStationApiController::class);
 
 Route::get('consumer-test', function (SystemModuleService $service) {
     $response = $service->createSystemModule(

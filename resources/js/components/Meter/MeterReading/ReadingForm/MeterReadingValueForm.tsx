@@ -1,8 +1,8 @@
 import { Meter, MeterProfileParameter } from '@/interfaces/data_interfaces'
-import Input from '@/ui/form/Input'
-import { TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
 import ErrorText from '@/typography/ErrorText'
 import WarningText from '@/typography/WarningText'
+import Input from '@/ui/form/Input'
+import { TimezoneReadingState } from './ReadingForm/useMeterReadingForm'
 
 interface Props {
   parameterReadingValues: TimezoneReadingState[]
@@ -31,7 +31,6 @@ export default function MeterReadingValueForm({
   mf,
   warnings,
 }: Readonly<Props>) {
-  console.log(maxReadingValue, 'maxReadingValue')
   return (
     <div className='rounded border bg-white p-4'>
       <div
@@ -102,33 +101,31 @@ export default function MeterReadingValueForm({
         )}
 
         {/* Final / Reading */}
-        <>
-          <div className='border-b p-2 text-sm font-medium'>
-            {profileParameter.is_cumulative ? 'Final' : 'Reading'}
+        <div className='border-b p-2 text-sm font-medium'>
+          {profileParameter.is_cumulative ? 'Final' : 'Reading'}
+        </div>
+        {parameterReadingValues?.map((tz) => (
+          <div
+            key={tz.timezone_id}
+            className='border-b p-2'
+          >
+            <Input
+              type='number'
+              value={tz.values.final}
+              setValue={(val) => onChange(tz.timezone_id, val)}
+              max={maxReadingValue}
+              disabled={isFirstReading && profileParameter.is_cumulative}
+              min={0}
+              step='any'
+            />
+            {errors?.[`${tz.timezone_id}.final`] && (
+              <ErrorText>{errors[`${tz.timezone_id}.final`]}</ErrorText>
+            )}
+            {warnings?.[`${tz.timezone_id}.final`] && (
+              <WarningText>{warnings[`${tz.timezone_id}.final`]}</WarningText>
+            )}
           </div>
-          {parameterReadingValues?.map((tz) => (
-            <div
-              key={tz.timezone_id}
-              className='border-b p-2'
-            >
-              <Input
-                type='number'
-                value={tz.values.final}
-                setValue={(val) => onChange(tz.timezone_id, val)}
-                max={maxReadingValue}
-                disabled={isFirstReading && profileParameter.is_cumulative}
-                min={0}
-                step='any'
-              />
-              {errors?.[`${tz.timezone_id}.final`] && (
-                <ErrorText>{errors[`${tz.timezone_id}.final`]}</ErrorText>
-              )}
-              {warnings?.[`${tz.timezone_id}.final`] && (
-                <WarningText>{warnings[`${tz.timezone_id}.final`]}</WarningText>
-              )}
-            </div>
-          ))}
-        </>
+        ))}
 
         {/* Diff */}
         {profileParameter.is_cumulative && (
@@ -157,27 +154,25 @@ export default function MeterReadingValueForm({
         )}
 
         {/* Import / Export */}
-        <>
-          <div className='p-2 text-sm font-medium'>
-            {profileParameter.is_export ? 'Export' : 'Import'} (MF: {mf})
+        <div className='p-2 text-sm font-medium'>
+          {profileParameter.is_export ? 'Export' : 'Import'} (MF: {mf})
+        </div>
+        {parameterReadingValues?.map((tz) => (
+          <div
+            key={tz.timezone_id}
+            className='p-2'
+          >
+            <Input
+              type='number'
+              value={tz.values.value}
+              disabled
+              min={0}
+              setValue={() => {}}
+              error={errors?.[`${tz.timezone_id}.value`]}
+              step='any'
+            />
           </div>
-          {parameterReadingValues?.map((tz) => (
-            <div
-              key={tz.timezone_id}
-              className='p-2'
-            >
-              <Input
-                type='number'
-                value={tz.values.value}
-                disabled
-                min={0}
-                setValue={() => {}}
-                error={errors?.[`${tz.timezone_id}.value`]}
-                step='any'
-              />
-            </div>
-          ))}
-        </>
+        ))}
       </div>
     </div>
   )

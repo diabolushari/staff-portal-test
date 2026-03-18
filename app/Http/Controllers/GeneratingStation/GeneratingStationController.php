@@ -49,6 +49,14 @@ class GeneratingStationController extends Controller
                 'search' => $search,
             ],
         ]);
+
+        $response = $this->generatingStationService
+            ->listGeneratingStations($search);
+
+        return Inertia::render('GeneratingStation/GeneratingStationIndex', [
+            'generatingStations' => $response->data ?? [],
+            'filters' => ['search' => $search],
+        ]);
     }
     /**
      * Show create form
@@ -72,15 +80,6 @@ class GeneratingStationController extends Controller
         $attributeDefinitions = $this->parameterValueService
             ->getParameterValues(null, null, null, 'Station', 'Generating Station Attribute')
             ->data;
-        $districts = $this->geoRegionsService->getGeoRegions(
-            'Administrative',
-            'District'
-        );
-        $states = $this->geoRegionsService->getGeoRegions(
-            'Administrative',
-            'State'
-        );
-
         $districts = $this->geoRegionsService->getGeoRegions(
             'Administrative',
             'District'

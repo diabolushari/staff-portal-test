@@ -8,10 +8,12 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
 use Proto\GeneratingStation\CreateGeneratingStationRequest;
+use Proto\GeneratingStation\ListGeneratingStationRequest;
 use Proto\GeneratingStation\ListGeneratingStationPaginatedRequest;
 use Proto\GeneratingStation\GetGeneratingStationRequest;
 use Proto\GeneratingStation\GeneratingStationMessage;
 use Proto\GeneratingStation\GeneratingStationAttributeRequest;
+use Proto\GeneratingStation\ListStationTransactionsRequest;
 use Proto\Connections\AddressMessage;
 use Proto\GeneratingStation\GeneratingStationServiceClient;
 
@@ -76,6 +78,40 @@ class GeneratingStationService
 
         return GrpcServiceResponse::success(
             $data,
+            $response,
+            $status->code,
+            $status->details
+        );
+    }
+
+    public function listGeneratingStations(?string $search = null): GrpcServiceResponse
+    {
+        $req = new ListGeneratingStationRequest();
+
+        if ($search !== null) {
+            $req->setSearch($search);
+        }
+
+        [$response, $status] =
+            $this->client->ListGeneratingStation($req)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $stations = [];
+
+        foreach ($response->getItems() as $station) {
+            $stations[] = GeneratingStationConverter::convertToArray($station);
+        }
+
+        return GrpcServiceResponse::success(
+            $stations,
             $response,
             $status->code,
             $status->details
@@ -159,6 +195,77 @@ class GeneratingStationService
         $station = $response->getStation();
         return GrpcServiceResponse::success(
             GeneratingStationConverter::convertToArray($station),
+            $response,
+            $status->code,
+            $status->details
+        );
+    }
+
+   public function listStationTransactions(int $stationId): GrpcServiceResponse
+    {
+        $req = new ListStationTransactionsRequest();
+        $req->setStationId($stationId);
+
+        [$response, $status] =
+            $this->client->ListStationTransactions($req)->wait();
+
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $transactions = [];
+
+        foreach ($response->getItems() as $txn) {
+
+            $timezone = $txn->getTimezone();
+            $sourceTimezone = $txn->getSourceTimezone();
+            $txnType = $txn->getTxnType();
+            $consumerConnection = $txn->getConsumerConnection();
+            $transactions[] = [
+                'txn_id' => $txn->getTxnId(),
+                'txn_group_ref' => $txn->getTxnGroupRef(),
+                'txn_seq' => $txn->getTxnSeq(),
+                'bill_year_month' => $txn->getBillYearMonth(),
+                'conversion_factor' => $txn->getConversionFactor(),
+                'pre_conversion_units' => $txn->getPreConversionUnits(),
+
+                'txn_units' => $txn->getTxnUnits(),
+                'unit_balance' => $txn->getUnitBalance(),
+
+                'txn_date' => $txn->getTxnDate(),
+                'txn_ts' => $txn->getTxnTs(),
+                'txn_direction' => $txn->getTxnDirection(),
+                'consumer_connection' => $consumerConnection ? [
+                    'consumer_number' => $consumerConnection->getConsumerNum()
+                ] : null,
+
+                'timezone' => $timezone ? [
+                    'id' => $timezone->getId(),
+                    'parameter_value' => $timezone->getParameterValue(),
+                    'parameter_code' => $timezone->getParameterCode(),
+                ] : null,
+                 'source_timezone' => $sourceTimezone ? [
+                    'id' => $sourceTimezone->getId(),
+                    'parameter_value' => $sourceTimezone->getParameterValue(),
+                    'parameter_code' => $sourceTimezone->getParameterCode(),
+                ] : null,
+
+
+                'txn_type' => $txnType ? [
+                    'id' => $txnType->getId(),
+                    'parameter_value' => $txnType->getParameterValue(),
+                    'parameter_code' => $txnType->getParameterCode(),
+                ] : null,
+            ];
+        }
+
+        return GrpcServiceResponse::success(
+            $transactions,
             $response,
             $status->code,
             $status->details
