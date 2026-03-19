@@ -3,7 +3,7 @@ import { SdRegister } from '@/interfaces/data_interfaces'
 import { getDisplayDate } from '@/utils'
 
 interface Props {
-  sdRegister?: SdRegister
+  sdRegister?: SdRegister[]
 }
 
 export const getAssessmentYear = (sdRegister: SdRegister) => {
@@ -21,7 +21,7 @@ const LastAssessmentCard = ({ sdRegister }: Props) => {
         <span className='text-xs font-semibold tracking-wider text-gray-500'>
           LAST ASSESSMENT SUMMARY
         </span>
-        {!sdRegister?.is_fully_settled ? (
+        {!sdRegister?.[0].is_fully_settled ? (
           <span className='rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-600'>
             Not Settled
           </span>
@@ -36,12 +36,14 @@ const LastAssessmentCard = ({ sdRegister }: Props) => {
       <div className='mb-6 flex gap-16'>
         <div>
           <p className='mb-1 text-xs text-gray-500'>Assessed On</p>
-          <p className='text-sm font-medium'>{getDisplayDate(sdRegister?.generated_date)}</p>
+          <p className='text-sm font-medium'>{getDisplayDate(sdRegister?.[0].generated_date)}</p>
         </div>
 
         <div>
           <p className='mb-1 text-xs text-gray-500'>Assessment Period</p>
-          <p className='text-sm font-medium'>{sdRegister ? getAssessmentYear(sdRegister) : '-'}</p>
+          <p className='text-sm font-medium'>
+            {sdRegister ? getAssessmentYear(sdRegister[0]) : '-'}
+          </p>
         </div>
       </div>
       <hr className='bg-kseb-line mb-6 h-[2px] border-0' />
@@ -50,7 +52,7 @@ const LastAssessmentCard = ({ sdRegister }: Props) => {
       <div>
         <p className='mb-1 text-xs text-gray-500'>Security Deposit Required</p>
         <p className='text-kseb-primary text-2xl font-semibold'>
-          ₹{sdRegister?.sd_demand?.total_sd_amount}
+          ₹{sdRegister?.[0].sd_demand?.total_sd_amount}
         </p>
       </div>
     </Card>

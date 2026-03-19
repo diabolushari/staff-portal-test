@@ -168,7 +168,7 @@ const ConsumerSDIndex = ({ connections, oldConnections, triggerTypes }: Props) =
 
                 <div className='flex gap-12 p-4 text-sm'>
                   <div className='flex flex-col'>
-                    <span className='text-gray-600'>Last Assessed</span>
+                    <span className='text-gray-600'>Assessment Period</span>
                     <span>{'-'}</span>
                   </div>
 

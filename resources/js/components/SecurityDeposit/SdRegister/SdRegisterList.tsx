@@ -25,7 +25,7 @@ const SdRegisterList = ({ sdRegisters }: Props) => {
         <div
           key={sdRegister.sd_register_id}
           className='normal-font grid cursor-pointer grid-cols-10 gap-x-6 gap-y-2 hover:bg-gray-100'
-          onClick={() => router.get(route(`sd-register.show`, sdRegister.sd_register_id))}
+          onClick={() => router.get(route(`sd-register.show`, sdRegister.connection_id))}
         >
           <span>{sdRegister.sd_type.name}</span>
           <span>{sdRegister.connection.consumer_number}</span>
