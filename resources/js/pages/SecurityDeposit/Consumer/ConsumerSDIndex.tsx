@@ -152,9 +152,11 @@ const ConsumerSDIndex = ({ connections, oldConnections, triggerTypes }: Props) =
 
                   <div className='flex flex-col'>
                     <span className='text-gray-600'>Difference</span>
-                    <span className='font-semibold text-red-500'>
+                    <span
+                      className={`font-semibold ${Number(connection?.sd_balance_summary?.[0]?.sd_principal_variance) < 0 ? 'text-green-500' : 'text-red-500'}`}
+                    >
                       {connection?.sd_balance_summary?.[0]?.sd_principal_variance
-                        ? `₹ ${connection.sd_balance_summary[0].sd_principal_variance}`
+                        ? `₹ ${Math.abs(Number(connection.sd_balance_summary[0].sd_principal_variance))}`
                         : '-'}
                     </span>
                   </div>
