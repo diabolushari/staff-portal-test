@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\GrpcConverters\GeneratingStation;
@@ -20,6 +19,21 @@ class StationConsumerRelConverter
     {
         if ($rel === null) {
             return null;
+        }
+        $unitBankSummaries = [];
+
+        foreach ($rel->getUnitBankSummaries() as $summary) {
+            $unitBankSummaries[] = [
+                'summary_id' => $summary->getSummaryId(),
+                'station_id' => $summary->getStationId(),
+                'station_connection_id' => $summary->getStationConnectionId(),
+                'timezone_id' => $summary->getTimezoneId(),
+                'bill_year_month' => $summary->getBillYearMonth(),
+                'closing_balance' => $summary->getClosingBalance(),
+                'last_txn_id' => $summary->getLastTxnId(),
+                'processing_run_id' => $summary->getProcessingRunId(),
+                'is_active' => $summary->getIsActive(),
+            ];
         }
 
         return [
@@ -59,6 +73,7 @@ class StationConsumerRelConverter
             'consumer_type' => $rel->hasConsumerType()
                 ? ParameterValueProtoConvertor::convertToArray($rel->getConsumerType())
                 : null,
+            'unit_bank_summaries' => $unitBankSummaries,
         ];
     }
 

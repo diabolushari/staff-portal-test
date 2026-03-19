@@ -296,6 +296,7 @@ export default function ConnectionsLayout({
       })
     }
   }, [flash])
+
   return (
     <SidebarProvider>
       <ToastContainer theme='dark' />

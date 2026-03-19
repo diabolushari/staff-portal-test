@@ -952,6 +952,18 @@ export interface GeneratingStation {
   attributes: GeneratingStationAttribute[]
 }
 
+export interface UnitBankSummary {
+  summary_id: number
+  station_id: number
+  station_connection_id: number
+  timezone_id: number
+  bill_year_month: number
+  closing_balance: number
+  last_txn_id: number
+  processing_run_id: string
+  is_active: boolean
+}
+
 export interface StationConsumerRel {
   version_id?: number
   rel_id?: number
@@ -978,6 +990,7 @@ export interface StationConsumerRel {
   station_connection?: Connection
   consumer_connection?: Connection
   consumer_type?: ParameterValues
+  unit_bank_summaries?: UnitBankSummary[]
 }
 
 
