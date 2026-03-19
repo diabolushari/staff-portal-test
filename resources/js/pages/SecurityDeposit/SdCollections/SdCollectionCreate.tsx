@@ -1,4 +1,5 @@
 import SdCollectionForm from '@/components/SecurityDeposit/SdCollections/SdCollectionForm'
+import AssessmentSummaryCard from '@/components/SecurityDeposit/SdRefunds/AssessmentSummaryCard'
 import SdRegisterDetailView from '@/components/SecurityDeposit/SdRegister/SdRegisterDetailView'
 import {
   ChargeHeadDefinition,
@@ -50,6 +51,11 @@ export default function SdCollectionCreate({
       sheetOpen={sheetOpen}
       sheetContent={
         <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
+          <AssessmentSummaryCard
+            balanceSummary={balanceSummary}
+            sdRegister={sdRegister[0]}
+            isCollectionCard={true}
+          />
           <SdCollectionForm
             sdDemand={sdDemand}
             paymentModes={paymentModes}

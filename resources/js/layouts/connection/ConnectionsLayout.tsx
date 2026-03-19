@@ -1,7 +1,6 @@
 import { BreadcrumbItem, PageProps } from '@/types'
 import { MainNav } from '@/components/Navbar/navitems'
 import { Connection } from '@/interfaces/data_interfaces'
-import StrongText from '@/typography/StrongText'
 import React, { useEffect } from 'react'
 import { NestedTabGroup } from '@/components/ui/nestedTab'
 import CustomBreadcrumb from '@/ui/BreadCrumb'
@@ -11,7 +10,6 @@ import TopNavBar from '@/components/Navbar/TopNavBar'
 import LeftNavBar from '@/components/Navbar/LeftNavBar'
 import { usePage } from '@inertiajs/react'
 import { showError, showInfo, showSuccess } from '@/ui/alerts'
-import { X } from 'lucide-react'
 
 interface ConnectionsLayoutProps {
   children: React.ReactNode
@@ -342,16 +340,21 @@ export default function ConnectionsLayout({
 
           <div className='col-span-2 hidden lg:block'>
             {sheetOpen && (
-              <div className='flex h-full flex-col border-l bg-white shadow-lg'>
-                <div className='flex items-center justify-between border-b p-4'>
-                  <h2 className='text-lg font-semibold'>{sheetTitle}</h2>
-                  <X
+              <div className='flex h-full flex-col border-l bg-white'>
+                {/* Header */}
+                <div className='flex items-center justify-between border-b bg-gray-50 px-4 py-3'>
+                  <h2 className='text-sm font-semibold text-gray-800'>{sheetTitle}</h2>
+
+                  <button
                     onClick={() => sheetAction?.(false)}
-                    className='cursor-pointer text-gray-500 hover:text-black'
-                  />
+                    className='cursor-pointer text-lg leading-none text-gray-400 hover:text-gray-700'
+                  >
+                    ×
+                  </button>
                 </div>
 
-                <div className='flex-1 overflow-y-auto p-4'>{sheetContent}</div>
+                {/* Content */}
+                <div className='flex-1 overflow-y-auto px-4 py-3'>{sheetContent}</div>
               </div>
             )}
           </div>
