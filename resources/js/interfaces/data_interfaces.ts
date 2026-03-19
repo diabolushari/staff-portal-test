@@ -980,6 +980,7 @@ export interface StationConsumerRel {
   consumer_type?: ParameterValues
 }
 
+
 export interface StationTransaction {
   txn_id?: number
 
@@ -1011,7 +1012,7 @@ export interface StationTransaction {
 
   source_txn_id?: number
 
-  meter_reading_value_id?: number
+  meter_reading_id?: number
   rel_version_id?: number
 
   txn_date?: string

@@ -1,3 +1,4 @@
+
 <?php
 
 namespace App\GrpcConverters\GeneratingStation;
@@ -90,7 +91,7 @@ class StationConsumerRelConverter
      * Convert update priority request
      */
     public function toUpdatePriorityRequest(
-        int $versionId,
+        int $relId,
         int $stationConnectionId,
         int $consumerPriorityOrder,
         int $stationPriorityOrder
@@ -98,7 +99,7 @@ class StationConsumerRelConverter
 
         $msg = new UpdateStationConsumerRelPriorityRequest();
 
-        $msg->setVersionId($versionId);
+        $msg->setRelId($relId);
         $msg->setStationConnectionId($stationConnectionId);
         $msg->setConsumerPriorityOrder($consumerPriorityOrder);
         $msg->setStationPriorityOrder($stationPriorityOrder);

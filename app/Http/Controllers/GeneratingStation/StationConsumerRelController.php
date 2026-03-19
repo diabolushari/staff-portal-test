@@ -93,10 +93,10 @@ class StationConsumerRelController extends Controller
     /**
      * Update priority order
      */
-    public function update(Request $request, int $versionId): RedirectResponse
+    public function update(Request $request, int $relId): RedirectResponse
     {
         $response = $this->stationConsumerRelService->updatePriority(
-            $versionId,
+            $relId,
             $request->station_connection_id,
             $request->consumer_priority_order ?? null,
             $request->station_priority_order ?? null,
@@ -113,6 +113,8 @@ class StationConsumerRelController extends Controller
         return redirect()->back()
             ->with('message', 'Priority updated successfully');
     }
+
+
 
     /**
      * Deactivate relation

@@ -1,7 +1,6 @@
 import { BreadcrumbItem, PageProps } from '@/types'
 import { MainNav } from '@/components/Navbar/navitems'
 import { Connection } from '@/interfaces/data_interfaces'
-import StrongText from '@/typography/StrongText'
 import React, { useEffect } from 'react'
 import { NestedTabGroup } from '@/components/ui/nestedTab'
 import CustomBreadcrumb from '@/ui/BreadCrumb'
@@ -25,6 +24,10 @@ interface ConnectionsLayoutProps {
   onEdit?: () => void
   consumerExist?: boolean
   meterExist?: boolean
+  sheetTitle?: string
+  sheetAction?: (open: boolean) => void
+  sheetOpen?: boolean
+  sheetContent?: React.ReactNode
 }
 
 const connectionTabs = (connection?: Connection | null) => [
@@ -273,6 +276,10 @@ export default function ConnectionsLayout({
   heading,
   description,
   onEdit,
+  sheetTitle,
+  sheetAction,
+  sheetOpen,
+  sheetContent,
 }: Readonly<ConnectionsLayoutProps>) {
   const { flash } = usePage<PageProps>().props
   useEffect(() => {
@@ -331,7 +338,26 @@ export default function ConnectionsLayout({
             </div>
           </main>
 
-          <div className='col-span-2 hidden lg:block'></div>
+          <div className='col-span-2 hidden lg:block'>
+            {sheetOpen && (
+              <div className='flex h-full flex-col border-l bg-white'>
+                {/* Header */}
+                <div className='flex items-center justify-between border-b bg-gray-50 px-4 py-3'>
+                  <h2 className='text-sm font-semibold text-gray-800'>{sheetTitle}</h2>
+
+                  <button
+                    onClick={() => sheetAction?.(false)}
+                    className='cursor-pointer text-lg leading-none text-gray-400 hover:text-gray-700'
+                  >
+                    ×
+                  </button>
+                </div>
+
+                {/* Content */}
+                <div className='flex-1 overflow-y-auto px-4 py-3'>{sheetContent}</div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </SidebarProvider>
