@@ -10,6 +10,8 @@ option java_multiple_files = true;
 option java_package = "com.kseb.consumerservice.proto.generatingstation";
 option java_outer_classname = "StationUnitBankSummaryProto";
 
+import "parameters/parameter-value.proto";
+
 // Represents the balance for a single timezone
 message StationUnitBankSummaryMessage {
   int32 summary_id = 1;
@@ -21,6 +23,8 @@ message StationUnitBankSummaryMessage {
   int32 last_txn_id = 7;
   string processing_run_id = 8;
   bool is_active = 9;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto timezone = 10;
+
 }
 
 // Request to get latest balances for a station

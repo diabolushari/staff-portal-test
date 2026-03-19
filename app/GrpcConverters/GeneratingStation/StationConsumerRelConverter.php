@@ -33,6 +33,9 @@ class StationConsumerRelConverter
                 'last_txn_id' => $summary->getLastTxnId(),
                 'processing_run_id' => $summary->getProcessingRunId(),
                 'is_active' => $summary->getIsActive(),
+                'timezone' => $summary->hasTimezone()
+                ? ParameterValueProtoConvertor::convertToArray($summary->getTimezone())
+                : null,
             ];
         }
 

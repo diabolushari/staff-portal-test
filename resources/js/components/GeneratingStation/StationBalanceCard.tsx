@@ -10,10 +10,10 @@ export default function StationBalanceCard({ timeWindow, timezone, availableUnit
   return (
     <div className='rounded-lg border bg-gray-50 p-4 shadow-sm'>
       <div className='flex flex-col gap-2 text-sm'>
-        <div className='flex justify-between'>
+        {/* <div className='flex justify-between'>
           <span className='text-gray-500'>Time Window</span>
           <span className='font-medium'>{timeWindow}</span>
-        </div>
+        </div> */}
 
         <div className='flex justify-between'>
           <span className='text-gray-500'>Time Zone</span>

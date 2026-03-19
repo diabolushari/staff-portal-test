@@ -1,5 +1,6 @@
 import AddStationConsumerModal from '@/components/GeneratingStation/AddStationConsumerModal'
 import ConsumerStationList from '@/components/GeneratingStation/ConsumerStationList'
+import StationBalanceCard from '@/components/GeneratingStation/StationBalanceCard'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import { Connection, GeneratingStation, StationConsumerRel } from '@/interfaces/data_interfaces'
 import ConnectionsLayout from '@/layouts/connection/ConnectionsLayout'
@@ -12,12 +13,14 @@ interface Props {
   connection: Connection
   stations: GeneratingStation[]
   relations: StationConsumerRel[]
+  openSheet?: boolean
 }
 
 export default function StationConsumerRelCreate({
   connection,
   stations,
   relations,
+  openSheet = false,
 }: Readonly<Props>) {
   const [showModal, setShowModal] = useState(false)
   const breadcrumbs: BreadcrumbItem[] = [
@@ -38,7 +41,10 @@ export default function StationConsumerRelCreate({
       href: '#',
     },
   ]
-  console.log(stations)
+
+  const [sheetOpen, setSheetOpen] = useState(openSheet ?? false)
+  const [selectedRelation, setSelectedRelation] = useState<StationConsumerRel | null>(null)
+
   return (
     <ConnectionsLayout
       connection={connection}
@@ -53,6 +59,60 @@ export default function StationConsumerRelCreate({
       }
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
+      sheetTitle='Station Balances'
+      sheetOpen={sheetOpen}
+      sheetAction={setSheetOpen}
+      sheetContent={
+        selectedRelation &&
+        (() => {
+          const summaries = selectedRelation.unit_bank_summaries ?? []
+
+          if (summaries.length === 0) return null
+
+          const latestMonth = Math.max(...summaries.map((s) => s.bill_year_month))
+
+          const latestSummaries = summaries.filter((s) => s.bill_year_month === latestMonth)
+
+          const timezoneOrder = ['Normal', 'Peak', 'Off Peak']
+
+          const sorted = latestSummaries.sort((a, b) => {
+            const aIndex = timezoneOrder.indexOf(a.timezone?.parameter_value ?? '')
+            const bIndex = timezoneOrder.indexOf(b.timezone?.parameter_value ?? '')
+            return aIndex - bIndex
+          })
+
+          const lastThree = sorted.slice(-3)
+          console.log(selectedRelation.unit_bank_summaries)
+          return (
+            <div className='flex h-full flex-col gap-4 p-4'>
+              <div className='text-lg font-semibold'>{selectedRelation.station?.station_name}</div>
+
+              <div className='text-sm text-gray-500'>Zone Wise Available Balance</div>
+
+              {lastThree.map((item, index) => (
+                <StationBalanceCard
+                  key={index}
+                  timeWindow={''}
+                  timezone={item.timezone?.parameter_value ?? '-'}
+                  availableUnits={item.closing_balance ?? 0}
+                />
+              ))}
+              <div className='mt-4 border-t pt-4'>
+                <div
+                  className='cursor-pointer rounded-lg border p-3 transition hover:bg-gray-50'
+                  onClick={() =>
+                    router.visit(`/generating-stations/${selectedRelation.station?.station_id}`)
+                  }
+                >
+                  <div className='text-sm font-medium text-blue-600 hover:underline'>
+                    Station Details
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        })()
+      }
     >
       <div className='flex justify-end p-5'>
         <AddButton
@@ -69,7 +129,14 @@ export default function StationConsumerRelCreate({
         />
       )}
       <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-6'>
-        <ConsumerStationList relations={relations} />
+        {/* <ConsumerStationList relations={relations} /> */}
+        <ConsumerStationList
+          relations={relations}
+          onViewBalance={(rel) => {
+            setSelectedRelation(rel)
+            setSheetOpen(true)
+          }}
+        />
       </div>
     </ConnectionsLayout>
   )

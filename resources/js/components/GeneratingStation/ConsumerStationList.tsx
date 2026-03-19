@@ -11,9 +11,10 @@ import DeactivateStationConsumerModal from './DeactivateStationConsumerModal'
 
 interface Props {
   relations: StationConsumerRel[]
+  onViewBalance?: (rel: StationConsumerRel) => void
 }
 
-export default function ConsumerStationList({ relations }: Props) {
+export default function ConsumerStationList({ relations, onViewBalance }: Props) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [reprioritizeModalOpen, setReprioritizeModalOpen] = useState(false)
   const [inactiveModalOpen, setInactiveModalOpen] = useState(false)
@@ -85,7 +86,7 @@ export default function ConsumerStationList({ relations }: Props) {
                       className='flex cursor-pointer items-center gap-1'
                       onClick={(e) => {
                         e.stopPropagation()
-                        console.log('View balance clicked', rel)
+                        onViewBalance?.(rel)
                       }}
                     >
                       <Eye className='h-3.5 w-3.5 text-gray-500' />

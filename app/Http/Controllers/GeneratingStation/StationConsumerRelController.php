@@ -50,7 +50,7 @@ class StationConsumerRelController extends Controller
     {
         $stationId = $request->input('stationId');
         $stationConnectionId = $request->input('stationConnectionId');
-
+        $openSheet = $request->input('openSheet', false);
         $stationConnection = $this->connectionService->getConnection($stationConnectionId)->data;
 
         $consumerTypes = $this->parameterValueService
@@ -68,6 +68,7 @@ class StationConsumerRelController extends Controller
                 'connection' => $stationConnection,
                 'consumerTypes' => $consumerTypes,
                 'stations' => $stations,
+                'openSheet' => $openSheet ? true : false,
             ]
         );
     }

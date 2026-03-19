@@ -962,6 +962,7 @@ export interface UnitBankSummary {
   last_txn_id: number
   processing_run_id: string
   is_active: boolean
+  timezone?: ParameterValues
 }
 
 export interface StationConsumerRel {
