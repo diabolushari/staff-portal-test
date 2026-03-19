@@ -894,6 +894,7 @@ export interface SdCollection {
   sd_attributes: SdAttribute[]
   status: ParameterValues
   status_id: number
+  transaction_ref: string
 }
 
 export interface SdAttribute {

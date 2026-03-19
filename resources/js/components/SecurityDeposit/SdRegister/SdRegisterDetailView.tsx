@@ -78,7 +78,7 @@ const SdRegisterDetailView = ({
       value: 'collection',
       onClick: () =>
         router.get(
-          route('sd-collections-create', {
+          route('sd-collections.create', {
             sdDemandId: sdRegister?.[0].sd_demand_id,
             connectionId: connection.connection_id,
           })

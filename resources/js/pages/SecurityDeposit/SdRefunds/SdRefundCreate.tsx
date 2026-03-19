@@ -1,5 +1,4 @@
-import SdCollectionForm from '@/components/SecurityDeposit/SdCollections/SdCollectionForm'
-import AssessmentSummaryCard from '@/components/SecurityDeposit/SdRefunds/AssessmentSummaryCard'
+import RefundSection from '@/components/SecurityDeposit/SdRefunds/RefundSection'
 import SdRegisterDetailView from '@/components/SecurityDeposit/SdRegister/SdRegisterDetailView'
 import {
   ChargeHeadDefinition,
@@ -50,21 +49,16 @@ export default function SdRefundCreate({
       sheetAction={setSheetOpen}
       sheetOpen={sheetOpen}
       sheetContent={
-        <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto p-2'>
-          <AssessmentSummaryCard
-            balanceSummary={balanceSummary}
-            sdRegister={sdRegister[0]}
-            isRefundCard={true}
-          />
-          <SdCollectionForm
+        <>
+          <RefundSection
             sdDemand={sdDemand}
             paymentModes={paymentModes}
             collectionStatus={collectionStatus}
             connection={connection}
-            sdRegister={sdRegister[0]}
-            isRefund={true}
+            sdRegister={sdRegister}
+            balanceSummary={balanceSummary}
           />
-        </div>
+        </>
       }
       highlightedAction={'refund'}
     />

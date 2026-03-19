@@ -54,9 +54,15 @@ const AssessmentSummaryCard = ({
             <span className='text-kseb-primary text-base font-bold'>₹ {refund}</span>
           </div>
         )}
+        {isRefundCard && (
+          <div className='flex justify-between'>
+            <span className='font-medium text-gray-500'>Total Adjusted</span>
+            <span className='text-kseb-primary text-base font-bold'>₹ {0}</span>
+          </div>
+        )}
         {isCollectionCard && (
           <div className='flex justify-between'>
-            <span className='font-medium text-gray-500'>Total Collection</span>
+            <span className='text-kseb-primary font-medium'>ASD Required</span>
             <span className='text-kseb-primary text-base font-bold'>₹ {collection}</span>
           </div>
         )}
