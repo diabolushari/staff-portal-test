@@ -15,6 +15,7 @@ import LastAssessmentCard from './LastAssessmentCard'
 import BalanceDetailCard from './BalanceDetailCard'
 import LatestUpdateDetailCard from './LatestUpdateDetailCard'
 import SdRegisterListByConnection from './SdRegisterListByConnection'
+import RegisterDetailSheet from './RegisterDetailSheet'
 
 interface Props {
   sdRegister?: SdRegister[]
@@ -66,6 +67,21 @@ const SdRegisterDetailView = ({
 }: Props) => {
   const [showActions, setShowActions] = useState<boolean>(sheetOpen ?? false)
 
+  const [localSheetOpen, setLocalSheetOpen] = useState(false)
+
+  const handleSheetAction = (open: boolean) => {
+    if (sheetAction) {
+      sheetAction(open)
+    } else {
+      setLocalSheetOpen(open)
+    }
+  }
+  useEffect(() => {
+    if (!localSheetOpen) {
+      setSelectedSdRegister(null)
+    }
+  }, [localSheetOpen])
+
   const ActionItems = [
     {
       label: 'Ad-hoc Assessment',
@@ -98,25 +114,32 @@ const SdRegisterDetailView = ({
   ]
 
   useEffect(() => {
-    if (sheetOpen) return
-    if (!sheetOpen) setShowActions(false)
+    if (!sheetOpen) {
+      setShowActions(false)
+      setSelectedSdRegister(null)
+    }
   }, [sheetOpen])
+
+  const [selectedSdRegister, setSelectedSdRegister] = useState<SdRegister | null>(null)
+
   return (
     <MainLayout
       breadcrumb={breadcrumb}
       navItems={billingNavItems}
       title={`Security Deposits`}
-      selectedItem='sd-register'
+      selectedItem='SD Register'
       selectedTopNav='Billing'
       description={
         <span>
           Security Deposit for Consumer number <b>{connection.consumer_number}</b>
         </span>
       }
-      sheetTitle={sheetTitle}
-      sheetAction={sheetAction}
-      sheetOpen={sheetOpen}
-      sheetContent={sheetContent}
+      sheetTitle={selectedSdRegister ? `SD Register Details` : sheetTitle}
+      sheetAction={sheetAction ?? handleSheetAction}
+      sheetOpen={sheetOpen ?? localSheetOpen}
+      sheetContent={
+        selectedSdRegister ? <RegisterDetailSheet sdRegister={selectedSdRegister} /> : sheetContent
+      }
     >
       <div className='relative ml-auto w-48'>
         <Button
@@ -172,6 +195,9 @@ const SdRegisterDetailView = ({
         sdTypes={sdTypes}
         page={page}
         pageSize={pageSize}
+        selectedSdRegister={selectedSdRegister}
+        setSelectedSdRegister={setSelectedSdRegister}
+        sheetAction={handleSheetAction}
       />
     </MainLayout>
   )

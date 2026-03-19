@@ -3,7 +3,6 @@ import useFetchRecord from '@/hooks/useFetchRecord'
 import { Connection, SdRegister } from '@/interfaces/data_interfaces'
 import { Paginator } from '@/ui/ui_interfaces'
 import { getDisplayDate } from '@/utils'
-import { router } from '@inertiajs/react'
 import { getAssessmentYear } from './LastAssessmentCard'
 import Pagination from '@/ui/Pagination/Pagination'
 import useCustomForm from '@/hooks/useCustomForm'
@@ -18,6 +17,9 @@ interface Props {
   occupancyTypes: ParameterValues[]
   page?: number
   pageSize?: number
+  selectedSdRegister: SdRegister | null
+  setSelectedSdRegister: (sdRegister: SdRegister) => void
+  sheetAction: (open: boolean) => void
 }
 
 const SdRegisterListByConnection = ({
@@ -26,6 +28,9 @@ const SdRegisterListByConnection = ({
   occupancyTypes,
   page,
   pageSize,
+  selectedSdRegister,
+  setSelectedSdRegister,
+  sheetAction,
 }: Props) => {
   const { formData, setFormValue } = useCustomForm({
     sd_type_id: '',
@@ -101,8 +106,11 @@ const SdRegisterListByConnection = ({
             {sdRegister[0]?.data?.map((sd) => (
               <div
                 key={sd.sd_register_id}
-                className='grid cursor-pointer grid-cols-6 items-center rounded-lg px-1 py-3 text-sm hover:bg-gray-50'
-                onClick={() => router.get(route(`sd-register.show`, sd.connection_id))}
+                className={`grid cursor-pointer grid-cols-6 items-center rounded-lg px-1 py-3 text-sm hover:bg-gray-50 ${selectedSdRegister?.sd_register_id === sd.sd_register_id ? 'bg-kseb-bg-blue' : ''}`}
+                onClick={() => {
+                  setSelectedSdRegister(sd)
+                  sheetAction(true)
+                }}
               >
                 <span className='font-medium text-gray-700'>{getAssessmentYear(sd)}</span>
 
