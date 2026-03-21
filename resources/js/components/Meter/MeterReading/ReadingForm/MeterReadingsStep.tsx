@@ -119,11 +119,11 @@ export default function MeterReadingsStep({
             filteredMetersWithTimezonesAndProfiles={filteredMetersWithTimezonesAndProfiles}
           />
 
-          {filteredMetersWithTimezonesAndProfiles.length > 1 && (
+          {filteredMetersWithTimezonesAndProfiles.length > 1 && !profileErrorExist && (
             <div className='flex justify-between'>
               <Button
                 variant='secondary'
-                label='Cancel'
+                label='Switch Meter'
                 onClick={() => {
                   setActiveMeter(null)
                   setIsOnParameterForm(false)

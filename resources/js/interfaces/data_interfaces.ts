@@ -672,6 +672,7 @@ export interface MeterReadingValueGroup {
   meter: Meter
   values?: MeterReadingValue[]
   reading?: MeterReading
+  current_meter_connection_mapping?: MeterConnectionMapping | null
 }
 
 export interface BillingGroup {

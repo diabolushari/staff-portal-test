@@ -5,7 +5,7 @@ import {
 } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import MeterReadingObservationStep from '../MeterReadingObservationStep'
 import MeterReadingsStep from './MeterReadingsStep'
 import useMeterHealthForm from './useMeterHealthForm'
@@ -46,6 +46,22 @@ export default function MeterReadingFormSteps({
   latestMeterReading,
 }: Readonly<Props>) {
   const [activeMeter, setActiveMeter] = useState<MeterWithTimezoneAndProfile | null>(null)
+
+  const isFirstReading = useMemo(() => {
+    if (activeMeter == null) {
+      return true
+    }
+
+    const latestMeterReading = latestMeterReadingGroupByMeter.find(
+      (reading) => reading.meter?.meter_id === activeMeter.meter_id
+    )
+
+    if (latestMeterReading == null) {
+      return true
+    }
+
+    return latestMeterReading.reading == null
+  }, [activeMeter, latestMeterReadingGroupByMeter])
 
   const { readingValues, updateReading } = useMeterReadingForm(
     metersWithTimezonesAndProfiles,
@@ -110,7 +126,7 @@ export default function MeterReadingFormSteps({
           updateMeterHealth={updateMeterHealth}
           updateCTPTHealth={updateCTPTHealth}
           setIsOnParameterForm={setIsOnParameterForm}
-          isFirstReading={false}
+          isFirstReading={isFirstReading}
           isOnparameterForm={isOnParamaterForm}
           activeMeter={activeMeter}
           setActiveMeter={setActiveMeter}

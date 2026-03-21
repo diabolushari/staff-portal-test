@@ -1,5 +1,5 @@
-import MeterReadingGeneralStep from '@/components/Meter/MeterReading/ReadingForm/MeterReadingGeneralStep'
 import MeterReadingFormSteps from '@/components/Meter/MeterReading/ReadingForm/MeterReadingFormSteps'
+import MeterReadingGeneralStep from '@/components/Meter/MeterReading/ReadingForm/MeterReadingGeneralStep'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import Stepper from '@/components/Stepper'
 import useCustomForm from '@/hooks/useCustomForm'
@@ -91,8 +91,6 @@ export default function MeterReadingCreatePage({
   const { post, errors, loading } = useInertiaPost(route('meter-reading.store'), {
     showErrorToast: true,
   })
-
-  const [selectedMeters, setSelectedMeters] = useState<number[]>([])
 
   const defalultAnomaly = anomalyTypes.find(
     (h) => h.parameter_value.toLowerCase() === 'no visible anomalies'
@@ -201,8 +199,6 @@ export default function MeterReadingCreatePage({
                 meterConnectionMappings={meterConnectionMappings}
                 onMetersWithTimezonesAndProfilesChange={setMetersWithTimezonesAndProfiles}
                 setActiveStep={setActiveStep}
-                selectedMeters={selectedMeters}
-                onSelectedMetersChange={setSelectedMeters}
               />
             )}
             {(activeStep === 1 || activeStep === 2) && (

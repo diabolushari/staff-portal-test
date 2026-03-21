@@ -1,8 +1,4 @@
 import { getMetersWithTimezonesAndProfiles } from '@/components/Meter/MeterReading/ReadingForm/meter-reading-helpers'
-import {
-  canSelectMeterWithNextReadingDate,
-  getSelectedMeterNextReadingDate,
-} from '@/components/Meter/MeterReading/ReadingForm/meter-selection-helpers'
 import { getLastDayOfMonth } from '@/components/Meter/MeterReading/valdiations/meter-reading-validation-helpers'
 import Field from '@/components/ui/field'
 import {
@@ -13,6 +9,7 @@ import {
 } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
+import ErrorText from '@/typography/ErrorText'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
 import CheckBox from '@/ui/form/CheckBox'
@@ -31,8 +28,6 @@ interface Props {
   latestMeterReadings?: MeterReadingValueGroup[]
   interimReasons: ParameterValues[]
   meterConnectionMappings: MeterConnectionMapping[]
-  selectedMeters: number[]
-  onSelectedMetersChange: (meterIds: number[]) => void
   onMetersWithTimezonesAndProfilesChange: (meters: MeterWithTimezoneAndProfile[]) => void
   setActiveStep: (step: number) => void
 }
@@ -42,48 +37,7 @@ interface MeterRow {
   meter_serial: string
   next_reading_date: string | null
   is_first_reading_flag: boolean
-}
-
-function getEnergiseDate(
-  meterConnectionMappings: MeterConnectionMapping[],
-  meterId: number
-): string | null {
-  const mappings = meterConnectionMappings?.filter((meterConnectionMapping) => {
-    return (
-      meterConnectionMapping.meter_id === meterId &&
-      meterConnectionMapping.energise_date != null &&
-      meterConnectionMapping.is_current
-    )
-  })
-
-  if (mappings.length === 0) {
-    return null
-  }
-
-  if (mappings.length === 1) {
-    return mappings[0].energise_date ?? null
-  }
-
-  //get energise date for record with Highest END date
-  const latestRecord = mappings.reduce(
-    (latestRecord, currentRecord) => {
-      if (latestRecord == null || currentRecord.effective_end_ts == null) {
-        return currentRecord
-      }
-      if (latestRecord.effective_end_ts == null) return latestRecord
-
-      const currentEndDate = dayjs(currentRecord.effective_end_ts)
-      const latestEndDate = dayjs(latestRecord.effective_end_ts)
-
-      if (currentEndDate.isAfter(latestEndDate)) {
-        return currentRecord
-      }
-      return latestRecord
-    },
-    null as MeterConnectionMapping | null
-  )
-
-  return latestRecord?.energise_date ?? null
+  checked: boolean
 }
 
 export default function MeterReadingGeneralStep({
@@ -95,15 +49,14 @@ export default function MeterReadingGeneralStep({
   latestMeterReadings,
   interimReasons,
   meterConnectionMappings,
-  selectedMeters,
-  onSelectedMetersChange,
   onMetersWithTimezonesAndProfilesChange,
   setActiveStep,
 }: Readonly<Props>) {
   const maxDate = dayjs().format('DD-MM-YYYY')
   const maxDateForReadingStartDate = dayjs(maxDate).subtract(1, 'day').format('DD-MM-YYYY')
-  const openDateField = true
   const [meterRows, setMeterRows] = useState<MeterRow[]>([])
+  const [validationInProgress, setValidationInProgress] = useState(false)
+  const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
 
   useEffect(() => {
     let dateOfFirstMeter: string | null = null
@@ -116,10 +69,8 @@ export default function MeterReadingGeneralStep({
           let nextReadingDate: string | null = null
 
           if (isFirstReading) {
-            nextReadingDate = getEnergiseDate(
-              meterConnectionMappings,
-              latestMeterReading.meter.meter_id
-            )
+            nextReadingDate =
+              latestMeterReading?.current_meter_connection_mapping?.energise_date ?? null
           } else {
             nextReadingDate = latestMeterReading?.reading?.reading_end_date ?? null
           }
@@ -137,90 +88,72 @@ export default function MeterReadingGeneralStep({
           }
         }) ?? []
 
-    onSelectedMetersChange(availableRows.filter((row) => row.checked).map((row) => row.meter_id))
     setMeterRows(availableRows)
-  }, [latestMeterReadings, meterConnectionMappings, onSelectedMetersChange])
+  }, [latestMeterReadings, meterConnectionMappings])
 
   const isFirstReading = useMemo(() => {
-    return selectedMeters.every((meterId) => {
-      const row = meterRows.find((meterRow) => meterRow.meter_id === meterId)
-      if (!row?.is_first_reading_flag) {
-        return false
-      }
-      return true
-    })
-  }, [meterRows, selectedMeters])
-
-  const selectedMeterNextReadingDate = useMemo(() => {
-    return getSelectedMeterNextReadingDate(meterRows, selectedMeters)
-  }, [meterRows, selectedMeters])
-
-  useEffect(() => {
-    if (selectedMeters.length < 2 || selectedMeterNextReadingDate === undefined) {
-      return
-    }
-
-    const filteredSelectedMeters = selectedMeters.filter((meterId) => {
-      const meterRow = meterRows.find((row) => row.meter_id === meterId)
-
-      if (meterRow == null) {
-        return false
-      }
-
-      return meterRow.next_reading_date === selectedMeterNextReadingDate
-    })
-
-    if (filteredSelectedMeters.length !== selectedMeters.length) {
-      onSelectedMetersChange(filteredSelectedMeters)
-    }
-  }, [meterRows, onSelectedMetersChange, selectedMeterNextReadingDate, selectedMeters])
+    return meterRows
+      .filter((row) => row.checked)
+      .some((row) => {
+        return row?.is_first_reading_flag
+      })
+  }, [meterRows])
 
   useEffect(() => {
     const readingStartDate =
-      meterRows.find((meterRow) => meterRow.meter_id === selectedMeters[0])?.next_reading_date ??
-      null
+      meterRows.find((meterRow) => meterRow.checked)?.next_reading_date ?? null
 
     if (readingStartDate == null) {
+      setFormValue('reading_start_date')('')
+      setFormValue('reading_end_date')('')
       return
     }
 
     if (isFirstReading) {
       setFormValue('reading_start_date')(readingStartDate)
-      setFormValue('reading_end_date')(getLastDayOfMonth(readingStartDate))
+      setFormValue('reading_end_date')(readingStartDate)
     }
     if (!isFirstReading) {
       const nextDay = dayjs(readingStartDate).add(1, 'day')
       setFormValue('reading_start_date')(nextDay.format('YYYY-MM-DD'))
       setFormValue('reading_end_date')(getLastDayOfMonth(nextDay.format('YYYY-MM-DD')))
     }
-  }, [isFirstReading, selectedMeters, meterRows, setFormValue])
+  }, [isFirstReading, meterRows, setFormValue])
 
   const handleMeterSelection = (meterId: number): void => {
-    if (selectedMeters.includes(meterId)) {
-      onSelectedMetersChange(
-        selectedMeters.filter((selectedMeterId) => selectedMeterId !== meterId)
-      )
-      return
-    }
+    setMeterRows((oldValues) => {
+      const checkedMeter = oldValues.find((row) => row.meter_id === meterId)
+      const currentNextReadingDate = checkedMeter?.next_reading_date
 
-    if (!canSelectMeterWithNextReadingDate(meterRows, selectedMeters, meterId)) {
-      return
-    }
+      return oldValues.map((row) => {
+        if (row.meter_id === meterId && row.checked) {
+          return { ...row, checked: false }
+        }
 
-    onSelectedMetersChange([...selectedMeters, meterId])
+        if (row.meter_id === meterId && row.next_reading_date == currentNextReadingDate) {
+          return { ...row, checked: true }
+        }
+
+        return row
+      })
+    })
   }
 
   const handleValidate = async (): Promise<void> => {
-    const { hasError, meterWithTimezonesAndProfiles } = await getMetersWithTimezonesAndProfiles({
-      connectionId: formData.connection_id,
-      meterIds: selectedMeters,
-      startDate: formData.reading_start_date ?? null,
-      endDate: formData.reading_end_date ?? null,
-      latestMeterReadings,
-      meterConnectionMappings,
-    })
+    setValidationInProgress(true)
+    const { hasError, errors, meterWithTimezonesAndProfiles } =
+      await getMetersWithTimezonesAndProfiles({
+        connectionId: formData.connection_id,
+        meterIds: meterRows.filter((row) => row.checked).map((row) => row.meter_id),
+        startDate: formData.reading_start_date ?? null,
+        endDate: formData.reading_end_date ?? null,
+        latestMeterReadings,
+        meterConnectionMappings,
+      })
+    setValidationInProgress(false)
 
     if (hasError) {
+      setValidationErrors(errors)
       return
     }
 
@@ -275,44 +208,36 @@ export default function MeterReadingGeneralStep({
 
             <div className='col-span-2'>
               <div className='mb-2 text-sm font-medium text-[#252c32]'>Meters</div>
-              {selectedMeters.length > 0 && (
-                <div className='mb-2 text-xs text-[#5f6d79]'>
-                  Only meters with the same last reading date can be selected together.
-                </div>
-              )}
+              <ErrorText>
+                {validationErrors['meter_ids'] ?? validationErrors['connection_id']}
+              </ErrorText>
+              <div className='mb-2 text-xs text-[#5f6d79]'>
+                Only meters with the same next reading date can be selected together.
+              </div>
               <div className='grid gap-3'>
                 {meterRows?.map((meterRow) => {
-                  const isSelected = selectedMeters.includes(meterRow.meter_id)
-                  const isSelectable = canSelectMeterWithNextReadingDate(
-                    meterRows,
-                    selectedMeters,
-                    meterRow.meter_id
-                  )
-
                   return (
                     <label
                       key={meterRow.meter_id}
-                      className={`flex items-start gap-3 rounded-lg border border-[#e5e9eb] p-3 ${
-                        isSelectable ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'
-                      }`}
+                      className={`flex items-start gap-3 rounded-lg border border-[#e5e9eb] p-3 ${'cursor-pointer'}`}
                     >
                       <input
                         type='checkbox'
-                        checked={isSelected}
+                        checked={meterRow.checked}
                         onChange={() => handleMeterSelection(meterRow.meter_id)}
                         className='mt-1 h-4 w-4'
-                        disabled={!isSelectable && !isSelected}
                       />
                       <div className='flex flex-col'>
                         <span className='text-sm font-medium text-[#252c32]'>
                           Meter Serial: {meterRow.meter_serial}
                         </span>
                         <span className='text-xs text-[#5f6d79]'>
-                          Next Reading Date:{' '}
+                          Next Reading On :{' '}
                           {meterRow.next_reading_date != null
                             ? dayjs(meterRow.next_reading_date).format('DD-MM-YYYY')
                             : '-'}
                         </span>
+                        <ErrorText>{validationErrors[`meters.${meterRow.meter_id}`]}</ErrorText>
                       </div>
                     </label>
                   )
@@ -336,36 +261,33 @@ export default function MeterReadingGeneralStep({
               />
             </div>
 
-            {openDateField && (
-              <Datepicker
-                label='Billing Period Start'
-                value={formData.reading_start_date}
-                setValue={(value) => {
-                  setFormValue('reading_start_date')(value)
-                  if (isFirstReading) {
-                    setFormValue('reading_end_date')(value)
-                  }
-                }}
-                error={errors?.reading_start_date}
-                disabled={!isFirstReading}
-                max={maxDateForReadingStartDate}
-              />
-            )}
-            {openDateField && (
-              <Datepicker
-                label='Billing Period End'
-                value={formData.reading_end_date}
-                setValue={setFormValue('reading_end_date')}
-                error={errors?.reading_end_date}
-                max={maxDate}
-              />
-            )}
-
+            <Datepicker
+              label='Billing Period Start'
+              value={formData.reading_start_date}
+              setValue={(value) => {
+                setFormValue('reading_start_date')(value)
+                if (isFirstReading) {
+                  setFormValue('reading_end_date')(value)
+                }
+              }}
+              error={errors?.reading_start_date ?? validationErrors['start_date']}
+              disabled={true}
+              max={maxDateForReadingStartDate}
+            />
+            <Datepicker
+              label='Billing Period End'
+              value={formData.reading_end_date}
+              setValue={setFormValue('reading_end_date')}
+              error={errors?.reading_end_date ?? validationErrors['end_date']}
+              disabled={!formData.is_interim_reading}
+              max={maxDate}
+            />
             <div className='col-span-2 flex justify-end'>
               <Button
                 type='button'
                 label='Validate & Continue'
                 onClick={handleValidate}
+                processing={validationInProgress}
               />
             </div>
           </div>

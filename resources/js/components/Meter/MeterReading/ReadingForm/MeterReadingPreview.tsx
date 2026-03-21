@@ -1,4 +1,8 @@
-import { Meter, MeterProfileParameter, MeterWithTimezoneAndProfile, } from '@/interfaces/data_interfaces'
+import {
+    Meter,
+    MeterProfileParameter,
+    MeterWithTimezoneAndProfile,
+} from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
 import { CONSUMPTION_PARAMETER_NAME, DEMAND_PARAMETER_NAME } from '@/types/constants'
@@ -220,7 +224,7 @@ const MeterReadingPreview = ({
       if (param == null || param.readings?.length === 0) return false
 
       if (isFirstReading) {
-        return param.readings.every((r) => r.values?.initial != null)
+        return param.readings.every((r) => r.values?.initial != null && r.values?.initial != '')
       }
 
       return param.readings.every((r) => r.values?.final != null && r.values?.final != '')
