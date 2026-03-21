@@ -1,5 +1,5 @@
 import MeterReadingGeneralStep from '@/components/Meter/MeterReading/ReadingForm/MeterReadingGeneralStep'
-import MeterReadingSubmitStep from '@/components/Meter/MeterReading/ReadingForm/MeterReadingSubmitStep'
+import MeterReadingFormSteps from '@/components/Meter/MeterReading/ReadingForm/MeterReadingFormSteps'
 import { consumerNavItems } from '@/components/Navbar/navitems'
 import Stepper from '@/components/Stepper'
 import useCustomForm from '@/hooks/useCustomForm'
@@ -206,7 +206,7 @@ export default function MeterReadingCreatePage({
               />
             )}
             {(activeStep === 1 || activeStep === 2) && (
-              <MeterReadingSubmitStep
+              <MeterReadingFormSteps
                 post={post}
                 loading={loading}
                 activeStep={activeStep}

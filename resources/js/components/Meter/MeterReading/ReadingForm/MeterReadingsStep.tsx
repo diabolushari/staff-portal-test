@@ -86,7 +86,6 @@ export default function MeterReadingsStep({
         </div>
       )}
 
-      {/* ---------- BACK TO METER LIST ---------- */}
       {filteredMetersWithTimezonesAndProfiles.length > 1 && activeMeter === null && (
         <div>
           <Button
