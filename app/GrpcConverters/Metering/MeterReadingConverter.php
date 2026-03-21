@@ -52,6 +52,7 @@ class MeterReadingConverter
             'power_factors' => $powerFactors,
             'healths' => $healths,
             'is_interim_reading' => $detail->getMultipleReading(),
+            'is_billable' => $detail->hasIsBillable() ? $detail->getIsBillable() : null,
         ];
     }
 

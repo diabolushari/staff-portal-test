@@ -21,6 +21,7 @@ import { ConnectionDetailTooltip } from '../ConnectionDetailTooltip'
 
 interface Props {
   connectionWithConsumer: ConsumerData
+  editMode: boolean
   formData: MeterReadingForm
   setFormValue: <K extends keyof MeterReadingForm>(key: K) => (value: MeterReadingForm[K]) => void
   toggleBoolean: (key: keyof MeterReadingForm) => () => void
@@ -42,6 +43,7 @@ interface MeterRow {
 
 export default function MeterReadingGeneralStep({
   connectionWithConsumer,
+  editMode,
   formData,
   setFormValue,
   toggleBoolean,
@@ -54,7 +56,7 @@ export default function MeterReadingGeneralStep({
 }: Readonly<Props>) {
   const maxDate = dayjs().format('DD-MM-YYYY')
   const maxDateForReadingStartDate = dayjs(maxDate).subtract(1, 'day').format('DD-MM-YYYY')
-  const [meterRows, setMeterRows] = useState<MeterRow[]>([])
+  const [meterCheckList, setMeterCheckList] = useState<MeterRow[]>([])
   const [validationInProgress, setValidationInProgress] = useState(false)
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({})
 
@@ -72,7 +74,13 @@ export default function MeterReadingGeneralStep({
             nextReadingDate =
               latestMeterReading?.current_meter_connection_mapping?.energise_date ?? null
           } else {
-            nextReadingDate = latestMeterReading?.reading?.reading_end_date ?? null
+            const readingStartDate =
+              latestMeterReading.reading?.reading_end_date == null
+                ? null
+                : dayjs(latestMeterReading.reading?.reading_end_date)
+                    .add(1, 'day')
+                    .format('YYYY-MM-DD')
+            nextReadingDate = readingStartDate ?? null
           }
 
           if (index === 0) {
@@ -88,20 +96,20 @@ export default function MeterReadingGeneralStep({
           }
         }) ?? []
 
-    setMeterRows(availableRows)
+    setMeterCheckList(availableRows)
   }, [latestMeterReadings, meterConnectionMappings])
 
   const isFirstReading = useMemo(() => {
-    return meterRows
+    return meterCheckList
       .filter((row) => row.checked)
       .some((row) => {
         return row?.is_first_reading_flag
       })
-  }, [meterRows])
+  }, [meterCheckList])
 
   useEffect(() => {
     const readingStartDate =
-      meterRows.find((meterRow) => meterRow.checked)?.next_reading_date ?? null
+      meterCheckList.find((meterRow) => meterRow.checked)?.next_reading_date ?? null
 
     if (readingStartDate == null) {
       setFormValue('reading_start_date')('')
@@ -114,14 +122,13 @@ export default function MeterReadingGeneralStep({
       setFormValue('reading_end_date')(readingStartDate)
     }
     if (!isFirstReading) {
-      const nextDay = dayjs(readingStartDate).add(1, 'day')
-      setFormValue('reading_start_date')(nextDay.format('YYYY-MM-DD'))
-      setFormValue('reading_end_date')(getLastDayOfMonth(nextDay.format('YYYY-MM-DD')))
+      setFormValue('reading_start_date')(readingStartDate)
+      setFormValue('reading_end_date')(getLastDayOfMonth(readingStartDate))
     }
-  }, [isFirstReading, meterRows, setFormValue])
+  }, [isFirstReading, meterCheckList, setFormValue])
 
   const handleMeterSelection = (meterId: number): void => {
-    setMeterRows((oldValues) => {
+    setMeterCheckList((oldValues) => {
       const checkedMeter = oldValues.find((row) => row.meter_id === meterId)
       const currentNextReadingDate = checkedMeter?.next_reading_date
 
@@ -144,7 +151,7 @@ export default function MeterReadingGeneralStep({
     const { hasError, errors, meterWithTimezonesAndProfiles } =
       await getMetersWithTimezonesAndProfiles({
         connectionId: formData.connection_id,
-        meterIds: meterRows.filter((row) => row.checked).map((row) => row.meter_id),
+        meterIds: meterCheckList.filter((row) => row.checked).map((row) => row.meter_id),
         startDate: formData.reading_start_date ?? null,
         endDate: formData.reading_end_date ?? null,
         latestMeterReadings,
@@ -188,12 +195,14 @@ export default function MeterReadingGeneralStep({
               value={formData.is_interim_reading}
               error={errors?.is_interim_reading}
             />
-            <CheckBox
-              label='Use For Billing'
-              toggleValue={toggleBoolean('is_billable')}
-              value={formData.is_billable}
-              error={errors?.is_billable}
-            />
+            {!editMode && (
+              <CheckBox
+                label='Use For Billing'
+                toggleValue={toggleBoolean('is_billable')}
+                value={formData.is_billable ?? true}
+                error={errors?.is_billable}
+              />
+            )}
             {formData.is_interim_reading && (
               <SelectList
                 label='Interim Reason'
@@ -215,35 +224,40 @@ export default function MeterReadingGeneralStep({
                 Only meters with the same next reading date can be selected together.
               </div>
               <div className='grid gap-3'>
-                {meterRows?.map((meterRow) => {
+                {meterCheckList?.map((checkListItem) => {
                   return (
                     <label
-                      key={meterRow.meter_id}
+                      key={checkListItem.meter_id}
                       className={`flex items-start gap-3 rounded-lg border border-[#e5e9eb] p-3 ${'cursor-pointer'}`}
                     >
                       <input
                         type='checkbox'
-                        checked={meterRow.checked}
-                        onChange={() => handleMeterSelection(meterRow.meter_id)}
+                        checked={checkListItem.checked}
+                        onChange={() => handleMeterSelection(checkListItem.meter_id)}
                         className='mt-1 h-4 w-4'
                       />
                       <div className='flex flex-col'>
                         <span className='text-sm font-medium text-[#252c32]'>
-                          Meter Serial: {meterRow.meter_serial}
+                          Meter Serial: {checkListItem.meter_serial}
                         </span>
                         <span className='text-xs text-[#5f6d79]'>
                           Next Reading On :{' '}
-                          {meterRow.next_reading_date != null
-                            ? dayjs(meterRow.next_reading_date).format('DD-MM-YYYY')
+                          {checkListItem.next_reading_date != null
+                            ? dayjs(checkListItem.next_reading_date).format('DD-MM-YYYY')
                             : '-'}
                         </span>
-                        <ErrorText>{validationErrors[`meters.${meterRow.meter_id}`]}</ErrorText>
+                        {checkListItem.is_first_reading_flag && (
+                          <span className='text-xs text-[#5f6d79]'>First Reading</span>
+                        )}
+                        <ErrorText>
+                          {validationErrors[`meters.${checkListItem.meter_id}`]}
+                        </ErrorText>
                       </div>
                     </label>
                   )
                 })}
 
-                {(!meterRows || meterRows.length === 0) && (
+                {(!meterCheckList || meterCheckList.length === 0) && (
                   <div className='rounded-lg border border-dashed border-[#d8dde0] p-3 text-sm text-[#5f6d79]'>
                     No meters available
                   </div>

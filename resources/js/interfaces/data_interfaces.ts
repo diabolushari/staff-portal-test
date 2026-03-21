@@ -504,6 +504,7 @@ export interface MeterReading {
   power_factors: MeterReadingPowerFactor[]
   healths?: MeterHealth[]
   is_interim_reading: boolean
+  is_billable?: boolean | null
 }
 
 export interface MeterHealth {

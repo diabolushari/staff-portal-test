@@ -13,7 +13,11 @@ interface Props {
   profile: MeterProfileParameter
   updateReading: (meterId: number, parameterId: number, newReading: TimezoneReadingState[]) => void
   isFirstReading: boolean
-  onErrorChange?: (parameterId: number, hasError: boolean) => void
+  onErrorChange?: (
+    meterId: number,
+    parameterId: number,
+    errors: Record<string, string | undefined>
+  ) => void
 }
 
 const ProfileReadingForm = ({
@@ -56,9 +60,12 @@ const ProfileReadingForm = ({
   }, [meter])
 
   useEffect(() => {
-    const hasError = Object.keys(readingErrors).length > 0
-    onErrorChange?.(profile.meter_parameter_id, hasError)
-  }, [readingErrors, onErrorChange, profile.meter_parameter_id])
+    if (meter == null) {
+      return
+    }
+
+    onErrorChange?.(meter.meter_id, profile.meter_parameter_id, readingErrors)
+  }, [meter, onErrorChange, profile.meter_parameter_id, readingErrors])
 
   const updateData = useCallback(
     (timezoneId: number, value: string) => {
@@ -121,8 +128,10 @@ const ProfileReadingForm = ({
             ...reading.values,
             initial: value,
             final: value,
-            diff: '0',
-            value: 0,
+            diff: value,
+            value: Number(
+              ((meter.meter_mf ?? 1) * num).toFixed(meter.meter.decimal_digit_count ?? 2)
+            ),
           },
         }
       })

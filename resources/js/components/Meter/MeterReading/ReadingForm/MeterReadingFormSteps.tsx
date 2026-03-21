@@ -7,6 +7,7 @@ import { ParameterValues } from '@/interfaces/parameter_types'
 import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import MeterReadingObservationStep from '../MeterReadingObservationStep'
+import useMeterReadingErrorState from './meter-reading-error-state'
 import MeterReadingsStep from './MeterReadingsStep'
 import useMeterHealthForm from './useMeterHealthForm'
 import useMeterReadingForm from './useMeterReadingForm'
@@ -14,6 +15,7 @@ import useMeterReadingForm from './useMeterReadingForm'
 interface Props {
   activeStep: number
   setActiveStep: Dispatch<SetStateAction<number>>
+  editMode: boolean
   formData: MeterReadingForm
   setFormValue: (
     key: keyof MeterReadingForm
@@ -33,6 +35,7 @@ interface Props {
 export default function MeterReadingFormSteps({
   activeStep,
   setActiveStep,
+  editMode,
   formData,
   setFormValue,
   meterHealthTypes,
@@ -84,14 +87,20 @@ export default function MeterReadingFormSteps({
 
   const [isOnParamaterForm, setIsOnParameterForm] = useState(false)
 
-  const [allProfileHasData, setAllProfileHasData] = useState<boolean>(false)
-  const [profileErrorExist, setProfileErrorExist] = useState<boolean>(false)
+  const { profileValidationState, updateProfileErrors, allProfileHasData, profileErrorExist } =
+    useMeterReadingErrorState(metersWithTimezonesAndProfiles, readingValues)
 
   const handleSubmit = () => {
     accordionOpen()
 
+    const submitFormData = { ...formData }
+
+    if (editMode) {
+      delete submitFormData.is_billable
+    }
+
     post({
-      ...formData,
+      ...submitFormData,
       readings_by_meter: readingValues,
       meter_health: healthData,
     })
@@ -130,8 +139,8 @@ export default function MeterReadingFormSteps({
           isOnparameterForm={isOnParamaterForm}
           activeMeter={activeMeter}
           setActiveMeter={setActiveMeter}
-          setAllProfileHasData={setAllProfileHasData}
-          setProfileErrorExist={setProfileErrorExist}
+          profileValidationState={profileValidationState}
+          updateProfileErrors={updateProfileErrors}
           allProfileHasData={allProfileHasData}
           profileErrorExist={profileErrorExist}
           loading={loading}

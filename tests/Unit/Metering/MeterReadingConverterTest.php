@@ -56,3 +56,14 @@ it('returns a null meter connection mapping when the proto field is not set', fu
 
     expect($result['current_meter_connection_mapping'])->toBeNull();
 });
+
+it('includes is billable when the proto field is set', function () {
+    $reading = (new MeterReadingMessage)
+        ->setMeterReadingId(101)
+        ->setConnectionId(501)
+        ->setIsBillable(true);
+
+    $result = MeterReadingConverter::toArray($reading);
+
+    expect($result['is_billable'])->toBeTrue();
+});

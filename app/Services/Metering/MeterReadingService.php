@@ -250,7 +250,10 @@ class MeterReadingService
         $protoRequest->setMeteringDate($request->meteringDate);
         $protoRequest->setReadingStartDate($request->readingStartDate);
         $protoRequest->setReadingEndDate($request->readingEndDate);
-        $protoRequest->setIsBillable($request->isBillable);
+
+        if ($request->isBillable !== null) {
+            $protoRequest->setIsBillable($request->isBillable);
+        }
 
         if ($request->isInterimReading) {
             $protoRequest->setSingleReading(false);

@@ -4,6 +4,7 @@ import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
 import Button from '@/ui/button/Button'
 import React, { useEffect, useMemo } from 'react'
 import MeterReadingPreview from './MeterReadingPreview'
+import { MeterProfileValidationState } from './meter-reading-error-state'
 import { MeterHealthFormData } from './useMeterHealthForm'
 import { MeterReadingFormState, TimezoneReadingState } from './useMeterReadingForm'
 
@@ -26,8 +27,12 @@ interface Props {
   isOnparameterForm: boolean
   activeMeter: MeterWithTimezoneAndProfile | null
   setActiveMeter: (meter: MeterWithTimezoneAndProfile | null) => void
-  setProfileErrorExist: (value: boolean) => void
-  setAllProfileHasData: (value: boolean) => void
+  profileValidationState: MeterProfileValidationState[]
+  updateProfileErrors: (
+    meterId: number,
+    parameterId: number,
+    errors: Record<string, string | undefined>
+  ) => void
   setActiveStep: (step: number) => void
   handleSubmit: () => void
   allProfileHasData: boolean
@@ -49,8 +54,8 @@ export default function MeterReadingsStep({
   isFirstReading,
   activeMeter,
   setActiveMeter,
-  setAllProfileHasData,
-  setProfileErrorExist,
+  profileValidationState,
+  updateProfileErrors,
   setActiveStep,
   handleSubmit,
   allProfileHasData,
@@ -61,6 +66,48 @@ export default function MeterReadingsStep({
     return metersWithTimezonesAndProfiles
   }, [metersWithTimezonesAndProfiles])
 
+  const activeMeterHasData = useMemo(() => {
+    if (activeMeter == null) {
+      return false
+    }
+
+    const meterReading = readingValues.find((reading) => reading.meter_id === activeMeter.meter_id)
+
+    if (meterReading == null) {
+      return false
+    }
+
+    return activeMeter.reading_parameters.every((profile) => {
+      const parameterReading = meterReading.parameters.find(
+        (parameter) => parameter.meter_parameter_id === profile.meter_parameter_id
+      )
+
+      if (parameterReading == null) {
+        return false
+      }
+
+      return parameterReading.readings.every((reading) => {
+        return reading.values.final != null && reading.values.final !== ''
+      })
+    })
+  }, [activeMeter, readingValues])
+
+  const activeMeterHasErrors = useMemo(() => {
+    if (activeMeter == null) {
+      return false
+    }
+
+    const meterValidationState = profileValidationState.find(
+      (validationState) => validationState.meter_id === activeMeter.meter_id
+    )
+
+    return (
+      meterValidationState?.parameters.some((parameterState) => {
+        return Object.values(parameterState.errors).some((error) => error != null && error !== '')
+      }) ?? false
+    )
+  }, [activeMeter, profileValidationState])
+
   useEffect(() => {
     if (filteredMetersWithTimezonesAndProfiles.length === 1) {
       setActiveMeter(filteredMetersWithTimezonesAndProfiles[0])
@@ -69,7 +116,7 @@ export default function MeterReadingsStep({
 
   return (
     <div className='flex flex-col gap-6'>
-      {filteredMetersWithTimezonesAndProfiles.length > 1 && activeMeter === null && (
+      {activeMeter == null && (
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
           {filteredMetersWithTimezonesAndProfiles?.map((meter) => (
             <button
@@ -101,8 +148,6 @@ export default function MeterReadingsStep({
       {activeMeter != null && (
         <React.Fragment>
           <MeterReadingPreview
-            setAllProfileHasData={setAllProfileHasData}
-            setProfileErrorExist={setProfileErrorExist}
             healthData={healthData}
             meterHealthTypes={meterHealthTypes}
             ctHealthTypes={ctHealthTypes}
@@ -116,22 +161,15 @@ export default function MeterReadingsStep({
             isFirstReading={isFirstReading}
             hasMultipleMeters={filteredMetersWithTimezonesAndProfiles.length > 1}
             setIsOnParameterForm={setIsOnParameterForm}
-            filteredMetersWithTimezonesAndProfiles={filteredMetersWithTimezonesAndProfiles}
+            profileValidationState={profileValidationState}
+            onProfileErrorChange={updateProfileErrors}
           />
-
-          {filteredMetersWithTimezonesAndProfiles.length > 1 && !profileErrorExist && (
-            <div className='flex justify-between'>
-              <Button
-                variant='secondary'
-                label='Switch Meter'
-                onClick={() => {
-                  setActiveMeter(null)
-                  setIsOnParameterForm(false)
-                }}
-              />
+          {filteredMetersWithTimezonesAndProfiles.length > 1 && (
+            <div className='flex justify-end'>
               <Button
                 variant='primary'
-                label='Update'
+                label='Continue'
+                disabled={activeMeterHasErrors || !activeMeterHasData}
                 onClick={() => {
                   setActiveMeter(null)
                   setIsOnParameterForm(false)

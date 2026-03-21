@@ -28,7 +28,7 @@ export interface MeterReadingForm {
   remarks: string
   interim_reason_id: string
   is_interim_reading: boolean
-  is_billable: boolean
+  is_billable?: boolean
   _method: 'PUT' | 'POST' | undefined
 }
 
@@ -190,6 +190,7 @@ export default function MeterReadingCreatePage({
             {activeStep === 0 && (
               <MeterReadingGeneralStep
                 connectionWithConsumer={connectionWithConsumer}
+                editMode={editMode}
                 formData={formData}
                 setFormValue={setFormValue}
                 toggleBoolean={toggleBoolean}
@@ -207,6 +208,7 @@ export default function MeterReadingCreatePage({
                 loading={loading}
                 activeStep={activeStep}
                 setActiveStep={setActiveStep}
+                editMode={editMode}
                 metersWithTimezonesAndProfiles={metersWithTimezonesAndProfiles}
                 formData={formData}
                 setFormValue={setFormValue}
