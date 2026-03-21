@@ -24,6 +24,24 @@ class GeneratingStationConverter
         foreach ($station->getAttributes() as $attr) {
             $attributes[] = GeneratingStationAttributeConverter::convertToArray($attr);
         }
+        $unitBankSummaries = [];
+
+        foreach ($station->getUnitBankSummaries() as $summary) {
+            $unitBankSummaries[] = [
+                'summary_id' => $summary->getSummaryId(),
+                'station_id' => $summary->getStationId(),
+                'station_connection_id' => $summary->getStationConnectionId(),
+                'timezone_id' => $summary->getTimezoneId(),
+                'bill_year_month' => $summary->getBillYearMonth(),
+                'closing_balance' => $summary->getClosingBalance(),
+                'last_txn_id' => $summary->getLastTxnId(),
+                'processing_run_id' => $summary->getProcessingRunId(),
+                'is_active' => $summary->getIsActive(),
+                'timezone' => $summary->hasTimezone()
+                    ? ParameterValueProtoConvertor::convertToArray($summary->getTimezone())
+                    : null,
+            ];
+        }
 
         return [
             'station_id' => $station->getStationId(),
@@ -76,6 +94,7 @@ class GeneratingStationConverter
                 ) : null,
 
             'attributes' => $attributes,
+            'unit_bank_summaries' => $unitBankSummaries,
         ];
     }
 }

@@ -32,7 +32,7 @@ export default function ConsumerStationList({ relations, onViewBalance }: Props)
   }
 
   const getAvailableBalance = (rel: StationConsumerRel) => {
-    const summaries = rel.unit_bank_summaries || []
+    const summaries = rel.station?.unit_bank_summaries || []
     if (summaries.length === 0) return 0
 
     const latestMonth = Math.max(...summaries.map((s) => s.bill_year_month))

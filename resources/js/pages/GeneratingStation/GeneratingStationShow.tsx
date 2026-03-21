@@ -60,6 +60,11 @@ export default function GeneratingStationShowPage({ station }: Props) {
           />
 
           <Field
+            label='Consumer Number'
+            value={station?.connection?.consumer_number ?? '-'}
+          />
+
+          <Field
             label='Generation Type'
             value={station?.generation_type?.parameter_value ?? '-'}
           />
@@ -67,26 +72,6 @@ export default function GeneratingStationShowPage({ station }: Props) {
           <Field
             label='Plant Type'
             value={station?.plant_type?.parameter_value ?? '-'}
-          />
-
-          <Field
-            label='Voltage Category'
-            value={station?.voltage_category?.parameter_value ?? '-'}
-          />
-
-          <Field
-            label='Installed Capacity'
-            value={`${station?.installed_capacity ?? '-'}`}
-          />
-
-          <Field
-            label='Commissioning Date'
-            value={getDisplayDate(station.commissioning_date) ?? '-'}
-          />
-
-          <Field
-            label='Generation Status'
-            value={station?.generation_status?.parameter_value ?? '-'}
           />
           {station?.attributes?.length > 0 &&
             station?.attributes?.map((attr: any, index: number) => (
@@ -98,9 +83,34 @@ export default function GeneratingStationShowPage({ station }: Props) {
             ))}
         </div>
       </Card>
+      <Card className='rounded-lg p-7'>
+        <StrongText className='mb-6 block text-base font-semibold'>Plant Properties</StrongText>
+
+        <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+          <Field
+            label='Installed Capacity'
+            value={`${station?.installed_capacity ?? '-'}`}
+          />
+
+          <Field
+            label='Voltage Category'
+            value={station?.voltage_category?.parameter_value ?? '-'}
+          />
+
+          <Field
+            label='Commissioning Date'
+            value={getDisplayDate(station.commissioning_date) ?? '-'}
+          />
+
+          <Field
+            label='Generation Status'
+            value={station?.generation_status?.parameter_value ?? '-'}
+          />
+        </div>
+      </Card>
 
       <Card className='mt-4 rounded-lg p-7'>
-        <StrongText className='mb-6 block text-base font-semibold'>Address</StrongText>
+        <StrongText className='mb-6 block text-base font-semibold'>Station Address</StrongText>
 
         <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
           <Field

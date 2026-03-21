@@ -6,14 +6,13 @@ package com.kseb.consumerservice.proto.generatingstation;
 option php_namespace = "Proto\\GeneratingStation";
 option php_metadata_namespace = "GPBMetadata";
 
-
-
 import "connections/connections.proto";
 import "connections/consumer.proto";
 import "connections/consumer_address.proto";
 import "parameters/parameter-value.proto";
 import "generatingstation/generating-station-attribute.proto";
 import "generatingstation/station-transaction-ledger.proto";
+import "generatingstation/station-unit-bank-summary.proto";
 
 message GeneratingStationMessage {
   optional int32 version_id = 1;
@@ -47,6 +46,7 @@ message GeneratingStationMessage {
   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto generation_status = 21;
 
   repeated GeneratingStationAttributeResponse attributes = 22;
+  repeated com.kseb.consumerservice.proto.generatingstation.StationUnitBankSummaryMessage unit_bank_summaries = 23;
 }
 
 message CreateGeneratingStationRequest {
@@ -134,7 +134,6 @@ service GeneratingStationService {
 
   rpc ListStationTransactions(ListStationTransactionsRequest)
       returns (ListStationTransactionsResponse);
-      
       
   rpc ListGeneratingStationPaginated(ListGeneratingStationPaginatedRequest)
       returns (ListGeneratingStationPaginatedResponse);

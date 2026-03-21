@@ -111,7 +111,7 @@ const GeneratingStationForm = ({
         onSubmit={handleSubmit}
         className='flex flex-col gap-4'
       >
-        <FormCard title='Basic Information'>
+        <FormCard title='Plant Information'>
           <div className='flex flex-col gap-2'>
             <label className='text-sm font-medium'>
               Plant Type <span className='text-red-500'></span>
@@ -141,7 +141,7 @@ const GeneratingStationForm = ({
           </div>
           {/* Connection ComboBox */}
           <ComboBox
-            label='Connection'
+            label='Consumer Number'
             url={`/api/consumer-number?q=`}
             setValue={setSelectedConnection}
             value={selectedConnection}

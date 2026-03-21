@@ -11,7 +11,7 @@ option php_metadata_namespace = "GPBMetadata";
 import "connections/connections.proto";
 import "parameters/parameter-value.proto";
 import "generatingstation/generating-station.proto";
-import "generatingstation/station-unit-bank-summary.proto";
+
 
 message StationConsumerRelMessage {
 
@@ -47,7 +47,7 @@ message StationConsumerRelMessage {
   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto
       consumer_type = 18;
 
-  repeated com.kseb.consumerservice.proto.generatingstation.StationUnitBankSummaryMessage unit_bank_summaries = 19;
+  
 }
 
 

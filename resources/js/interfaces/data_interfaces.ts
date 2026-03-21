@@ -950,6 +950,7 @@ export interface GeneratingStation {
   plant_type?: ParameterValues
   address?: Address
   attributes: GeneratingStationAttribute[]
+  unit_bank_summaries?: UnitBankSummary[]
 }
 
 export interface UnitBankSummary {
@@ -991,7 +992,7 @@ export interface StationConsumerRel {
   station_connection?: Connection
   consumer_connection?: Connection
   consumer_type?: ParameterValues
-  unit_bank_summaries?: UnitBankSummary[]
+  
 }
 
 

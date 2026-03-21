@@ -8,6 +8,7 @@ import { BreadcrumbItem } from '@/types'
 import AddButton from '@/ui/button/AddButton'
 import { router } from '@inertiajs/react'
 import { useState } from 'react'
+import dayjs from 'dayjs'
 
 interface Props {
   connection: Connection
@@ -65,13 +66,20 @@ export default function StationConsumerRelCreate({
       sheetContent={
         selectedRelation &&
         (() => {
-          const summaries = selectedRelation.unit_bank_summaries ?? []
+          const summaries = selectedRelation.station?.unit_bank_summaries ?? []
 
           if (summaries.length === 0) return null
 
           const latestMonth = Math.max(...summaries.map((s) => s.bill_year_month))
 
           const latestSummaries = summaries.filter((s) => s.bill_year_month === latestMonth)
+
+          const totalBalance = latestSummaries.reduce(
+            (sum, item) => sum + (item.closing_balance || 0),
+            0
+          )
+
+          const balanceDate = dayjs(String(latestMonth), 'YYYYMM').format('MMM YYYY')
 
           const timezoneOrder = ['Normal', 'Peak', 'Off Peak']
 
@@ -82,12 +90,24 @@ export default function StationConsumerRelCreate({
           })
 
           const lastThree = sorted.slice(-3)
-          console.log(selectedRelation.unit_bank_summaries)
+          console.log(selectedRelation.station?.unit_bank_summaries)
           return (
             <div className='flex h-full flex-col gap-4 p-4'>
-              <div className='text-lg font-semibold'>{selectedRelation.station?.station_name}</div>
+              <div className='text-xs text-gray-400'>CURRENT STATION</div>
 
-              <div className='text-sm text-gray-500'>Zone Wise Available Balance</div>
+              <div className='flex w-full font-medium'>
+                {selectedRelation.station?.station_name ?? '-'}
+              </div>
+
+              <div className='mt-2 flex justify-between text-sm'>
+                <div className='text-gray-500'>Balance as of date </div>
+                <div className='font-medium'>{balanceDate}</div>
+              </div>
+
+              <div className='mt-2 flex justify-between text-sm'>
+                <div className='text-gray-500'>Total Balance</div>
+                <div className='font-semibold text-blue-600'>{totalBalance} Units</div>
+              </div>
 
               {lastThree.map((item, index) => (
                 <StationBalanceCard
