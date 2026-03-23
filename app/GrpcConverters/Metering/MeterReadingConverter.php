@@ -97,6 +97,7 @@ class MeterReadingConverter
             'current_meter_connection_mapping' => $currentMeterConnectionMapping !== null
                 ? MeterConnectionMappingConverter::meterConnectionMappingProtoToArray($currentMeterConnectionMapping)
                 : null,
+            'is_first_reading' => $detail->getIsFirstReading(),
         ];
     }
 

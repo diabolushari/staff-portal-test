@@ -676,6 +676,7 @@ export interface MeterReadingValueGroup {
   values?: MeterReadingValue[]
   reading?: MeterReading
   current_meter_connection_mapping?: MeterConnectionMapping | null
+  is_first_reading: boolean
 }
 
 export interface BillingGroup {
@@ -1018,9 +1019,7 @@ export interface StationConsumerRel {
   station_connection?: Connection
   consumer_connection?: Connection
   consumer_type?: ParameterValues
-  
 }
-
 
 export interface StationTransaction {
   txn_id?: number

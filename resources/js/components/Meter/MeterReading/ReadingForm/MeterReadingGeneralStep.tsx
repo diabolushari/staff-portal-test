@@ -78,9 +78,9 @@ export default function MeterReadingGeneralStep({
               latestMeterReading.reading?.reading_end_date == null
                 ? null
                 : dayjs(latestMeterReading.reading?.reading_end_date)
-                    .add(1, 'day')
-                    .format('YYYY-MM-DD')
-            nextReadingDate = readingStartDate ?? null
+            nextReadingDate = latestMeterReading.is_first_reading
+              ? (readingStartDate?.format('YYYY-MM-DD') ?? null)
+              : (readingStartDate?.add(1, 'day').format('YYYY-MM-DD') ?? null)
           }
 
           if (index === 0) {

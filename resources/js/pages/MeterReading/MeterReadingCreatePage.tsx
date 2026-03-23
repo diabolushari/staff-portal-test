@@ -63,6 +63,8 @@ export default function MeterReadingCreatePage({
   latestMeterReadingGroupByMeter,
   meterConnectionMappings,
 }: Readonly<Props>) {
+  console.log(latestMeterReadingGroupByMeter)
+
   const breadcrumb: BreadcrumbItem[] = useMemo(() => {
     return [
       {
