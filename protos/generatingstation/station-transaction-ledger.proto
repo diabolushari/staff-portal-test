@@ -8,9 +8,9 @@ option php_metadata_namespace = "GPBMetadata";
 option java_multiple_files = true;
 option java_package = "com.kseb.consumerservice.proto.generatingstation";
 option java_outer_classname = "StationTransactionLedgerProto";
-
 import "connections/connections.proto";
 import "parameters/parameter-value.proto";
+import "meterreading/meter_reading.proto";
 
 message StationTransactionLedgerMessage {
 
@@ -44,7 +44,7 @@ message StationTransactionLedgerMessage {
 
   optional int32 source_txn_id = 20;
 
-  optional int32 meter_reading_value_id = 21;
+  optional int32 meter_reading_id = 21;
   optional int32 rel_version_id = 22;
 
   string txn_date = 23;
@@ -72,6 +72,8 @@ message StationTransactionLedgerMessage {
   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto txn_type = 36;
 
   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto source_timezone = 37;
+
+  optional com.kseb.consumerservice.proto.meterreading.MeterReadingMessage meter_reading = 38;
 
 }
 

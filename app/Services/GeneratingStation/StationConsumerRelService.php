@@ -114,8 +114,8 @@ class StationConsumerRelService
         );
     }
 
-    public function updatePriority(
-        int $versionId,
+      public function updatePriority(
+        int $relId,
         int $stationConnectionId,
         ?int $consumerPriorityOrder,
         ?int $stationPriorityOrder,
@@ -124,7 +124,7 @@ class StationConsumerRelService
     ): GrpcServiceResponse {
 
         $grpcRequest = new UpdateStationConsumerRelPriorityRequest();
-        $grpcRequest->setVersionId($versionId);
+        $grpcRequest->setRelId($relId);
         $grpcRequest->setStationConnectionId($stationConnectionId);
         if ($consumerPriorityOrder !== null) {
             $grpcRequest->setConsumerPriorityOrder($consumerPriorityOrder);
@@ -161,6 +161,7 @@ class StationConsumerRelService
             $status->details
         );
     }
+
 
     public function deactivate(int $relId, string $effectiveEnd): GrpcServiceResponse
     {

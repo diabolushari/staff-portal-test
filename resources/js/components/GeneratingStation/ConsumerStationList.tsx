@@ -2,7 +2,7 @@ import ActionButton from '@/components/action-button'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import { router } from '@inertiajs/react'
 import { useState } from 'react'
-import { Cpu, Zap, Calendar, Hash, Factory } from 'lucide-react'
+import { Cpu, Zap, Calendar, Hash, Factory, Eye } from 'lucide-react'
 import { getDisplayDate } from '@/utils'
 import { StationConsumerRel } from '@/interfaces/data_interfaces'
 import StationActionButton from '../station-action-button'
@@ -11,9 +11,10 @@ import DeactivateStationConsumerModal from './DeactivateStationConsumerModal'
 
 interface Props {
   relations: StationConsumerRel[]
+  onViewBalance?: (rel: StationConsumerRel) => void
 }
 
-export default function ConsumerStationList({ relations }: Props) {
+export default function ConsumerStationList({ relations, onViewBalance }: Props) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [reprioritizeModalOpen, setReprioritizeModalOpen] = useState(false)
   const [inactiveModalOpen, setInactiveModalOpen] = useState(false)
@@ -28,6 +29,17 @@ export default function ConsumerStationList({ relations }: Props) {
     return (
       <div className='flex h-full items-center justify-center text-gray-500'>No Stations Found</div>
     )
+  }
+
+  const getAvailableBalance = (rel: StationConsumerRel) => {
+    const summaries = rel.station?.unit_bank_summaries || []
+    if (summaries.length === 0) return 0
+
+    const latestMonth = Math.max(...summaries.map((s) => s.bill_year_month))
+
+    const latestSummaries = summaries.filter((s) => s.bill_year_month === latestMonth)
+
+    return latestSummaries.reduce((sum, item) => sum + (item.closing_balance || 0), 0)
   }
   const getPrimarySource = relations.filter(
     (rel) => rel.station_connection_id == rel.consumer_connection_id
@@ -69,12 +81,20 @@ export default function ConsumerStationList({ relations }: Props) {
                     </span>
                   </div>
 
-                  <div className='flex items-center gap-1'>
-                    <Zap className='h-3.5 w-3.5 text-gray-500' />
-                    <span className='text-sm text-gray-600'>
-                      Installed Capacity: {rel.station?.installed_capacity ?? '-'} MW
-                    </span>
-                  </div>
+                  {getPrimarySource.includes(rel) && (
+                    <div
+                      className='flex cursor-pointer items-center gap-1'
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onViewBalance?.(rel)
+                      }}
+                    >
+                      <Eye className='h-3.5 w-3.5 text-gray-500' />
+                      <span className='text-sm font-medium text-blue-600 hover:underline'>
+                        Available Balance: {getAvailableBalance(rel)}
+                      </span>
+                    </div>
+                  )}
 
                   {/* <div className='flex items-center gap-1'>
                     <Cpu className='h-3.5 w-3.5 text-gray-500' />
@@ -93,6 +113,12 @@ export default function ConsumerStationList({ relations }: Props) {
 
                 {/* Row 2 */}
                 <div className='flex flex-wrap gap-5'>
+                  <div className='flex items-center gap-1'>
+                    <Zap className='h-3.5 w-3.5 text-gray-500' />
+                    <span className='text-sm text-gray-600'>
+                      Installed Capacity: {rel.station?.installed_capacity ?? '-'} MW
+                    </span>
+                  </div>
                   <div className='flex items-center gap-1'>
                     <Calendar className='h-3.5 w-3.5 text-gray-500' />
                     <span className='text-sm text-gray-600'>

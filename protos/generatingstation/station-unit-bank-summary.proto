@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.generatingstation;
+
+option php_namespace = "Proto\\GeneratingStation";
+option php_metadata_namespace = "GPBMetadata";
+
+
+option java_multiple_files = true;
+option java_package = "com.kseb.consumerservice.proto.generatingstation";
+option java_outer_classname = "StationUnitBankSummaryProto";
+
+import "parameters/parameter-value.proto";
+
+// Represents the balance for a single timezone
+message StationUnitBankSummaryMessage {
+  int32 summary_id = 1;
+  int32 station_id = 2;
+  int32 station_connection_id = 3;
+  int32 timezone_id = 4;
+  int32 bill_year_month = 5;
+  double closing_balance = 6;
+  int32 last_txn_id = 7;
+  string processing_run_id = 8;
+  bool is_active = 9;
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto timezone = 10;
+
+}
+
+// Request to get latest balances for a station
+message GetStationUnitBankSummaryRequest {
+  int32 station_id = 1;
+  int32 station_connection_id = 2;
+}
+
+// Response with latest balances for all timezones
+message GetStationUnitBankSummaryResponse {
+  repeated StationUnitBankSummaryMessage summaries = 1; 
+}
+
+// Service
+service StationUnitBankSummaryService {
+  rpc GetLatestBalances(GetStationUnitBankSummaryRequest) 
+      returns (GetStationUnitBankSummaryResponse);
+}
