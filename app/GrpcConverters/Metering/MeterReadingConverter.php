@@ -2,17 +2,18 @@
 
 namespace App\GrpcConverters\Metering;
 
+use App\GrpcConverters\Connection\MeterConnectionMappingConverter;
 use App\GrpcConverters\Meter\MeterProtoConvertor;
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\Services\Metering\MeteringParameterProfileService;
 use Proto\MeterReading\MeterReadingHealthMessage;
 use Proto\MeterReading\MeterReadingMessage;
 use Proto\MeterReading\MeterReadingPowerFactorMessage;
+use Proto\MeterReading\MeterReadingValueGroupMessage;
 use Proto\MeterReading\ReadingValueMessage;
 
 class MeterReadingConverter
 {
-
     /**
      * @return array<string, mixed>
      */
@@ -51,6 +52,7 @@ class MeterReadingConverter
             'power_factors' => $powerFactors,
             'healths' => $healths,
             'is_interim_reading' => $detail->getMultipleReading(),
+            'is_billable' => $detail->hasIsBillable() ? $detail->getIsBillable() : null,
         ];
     }
 
@@ -73,6 +75,28 @@ class MeterReadingConverter
             'meter' => MeterProtoConvertor::convertToArray($detail->getMeter()),
             'meter_profile_parameter' => MeteringParameterProfileService::toArray($detail->getParameter()),
 
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function meterReadingValueGroupToArray(MeterReadingValueGroupMessage $detail): array
+    {
+        $values = [];
+        foreach ($detail->getValues() as $value) {
+            $values[] = self::meterReadingValuesToArray($value);
+        }
+
+        $currentMeterConnectionMapping = $detail->getCurrentMeterConnectionMapping();
+
+        return [
+            'meter' => MeterProtoConvertor::convertToArray($detail->getMeter()),
+            'values' => $values,
+            'reading' => self::toArray($detail->getReading()),
+            'current_meter_connection_mapping' => $currentMeterConnectionMapping !== null
+                ? MeterConnectionMappingConverter::meterConnectionMappingProtoToArray($currentMeterConnectionMapping)
+                : null,
         ];
     }
 

@@ -81,6 +81,10 @@ use App\Http\Controllers\SecurityDeposit\SdAssessController;
 use App\Http\Controllers\SecurityDeposit\SdAttributeDownloadController;
 use App\Http\Controllers\SecurityDeposit\SdCollectionController;
 use App\Http\Controllers\SecurityDeposit\SdDemandsController;
+use App\Http\Controllers\GeneratingStation\GeneratingStationController;
+use App\Http\Controllers\GeneratingStation\StationConsumerController;
+use App\Http\Controllers\GeneratingStation\StationConsumerRelController;
+use App\Http\Controllers\GeneratingStation\StationTransactionController;
 use App\Http\Controllers\SecurityDeposit\SdRegisterController;
 use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
@@ -223,6 +227,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/generating-stations/{stationId}/consumers', [StationConsumerController::class, 'index'])
         ->name('generating-stations.consumers');
 
+    Route::get('/generating-stations/{stationId}/transactions', [StationTransactionController::class, 'index'])
+        ->name('generating-stations.transactions');
+
     Route::get('consumer-sd', ConsumerSDController::class)
         ->name('consumer-sd');
 
@@ -280,5 +287,5 @@ Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
 
 // pdf download
 Route::get('pdf-download/{billId}', [BillingPdfController::class, 'index'])->name('pdf-download');
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

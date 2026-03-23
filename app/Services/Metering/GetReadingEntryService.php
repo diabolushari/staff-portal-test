@@ -10,7 +10,6 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
 use Carbon\Carbon;
 use Grpc\ChannelCredentials;
-use Illuminate\Support\Facades\Date;
 use Proto\MeterReading\GetReadingEntryDataRequest;
 use Proto\MeterReading\GetReadingEntryDataResponse;
 use Proto\MeterReading\ReadingEntryDataServiceClient;
@@ -33,7 +32,7 @@ class GetReadingEntryService
         ?string $readingStartDate = null,
         ?string $readingEndDate = null
     ): GrpcServiceResponse {
-        $protoRequest = new GetReadingEntryDataRequest();
+        $protoRequest = new GetReadingEntryDataRequest;
         $protoRequest->setConnectionId($connectionId);
         if ($readingStartDate) {
             $protoRequest->setReadingStartDate($readingStartDate);
@@ -55,7 +54,6 @@ class GetReadingEntryService
 
         $meterReadingsArray = $this->convertToMeterReadingData($response);
 
-
         return GrpcServiceResponse::success($meterReadingsArray, $response, $status->code, $status->details);
     }
 
@@ -72,24 +70,25 @@ class GetReadingEntryService
         foreach ($meterReadingValueGroups as $meterReadingValueGroup) {
             $values = [];
             foreach ($meterReadingValueGroup->getValues() as $value) {
-                $value = $this->meterReadingValueService->valueMessageToArray($value);
-                $values[] = $value;
+                $values[] = $this->meterReadingValueService->valueMessageToArray($value);
             }
-            $meter = $meterReadingValueGroup->getMeter();
-            $meterArray = MeterProtoConvertor::convertToArray($meter);
-            $reading = MeterReadingConverter::toArray($meterReadingValueGroup->getReading());
-            $meterReadingValueGroupArray = [
+
+            $currentMeterConnectionMapping = $meterReadingValueGroup->getCurrentMeterConnectionMapping();
+            $meterReadingValueGroupsArray[] = [
                 'values' => $values,
-                'meter' => $meterArray,
-                'reading' => $reading,
+                'meter' => MeterProtoConvertor::convertToArray($meterReadingValueGroup->getMeter()),
+                'reading' => MeterReadingConverter::toArray($meterReadingValueGroup->getReading()),
+                'current_meter_connection_mapping' => $currentMeterConnectionMapping !== null
+                    ? MeterConnectionMappingConverter::meterConnectionMappingProtoToArray($currentMeterConnectionMapping)
+                    : null,
             ];
-            $meterReadingValueGroupsArray[] = $meterReadingValueGroupArray;
         }
         $meterConnectionMappings = $response->getMeterConnectionMappings();
         $meterConnectionMappingsArray = [];
         foreach ($meterConnectionMappings as $meterConnectionMapping) {
             $meterConnectionMappingsArray[] = MeterConnectionMappingConverter::meterConnectionMappingProtoToArray($meterConnectionMapping);
         }
+
         return [
             'connections' => $connectionsArray,
             'meter_reading_value_groups' => $meterReadingValueGroupsArray,
@@ -114,16 +113,17 @@ class GetReadingEntryService
             // If only one record exists → return it
             if (count($records) === 1) {
                 $result[] = $records[0];
+
                 continue;
             }
 
             // Filter records where effective_end is NOT null
             $nonNullEndRecords = array_filter($records, function ($record) {
-                return !is_null($record['effective_end_ts']);
+                return ! is_null($record['effective_end_ts']);
             });
 
             // If we have valid end dates
-            if (!empty($nonNullEndRecords)) {
+            if (! empty($nonNullEndRecords)) {
 
                 usort($nonNullEndRecords, function ($a, $b) {
                     return Carbon::parse($a['effective_end_ts'])

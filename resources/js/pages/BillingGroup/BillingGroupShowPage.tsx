@@ -149,7 +149,7 @@ export default function BillingGroupShowPage({ billingGroup }: Readonly<PageProp
     >
       <div className='flex justify-end gap-2'>
         <Button
-          variant={addConnectionComponent ? 'danger' : 'tertiary'}
+          variant={addConnectionComponent ? 'secondary' : 'tertiary'}
           label={addConnectionComponent ? 'Close' : 'Add Member'}
           onClick={() => setAddConnectionComponent(!addConnectionComponent)}
         />
