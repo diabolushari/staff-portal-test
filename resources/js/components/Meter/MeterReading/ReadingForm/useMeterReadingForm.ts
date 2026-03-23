@@ -36,7 +36,7 @@ export interface TimezoneReadingState {
   values: {
     diff: string
     final: string
-    initial: number
+    initial: string
     value: number
     lastReadingDiff: number
   }
@@ -75,9 +75,9 @@ function initializeReadignParameter(
         timezone_name: tz.timezone_name,
         isRotation: false,
         values: {
-          initial: profile.is_cumulative ? (prevReading?.final_reading ?? 0) : 0,
-          final: prevReading == null ? '' : '0',
-          diff: prevReading == null ? '' : '0',
+          initial: profile.is_cumulative ? (prevReading?.final_reading.toString() ?? '0') : '0',
+          final: prevReading == null ? '0' : '',
+          diff: prevReading == null ? '0' : '',
           lastReadingDiff: prevReading?.difference ?? 0,
           value: 0,
         },

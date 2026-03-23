@@ -504,6 +504,7 @@ export interface MeterReading {
   power_factors: MeterReadingPowerFactor[]
   healths?: MeterHealth[]
   is_interim_reading: boolean
+  is_billable?: boolean | null
 }
 
 export interface MeterHealth {
@@ -672,6 +673,7 @@ export interface MeterReadingValueGroup {
   meter: Meter
   values?: MeterReadingValue[]
   reading?: MeterReading
+  current_meter_connection_mapping?: MeterConnectionMapping | null
 }
 
 export interface BillingGroup {

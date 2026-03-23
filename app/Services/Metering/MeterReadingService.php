@@ -2,7 +2,6 @@
 
 namespace App\Services\Metering;
 
-use App\GrpcConverters\Meter\MeterProtoConvertor;
 use App\GrpcConverters\Metering\MeterReadingConverter;
 use App\Http\Requests\Metering\MeterReadingForm;
 use App\Services\Grpc\GrpcErrorService;
@@ -15,6 +14,7 @@ use Proto\MeterReading\CreateMeterReadingRequest;
 use Proto\MeterReading\CtptHealthFormMessage;
 use Proto\MeterReading\GetMeterReadingRequest;
 use Proto\MeterReading\LatestMeterReadingGroupByMeterRequest;
+use Proto\MeterReading\LatestMeterReadingGroupByMeterResponse;
 use Proto\MeterReading\LatestMeterReadingRequest;
 use Proto\MeterReading\ListMeterReadingPaginatedRequest;
 use Proto\MeterReading\ListMeterReadingRequest;
@@ -224,6 +224,7 @@ class MeterReadingService
         $protoRequest = new LatestMeterReadingGroupByMeterRequest;
         $protoRequest->setConnectionId($connectionId);
 
+        /** @var LatestMeterReadingGroupByMeterResponse $response */
         [$response, $status] = $this->client->LatestMeterReadingGroupByMeter($protoRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -235,18 +236,7 @@ class MeterReadingService
         }
         $meterReadingValueGroups = [];
         foreach ($response->getMeterReadingValueGroups() as $meterReadingValueGroup) {
-            $meter = MeterProtoConvertor::convertToArray($meterReadingValueGroup->getMeter());
-            $reading = MeterReadingConverter::toArray($meterReadingValueGroup->getReading());
-            $values = [];
-            foreach ($meterReadingValueGroup->getValues() as $value) {
-                $values[] = MeterReadingConverter::meterReadingValuesToArray($value);
-            }
-            $meterReadingValueGroup = [
-                'meter' => $meter,
-                'values' => $values,
-                'reading' => $reading,
-            ];
-            $meterReadingValueGroups[] = $meterReadingValueGroup;
+            $meterReadingValueGroups[] = MeterReadingConverter::meterReadingValueGroupToArray($meterReadingValueGroup);
         }
 
         return GrpcServiceResponse::success($meterReadingValueGroups, $response, $status->code, $status->details);
@@ -260,7 +250,10 @@ class MeterReadingService
         $protoRequest->setMeteringDate($request->meteringDate);
         $protoRequest->setReadingStartDate($request->readingStartDate);
         $protoRequest->setReadingEndDate($request->readingEndDate);
-        $protoRequest->setIsBillable($request->isBillable);
+
+        if ($request->isBillable !== null) {
+            $protoRequest->setIsBillable($request->isBillable);
+        }
 
         if ($request->isInterimReading) {
             $protoRequest->setSingleReading(false);

@@ -44,13 +44,9 @@ interface GetMetersWithTimezonesAndProfilesParams {
 
 interface MeterReadingValidationResult {
   hasError: boolean
+  errors: Record<string, string | undefined>
   meterWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
 }
-
-const emptyValidationResult = (): MeterReadingValidationResult => ({
-  hasError: true,
-  meterWithTimezonesAndProfiles: [],
-})
 
 function convertMeterPeriodDetailsToMeterWithTimezonesAndProfiles(
   meterPeriodDetails: MeterPeriodDetail[],
@@ -136,19 +132,18 @@ export async function getMetersWithTimezonesAndProfiles({
     const meters = response.data.data?.meters ?? []
 
     let hasError = false
+    const errors: Record<string, string | undefined> = {}
 
     for (const meter of meters) {
       if (meter.profiles.length !== 1) {
-        showError(
+        errors[`meters.${meter.meter_id}`] =
           'Meter Should have only one profile during selected period. Please check the meter details.'
-        )
         hasError = true
       }
 
       if (meter.timezones.length !== 1) {
-        showError(
+        errors[`meters.${meter.meter_id}`] =
           'Meter Should have only one timezone during selected period. Please check the meter details.'
-        )
         hasError = true
       }
 
@@ -158,14 +153,21 @@ export async function getMetersWithTimezonesAndProfiles({
         endDate ?? ''
       )
 
-      if (mappings.length !== 1) {
-        showError('Meters data changed during this period. Please check the meter details.')
+      //check if all mapping have same meter_mf
+      const meterMf = mappings.map((mapping) => mapping.meter_mf)
+      if (meterMf.length > 0 && meterMf.some((mf) => mf !== meterMf[0])) {
+        errors[`meters.${meter.meter_id}`] =
+          'Meters MF changed during this period. Please check the meter details.'
         hasError = true
       }
     }
 
     if (hasError) {
-      return emptyValidationResult()
+      return {
+        hasError: true,
+        errors,
+        meterWithTimezonesAndProfiles: [],
+      }
     }
 
     const meterWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[] =
@@ -179,11 +181,16 @@ export async function getMetersWithTimezonesAndProfiles({
 
     return {
       hasError: false,
+      errors: {},
       meterWithTimezonesAndProfiles,
     }
   } catch (error) {
-    handleHttpErrors(error)
+    const errors = handleHttpErrors(error)
 
-    return emptyValidationResult()
+    return {
+      hasError: true,
+      errors,
+      meterWithTimezonesAndProfiles: [],
+    }
   }
 }
