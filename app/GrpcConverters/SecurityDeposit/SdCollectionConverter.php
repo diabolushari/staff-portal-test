@@ -3,6 +3,7 @@
 namespace App\GrpcConverters\SecurityDeposit;
 
 use App\GrpcConverters\ParameterValueProtoConvertor;
+use Proto\SecurityDeposit\SdAttributeResponse;
 use Proto\SecurityDeposit\SdCollectionMessage;
 
 class SdCollectionConverter
@@ -17,6 +18,13 @@ class SdCollectionConverter
         }
 
         // TODO REVERSAL DATE
+
+        $sdAttribute = $sdCollection->getSdAttribute();
+        $sdAttributeArray = [];
+        foreach ($sdAttribute as $attribute) {
+            $sdAttributeArray[] = self::attributeConvertToArray($attribute);
+        }
+
         return [
             'sd_collection_id' => $sdCollection->getSdCollectionId(),
             'sd_demand_id' => $sdCollection->getSdDemandId(),
@@ -39,6 +47,27 @@ class SdCollectionConverter
             'status' => $sdCollection->hasStatus() ?
                 ParameterValueProtoConvertor::convertToArray($sdCollection->getStatus()) :
                 null,
+            'sd_attributes' => $sdAttributeArray,
+        ];
+    }
+
+    public static function attributeConvertToArray(?SdAttributeResponse $attribute): ?array
+    {
+        if ($attribute === null) {
+            return null;
+        }
+
+        return [
+            'attribute_id' => $attribute->getAttributeId(),
+            'sd_collection_id' => $attribute->getSdCollectionId(),
+            'attribute_definition_id' => $attribute->getAttributeDefinitionId(),
+            'attribute_value' => $attribute->getAttributeValue(),
+            'mime_type' => $attribute->hasMimeType() ? $attribute->getMimeType() : null,
+            'created_by' => $attribute->hasCreatedBy() ? $attribute->getCreatedBy() : null,
+            'updated_by' => $attribute->hasUpdatedBy() ? $attribute->getUpdatedBy() : null,
+            'attribute_definition' => $attribute->hasAttributeDefinition() ?
+                          ParameterValueProtoConvertor::convertToArray($attribute->getAttributeDefinition()) :
+                          null,
         ];
     }
 }

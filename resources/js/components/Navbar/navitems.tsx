@@ -125,6 +125,10 @@ export const billingNavItems: MainNav = {
       icon: '',
       children: [
         {
+          title: 'Consumers',
+          href: '/consumer-sd',
+        },
+        {
           title: 'SD Register',
           href: '/sd-register',
         },

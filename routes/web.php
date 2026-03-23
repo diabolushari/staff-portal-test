@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\BillingGroupListApiController;
-use App\Http\Controllers\Api\Connections\GetConnectionPeriodDetailsApiController;
 use App\Http\Controllers\Api\ChargeHeadDefinition\GetChargeHeadDefinitionController;
+use App\Http\Controllers\Api\Connections\GetConnectionPeriodDetailsApiController;
 use App\Http\Controllers\Api\Connections\GetPurposeInfoApiController;
 use App\Http\Controllers\Api\Connections\PartiesListApiController;
 use App\Http\Controllers\Api\GetOfficeByCodeApiController;
@@ -33,6 +33,7 @@ use App\Http\Controllers\Connection\ConnectionGreenEnergyController;
 use App\Http\Controllers\Connection\ConnectionsPartyController;
 use App\Http\Controllers\Connection\ConsumerController;
 use App\Http\Controllers\Connection\CreateConsumerController;
+use App\Http\Controllers\Connection\GeneratingStation\ConnectionStationConsumerRelController;
 use App\Http\Controllers\Connection\GetConnectionMeterController;
 use App\Http\Controllers\Connection\GetConnectionMeterTransformerController;
 use App\Http\Controllers\Connection\GetConnectionPartyController;
@@ -41,12 +42,15 @@ use App\Http\Controllers\Connection\MeterConnectionMappingUpdateChangeController
 use App\Http\Controllers\Connection\MeterConnectionMappingUpdateStatusController;
 use App\Http\Controllers\Connection\PurposeInfoController;
 use App\Http\Controllers\Connection\SecurityDeposit\ConnectionSdDemandController;
-use App\Http\Controllers\Connection\GeneratingStation\ConnectionStationConsumerRelController;
 use App\Http\Controllers\Consumers\CreateGeoregionSeedController;
 use App\Http\Controllers\Consumers\OfficeController;
 use App\Http\Controllers\Consumers\PartiesController;
 use App\Http\Controllers\Consumers\UpdateOfficeContactsController;
 use App\Http\Controllers\GeneratingStation\GeneratingStationApiController;
+use App\Http\Controllers\GeneratingStation\GeneratingStationController;
+use App\Http\Controllers\GeneratingStation\StationConsumerController;
+use App\Http\Controllers\GeneratingStation\StationConsumerRelController;
+use App\Http\Controllers\GeneratingStation\StationTransactionController;
 use App\Http\Controllers\Metering\CreateMeterReadingController;
 use App\Http\Controllers\Metering\MeterConnectionMappingController;
 use App\Http\Controllers\Metering\MeterConnectionMappingCreateController;
@@ -70,13 +74,14 @@ use App\Http\Controllers\Offices\OfficesCreateWithCsvController;
 use App\Http\Controllers\Parameter\ParameterDefinitionController;
 use App\Http\Controllers\Parameter\ParameterDomainController;
 use App\Http\Controllers\Parameter\ParameterValueController;
+use App\Http\Controllers\SecurityDeposit\Consumer\ConsumerSDController;
+use App\Http\Controllers\SecurityDeposit\Consumer\ConsumerSDGroupController;
+use App\Http\Controllers\SecurityDeposit\Consumer\SDRefundController;
+use App\Http\Controllers\SecurityDeposit\Consumer\SDRegisterByConnection;
+use App\Http\Controllers\SecurityDeposit\SdAssessController;
 use App\Http\Controllers\SecurityDeposit\SdAttributeDownloadController;
 use App\Http\Controllers\SecurityDeposit\SdCollectionController;
 use App\Http\Controllers\SecurityDeposit\SdDemandsController;
-use App\Http\Controllers\GeneratingStation\GeneratingStationController;
-use App\Http\Controllers\GeneratingStation\StationConsumerController;
-use App\Http\Controllers\GeneratingStation\StationConsumerRelController;
-use App\Http\Controllers\GeneratingStation\StationTransactionController;
 use App\Http\Controllers\SecurityDeposit\SdRegisterController;
 use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
@@ -198,12 +203,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->only(['create', 'store']);
     Route::get('attribute-download', SdAttributeDownloadController::class)
         ->name('attribute-download');
-    //generating station
+    // generating station
     Route::resource('generating-stations', GeneratingStationController::class)
         ->only(['index', 'create', 'store', 'show']);
 
-    Route::get('sd-register', SdRegisterController::class)
+    Route::get('sd-register', [SdRegisterController::class, 'index'])
         ->name('sd-register');
+    Route::get('sd-register/{id}', [SdRegisterController::class, 'show'])
+        ->name('sd-register.show');
+
+    Route::get('sd-refunds-create', [SDRefundController::class, 'create'])
+        ->name('sd-refunds-create');
 
     Route::resource('station-consumer-rels', StationConsumerRelController::class)
         ->only(['create', 'store', 'edit', 'update', 'destroy']);
@@ -211,11 +221,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('connection/{connectionId}/station-consumer-rels', ConnectionStationConsumerRelController::class)
         ->name('connection.station-consumer-rels');
 
-    Route::get('/generating-stations/{stationId}/consumers',[StationConsumerController::class, 'index'])
+    Route::get('/generating-stations/{stationId}/consumers', [StationConsumerController::class, 'index'])
         ->name('generating-stations.consumers');
 
-    Route::get('/generating-stations/{stationId}/transactions',[StationTransactionController::class, 'index'])
+    Route::get('/generating-stations/{stationId}/transactions', [StationTransactionController::class, 'index'])
         ->name('generating-stations.transactions');
+
+    Route::get('consumer-sd', ConsumerSDController::class)
+        ->name('consumer-sd');
+
+    Route::get('consumer-sd/group', [ConsumerSDGroupController::class, 'index'])
+        ->name('consumer-sd.group');
+
+    Route::get('consumer-sd/group/{id}', [ConsumerSDGroupController::class, 'show'])
+        ->name('consumer-sd.group.show');
+
+    Route::post('sd-assess', SdAssessController::class)
+        ->name('sd-assess');
 });
 
 Route::get('api/system-modules', SystemModuleApiController::class);
@@ -241,7 +263,8 @@ Route::get('api/tariff-order/{id}/download', TariffOrderDownloadApiController::c
 Route::get('api/connections/get-tariffs', GetPurposeInfoApiController::class)->name('connections.get-tariffs');
 Route::get('api/charge-head-definitions', GetChargeHeadDefinitionController::class);
 Route::get('api/generating-stations', GeneratingStationApiController::class);
-
+Route::get('api/sd-register-by-connection/{connectionId}', SDRegisterByConnection::class)
+    ->name('sd-register-by-connection');
 Route::get('consumer-test', function (SystemModuleService $service) {
     $response = $service->createSystemModule(
         new SystemModuleFormRequest('Test Module')
@@ -261,5 +284,5 @@ Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
 
 // pdf download
 Route::get('pdf-download/{billId}', [BillingPdfController::class, 'index'])->name('pdf-download');
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

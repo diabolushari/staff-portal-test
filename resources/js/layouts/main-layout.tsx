@@ -24,6 +24,10 @@ interface Props {
   selectedTopNav?: string
   description?: React.ReactNode
   editBtnClick?: () => void
+  sheetTitle?: string
+  sheetAction?: (open: boolean) => void
+  sheetOpen?: boolean
+  sheetContent?: React.ReactNode
 }
 
 export default function MainLayout({
@@ -38,6 +42,10 @@ export default function MainLayout({
   selectedTopNav,
   description,
   editBtnClick,
+  sheetAction,
+  sheetOpen,
+  sheetContent,
+  sheetTitle,
 }: Readonly<Props>) {
   const { flash } = usePage<PageProps>().props
 
@@ -111,7 +119,26 @@ export default function MainLayout({
             </div>
           </main>
 
-          <div className='col-span-2 hidden lg:block'></div>
+          <div className='col-span-2 hidden lg:block'>
+            {sheetOpen && (
+              <div className='flex h-full flex-col border-l bg-white'>
+                {/* Header */}
+                <div className='flex items-center justify-between border-b bg-gray-50 px-4 py-3'>
+                  <h2 className='text-sm font-semibold text-gray-800'>{sheetTitle}</h2>
+
+                  <button
+                    onClick={() => sheetAction?.(false)}
+                    className='cursor-pointer text-lg leading-none text-gray-400 hover:text-gray-700'
+                  >
+                    ×
+                  </button>
+                </div>
+
+                {/* Content */}
+                <div className='flex-1 overflow-y-auto px-4 py-3'>{sheetContent}</div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </SidebarProvider>

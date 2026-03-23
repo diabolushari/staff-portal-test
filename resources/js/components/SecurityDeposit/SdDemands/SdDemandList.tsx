@@ -1,6 +1,5 @@
 import ActionButton from '@/components/action-button'
-import { Button } from '@/components/ui/button'
-import { SdDemand } from '@/interfaces/data_interfaces'
+import { Connection, SdDemand } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
 import DeleteModal from '@/ui/Modal/DeleteModal'
 import { router } from '@inertiajs/react'
@@ -9,9 +8,10 @@ import SdCollectionList from '../SdCollections/SdCollectionList'
 
 interface Props {
   sdDemands: SdDemand[]
+  connection: Connection
 }
 
-const SdDemandList = ({ sdDemands }: Props) => {
+const SdDemandList = ({ sdDemands, connection }: Props) => {
   const [deleteItem, setDeleteItem] = useState<SdDemand | null>(null)
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
 
@@ -72,17 +72,19 @@ const SdDemandList = ({ sdDemands }: Props) => {
                   </div>
                 </div>
               </div>
-              <div className='flex justify-end p-4'>
+              {/* <div className='flex justify-end p-4'>
                 <Button
                   variant='outline'
                   type='button'
                   onClick={() =>
-                    router.get(`/sd-collections/create?sdDemandId=${sdDemand.sd_demand_id}`)
+                    router.get(
+                      `/sd-collections/create?sdDemandId=${sdDemand.sd_demand_id}&connectionId=${connection.connection_id}`
+                    )
                   }
                 >
                   Add Collection
                 </Button>
-              </div>
+              </div> */}
               {sdDemand.collections && sdDemand.collections.length > 0 ? (
                 <SdCollectionList sdCollections={sdDemand.collections} />
               ) : (

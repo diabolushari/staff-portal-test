@@ -12,6 +12,7 @@ use App\Services\utils\GrpcServiceResponse;
 use Google\Protobuf\Struct;
 use Grpc\ChannelCredentials;
 use Proto\Connections\ConnectionRequest;
+use Proto\Connections\ConnectionSdBalanceSummaryListRequest;
 use Proto\Connections\ConnectionServiceClient;
 use Proto\Connections\ConnectionUpdateRequest;
 use Proto\Connections\CreateConnectionRequest;
@@ -344,5 +345,45 @@ class ConnectionService
         }
 
         return GrpcServiceResponse::success($response, $response, $status->code, $status->details);
+    }
+
+    public function listConnectionWithActiveBalanceSummary(?int $connectionId,
+        ?int $pageNumber = 1,
+        ?int $pageSize = 10,
+    ): GrpcServiceResponse {
+        $grpcRequest = new ConnectionSdBalanceSummaryListRequest;
+        if ($connectionId != null) {
+            $grpcRequest->setConnectionId($connectionId);
+        }
+        if ($pageNumber != null) {
+            $grpcRequest->setPageNumber($pageNumber);
+        }
+        if ($pageSize != null) {
+            $grpcRequest->setPageSize($pageSize);
+        }
+        [$response, $status] = $this->client->ListConnectionSdBalanceSummaries($grpcRequest)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+
+        $connection = $response->getConnection();
+        $connectionArray = [];
+        foreach ($connection as $connection) {
+            $connectionArray[] = ConnectionProtoConverter::convertToArray($connection);
+        }
+        $data = [
+            'connectionArray' => $connectionArray,
+            'total_count' => $response->getTotalCount(),
+            'page_number' => $response->getPageNumber(),
+            'page_size' => $response->getPageSize(),
+            'total_pages' => $response->getTotalPages(),
+        ];
+
+        return GrpcServiceResponse::success($data, $response, $status->code, $status->details);
     }
 }

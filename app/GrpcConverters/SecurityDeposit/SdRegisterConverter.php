@@ -3,7 +3,6 @@
 namespace App\GrpcConverters\SecurityDeposit;
 
 use App\GrpcConverters\Billing\ChargeHeadDefinitionConverter;
-use App\GrpcConverters\Connection\ConnectionProtoConverter;
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use Proto\Consumers\SdRegisterMessage;
 
@@ -12,7 +11,7 @@ class SdRegisterConverter
     /**
      * Convert SdRegisterMessage proto to array.
      */
-    public static function convertTOArray(?SdRegisterMessage $sdRegister): ?array
+    public static function convertToArray(?SdRegisterMessage $sdRegister): ?array
     {
         if ($sdRegister === null) {
             return null;
@@ -40,10 +39,9 @@ class SdRegisterConverter
                          ChargeHeadDefinitionConverter::convertToArray($sdRegister->getSdType()) : null,
             'occupancy_type' => $sdRegister->hasOccupancyType() ?
                          ParameterValueProtoConvertor::convertToArray($sdRegister->getOccupancyType()) : null,
-            'connection' => $sdRegister->hasConnection() ?
-                         ConnectionProtoConverter::convertToArray($sdRegister->getConnection()) : null,
             'sd_demand' => $sdRegister->hasSdDemand() ?
                          SdDemandConverter::convertToArray($sdRegister->getSdDemand()) : null,
+
         ];
     }
 }

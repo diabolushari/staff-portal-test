@@ -36,7 +36,6 @@ const SdDemandForm = ({
     charge_head_definition_id: sdDemand?.charge_head_definition_id ?? '',
     _method: sdDemand ? 'PUT' : undefined,
   })
-  console.log(chargeHeadDefinitions)
   const url = sdDemand
     ? route('sd-demands.update', {
         sd_demand: sdDemand.sd_demand_id,

@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { SdDemand } from '@/interfaces/data_interfaces'
+import { Connection, SdDemand, SdRegister } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import CheckBox from '@/ui/form/CheckBox'
 import Datepicker from '@/ui/form/DatePicker'
@@ -14,11 +14,27 @@ interface Props {
   sdDemand: SdDemand
   paymentModes: ParameterValues[]
   collectionStatus: ParameterValues[]
+  connection: Connection
+  sdRegister: SdRegister
+  isRefund?: boolean
 }
 
-const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) => {
+const SdCollectionForm = ({
+  sdDemand,
+  paymentModes,
+  collectionStatus,
+  connection,
+  sdRegister,
+  isRefund = false,
+}: Props) => {
   const [selectedCollectionMode, setSelectedCollectionMode] = useState<ParameterValues | null>(null)
   const [isReversed, setIsReversed] = useState<boolean>(false)
+
+  const refundStatus = collectionStatus.find(
+    (status) => status.parameter_value.toLowerCase() === 'refund'
+  )
+
+  const statusId = isRefund ? refundStatus?.id : ''
 
   const { formData, setFormValue, toggleBoolean } = useCustomForm({
     sd_demand_id: sdDemand.sd_demand_id,
@@ -34,7 +50,9 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
     reversed_by: '',
     transaction_ref: '',
     remarks: '',
-    status_id: '',
+    status_id: statusId,
+    connection_id: connection.connection_id,
+    sd_register_id: sdRegister.sd_register_id,
   })
 
   //TODO useEffect has missing dependency of collectionModes
@@ -90,22 +108,23 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
 
     post(customFormData)
   }
+  console.log(formData)
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <div className='grid grid-cols-2 gap-4'>
+        <div className='grid grid-cols-1 gap-4'>
           <Datepicker
-            label='Collection Date'
+            label={isRefund ? 'Refund Date' : 'Collection Date'}
             value={formData.collection_date}
             setValue={setFormValue('collection_date')}
             error={errors.collection_date}
-            placeholder='Select Collection Date'
+            placeholder={isRefund ? 'Select Refund Date' : 'Select Collection Date'}
             required
           />
 
           <SelectList
-            label='Payment Mode'
+            label={isRefund ? 'Refund Mode' : 'Payment Mode'}
             list={paymentModes}
             dataKey='id'
             displayKey='parameter_value'
@@ -113,7 +132,7 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
             setValue={setFormValue('payment_mode_id')}
             error={errors.payment_mode_id}
             required
-            placeholder='Select Payment Mode'
+            placeholder={isRefund ? 'Select Refund Mode' : 'Select Payment Mode'}
           />
           <DynamicAttributeForm
             selectedValue={selectedCollectionMode}
@@ -124,38 +143,38 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
           />
         </div>
 
-        <div className='grid grid-cols-2 gap-4'>
+        <div className='grid grid-cols-1 gap-4'>
           <Input
             type='number'
-            label='Collection Amount'
+            label={isRefund ? 'Refund Amount' : 'Collection Amount'}
             value={formData.collection_amount}
             setValue={setFormValue('collection_amount')}
             error={errors.collection_amount}
             required
-            placeholder='Enter Amount'
+            placeholder={isRefund ? 'Enter Refund Amount' : 'Enter Collection Amount'}
           />
 
           <Input
-            label='Receipt Number'
+            label={isRefund ? 'Refund Receipt Number' : 'Receipt Number'}
             value={formData.receipt_number}
             setValue={setFormValue('receipt_number')}
             error={errors.receipt_number}
-            placeholder='Enter Receipt Number'
+            placeholder={isRefund ? 'Enter Refund Receipt Number' : 'Enter Receipt Number'}
           />
 
           <Input
-            label='Collected By'
+            label={isRefund ? 'Refunded By' : 'Collected By'}
             value={formData.collected_by}
             setValue={setFormValue('collected_by')}
             error={errors.collected_by}
-            placeholder='Collected By'
+            placeholder={isRefund ? 'Enter Refunded By' : 'Enter Collected By'}
           />
           <Input
-            label='Collected At'
+            label={isRefund ? 'Refunded At' : 'Collected At'}
             value={formData.collected_at}
             setValue={setFormValue('collected_at')}
             error={errors.collected_at}
-            placeholder='Collected At'
+            placeholder={isRefund ? 'Enter Refunded At' : 'Enter Collected At'}
           />
           <CheckBox
             label='Is Active'
@@ -203,26 +222,25 @@ const SdCollectionForm = ({ sdDemand, paymentModes, collectionStatus }: Props) =
             error={errors.remarks}
             placeholder='Enter Remarks'
           />
-          <SelectList
-            label='Status'
-            list={collectionStatus}
-            dataKey='id'
-            displayKey='parameter_value'
-            value={formData.status_id}
-            setValue={setFormValue('status_id')}
-            error={errors.status_id}
-            required
-            placeholder='Select Status'
-          />
-        </div>
-
-        <div className='flex justify-end'>
+          {!isRefund && (
+            <SelectList
+              label='Status'
+              list={collectionStatus}
+              dataKey='id'
+              displayKey='parameter_value'
+              value={formData.status_id}
+              setValue={setFormValue('status_id')}
+              error={errors.status_id}
+              required
+              placeholder='Select Status'
+            />
+          )}
           <Button
             variant={'default'}
             type='submit'
             disabled={loading}
           >
-            SUBMIT
+            {isRefund ? 'PROCESS REFUND' : 'SUBMIT COLLECTION RECORD'}
           </Button>
         </div>
       </form>
