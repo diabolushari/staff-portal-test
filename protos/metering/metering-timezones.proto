@@ -81,6 +81,7 @@ message MeteringTimezoneResponse {
   optional google.protobuf.Timestamp updated_ts = 13;
   int32 created_by = 14;
   optional int32 updated_by = 15;
+  int32 timezone_name_id = 16;
 }
 
 message ListTimezoneGroupByMeteringTypeRequest {
@@ -106,6 +107,6 @@ message GetTimezoneGroupByTimezoneTypeRequest {
 message GetTimezoneGroupByTimezoneTypeResponse {
   TimezoneGroup timezone_group = 1;
 }
-  
+
 
 

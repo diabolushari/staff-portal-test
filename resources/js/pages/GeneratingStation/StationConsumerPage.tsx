@@ -4,6 +4,7 @@ import { consumerNavItems } from '@/components/Navbar/navitems'
 import StationConsumerList from '@/components/GeneratingStation/StationConsumerList'
 import { GeneratingStation, StationConsumerRel } from '@/interfaces/data_interfaces'
 import SingleTabGroup from '@/components/ui/single-tab'
+import { Value } from '@radix-ui/react-select'
 
 interface Props {
   relations: StationConsumerRel[]
@@ -30,6 +31,12 @@ export default function StationConsumersPage({ relations, stationId, station }: 
       label: 'Consumers',
       icon: '',
       href: route('generating-stations.consumers', station?.station_id),
+    },
+    {
+      value: 'transaction',
+      label: 'Transactions',
+      icon: '',
+      href: route('generating-stations.transactions', station?.station_id),
     },
   ]
   return (

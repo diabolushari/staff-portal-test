@@ -189,7 +189,7 @@ class BillExportService
             return [];
         }
 
-        $maxKvaIndex = 1;
+        $maxKvaIndex = 0;
         $maxKvaValue = -INF;
 
         foreach ($kvaValues as $index => $kva) {
@@ -197,7 +197,7 @@ class BillExportService
 
             if ($value > $maxKvaValue) {
                 $maxKvaValue = $value;
-                $maxKvaIndex = $index + 1;
+                $maxKvaIndex = $index;
             }
         }
 
@@ -244,6 +244,9 @@ class BillExportService
                 $demandChargeAmount = 0;
 
                 if (($useContractDemand && $zoneId == $maxKvaIndex) || (! $useContractDemand && $zoneId == $zoneWithMaxDemand['result'])) {
+                    $units = $demandUnits;
+                    $demandChargeAmount = $demandChargeHead ? (float) ($demandChargeHead['result'] ?? 0) : 0;
+                } elseif (!$useContractDemand && $zoneWithMaxDemand['result'] - 1 == $index) {
                     $units = $demandUnits;
                     $demandChargeAmount = $demandChargeHead ? (float) ($demandChargeHead['result'] ?? 0) : 0;
                 }

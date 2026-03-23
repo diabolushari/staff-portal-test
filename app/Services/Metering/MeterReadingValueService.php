@@ -6,6 +6,7 @@ use App\Services\Grpc\GrpcErrorService;
 use App\Services\Parameters\ParameterValueService;
 use App\Services\utils\GrpcServiceResponse;
 use Grpc\ChannelCredentials;
+use Proto\MeterReading\ReadingValueMessage;
 use Proto\MeterReadingValues\GetMeterReadingValuesRequest;
 use Proto\MeterReadingValues\GetMeterReadingValuesResponse;
 use Proto\MeterReadingValues\ListMeterReadingValuesRequest;
@@ -131,6 +132,28 @@ class MeterReadingValueService
             'parameter' => $this->meteringParameterProfileService->toArray($response->getReading()?->getParameter()),
             'meter_mf' => $response->getReading()?->getMeterMf(),
             'is_rotation' => $response->getReading()?->getIsRotation()
+        ];
+    }
+
+    public function valueMessageToArray(ReadingValueMessage $response): array
+    {
+        return [
+            'id' => $response->getMeterReadingValuesId(),
+            'meter_id' => $response->getMeterId(),
+            'parameter_id' => $response->getParameterId(),
+            'timezone_id' => $response->getTimezoneId(),
+            'initial' => $response->getInitialReading(),
+            'final' => $response->getFinalReading(),
+            'diff' => $response->getDifference(),
+            'value' => $response->getMulValue(),
+            'created_by' => $response->getCreatedBy(),
+            'updated_by' => $response->getUpdatedBy(),
+            'is_active' => $response->getIsActive(),
+            'meter' => $response->getMeter(),
+            'timezone' => $this->parameterValueService->toArray($response->getTimezone()),
+            'parameter' => $this->meteringParameterProfileService->toArray($response->getParameter()),
+            'meter_mf' => $response->getMeterMf(),
+            'is_rotation' => $response->getIsRotation()
         ];
     }
 

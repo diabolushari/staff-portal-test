@@ -2,7 +2,9 @@ syntax = "proto3";
 
 package com.kseb.consumerservice.proto.metering;
 
-
+option java_package = "com.kseb.consumerservice.proto.metering";
+option java_multiple_files = true;
+option java_outer_classname = "MeterConnectionMappingProto";
 
 option php_namespace = "Proto\\Metering";
 option php_metadata_namespace = "GPBMetadata";
@@ -20,11 +22,7 @@ service MeterConnectionMappingService {
   rpc GetMeterConnectionMappingByConnectionId(GetMeterConnectionMappingByConnectionIdRequest) returns (ListMeterConnectionMappingsResponse);
   rpc ListMeterConnectionMappings(ListMeterConnectionMappingsRequest) returns (ListMeterConnectionMappingsResponse);
   rpc UpdateMeterConnectionMapping(UpdateMeterConnectionMappingRequest) returns (MeterConnectionMappingResponse);
-  rpc UpdateMeterConnectionStatus(UpdateMeterConnectionStatusRequest)
-      returns (MeterConnectionMappingResponse);
   rpc UpdateMeterConnectionChangeReason(UpdateMeterConnectionChangeReasonRequest)
-      returns (MeterConnectionMappingResponse);
-  rpc UpdateMeterConnectionProfile(UpdateMeterConnectionProfileRequest)
       returns (MeterConnectionMappingResponse);
   rpc DeleteMeterConnectionMapping(DeleteMeterConnectionMappingRequest) returns (google.protobuf.Empty);
 }
@@ -45,12 +43,12 @@ message CreateMeterConnectionMappingRequest {
   int32 connection_id = 3;
   int32 meter_use_category = 4; // ParameterValue ID for Meter Use Category
   int32 meter_status_id = 5;
-  optional google.protobuf.Timestamp faulty_date = 6;
-  optional google.protobuf.Timestamp rectification_date = 7;
-  optional google.protobuf.Timestamp energise_date = 8;
-  optional google.protobuf.Timestamp notice_date = 9;
-  optional google.protobuf.Timestamp intimation_date = 10;
-  optional google.protobuf.Timestamp change_date = 11;
+  optional string faulty_date = 6;
+  optional string rectification_date = 7;
+  optional string energise_date = 8;
+  optional string notice_date = 9;
+  optional string intimation_date = 10;
+  optional string change_date = 11;
   optional int32 change_reason = 12;
   google.protobuf.Timestamp effective_start_ts = 13;
   optional google.protobuf.Timestamp effective_end_ts = 14;
@@ -71,33 +69,21 @@ message UpdateMeterConnectionMappingRequest {
   optional float meter_mf = 4;
   optional int32 timezone_type_id = 5;
   optional int32 sort_priority = 6;
-  optional google.protobuf.Timestamp energise_date = 7;
+  optional string energise_date = 7;
   optional bool is_meter_reading_mandatory = 8;
   optional int32 updated_by = 9;
-}
-
-
-message UpdateMeterConnectionStatusRequest {
-  int32 rel_id = 1;  
-  optional int32 meter_status_id = 2;
-  optional google.protobuf.Timestamp faulty_date = 3;
-  optional google.protobuf.Timestamp notice_date = 4;
-  optional google.protobuf.Timestamp intimation_date = 5;
-  optional int32 updated_by = 6;
+  optional int32 meter_status_id = 10;
+  optional string faulty_date = 11;
+  optional string notice_date = 12;
+  optional string intimation_date = 13;
 }
 
 
 message UpdateMeterConnectionChangeReasonRequest {
   int32 rel_id = 1;  
   optional int32 change_reason = 2;
-  optional google.protobuf.Timestamp change_date = 3;
+  optional string change_date = 3;
   optional int32 updated_by = 4;
-}
-
-message UpdateMeterConnectionProfileRequest {
-  int32 rel_id = 1;
-  int32 profile_id = 2;                 
-  optional int32 updated_by = 3;
 }
 
 
@@ -114,7 +100,9 @@ message DeleteMeterConnectionMappingRequest {
   int32 rel_id = 1;
 }
 
-message ListMeterConnectionMappingsRequest {}
+message ListMeterConnectionMappingsRequest {
+  int32 connection_id = 1;
+}
 
 message ListMeterConnectionMappingsResponse {
   repeated MeterConnectionMappingResponse meter_connection_mappings = 1;
@@ -129,15 +117,15 @@ message MeterConnectionMappingResponse {
   parameters.ParameterValueProto meter_use_category = 6;
   parameters.ParameterValueProto meter_status = 7;
   parameters.ParameterValueProto profile = 8;
-  optional google.protobuf.Timestamp faulty_date = 9;
-  optional google.protobuf.Timestamp rectification_date = 10;
-  optional google.protobuf.Timestamp energise_date = 11;
-  optional google.protobuf.Timestamp notice_date = 12;
-  optional google.protobuf.Timestamp intimation_date = 13;
-  optional google.protobuf.Timestamp change_date = 14;
+  optional string faulty_date = 9;
+  optional string rectification_date = 10;
+  optional string energise_date = 11;
+  optional string notice_date = 12;
+  optional string intimation_date = 13;
+  optional string change_date = 14;
   optional parameters.ParameterValueProto change_reason = 15;
-  google.protobuf.Timestamp effective_start_ts = 16;
-  optional google.protobuf.Timestamp effective_end_ts = 17;
+  string effective_start_ts = 16;
+  string effective_end_ts = 17;
   optional bool is_active = 18;
   google.protobuf.Timestamp created_ts = 19;
   optional google.protobuf.Timestamp updated_ts = 20;
@@ -147,6 +135,5 @@ message MeterConnectionMappingResponse {
   optional bool is_meter_reading_mandatory = 24;
   optional MeterResponse meter = 25;
   optional float meter_mf = 26;
+  optional bool is_current = 27;
 }
-
-

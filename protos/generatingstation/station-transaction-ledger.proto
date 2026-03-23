@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package com.kseb.consumerservice.proto.generatingstation;
+
+option php_namespace = "Proto\\GeneratingStation";
+option php_metadata_namespace = "GPBMetadata";
+
+option java_multiple_files = true;
+option java_package = "com.kseb.consumerservice.proto.generatingstation";
+option java_outer_classname = "StationTransactionLedgerProto";
+
+import "connections/connections.proto";
+import "parameters/parameter-value.proto";
+
+message StationTransactionLedgerMessage {
+
+  optional int32 txn_id = 1;
+
+  string txn_group_ref = 2;
+  int32 txn_seq = 3;
+  string processing_run_id = 4;
+
+  int32 bill_year_month = 5;
+
+  int32 station_id = 6;
+  int32 station_connection_id = 7;
+  optional int32 consumer_connection_id = 8;
+
+  int64 timezone_id = 9;
+  int32 txn_type_id = 10;
+
+  string txn_direction = 11;
+
+  double txn_units = 12;
+  double unit_balance = 13;
+
+  optional double conversion_factor = 14;
+  optional int64 source_timezone_id = 15;
+  optional double pre_conversion_units = 16;
+
+  optional int32 adjustment_priority = 17;
+  optional int32 consumer_priority_order = 18;
+  optional int32 station_priority_order = 19;
+
+  optional int32 source_txn_id = 20;
+
+  optional int32 meter_reading_value_id = 21;
+  optional int32 rel_version_id = 22;
+
+  string txn_date = 23;
+  string txn_ts = 24;
+
+  optional string txn_description = 25;
+
+  optional string created_ts = 26;
+  optional string updated_ts = 27;
+
+  optional int32 created_by = 28;
+  optional int32 updated_by = 29;
+
+  optional bool is_active = 30;
+
+  optional string deleted_ts = 31;
+  optional int32 deleted_by = 32;
+
+  optional com.kseb.consumerservice.grpc.connections.ConnectionMessage station_connection = 33;
+
+  optional com.kseb.consumerservice.grpc.connections.ConnectionMessage consumer_connection = 34;
+
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto timezone = 35;
+
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto txn_type = 36;
+
+  optional com.kseb.consumerservice.proto.parameters.ParameterValueProto source_timezone = 37;
+
+}
+
+message CreateStationTransactionLedgerRequest {
+  StationTransactionLedgerMessage ledger = 1;
+}
+
+message CreateStationTransactionLedgerResponse {
+  StationTransactionLedgerMessage ledger = 1;
+}
+
+message GetStationTransactionLedgerRequest {
+  int32 txn_id = 1;
+}
+
+message GetStationTransactionLedgerResponse {
+  optional StationTransactionLedgerMessage ledger = 1;
+}
+
+
+message ListStationTransactionLedgerRequest {
+  optional string search = 1;
+}
+
+message ListStationTransactionLedgerResponse {
+  repeated StationTransactionLedgerMessage items = 1;
+}
+
+
+service StationTransactionLedgerService {
+
+  rpc CreateStationTransactionLedger(CreateStationTransactionLedgerRequest)
+      returns (CreateStationTransactionLedgerResponse);
+
+  rpc GetStationTransactionLedger(GetStationTransactionLedgerRequest)
+      returns (GetStationTransactionLedgerResponse);
+
+  rpc ListStationTransactionLedger(ListStationTransactionLedgerRequest)
+      returns (ListStationTransactionLedgerResponse);
+      
+
+
+}

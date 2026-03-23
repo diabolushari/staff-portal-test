@@ -80,6 +80,8 @@ export interface MeterConnectionMapping {
   meter_mf?: number
   meter_timezone_type?: ParameterValues
   timezone_type_id?: number
+  is_current: boolean
+  is_active: boolean
 }
 
 export interface DateTimeField {
@@ -452,8 +454,6 @@ export interface MeterTransformerAssignment {
 export interface MeteringTimezoneSlot {
   version_id: number
   metering_timezone_id: number
-  pricing_type_id: number
-  pricing_type?: Partial<ParameterValues> | null
   timezone_type_id: number
   timezone_type?: Partial<ParameterValues> | null
   timezone_name_id: number
@@ -504,7 +504,9 @@ export interface MeterReading {
   is_active: boolean
   values: MeterReadingValue[]
   power_factors: MeterReadingPowerFactor[]
-  healths: MeterHealth[]
+  healths?: MeterHealth[]
+  is_interim_reading: boolean
+  is_billable?: boolean | null
 }
 
 export interface MeterHealth {
@@ -659,6 +661,7 @@ export interface BillingRuleJson {
 export interface MeterWithTimezoneAndProfile {
   meter_id: number
   meter: Meter
+  meter_serial: string
   timezones: {
     timezone_id: number
     timezone_name: string
@@ -666,6 +669,13 @@ export interface MeterWithTimezoneAndProfile {
   reading_parameters: MeterProfileParameter[]
   meter_profile: ParameterValues
   meter_mf: number | null
+}
+
+export interface MeterReadingValueGroup {
+  meter: Meter
+  values?: MeterReadingValue[]
+  reading?: MeterReading
+  current_meter_connection_mapping?: MeterConnectionMapping | null
 }
 
 export interface BillingGroup {
@@ -994,4 +1004,62 @@ export interface StationConsumerRel {
   station_connection?: Connection
   consumer_connection?: Connection
   consumer_type?: ParameterValues
+}
+
+export interface StationTransaction {
+  txn_id?: number
+
+  txn_group_ref: string
+  txn_seq: number
+  processing_run_id?: string
+
+  bill_year_month: number
+
+  station_id: number
+  station_connection_id: number
+  consumer_connection_id?: number
+
+  timezone_id: number
+  txn_type_id: number
+
+  txn_direction: string
+
+  txn_units: number
+  unit_balance: number
+
+  conversion_factor?: number
+  source_timezone_id?: number
+  pre_conversion_units?: number
+
+  adjustment_priority?: number
+  consumer_priority_order?: number
+  station_priority_order?: number
+
+  source_txn_id?: number
+
+  meter_reading_value_id?: number
+  rel_version_id?: number
+
+  txn_date?: string
+  txn_ts?: string
+
+  txn_description?: string
+
+  created_ts?: string
+  updated_ts?: string
+
+  created_by?: number
+  updated_by?: number
+
+  is_active?: boolean
+
+  deleted_ts?: string
+  deleted_by?: number
+
+  station_connection?: Connection
+  consumer_connection?: Connection
+
+  timezone?: ParameterValues
+  txn_type?: ParameterValues
+  source_timezone?: ParameterValues
 }

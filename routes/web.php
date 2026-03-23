@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\BillingGroupListApiController;
+use App\Http\Controllers\Api\Connections\GetConnectionPeriodDetailsApiController;
 use App\Http\Controllers\Api\ChargeHeadDefinition\GetChargeHeadDefinitionController;
 use App\Http\Controllers\Api\Connections\GetPurposeInfoApiController;
 use App\Http\Controllers\Api\Connections\PartiesListApiController;
@@ -80,6 +81,7 @@ use App\Http\Controllers\SecurityDeposit\SdAssessController;
 use App\Http\Controllers\SecurityDeposit\SdAttributeDownloadController;
 use App\Http\Controllers\SecurityDeposit\SdCollectionController;
 use App\Http\Controllers\SecurityDeposit\SdDemandsController;
+use App\Http\Controllers\GeneratingStation\StationTransactionController;
 use App\Http\Controllers\SecurityDeposit\SdRegisterController;
 use App\Http\Controllers\Settings\SettingsDetailController;
 use App\Http\Controllers\SystemModule\SystemModuleController;
@@ -222,6 +224,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/generating-stations/{stationId}/consumers', [StationConsumerController::class, 'index'])
         ->name('generating-stations.consumers');
 
+    Route::get('/generating-stations/{stationId}/transactions',[StationTransactionController::class, 'index'])
+        ->name('generating-stations.transactions');
+
     Route::get('consumer-sd', ConsumerSDController::class)
         ->name('consumer-sd');
 
@@ -248,6 +253,12 @@ Route::get('api/parties', PartiesListApiController::class);
 Route::get('api/unassigned-transformers', UnassignedTransformersApiController::class);
 Route::get('api/unassigned-meters', UnassignedMetersApiController::class);
 Route::get('api/billing-groups', BillingGroupListApiController::class);
+Route::get('api/tariff-order/{id}/download', TariffOrderDownloadApiController::class)
+    ->name('tariff-order.download');
+Route::get('api/connections/get-tariffs', GetPurposeInfoApiController::class)
+    ->name('connections.get-tariffs');
+Route::post('api/connections/period-details', GetConnectionPeriodDetailsApiController::class)
+    ->name('connections.period-details');
 Route::get('api/tariff-order/{id}/download', TariffOrderDownloadApiController::class)->name('tariff-order.download');
 Route::get('api/connections/get-tariffs', GetPurposeInfoApiController::class)->name('connections.get-tariffs');
 Route::get('api/charge-head-definitions', GetChargeHeadDefinitionController::class);

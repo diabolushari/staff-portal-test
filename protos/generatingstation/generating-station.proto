@@ -7,12 +7,13 @@ option php_namespace = "Proto\\GeneratingStation";
 option php_metadata_namespace = "GPBMetadata";
 
 
-import "google/protobuf/timestamp.proto";
+
 import "connections/connections.proto";
 import "connections/consumer.proto";
 import "connections/consumer_address.proto";
 import "parameters/parameter-value.proto";
 import "generatingstation/generating-station-attribute.proto";
+import "generatingstation/station-transaction-ledger.proto";
 
 message GeneratingStationMessage {
   optional int32 version_id = 1;
@@ -92,6 +93,14 @@ message ListGeneratingStationResponse {
   repeated GeneratingStationMessage items = 1;
 }
 
+message ListStationTransactionsRequest {
+  int32 station_id = 1;
+}
+
+message ListStationTransactionsResponse {
+  repeated StationTransactionLedgerMessage items = 1;
+}
+
 message ListGeneratingStationPaginatedRequest {
   optional string station_name = 1;
   optional int32 page = 2;
@@ -122,6 +131,10 @@ service GeneratingStationService {
 
   rpc ListGeneratingStation(ListGeneratingStationRequest)
       returns (ListGeneratingStationResponse);
+
+  rpc ListStationTransactions(ListStationTransactionsRequest)
+      returns (ListStationTransactionsResponse);
+      
       
   rpc ListGeneratingStationPaginated(ListGeneratingStationPaginatedRequest)
       returns (ListGeneratingStationPaginatedResponse);

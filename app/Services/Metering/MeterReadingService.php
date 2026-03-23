@@ -2,7 +2,6 @@
 
 namespace App\Services\Metering;
 
-use App\GrpcConverters\Meter\MeterProtoConvertor;
 use App\GrpcConverters\Metering\MeterReadingConverter;
 use App\Http\Requests\Metering\MeterReadingForm;
 use App\Services\Grpc\GrpcErrorService;
@@ -14,6 +13,8 @@ use Illuminate\Validation\ValidationException;
 use Proto\MeterReading\CreateMeterReadingRequest;
 use Proto\MeterReading\CtptHealthFormMessage;
 use Proto\MeterReading\GetMeterReadingRequest;
+use Proto\MeterReading\LatestMeterReadingGroupByMeterRequest;
+use Proto\MeterReading\LatestMeterReadingGroupByMeterResponse;
 use Proto\MeterReading\LatestMeterReadingRequest;
 use Proto\MeterReading\ListMeterReadingPaginatedRequest;
 use Proto\MeterReading\ListMeterReadingRequest;
@@ -134,6 +135,7 @@ class MeterReadingService
     {
 
         $grpcRequest = $this->toProto($request);
+
         [$response, $status] = $this->client->CreateMeterReading($grpcRequest)->wait();
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -217,6 +219,29 @@ class MeterReadingService
         return GrpcServiceResponse::success($meterReadingArray, $response, $status->code, $status->details);
     }
 
+    public function latestMeterReadingGroupByMeter(int $connectionId): GrpcServiceResponse
+    {
+        $protoRequest = new LatestMeterReadingGroupByMeterRequest;
+        $protoRequest->setConnectionId($connectionId);
+
+        /** @var LatestMeterReadingGroupByMeterResponse $response */
+        [$response, $status] = $this->client->LatestMeterReadingGroupByMeter($protoRequest)->wait();
+        if ($status->code !== 0) {
+            return GrpcServiceResponse::error(
+                GrpcErrorService::handleErrorResponse($status, $response, false),
+                $response,
+                $status->code,
+                $status->details
+            );
+        }
+        $meterReadingValueGroups = [];
+        foreach ($response->getMeterReadingValueGroups() as $meterReadingValueGroup) {
+            $meterReadingValueGroups[] = MeterReadingConverter::meterReadingValueGroupToArray($meterReadingValueGroup);
+        }
+
+        return GrpcServiceResponse::success($meterReadingValueGroups, $response, $status->code, $status->details);
+    }
+
     public function toProto(MeterReadingForm $request): CreateMeterReadingRequest
     {
         $protoRequest = new CreateMeterReadingRequest;
@@ -226,12 +251,26 @@ class MeterReadingService
         $protoRequest->setReadingStartDate($request->readingStartDate);
         $protoRequest->setReadingEndDate($request->readingEndDate);
 
-        if ($request->readingType === 'single_reading') {
-            $protoRequest->setSingleReading(true);
-            $protoRequest->setMultipleReading(false);
-        } else {
-            $protoRequest->setMultipleReading(true);
+        if ($request->isBillable !== null) {
+            $protoRequest->setIsBillable($request->isBillable);
+        }
+
+        if ($request->isInterimReading) {
             $protoRequest->setSingleReading(false);
+            $protoRequest->setIsInterimReading(true);
+        } else {
+            $protoRequest->setIsInterimReading(false);
+            $protoRequest->setSingleReading(true);
+        }
+
+        if ($request->isInterimReading) {
+            $reasonId = $request->interimReasonId;
+            if ($reasonId == null) {
+                throw ValidationException::withMessages([
+                    'interim_reason_id' => ['Interim reason is required'],
+                ]);
+            }
+            $protoRequest->setInterimReasonId($reasonId);
         }
 
         $protoRequest->setAnomalyId($request->anomalyId);
@@ -245,9 +284,6 @@ class MeterReadingService
         // 🔑 Flatten readings_by_meter into MeterReadingValue list
 
         foreach ($request->readingsByMeter as $meter) {
-            if (empty($meter['meter_id'])) {
-                continue; // skip if meter_id missing
-            }
             $meterId = (int) $meter['meter_id'];
 
             if (empty($meter['parameters']) || ! is_array($meter['parameters'])) {
