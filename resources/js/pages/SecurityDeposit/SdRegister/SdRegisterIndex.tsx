@@ -1,13 +1,13 @@
 import { billingNavItems } from '@/components/Navbar/navitems'
 import SdRegisterList from '@/components/SecurityDeposit/SdRegister/SdRegisterList'
-import { SdRegister } from '@/interfaces/data_interfaces'
+import { Connection } from '@/interfaces/data_interfaces'
 import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Pagination from '@/ui/Pagination/Pagination'
 import { Paginator } from '@/ui/ui_interfaces'
 
 interface Props {
-  sdRegisters: Paginator<SdRegister>
+  connections: Paginator<Connection>
 }
 const breadcrumb: BreadcrumbItem[] = [
   {
@@ -18,8 +18,9 @@ const breadcrumb: BreadcrumbItem[] = [
     title: 'SD Register',
     href: '/sd-register',
   },
+  { title: 'Consumer', href: '#' },
 ]
-const SdRegisterIndex = ({ sdRegisters }: Props) => {
+const SdRegisterIndex = ({ connections }: Props) => {
   return (
     <MainLayout
       breadcrumb={breadcrumb}
@@ -28,10 +29,10 @@ const SdRegisterIndex = ({ sdRegisters }: Props) => {
       selectedItem='sd-register'
       selectedTopNav='Billing'
     >
-      {sdRegisters.data && sdRegisters.data.length > 0 ? (
+      {connections.data && connections.data.length > 0 ? (
         <>
-          <SdRegisterList sdRegisters={sdRegisters.data} />
-          <Pagination pagination={sdRegisters} />
+          <SdRegisterList connections={connections.data} />
+          <Pagination pagination={connections} />
         </>
       ) : (
         <div className='flex justify-center gap-1'>

@@ -211,6 +211,8 @@ export interface Connection {
   previous_reading: MeterReading
   green_energy?: ConnectionGreenEnergy[]
   alternate_tariff?: ParameterValues
+  sd_balance_summary?: SdBalanceSummary[]
+  latest_sd_register?: SdRegister
 }
 
 export interface ConnectionGreenEnergy {
@@ -504,6 +506,7 @@ export interface MeterReading {
   power_factors: MeterReadingPowerFactor[]
   healths?: MeterHealth[]
   is_interim_reading: boolean
+  is_billable?: boolean | null
 }
 
 export interface MeterHealth {
@@ -672,6 +675,7 @@ export interface MeterReadingValueGroup {
   meter: Meter
   values?: MeterReadingValue[]
   reading?: MeterReading
+  current_meter_connection_mapping?: MeterConnectionMapping | null
 }
 
 export interface BillingGroup {
@@ -844,7 +848,6 @@ export interface SdRegister {
   updated_by?: number
   sd_type: ChargeHeadDefinition
   occupancy_type: ParameterValues
-  connection: Connection
   sd_demand: SdDemand
 }
 
@@ -860,9 +863,28 @@ export interface SdDemand {
   charge_head_definition_id: number
   charge_head_definition: ChargeHeadDefinition
   calculation_basic?: ParameterValues
+  sd_demand_status?: SdDemandStatus
   collections?: SdCollection[]
 }
-
+export interface SdDemandStatus {
+  status_log_id: number
+  sd_demand_id: number
+  sd_collection_id: number
+  status_id: number
+  outstanding_amount: number
+  is_gl_posted: boolean
+  gl_posted_ts: string
+  gl_posted_by: number
+  gl_reference: string
+  remarks: string
+  created_ts: string
+  updated_ts: string
+  created_by: number
+  updated_by: number
+  deleted_ts: string
+  deleted_by: number
+  status: ParameterValues
+}
 export interface SdCollection {
   sd_collection_id: number
   sd_demand_id: number
@@ -879,7 +901,11 @@ export interface SdCollection {
   created_by: number
   updated_by: number
   payment_mode: ParameterValues
-  sdAttribute: SdAttribute[]
+  sd_attributes: SdAttribute[]
+  status: ParameterValues
+  status_id: number
+  transaction_ref: string
+  remarks: string
 }
 
 export interface SdAttribute {

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { MeterProfileParameter, MeterWithTimezoneAndProfile } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
+import { useMemo } from 'react'
 import { MeterReadingFormState } from './useMeterReadingForm'
 
 interface Props {
@@ -29,7 +30,9 @@ export default function ReadingParameterPreviewCard({
   hasError,
   onToggle,
 }: Readonly<Props>) {
-  const meterData = readingValues.find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
+  const meterData = useMemo(() => {
+    return readingValues.find((m) => m.meter_id === meterWithTimezoneAndProfile.meter_id)
+  }, [readingValues, meterWithTimezoneAndProfile])
 
   const paramData = meterData?.parameters?.find(
     (p) => p.meter_parameter_id === profile.meter_parameter_id
@@ -101,17 +104,15 @@ export default function ReadingParameterPreviewCard({
                             <span>{r.timezone_name}</span>
 
                             <span className='text-right font-medium text-gray-800'>
-                              {r.values?.initial || 0}
+                              {r.values?.initial == '' ? '-' : r.values?.initial}
                             </span>
 
                             <span className='text-right font-medium text-gray-800'>
-                              {r.values?.final || 0}
+                              {r.values?.final == '' ? '-' : r.values?.final}
                             </span>
 
                             <span className='text-right font-medium'>
-                              {r.values?.value !== undefined && r.values?.value !== null
-                                ? Number(r.values.value).toFixed(2)
-                                : 0}
+                              {r.values?.value == null ? '-' : r.values?.value.toFixed(2)}
                             </span>
                           </div>
                         )
@@ -123,7 +124,7 @@ export default function ReadingParameterPreviewCard({
                           <span className='text-right'></span>
                           <span className='text-right'></span>
 
-                          <span className='text-right'>{totalValue.toFixed(2) || '-'}</span>
+                          <span className='text-right'>{totalValue.toFixed(2) ?? '-'}</span>
                         </div>
                       )}
                     </>
@@ -132,8 +133,8 @@ export default function ReadingParameterPreviewCard({
                       {/* Header */}
                       <div className='grid grid-cols-3 gap-2 border-b border-gray-200 pb-1 font-medium text-gray-700'>
                         <span></span>
-                        <span className='text-right'>FR</span>
-                        <span className='text-right'>DIFF x MF</span>
+                        <span className='text-right'>Reading</span>
+                        <span className='text-right'>Reading x MF</span>
                       </div>
                       {/* Rows */}
                       {paramData?.readings?.map((r) => {
@@ -145,13 +146,11 @@ export default function ReadingParameterPreviewCard({
                             <span>{r.timezone_name}</span>
 
                             <span className='text-right font-medium text-gray-800'>
-                              {r.values?.final || 0}
+                              {r.values?.final == '' ? '-' : r.values?.final}
                             </span>
 
                             <span className='text-right font-medium'>
-                              {r.values?.value !== undefined && r.values?.value !== null
-                                ? Number(r.values.value).toFixed(2)
-                                : 0}
+                              {r.values?.value == null ? '-' : r.values?.value.toFixed(2)}
                             </span>
                           </div>
                         )

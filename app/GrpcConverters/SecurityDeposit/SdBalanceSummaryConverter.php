@@ -2,7 +2,6 @@
 
 namespace App\GrpcConverters\SecurityDeposit;
 
-use App\GrpcConverters\Connection\ConnectionProtoConverter;
 use Proto\Consumers\SdBalanceSummaryMessage;
 
 class SdBalanceSummaryConverter
@@ -32,7 +31,6 @@ class SdBalanceSummaryConverter
             'last_updated_by_collection' => $sdBalanceSummary->hasLastUpdatedByCollection() ? $sdBalanceSummary->getLastUpdatedByCollection() : null,
             'created_by' => $sdBalanceSummary->getCreatedBy(),
             'updated_by' => $sdBalanceSummary->getUpdatedBy(),
-            'connection' => $sdBalanceSummary->hasConnection() ? ConnectionProtoConverter::convertToArray($sdBalanceSummary->getConnection()) : null,
             'sd_demand' => $sdBalanceSummary->hasSdDemand() ? SdDemandConverter::convertToArray($sdBalanceSummary->getSdDemand()) : null,
             'sd_collection' => $sdBalanceSummary->hasSdCollection() ? SdCollectionConverter::convertToArray($sdBalanceSummary->getSdCollection()) : null,
         ];

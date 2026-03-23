@@ -1,14 +1,19 @@
-import { Meter, MeterProfileParameter, MeterWithTimezoneAndProfile, } from '@/interfaces/data_interfaces'
+import {
+  Meter,
+  MeterProfileParameter,
+  MeterWithTimezoneAndProfile,
+} from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { MeterReadingForm } from '@/pages/MeterReading/MeterReadingCreatePage'
 import { CONSUMPTION_PARAMETER_NAME, DEMAND_PARAMETER_NAME } from '@/types/constants'
 import StrongText from '@/typography/StrongText'
 import Button from '@/ui/button/Button'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import PowerFactorBar from './MeterPowerFactor'
 import MeterReadingHealthForm from './MeterReadingHealthForm'
 import ProfileReadingForm from './ProfileReadingForm'
 import ReadingParameterPreviewCard from './ReadingParameterPreviewCard'
+import { MeterProfileValidationState } from './meter-reading-error-state'
 import { MeterHealthFormData } from './useMeterHealthForm'
 import { MeterReadingFormState, TimezoneReadingState } from './useMeterReadingForm'
 
@@ -129,9 +134,12 @@ interface Props {
   meterHealthTypes: ParameterValues[]
   ctHealthTypes: ParameterValues[]
   setIsOnParameterForm: (value: boolean) => void
-  setProfileErrorExist: (value: boolean) => void
-  setAllProfileHasData: (value: boolean) => void
-  filteredMetersWithTimezonesAndProfiles: MeterWithTimezoneAndProfile[]
+  profileValidationState: MeterProfileValidationState[]
+  onProfileErrorChange: (
+    meterId: number,
+    parameterId: number,
+    errors: Record<string, string | undefined>
+  ) => void
 }
 
 export interface MeterReadingPreviewRef {
@@ -147,9 +155,8 @@ const MeterReadingPreview = ({
   isFirstReading,
   meterHealthTypes,
   ctHealthTypes,
-  setProfileErrorExist,
-  setAllProfileHasData,
-  filteredMetersWithTimezonesAndProfiles,
+  profileValidationState,
+  onProfileErrorChange,
 }: Props) => {
   const hasImportKwh = meterWithTimezoneAndProfile.reading_parameters.some(
     (p) =>
@@ -185,55 +192,26 @@ const MeterReadingPreview = ({
 
   const previewRef = useRef<HTMLDivElement | null>(null)
 
-  const [profileErrors, setProfileErrors] = useState<Record<number, boolean>>({})
-
-  const handleProfileErrorChange = useCallback((parameterId: number, hasError: boolean) => {
-    setProfileErrors((prev) => ({
-      ...prev,
-      [parameterId]: hasError,
-    }))
-  }, [])
-
-  useEffect(() => {
-    const hasAnyError = Object.values(profileErrors).some(Boolean)
-    setProfileErrorExist(hasAnyError)
-  }, [profileErrors, setProfileErrorExist])
-
-  useEffect(() => {
-    const filteredReadingvalues = readingValues?.filter((readingData) =>
-      filteredMetersWithTimezonesAndProfiles?.find((m) => m.meter.meter_id === readingData.meter_id)
-    )
-    const meterReadingData = filteredReadingvalues?.find(
-      (readingData) => readingData.meter_id === meterWithTimezoneAndProfile.meter_id
+  const profileErrors = useMemo(() => {
+    const meterValidationState = profileValidationState.find(
+      (validationState) => validationState.meter_id === meterWithTimezoneAndProfile.meter_id
     )
 
-    if (meterReadingData == null) {
-      setAllProfileHasData(false)
-      return
-    }
+    return meterWithTimezoneAndProfile.reading_parameters.reduce<Record<number, boolean>>(
+      (errorState, profile) => {
+        const parameterValidationState = meterValidationState?.parameters.find(
+          (parameter) => parameter.parameter_id === profile.meter_parameter_id
+        )
 
-    const dataExist = meterWithTimezoneAndProfile.reading_parameters.every((profile) => {
-      const param = meterReadingData.parameters.find(
-        (p) => p.meter_parameter_id === profile.meter_parameter_id
-      )
+        errorState[profile.meter_parameter_id] = Object.values(
+          parameterValidationState?.errors ?? {}
+        ).some((error) => error != null && error !== '')
 
-      if (param == null || param.readings?.length === 0) return false
-
-      if (isFirstReading) {
-        return param.readings.every((r) => r.values?.initial != null)
-      }
-
-      return param.readings.every((r) => r.values?.final != null && r.values?.final != '')
-    })
-
-    setAllProfileHasData(dataExist)
-  }, [
-    readingValues,
-    meterWithTimezoneAndProfile,
-    setAllProfileHasData,
-    filteredMetersWithTimezonesAndProfiles,
-    isFirstReading,
-  ])
+        return errorState
+      },
+      {}
+    )
+  }, [profileValidationState, meterWithTimezoneAndProfile])
 
   const toggleAllProfiles = useCallback(
     (event: React.FormEvent<HTMLButtonElement>) => {
@@ -316,7 +294,7 @@ const MeterReadingPreview = ({
                   readingValues={readingValues}
                   profile={profile}
                   isFirstReading={isFirstReading}
-                  onErrorChange={handleProfileErrorChange}
+                  onErrorChange={onProfileErrorChange}
                 />
               </ReadingParameterPreviewCard>
             )

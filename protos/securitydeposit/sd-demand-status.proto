@@ -5,8 +5,8 @@ package com.kseb.consumerservice.grpc.securitydeposit;
 option php_namespace = "Proto\\Consumers";
 option php_metadata_namespace = "GPBMetadata";
 
+import "google/protobuf/empty.proto";
 import "parameters/parameter-value.proto";
-import "connections/connections.proto";
 import "securitydeposit/sd-collections.proto";
 
 message SdDemandStatusMessage {

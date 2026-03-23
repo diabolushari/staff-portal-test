@@ -78,7 +78,7 @@ class SdDemandsService
                 }
 
                 if (! empty($attributesArray)) {
-                    $collectionData['sdAttribute'] = $attributesArray;
+                    $collectionData['sd_attributes'] = $attributesArray;
                 }
 
                 $collectionsArray[] = $collectionData;

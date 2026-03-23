@@ -50,15 +50,24 @@ const ConnectionSdDemand = ({ connection, sdDemands, balanceSummary }: Props) =>
       breadcrumbs={breadcrumbs}
       connectionsNavItems={consumerNavItems}
     >
-      <div className='flex justify-end p-5'>
-        <AddButton
-          onClick={() =>
-            router.get(route('sd-demands.create', { connectionId: connection.connection_id }))
-          }
-          buttonText='Add SD Demand'
-        />
+      {sdDemands.data.length === 0 && (
+        <div className='flex justify-end p-5'>
+          <AddButton
+            onClick={() =>
+              router.get(route('sd-demands.create', { connectionId: connection.connection_id }))
+            }
+            buttonText='Add SD Demand'
+          />
+        </div>
+      )}
+      <div>
+        {sdDemands && (
+          <SdDemandList
+            sdDemands={sdDemands.data}
+            connection={connection}
+          />
+        )}
       </div>
-      <div>{sdDemands && <SdDemandList sdDemands={sdDemands.data} />}</div>
       <div>{sdDemands && <Pagination pagination={sdDemands} />}</div>
     </ConnectionsLayout>
   )

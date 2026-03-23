@@ -6,9 +6,10 @@ import { useState } from 'react'
 
 interface Props {
   billingGroups: BillingGroup[]
+  listOnSD?: boolean
 }
 
-export default function BillingGroupList({ billingGroups }: Props) {
+export default function BillingGroupList({ billingGroups, listOnSD = false }: Props) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [selectedBillingGroup, setSelectedBillingGroup] = useState<BillingGroup | null>(null)
 
@@ -33,9 +34,13 @@ export default function BillingGroupList({ billingGroups }: Props) {
             className='mb-4 cursor-pointer rounded-lg border border-gray-200 bg-white px-2.5 py-[5px] transition-shadow last:mb-0 hover:shadow-md'
             onClick={() =>
               router.get(
-                route('billing-groups.show', {
-                  id: billingGroup?.billing_group_id,
-                })
+                listOnSD
+                  ? route('consumer-sd.group.show', {
+                      id: billingGroup?.billing_group_id,
+                    })
+                  : route('billing-groups.show', {
+                      id: billingGroup?.billing_group_id,
+                    })
               )
             }
           >

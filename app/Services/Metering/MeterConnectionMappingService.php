@@ -9,7 +9,6 @@ use App\Http\Requests\Connections\ConnectionMeterChangeReasonFormRequest;
 use App\Http\Requests\Connections\ConnectionMeterStatusFormRequest;
 use App\Http\Requests\Metering\MeterConnectionRelFormRequest;
 use App\Services\Grpc\GrpcErrorService;
-use App\Services\utils\DateTimeConverter;
 use App\Services\utils\GrpcServiceResponse;
 use DateTime;
 use DateTimeInterface;
@@ -24,7 +23,6 @@ use Proto\Metering\MeterConnectionMappingResponse;
 use Proto\Metering\MeterConnectionMappingServiceClient;
 use Proto\Metering\MeterTransformerRelFormRequest;
 use Proto\Metering\UpdateMeterConnectionMappingRequest;
-use Proto\Metering\UpdateMeterConnectionProfileRequest;
 use Proto\Parameters\ParameterValueProto;
 
 class MeterConnectionMappingService
@@ -55,9 +53,8 @@ class MeterConnectionMappingService
         if (isset($data->sortPriority)) {
             $request->setSortPriority($data->sortPriority);
         }
-        $energiseDate = DateTimeConverter::convertStringToTimestamp($data->energiseDate);
-        if ($energiseDate !== null) {
-            $request->setEnergiseDate($energiseDate);
+        if ($data->energiseDate !== '') {
+            $request->setEnergiseDate($data->energiseDate);
         }
         $request->setIsMeterReadingMandatory($data->isMeterReadingMandatory);
 
@@ -192,7 +189,7 @@ class MeterConnectionMappingService
     {
         $request = MeterConnectionMappingConverter::arrayToUpdateMeterConnectionStatusRequest($data);
 
-        [$response, $status] = $this->client->UpdateMeterConnectionStatus($request)->wait();
+        [$response, $status] = $this->client->UpdateMeterConnectionMapping($request)->wait();
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -246,9 +243,12 @@ class MeterConnectionMappingService
             $request->setMeterMf((float) $data->meterMf);
         }
 
-        $energiseDate = DateTimeConverter::convertStringToTimestamp($data->energiseDate);
-        if ($energiseDate !== null) {
-            $request->setEnergiseDate($energiseDate);
+        if (isset($data->meterStatusId)) {
+            $request->setMeterStatusId($data->meterStatusId);
+        }
+
+        if ($data->energiseDate !== '') {
+            $request->setEnergiseDate($data->energiseDate);
         }
 
         if (isset($data->sortPriority)) {
@@ -292,11 +292,11 @@ class MeterConnectionMappingService
 
     public function updateMeterConnectionProfile(int $relId, int $profileId): GrpcServiceResponse
     {
-        $request = new UpdateMeterConnectionProfileRequest;
+        $request = new UpdateMeterConnectionMappingRequest;
         $request->setRelId($relId);
         $request->setProfileId($profileId);
 
-        [$response, $status] = $this->client->UpdateMeterConnectionProfile($request)->wait();
+        [$response, $status] = $this->client->UpdateMeterConnectionMapping($request)->wait();
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(
@@ -315,18 +315,18 @@ class MeterConnectionMappingService
      */
     public function meterConnectionMappingProtoToArray(MeterConnectionMappingResponse $rel): array
     {
-        $faultyDate = $rel->getFaultyDate() ? $rel->getFaultyDate()->toDateTime()->format('Y-m-d') : null;
-        $rectificationDate = $rel->getRectificationDate() ? $rel->getRectificationDate()->toDateTime()->format('Y-m-d') : null;
-        $effectiveStartTs = $rel->getEffectiveStartTs() ? $rel->getEffectiveStartTs() : null;
-        $effectiveEndTs = $rel->getEffectiveEndTs() ? $rel->getEffectiveEndTs() : null;
+        $faultyDate = $rel->hasFaultyDate() ? $rel->getFaultyDate() : null;
+        $rectificationDate = $rel->hasRectificationDate() ? $rel->getRectificationDate() : null;
+        $effectiveStartTs = $rel->getEffectiveStartTs() !== '' ? $rel->getEffectiveStartTs() : null;
+        $effectiveEndTs = $rel->getEffectiveEndTs() !== '' ? $rel->getEffectiveEndTs() : null;
         $createdTs = $rel->getCreatedTs() ? $rel->getCreatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
         $updatedTs = $rel->getUpdatedTs() ? $rel->getUpdatedTs()->toDateTime()->format('Y-m-d H:i:s') : null;
         $meter = MeterProtoConvertor::convertToArray($rel->getMeter());
-        $noticeDate = $rel->getNoticeDate() ? $rel->getNoticeDate()->toDateTime()->format('Y-m-d') : null;
-        $intimationDate = $rel->getIntimationDate() ? $rel->getIntimationDate()->toDateTime()->format('Y-m-d') : null;
-        $changeDate = $rel->getChangeDate() ? $rel->getChangeDate()->toDateTime()->format('Y-m-d') : null;
+        $noticeDate = $rel->hasNoticeDate() ? $rel->getNoticeDate() : null;
+        $intimationDate = $rel->hasIntimationDate() ? $rel->getIntimationDate() : null;
+        $changeDate = $rel->hasChangeDate() ? $rel->getChangeDate() : null;
         $meterProfile = ParameterValueProtoConvertor::convertToArray($rel->getProfile());
-        $energiseDate = $rel->getEnergiseDate() ? $rel->getEnergiseDate()->toDateTime()->format('Y-m-d') : null;
+        $energiseDate = $rel->hasEnergiseDate() ? $rel->getEnergiseDate() : null;
         $meter = MeterProtoConvertor::convertToArray($rel->getMeter());
 
         $timezoneType = $meter['meter_timezone_type_rel'][0]['timezone_type'] ?? null;
