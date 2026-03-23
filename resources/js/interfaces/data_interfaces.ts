@@ -212,6 +212,7 @@ export interface Connection {
   green_energy?: ConnectionGreenEnergy[]
   alternate_tariff?: ParameterValues
   sd_balance_summary?: SdBalanceSummary[]
+  latest_sd_register?: SdRegister
 }
 
 export interface ConnectionGreenEnergy {
@@ -847,7 +848,6 @@ export interface SdRegister {
   updated_by?: number
   sd_type: ChargeHeadDefinition
   occupancy_type: ParameterValues
-  connection: Connection
   sd_demand: SdDemand
 }
 

@@ -1,44 +1,84 @@
-import { SdRegister } from '@/interfaces/data_interfaces'
-import { getDisplayDate } from '@/utils'
+import { Connection } from '@/interfaces/data_interfaces'
 import { router } from '@inertiajs/react'
+import { getAssessmentYear } from './LastAssessmentCard'
+import { getDisplayDate } from '@/utils'
 
 interface Props {
-  sdRegisters: SdRegister[]
+  connections: Connection[]
 }
 
-const SdRegisterList = ({ sdRegisters }: Props) => {
+const SdRegisterList = ({ connections }: Props) => {
   return (
     <>
-      <div className='context-menu-item grid grid-cols-10 gap-x-6 gap-y-2 pt-5'>
-        <span>SD Register Type</span>
-        <span>Consumer Number</span>
-        <span>Occupancy Type</span>
-        <span>Period From</span>
-        <span>Period To</span>
-        <span>Generated Date</span>
-        <span>SD Amount</span>
-        <span>BG Expiry Date</span>
-        <span>BG Renewal Due Date</span>
-        <span>Settled Date</span>
-      </div>
-      {sdRegisters.map((sdRegister) => (
+      {connections.map((connection) => (
         <div
-          key={sdRegister.sd_register_id}
-          className='normal-font grid cursor-pointer grid-cols-10 gap-x-6 gap-y-2 hover:bg-gray-100'
-          onClick={() => router.get(route(`sd-register.show`, sdRegister.connection_id))}
+          key={connection.connection_id}
+          className='border-kseb-line mb-4 w-full cursor-pointer border bg-white shadow-sm'
+          onClick={() => router.get(route('sd-register.show', connection.connection_id))}
         >
-          <span>{sdRegister.sd_type.name}</span>
-          <span>{sdRegister.connection.consumer_number}</span>
-          <span>{sdRegister.occupancy_type.parameter_value}</span>
-          <span>{getDisplayDate(sdRegister.period_from)}</span>
-          <span>{getDisplayDate(sdRegister.period_to)}</span>
-          <span>{getDisplayDate(sdRegister.generated_date)}</span>
-          <span>{sdRegister.sd_amount}</span>
-          <span>{sdRegister.bg_expiry_date ? getDisplayDate(sdRegister.bg_expiry_date) : '-'}</span>
-          <span>
-            {sdRegister.bg_renewal_due_date ? getDisplayDate(sdRegister.bg_renewal_due_date) : '-'}
-          </span>
-          <span>{sdRegister.settled_date ? getDisplayDate(sdRegister.settled_date) : '-'}</span>
+          <div className='flex items-start justify-between p-4'>
+            <div className='flex flex-col gap-1 text-sm'>
+              <span className='font-semibold'>
+                {connection.consumer_profiles?.[0]?.consumer_name}
+              </span>
+              <span>Consumer Number: {connection.consumer_number}</span>
+              <span>Legacy Code: {connection.consumer_legacy_code}</span>
+            </div>
+
+            <span className='rounded bg-gray-200 px-3 py-1 text-xs font-medium'></span>
+          </div>
+
+          <div className='bg-kseb-bg-blue grid grid-cols-4 items-center px-4 py-3 text-sm'>
+            <div className='flex flex-col'>
+              <span className='text-gray-600'>SD Assessed</span>
+              <span className='font-semibold'>
+                {connection?.sd_balance_summary?.[0]?.sd_principal_required
+                  ? `₹ ${connection.sd_balance_summary[0].sd_principal_required}`
+                  : '-'}
+              </span>
+            </div>
+
+            <div className='flex flex-col'>
+              <span className='text-gray-600'>SD Available</span>
+              <span className='font-semibold'>
+                {connection?.sd_balance_summary?.[0]?.sd_principal_on_file
+                  ? `₹ ${connection.sd_balance_summary[0].sd_principal_on_file}`
+                  : '-'}
+              </span>
+            </div>
+
+            <div className='flex flex-col'>
+              <span className='text-gray-600'>Difference</span>
+              <span
+                className={`font-semibold ${Number(connection?.sd_balance_summary?.[0]?.sd_principal_variance) < 0 ? 'text-green-500' : 'text-red-500'}`}
+              >
+                {connection?.sd_balance_summary?.[0]?.sd_principal_variance
+                  ? `₹ ${Math.abs(Number(connection.sd_balance_summary[0].sd_principal_variance))}`
+                  : '-'}
+              </span>
+            </div>
+          </div>
+
+          <div className='flex gap-12 p-4 text-sm'>
+            <div className='flex flex-col'>
+              <span className='text-gray-600'>Assessment Period</span>
+              <span>
+                {' '}
+                {connection.latest_sd_register
+                  ? getAssessmentYear(connection.latest_sd_register)
+                  : '-'}
+              </span>
+            </div>
+
+            <div className='flex flex-col'>
+              <span className='text-gray-600'>Assessment Date</span>
+              <span>
+                {connection.latest_sd_register
+                  ? getDisplayDate(connection.latest_sd_register.generated_date)
+                  : '-'}
+              </span>
+            </div>
+          </div>
         </div>
       ))}
     </>

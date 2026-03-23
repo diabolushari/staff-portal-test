@@ -1,6 +1,7 @@
 import { billingNavItems } from '@/components/Navbar/navitems'
 import ConsumerSDIndexSearch from '@/components/SecurityDeposit/Consumer/ConsumerSDIndexSearch'
 import SdAssessModal from '@/components/SecurityDeposit/SdAssessModal'
+import { getAssessmentYear } from '@/components/SecurityDeposit/SdRegister/LastAssessmentCard'
 import { Button } from '@/components/ui/button'
 import IconSingleTab from '@/components/ui/icon-single-tab'
 import { Connection } from '@/interfaces/data_interfaces'
@@ -10,6 +11,7 @@ import { BreadcrumbItem } from '@/types'
 import CheckBox from '@/ui/form/CheckBox'
 import Pagination from '@/ui/Pagination/Pagination'
 import { Paginator } from '@/ui/ui_interfaces'
+import { getDisplayDate } from '@/utils'
 import { User, Users } from 'lucide-react'
 import { useState } from 'react'
 
@@ -150,9 +152,11 @@ const ConsumerSDIndex = ({ connections, oldConnections, triggerTypes }: Props) =
 
                   <div className='flex flex-col'>
                     <span className='text-gray-600'>Difference</span>
-                    <span className='font-semibold text-red-500'>
+                    <span
+                      className={`font-semibold ${Number(connection?.sd_balance_summary?.[0]?.sd_principal_variance) < 0 ? 'text-green-500' : 'text-red-500'}`}
+                    >
                       {connection?.sd_balance_summary?.[0]?.sd_principal_variance
-                        ? `₹ ${connection.sd_balance_summary[0].sd_principal_variance}`
+                        ? `₹ ${Math.abs(Number(connection.sd_balance_summary[0].sd_principal_variance))}`
                         : '-'}
                     </span>
                   </div>
@@ -169,12 +173,20 @@ const ConsumerSDIndex = ({ connections, oldConnections, triggerTypes }: Props) =
                 <div className='flex gap-12 p-4 text-sm'>
                   <div className='flex flex-col'>
                     <span className='text-gray-600'>Assessment Period</span>
-                    <span>{'-'}</span>
+                    <span>
+                      {connection.latest_sd_register
+                        ? getAssessmentYear(connection.latest_sd_register)
+                        : '-'}
+                    </span>
                   </div>
 
                   <div className='flex flex-col'>
                     <span className='text-gray-600'>Assessment Date</span>
-                    <span>{'-'}</span>
+                    <span>
+                      {connection.latest_sd_register
+                        ? getDisplayDate(connection.latest_sd_register.generated_date)
+                        : '-'}
+                    </span>
                   </div>
                 </div>
               </div>

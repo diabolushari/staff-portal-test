@@ -5,6 +5,7 @@ namespace App\GrpcConverters\Connection;
 use App\GrpcConverters\Office\OfficeProtoConvertor;
 use App\GrpcConverters\ParameterValueProtoConvertor;
 use App\GrpcConverters\SecurityDeposit\SdBalanceSummaryConverter;
+use App\GrpcConverters\SecurityDeposit\SdRegisterConverter;
 use App\Services\Connection\ConsumerService;
 use App\Services\Metering\MeterReadingService;
 use Proto\Connections\ConnectionMessage;
@@ -247,6 +248,7 @@ class ConnectionProtoConverter
             'green_energy' => $greenEnergyArrays,
             'alternate_tariff' => $connection->hasAlternateTariff() ? ParameterValueProtoConvertor::convertToArray($connection->getAlternateTariff()) : null,
             'sd_balance_summary' => $SdBalanceSummary,
+            'latest_sd_register' => $connection->hasLatestSdRegister() ? SdRegisterConverter::convertToArray($connection->getLatestSdRegister()) : null,
         ];
     }
 }

@@ -24,21 +24,26 @@ class SdRegisterController extends Controller
 
     public function index()
     {
-        $sdRegisters = $this->sdRegisterService->listPaginatedSdRegisters(null, null, null, null, null);
+
+        $response = $this->connectionService->listConnectionWithActiveBalanceSummary(
+            connectionId: null,
+            pageNumber: 1,
+            pageSize: 10,
+        );
         $paginated = null;
 
-        if (! empty($sdRegisters->data)) {
+        if (! empty($response->data)) {
             $paginated = new LengthAwarePaginator(
-                $sdRegisters->data['sd_registers'],
-                $sdRegisters->data['total_count'],
-                $sdRegisters->data['page_size'],
-                $sdRegisters->data['page_number'],
+                $response->data['connectionArray'],
+                $response->data['total_count'],
+                $response->data['page_size'],
+                $response->data['page_number'],
                 ['path' => request()->url()]
             );
         }
 
         return Inertia::render('SecurityDeposit/SdRegister/SdRegisterIndex', [
-            'sdRegisters' => $paginated,
+            'connections' => $paginated,
         ]);
     }
 
