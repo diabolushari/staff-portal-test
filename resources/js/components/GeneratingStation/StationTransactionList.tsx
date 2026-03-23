@@ -33,6 +33,7 @@ export default function StationTransactionTable({ transactions }: Props) {
     .filter((txn) => txn.txn_direction?.trim().toUpperCase() === 'D')
     .reduce((sum, txn) => sum + (txn.pre_conversion_units || 0), 0)
   console.log(transactions)
+
   return (
     <div className='rounded-lg bg-white p-4'>
       {/* Generated Units Card */}
@@ -72,32 +73,72 @@ export default function StationTransactionTable({ transactions }: Props) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {transactions.map((txn) => (
-            <TableRow key={txn.txn_id}>
-              <TableCell>
-                {txn.txn_date ? dayjs(txn.txn_date).format('MMM DD, YYYY') : '-'}
-              </TableCell>
-              <TableCell>{txn.txn_type?.parameter_value ?? '-'}</TableCell>
-              <TableCell>{txn.consumer_connection?.consumer_number ?? '-'}</TableCell>
-              {/* <TableCell>{txn.timezone?.parameter_value ?? '-'}</TableCell> */}
-              <TableCell>{txn.source_timezone?.parameter_value ?? '-'}</TableCell>
+          {transactions.map((txn) => {
+            const direction = txn.txn_direction?.trim().toUpperCase()
 
-              <TableCell>{txn.timezone?.parameter_value ?? '-'}</TableCell>
-              <TableCell>{txn.txn_direction?.trim().toUpperCase() === 'C' ? 'C' : 'D'}</TableCell>
-              <TableCell>
-                {txn.txn_type?.parameter_code === 'GEN_CREDIT'
-                  ? `+${txn.txn_units}`
-                  : txn.pre_conversion_units != null
-                    ? `${txn.txn_direction?.trim().toUpperCase() === 'C' ? '+' : '-'}${txn.pre_conversion_units}`
-                    : '-'}
-              </TableCell>
-              {/* <TableCell>{txn.pre_conversion_units ?? '-'}</TableCell> */}
+            const sourceZone =
+              direction === 'D'
+                ? txn.timezone?.parameter_value
+                : txn.source_timezone?.parameter_value
 
-              <TableCell>{txn.conversion_factor ?? '-'}</TableCell>
-              {/* <TableCell>{txn.txn_units ?? '-'}</TableCell>
-              <TableCell>{txn.unit_balance ?? '-'}</TableCell> */}
-            </TableRow>
-          ))}
+            const targetZone =
+              direction === 'D'
+                ? txn.source_timezone?.parameter_value
+                : txn.timezone?.parameter_value
+
+            return (
+              <TableRow key={txn.txn_id}>
+                <TableCell>
+                  {txn.txn_date ? dayjs(txn.txn_date).format('MMM DD, YYYY') : '-'}
+                </TableCell>
+
+                <TableCell>{txn.txn_type?.parameter_value ?? '-'}</TableCell>
+
+                <TableCell>{txn.consumer_connection?.consumer_number ?? '-'}</TableCell>
+
+                <TableCell>{sourceZone ?? '-'}</TableCell>
+                <TableCell>{targetZone ?? '-'}</TableCell>
+
+                <TableCell>{direction === 'C' ? 'C' : 'D'}</TableCell>
+
+                <TableCell>
+                  {(() => {
+                    //const isGen = txn.txn_type?.parameter_code === 'GEN_CREDIT'
+                    // const value = isGen ? txn.txn_units : txn.pre_conversion_units
+                    const isGen = txn.txn_type?.parameter_code === 'GEN_CREDIT'
+                    const isInterZone = txn.txn_type?.parameter_code?.includes('INTER_ZONE')
+
+                    let value = null
+
+                    if (isGen) {
+                      value = txn.txn_units
+                    } else if (isInterZone) {
+                      value = direction === 'D' ? txn.pre_conversion_units : txn.txn_units
+                    } else {
+                      value = txn.txn_units
+                    }
+
+                    if (value == null) return '-'
+
+                    const isPositive = isGen || direction === 'C'
+
+                    return (
+                      <span
+                        className={
+                          isPositive ? 'font-semibold text-green-600' : 'font-semibold text-red-600'
+                        }
+                      >
+                        {isPositive ? '+' : '-'}
+                        {value}
+                      </span>
+                    )
+                  })()}
+                </TableCell>
+
+                <TableCell>{txn.conversion_factor ?? '-'}</TableCell>
+              </TableRow>
+            )
+          })}
         </TableBody>
       </Table>
     </div>
