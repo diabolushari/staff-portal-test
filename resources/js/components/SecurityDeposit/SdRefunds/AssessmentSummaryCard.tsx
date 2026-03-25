@@ -18,7 +18,13 @@ const AssessmentSummaryCard = ({
   const diffAmount =
     Number(balanceSummary.sd_principal_on_file) - Number(sdRegister.sd_demand?.total_sd_amount)
 
-  const refund = diffAmount > 0 ? diffAmount : 0
+  let refund = 0
+  if (Number(balanceSummary.available_cash_balance) > diffAmount) {
+    refund = diffAmount > 0 ? diffAmount : 0
+  } else {
+    refund = Number(balanceSummary.available_cash_balance)
+  }
+
   const collection = diffAmount < 0 ? diffAmount : 0
 
   return (

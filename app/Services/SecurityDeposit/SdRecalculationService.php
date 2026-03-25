@@ -5,9 +5,9 @@ namespace App\Services\SecurityDeposit;
 use App\Http\Requests\SecurityDeposit\SdRecalculationFormRequest;
 use App\Services\Grpc\GrpcErrorService;
 use App\Services\utils\GrpcServiceResponse;
-use Proto\SecurityDeposit\SdRecalculateWithMultipleConnectionsRequest;
-use Proto\SecurityDeposit\SdRecalculateServiceClient;
 use Grpc\ChannelCredentials;
+use Proto\SecurityDeposit\SdRecalculateServiceClient;
+use Proto\SecurityDeposit\SdRecalculateWithMultipleConnectionsRequest;
 
 class SdRecalculationService
 {
@@ -23,19 +23,17 @@ class SdRecalculationService
 
     public function recalculateSd(SdRecalculationFormRequest $request): GrpcServiceResponse
     {
-        $grpcRequest = new SdRecalculateWithMultipleConnectionsRequest();
+        $grpcRequest = new SdRecalculateWithMultipleConnectionsRequest;
         $grpcRequest->setConnectionIds($request->connectionIds);
-        if (! empty($request->contextDate)) {
-            $grpcRequest->setContextDate($request->contextDate);
-        }
+        $grpcRequest->setStartDate($request->startDate);
+        $grpcRequest->setEndDate($request->endDate);
         if ($request->triggerTypeId != null) {
             $grpcRequest->setTriggerTypeId($request->triggerTypeId);
         }
 
-
         [$response, $status] = $this->client
             ->RecalculateSdWithMultipleConnections($grpcRequest)
-            ->wait();;
+            ->wait();
 
         if ($status->code !== 0) {
             return GrpcServiceResponse::error(

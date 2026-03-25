@@ -191,6 +191,8 @@ export default function ConsumerSDGroupShowPage({ group, triggerTypes }: Readonl
               setShowModal={setShowAssessModal}
               connection_ids={selectedConnections}
               triggerTypes={triggerTypes}
+              redirect='group'
+              billingGroupId={group?.billing_group_id}
             />
           )}
         </>

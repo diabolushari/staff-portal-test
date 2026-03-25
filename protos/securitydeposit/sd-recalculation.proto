@@ -25,8 +25,9 @@ message SdRecalculateRequest {
 
 message SdRecalculateWithMultipleConnectionsRequest {
   repeated int32 connection_ids = 1;
-  optional string context_date = 2;
-  int32 trigger_type_id = 3;
+  string start_date = 2;
+  string end_date = 3;
+  int32 trigger_type_id = 4;
 
 }
 

@@ -8,8 +8,6 @@ use App\Services\SecurityDeposit\SdRecalculationService;
 use Illuminate\Http\RedirectResponse;
 
 class SdAssessController extends Controller
-
-
 {
     public function __construct(
         private readonly SdRecalculationService $sdRecalculationService
@@ -25,6 +23,10 @@ class SdAssessController extends Controller
 
         if ($request->billingGroupId) {
             return redirect()->route('consumer-sd.group.show', $request->billingGroupId);
+        }
+
+        if ($request->redirect == 'individual') {
+            return redirect()->route('consumer-sd');
         }
 
         return redirect()->route('consumer-sd.group');

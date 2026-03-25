@@ -1,29 +1,33 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
-import { BillingGroup } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import Button from '@/ui/button/Button'
 import Datepicker from '@/ui/form/DatePicker'
-import MonthPicker from '@/ui/form/MonthPicker'
 import SelectList from '@/ui/form/SelectList'
 import Modal from '@/ui/Modal/Modal'
-import dayjs from 'dayjs'
 
 interface SdAssessModalProps {
   setShowModal: (show: boolean) => void
   connection_ids: number[]
   triggerTypes: ParameterValues[]
+  redirect?: 'group' | 'individual'
+  billingGroupId?: number
 }
 
 export default function SdAssessModal({
   setShowModal,
   connection_ids,
   triggerTypes,
+  redirect = 'individual',
+  billingGroupId,
 }: SdAssessModalProps) {
   const { formData, setFormValue } = useCustomForm({
     connection_ids: connection_ids,
     trigger_type_id: '',
-    context_date: '',
+    start_date: '',
+    end_date: '',
+    billing_group_id: billingGroupId,
+    redirect: redirect,
   })
 
   const { post, loading } = useInertiaPost(route('sd-assess'))
@@ -32,13 +36,6 @@ export default function SdAssessModal({
     e.preventDefault()
     post(formData)
   }
-
-  const financialYearList = [
-    {
-      id: '2024-04-01',
-      name: '2024-2025',
-    },
-  ]
 
   return (
     <Modal
@@ -59,13 +56,15 @@ export default function SdAssessModal({
           value={formData?.trigger_type_id}
           setValue={setFormValue('trigger_type_id')}
         />
-        <SelectList
-          label='Financial Year'
-          list={financialYearList}
-          displayKey='name'
-          dataKey='id'
-          value={formData?.context_date}
-          setValue={setFormValue('context_date')}
+        <Datepicker
+          label='Start Date'
+          value={formData?.start_date}
+          setValue={setFormValue('start_date')}
+        />
+        <Datepicker
+          label='End Date'
+          value={formData?.end_date}
+          setValue={setFormValue('end_date')}
         />
         <div className='flex justify-end gap-2'>
           <Button
