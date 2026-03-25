@@ -110,6 +110,10 @@ const SdRegisterListByConnection = ({
                 onClick={() => {
                   setSelectedSdRegister(sd)
                   sheetAction(true)
+                  window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth',
+                  })
                 }}
               >
                 <span className='font-medium text-gray-700'>{getAssessmentYear(sd)}</span>

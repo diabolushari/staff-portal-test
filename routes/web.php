@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\BillingGroupListApiController;
-use App\Http\Controllers\Api\Connections\GetConnectionPeriodDetailsApiController;
 use App\Http\Controllers\Api\ChargeHeadDefinition\GetChargeHeadDefinitionController;
+use App\Http\Controllers\Api\Connections\GetConnectionPeriodDetailsApiController;
 use App\Http\Controllers\Api\Connections\GetPurposeInfoApiController;
 use App\Http\Controllers\Api\Connections\PartiesListApiController;
 use App\Http\Controllers\Api\GetOfficeByCodeApiController;
@@ -50,6 +50,7 @@ use App\Http\Controllers\GeneratingStation\GeneratingStationApiController;
 use App\Http\Controllers\GeneratingStation\GeneratingStationController;
 use App\Http\Controllers\GeneratingStation\StationConsumerController;
 use App\Http\Controllers\GeneratingStation\StationConsumerRelController;
+use App\Http\Controllers\GeneratingStation\StationTransactionController;
 use App\Http\Controllers\Metering\CreateMeterReadingController;
 use App\Http\Controllers\Metering\MeterConnectionMappingController;
 use App\Http\Controllers\Metering\MeterConnectionMappingCreateController;
@@ -223,6 +224,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/generating-stations/{stationId}/consumers', [StationConsumerController::class, 'index'])
         ->name('generating-stations.consumers');
+
+    Route::get('/generating-stations/{stationId}/transactions', [StationTransactionController::class, 'index'])
+        ->name('generating-stations.transactions');
 
     Route::get('/generating-stations/{stationId}/transactions', [StationTransactionController::class, 'index'])
         ->name('generating-stations.transactions');

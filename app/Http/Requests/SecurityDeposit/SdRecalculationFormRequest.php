@@ -11,8 +11,10 @@ class SdRecalculationFormRequest extends Data
 {
     public function __construct(
         public array $connectionIds,
-        public ?string $contextDate,
+        public string $startDate,
+        public string $endDate,
         public ?int $triggerTypeId,
         public ?int $billingGroupId,
+        public string $redirect,
     ) {}
 }

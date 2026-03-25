@@ -5,9 +5,15 @@ import MainLayout from '@/layouts/main-layout'
 import { BreadcrumbItem } from '@/types'
 import Pagination from '@/ui/Pagination/Pagination'
 import { Paginator } from '@/ui/ui_interfaces'
+import SdRegisterIndexSearch from '../Consumer/SdRegisterIndexSearch'
 
 interface Props {
   connections: Paginator<Connection>
+  oldConnection?: Connection
+  oldGroup?: string
+  oldStatus?: boolean
+  oldDateFrom?: string
+  oldDateTo?: string
 }
 const breadcrumb: BreadcrumbItem[] = [
   {
@@ -20,7 +26,14 @@ const breadcrumb: BreadcrumbItem[] = [
   },
   { title: 'Consumer', href: '#' },
 ]
-const SdRegisterIndex = ({ connections }: Props) => {
+const SdRegisterIndex = ({
+  connections,
+  oldConnection,
+  oldGroup,
+  oldStatus,
+  oldDateFrom,
+  oldDateTo,
+}: Props) => {
   return (
     <MainLayout
       breadcrumb={breadcrumb}
@@ -29,6 +42,13 @@ const SdRegisterIndex = ({ connections }: Props) => {
       selectedItem='sd-register'
       selectedTopNav='Billing'
     >
+      <SdRegisterIndexSearch
+        oldConnection={oldConnection}
+        oldGroup={oldGroup}
+        oldStatus={oldStatus}
+        oldDateFrom={oldDateFrom}
+        oldDateTo={oldDateTo}
+      />
       {connections.data && connections.data.length > 0 ? (
         <>
           <SdRegisterList connections={connections.data} />

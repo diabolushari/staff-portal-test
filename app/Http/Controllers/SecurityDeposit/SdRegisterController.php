@@ -22,11 +22,20 @@ class SdRegisterController extends Controller
         private readonly ChargeHeadDefinitionService $chargeHeadDefinitionService,
     ) {}
 
-    public function index()
+    public function index(Request $request)
     {
+        $connectionId = $request->input('connection_id');
+        $group = $request->input('group');
+        $isSettled = $request->input('is_settled');
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
 
         $response = $this->connectionService->listConnectionWithActiveBalanceSummary(
-            connectionId: null,
+            connectionId: $connectionId,
+            group: $group,
+            isSettled: $isSettled,
+            dateFrom: $dateFrom,
+            dateTo: $dateTo,
             pageNumber: 1,
             pageSize: 10,
         );
@@ -42,8 +51,18 @@ class SdRegisterController extends Controller
             );
         }
 
+        $oldConnection = null;
+        if ($connectionId != null) {
+            $oldConnection = $this->connectionService->getConnection($connectionId)->data;
+        }
+
         return Inertia::render('SecurityDeposit/SdRegister/SdRegisterIndex', [
             'connections' => $paginated,
+            'oldConnection' => $oldConnection,
+            'oldGroup' => $group,
+            'oldIsSettled' => $isSettled,
+            'oldDateFrom' => $dateFrom,
+            'oldDateTo' => $dateTo,
         ]);
     }
 
