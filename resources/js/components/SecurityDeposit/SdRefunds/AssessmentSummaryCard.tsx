@@ -69,7 +69,9 @@ const AssessmentSummaryCard = ({
         {isCollectionCard && (
           <div className='flex justify-between'>
             <span className='text-kseb-primary font-medium'>ASD Required</span>
-            <span className='text-kseb-primary text-base font-bold'>₹ {collection}</span>
+            <span className='text-kseb-primary text-base font-bold'>
+              ₹ {balanceSummary.sd_principal_variance}
+            </span>
           </div>
         )}
       </div>
