@@ -80,6 +80,7 @@ const ConsumerSDIndex = ({ connections, oldConnections, triggerTypes }: Props) =
     if (selectedConnections.length === 0) return
     setShowAssessModal(true)
   }
+  console.log(connections)
   return (
     <MainLayout
       breadcrumb={breadCrumbs}
