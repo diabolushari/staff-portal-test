@@ -33,7 +33,6 @@ const ConnectionSdDemand = ({ connection, sdDemands, balanceSummary }: Props) =>
     ],
     [connection]
   )
-  console.log(sdDemands)
   return (
     <ConnectionsLayout
       connection={connection}
@@ -60,14 +59,7 @@ const ConnectionSdDemand = ({ connection, sdDemands, balanceSummary }: Props) =>
           />
         </div>
       )}
-      <div>
-        {sdDemands && (
-          <SdDemandList
-            sdDemands={sdDemands.data}
-            connection={connection}
-          />
-        )}
-      </div>
+      <div>{sdDemands && <SdDemandList sdDemands={sdDemands.data} />}</div>
       <div>{sdDemands && <Pagination pagination={sdDemands} />}</div>
     </ConnectionsLayout>
   )

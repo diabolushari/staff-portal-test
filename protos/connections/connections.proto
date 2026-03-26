@@ -23,6 +23,18 @@ import "securitydeposit/sd-balance-summary.proto";
 import "securitydeposit/sd-register.proto";
 
 
+message ConnectionBillingGroupMessage {
+  int64 version_id = 1;
+  int32 billing_group_id = 2;
+  string name = 3;
+  optional string description = 4;
+  string effective_start = 5;
+  optional string effective_end = 6;
+  bool is_active = 7;
+  optional int32 created_by = 8;
+  optional int32 updated_by = 9;
+}
+
 // Connection table
 message ConnectionMessage {
   int32 version_id = 1;
@@ -88,7 +100,7 @@ message ConnectionMessage {
   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto alternate_tariff = 61;
   repeated com.kseb.consumerservice.grpc.securitydeposit.SdBalanceSummaryMessage sd_balance_summary = 62;
   optional com.kseb.consumerservice.grpc.securitydeposit.SdRegisterMessage latest_sd_register = 63;
-
+  optional ConnectionBillingGroupMessage billing_group = 64;
 }
 
 
@@ -125,7 +137,6 @@ message CreateConnectionRequest {
   repeated int64 other_purposes = 30;
   repeated com.kseb.consumerservice.grpc.connections.ConnectionFlagFormRequest connection_flags = 31;
   repeated com.kseb.consumerservice.grpc.connections.ConnectionGenerationFormRequest connection_generation_types = 32;
-
 
 }
 
@@ -248,9 +259,13 @@ message ConnectionUpdateResponse {
 }
 
 message ConnectionSdBalanceSummaryListRequest {
- optional int32 connection_id = 1;
-  int32 page_number = 2;
-  int32 page_size = 3;
+  optional int32 connection_id = 1;
+  optional string group=2;
+  optional bool is_settled=3;
+  optional string date_from=4;
+  optional string date_to=5;
+  int32 page_number = 6;
+  int32 page_size = 7;
 }
 
 message ConnectionSdBalanceSummaryListResponse {

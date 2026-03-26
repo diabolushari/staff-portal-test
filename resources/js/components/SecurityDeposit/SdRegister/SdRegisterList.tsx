@@ -25,7 +25,9 @@ const SdRegisterList = ({ connections }: Props) => {
               <span>Legacy Code: {connection.consumer_legacy_code}</span>
             </div>
 
-            <span className='rounded bg-gray-200 px-3 py-1 text-xs font-medium'></span>
+            <span className='rounded bg-gray-200 px-3 py-1 text-xs font-medium'>
+              {connection.billing_group?.name}
+            </span>
           </div>
 
           <div className='bg-kseb-bg-blue grid grid-cols-4 items-center px-4 py-3 text-sm'>

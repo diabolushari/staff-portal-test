@@ -147,7 +147,7 @@ const ComboBox = <
               </button>
             )}
           </div>
-          {error != null && <div className='error-text'>{error}</div>}
+          {error != null && <ErrorText>{error}</ErrorText>}
         </div>
       )}
       {value == null && (

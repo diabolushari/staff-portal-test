@@ -10,6 +10,7 @@ import Datepicker from '@/ui/form/DatePicker'
 import { ChargeHeadDefinition } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import SelectList from '@/ui/form/SelectList'
+import { Button } from '@/components/ui/button'
 
 interface Props {
   connection: Connection
@@ -47,6 +48,9 @@ const SdRegisterListByConnection = ({
       ...formData,
     })
   )
+
+  const formDataExist =
+    formData.sd_type_id || formData.occupancy_type_id || formData.period_from || formData.period_to
   return (
     <>
       <div className='mr-auto flex font-semibold'>SD Register</div>
@@ -90,6 +94,19 @@ const SdRegisterListByConnection = ({
             />
           </div>
         </div>
+        {formDataExist && (
+          <Button
+            onClick={() => {
+              setFormValue('sd_type_id')('')
+              setFormValue('occupancy_type_id')('')
+              setFormValue('period_from')('')
+              setFormValue('period_to')('')
+            }}
+            variant={'link'}
+          >
+            Clear Filters
+          </Button>
+        )}
       </form>
       <Card className='rounded-2xl border bg-white p-5 shadow-sm'>
         <div className='space-y-4'>
@@ -110,6 +127,10 @@ const SdRegisterListByConnection = ({
                 onClick={() => {
                   setSelectedSdRegister(sd)
                   sheetAction(true)
+                  window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth',
+                  })
                 }}
               >
                 <span className='font-medium text-gray-700'>{getAssessmentYear(sd)}</span>

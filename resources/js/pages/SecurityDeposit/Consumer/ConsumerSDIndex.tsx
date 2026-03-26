@@ -80,6 +80,7 @@ const ConsumerSDIndex = ({ connections, oldConnections, triggerTypes }: Props) =
     if (selectedConnections.length === 0) return
     setShowAssessModal(true)
   }
+  console.log(connections)
   return (
     <MainLayout
       breadcrumb={breadCrumbs}
@@ -128,7 +129,9 @@ const ConsumerSDIndex = ({ connections, oldConnections, triggerTypes }: Props) =
                     <span>Legacy Code: {connection.consumer_legacy_code}</span>
                   </div>
 
-                  <span className='rounded bg-gray-200 px-3 py-1 text-xs font-medium'></span>
+                  <span className='rounded bg-gray-200 px-3 py-1 text-xs font-medium'>
+                    {connection.billing_group?.name}
+                  </span>
                 </div>
 
                 <div className='bg-kseb-bg-blue grid grid-cols-4 items-center px-4 py-3 text-sm'>
@@ -155,8 +158,11 @@ const ConsumerSDIndex = ({ connections, oldConnections, triggerTypes }: Props) =
                     <span
                       className={`font-semibold ${Number(connection?.sd_balance_summary?.[0]?.sd_principal_variance) < 0 ? 'text-green-500' : 'text-red-500'}`}
                     >
-                      {connection?.sd_balance_summary?.[0]?.sd_principal_variance
+                      {/* {connection?.sd_balance_summary?.[0]?.sd_principal_variance
                         ? `₹ ${Math.abs(Number(connection.sd_balance_summary[0].sd_principal_variance))}`
+                        : '-'} */}
+                      {connection?.sd_balance_summary?.[0]?.sd_principal_variance
+                        ? `₹ ${connection.sd_balance_summary[0].sd_principal_variance}`
                         : '-'}
                     </span>
                   </div>
@@ -199,6 +205,7 @@ const ConsumerSDIndex = ({ connections, oldConnections, triggerTypes }: Props) =
           setShowModal={setShowAssessModal}
           connection_ids={selectedConnections}
           triggerTypes={triggerTypes}
+          redirect='individual'
         />
       )}
       <Pagination pagination={connections} />

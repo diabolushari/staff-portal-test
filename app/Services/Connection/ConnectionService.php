@@ -348,12 +348,28 @@ class ConnectionService
     }
 
     public function listConnectionWithActiveBalanceSummary(?int $connectionId,
+        ?string $group,
+        ?bool $isSettled,
+        ?string $dateFrom,
+        ?string $dateTo,
         ?int $pageNumber = 1,
         ?int $pageSize = 10,
     ): GrpcServiceResponse {
         $grpcRequest = new ConnectionSdBalanceSummaryListRequest;
         if ($connectionId != null) {
             $grpcRequest->setConnectionId($connectionId);
+        }
+        if ($group != null) {
+            $grpcRequest->setGroup($group);
+        }
+        if ($isSettled != null) {
+            $grpcRequest->setIsSettled($isSettled);
+        }
+        if ($dateFrom != null) {
+            $grpcRequest->setDateFrom($dateFrom);
+        }
+        if ($dateTo != null) {
+            $grpcRequest->setDateTo($dateTo);
         }
         if ($pageNumber != null) {
             $grpcRequest->setPageNumber($pageNumber);

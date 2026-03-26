@@ -8,6 +8,7 @@ use App\GrpcConverters\SecurityDeposit\SdBalanceSummaryConverter;
 use App\GrpcConverters\SecurityDeposit\SdRegisterConverter;
 use App\Services\Connection\ConsumerService;
 use App\Services\Metering\MeterReadingService;
+use Proto\Connections\ConnectionBillingGroupMessage;
 use Proto\Connections\ConnectionMessage;
 
 class ConnectionProtoConverter
@@ -249,6 +250,21 @@ class ConnectionProtoConverter
             'alternate_tariff' => $connection->hasAlternateTariff() ? ParameterValueProtoConvertor::convertToArray($connection->getAlternateTariff()) : null,
             'sd_balance_summary' => $SdBalanceSummary,
             'latest_sd_register' => $connection->hasLatestSdRegister() ? SdRegisterConverter::convertToArray($connection->getLatestSdRegister()) : null,
+            'billing_group' => $connection->hasBillingGroup() ? self::billingGroupConverterForConnection($connection->getBillingGroup()) : null,
+        ];
+    }
+
+    public static function billingGroupConverterForConnection(ConnectionBillingGroupMessage $connectionBillingGroupMessage)
+    {
+        return [
+            'billing_group_id' => $connectionBillingGroupMessage->getBillingGroupId(),
+            'name' => $connectionBillingGroupMessage->getName(),
+            'version_id' => $connectionBillingGroupMessage->getVersionId(),
+            'description' => $connectionBillingGroupMessage->hasDescription() ? $connectionBillingGroupMessage->getDescription() : null,
+            'effective_end' => $connectionBillingGroupMessage->hasEffectiveEnd() ? $connectionBillingGroupMessage->getEffectiveEnd() : null,
+            'is_active' => $connectionBillingGroupMessage->getIsActive(),
+            'created_by' => $connectionBillingGroupMessage->hasCreatedBy() ? $connectionBillingGroupMessage->getCreatedBy() : null,
+            'updated_by' => $connectionBillingGroupMessage->hasUpdatedBy() ? $connectionBillingGroupMessage->getUpdatedBy() : null,
         ];
     }
 }

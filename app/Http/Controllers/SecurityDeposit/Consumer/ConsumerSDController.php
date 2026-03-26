@@ -28,6 +28,10 @@ class ConsumerSDController extends Controller
 
         $response = $this->connectionService->listConnectionWithActiveBalanceSummary(
             connectionId: $connectionId,
+            group: null,
+            isSettled: null,
+            dateFrom: null,
+            dateTo: null,
             pageNumber: $pageNumber,
             pageSize: $pageSize,
         );

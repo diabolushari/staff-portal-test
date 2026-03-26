@@ -18,7 +18,13 @@ const AssessmentSummaryCard = ({
   const diffAmount =
     Number(balanceSummary.sd_principal_on_file) - Number(sdRegister.sd_demand?.total_sd_amount)
 
-  const refund = diffAmount > 0 ? diffAmount : 0
+  let refund = 0
+  if (Number(balanceSummary.available_cash_balance) > diffAmount) {
+    refund = diffAmount > 0 ? diffAmount : 0
+  } else {
+    refund = Number(balanceSummary.available_cash_balance)
+  }
+
   const collection = diffAmount < 0 ? diffAmount : 0
 
   return (
@@ -63,7 +69,9 @@ const AssessmentSummaryCard = ({
         {isCollectionCard && (
           <div className='flex justify-between'>
             <span className='text-kseb-primary font-medium'>ASD Required</span>
-            <span className='text-kseb-primary text-base font-bold'>₹ {collection}</span>
+            <span className='text-kseb-primary text-base font-bold'>
+              ₹ {balanceSummary.sd_principal_variance}
+            </span>
           </div>
         )}
       </div>

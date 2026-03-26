@@ -213,6 +213,7 @@ export interface Connection {
   alternate_tariff?: ParameterValues
   sd_balance_summary?: SdBalanceSummary[]
   latest_sd_register?: SdRegister
+  billing_group?: BillingGroup
 }
 
 export interface ConnectionGreenEnergy {
@@ -942,6 +943,7 @@ export interface SdBalanceSummary {
   sd_principal_variance: string
   tds_deducted: string
   updated_by: number
+  available_cash_balance: string
 }
 export interface GeneratingStationAttribute {
   attribute_id: number | null

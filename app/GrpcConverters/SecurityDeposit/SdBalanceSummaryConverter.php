@@ -33,6 +33,7 @@ class SdBalanceSummaryConverter
             'updated_by' => $sdBalanceSummary->getUpdatedBy(),
             'sd_demand' => $sdBalanceSummary->hasSdDemand() ? SdDemandConverter::convertToArray($sdBalanceSummary->getSdDemand()) : null,
             'sd_collection' => $sdBalanceSummary->hasSdCollection() ? SdCollectionConverter::convertToArray($sdBalanceSummary->getSdCollection()) : null,
+            'available_cash_balance' => $sdBalanceSummary->hasAvailableCashBalance() ? $sdBalanceSummary->getAvailableCashBalance() : null,
         ];
     }
 }

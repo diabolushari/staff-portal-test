@@ -1,17 +1,14 @@
-import ActionButton from '@/components/action-button'
-import { Connection, SdDemand } from '@/interfaces/data_interfaces'
 import StrongText from '@/typography/StrongText'
-import DeleteModal from '@/ui/Modal/DeleteModal'
-import { router } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
 import SdCollectionList from '../SdCollections/SdCollectionList'
+import { SdDemand } from '@/interfaces/data_interfaces'
+import DeleteModal from '@/ui/Modal/DeleteModal'
 
 interface Props {
   sdDemands: SdDemand[]
-  connection: Connection
 }
 
-const SdDemandList = ({ sdDemands, connection }: Props) => {
+const SdDemandList = ({ sdDemands }: Props) => {
   const [deleteItem, setDeleteItem] = useState<SdDemand | null>(null)
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
 
@@ -60,7 +57,7 @@ const SdDemandList = ({ sdDemands, connection }: Props) => {
                   </div>
                 </div>
 
-                <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
+                {/* <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
                   <div className='mt-2 flex items-center gap-3'>
                     <ActionButton
                       onDelete={() => {
@@ -70,7 +67,7 @@ const SdDemandList = ({ sdDemands, connection }: Props) => {
                       onEdit={() => router.get(route('sd-demands.edit', sdDemand.sd_demand_id))}
                     />
                   </div>
-                </div>
+                </div> */}
               </div>
               {/* <div className='flex justify-end p-4'>
                 <Button

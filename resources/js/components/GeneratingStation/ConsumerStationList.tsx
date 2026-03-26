@@ -1,6 +1,4 @@
-import ActionButton from '@/components/action-button'
 import DeleteModal from '@/ui/Modal/DeleteModal'
-import { router } from '@inertiajs/react'
 import { useState } from 'react'
 import { Cpu, Zap, Calendar, Hash, Factory, Eye } from 'lucide-react'
 import { getDisplayDate } from '@/utils'

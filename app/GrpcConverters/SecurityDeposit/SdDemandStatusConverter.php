@@ -2,6 +2,7 @@
 
 namespace App\GrpcConverters\SecurityDeposit;
 
+use App\GrpcConverters\ParameterValueProtoConvertor;
 use Proto\Consumers\SdDemandStatusMessage;
 
 class SdDemandStatusConverter
@@ -29,7 +30,7 @@ class SdDemandStatusConverter
             'created_by' => $sdDemandStatus->hasCreatedBy() ? $sdDemandStatus->getCreatedBy() : null,
             'updated_by' => $sdDemandStatus->hasUpdatedBy() ? $sdDemandStatus->getUpdatedBy() : null,
             'sd_collection' => $sdDemandStatus->hasSdCollection() ? SdCollectionConverter::convertToArray($sdDemandStatus->getSdCollection()) : null,
-            'status' => $sdDemandStatus->hasStatus() ? SdDemandStatusConverter::convertToArray($sdDemandStatus->getStatus()) : null,
+            'status' => $sdDemandStatus->hasStatus() ? ParameterValueProtoConvertor::convertToArray($sdDemandStatus->getStatus()) : null,
         ];
     }
 }

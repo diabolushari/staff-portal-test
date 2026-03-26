@@ -227,6 +227,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/generating-stations/{stationId}/transactions', [StationTransactionController::class, 'index'])
         ->name('generating-stations.transactions');
 
+    Route::get('/generating-stations/{stationId}/transactions', [StationTransactionController::class, 'index'])
+        ->name('generating-stations.transactions');
+
     Route::get('consumer-sd', ConsumerSDController::class)
         ->name('consumer-sd');
 
@@ -284,5 +287,5 @@ Route::get('settings-page', [SettingsDetailController::class, 'settingsDetail'])
 
 // pdf download
 Route::get('pdf-download/{billId}', [BillingPdfController::class, 'index'])->name('pdf-download');
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
