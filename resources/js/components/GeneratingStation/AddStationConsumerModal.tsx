@@ -1,14 +1,14 @@
 import useCustomForm from '@/hooks/useCustomForm'
 import useInertiaPost from '@/hooks/useInertiaPost'
 import { Connection, GeneratingStation } from '@/interfaces/data_interfaces'
+import ErrorText from '@/typography/ErrorText'
 import Modal from '@/ui/Modal/Modal'
-import Input from '@/ui/form/Input'
-import Datepicker from '@/ui/form/DatePicker'
-import SelectList from '@/ui/form/SelectList'
 import Button from '@/ui/button/Button'
+import ComboBox from '@/ui/form/ComboBox'
+import Datepicker from '@/ui/form/DatePicker'
+import Input from '@/ui/form/Input'
 import RadioGroup from '@/ui/form/RadioGroup'
 import { useCallback, useMemo, useState } from 'react'
-import ComboBox from '@/ui/form/ComboBox'
 
 interface Props {
   connection: Connection
@@ -16,7 +16,7 @@ interface Props {
   setShowModal: (show: boolean) => void
 }
 
-export default function AddStationConsumerModal({ connection, stations, setShowModal }: Props) {
+export default function AddStationConsumerModal({ connection, setShowModal }: Props) {
   const [selectedStation, setSelectedStation] = useState<GeneratingStation | null>(null)
   const { formData, setFormValue } = useCustomForm({
     station_id: '',
@@ -76,6 +76,12 @@ export default function AddStationConsumerModal({ connection, stations, setShowM
         className='flex flex-col space-y-4'
       >
         <div className='flex flex-col gap-3'>
+          {errors?.consumer_connection_id != null && (
+            <ErrorText>{errors?.consumer_connection_id}</ErrorText>
+          )}
+          {errors?.consumer_priority_order != null && (
+            <ErrorText>{errors?.consumer_priority_order}</ErrorText>
+          )}
           <div className='flex items-center gap-6'>
             <RadioGroup
               label='Purpose'
@@ -97,6 +103,7 @@ export default function AddStationConsumerModal({ connection, stations, setShowM
             displayKey='station_name'
             displayValue2='station_code'
             placeholder='Search Station'
+            error={errors?.station_id || errors?.station_connection_id}
           />
 
           {/* Priority */}

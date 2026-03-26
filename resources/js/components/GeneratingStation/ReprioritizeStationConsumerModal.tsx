@@ -18,7 +18,7 @@ export default function ReprioritizeStationConsumerModal({
   isconsumerPriority,
 }: Props) {
   const { formData, setFormValue } = useCustomForm({
-    version_id: relation.version_id,
+    rel_id: relation.rel_id,
     station_connection_id: relation.station_connection_id,
     consumer_priority_order: relation.consumer_priority_order ?? '',
     station_priority_order: relation.station_priority_order ?? '',
@@ -27,7 +27,7 @@ export default function ReprioritizeStationConsumerModal({
     _method: 'PUT',
   })
 
-  const { post, loading } = useInertiaPost(`/station-consumer-rels/${relation.version_id}`, {
+  const { post, loading } = useInertiaPost(`/station-consumer-rels/${relation.rel_id}`, {
     onComplete: () => {
       setShowModal(false)
     },

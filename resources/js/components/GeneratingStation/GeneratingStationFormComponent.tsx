@@ -78,6 +78,28 @@ const GeneratingStationForm = ({
     setSelectedGenerationType(selected ?? null)
   }, [formData.generation_type_id])
 
+  const selectedPlantType = useMemo(() => {
+    return plantTypes.find((p) => String(p.id) === formData.plant_type_id)
+  }, [formData.plant_type_id, plantTypes])
+
+  const isProsumer = selectedPlantType?.parameter_value === 'Prosumer'
+
+  useEffect(() => {
+    if (!isProsumer) {
+      setSelectedConnection(null)
+      setFormValue('connection_id')('')
+    }
+  }, [isProsumer])
+  useEffect(() => {
+    if (formData.plant_type_id) return
+
+    const prosumer = plantTypes.find((p) => p.parameter_value === 'Prosumer')
+
+    if (prosumer) {
+      setFormValue('plant_type_id')(String(prosumer.id))
+    }
+  }, [plantTypes])
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     post(customFormData)
@@ -89,10 +111,37 @@ const GeneratingStationForm = ({
         onSubmit={handleSubmit}
         className='flex flex-col gap-4'
       >
-        <FormCard title='Basic Information'>
+        <FormCard title='Plant Information'>
+          <div className='flex flex-col gap-2'>
+            <label className='text-sm font-medium'>
+              Plant Type <span className='text-red-500'></span>
+            </label>
+
+            <div className='flex flex-wrap gap-4'>
+              {plantTypes.map((type) => (
+                <label
+                  key={type.id}
+                  className='flex cursor-pointer items-center gap-2'
+                >
+                  <input
+                    type='radio'
+                    name='plant_type_id'
+                    value={type.id}
+                    checked={formData.plant_type_id === String(type.id)}
+                    onChange={() => setFormValue('plant_type_id')(String(type.id))}
+                  />
+                  <span>{type.parameter_value}</span>
+                </label>
+              ))}
+            </div>
+
+            {errors.plant_type_id && (
+              <span className='text-sm text-red-500'>{errors.plant_type_id}</span>
+            )}
+          </div>
           {/* Connection ComboBox */}
           <ComboBox
-            label='Connection'
+            label='Consumer Number'
             url={`/api/consumer-number?q=`}
             setValue={setSelectedConnection}
             value={selectedConnection}
@@ -100,6 +149,7 @@ const GeneratingStationForm = ({
             displayKey='consumer_number'
             displayValue2='consumer_legacy_code'
             placeholder='Search Connection'
+            disabled={!isProsumer}
           />
 
           <Input
@@ -128,7 +178,16 @@ const GeneratingStationForm = ({
             attributeData={attributeData}
             setAttributeData={setAttributeData}
           />
-
+        </FormCard>
+        <FormCard title='Plant Properties'>
+          <Input
+            type='number'
+            label='Installed Capacity'
+            value={formData.installed_capacity}
+            setValue={setFormValue('installed_capacity')}
+            error={errors.installed_capacity}
+            required
+          />
           <SelectList
             label='Voltage Category'
             list={voltageCategories}
@@ -139,17 +198,15 @@ const GeneratingStationForm = ({
             error={errors.voltage_category_id}
             required
           />
-
-          <SelectList
-            label='Plant Type'
-            list={plantTypes}
-            dataKey='id'
-            displayKey='parameter_value'
-            value={formData.plant_type_id}
-            setValue={setFormValue('plant_type_id')}
-            error={errors.plant_type_id}
+          <Datepicker
+            label='Commissioning Date'
+            value={formData.commissioning_date}
+            setValue={setFormValue('commissioning_date')}
+            error={errors.commissioning_date}
+            placeholder='Select Commissioning Date'
             required
           />
+
           <SelectList
             label='Generation Status'
             list={generationStatus}
@@ -160,25 +217,8 @@ const GeneratingStationForm = ({
             error={errors.generation_status_id}
             required
           />
-          <Input
-            type='number'
-            label='Installed Capacity'
-            value={formData.installed_capacity}
-            setValue={setFormValue('installed_capacity')}
-            error={errors.installed_capacity}
-            required
-          />
-
-          <Datepicker
-            label='Commissioning Date'
-            value={formData.commissioning_date}
-            setValue={setFormValue('commissioning_date')}
-            error={errors.commissioning_date}
-            placeholder='Select Commissioning Date'
-            required
-          />
         </FormCard>
-        <FormCard title='Address'>
+        <FormCard title='StationAddress'>
           <Input
             label='Address Line 1'
             value={formData.address_line1}

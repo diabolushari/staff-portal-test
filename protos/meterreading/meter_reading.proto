@@ -236,6 +236,7 @@ message MeterReadingValueGroupMessage {
   repeated ReadingValueMessage values = 2;
   MeterReadingMessage reading = 3;
   optional com.kseb.consumerservice.proto.metering.MeterConnectionMappingResponse current_meter_connection_mapping = 4;
+  bool is_first_reading = 5;
 }
 message LatestMeterReadingGroupByMeterResponse {
   repeated MeterReadingValueGroupMessage meter_reading_value_groups = 1;

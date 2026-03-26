@@ -677,6 +677,7 @@ export interface MeterReadingValueGroup {
   values?: MeterReadingValue[]
   reading?: MeterReading
   current_meter_connection_mapping?: MeterConnectionMapping | null
+  is_first_reading: boolean
 }
 
 export interface BillingGroup {
@@ -978,6 +979,20 @@ export interface GeneratingStation {
   plant_type?: ParameterValues
   address?: Address
   attributes: GeneratingStationAttribute[]
+  unit_bank_summaries?: UnitBankSummary[]
+}
+
+export interface UnitBankSummary {
+  summary_id: number
+  station_id: number
+  station_connection_id: number
+  timezone_id: number
+  bill_year_month: number
+  closing_balance: number
+  last_txn_id: number
+  processing_run_id: string
+  is_active: boolean
+  timezone?: ParameterValues
 }
 
 export interface StationConsumerRel {
@@ -1039,7 +1054,7 @@ export interface StationTransaction {
 
   source_txn_id?: number
 
-  meter_reading_value_id?: number
+  meter_reading_id?: number
   rel_version_id?: number
 
   txn_date?: string

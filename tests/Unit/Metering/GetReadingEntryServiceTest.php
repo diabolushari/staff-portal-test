@@ -46,6 +46,7 @@ it('includes the current meter connection mapping without changing reading entry
             ->setMeterId(11)
             ->setIsCurrent(true)
     );
+    $valueGroup->setIsFirstReading(true);
 
     $response = new GetReadingEntryDataResponse;
     $response->setMeterReadingValueGroups([$valueGroup]);
@@ -56,6 +57,7 @@ it('includes the current meter connection mapping without changing reading entry
     expect($convertedValueGroup['meter']['meter_id'])->toBe(11)
         ->and($convertedValueGroup['current_meter_connection_mapping']['rel_id'])->toBe(55)
         ->and($convertedValueGroup['current_meter_connection_mapping']['is_current'])->toBeTrue()
+        ->and($convertedValueGroup['is_first_reading'])->toBeTrue()
         ->and($convertedValueGroup['values'])->toHaveCount(1)
         ->and($convertedValueGroup['values'][0]['initial'])->toBe(12.5)
         ->and(array_key_exists('initial_reading', $convertedValueGroup['values'][0]))->toBeFalse();

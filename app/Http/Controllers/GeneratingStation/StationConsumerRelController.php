@@ -50,7 +50,7 @@ class StationConsumerRelController extends Controller
     {
         $stationId = $request->input('stationId');
         $stationConnectionId = $request->input('stationConnectionId');
-
+        $openSheet = $request->input('openSheet', false);
         $stationConnection = $this->connectionService->getConnection($stationConnectionId)->data;
 
         $consumerTypes = $this->parameterValueService
@@ -68,6 +68,7 @@ class StationConsumerRelController extends Controller
                 'connection' => $stationConnection,
                 'consumerTypes' => $consumerTypes,
                 'stations' => $stations,
+                'openSheet' => $openSheet ? true : false,
             ]
         );
     }
@@ -93,10 +94,10 @@ class StationConsumerRelController extends Controller
     /**
      * Update priority order
      */
-    public function update(Request $request, int $versionId): RedirectResponse
+    public function update(Request $request, int $relId): RedirectResponse
     {
         $response = $this->stationConsumerRelService->updatePriority(
-            $versionId,
+            $relId,
             $request->station_connection_id,
             $request->consumer_priority_order ?? null,
             $request->station_priority_order ?? null,
@@ -113,6 +114,8 @@ class StationConsumerRelController extends Controller
         return redirect()->back()
             ->with('message', 'Priority updated successfully');
     }
+
+
 
     /**
      * Deactivate relation

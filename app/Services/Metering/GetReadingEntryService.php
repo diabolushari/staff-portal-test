@@ -81,6 +81,7 @@ class GetReadingEntryService
                 'current_meter_connection_mapping' => $currentMeterConnectionMapping !== null
                     ? MeterConnectionMappingConverter::meterConnectionMappingProtoToArray($currentMeterConnectionMapping)
                     : null,
+                'is_first_reading' => $meterReadingValueGroup->getIsFirstReading(),
             ];
         }
         $meterConnectionMappings = $response->getMeterConnectionMappings();

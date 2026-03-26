@@ -33,6 +33,7 @@ it('includes the current meter connection mapping when converting a meter readin
             ->setMeterId(11)
             ->setIsCurrent(true)
     );
+    $valueGroup->setIsFirstReading(true);
 
     $result = MeterReadingConverter::meterReadingValueGroupToArray($valueGroup);
 
@@ -41,7 +42,8 @@ it('includes the current meter connection mapping when converting a meter readin
         ->and($result['values'])->toHaveCount(1)
         ->and($result['current_meter_connection_mapping'])->not->toBeNull()
         ->and($result['current_meter_connection_mapping']['rel_id'])->toBe(77)
-        ->and($result['current_meter_connection_mapping']['is_current'])->toBeTrue();
+        ->and($result['current_meter_connection_mapping']['is_current'])->toBeTrue()
+        ->and($result['is_first_reading'])->toBeTrue();
 });
 
 it('returns a null meter connection mapping when the proto field is not set', function () {
@@ -54,7 +56,8 @@ it('returns a null meter connection mapping when the proto field is not set', fu
 
     $result = MeterReadingConverter::meterReadingValueGroupToArray($valueGroup);
 
-    expect($result['current_meter_connection_mapping'])->toBeNull();
+    expect($result['current_meter_connection_mapping'])->toBeNull()
+        ->and($result['is_first_reading'])->toBeFalse();
 });
 
 it('includes is billable when the proto field is set', function () {

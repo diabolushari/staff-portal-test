@@ -1,3 +1,4 @@
+
 syntax = "proto3";
 
 package com.kseb.consumerservice.proto.generatingstation;
@@ -5,6 +6,7 @@ package com.kseb.consumerservice.proto.generatingstation;
 
 option php_namespace = "Proto\\GeneratingStation";
 option php_metadata_namespace = "GPBMetadata";
+
 
 import "connections/connections.proto";
 import "parameters/parameter-value.proto";
@@ -44,6 +46,8 @@ message StationConsumerRelMessage {
 
   optional com.kseb.consumerservice.proto.parameters.ParameterValueProto
       consumer_type = 18;
+
+  
 }
 
 
@@ -66,7 +70,7 @@ message CreateStationConsumerRelResponse {
 
 message UpdateStationConsumerRelPriorityRequest {
 
-  int32 version_id = 1;
+  int32 rel_id = 1;
 
   optional int32 station_connection_id = 2;
   optional int32 consumer_type_id = 3;

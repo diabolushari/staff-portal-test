@@ -67,10 +67,21 @@ export const consumerNavItems: MainNav = {
       href: '/parties',
       icon: '',
     },
+    // {
+    //   title: 'Generating Stations',
+    //   href: '/generating-stations',
+    //   icon: '',
+    // },
     {
       title: 'Generating Stations',
       href: '/generating-stations',
       icon: '',
+      children: [
+        {
+          title: 'Generating Stations',
+          href: '/generating-stations',
+        },
+      ],
     },
   ],
 }
