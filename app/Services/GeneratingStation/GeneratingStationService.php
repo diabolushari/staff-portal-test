@@ -33,7 +33,7 @@ class GeneratingStationService
     public function listPaginatedGeneratingStations(
         ?int $page = 1,
         ?int $pageSize = 10,
-        ?string $search = null
+        array $filters = []
     ): GrpcServiceResponse {
 
         $req = new ListGeneratingStationPaginatedRequest();
@@ -46,9 +46,38 @@ class GeneratingStationService
             $req->setPageSize($pageSize);
         }
 
-        if ($search !== null) {
-            $req->setStationName($search);
+        if (!empty($filters['station_name'])) {
+            $req->setStationName($filters['station_name']);
         }
+
+        if (!empty($filters['consumer_number'])) {
+            $req->setConsumerNumber($filters['consumer_number']);
+        }
+
+        if (!empty($filters['generation_type_id'])) {
+            $req->setGenerationTypeId((int)$filters['generation_type_id']);
+        }
+
+        if (!empty($filters['voltage_category_id'])) {
+            $req->setVoltageCategoryId((int)$filters['voltage_category_id']);
+        }
+
+        if (!empty($filters['plant_type_id'])) {
+            $req->setPlantTypeId((int)$filters['plant_type_id']);
+        }
+
+        if (!empty($filters['generation_status_id'])) {
+            $req->setGenerationStatusId((int)$filters['generation_status_id']);
+        }
+
+        if (!empty($filters['date_from'])) {
+            $req->setDateFrom($filters['date_from']);
+        }
+
+        if (!empty($filters['date_to'])) {
+            $req->setDateTo($filters['date_to']);
+        }
+
 
         [$response, $status] =
             $this->client->ListGeneratingStationPaginated($req)->wait();

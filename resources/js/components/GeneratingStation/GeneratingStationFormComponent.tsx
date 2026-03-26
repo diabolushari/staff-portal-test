@@ -148,7 +148,7 @@ const GeneratingStationForm = ({
             dataKey='connection_id'
             displayKey='consumer_number'
             displayValue2='consumer_legacy_code'
-            placeholder='Search Connection'
+            placeholder='Search Consumer Number'
             disabled={!isProsumer}
           />
 
