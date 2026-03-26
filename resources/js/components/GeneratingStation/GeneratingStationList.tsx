@@ -51,22 +51,29 @@ export default function GeneratingStationList({ stations }: Props) {
                   </div>
 
                   <div className='flex items-center gap-1'>
-                    <Cpu className='h-3.5 w-3.5 text-gray-500' />
+                    <Hash className='h-3.5 w-3.5 text-gray-500' />
                     <span className='text-sm text-gray-600'>
-                      Plant Type: {station.plant_type?.parameter_value ?? '-'}
+                      Consumer Number: {station.connection?.consumer_number ?? '-'}
                     </span>
                   </div>
 
                   <div className='flex items-center gap-1'>
-                    <Zap className='h-3.5 w-3.5 text-gray-500' />
+                    <Cpu className='h-3.5 w-3.5 text-gray-500' />
                     <span className='text-sm text-gray-600'>
-                      Voltage: {station.voltage_category?.parameter_value ?? '-'}
+                      Plant Type: {station.plant_type?.parameter_value ?? '-'}
                     </span>
                   </div>
                 </div>
 
                 {/* Row 2 */}
                 <div className='flex flex-wrap gap-5'>
+                  <div className='flex items-center gap-1'>
+                    <Zap className='h-3.5 w-3.5 text-gray-500' />
+                    <span className='text-sm text-gray-600'>
+                      Voltage: {station.voltage_category?.parameter_value ?? '-'}
+                    </span>
+                  </div>
+
                   <div className='flex items-center gap-1'>
                     <Zap className='h-3.5 w-3.5 text-gray-500' />
                     <span className='text-sm text-gray-600'>
@@ -104,12 +111,12 @@ export default function GeneratingStationList({ stations }: Props) {
                 </div>
 
                 {/* Actions */}
-                <div onClick={(e) => e.stopPropagation()}>
+                {/* <div onClick={(e) => e.stopPropagation()}>
                   <ActionButton
-                  // onEdit={() => router.get(`/generating-stations/${station.station_id}/edit`)}
-                  // onDelete={() => handleDeleteClick(station)}
+                  onEdit={() => router.get(`/generating-stations/${station.station_id}/edit`)}
+                  onDelete={() => handleDeleteClick(station)}
                   />
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

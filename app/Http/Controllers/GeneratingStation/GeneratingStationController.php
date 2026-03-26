@@ -24,12 +24,22 @@ class GeneratingStationController extends Controller
 
     public function index(Request $request): Response
     {
-        $search = $request->input('search') ?? null;
+        $filters = [
+            'station_name' => $request->input('station_name'),
+            'consumer_number' => $request->input('consumer_number'),
+            'generation_type_id' => $request->input('generation_type_id'),
+            'voltage_category_id' => $request->input('voltage_category_id'),
+            'plant_type_id' => $request->input('plant_type_id'),
+            'generation_status_id' => $request->input('generation_status_id'),
+            'date_from' => $request->input('date_from'),
+            'date_to' => $request->input('date_to'),
+        ];
+
         $pageNumber = $request->input('page') ?? 1;
         $pageSize = $request->input('page_size') ?? 10;
 
         $response = $this->generatingStationService
-            ->listPaginatedGeneratingStations($pageNumber, $pageSize, $search);
+            ->listPaginatedGeneratingStations($pageNumber, $pageSize, $filters);
 
         $paginated = null;
 
@@ -42,21 +52,42 @@ class GeneratingStationController extends Controller
                 ['path' => request()->url()]
             );
         }
+          $generationStatus = $this->parameterValueService
+            ->getParameterValues(null, null, null, 'Station', 'Generation Status')->data;
+
+        $generationTypes = $this->parameterValueService
+            ->getParameterValues(null, null, null, 'Station', 'Generation Type')->data;
+
+        $voltageCategories = $this->parameterValueService
+            ->getParameterValues(null, null, null, 'Station', 'Voltage Category')->data;
+
+        $plantTypes = $this->parameterValueService
+            ->getParameterValues(null, null, null, 'Station', 'Plant Type')->data;
+
 
         return Inertia::render('GeneratingStation/GeneratingStationIndex', [
             'generatingStations' => $paginated ?? [],
-            'filters' => [
-                'search' => $search,
-            ],
+            'filters' => $filters,
+            'generationTypes' => $generationTypes,
+            'voltageCategories' => $voltageCategories,
+            'plantTypes' => $plantTypes,
+            'generationStatuses' => $generationStatus,
+
         ]);
 
-        $response = $this->generatingStationService
-            ->listGeneratingStations($search);
+
+        // $response = $this->generatingStationService
+        //     ->listGeneratingStations($search);
 
         return Inertia::render('GeneratingStation/GeneratingStationIndex', [
             'generatingStations' => $response->data ?? [],
             'filters' => ['search' => $search],
+            'generationTypes' => $generationTypes,
+            'voltageCategories' => $voltageCategories,
+            'plantTypes' => $plantTypes,
+            'generationStatuses' => $generationStatus,
         ]);
+
     }
     /**
      * Show create form
