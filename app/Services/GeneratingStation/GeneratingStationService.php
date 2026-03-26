@@ -230,10 +230,27 @@ class GeneratingStationService
         );
     }
 
-   public function listStationTransactions(int $stationId): GrpcServiceResponse
+   public function listStationTransactions(int $stationId, array $filters = []): GrpcServiceResponse
     {
         $req = new ListStationTransactionsRequest();
         $req->setStationId($stationId);
+
+          if (!empty($filters['transaction_type_id'])) {
+            $req->setTransactionTypeId((int)$filters['transaction_type_id']);
+        }
+
+        if (!empty($filters['consumer_number'])) {
+            $req->setConsumerNumber($filters['consumer_number']);
+        }
+
+        if (!empty($filters['date_from'])) {
+            $req->setDateFrom($filters['date_from']);
+        }
+
+        if (!empty($filters['date_to'])) {
+            $req->setDateTo($filters['date_to']);
+        }
+
 
         [$response, $status] =
             $this->client->ListStationTransactions($req)->wait();

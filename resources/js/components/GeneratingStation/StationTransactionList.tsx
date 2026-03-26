@@ -6,15 +6,31 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import StationTransactionSearch from './StationTransactionSearch'
 import { StationTransaction } from '@/interfaces/data_interfaces'
+import { ParameterValues } from '@/interfaces/parameter_types'
 import { tr } from 'date-fns/locale'
 import dayjs from 'dayjs'
 
 interface Props {
   transactions: StationTransaction[]
+  filters: StationTransactionFilters
+  transactionTypes: ParameterValues[]
+  stationId: number
+}
+interface StationTransactionFilters {
+  transaction_type_id?: string
+  consumer_number?: string
+  date_from?: string
+  date_to?: string
 }
 
-export default function StationTransactionTable({ transactions }: Props) {
+export default function StationTransactionTable({
+  transactions,
+  filters,
+  transactionTypes,
+  stationId,
+}: Props) {
   if (!transactions || transactions.length === 0) {
     return (
       <div className='flex h-full items-center justify-center text-gray-500'>
@@ -54,22 +70,26 @@ export default function StationTransactionTable({ transactions }: Props) {
           <div className='text-xl font-bold'>{adjustedUnits.toLocaleString()}</div>
         </div>
       </div>
+      <StationTransactionSearch
+        filters={filters}
+        transactionTypes={transactionTypes}
+        stationId={stationId}
+      />
 
       {/* Transaction Table */}
       <Table>
-        <TableHeader>
+        <TableHeader className='bg-gray-100'>
           <TableRow>
-            <TableHead>Date</TableHead>
-            <TableHead>Transaction Type</TableHead>
-            <TableHead>Adjusted To</TableHead>
-            <TableHead>Source Zone</TableHead>
-
-            <TableHead>Target Zone</TableHead>
-            <TableHead>Direction</TableHead>
-            <TableHead>Adjusted Units</TableHead>
-            <TableHead>Conversion Factor</TableHead>
-            {/* <TableHead>Txn Units</TableHead>
-            <TableHead>Unit Balance</TableHead> */}
+            <TableHead className='font-semibold text-blue-700'>Date</TableHead>
+            <TableHead className='font-semibold text-blue-700'>Transaction Type</TableHead>
+            <TableHead className='font-semibold text-blue-700'>Adjusted To</TableHead>
+            <TableHead className='font-semibold text-blue-700'>Source Zone</TableHead>
+            <TableHead className='font-semibold text-blue-700'>Target Zone</TableHead>
+            <TableHead className='font-semibold text-blue-700'>Direction</TableHead>
+            <TableHead className='font-semibold text-blue-700'>Adjusted Units</TableHead>
+            <TableHead className='font-semibold text-blue-700'>Conversion Factor</TableHead>
+            <TableHead className='font-semibold text-blue-700'>Banked Units</TableHead>
+            <TableHead className='font-semibold text-blue-700'>Transaction Group Ref</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -88,20 +108,34 @@ export default function StationTransactionTable({ transactions }: Props) {
 
             return (
               <TableRow key={txn.txn_id}>
-                <TableCell>
+                <TableCell className='py-3 text-gray-700'>
                   {txn.txn_date ? dayjs(txn.txn_date).format('MMM DD, YYYY') : '-'}
                 </TableCell>
 
-                <TableCell>{txn.txn_type?.parameter_value ?? '-'}</TableCell>
+                <TableCell className='py-3 text-gray-700'>
+                  {txn.txn_type?.parameter_value ?? '-'}
+                </TableCell>
 
-                <TableCell>{txn.consumer_connection?.consumer_number ?? '-'}</TableCell>
+                <TableCell className='py-3 text-gray-700'>
+                  {txn.consumer_connection?.consumer_number ?? '-'}
+                </TableCell>
 
-                <TableCell>{sourceZone ?? '-'}</TableCell>
-                <TableCell>{targetZone ?? '-'}</TableCell>
+                <TableCell className='py-3 text-gray-700'>
+                  <span className='rounded-full bg-gray-100 px-2 py-1 text-xs'>
+                    {sourceZone ?? '-'}
+                  </span>
+                </TableCell>
+                <TableCell className='py-3 text-gray-700'>
+                  <span className='rounded-full bg-gray-100 px-2 py-1 text-xs'>
+                    {targetZone ?? '-'}
+                  </span>
+                </TableCell>
 
-                <TableCell>{direction === 'C' ? 'C' : 'D'}</TableCell>
+                <TableCell className='py-3 text-gray-700'>
+                  {direction === 'C' ? 'C' : 'D'}
+                </TableCell>
 
-                <TableCell>
+                <TableCell className='py-3 text-gray-700'>
                   {(() => {
                     //const isGen = txn.txn_type?.parameter_code === 'GEN_CREDIT'
                     // const value = isGen ? txn.txn_units : txn.pre_conversion_units
@@ -135,7 +169,11 @@ export default function StationTransactionTable({ transactions }: Props) {
                   })()}
                 </TableCell>
 
-                <TableCell>{txn.conversion_factor ?? '-'}</TableCell>
+                <TableCell className='py-3 text-gray-700'>{txn.conversion_factor ?? '-'}</TableCell>
+                <TableCell className='py-3 font-medium text-gray-700'>
+                  {txn.unit_balance != null ? txn.unit_balance : '-'}
+                </TableCell>
+                <TableCell className='py-3 text-gray-700'>{txn.txn_group_ref ?? '-'}</TableCell>
               </TableRow>
             )
           })}
