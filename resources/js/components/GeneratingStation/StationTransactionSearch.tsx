@@ -6,11 +6,11 @@ import Datepicker from '@/ui/form/DatePicker'
 import Button from '@/ui/button/Button'
 import { ParameterValues } from '@/interfaces/parameter_types'
 
-interface StationTransactionFilters {
-  transaction_type_id?: string
-  consumer_number?: string
-  date_from?: string
-  date_to?: string
+export interface StationTransactionFilters {
+  transaction_type_id?: string | null
+  consumer_number?: string | null
+  date_from?: string | null
+  date_to?: string | null
 }
 
 interface Props {
