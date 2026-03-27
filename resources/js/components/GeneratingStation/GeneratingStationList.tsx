@@ -50,12 +50,14 @@ export default function GeneratingStationList({ stations }: Props) {
                     </span>
                   </div>
 
-                  <div className='flex items-center gap-1'>
-                    <Hash className='h-3.5 w-3.5 text-gray-500' />
-                    <span className='text-sm text-gray-600'>
-                      Consumer Number: {station.connection?.consumer_number ?? '-'}
-                    </span>
-                  </div>
+                  {station.connection?.consumer_number && (
+                    <div className='flex items-center gap-1'>
+                      <Hash className='h-3.5 w-3.5 text-gray-500' />
+                      <span className='text-sm text-gray-600'>
+                        Consumer Number: {station.connection.consumer_number}
+                      </span>
+                    </div>
+                  )}
 
                   <div className='flex items-center gap-1'>
                     <Cpu className='h-3.5 w-3.5 text-gray-500' />

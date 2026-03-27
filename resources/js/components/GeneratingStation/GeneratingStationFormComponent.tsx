@@ -61,7 +61,7 @@ const GeneratingStationForm = ({
   const customFormData = useMemo(() => {
     return {
       ...formData,
-      connection_id: selectedConnection?.connection_id.toString() ?? '',
+      connection_id: selectedConnection?.connection_id ?? null,
       attributeData: attributeData?.map((attr) => ({
         attribute_definition_id: attr.attribute_definition_id,
         attribute_value: attr.attribute_value,

@@ -7,22 +7,17 @@ import { Paginator } from '@/ui/ui_interfaces'
 import GeneratingStationList from '@/components/GeneratingStation/GeneratingStationList'
 import GeneratingStationIndexSearch from '@/components/GeneratingStation/GeneratingStationIndexSearch'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import { GeneratingStation } from '@/interfaces/data_interfaces'
 
-interface GeneratingStation {
-  station_id: number
-  station_name: string
-  installed_capacity: number
-}
-
-interface Filters {
-  station_name?: string
-  consumer_number?: string
-  generation_type_id?: string
-  voltage_category_id?: string
-  plant_type_id?: string
-  generation_status_id?: string
-  date_from?: string
-  date_to?: string
+export interface Filters {
+  station_name?: string | null
+  consumer_number?: string | null
+  generation_type_id?: string | null
+  voltage_category_id?: string | null
+  plant_type_id?: string | null
+  generation_status_id?: string | null
+  date_from?: string | null
+  date_to?: string | null
 }
 
 interface PageProps {

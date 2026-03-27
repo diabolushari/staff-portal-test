@@ -75,19 +75,6 @@ class GeneratingStationController extends Controller
 
         ]);
 
-
-        // $response = $this->generatingStationService
-        //     ->listGeneratingStations($search);
-
-        return Inertia::render('GeneratingStation/GeneratingStationIndex', [
-            'generatingStations' => $response->data ?? [],
-            'filters' => ['search' => $search],
-            'generationTypes' => $generationTypes,
-            'voltageCategories' => $voltageCategories,
-            'plantTypes' => $plantTypes,
-            'generationStatuses' => $generationStatus,
-        ]);
-
     }
     /**
      * Show create form
