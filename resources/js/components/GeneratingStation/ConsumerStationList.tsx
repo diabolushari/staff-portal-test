@@ -123,12 +123,14 @@ export default function ConsumerStationList({ relations, onViewBalance }: Props)
                       Active From: {rel.effective_start ? getDisplayDate(rel.effective_start) : '-'}
                     </span>
                   </div>
-                  <div className='flex items-center gap-1'>
-                    <Calendar className='h-3.5 w-3.5 text-gray-500' />
-                    <span className='text-sm text-gray-600'>
-                      Active To: {rel.effective_end ? getDisplayDate(rel.effective_end) : '-'}
-                    </span>
-                  </div>
+                  {rel.effective_end && (
+                    <div className='flex items-center gap-1'>
+                      <Calendar className='h-3.5 w-3.5 text-gray-500' />
+                      <span className='text-sm text-gray-600'>
+                        Active To: {getDisplayDate(rel.effective_end)}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
