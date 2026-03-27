@@ -5,6 +5,7 @@ import Button from '@/ui/button/Button'
 import SelectList from '@/ui/form/SelectList'
 import Datepicker from '@/ui/form/DatePicker'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import { Filters } from '@/pages/GeneratingStation/GeneratingStationIndex'
 
 interface Props {
   generationTypes: ParameterValues[]
@@ -12,7 +13,7 @@ interface Props {
   plantTypes: ParameterValues[]
   generationStatuses: ParameterValues[]
 
-  filters: any
+  filters: Filters
 }
 
 export default function GeneratingStationIndexSearch({

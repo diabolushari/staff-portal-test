@@ -324,7 +324,9 @@ class GeneratingStationService
 
         $msg = new GeneratingStationMessage();
 
-        $msg->setConnectionId($request->connectionId);
+        if (!is_null($request->connectionId)) { 
+            $msg->setConnectionId((int) $request->connectionId);
+        }
         $msg->setStationName($request->stationName);
         $msg->setGenerationStatusId($request->generationStatusId);
         $msg->setInstalledCapacity($request->installedCapacity);
