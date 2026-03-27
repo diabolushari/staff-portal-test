@@ -113,12 +113,15 @@ class GeneratingStationService
         );
     }
 
-    public function listGeneratingStations(?string $search = null): GrpcServiceResponse
+    public function listGeneratingStations(?string $search = null, ?int $consumerConnectionId = null): GrpcServiceResponse
     {
         $req = new ListGeneratingStationRequest();
 
         if ($search !== null) {
             $req->setSearch($search);
+        }
+        if ($consumerConnectionId !== null) {
+            $req->setConsumerConnectionId($consumerConnectionId);
         }
 
         [$response, $status] =
