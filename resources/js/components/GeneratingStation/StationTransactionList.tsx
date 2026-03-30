@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import StationTransactionSearch from './StationTransactionSearch'
+import StationTransactionSearch, { StationTransactionFilters } from './StationTransactionSearch'
 import { StationTransaction } from '@/interfaces/data_interfaces'
 import { ParameterValues } from '@/interfaces/parameter_types'
 import { tr } from 'date-fns/locale'
@@ -17,12 +17,6 @@ interface Props {
   filters: StationTransactionFilters
   transactionTypes: ParameterValues[]
   stationId: number
-}
-interface StationTransactionFilters {
-  transaction_type_id?: string
-  consumer_number?: string
-  date_from?: string
-  date_to?: string
 }
 
 export default function StationTransactionTable({

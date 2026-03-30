@@ -87,6 +87,7 @@ message DeleteGeneratingStationResponse {
 
 message ListGeneratingStationRequest {
  optional string search = 1;
+optional int32 consumer_connection_id = 2;
 }
 
 message ListGeneratingStationResponse {
