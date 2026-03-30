@@ -37,7 +37,7 @@ class StationConsumerRelConverter
             'effective_start' => $rel->getEffectiveStart(),
             'effective_end' => $rel->hasEffectiveEnd() ? $rel->getEffectiveEnd() : null,
 
-            'is_current' => $rel->getIsCurrent(),
+            'is_active' => $rel->getIsActive(),
 
             'created_by' => $rel->hasCreatedBy() ? $rel->getCreatedBy() : null,
             'updated_by' => $rel->hasUpdatedBy() ? $rel->getUpdatedBy() : null,

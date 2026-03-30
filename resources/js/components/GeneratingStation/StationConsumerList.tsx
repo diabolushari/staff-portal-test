@@ -90,13 +90,13 @@ export default function StationConsumerList({ relations }: Props) {
                 <div className='flex flex-col items-end gap-2 py-2.5 pr-2.5 pl-[15px]'>
                   <div
                     className={`rounded-[50px] px-2.5 py-px ${
-                      rel.is_current ? 'bg-green-100' : 'bg-gray-200'
+                      rel.is_active ? 'bg-green-100' : 'bg-gray-200'
                     }`}
                   >
                     <span
-                      className={`text-xs ${rel.is_current ? 'text-green-800' : 'text-gray-700'}`}
+                      className={`text-xs ${rel.is_active ? 'text-green-800' : 'text-gray-700'}`}
                     >
-                      {rel.is_current ? 'Active' : 'Inactive'}
+                      {rel.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </div>
 

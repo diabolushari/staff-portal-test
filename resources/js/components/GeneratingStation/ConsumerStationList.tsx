@@ -145,17 +145,15 @@ export default function ConsumerStationList({ relations, onViewBalance }: Props)
                 <div
                   className={`rounded-[50px] px-2.5 py-px ${
                     // rel.is_current ? 'bg-green-100' : 'bg-gray-200'
-                    rel.is_current
+                    rel.is_active
                       ? getPrimarySource.includes(rel)
                         ? 'bg-green-300 text-green-900'
                         : 'bg-green-100 text-green-800'
                       : 'bg-gray-200 text-gray-700'
                   }`}
                 >
-                  <span
-                    className={`text-xs ${rel.is_current ? 'text-green-800' : 'text-gray-700'}`}
-                  >
-                    {rel.is_current ? 'Active' : 'Inactive'}
+                  <span className={`text-xs ${rel.is_active ? 'text-green-800' : 'text-gray-700'}`}>
+                    {rel.is_active ? 'Active' : 'Inactive'}
                   </span>
                 </div>
 
