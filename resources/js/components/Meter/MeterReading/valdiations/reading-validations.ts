@@ -18,19 +18,19 @@ export const verifyFinalReadingDigits = (value: string, intDigits: number, decDi
 
 export function verifyApparentEnergy(
   timeZoneId: number,
-  parameterName: string,
+  selectedParameter: MeterProfileParameter,
   value: number,
   meterInfo: MeterWithTimezoneAndProfile,
   meterReadingValues: MeterReadingFormState[]
 ) {
-  console.log('value', value)
   const otherParameterName =
-    parameterName.toLowerCase() === CONSUMPTION_PARAMETER_NAME.toLowerCase()
+    selectedParameter.name.toLowerCase() === CONSUMPTION_PARAMETER_NAME.toLowerCase()
       ? DEMAND_PARAMETER_NAME.toLowerCase()
       : CONSUMPTION_PARAMETER_NAME.toLowerCase()
 
   const otherParameter = meterInfo.reading_parameters.find(
-    (p) => p.name?.toLowerCase() === otherParameterName
+    (p) =>
+      p.name?.toLowerCase() === otherParameterName && p.is_export === selectedParameter.is_export
   )
 
   if (otherParameter == null) {
@@ -65,7 +65,7 @@ export function verifyApparentEnergy(
     return true
   }
 
-  if (parameterName.toLowerCase() === CONSUMPTION_PARAMETER_NAME.toLowerCase()) {
+  if (selectedParameter.name.toLowerCase() === CONSUMPTION_PARAMETER_NAME.toLowerCase()) {
     return value <= Number(timezoneReading.values.diff)
   }
   return value >= Number(timezoneReading.values.diff)
@@ -131,7 +131,7 @@ export function compareAgainstOthers(
     if (
       !verifyApparentEnergy(
         reading.timezone_id,
-        selectedParameter.name,
+        selectedParameter,
         Number(reading.values.diff),
         selectedMeter,
         readingValues
