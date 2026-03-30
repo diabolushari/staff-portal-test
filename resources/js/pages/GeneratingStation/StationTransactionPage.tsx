@@ -5,19 +5,20 @@ import { GeneratingStation } from '@/interfaces/data_interfaces'
 import SingleTabGroup from '@/components/ui/single-tab'
 import StationTransactionList from '@/components/GeneratingStation/StationTransactionList'
 import { ParameterValues } from '@/interfaces/parameter_types'
+import { StationTransaction } from '@/interfaces/data_interfaces'
 
 interface Props {
-  transactions: any[]
+  transactions: StationTransaction[]
   stationId: number
   station: GeneratingStation
   filters: StationTransactionFilters
   transactionTypes: ParameterValues[]
 }
 interface StationTransactionFilters {
-  transaction_type_id?: string
-  consumer_number?: string
-  date_from?: string
-  date_to?: string
+  transaction_type_id?: string | null
+  consumer_number?: string | null
+  date_from?: string | null
+  date_to?: string | null
 }
 
 export default function StationTransactionPage({

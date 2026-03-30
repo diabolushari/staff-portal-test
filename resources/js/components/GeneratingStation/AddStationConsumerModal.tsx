@@ -8,7 +8,7 @@ import ComboBox from '@/ui/form/ComboBox'
 import Datepicker from '@/ui/form/DatePicker'
 import Input from '@/ui/form/Input'
 import RadioGroup from '@/ui/form/RadioGroup'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 interface Props {
   connection: Connection
@@ -39,6 +39,14 @@ export default function AddStationConsumerModal({ connection, setShowModal }: Pr
   const tomorrowDate = new Date()
   tomorrowDate.setDate(tomorrowDate.getDate() + 1)
   const tomorrow = tomorrowDate.toISOString().split('T')[0]
+
+  useEffect(() => {
+    if (formData.purpose_type === '1') {
+      setFormValue('effective_start')(today)
+    } else {
+      setFormValue('effective_start')(tomorrow)
+    }
+  }, [formData.purpose_type])
 
   const onComplete = useCallback(() => {
     setShowModal(false)
@@ -96,7 +104,7 @@ export default function AddStationConsumerModal({ connection, setShowModal }: Pr
           {/* Station Name */}
           <ComboBox
             label='Generating Station'
-            url='/api/generating-stations?q='
+            url={`/api/generating-stations?consumer_connection_id=${connection.connection_id}&q=`}
             setValue={setSelectedStation}
             value={selectedStation}
             dataKey='station_id'

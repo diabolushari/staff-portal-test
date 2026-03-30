@@ -17,12 +17,13 @@ export default function ReprioritizeStationConsumerModal({
   relation,
   isconsumerPriority,
 }: Props) {
+  const today = new Date().toISOString().split('T')[0]
   const { formData, setFormValue } = useCustomForm({
     rel_id: relation.rel_id,
     station_connection_id: relation.station_connection_id,
     consumer_priority_order: relation.consumer_priority_order ?? '',
     station_priority_order: relation.station_priority_order ?? '',
-    effective_start: '',
+    effective_start: today,
     effective_end: '',
     _method: 'PUT',
   })

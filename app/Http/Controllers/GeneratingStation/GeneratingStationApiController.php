@@ -17,13 +17,14 @@ class GeneratingStationApiController extends Controller
    public function __invoke(Request $request): JsonResponse
 {
     $query = $request->query('q');
+    $consumerConnectionId = $request->query('consumer_connection_id');
 
     if (!$query) {
         return response()->json([]);
     }
 
     $stations = $this->generatingStationService
-        ->listGeneratingStations($query)
+        ->listGeneratingStations($query, $consumerConnectionId)
         ->data ?? [];
 
     return response()->json($stations);
