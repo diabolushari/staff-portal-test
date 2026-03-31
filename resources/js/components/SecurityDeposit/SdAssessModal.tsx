@@ -12,6 +12,7 @@ interface SdAssessModalProps {
   triggerTypes: ParameterValues[]
   redirect?: 'group' | 'individual'
   billingGroupId?: number
+  setSelectedConnections: (selectedConnections: number[]) => void
 }
 
 export default function SdAssessModal({
@@ -20,6 +21,7 @@ export default function SdAssessModal({
   triggerTypes,
   redirect = 'individual',
   billingGroupId,
+  setSelectedConnections,
 }: SdAssessModalProps) {
   const { formData, setFormValue } = useCustomForm({
     connection_ids: connection_ids,
@@ -30,7 +32,12 @@ export default function SdAssessModal({
     redirect: redirect,
   })
 
-  const { post, loading } = useInertiaPost(route('sd-assess'))
+  const { post, loading } = useInertiaPost(route('sd-assess'), {
+    onComplete: () => {
+      setShowModal(false)
+      setSelectedConnections([])
+    },
+  })
 
   const handleSubmitBill = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
