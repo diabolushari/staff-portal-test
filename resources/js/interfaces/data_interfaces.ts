@@ -1011,7 +1011,7 @@ export interface StationConsumerRel {
   effective_start: string
   effective_end?: string
 
-  is_current: boolean
+  is_active: boolean
 
   created_by?: number
   updated_by?: number

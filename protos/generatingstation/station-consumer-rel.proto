@@ -30,7 +30,7 @@ message StationConsumerRelMessage {
   string effective_start = 9;
   optional string effective_end = 10;
 
-  bool is_current = 11;
+  bool is_active = 11;
 
   optional int32 created_by = 12;
   optional int32 updated_by = 13;
