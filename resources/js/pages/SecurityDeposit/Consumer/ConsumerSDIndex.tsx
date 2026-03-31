@@ -204,6 +204,7 @@ const ConsumerSDIndex = ({ connections, oldConnections, triggerTypes }: Props) =
         <SdAssessModal
           setShowModal={setShowAssessModal}
           connection_ids={selectedConnections}
+          setSelectedConnections={setSelectedConnections}
           triggerTypes={triggerTypes}
           redirect='individual'
         />

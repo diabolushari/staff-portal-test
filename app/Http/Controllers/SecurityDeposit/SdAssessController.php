@@ -22,13 +22,16 @@ class SdAssessController extends Controller
         }
 
         if ($request->billingGroupId) {
-            return redirect()->route('consumer-sd.group.show', $request->billingGroupId);
+            return redirect()->route('consumer-sd.group.show', $request->billingGroupId)
+                ->with('message', 'SD recalculated successfully');
         }
 
         if ($request->redirect == 'individual') {
-            return redirect()->route('consumer-sd');
+            return redirect()->route('consumer-sd')
+                ->with('message', 'SD recalculated successfully');
         }
 
-        return redirect()->route('consumer-sd.group');
+        return redirect()->route('consumer-sd.group')
+            ->with('message', 'SD recalculated successfully');
     }
 }
