@@ -10,7 +10,7 @@ on:
 jobs:
   run-on-server:
     if: ${{ github.event.pull_request.merged == true }}
-     runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
       steps:
         - name: Start SSH agent and add key
