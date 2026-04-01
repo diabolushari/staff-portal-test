@@ -12,44 +12,44 @@ jobs:
     if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
 
-      steps:
-        - name: Start SSH agent and add key
-          uses: webfactory/ssh-agent@v0.9.0
-          with:
-            ssh-private-key: ${{ secrets.DO_SSH_KEY }}
+    steps:
+      - name: Start SSH agent and add key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DO_SSH_KEY }}
 
-        - name: Add server to known_hosts
-          run: |
-            mkdir -p ~/.ssh
-            ssh-keyscan -p 22 -H ${{ secrets.DO_HOST }} >> ~/.ssh/known_hosts
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p 22 -H ${{ secrets.DO_HOST }} >> ~/.ssh/known_hosts
 
-        - name: Run commands on server
-          run: |
-            ssh -p ${{ secrets.DO_PORT }} ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }} << EOF
-              set -e
+      - name: Run commands on server
+        run: |
+          ssh -p ${{ secrets.DO_PORT }} ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }} << EOF
+            set -e
 
-              cd ${{ secrets.APP_DIR }}
+            cd ${{ secrets.APP_DIR }}
 
-              echo "Pull latest code"
-              git fetch origin main
-              git reset --hard origin/main
+            echo "Pull latest code"
+            git fetch origin main
+            git reset --hard origin/main
 
-              echo "Installing PHP dependencies"
-              export COMPOSER_ALLOW_SUPERUSER=1
-              composer install --no-interaction --prefer-dist --optimize-autoloader
+            echo "Installing PHP dependencies"
+            export COMPOSER_ALLOW_SUPERUSER=1
+            composer install --no-interaction --prefer-dist --optimize-autoloader
 
-              echo "Installing Node dependencies"
-              npm ci
+            echo "Installing Node dependencies"
+            npm ci
 
-              echo "Running gRPC generation"
-              bash ./scripts/generate-grpc.sh
+            echo "Running gRPC generation"
+            bash ./scripts/generate-grpc.sh
 
-              echo "Building frontend"
-              npm run build
+            echo "Building frontend"
+            npm run build
 
-              echo "Running migrations"
-              php artisan migrate --force
+            echo "Running migrations"
+            php artisan migrate --force
 
-              echo "Done"
-            EOF
+            echo "Done"
+          EOF
 
