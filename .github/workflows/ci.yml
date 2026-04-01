@@ -6,8 +6,8 @@ branches:
 - main
 
 jobs:
-run-on-server:
-runs-on: ubuntu-latest
+  run-on-server:
+  runs-on: ubuntu-latest
 
 steps:
   - name: Start SSH agent and add key
