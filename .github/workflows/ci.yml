@@ -27,6 +27,17 @@ jobs:
 
             cd ${{ secrets.APP_DIR }}
 
+            echo "Pull latest code"
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo "Installing PHP dependencies"
+            export COMPOSER_ALLOW_SUPERUSER=1
+            composer install --no-interaction --prefer-dist --optimize-autoloader
+
+            echo "Installing Node dependencies"
+            npm ci
+
             echo "Running gRPC generation"
             bash ./scripts/generate-grpc.sh
 
