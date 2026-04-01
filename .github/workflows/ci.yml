@@ -1,40 +1,41 @@
 name: Run Build & Migrate on Server
 
 on:
-push:
-branches:
-- main
+  push:
+    branches:
+      - main
 
 jobs:
   run-on-server:
     runs-on: ubuntu-latest
 
-steps:
-  - name: Start SSH agent and add key
-    uses: webfactory/ssh-agent@v0.9.0
-    with:
-      ssh-private-key: ${{ secrets.DO_SSH_KEY }}
+    steps:
+      - name: Start SSH agent and add key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DO_SSH_KEY }}
 
-  - name: Add server to known_hosts
-    run: |
-      mkdir -p ~/.ssh
-      ssh-keyscan -p ${{ secrets.DO_PORT }} -H ${{ secrets.DO_HOST }} >> ~/.ssh/known_hosts
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ secrets.DO_PORT }} -H ${{ secrets.DO_HOST }} >> ~/.ssh/known_hosts
 
-  - name: Run commands on server
-    run: |
-      ssh -p ${{ secrets.DO_PORT }} ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }} << 'EOF'
-        set -e
+      - name: Run commands on server
+        run: |
+          ssh -p ${{ secrets.DO_PORT }} ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }} << 'EOF'
+            set -e
 
-        cd ${{ secrets.APP_DIR }}
+            cd ${{ secrets.APP_DIR }}
 
-        echo "Running gRPC generation"
-        bash ./scripts/generate-grpc.sh
+            echo "Running gRPC generation"
+            bash ./scripts/generate-grpc.sh
 
-        echo "Building frontend"
-        npm run build
+            echo "Building frontend"
+            npm run build
 
-        echo "Running migrations"
-        php artisan migrate --force
+            echo "Running migrations"
+            php artisan migrate --force
 
-        echo "Done"
-      EOF
+            echo "Done"
+          EOF
+
